@@ -1,0 +1,1 @@
+# Vulthil.SharedKernel

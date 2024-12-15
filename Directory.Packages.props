@@ -1,0 +1,19 @@
+<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageVersion Include="MediatR" Version="12.4.1" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
+		<GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.3.0.106239">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>
+				runtime; build; native; contentfiles; analyzers; buildtransitive
+			</IncludeAssets>
+		</GlobalPackageReference >
+	</ItemGroup>
+
+</Project>

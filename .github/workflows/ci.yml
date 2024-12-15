@@ -1,0 +1,27 @@
+name: Build and Test
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build
+      run: dotnet build Vulthil.SharedKernel.sln --configuration Release
+    - name: Test
+      run: dotnet test Vulthil.SharedKernel.sln --configuration Release --no-build --no-restore

@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/tests/">
+  </Folder>
+  <Folder Name="/.github/" Id="ba7427f8-03bd-41cc-8a3d-2171917369e8" />
+  <Folder Name="/.github/workflows/" Id="b3bf5420-faf8-4513-866e-3d34d9dba8c4">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/" Id="b83eafa3-0cbf-4da4-b83c-daf3c7010969">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" Id="eab01430-a794-4045-8fff-adf601b86a27" />
+  </Folder>
+</Solution>

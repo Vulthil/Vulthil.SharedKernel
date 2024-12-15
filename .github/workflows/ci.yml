@@ -1,15 +1,14 @@
-name: Build and Test2
+name: Build and Test
 
 on: 
   workflow_dispatch:
   push:
     branches: [ $default-branch ]
-    
   pull_request:
     branches: [ $default-branch ]
 
 env:
-  projectName: "Vulthil.SharedKernel.sln"
+  projectName: 'Vulthil.SharedKernel.sln'
 
 jobs:
   build:

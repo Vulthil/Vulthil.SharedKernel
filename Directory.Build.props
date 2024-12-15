@@ -6,6 +6,12 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<Authors>Vulthil</Authors>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/Vulthil/Vulthil.SharedKernel</RepositoryUrl>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<AnalysisMode>All</AnalysisMode>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>

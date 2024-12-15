@@ -1,0 +1,40 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+env:
+  projectName: 'Vulthil.SharedKernel.sln'
+  nugetSource: 'https://nuget.pkg.github.com/Vulthil/index.json'
+  NuGetDirectory: ${{ github.workspace }}/artifacts
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v3.1.1
+      with:
+        versionSpec: '6.0.x'
+    - uses: actions/setup-dotnet@v4
+    - name: Determine Version
+      uses: gittools/actions/gitversion/execute@v3.1.1
+      with:
+          useConfigFile: true
+    - name: Pack
+      run: dotnet pack --configuration Release -p:${{ env.fullSemVer }} --output ${{ env.NuGetDirectory }}
+    # - uses: actions/upload-artifact@v3
+    #   with:
+    #     name: nuget
+    #     if-no-files-found: error
+    #     retention-days: 7
+    #     path: ${{ env.NuGetDirectory }}/*.nupkg
+    - name: Push
+      working-directory: ${{ env.NuGetDirectory }}
+      run: dotnet nuget push * -s ${{ env.NugetSource }} -k ${GITHUB_TOKEN}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }

@@ -1,7 +1,9 @@
 <Solution>
   <Folder Name="/tests/">
   </Folder>
-  <Folder Name="/.github/" Id="ba7427f8-03bd-41cc-8a3d-2171917369e8" />
+  <Folder Name="/.github/" Id="ba7427f8-03bd-41cc-8a3d-2171917369e8">
+    <File Path=".github/dependabot.yml" />
+  </Folder>
   <Folder Name="/.github/workflows/" Id="b3bf5420-faf8-4513-866e-3d34d9dba8c4">
     <File Path=".github/workflows/ci.yml" />
   </Folder>

@@ -8,7 +8,7 @@ on:
     branches: [ $default-branch ]
 
 env:
-  projectName: "Vulthil.SharedKernel.slnx"
+  projectName: "Vulthil.SharedKernel.sln"
 
 jobs:
   build:

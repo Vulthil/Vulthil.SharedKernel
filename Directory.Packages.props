@@ -8,7 +8,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
-		<GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.3.0.106239">
+		<GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.4.0.108396">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>
 				runtime; build; native; contentfiles; analyzers; buildtransitive

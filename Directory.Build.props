@@ -9,6 +9,8 @@
 		<Authors>Vulthil</Authors>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/Vulthil/Vulthil.SharedKernel</RepositoryUrl>
+
+		<MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
 	</PropertyGroup>
 
 	<PropertyGroup>

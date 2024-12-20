@@ -50,18 +50,18 @@ jobs:
         path: ${{ env.NuGetDirectory }}
     - name: Publish NuGet package
       run: |
-        foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
-            dotnet nuget push $file --api-key "${{ secrets.GITHUB_TOKEN }}" --source ${{ env.NuGetSource }} --skip-duplicate
-        }
+        for file in "${{ env.NuGetDirectory }}"/*.nupkg ; do
+            dotnet nuget push "$file" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "${{ env.NuGetSource }}" --skip-duplicate
+        done
   
-  create_release:
-    runs-on: 'ubuntu-latest'
-    if: ${{ github.ref == 'refs/heads/main' }}  
-    needs: [deploy]
-    permissions:
-      contents: write
-    steps:
-    - uses: actions/checkout@v4
-    - run: 'gh release create "${{ needs.compute_package_version.outputs.package_version }}" --generate-notes --notes ""'
-      env:
-        GH_TOKEN: ${{ github.token }}
+  # create_release:
+  #   runs-on: 'ubuntu-latest'
+  #   if: ${{ github.ref == 'refs/heads/main' }}  
+  #   needs: [deploy]
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - run: 'gh release create "${{ needs.compute_package_version.outputs.package_version }}" --generate-notes --notes ""'
+  #     env:
+  #       GH_TOKEN: ${{ github.token }}

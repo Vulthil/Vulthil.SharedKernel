@@ -4,13 +4,21 @@ on:
   workflow_dispatch:
   push:
     branches: 
-      - main
+      - 'main'
   pull_request:
     branches:
-      - main
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_id || github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
-  projectName: 'Vulthil.SharedKernel.sln'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  ProjectName: 'Vulthil.SharedKernel.sln'
+  NuGetDirectory: ${{ github.workspace}}/nuget
+  NuGetSource: https://nuget.pkg.github.com/Vulthil/index.json
 
 jobs:
   build:
@@ -20,6 +28,43 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v4
     - name: Build
-      run: dotnet build ${{ env.projectName }} --configuration Release
+      run: dotnet build ${{ env.ProjectName }} --configuration Release
     - name: Test
-      run: dotnet test ${{ env.projectName }} --configuration Release --no-build --no-restore
+      run: dotnet test ${{ env.ProjectName }} --configuration Release --no-build --no-restore
+    - name: Pack
+      run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: nuget
+        if-no-files-found: error
+        retention-days: 7
+        path: ${{ env.NuGetDirectory }}/*.nupkg
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    permissions:
+      packages: write
+      contents: read
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: nuget
+        path: ${{ env.NuGetDirectory }}
+    - name: Publish NuGet package
+      run: |
+        for file in "${{ env.NuGetDirectory }}"/*.nupkg ; do
+            dotnet nuget push "$file" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "${{ env.NuGetSource }}" --skip-duplicate
+        done
+  
+  # create_release:
+  #   runs-on: 'ubuntu-latest'
+  #   if: ${{ github.ref == 'refs/heads/main' }}  
+  #   needs: [deploy]
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - run: 'gh release create "${{ needs.compute_package_version.outputs.package_version }}" --generate-notes --notes ""'
+  #     env:
+  #       GH_TOKEN: ${{ github.token }}

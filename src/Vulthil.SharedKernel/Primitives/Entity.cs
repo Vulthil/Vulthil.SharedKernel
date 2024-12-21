@@ -8,7 +8,7 @@ public abstract class Entity<TId> : IEntity
     public TId Id { get; private set; }
 
     protected Entity(TId id)
-        : base() => Id = id;
+        : this() => Id = id;
 
     /// <summary>
     /// EF Core Only
@@ -25,5 +25,5 @@ public abstract class Entity<TId> : IEntity
 
     public void ClearDomainEvents() => _domainEvents.Clear();
 
-    protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 }

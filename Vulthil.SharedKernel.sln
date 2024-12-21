@@ -31,6 +31,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Vulthil.SharedKernel.slnx = Vulthil.SharedKernel.slnx
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Tests", "tests\Vulthil.SharedKernel.Tests\Vulthil.SharedKernel.Tests.csproj", "{0B9DE0C4-4816-4DF2-B399-455DE59486BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html-coverage-report", "html-coverage-report", "{A433ED30-390B-44F3-99A9-C955F448F151}"
+	ProjectSection(SolutionItems) = preProject
+		tests\html-coverage-report\index.html = tests\html-coverage-report\index.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +48,10 @@ Global
 		{4A3EF0DD-1E8D-472A-ACFC-1088C4524090}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A3EF0DD-1E8D-472A-ACFC-1088C4524090}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A3EF0DD-1E8D-472A-ACFC-1088C4524090}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B9DE0C4-4816-4DF2-B399-455DE59486BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B9DE0C4-4816-4DF2-B399-455DE59486BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B9DE0C4-4816-4DF2-B399-455DE59486BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B9DE0C4-4816-4DF2-B399-455DE59486BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,5 +59,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6E03BA06-CA05-46B8-A4FF-962D761CB680} = {E80463DE-A4AE-4740-8D84-3434DFBB66CD}
 		{4A3EF0DD-1E8D-472A-ACFC-1088C4524090} = {A7FD16E5-FDA3-417D-8B01-F1B2B0AC45CD}
+		{0B9DE0C4-4816-4DF2-B399-455DE59486BB} = {62EB7866-14EC-4193-BD4C-52C1455F140E}
+		{A433ED30-390B-44F3-99A9-C955F448F151} = {62EB7866-14EC-4193-BD4C-52C1455F140E}
 	EndGlobalSection
 EndGlobal

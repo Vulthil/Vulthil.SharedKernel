@@ -22,6 +22,8 @@ public class Result
 
     public static Result Failure(Error error) => new(false, error);
     public static Result<TValue> Failure<TValue>(Error error) => new(default, false, error);
+
+    public static Result<TValue> ValidationFailure<TValue>(ValidationError error) => Failure<TValue>(error);
 }
 
 public class Result<TValue> : Result
@@ -39,5 +41,4 @@ public class Result<TValue> : Result
         ? Success(value)
         : Failure<TValue>(Error.NullValue);
 
-    public static Result<TValue> ValidationFailure(ValidationError error) => Failure<TValue>(error);
 }

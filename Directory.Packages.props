@@ -3,7 +3,20 @@
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageVersion Include="FluentAssertions" Version="7.0.0" />
 		<PackageVersion Include="MediatR" Version="12.4.1" />
+		<PackageVersion Include="coverlet.msbuild" Version="6.0.2" />
+		<PackageVersion Include="coverlet.collector" Version="6.0.2" />
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<PackageVersion Include="xunit" Version="2.9.2" />
+		<PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+		<PackageVersion Include="ReportGenerator" Version="5.4.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">

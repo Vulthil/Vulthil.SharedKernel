@@ -22,8 +22,6 @@ env:
 jobs:
   create_nuget:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     outputs:
       stable_version: ${{ steps.extract_version.outputs.stable_version }}
     steps:
@@ -72,9 +70,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     needs: [ create_nuget, test ]
-    permissions:
-      packages: write
-      contents: read
     steps:
     - uses: actions/download-artifact@v4
       with:
@@ -95,13 +90,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Create GitHub Release
-      id: create_release
-      uses: comnoco/create-release@v2
+      uses: elgohr/Github-Release-Action@v5
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.STABLE_VERSION }}
-        release_name: Release v${{ env.STABLE_VERSION }}
+        tag: ${{ env.STABLE_VERSION }}
+        title: Release v${{ env.STABLE_VERSION }}
         draft: false
         prerelease: false
 
@@ -109,9 +103,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [ create_nuget, test, create_release ]
-    permissions:
-      packages: write
-      contents: read
     steps:
     - uses: actions/download-artifact@v4
       with:

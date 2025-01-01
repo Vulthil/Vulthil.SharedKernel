@@ -16,7 +16,7 @@ concurrency:
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
-  NuGetDirectory: ${{ github.workspace}}/nuget
+  NuGetDirectory: ${{ github.workspace }}/nuget
   NuGetSource: https://nuget.pkg.github.com/Vulthil/index.json
 
 jobs:
@@ -75,6 +75,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [ create_nuget, test ]
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
     - name: Tag the Commit

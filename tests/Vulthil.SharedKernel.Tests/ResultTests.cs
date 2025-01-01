@@ -59,6 +59,9 @@ public sealed class ResultTests
         result.IsSuccess.Should().BeFalse();
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(Error.NullValue);
+        result.Error.Code.Should().Be(Error.NullValue.Code);
+        result.Error.Description.Should().Be(Error.NullValue.Description);
+        result.Error.Type.Should().Be(Error.NullValue.Type);
     }
 
     [Fact]
@@ -105,7 +108,19 @@ public sealed class ResultTests
             .Which.Errors.Should().HaveCount(1)
                 .And.Contain(Error.NullValue);
         result.Invoking(r => r.Value).Should().ThrowExactly<InvalidOperationException>();
-
-
     }
+
+    public static TheoryData<Error, ErrorType> TestData => new()
+    {
+        { Error.NotFound("C", "D"), ErrorType.NotFound },
+        { Error.Validation("C", "D"), ErrorType.Validation },
+        { Error.Conflict("C", "D"), ErrorType.Conflict },
+        { Error.Failure("C", "D"), ErrorType.Failure },
+    };
+
+    [Theory]
+    [MemberData(nameof(TestData))]
+    public void ErrorStaticFactoryMethodsShouldCreateErrors(Error error, ErrorType expectedErrorType) =>
+        // Assert
+        error.Type.Should().Be(expectedErrorType);
 }

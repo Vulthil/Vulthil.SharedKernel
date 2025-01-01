@@ -12,6 +12,7 @@
 		<PackageReference Include="coverlet.collector" />
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq.AutoMock" />
 		<PackageReference Include="xunit" />
 		<PackageReference Include="xunit.runner.visualstudio" />
 		<PackageReference Include="ReportGenerator" />
@@ -23,10 +24,11 @@
 
 	<ItemGroup>
 		<Using Include="Xunit" />
+		<Using Include="Moq" />
 	</ItemGroup>
 
 	<Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest">
-		<ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="../html-coverage-report"  />
+		<ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="../html-coverage-report" />
 	</Target>
 
 </Project>

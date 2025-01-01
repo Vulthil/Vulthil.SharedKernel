@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\src\Vulthil.SharedKernel\Vulthil.SharedKernel.csproj" />
+		<ProjectReference Include="..\Vulthil.SharedKernel\Vulthil.SharedKernel.csproj" />
 	</ItemGroup>
 
 </Project>

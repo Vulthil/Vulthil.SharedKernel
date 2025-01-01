@@ -39,7 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html-coverage-report", "htm
 		tests\html-coverage-report\index.html = tests\html-coverage-report\index.html
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Application", "Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj", "{4A51B7E9-2922-46D5-88E3-603D06CE9B06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Application", "src\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj", "{4A51B7E9-2922-46D5-88E3-603D06CE9B06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

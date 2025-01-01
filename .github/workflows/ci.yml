@@ -29,6 +29,11 @@ jobs:
     - uses: actions/setup-dotnet@v4
     - name: Pack
       run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }}
+    - name: Extract Version
+      id: extract_version
+      run: |
+        VERSION=$(grep -oP '(?<=PackageVersion>)[^<]+' ${{ env.NuGetDirectory }}/*.nupkg)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
     - uses: actions/upload-artifact@v4
       with:
         name: nuget
@@ -70,13 +75,13 @@ jobs:
     - uses: actions/checkout@v4
     - name: Get Version
       id: get_version
-      run: echo "::set-output name=version::$(dotnet minver)"
+      run: echo "version=$(dotnet minver)" >> $GITHUB_ENV
     - name: Tag the Commit
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
-        git tag v${{ steps.get_version.outputs.version }}
-        git push origin v${{ steps.get_version.outputs.version }}
+        git tag v${{ env.VERSION }}
+        git push origin v${{ env.VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create GitHub Release
@@ -84,8 +89,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ steps.get_version.outputs.version }}
-        release_name: Release ${{ steps.get_version.outputs.version }}
+        tag_name: v${{ env.VERSION }}
+        release_name: Release ${{ env.VERSION }}
         draft: false
         prerelease: false
 
@@ -107,14 +112,3 @@ jobs:
             dotnet nuget push "$file" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "${{ env.NuGetSource }}" --skip-duplicate
         done
   
-  # create_release:
-  #   runs-on: 'ubuntu-latest'
-  #   if: ${{ github.ref == 'refs/heads/main' }}  
-  #   needs: [deploy]
-  #   permissions:
-  #     contents: write
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - run: 'gh release create "${{ needs.compute_package_version.outputs.package_version }}" --generate-notes --notes ""'
-  #     env:
-  #       GH_TOKEN: ${{ github.token }}

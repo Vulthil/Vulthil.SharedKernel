@@ -22,6 +22,8 @@ env:
 jobs:
   create_nuget:
     runs-on: ubuntu-latest
+    outputs:
+      stable_version: ${{ steps.extract_version.outputs.stable_version }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -30,8 +32,19 @@ jobs:
     - uses: actions/setup-dotnet@v4
     - name: Restore .NET tools
       run: dotnet tool restore
+    - name: Extract Version
+      id: extract_version
+      run: |
+        VERSION=$(dotnet minver)
+        if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
+          STABLE_VERSION=$(echo $VERSION | cut -d "-" -f 1)
+        else
+          STABLE_VERSION=$VERSION
+        fi
+        echo "STABLE_VERSION=$STABLE_VERSION" >> $GITHUB_ENV
+        echo "stable_version=$STABLE_VERSION" >> $GITHUB_OUTPUT
     - name: Pack
-      run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }}
+      run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} /p:Version=${{ env.STABLE_VERSION }}
     - uses: actions/upload-artifact@v4
       with:
         name: nuget
@@ -46,7 +59,7 @@ jobs:
     - uses: actions/setup-dotnet@v4
     - name: Test
       run: dotnet test --configuration Release
-
+   
   deploy_preview:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
@@ -64,29 +77,23 @@ jobs:
         for file in "${{ env.NuGetDirectory }}"/*.nupkg ; do
             dotnet nuget push "$file" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "${{ env.NuGetSource }}" --skip-duplicate --symbol-source "${{ env.NuGetSource }}" --symbol-api-key "${{ secrets.GITHUB_TOKEN }}"
         done
-
+  
   create_release:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [ create_nuget, test ]
     permissions:
       contents: write
+    env:
+      STABLE_VERSION: ${{ needs.create_nuget.outputs.stable_version }}
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
-    - name: Restore .NET tools
-      run: dotnet tool restore
-    - name: Extract Version
-      id: extract_version
-      run: |
-        VERSION=$(dotnet minver)
-        echo "VERSION=$VERSION" | cut -d "-" -f 1 >> $GITHUB_ENV
     - name: Tag the Commit
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
-        git tag ${{ env.VERSION }}
-        git push origin ${{ env.VERSION }}
+        git tag $STABLE_VERSION
+        git push origin $STABLE_VERSION
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create GitHub Release
@@ -94,8 +101,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.VERSION }}
-        release_name: Release v${{ env.VERSION }}
+        tag_name: ${{ env.STABLE_VERSION }}
+        release_name: Release v${{ env.STABLE_VERSION }}
         draft: false
         prerelease: false
 

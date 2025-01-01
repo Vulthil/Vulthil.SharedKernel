@@ -35,7 +35,7 @@ jobs:
     - name: Extract Version
       id: extract_version
       run: |
-        VERSION=$(minver)
+        VERSION=$(dotnet minver)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
     - uses: actions/upload-artifact@v4

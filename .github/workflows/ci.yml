@@ -44,7 +44,7 @@ jobs:
         echo "STABLE_VERSION=$STABLE_VERSION" >> $GITHUB_ENV
         echo "stable_version=$STABLE_VERSION" >> $GITHUB_OUTPUT
     - name: Pack
-      run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} /p:Version=${{ env.STABLE_VERSION }}
+      run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} -p:PackageVersion=${{ env.STABLE_VERSION }}
     - uses: actions/upload-artifact@v4
       with:
         name: nuget

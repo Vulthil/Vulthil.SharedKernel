@@ -96,7 +96,6 @@ jobs:
       with:
         tag: ${{ env.STABLE_VERSION }}
         title: Release v${{ env.STABLE_VERSION }}
-        draft: false
         prerelease: false
 
   deploy:

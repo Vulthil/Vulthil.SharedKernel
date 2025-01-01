@@ -4,6 +4,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="FluentAssertions" Version="7.0.0" />
+		<PackageVersion Include="FluentValidation" Version="11.11.0" />
+		<PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
 		<PackageVersion Include="MediatR" Version="12.4.1" />
 		<PackageVersion Include="coverlet.msbuild" Version="6.0.3" />
 		<PackageVersion Include="coverlet.collector" Version="6.0.3" />

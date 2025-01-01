@@ -28,13 +28,16 @@ jobs:
         fetch-depth: 0
         filter: tree:0
     - uses: actions/setup-dotnet@v4
+    - name: Restore .NET tools
+      run: dotnet tool restore
     - name: Pack
       run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }}
     - name: Extract Version
       id: extract_version
       run: |
-        VERSION=$(grep -oP '(?<=Version>)[^<]+' ${{ env.NuGetDirectory }}/*.nupkg)
+        VERSION=$(minver)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
     - uses: actions/upload-artifact@v4
       with:
         name: nuget
@@ -74,15 +77,12 @@ jobs:
     needs: [ create_nuget, test ]
     steps:
     - uses: actions/checkout@v4
-    - name: Get Version
-      id: get_version
-      run: echo "version=$(dotnet minver)" >> $GITHUB_ENV
     - name: Tag the Commit
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
-        git tag v${{ env.VERSION }}
-        git push origin v${{ env.VERSION }}
+        git tag ${{ env.VERSION }}
+        git push origin ${{ env.VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create GitHub Release
@@ -98,7 +98,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [ create_nuget, test, create_release]
+    needs: [ create_nuget, test, create_release ]
     permissions:
       packages: write
       contents: read

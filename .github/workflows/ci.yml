@@ -22,6 +22,8 @@ env:
 jobs:
   create_nuget:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       stable_version: ${{ steps.extract_version.outputs.stable_version }}
     steps:
@@ -38,11 +40,17 @@ jobs:
         VERSION=$(dotnet minver)
         if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
           STABLE_VERSION=$(echo $VERSION | cut -d "-" -f 1)
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git tag $STABLE_VERSION
+          git push origin $STABLE_VERSION
         else
           STABLE_VERSION=$VERSION
         fi
         echo "STABLE_VERSION=$STABLE_VERSION" >> $GITHUB_ENV
         echo "stable_version=$STABLE_VERSION" >> $GITHUB_OUTPUT
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Pack
       run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} -p:PackageVersion=${{ env.STABLE_VERSION }}
     - uses: actions/upload-artifact@v4
@@ -82,20 +90,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [ create_nuget, test ]
-    permissions:
-      contents: write
     env:
       STABLE_VERSION: ${{ needs.create_nuget.outputs.stable_version }}
     steps:
     - uses: actions/checkout@v4
-    - name: Tag the Commit
-      run: |
-        git config --global user.name "github-actions"
-        git config --global user.email "github-actions@github.com"
-        git tag $STABLE_VERSION
-        git push origin $STABLE_VERSION
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create GitHub Release
       uses: actions/create-release@v1
       env:

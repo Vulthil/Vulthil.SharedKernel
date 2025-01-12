@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using Vulthil.SharedKernel.Events;
+using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests;
 
-public sealed class IDomainEventHandlerTests
+public sealed class IDomainEventHandlerTests : BaseUnitTestCase
 {
     private sealed record TestDomainEvent : IDomainEvent;
     private sealed class TestDomainHandler : IDomainEventHandler<TestDomainEvent>

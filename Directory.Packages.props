@@ -14,25 +14,17 @@
 		<PackageVersion Include="coverlet.collector" Version="6.0.3" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
 		<PackageVersion Include="Moq.AutoMock" Version="3.5.0" />
-		<PackageVersion Include="xunit" Version="2.9.2" />
-		<PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
+		<PackageVersion Include="xunit.analyzers" Version="1.19.0" />
+		<PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1" />
 		<PackageVersion Include="ReportGenerator" Version="5.4.3" />
+		<PackageVersion Include="MinVer" Version="6.0.0" />
+		<PackageVersion Include="SonarAnalyzer.CSharp" Version="10.5.0.109200" />
+		<PackageVersion Include="xunit.v3" Version="1.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
 		</AssemblyAttribute>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
-		<GlobalPackageReference Include="MinVer" Version="6.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</GlobalPackageReference>
-		<GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.4.0.108396">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</GlobalPackageReference>
 	</ItemGroup>
 </Project>

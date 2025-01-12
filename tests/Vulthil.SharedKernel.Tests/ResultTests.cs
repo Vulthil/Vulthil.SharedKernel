@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Vulthil.SharedKernel.Primitives;
+using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests;
 
-public sealed class ResultTests
+public sealed class ResultTests : BaseUnitTestCase
 {
-
     [Fact]
     public void ResultShouldBeSuccess()
     {

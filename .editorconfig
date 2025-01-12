@@ -65,8 +65,8 @@ dotnet_code_quality_unused_parameters = all:error
 csharp_style_namespace_declarations=file_scoped:error
 
 # var preferences
-csharp_style_var_elsewhere = true:suggestion
-csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_elsewhere = true:none
+csharp_style_var_for_built_in_types = true:none
 csharp_style_var_when_type_is_apparent = true:error
 
 # Expression-bodied members
@@ -240,11 +240,17 @@ dotnet_diagnostic.CA1030.severity = none
 # CA1031: Do not catch general exception types
 dotnet_diagnostic.CA1031.severity = none
 
+# CA1032: Implement standard exception constructors
+dotnet_diagnostic.CA1032.severity = none
+
 # CA1040: Avoid empty interfaces
 dotnet_diagnostic.CA1040.severity = none
 
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
+
+# CA1515: Consider making public types internal
+dotnet_diagnostic.CA1515.severity = none
 
 # CA1711: Identifiers should not have incorrect suffix
 dotnet_diagnostic.CA1711.severity = none
@@ -276,16 +282,7 @@ dotnet_diagnostic.CA2326.severity = none
 # CA2327: Do not use insecure JsonSerializerSettings
 dotnet_diagnostic.CA2327.severity = none
 
-# CA23CA103227: Implement standard exception constructors
-dotnet_diagnostic.CA1032.severity = none
-
 # Visual Studio.Analyzers
 
 # IDE0046: Convert to conditional expression
 dotnet_diagnostic.IDE0046.severity = none
-
-[*.{cs,vb}]
-dotnet_style_operator_placement_when_wrapping = beginning_of_line
-tab_width = 4
-indent_size = 4
-end_of_line = crlf

@@ -1,20 +1,18 @@
 ﻿using FluentAssertions;
 using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.Primitives;
+using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests;
-public sealed class EntityTests
+public sealed class EntityTests : BaseUnitTestCase
 {
     private sealed record TestEntityId(Guid Value);
     private sealed record TestEntityEvent(Guid Id) : IDomainEvent;
-    private sealed class TestEntity : Entity<TestEntityId>
+    private sealed class TestEntity(TestEntityId testEntityId) : Entity<TestEntityId>(testEntityId)
     {
-        private TestEntity(TestEntityId testEntityId) : base(testEntityId) { }
-
         public static TestEntity Create() => new(new(Guid.NewGuid()));
         public void RaiseEvent() => Raise(new TestEntityEvent(Id.Value));
     }
-
 
     [Fact]
     public void EntityShouldBeConstructable()

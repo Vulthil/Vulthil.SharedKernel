@@ -1,16 +1,13 @@
 ﻿using FluentAssertions;
 using Vulthil.SharedKernel.Exceptions;
 using Vulthil.SharedKernel.Primitives;
+using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests;
-public sealed class DomainExceptionTests
+
+public sealed class DomainExceptionTests : BaseUnitTestCase
 {
-    private sealed class TestDomainException : DomainException
-    {
-        public TestDomainException(Error error) : base(error)
-        {
-        }
-    }
+    private sealed class TestDomainException(Error error) : DomainException(error);
 
     [Fact]
     public void DomainExceptionShouldBeConstructable()

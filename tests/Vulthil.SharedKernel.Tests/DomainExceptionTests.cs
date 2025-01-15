@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Vulthil.SharedKernel.Exceptions;
+﻿using Vulthil.SharedKernel.Exceptions;
 using Vulthil.SharedKernel.Primitives;
 using Vulthil.SharedKernel.xUnit;
 

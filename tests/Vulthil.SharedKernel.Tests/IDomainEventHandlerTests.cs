@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Vulthil.SharedKernel.Events;
+﻿using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests;

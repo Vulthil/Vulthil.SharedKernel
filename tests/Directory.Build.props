@@ -1,0 +1,46 @@
+<Project>
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<CollectCoverage>true</CollectCoverage>
+		<CoverletOutput>./TestResults/</CoverletOutput>
+		<ReportOutput>$(CoverletOutput)/Reports</ReportOutput>
+		<CoverletOutputFormat>opencover</CoverletOutputFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Shouldly" />
+		<PackageReference Include="coverlet.msbuild" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq.AutoMock" />
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="ReportGenerator" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Vulthil.SharedKernel.xUnit\Vulthil.SharedKernel.xUnit.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Shouldly" />
+		<Using Include="Xunit" />
+		<Using Include="Moq" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="TestResults\" />
+	</ItemGroup>
+
+	<Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest">
+		<ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(ReportOutput)" />
+	</Target>
+</Project>

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Vulthil.SharedKernel.Events;
+﻿using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests;
@@ -24,6 +23,6 @@ public sealed class IDomainEventHandlerTests : BaseUnitTestCase
         Func<Task> act = async () => await handler.HandleAsync(domainEvent, cancellationToken);
 
         // Assert
-        await act.Should().NotThrowAsync();
+        await act.ShouldNotThrowAsync();
     }
 }

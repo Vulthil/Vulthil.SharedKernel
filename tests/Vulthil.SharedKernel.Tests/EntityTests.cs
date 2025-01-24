@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Vulthil.SharedKernel.Events;
+﻿using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.Primitives;
 using Vulthil.SharedKernel.xUnit;
 
@@ -21,8 +20,8 @@ public sealed class EntityTests : BaseUnitTestCase
         var testEntity = TestEntity.Create();
 
         // Assert
-        testEntity.Id.Should().NotBe(default(TestEntityId));
-        testEntity.DomainEvents.Should().BeEmpty();
+        testEntity.Id.ShouldNotBe(default);
+        testEntity.DomainEvents.ShouldBeEmpty();
     }
 
     [Fact]
@@ -35,9 +34,9 @@ public sealed class EntityTests : BaseUnitTestCase
         testEntity.RaiseEvent();
 
         // Assert
-        testEntity.DomainEvents.Should().ContainSingle()
-            .Which.Should().BeOfType<TestEntityEvent>()
-                .Which.Id.Should().Be(testEntity.Id.Value);
+        testEntity.DomainEvents.ShouldHaveSingleItem()
+            .ShouldBeOfType<TestEntityEvent>()
+                .Id.ShouldBe(testEntity.Id.Value);
     }
 
     [Fact]
@@ -51,6 +50,6 @@ public sealed class EntityTests : BaseUnitTestCase
         testEntity.ClearDomainEvents();
 
         // Assert
-        testEntity.DomainEvents.Should().BeEmpty();
+        testEntity.DomainEvents.ShouldBeEmpty();
     }
 }

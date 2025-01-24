@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Vulthil.SharedKernel.Primitives;
+﻿using Vulthil.SharedKernel.Primitives;
 using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests;
@@ -13,9 +12,9 @@ public sealed class ResultTests : BaseUnitTestCase
         var result = Result.Success();
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.IsFailure.Should().BeFalse();
-        result.Error.Should().Be(Error.None);
+        result.IsSuccess.ShouldBeTrue();
+        result.IsFailure.ShouldBeFalse();
+        result.Error.ShouldBe(Error.None);
     }
 
     [Fact]
@@ -25,7 +24,7 @@ public sealed class ResultTests : BaseUnitTestCase
         Func<Result> act = () => new Result(true, Error.NullValue);
 
         // Assert
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Theory]
@@ -38,15 +37,15 @@ public sealed class ResultTests : BaseUnitTestCase
         Result<T> implicitOperator = value;
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be(value);
-        result.IsFailure.Should().BeFalse();
-        result.Error.Should().Be(Error.None);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBe(value);
+        result.IsFailure.ShouldBeFalse();
+        result.Error.ShouldBe(Error.None);
 
-        implicitOperator.IsSuccess.Should().BeTrue();
-        implicitOperator.Value.Should().Be(value);
-        implicitOperator.IsFailure.Should().BeFalse();
-        implicitOperator.Error.Should().Be(Error.None);
+        implicitOperator.IsSuccess.ShouldBeTrue();
+        implicitOperator.Value.ShouldBe(value);
+        implicitOperator.IsFailure.ShouldBeFalse();
+        implicitOperator.Error.ShouldBe(Error.None);
     }
 
     [Fact]
@@ -56,12 +55,12 @@ public sealed class ResultTests : BaseUnitTestCase
         var result = Result.Failure(Error.NullValue);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(Error.NullValue);
-        result.Error.Code.Should().Be(Error.NullValue.Code);
-        result.Error.Description.Should().Be(Error.NullValue.Description);
-        result.Error.Type.Should().Be(Error.NullValue.Type);
+        result.IsSuccess.ShouldBeFalse();
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(Error.NullValue);
+        result.Error.Code.ShouldBe(Error.NullValue.Code);
+        result.Error.Description.ShouldBe(Error.NullValue.Description);
+        result.Error.Type.ShouldBe(Error.NullValue.Type);
     }
 
     [Fact]
@@ -71,7 +70,7 @@ public sealed class ResultTests : BaseUnitTestCase
         Action act = () => Result.Failure(Error.None);
 
         // Assert
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -83,15 +82,15 @@ public sealed class ResultTests : BaseUnitTestCase
         Result<Result> implicitOperator = nullValue;
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(Error.NullValue);
-        result.Invoking(r => r.Value).Should().ThrowExactly<InvalidOperationException>();
+        result.IsSuccess.ShouldBeFalse();
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(Error.NullValue);
+        Should.Throw<InvalidOperationException>(() => result.Value);
 
-        implicitOperator.IsSuccess.Should().BeFalse();
-        implicitOperator.IsFailure.Should().BeTrue();
-        implicitOperator.Error.Should().Be(Error.NullValue);
-        implicitOperator.Invoking(r => r.Value).Should().ThrowExactly<InvalidOperationException>();
+        implicitOperator.IsSuccess.ShouldBeFalse();
+        implicitOperator.IsFailure.ShouldBeTrue();
+        implicitOperator.Error.ShouldBe(Error.NullValue);
+        Should.Throw<InvalidOperationException>(() => implicitOperator.Value);
     }
 
     [Fact]
@@ -102,25 +101,26 @@ public sealed class ResultTests : BaseUnitTestCase
         var result = Result.ValidationFailure<Result>(validationError);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().BeOfType<ValidationError>()
-            .Which.Errors.Should().HaveCount(1)
-                .And.Contain(Error.NullValue);
-        result.Invoking(r => r.Value).Should().ThrowExactly<InvalidOperationException>();
+        result.IsSuccess.ShouldBeFalse();
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBeOfType<ValidationError>()
+            .Errors.ShouldHaveSingleItem()
+            .ShouldBe(Error.NullValue);
+        Should.Throw<InvalidOperationException>(() => result.Value);
     }
 
     public static TheoryData<Error, ErrorType> TestData => new()
     {
         { Error.NotFound("C", "D"), ErrorType.NotFound },
-        { Error.Validation("C", "D"), ErrorType.Validation },
+        { Error.Problem("C", "D"), ErrorType.Problem },
         { Error.Conflict("C", "D"), ErrorType.Conflict },
         { Error.Failure("C", "D"), ErrorType.Failure },
+        { new ValidationError([Error.NullValue]), ErrorType.Validation },
     };
 
     [Theory]
     [MemberData(nameof(TestData))]
     public void ErrorStaticFactoryMethodsShouldCreateErrors(Error error, ErrorType expectedErrorType) =>
         // Assert
-        error.Type.Should().Be(expectedErrorType);
+        error.Type.ShouldBe(expectedErrorType);
 }

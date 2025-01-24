@@ -34,14 +34,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Tests", "tests\Vulthil.SharedKernel.Tests\Vulthil.SharedKernel.Tests.csproj", "{0B9DE0C4-4816-4DF2-B399-455DE59486BB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html-coverage-report", "html-coverage-report", "{A433ED30-390B-44F3-99A9-C955F448F151}"
-	ProjectSection(SolutionItems) = preProject
-		tests\html-coverage-report\index.html = tests\html-coverage-report\index.html
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Application", "src\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj", "{4A51B7E9-2922-46D5-88E3-603D06CE9B06}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.xUnit", "src\Vulthil.SharedKernel.xUnit\Vulthil.SharedKernel.xUnit.csproj", "{E775147B-B141-4AE6-A0DE-A5FED02587FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Application.Tests", "tests\Vulthil.SharedKernel.Application.Tests\Vulthil.SharedKernel.Application.Tests.csproj", "{5AB2F124-D346-4F3D-8C94-DFB31F6C1CF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test Items", "Test Items", "{CBE7F66F-3346-4AAE-9E95-642FD4D57B73}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "samples\WebApi\WebApi\WebApi.csproj", "{EBEFC6A4-1704-4C76-B671-474DB0423402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Tests", "samples\WebApi\WebApi.Tests\WebApi.Tests.csproj", "{4BD18E81-45CF-4260-BBB5-ADCB0E624409}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9BB2683C-D925-4EE7-8FB5-648C190F6E72}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{7E89B67E-FDD5-4316-A47F-AF8EA48F1E98}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample Items", "Sample Items", "{D8BCB0DB-192C-45D9-A381-54137B6B6345}"
+	ProjectSection(SolutionItems) = preProject
+		samples\WebApi\Directory.Build.props = samples\WebApi\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Infrastructure", "src\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj", "{1472641B-F87B-43A8-96FE-3632655F25EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vulthil.SharedKernel.Api", "src\Vulthil.SharedKernel.Api\Vulthil.SharedKernel.Api.csproj", "{1905E823-876D-4095-AC0D-78AF183A0B6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +84,26 @@ Global
 		{E775147B-B141-4AE6-A0DE-A5FED02587FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E775147B-B141-4AE6-A0DE-A5FED02587FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E775147B-B141-4AE6-A0DE-A5FED02587FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AB2F124-D346-4F3D-8C94-DFB31F6C1CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AB2F124-D346-4F3D-8C94-DFB31F6C1CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AB2F124-D346-4F3D-8C94-DFB31F6C1CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AB2F124-D346-4F3D-8C94-DFB31F6C1CF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBEFC6A4-1704-4C76-B671-474DB0423402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBEFC6A4-1704-4C76-B671-474DB0423402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBEFC6A4-1704-4C76-B671-474DB0423402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBEFC6A4-1704-4C76-B671-474DB0423402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BD18E81-45CF-4260-BBB5-ADCB0E624409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BD18E81-45CF-4260-BBB5-ADCB0E624409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BD18E81-45CF-4260-BBB5-ADCB0E624409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BD18E81-45CF-4260-BBB5-ADCB0E624409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1472641B-F87B-43A8-96FE-3632655F25EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1472641B-F87B-43A8-96FE-3632655F25EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1472641B-F87B-43A8-96FE-3632655F25EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1472641B-F87B-43A8-96FE-3632655F25EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1905E823-876D-4095-AC0D-78AF183A0B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1905E823-876D-4095-AC0D-78AF183A0B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1905E823-876D-4095-AC0D-78AF183A0B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1905E823-876D-4095-AC0D-78AF183A0B6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,8 +112,15 @@ Global
 		{6E03BA06-CA05-46B8-A4FF-962D761CB680} = {E80463DE-A4AE-4740-8D84-3434DFBB66CD}
 		{4A3EF0DD-1E8D-472A-ACFC-1088C4524090} = {A7FD16E5-FDA3-417D-8B01-F1B2B0AC45CD}
 		{0B9DE0C4-4816-4DF2-B399-455DE59486BB} = {62EB7866-14EC-4193-BD4C-52C1455F140E}
-		{A433ED30-390B-44F3-99A9-C955F448F151} = {62EB7866-14EC-4193-BD4C-52C1455F140E}
 		{4A51B7E9-2922-46D5-88E3-603D06CE9B06} = {A7FD16E5-FDA3-417D-8B01-F1B2B0AC45CD}
 		{E775147B-B141-4AE6-A0DE-A5FED02587FE} = {A7FD16E5-FDA3-417D-8B01-F1B2B0AC45CD}
+		{5AB2F124-D346-4F3D-8C94-DFB31F6C1CF4} = {62EB7866-14EC-4193-BD4C-52C1455F140E}
+		{CBE7F66F-3346-4AAE-9E95-642FD4D57B73} = {62EB7866-14EC-4193-BD4C-52C1455F140E}
+		{EBEFC6A4-1704-4C76-B671-474DB0423402} = {7E89B67E-FDD5-4316-A47F-AF8EA48F1E98}
+		{4BD18E81-45CF-4260-BBB5-ADCB0E624409} = {7E89B67E-FDD5-4316-A47F-AF8EA48F1E98}
+		{7E89B67E-FDD5-4316-A47F-AF8EA48F1E98} = {9BB2683C-D925-4EE7-8FB5-648C190F6E72}
+		{D8BCB0DB-192C-45D9-A381-54137B6B6345} = {7E89B67E-FDD5-4316-A47F-AF8EA48F1E98}
+		{1472641B-F87B-43A8-96FE-3632655F25EF} = {A7FD16E5-FDA3-417D-8B01-F1B2B0AC45CD}
+		{1905E823-876D-4095-AC0D-78AF183A0B6B} = {A7FD16E5-FDA3-417D-8B01-F1B2B0AC45CD}
 	EndGlobalSection
 EndGlobal

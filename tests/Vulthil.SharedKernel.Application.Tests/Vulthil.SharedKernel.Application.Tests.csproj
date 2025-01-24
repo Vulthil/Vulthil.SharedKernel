@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj" />
+	</ItemGroup>
+
+</Project>

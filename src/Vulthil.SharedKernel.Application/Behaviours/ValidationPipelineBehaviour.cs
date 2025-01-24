@@ -12,7 +12,10 @@ internal sealed class ValidationPipelineBehaviour<TRequest, TResponse>(
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators = validators;
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         var validationFailures = await ValidateAsync(request);
 
@@ -27,7 +30,7 @@ internal sealed class ValidationPipelineBehaviour<TRequest, TResponse>(
             var resultType = typeof(TResponse).GetGenericArguments()[0];
             var failureMethod = typeof(Result<>)
                 .MakeGenericType(resultType)
-                .GetMethod(nameof(Result<object>.ValidationFailure));
+                .GetMethod(nameof(Result.ValidationFailure));
 
             if (failureMethod is not null)
             {
@@ -51,6 +54,7 @@ internal sealed class ValidationPipelineBehaviour<TRequest, TResponse>(
         }
 
         var context = new ValidationContext<TRequest>(request);
+
         var validationResults = await Task.WhenAll(_validators
             .Select(v => v.ValidateAsync(context)));
 
@@ -63,5 +67,5 @@ internal sealed class ValidationPipelineBehaviour<TRequest, TResponse>(
     }
 
     private static ValidationError CreateValidationError(ValidationFailure[] validationFailures) =>
-        new(validationFailures.Select(f => Error.Validation(f.ErrorCode, f.ErrorMessage)).ToArray());
+        new(validationFailures.Select(f => Error.Problem(f.ErrorCode, f.ErrorMessage)).ToArray());
 }

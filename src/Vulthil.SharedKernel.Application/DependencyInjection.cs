@@ -13,7 +13,8 @@ public static class DependencyInjection
 
         if (applicationOptions.FluentValidationAssemblies.Count != 0)
         {
-            services.AddValidatorsFromAssemblies(applicationOptions.FluentValidationAssemblies);
+            services.AddValidatorsFromAssemblies(applicationOptions.FluentValidationAssemblies,
+                includeInternalTypes: true);
         }
 
         if (applicationOptions.MediatRAssemblies.Count == 0)
@@ -24,6 +25,12 @@ public static class DependencyInjection
         services.AddMediatR(options =>
         {
             options.RegisterServicesFromAssemblies([.. applicationOptions.MediatRAssemblies]);
+
+            if (applicationOptions.AddRequestLoggingBehaviour)
+            {
+                options.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
+            }
+
             if (applicationOptions.AddValidationPipelineBehaviour)
             {
                 options.AddOpenBehavior(typeof(ValidationPipelineBehaviour<,>));
@@ -34,8 +41,6 @@ public static class DependencyInjection
                 options.AddOpenBehavior(typeof(TransactionalPipelineBehaviour<,>));
             }
         });
-
-
 
         return services;
     }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Vulthil.SharedKernel.Application;
 
@@ -13,6 +12,7 @@ public sealed class ApplicationOptions
 
     public bool AddValidationPipelineBehaviour { get; set; } = true;
     public bool AddTransactionalPipelineBehaviour { get; set; } = true;
+    public bool AddRequestLoggingBehaviour { get; set; } = true;
 
     public ApplicationOptions RegisterMediatRAssemblies(params Assembly[] assemblies)
     {

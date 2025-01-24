@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<Using Include="FluentAssertions"/>
 		<Using Include="Xunit" />
 		<Using Include="Moq" />
 	</ItemGroup>
@@ -11,7 +10,7 @@
 		<PackageReference Include="coverlet.msbuild" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Moq.AutoMock" />
-		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Shouldly" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.analyzers">
 			<PrivateAssets>all</PrivateAssets>
@@ -27,4 +26,5 @@
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.xUnit\Vulthil.SharedKernel.xUnit.csproj" />
 		<ProjectReference Include="..\WebApi\WebApi.csproj" />
 	</ItemGroup>
+
 </Project>

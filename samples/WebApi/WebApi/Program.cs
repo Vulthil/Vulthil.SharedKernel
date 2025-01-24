@@ -19,6 +19,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapOpenApi();
 
 await app.RunAsync();
 

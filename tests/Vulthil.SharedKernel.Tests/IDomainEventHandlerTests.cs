@@ -23,6 +23,6 @@ public sealed class IDomainEventHandlerTests : BaseUnitTestCase
         Func<Task> act = async () => await handler.HandleAsync(domainEvent, cancellationToken);
 
         // Assert
-        await act.Should().NotThrowAsync();
+        await act.ShouldNotThrowAsync();
     }
 }

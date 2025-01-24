@@ -4,15 +4,16 @@
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
 		<CollectCoverage>true</CollectCoverage>
-		<CoverletOutput>./results/</CoverletOutput>
+		<CoverletOutput>./TestResults/</CoverletOutput>
+		<ReportOutput>$(CoverletOutput)/Reports</ReportOutput>
 		<CoverletOutputFormat>opencover</CoverletOutputFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Shouldly" />
 		<PackageReference Include="coverlet.msbuild" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Moq.AutoMock" />
-		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.analyzers">
 			<PrivateAssets>all</PrivateAssets>
@@ -30,16 +31,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Using Include="FluentAssertions"/>
+		<Using Include="Shouldly" />
 		<Using Include="Xunit" />
 		<Using Include="Moq" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="results\" />
+		<Folder Include="TestResults\" />
 	</ItemGroup>
 
 	<Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest">
-		<ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="../html-coverage-report" />
+		<ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(ReportOutput)" />
 	</Target>
 </Project>

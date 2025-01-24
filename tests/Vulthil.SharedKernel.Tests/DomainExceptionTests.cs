@@ -15,7 +15,7 @@ public sealed class DomainExceptionTests : BaseUnitTestCase
         var exception = new TestDomainException(Error.NullValue);
 
         // Assert
-        exception.Error.Should().Be(Error.NullValue);
-        exception.Message.Should().Be(Error.NullValue.Description);
+        exception.Error.ShouldBe(Error.NullValue);
+        exception.Message.ShouldBe(Error.NullValue.Description);
     }
 }

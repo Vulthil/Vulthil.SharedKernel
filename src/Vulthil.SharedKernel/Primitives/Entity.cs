@@ -3,7 +3,7 @@
 namespace Vulthil.SharedKernel.Primitives;
 
 public abstract class Entity<TId> : IEntity
-    where TId : class
+    where TId : notnull
 {
     public TId Id { get; private set; }
 
@@ -25,5 +25,5 @@ public abstract class Entity<TId> : IEntity
 
     public void ClearDomainEvents() => _domainEvents.Clear();
 
-    protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    public void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 }

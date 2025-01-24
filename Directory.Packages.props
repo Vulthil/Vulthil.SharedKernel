@@ -16,8 +16,8 @@
 		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
 		<PackageVersion Include="MediatR" Version="12.4.1" />
-		<PackageVersion Include="coverlet.msbuild" Version="6.0.3" />
-		<PackageVersion Include="coverlet.collector" Version="6.0.3" />
+		<PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
+		<PackageVersion Include="coverlet.collector" Version="6.0.4" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
 		<PackageVersion Include="Moq.AutoMock" Version="3.5.0" />
 		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />

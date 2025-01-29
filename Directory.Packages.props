@@ -4,7 +4,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageVersion Include="Shouldly" Version="4.2.1" />
+		<PackageVersion Include="Shouldly" Version="4.3.0" />
 		<PackageVersion Include="FluentValidation" Version="11.11.0" />
 		<PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
 		<PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.1" />

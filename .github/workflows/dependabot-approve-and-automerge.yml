@@ -9,7 +9,6 @@ jobs:
   dependabot:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' && github.repository_owner == 'Vulthil' }}
-    needs: [test] # Ensure this job waits for the CI test job to succeed
     steps:
       - name: Dependabot metadata
         id: metadata

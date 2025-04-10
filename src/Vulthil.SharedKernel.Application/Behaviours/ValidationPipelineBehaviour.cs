@@ -21,7 +21,7 @@ internal sealed class ValidationPipelineBehaviour<TRequest, TResponse>(
 
         if (validationFailures.Length == 0)
         {
-            return await next();
+            return await next(cancellationToken);
         }
 
         if (typeof(TResponse).IsGenericType &&

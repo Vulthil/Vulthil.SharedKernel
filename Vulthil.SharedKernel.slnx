@@ -1,26 +1,42 @@
 <Solution>
-	<Folder Name="/tests/">
-		<Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
-	</Folder>
-	<Folder Name="/.github/" Id="ba7427f8-03bd-41cc-8a3d-2171917369e8">
-		<File Path=".github/dependabot.yml" />
-	</Folder>
-	<Folder Name="/.github/workflows/" Id="b3bf5420-faf8-4513-866e-3d34d9dba8c4">
-		<File Path=".github/workflows/ci.yml" />
-		<File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
-	</Folder>
-	<Folder Name="/Solution Items/" Id="b83eafa3-0cbf-4da4-b83c-daf3c7010969">
-		<File Path=".editorconfig" />
-		<File Path=".gitattributes" />
-		<File Path=".gitignore" />
-		<File Path="Directory.Build.props" />
-		<File Path="Directory.Packages.props" />
-		<File Path=".config/dotnet-tools.json" />
-		<File Path="global.json" />
-		<File Path="README.md" />
-	</Folder>
-	<Folder Name="/src/">
-		<Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" Id="eab01430-a794-4045-8fff-adf601b86a27" />
-		<Project Path="src/Vulthil.SharedKernel.Application/Vulthil.SharedKernel.Application.csproj" />
-	</Folder>
+  <Folder Name="/.github/">
+    <File Path=".github/dependabot.yml" />
+  </Folder>
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
+  </Folder>
+  <Folder Name="/samples/" />
+  <Folder Name="/samples/WebApi/">
+    <Project Path="samples/WebApi/WebApi.Tests/WebApi.Tests.csproj" />
+    <Project Path="samples/WebApi/WebApi/WebApi.csproj" />
+  </Folder>
+  <Folder Name="/samples/WebApi/Sample Items/">
+    <File Path="samples/WebApi/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".config/dotnet-tools.json" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+    <File Path="Vulthil.SharedKernel.slnx" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Application/Vulthil.SharedKernel.Application.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure/Vulthil.SharedKernel.Infrastructure.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.xUnit/Vulthil.SharedKernel.xUnit.csproj" />
+    <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
+    <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Test Items/">
+    <File Path="tests/Directory.Build.props" />
+  </Folder>
 </Solution>

@@ -15,7 +15,7 @@ public sealed class TransactionalPipelineBehaviour<TRequest, TResponse>(
     {
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
-        var response = await next();
+        var response = await next(cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
 

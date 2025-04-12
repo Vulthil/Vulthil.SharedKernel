@@ -4,21 +4,33 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "wednesday"
+      interval: "daily"
     open-pull-requests-limit: 10
     groups:
       dotnet:
         patterns:
           - "*" # Prefer a single PR per solution update.
+  # Docker Images
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+  # Dotnet SDK
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    schedule:
+      interval: "daily"
   # NuGet packages
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "wednesday"
+      interval: "daily"
     open-pull-requests-limit: 25
     groups:
+      xunit:
+        patterns:
+          - "xunit"
+          - "xunit.*"
       dotnet:
         patterns:
           - "*"

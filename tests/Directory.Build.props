@@ -4,7 +4,9 @@
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
 		<CollectCoverage>true</CollectCoverage>
-		<CoverletOutputFormat>opencover,lcov,cobertura</CoverletOutputFormat>
+		<CoverletOutput>./TestResults/</CoverletOutput>
+		<ReportOutput>$(CoverletOutput)/Reports</ReportOutput>
+		<CoverletOutputFormat>cobertura</CoverletOutputFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,6 +23,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="ReportGenerator" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -33,4 +36,12 @@
 		<Using Include="Moq" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Folder Include="TestResults\" />
+	</ItemGroup>
+
+	<Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest">
+		<ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(ReportOutput)" />
+	</Target>
+	
 </Project>

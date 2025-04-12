@@ -1,7 +1,7 @@
 ﻿using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.xUnit;
 
-namespace Vulthil.SharedKernel.Tests;
+namespace Vulthil.SharedKernel.Tests.Core;
 
 public sealed class IDomainEventHandlerTests : BaseUnitTestCase
 {
@@ -17,7 +17,22 @@ public sealed class IDomainEventHandlerTests : BaseUnitTestCase
         // Arrange
         var domainEvent = new TestDomainEvent();
         IDomainEventHandler<TestDomainEvent> handler = new TestDomainHandler();
-        CancellationToken cancellationToken = CancellationToken.None;
+        var cancellationToken = CancellationToken.None;
+
+        // Act
+        Func<Task> act = async () => await handler.Handle(domainEvent, cancellationToken);
+
+        // Assert
+        await act.ShouldNotThrowAsync();
+    }
+
+    [Fact]
+    public async Task DomainHandlerShouldHandleAsync()
+    {
+        // Arrange
+        var domainEvent = new TestDomainEvent();
+        IDomainEventHandler<TestDomainEvent> handler = new TestDomainHandler();
+        var cancellationToken = CancellationToken.None;
 
         // Act
         Func<Task> act = async () => await handler.HandleAsync(domainEvent, cancellationToken);

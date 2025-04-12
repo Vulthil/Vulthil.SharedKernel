@@ -1,7 +1,7 @@
 ﻿using Vulthil.SharedKernel.Primitives;
 using Vulthil.SharedKernel.xUnit;
 
-namespace Vulthil.SharedKernel.Tests;
+namespace Vulthil.SharedKernel.Tests.Core;
 
 public sealed class ResultTests : BaseUnitTestCase
 {

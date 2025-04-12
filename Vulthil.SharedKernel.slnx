@@ -2,16 +2,16 @@
   <Folder Name="/.github/">
     <File Path=".github/dependabot.yml" />
   </Folder>
-  <Folder Name="/.github/workflows/">
+  <Folder Name="/.github/workflows/" Id="e7a3c856-6834-d657-f2f0-05592df2dde9">
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
   </Folder>
   <Folder Name="/samples/" />
-  <Folder Name="/samples/WebApi/">
+  <Folder Name="/samples/WebApi/" Id="1b33c862-9725-3b8f-ec9b-8486e0d9fc1e">
     <Project Path="samples/WebApi/WebApi.Tests/WebApi.Tests.csproj" />
     <Project Path="samples/WebApi/WebApi/WebApi.csproj" />
   </Folder>
-  <Folder Name="/samples/WebApi/Sample Items/">
+  <Folder Name="/samples/WebApi/Sample Items/" Id="21c353cb-e4c9-faa9-f2c8-3a74419d17ff">
     <File Path="samples/WebApi/Directory.Build.props" />
   </Folder>
   <Folder Name="/Solution Items/">
@@ -23,7 +23,7 @@
     <File Path="Directory.Packages.props" />
     <File Path="global.json" />
     <File Path="README.md" />
-    <File Path="Vulthil.SharedKernel.slnx" />
+    <File Path="watch" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
@@ -33,10 +33,9 @@
     <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
   </Folder>
-  <Folder Name="/tests/Test Items/">
+  <Folder Name="/tests/Test Items/" Id="f0a312cb-6dde-3711-ec9c-36e811ca53fb">
     <File Path="tests/Directory.Build.props" />
   </Folder>
 </Solution>

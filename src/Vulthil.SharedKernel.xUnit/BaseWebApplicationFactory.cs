@@ -34,7 +34,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     {
         services.RemoveAll<DbContextOptions<TDbContext>>();
 
-        services.AddDbContext<TDbContext>(container.OptionsAction());
+        services.AddDbContext<TDbContext>(container.OptionsAction);
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)

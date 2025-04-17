@@ -16,6 +16,12 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     public ValueTask InitializeAsync() => Initialize();
 
     protected virtual ValueTask Initialize() => ValueTask.CompletedTask;
+    protected virtual Mock<TMock> GetMock<TMock>()
+        where TMock : class
+        => AutoMocker.GetMock<TMock>();
+    protected virtual void Use<TService>(TService service)
+        where TService : notnull
+        => AutoMocker.Use(service);
 }
 
 public abstract class BaseUnitTestCase<TTarget> : BaseUnitTestCase where TTarget : class

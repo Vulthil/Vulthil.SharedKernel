@@ -4,7 +4,7 @@ namespace Vulthil.SharedKernel.xUnit.Containers;
 
 public interface IDatabaseContainer : IAsyncDisposable
 {
-    Func<Action<DbContextOptionsBuilder>> OptionsAction { get; }
+    Action<DbContextOptionsBuilder> OptionsAction { get; }
     Type DbContextType { get; }
     bool HasBeenMigrated { get; }
 

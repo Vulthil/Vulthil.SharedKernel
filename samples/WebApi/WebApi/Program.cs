@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebApi;
 using WebApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddRabbitMq(builder.Configuration);
 
 builder.Services.AddDbContext<WebApiDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));

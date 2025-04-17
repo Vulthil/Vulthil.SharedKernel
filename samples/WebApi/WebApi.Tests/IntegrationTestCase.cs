@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Vulthil.SharedKernel.Messaging.Publishers;
 using Vulthil.SharedKernel.xUnit;
 using WebApi.Data;
 using WebApi.Models;
@@ -19,15 +20,17 @@ public abstract class BaseIntegrationTestCase : BaseIntegrationTestCase<Program>
     public async Task Test_Something()
     {
         // Arrange
+        var publisher = ScopedServices.GetRequiredService<IPublisher>();
+        await publisher.PublishAsync(new SomeMessage(Guid.NewGuid()), CancellationToken);
         var dbContext = ScopedServices.GetRequiredService<WebApiDbContext>();
 
         // Act
         var webApiEntity = WebApiEntity.Create(Guid.NewGuid().ToString());
         dbContext.WebApiEntities.Add(webApiEntity);
-        await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        await dbContext.SaveChangesAsync(CancellationToken);
 
         // Assert
-        Assert.Single(await dbContext.WebApiEntities.ToListAsync(cancellationToken: TestContext.Current.CancellationToken));
+        Assert.Single(await dbContext.WebApiEntities.ToListAsync(cancellationToken: CancellationToken));
     }
 }
 

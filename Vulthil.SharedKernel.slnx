@@ -29,6 +29,8 @@
     <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Application/Vulthil.SharedKernel.Application.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Infrastructure/Vulthil.SharedKernel.Infrastructure.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Messaging.RabbitMq/Vulthil.SharedKernel.Messaging.RabbitMq.csproj" Id="4b1d6486-9a33-45de-8e74-446041a0bd88" />
+    <Project Path="src/Vulthil.SharedKernel.Messaging/Vulthil.SharedKernel.Messaging.csproj" Id="bc8c8002-4379-4b05-b163-70adbe867fb9" />
     <Project Path="src/Vulthil.SharedKernel.xUnit/Vulthil.SharedKernel.xUnit.csproj" />
     <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
   </Folder>

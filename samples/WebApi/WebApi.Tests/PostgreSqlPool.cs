@@ -18,22 +18,21 @@ public sealed class PostgreSqlPool : DatabaseContainerPool<WebApiDbContext, Post
 
     protected override IContainerBuilder<PostgreSqlBuilder, PostgreSqlContainer> ContainerBuilder => _postgreSqlBuilder;
 
-    protected override (RespawnerOptions RespawnerOptions, Func<string, Task<DbConnection>> ConnectionFactory) RespawnerOptions => (
+    protected override async Task<DbConnection> GetOpenConnectionAsync(string connectionString)
+    {
+        var connection = new NpgsqlConnection(connectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+
+    protected override RespawnerOptions RespawnerOptions =>
         new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,
-        },
-        async connectionString =>
-        {
-            var connection = new NpgsqlConnection(connectionString);
-            await connection.OpenAsync();
-            return connection;
-        }
-    );
+        };
 
-    protected override Func<string, Action<DbContextOptionsBuilder>> OptionsAction => connectionString =>
-    options =>
-        options.UseNpgsql(connectionString);
+    protected override Action<DbContextOptionsBuilder> GetOptionsAction(string connectionString) =>
+         options => options.UseNpgsql(connectionString);
 
     public override async Task ApplyMigrations(IServiceProvider services, IDatabaseContainer container)
     {

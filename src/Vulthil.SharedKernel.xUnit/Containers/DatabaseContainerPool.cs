@@ -6,30 +6,34 @@ using Respawn;
 
 namespace Vulthil.SharedKernel.xUnit.Containers;
 
-public sealed class DatabaseContainer : IDatabaseContainer
+public sealed class DatabaseContainer<TDbContext> : IDatabaseContainer
+    where TDbContext : DbContext
 {
-    private readonly DotNet.Testcontainers.Containers.IDatabaseContainer _container;
-    private readonly (RespawnerOptions RespawnerOptions, Func<string, Task<DbConnection>> ConnectionFactory) _respawnerOptions;
+    private readonly DotNet.Testcontainers.Containers.IContainer _container;
+    private readonly string _connectionString;
+    private readonly RespawnerOptions _respawnerOptions;
+    private readonly Func<string, Task<DbConnection>> _connectionFactory;
     private Respawner? _respawner;
 
-    public Func<Action<DbContextOptionsBuilder>> OptionsAction { get; }
-    public Type DbContextType { get; }
+    public Action<DbContextOptionsBuilder> OptionsAction { get; }
+    public Type DbContextType => typeof(TDbContext);
 
     public bool HasBeenMigrated { get; private set; }
 
-    public DatabaseContainer(Type dbContextType, DotNet.Testcontainers.Containers.IDatabaseContainer container, Func<string, Action<DbContextOptionsBuilder>> optionsAction, (RespawnerOptions RespawnerOptions, Func<string, Task<DbConnection>> ConnectionFactory) respawnerOptions)
+    public DatabaseContainer(DotNet.Testcontainers.Containers.IContainer container, string connectionString, Func<string, Action<DbContextOptionsBuilder>> optionsAction, RespawnerOptions respawnerOptions, Func<string, Task<DbConnection>> connectionFactory)
     {
         _container = container;
+        _connectionString = connectionString;
         _respawnerOptions = respawnerOptions;
-        DbContextType = dbContextType;
-        OptionsAction = () => optionsAction(_container.GetConnectionString());
+        _connectionFactory = connectionFactory;
+        OptionsAction = optionsAction(_connectionString);
     }
 
     public async Task ResetAsync()
     {
         if (_respawner is not null)
         {
-            using var connection = await _respawnerOptions.ConnectionFactory(_container.GetConnectionString());
+            using var connection = await _connectionFactory(_connectionString);
             await _respawner.ResetAsync(connection);
         }
     }
@@ -38,9 +42,8 @@ public sealed class DatabaseContainer : IDatabaseContainer
     {
         if (_respawner is null)
         {
-            var (respawnerOptions, connectionFactory) = _respawnerOptions;
-            using var connection = await connectionFactory(_container.GetConnectionString());
-            _respawner = await Respawner.CreateAsync(connection, respawnerOptions);
+            using var connection = await _connectionFactory(_connectionString);
+            _respawner = await Respawner.CreateAsync(connection, _respawnerOptions);
         }
     }
 
@@ -63,8 +66,9 @@ public abstract class DatabaseContainerPool<TDbContext, TBuilderEntity, TContain
 
     protected abstract IContainerBuilder<TBuilderEntity, TContainerEntity> ContainerBuilder { get; }
 
-    protected abstract Func<string, Action<DbContextOptionsBuilder>> OptionsAction { get; }
-    protected abstract (RespawnerOptions RespawnerOptions, Func<string, Task<DbConnection>> ConnectionFactory) RespawnerOptions { get; }
+    protected abstract Action<DbContextOptionsBuilder> GetOptionsAction(string connectionString);
+    protected abstract Task<DbConnection> GetOpenConnectionAsync(string connectionString);
+    protected abstract RespawnerOptions RespawnerOptions { get; }
 
     protected DatabaseContainerPool()
     {
@@ -81,7 +85,7 @@ public abstract class DatabaseContainerPool<TDbContext, TBuilderEntity, TContain
 
             await container.StartAsync();
 
-            _containerPool.Add(new DatabaseContainer(typeof(TDbContext), container, OptionsAction, RespawnerOptions));
+            _containerPool.Add(new DatabaseContainer<TDbContext>(container, container.GetConnectionString(), GetOptionsAction, RespawnerOptions, GetOpenConnectionAsync));
             _semaphore.Release();
         }
     }

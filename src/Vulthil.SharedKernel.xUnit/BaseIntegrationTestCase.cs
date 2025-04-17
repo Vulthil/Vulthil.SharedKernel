@@ -5,6 +5,7 @@ namespace Vulthil.SharedKernel.xUnit;
 public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
     where TEntryPoint : class
 {
+    protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
     protected BaseWebApplicationFactory<TEntryPoint> Factory { get; }
 
     private readonly IServiceScope _scope;

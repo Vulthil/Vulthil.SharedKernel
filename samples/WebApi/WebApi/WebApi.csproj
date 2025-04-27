@@ -11,8 +11,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Messaging.RabbitMq\Vulthil.SharedKernel.Messaging.RabbitMq.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel\Vulthil.SharedKernel.csproj" />
+		<ProjectReference Include="..\WebApi.ServiceDefaults\WebApi.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Development\Vulthil\Vulthil.SharedKernel\samples\WebApi\WebApi\Migrations\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="C:\Development\Vulthil\Vulthil.SharedKernel\samples\WebApi\WebApi\Migrations\.editorconfig" />
 	</ItemGroup>
 
 </Project>

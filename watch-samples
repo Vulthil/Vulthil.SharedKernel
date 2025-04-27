@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Save the current working directory
+original_dir=$(pwd)
+
+# Find all test project directories containing a *.Tests.csproj file
+test_projects=$(find ./samples -type f -name "*.Tests.csproj" | xargs -n1 dirname | sort -u)
+
+# Run `dotnet watch test` in parallel for each test project
+pids=()
+for project_dir in $test_projects; do
+  (
+    cd "$project_dir" || exit
+    dotnet watch test
+  ) &
+  pids+=($!)
+done
+
+# Wait for all background processes to finish
+trap "kill ${pids[*]} 2>/dev/null; cd \"$original_dir\"; exit" INT TERM
+wait
+
+# Restore the original working directory
+cd "$original_dir"
+

@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Vulthil.SharedKernel.Primitives;
+using Vulthil.Framework.Results;
+using Vulthil.Framework.Results.Results;
 
 namespace Vulthil.SharedKernel.Application.Behaviours;
 

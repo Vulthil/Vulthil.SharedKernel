@@ -4,4 +4,8 @@
 		<PackageReference Include="MediatR" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Vulthil.Framework.Results\Vulthil.Framework.Results.csproj" />
+	</ItemGroup>
+
 </Project>

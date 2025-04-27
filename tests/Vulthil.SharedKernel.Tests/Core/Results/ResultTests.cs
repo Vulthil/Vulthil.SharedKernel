@@ -1,4 +1,5 @@
-﻿using Vulthil.SharedKernel.Primitives;
+﻿using Vulthil.Framework.Results;
+using Vulthil.Framework.Results.Results;
 using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests.Core.Results;
@@ -108,19 +109,4 @@ public sealed class ResultTests : BaseUnitTestCase
             .ShouldBe(Error.NullValue);
         Should.Throw<InvalidOperationException>(() => result.Value);
     }
-
-    public static TheoryData<Error, ErrorType> TestData => new()
-    {
-        { Error.NotFound("C", "D"), ErrorType.NotFound },
-        { Error.Problem("C", "D"), ErrorType.Problem },
-        { Error.Conflict("C", "D"), ErrorType.Conflict },
-        { Error.Failure("C", "D"), ErrorType.Failure },
-        { new ValidationError([Error.NullValue]), ErrorType.Validation },
-    };
-
-    [Theory]
-    [MemberData(nameof(TestData))]
-    public void ErrorStaticFactoryMethodsShouldCreateErrors(Error error, ErrorType expectedErrorType) =>
-        // Assert
-        error.Type.ShouldBe(expectedErrorType);
 }

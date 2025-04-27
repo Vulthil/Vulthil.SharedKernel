@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Vulthil.SharedKernel.Primitives;
+using Vulthil.Framework.Results;
+using Vulthil.Framework.Results.Results;
 
 namespace Vulthil.SharedKernel.Api;
 

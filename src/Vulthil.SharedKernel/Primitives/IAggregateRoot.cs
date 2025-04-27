@@ -2,7 +2,7 @@
 
 namespace Vulthil.SharedKernel.Primitives;
 
-public interface IEntity
+public interface IAggregateRoot
 {
     IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
 

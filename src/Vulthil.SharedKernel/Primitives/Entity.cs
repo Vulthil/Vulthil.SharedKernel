@@ -1,8 +1,6 @@
-﻿using Vulthil.SharedKernel.Events;
+﻿namespace Vulthil.SharedKernel.Primitives;
 
-namespace Vulthil.SharedKernel.Primitives;
-
-public abstract class Entity<TId> : IEntity
+public abstract class Entity<TId>
     where TId : notnull
 {
     public TId Id { get; private set; }
@@ -19,11 +17,4 @@ public abstract class Entity<TId> : IEntity
     {
     }
 
-    private readonly List<IDomainEvent> _domainEvents = [];
-
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-
-    public void ClearDomainEvents() => _domainEvents.Clear();
-
-    public void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 }

@@ -31,6 +31,8 @@ internal sealed class RabbitMqPublisher : IPublisher, IDisposable, IAsyncDisposa
         _channel ??= await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         var properties = CreateBasicProperties(message);
+        properties.Headers ??= new Dictionary<string, object?>();
+
         var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message, message.GetType()));
         try
         {
@@ -60,13 +62,14 @@ internal sealed class RabbitMqPublisher : IPublisher, IDisposable, IAsyncDisposa
         GC.SuppressFinalize(this);
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
 
         _channelSemaphore.Dispose();
-        await (_connection?.CloseAsync() ?? Task.CompletedTask);
 
         Dispose(false);
+
+        return ValueTask.CompletedTask;
     }
 
     #endregion

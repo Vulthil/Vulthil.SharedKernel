@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Vulthil.SharedKernel.Primitives;
+namespace Vulthil.Framework.Results.Results;
 public class Result
 {
     public bool IsSuccess { get; }

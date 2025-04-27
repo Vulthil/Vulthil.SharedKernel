@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Vulthil.SharedKernel.Primitives;
+using Vulthil.Framework.Results.Results;
 
 namespace Vulthil.SharedKernel.Api;
 

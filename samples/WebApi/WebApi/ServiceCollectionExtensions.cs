@@ -6,9 +6,9 @@ namespace WebApi;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
+    public static IHostApplicationBuilder AddRabbitMq(this IHostApplicationBuilder builder, string connectionStringKey = "RabbitMq")
     {
-        services.AddMessaging(configurator =>
+        builder.Services.AddMessaging(configurator =>
         {
             configurator.AddQueue("some-queue", queueConfigurator =>
             {
@@ -17,10 +17,12 @@ public static class ServiceCollectionExtensions
                     .AddConsumer<SomeOtherConsumer>();
             });
 
-            configurator.UseRabbitMq(configuration, "RabbitMq");
+            configurator.UseRabbitMq(builder.Configuration, connectionStringKey);
         });
 
-        return services;
+        builder.AddRabbitMqClient(connectionStringKey);
+
+        return builder;
     }
 }
 

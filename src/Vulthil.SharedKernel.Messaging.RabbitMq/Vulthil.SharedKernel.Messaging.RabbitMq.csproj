@@ -5,7 +5,7 @@
 		<PackageReference Include="Microsoft.Extensions.Options" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-		<PackageReference Include="RabbitMQ.Client" />
+		<PackageReference Include="Aspire.RabbitMQ.Client.v7" />
 	</ItemGroup>
 
 	<ItemGroup>

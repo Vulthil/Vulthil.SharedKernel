@@ -3,11 +3,12 @@ using Vulthil.SharedKernel.Primitives;
 using Vulthil.SharedKernel.xUnit;
 
 namespace Vulthil.SharedKernel.Tests.Core;
-public sealed class EntityTests : BaseUnitTestCase
+
+public sealed class AggregateRootTests : BaseUnitTestCase
 {
     private sealed record TestEntityId(Guid Value);
     private sealed record TestEntityEvent(Guid Id) : IDomainEvent;
-    private sealed class TestEntity(TestEntityId testEntityId) : Entity<TestEntityId>(testEntityId)
+    private sealed class TestEntity(TestEntityId testEntityId) : AggregateRoot<TestEntityId>(testEntityId)
     {
         public static TestEntity Create() => new(new(Guid.NewGuid()));
         public void RaiseEvent() => Raise(new TestEntityEvent(Id.Value));

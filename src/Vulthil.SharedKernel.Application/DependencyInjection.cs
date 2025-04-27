@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.Application.Behaviours;
+using Vulthil.SharedKernel.Application.Messaging;
 
 namespace Vulthil.SharedKernel.Application;
 
@@ -41,6 +42,7 @@ public static class DependencyInjection
                 options.AddOpenBehavior(typeof(TransactionalPipelineBehaviour<,>));
             }
         });
+        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
         return services;
     }

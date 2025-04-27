@@ -76,6 +76,8 @@ public sealed class Subscriber : BackgroundService
 
     private async Task<bool> HandleMessageAsync(BasicDeliverEventArgs eventArgs, QueueDefinition queueDefinition, AsyncServiceScope scope)
     {
+        var headers = eventArgs.BasicProperties.Headers;
+
         var typeString = eventArgs.BasicProperties.Type;
 
         if (string.IsNullOrWhiteSpace(typeString))
@@ -92,6 +94,11 @@ public sealed class Subscriber : BackgroundService
 
         bool handled = false;
 
+        var byteBody = eventArgs.Body.ToArray();
+        var jsonString = Encoding.UTF8.GetString(byteBody);
+        var message = JsonSerializer.Deserialize(jsonString, type);
+        var genericMethod = ConnectConsumerMethod.MakeGenericMethod(typeof(IConsumer<>).MakeGenericType(type), type);
+
         foreach (var (consumerType, messageTypes) in queueDefinition.Consumers)
         {
             try
@@ -100,14 +107,6 @@ public sealed class Subscriber : BackgroundService
                 {
                     continue;
                 }
-
-                var byteBody = eventArgs.Body.ToArray();
-                var jsonString = Encoding.UTF8.GetString(byteBody);
-
-                var message = JsonSerializer.Deserialize(jsonString, type);
-
-                var genericMethod = ConnectConsumerMethod.MakeGenericMethod(typeof(IConsumer<>).MakeGenericType(type), type);
-
 
                 var consumer = scope.ServiceProvider.GetService(consumerType);
                 var consumeMethod = (Task)genericMethod.Invoke(null, [consumer, message, eventArgs.CancellationToken])!;

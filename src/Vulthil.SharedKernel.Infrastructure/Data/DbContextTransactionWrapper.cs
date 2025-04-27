@@ -3,11 +3,9 @@ using Vulthil.SharedKernel.Application.Data;
 
 namespace Vulthil.SharedKernel.Infrastructure.Data;
 
-internal class DbContextTransactionWrapper : IDbTransaction
+public sealed class DbContextTransactionWrapper(IDbContextTransaction dbContextTransaction) : IDbTransaction
 {
-    private readonly IDbContextTransaction _dbContextTransaction;
-
-    public DbContextTransactionWrapper(IDbContextTransaction dbContextTransaction) => _dbContextTransaction = dbContextTransaction;
+    private readonly IDbContextTransaction _dbContextTransaction = dbContextTransaction;
 
     public Task CommitAsync(CancellationToken cancellationToken = default) => _dbContextTransaction.CommitAsync(cancellationToken);
 

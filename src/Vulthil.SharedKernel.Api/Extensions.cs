@@ -70,21 +70,14 @@ public static class Extensions
     }
     public static IResult ToIResult(this Error error)
     {
-        Dictionary<string, string[]> errors;
-
-        if (error is ValidationError validationError)
-        {
-            errors = validationError.Errors
+        Dictionary<string, string[]> errors = error is ValidationError validationError
+            ? validationError.Errors
                 .GroupBy(e => e.Code, s => s.Description)
-                .ToDictionary(e => e.Key, errors => errors.ToArray());
-        }
-        else
-        {
-            errors = new Dictionary<string, string[]>
+                .ToDictionary(e => e.Key, errors => errors.ToArray())
+            : new Dictionary<string, string[]>
             {
                 [error.Code] = [error.Description]
             };
-        }
 
         return error.Type switch
         {

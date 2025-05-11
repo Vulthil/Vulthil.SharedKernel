@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Infrastructure;
-using Vulthil.SharedKernel.Messaging.Publishers;
-using WebApi;
+using Vulthil.SharedKernel.Messaging.Abstractions.Publishers;
+using Vulthil.SharedKernel.Primitives;
 using WebApi.Data;
+using WebApi.Infrastructure;
 using WebApi.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +15,10 @@ builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 
-builder.AddRabbitMq(ServiceNames.RabbitMqServiceName);
-
 builder.Services.AddInfrastructureWithUnitOfWork<WebApiDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString(ServiceNames.PostgresSqlServerServiceName)));
+
+builder.AddInfrastructure(ServiceNames.RabbitMqServiceName);
 
 var app = builder.Build();
 
@@ -31,12 +33,15 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapOpenApi();
 
-app.MapPost("/someMessage", async (ILogger<Program> logger, IPublisher publisher) =>
+app.MapPost("/testEvent", async (ILogger<Program> logger, IRequester requester) =>
 {
-    var someMessage = new SomeMessage(Guid.NewGuid());
+    var someMessage = new TestRequest(Guid.NewGuid(), "some name");
     logger.LogInformation("Sending message: {SomeMessage}", someMessage);
-    await publisher.PublishAsync(someMessage);
-    return Results.NoContent();
+
+    var result = await requester.RequestAsync<TestRequest, TestEvent>(someMessage);
+    return result
+        .Tap(t => logger.LogInformation("Received response: {Message}", t))
+        .ToIResult();
 });
 
 await app.RunAsync();

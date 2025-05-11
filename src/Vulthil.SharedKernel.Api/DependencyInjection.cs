@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Vulthil.SharedKernel.Api;
 
-
-
 public static class DependencyInjection
 {
     public const string DefaultDocumentName = "v1";

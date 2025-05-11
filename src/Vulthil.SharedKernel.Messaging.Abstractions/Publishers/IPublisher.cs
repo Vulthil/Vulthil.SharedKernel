@@ -1,4 +1,5 @@
-﻿namespace Vulthil.SharedKernel.Messaging.Publishers;
+﻿namespace Vulthil.SharedKernel.Messaging.Abstractions.Publishers;
+
 public interface IPublisher
 {
     Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)

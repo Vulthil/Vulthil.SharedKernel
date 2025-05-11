@@ -11,9 +11,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Api\Vulthil.SharedKernel.Api.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Messaging.RabbitMq\Vulthil.SharedKernel.Messaging.RabbitMq.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel\Vulthil.SharedKernel.csproj" />
+		<ProjectReference Include="..\WebApi.Infrastructure\WebApi.Infrastructure.csproj" />
 		<ProjectReference Include="..\WebApi.ServiceDefaults\WebApi.ServiceDefaults.csproj" />
 	</ItemGroup>
 

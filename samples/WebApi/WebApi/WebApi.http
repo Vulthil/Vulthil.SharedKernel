@@ -1,4 +1,4 @@
 @hostname=https://localhost:7045
 
 
-POST {{hostname}}/somemessage
+POST {{hostname}}/testEvent

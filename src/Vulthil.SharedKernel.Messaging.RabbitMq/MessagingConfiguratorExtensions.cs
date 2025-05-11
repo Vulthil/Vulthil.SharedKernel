@@ -1,21 +1,17 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Vulthil.SharedKernel.Messaging.Publishers;
+using Vulthil.SharedKernel.Messaging.Abstractions.Publishers;
 
 namespace Vulthil.SharedKernel.Messaging.RabbitMq;
 
 public static class MessagingConfiguratorExtensions
 {
-    public static IMessagingConfigurator UseRabbitMq(this IMessagingConfigurator configurator, IConfiguration configuration, string connectionStringKey)
+    public static IMessagingConfigurator UseRabbitMq(this IMessagingConfigurator configurator)
     {
-        configurator.Services.AddOptions<RabbitMqOptions>()
-            .Configure(options => options.ConnectionString = configuration.GetConnectionString(connectionStringKey) ?? throw new InvalidOperationException("Connection string for RabbitMq is required"));
-
-        configurator.Services.AddSingleton<RabbitMqConnectionFactory>();
-
-        configurator.Services.AddHostedService<Subscriber>();
-
+        configurator.Services.AddHostedService<RabbitMqHostedService>();
+        configurator.Services.AddSingleton<RabbitMqRequester>();
+        configurator.Services.AddSingleton<IRequester>(sp => sp.GetRequiredService<RabbitMqRequester>());
+        configurator.Services.AddHostedService(sp => sp.GetRequiredService<RabbitMqRequester>());
         configurator.Services.AddSingleton<IPublisher, RabbitMqPublisher>();
 
         return configurator;

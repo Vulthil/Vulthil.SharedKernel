@@ -9,6 +9,7 @@
   <Folder Name="/samples/" />
   <Folder Name="/samples/WebApi/" Id="1b33c862-9725-3b8f-ec9b-8486e0d9fc1e">
     <Project Path="samples/WebApi/WebApi.AppHost/WebApi.AppHost.csproj" Id="ab4523a9-7dd9-443f-9daf-be336b15a5e2" />
+    <Project Path="samples/WebApi/WebApi.Infrastructure/WebApi.Infrastructure.csproj" Id="c8067fd4-18ab-40eb-9a3c-6e0573062095" />
     <Project Path="samples/WebApi/WebApi.ServiceDefaults/WebApi.ServiceDefaults.csproj" />
     <Project Path="samples/WebApi/WebApi.Tests/WebApi.Tests.csproj" />
     <Project Path="samples/WebApi/WebApi/WebApi.csproj" />
@@ -36,10 +37,12 @@
     <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/src/Messaging/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
+    <Project Path="src/Vulthil.SharedKernel.Messaging.Abstractions/Vulthil.SharedKernel.Messaging.Abstractions.csproj" Id="ed7e652b-5802-4667-b911-11851a9b3dd9" />
     <Project Path="src/Vulthil.SharedKernel.Messaging.RabbitMq/Vulthil.SharedKernel.Messaging.RabbitMq.csproj" Id="4b1d6486-9a33-45de-8e74-446041a0bd88" />
     <Project Path="src/Vulthil.SharedKernel.Messaging/Vulthil.SharedKernel.Messaging.csproj" Id="bc8c8002-4379-4b05-b163-70adbe867fb9" />
   </Folder>
   <Folder Name="/src/Testing/" Id="84636569-eb40-4aad-9502-fb45eee5ab19">
+    <Project Path="src/Vulthil.SharedKernel.Messaging.TestHarness/Vulthil.SharedKernel.Messaging.TestHarness.csproj" Id="48a56824-43ef-42b0-aa8a-83459ccfa769" />
     <Project Path="src/Vulthil.SharedKernel.xUnit/Vulthil.SharedKernel.xUnit.csproj" />
   </Folder>
   <Folder Name="/tests/">

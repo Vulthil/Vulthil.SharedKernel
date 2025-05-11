@@ -1,34 +1,79 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Meziantou.Extensions.Logging.Xunit.v3;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Vulthil.SharedKernel.xUnit;
 
 public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
     where TEntryPoint : class
 {
-    protected BaseWebApplicationFactory<TEntryPoint> Factory { get; }
+    protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
+    private readonly BaseWebApplicationFactory<TEntryPoint> _realFactory;
+    private readonly Lazy<WebApplicationFactory<TEntryPoint>> _lazyFactory;
+    protected WebApplicationFactory<TEntryPoint> Factory => _lazyFactory.Value;
 
-    private readonly IServiceScope _scope;
+    protected ITestOutputHelper? TestOutputHelper { get; }
 
-    public IServiceProvider ScopedServices { get; }
+    private IServiceScope? _scope;
 
-    protected BaseIntegrationTestCase(BaseWebApplicationFactory<TEntryPoint> factory)
+    public IServiceProvider ScopedServices
     {
-        Factory = factory;
-        _scope = factory.Services.CreateScope();
-        ScopedServices = _scope.ServiceProvider;
+        get
+        {
+            _scope ??= Factory.Services.CreateScope();
+
+            return _scope.ServiceProvider;
+        }
     }
+
+    private HttpClient? _client;
+    public HttpClient Client => _client ??= Factory.CreateClient();
+
+    protected BaseIntegrationTestCase(BaseWebApplicationFactory<TEntryPoint> factory, ITestOutputHelper? testOutputHelper = null)
+    {
+        _realFactory = factory;
+        TestOutputHelper = testOutputHelper;
+        _lazyFactory = new(CreateFactory);
+    }
+
+    private WebApplicationFactory<TEntryPoint> CreateFactory() =>
+        _realFactory.WithWebHostBuilder(builder =>
+        {
+            if (TestOutputHelper is not null)
+            {
+                builder.ConfigureLogging(loggingBuilder =>
+                {
+                    loggingBuilder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new XUnitLoggerProvider(TestOutputHelper, new XUnitLoggerOptions()
+                    {
+                        IncludeCategory = true,
+                        IncludeLogLevel = true,
+                        IncludeScopes = true,
+                    }));
+                });
+            }
+        });
 
     public virtual async ValueTask DisposeAsync()
     {
-        await Factory.ResetDatabase();
-        _scope.Dispose();
+        await _realFactory.ResetDatabase();
+        _scope?.Dispose();
+        _client?.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    public void ResetScope()
+    {
+        _scope?.Dispose();
+        _scope = null;
     }
 
     public async ValueTask InitializeAsync()
     {
-        await Factory.InitializeRespawners();
+        await _realFactory.InitializeRespawners();
         await Initialize();
     }
+
     public virtual ValueTask Initialize() => ValueTask.CompletedTask;
 }

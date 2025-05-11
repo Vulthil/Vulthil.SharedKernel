@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vulthil.SharedKernel.Primitives;
+using Vulthil.Framework.Results.Results;
 
 namespace Vulthil.SharedKernel.Application.Behaviours;
 

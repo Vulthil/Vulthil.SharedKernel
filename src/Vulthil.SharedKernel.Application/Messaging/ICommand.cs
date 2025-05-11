@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Vulthil.SharedKernel.Primitives;
+using Vulthil.Framework.Results.Results;
 
 namespace Vulthil.SharedKernel.Application.Messaging;
 

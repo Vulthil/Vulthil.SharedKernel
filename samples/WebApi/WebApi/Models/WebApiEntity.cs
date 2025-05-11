@@ -4,7 +4,7 @@ namespace WebApi.Models;
 
 public sealed record WebApiEntityId(Guid Value);
 
-public class WebApiEntity : Entity<WebApiEntityId>
+public class WebApiEntity : AggregateRoot<WebApiEntityId>
 {
     public string Name { get; private set; }
     public WebApiEntity(string name) : base(new(Guid.NewGuid())) => Name = name;

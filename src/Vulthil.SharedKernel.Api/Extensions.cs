@@ -1,47 +1,90 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Vulthil.SharedKernel.Primitives;
+using Vulthil.Framework.Results;
+using Vulthil.Framework.Results.Results;
 
 namespace Vulthil.SharedKernel.Api;
 
 public static class Extensions
 {
-    public static ActionResult ToValidationProblemDetailsActionResult(this Result result, ControllerBase controller, int? statusCode = null)
-    {
-        return controller.ValidationProblem(result, statusCode);
-    }
-
-    public static ActionResult ValidationProblem(this ControllerBase controller, Result result, int? statusCode = null)
+    public static IActionResult ToActionResult(this Result result, ControllerBase controller)
     {
         if (result.IsSuccess)
         {
-            throw new InvalidOperationException();
+            return controller.NoContent();
         }
 
-        if (result.Error is ValidationError validationError)
+        return result.Error.ToActionResult(controller);
+    }
+
+    public static IActionResult ToActionResult<T>(this Result<T> result, ControllerBase controller)
+    {
+        if (result.IsSuccess)
         {
-            foreach (var error in validationError.Errors)
+            return controller.Ok(result.Value);
+        }
+
+        return result.Error.ToActionResult(controller);
+    }
+
+    public static IActionResult ToActionResult(this Error error, ControllerBase controller)
+    {
+        if (error is ValidationError validationError)
+        {
+            foreach (var innerError in validationError.Errors)
             {
-                controller.ModelState.AddModelError(error.Code, error.Description);
+                controller.ModelState.AddModelError(innerError.Code, innerError.Description);
             }
         }
         else
         {
-            controller.ModelState.AddModelError(result.Error.Code, result.Error.Description);
+            controller.ModelState.AddModelError(error.Code, error.Description);
         }
 
-        statusCode ??= GetStatusCode(result.Error.Type);
-
-        return controller.ValidationProblem(statusCode: statusCode);
+        return error.Type switch
+        {
+            ErrorType.Validation => controller.ValidationProblem(),
+            ErrorType.NotFound => controller.NotFound(),
+            ErrorType.Conflict => controller.Conflict(),
+            _ => controller.Problem()
+        };
     }
 
-    private static int GetStatusCode(ErrorType errorType) =>
-        errorType switch
+    public static IResult ToIResult<T>(this Result<T> result)
+    {
+        if (result.IsSuccess)
         {
-            ErrorType.Validation => StatusCodes.Status400BadRequest,
-            ErrorType.Problem => StatusCodes.Status400BadRequest,
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            _ => StatusCodes.Status500InternalServerError,
+            return Results.Ok(result.Value);
+        }
+
+        return ((Result)result).ToIResult();
+    }
+
+    public static IResult ToIResult(this Result result)
+    {
+        if (result.IsSuccess)
+        {
+            return Results.NoContent();
+        }
+        return result.Error.ToIResult();
+    }
+    public static IResult ToIResult(this Error error)
+    {
+        Dictionary<string, string[]> errors = error is ValidationError validationError
+            ? validationError.Errors
+                .GroupBy(e => e.Code, s => s.Description)
+                .ToDictionary(e => e.Key, errors => errors.ToArray())
+            : new Dictionary<string, string[]>
+            {
+                [error.Code] = [error.Description]
+            };
+
+        return error.Type switch
+        {
+            ErrorType.Validation => Results.ValidationProblem(errors, error.Description),
+            ErrorType.NotFound => Results.NotFound(),
+
+            _ => Results.Problem(extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value)),
         };
+    }
 }

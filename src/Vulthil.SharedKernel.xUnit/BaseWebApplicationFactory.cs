@@ -1,9 +1,6 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.SharedKernel.xUnit.Containers;
 
 namespace Vulthil.SharedKernel.xUnit;
@@ -11,45 +8,55 @@ namespace Vulthil.SharedKernel.xUnit;
 public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>, IAsyncLifetime
     where TEntryPoint : class
 {
-    private readonly IDatabaseContainerPool[] _databaseContainerPools;
+    private readonly IContainerPool[] _containerPools;
 
-    private readonly Dictionary<IDatabaseContainerPool, IDatabaseContainer> _containers = [];
+    private readonly Dictionary<IContainerPool, ICustomContainer> _containers = [];
 
-    protected BaseWebApplicationFactory(params IDatabaseContainerPool[] databaseContainerPools) => _databaseContainerPools = databaseContainerPools;
+    private IEnumerable<(IContainerWithConnectionStringPool Pool, ICustomContainer Container)> ContainersWithConnectionStrings => _containers
+        .Where(x => x.Key is IContainerWithConnectionStringPool)
+        .Select(x => ((IContainerWithConnectionStringPool)x.Key, x.Value));
+
+    private IEnumerable<(IDatabaseContainerPool Pool, TContainerType Container)> DatabaseContainers<TContainerType>()
+        where TContainerType : ICustomDatabaseContainer => _containers
+        .Where(x => x.Key is IDatabaseContainerPool && x.Value is TContainerType)
+        .Select(x => ((IDatabaseContainerPool)x.Key, (TContainerType)x.Value));
+
+    protected BaseWebApplicationFactory(params IContainerPool[] containerPools) => _containerPools = containerPools;
 
     public async ValueTask InitializeAsync()
     {
-        foreach (var pool in _databaseContainerPools)
+        foreach (var pool in _containerPools)
         {
             var container = await pool.GetContainerAsync();
             _containers.Add(pool, container);
         }
     }
 
-    private static readonly MethodInfo AddDbContextMethod = typeof(BaseWebApplicationFactory<TEntryPoint>)
-        .GetMethod(nameof(AddDbContext), BindingFlags.NonPublic | BindingFlags.Static)!;
+    //private static readonly MethodInfo AddDbContextMethod = typeof(BaseWebApplicationFactory<TEntryPoint>)
+    //    .GetMethod(nameof(AddDbContext), BindingFlags.NonPublic | BindingFlags.Static)!;
 
-    private static void AddDbContext<TDbContext>(IServiceCollection services, IDatabaseContainer container)
-        where TDbContext : DbContext
+    //private static void AddDbContext<TDbContext>(IServiceCollection services, ICustomDatabaseContainer container)
+    //    where TDbContext : DbContext
+    //{
+    //    services.RemoveAll<DbContextOptions<TDbContext>>();
+
+    //    services.AddDbContext<TDbContext>(container.OptionsAction);
+    //}
+
+    protected virtual void ConfigureCustomWebHost(IWebHostBuilder builder) { }
+
+    protected override sealed void ConfigureWebHost(IWebHostBuilder builder)
     {
-        services.RemoveAll<DbContextOptions<TDbContext>>();
-
-        services.AddDbContext<TDbContext>(container.OptionsAction());
-    }
-
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.ConfigureServices(services =>
+        foreach (var (p, container) in ContainersWithConnectionStrings)
         {
-            foreach (var (_, container) in _containers)
-            {
-                var genericAddDbContextMethod = AddDbContextMethod.MakeGenericMethod(container.DbContextType);
-                genericAddDbContextMethod.Invoke(null, [services, container]);
-            }
-        });
+            var connectionString = p.GetConnectionString(container.Container);
+            builder.UseSetting($"ConnectionStrings:{p.KeyName}", connectionString);
+        }
+
+        ConfigureCustomWebHost(builder);
     }
 
-    public override async ValueTask DisposeAsync()
+    public sealed override async ValueTask DisposeAsync()
     {
         foreach (var (pool, container) in _containers)
         {
@@ -62,7 +69,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
     internal async Task ResetDatabase()
     {
-        foreach (var (_, container) in _containers)
+        foreach (var (_, container) in DatabaseContainers<ICustomDatabaseContainerWithRespawner>())
         {
             await container.ResetAsync();
         }
@@ -71,10 +78,13 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     internal async Task InitializeRespawners()
     {
         await using var scope = Services.CreateAsyncScope();
-        foreach (var (pool, container) in _containers)
+        foreach (var (pool, container) in DatabaseContainers<ICustomDatabaseContainer>())
         {
             await pool.ApplyMigrations(scope.ServiceProvider, container);
-            await container.InitializeRespawner();
+            if (container is ICustomDatabaseContainerWithRespawner containerWithRespawner)
+            {
+                await containerWithRespawner.InitializeRespawner();
+            }
         }
     }
 }

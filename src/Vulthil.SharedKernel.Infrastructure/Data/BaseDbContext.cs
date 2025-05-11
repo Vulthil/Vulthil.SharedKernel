@@ -1,30 +1,16 @@
 ﻿using System.Reflection;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Vulthil.SharedKernel.Application.Data;
+using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
 namespace Vulthil.SharedKernel.Infrastructure.Data;
 
-public abstract class BaseDbContext : DbContext, IUnitOfWork
+public abstract class BaseDbContext(DbContextOptions options) : DbContext(options), IUnitOfWork, ISaveOutboxMessages
 {
-    private readonly IPublisher? _publisher;
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected abstract Assembly? ConfigurationAssembly { get; }
     protected virtual Func<Type, bool>? ConfigurationTypeConstraints { get; }
-
-    protected BaseDbContext(
-        DbContextOptions options,
-        IPublisher? publisher) : base(options) => _publisher = publisher;
-
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        if (_publisher is not null)
-        {
-            return this.SaveAndPublishChangesAsync(_publisher, cancellationToken);
-        }
-
-        return base.SaveChangesAsync(cancellationToken);
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,8 +22,5 @@ public abstract class BaseDbContext : DbContext, IUnitOfWork
         }
     }
 
-    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        return new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
-    }
+    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
 }

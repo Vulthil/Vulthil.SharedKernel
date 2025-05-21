@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Vulthil.Framework.Results;
-using Vulthil.Framework.Results.Results;
+using Vulthil.Results;
+
+using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Vulthil.SharedKernel.Api;
 
@@ -54,7 +55,7 @@ public static class Extensions
     {
         if (result.IsSuccess)
         {
-            return Results.Ok(result.Value);
+            return HttpResults.Ok(result.Value);
         }
 
         return ((Result)result).ToIResult();
@@ -64,7 +65,7 @@ public static class Extensions
     {
         if (result.IsSuccess)
         {
-            return Results.NoContent();
+            return HttpResults.NoContent();
         }
         return result.Error.ToIResult();
     }
@@ -81,10 +82,10 @@ public static class Extensions
 
         return error.Type switch
         {
-            ErrorType.Validation => Results.ValidationProblem(errors, error.Description),
-            ErrorType.NotFound => Results.NotFound(),
+            ErrorType.Validation => HttpResults.ValidationProblem(errors, error.Description),
+            ErrorType.NotFound => HttpResults.NotFound(),
 
-            _ => Results.Problem(extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value)),
+            _ => HttpResults.Problem(extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value)),
         };
     }
 }

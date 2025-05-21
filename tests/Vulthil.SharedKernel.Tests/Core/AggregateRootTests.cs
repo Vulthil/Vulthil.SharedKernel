@@ -1,6 +1,6 @@
 ﻿using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.Primitives;
-using Vulthil.SharedKernel.xUnit;
+using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Tests.Core;
 

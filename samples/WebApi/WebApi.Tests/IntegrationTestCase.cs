@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Vulthil.SharedKernel.xUnit;
+using Vulthil.xUnit;
 using WebApi.Data;
 using WebApi.Models;
 

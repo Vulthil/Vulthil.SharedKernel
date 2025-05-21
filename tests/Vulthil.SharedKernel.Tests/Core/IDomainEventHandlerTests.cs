@@ -1,5 +1,5 @@
 ﻿using Vulthil.SharedKernel.Events;
-using Vulthil.SharedKernel.xUnit;
+using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Tests.Core;
 

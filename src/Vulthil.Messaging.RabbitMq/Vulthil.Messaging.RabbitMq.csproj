@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.RabbitMQ.Client.v7" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
+	</ItemGroup>
+
+</Project>

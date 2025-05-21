@@ -1,4 +1,4 @@
-﻿using Vulthil.SharedKernel.xUnit;
+﻿using Vulthil.xUnit;
 using WebApi.Tests;
 
 

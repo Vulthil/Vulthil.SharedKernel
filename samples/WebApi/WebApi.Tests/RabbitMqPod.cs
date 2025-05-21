@@ -1,6 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using Testcontainers.RabbitMq;
-using Vulthil.SharedKernel.xUnit.Containers;
+using Vulthil.xUnit.Containers;
 using WebApi.ServiceDefaults;
 
 namespace WebApi.Tests;

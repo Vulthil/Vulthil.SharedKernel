@@ -1,5 +1,4 @@
-﻿using Vulthil.Framework.Results;
-using Vulthil.Framework.Results.Results;
+﻿using Vulthil.Results;
 
 namespace Vulthil.SharedKernel.Tests.Core.Results;
 

@@ -3,7 +3,7 @@ using DotNet.Testcontainers.Builders;
 using Npgsql;
 using Respawn;
 using Testcontainers.PostgreSql;
-using Vulthil.SharedKernel.xUnit.Containers;
+using Vulthil.xUnit.Containers;
 using WebApi.Data;
 using WebApi.ServiceDefaults;
 

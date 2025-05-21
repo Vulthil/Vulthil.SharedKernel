@@ -5,7 +5,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Vulthil.Framework.Results\Vulthil.Framework.Results.csproj" />
+	  <ProjectReference Include="..\Vulthil.Results\Vulthil.Results.csproj" />
 	</ItemGroup>
 
 </Project>

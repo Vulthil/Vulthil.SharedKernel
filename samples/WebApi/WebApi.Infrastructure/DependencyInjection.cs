@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Vulthil.SharedKernel.Messaging;
-using Vulthil.SharedKernel.Messaging.Abstractions.Consumers;
-using Vulthil.SharedKernel.Messaging.RabbitMq;
+using Vulthil.Messaging;
+using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.RabbitMq;
 
 namespace WebApi.Infrastructure;
 

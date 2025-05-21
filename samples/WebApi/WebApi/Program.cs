@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Infrastructure;
-using Vulthil.SharedKernel.Messaging.Abstractions.Publishers;
-using Vulthil.SharedKernel.Primitives;
 using WebApi.Data;
 using WebApi.Infrastructure;
 using WebApi.ServiceDefaults;

@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Vulthil.Framework.Results;
+using Vulthil.Results;
 
 namespace Vulthil.SharedKernel.Application;
 

@@ -1,6 +1,5 @@
-﻿using Vulthil.Framework.Results;
-using Vulthil.Framework.Results.Results;
-using Vulthil.SharedKernel.xUnit;
+﻿using Vulthil.Results;
+using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Tests.Core.Errors;
 public sealed class ErrorTests : BaseUnitTestCase

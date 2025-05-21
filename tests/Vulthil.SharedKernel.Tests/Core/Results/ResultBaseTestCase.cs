@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Vulthil.Framework.Results;
-using Vulthil.Framework.Results.Results;
-using Vulthil.SharedKernel.xUnit;
+using Vulthil.Results;
+using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Tests.Core.Results;
 

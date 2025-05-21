@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Vulthil.SharedKernel.xUnit\Vulthil.SharedKernel.xUnit.csproj" />
+		<ProjectReference Include="..\..\src\Vulthil.xUnit\Vulthil.xUnit.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

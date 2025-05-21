@@ -8,6 +8,8 @@ public sealed class TypeCache
     private readonly Dictionary<Type, RequestOption> _requestOptions = [];
     private readonly Dictionary<Type, EventOption> _eventOptions = [];
 
+    public bool RequestsConfigured => _requestOptions.Count != 0;
+
     public bool TryGetRequest<TRequestType>([NotNullWhen(true)] out RequestOption? requestOption) where TRequestType : class =>
         _requestOptions.TryGetValue(typeof(TRequestType), out requestOption);
     public bool TryGetEvent<TMessage>([NotNullWhen(true)] out EventOption? eventOption) =>

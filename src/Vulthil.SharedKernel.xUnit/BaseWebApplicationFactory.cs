@@ -8,7 +8,7 @@ namespace Vulthil.SharedKernel.xUnit;
 public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>, IAsyncLifetime
     where TEntryPoint : class
 {
-    private readonly IContainerPool[] _containerPools;
+    private readonly HashSet<IContainerPool> _containerPools = [];
 
     private readonly Dictionary<IContainerPool, ICustomContainer> _containers = [];
 
@@ -20,28 +20,21 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         where TContainerType : ICustomDatabaseContainer => _containers
         .Where(x => x.Key is IDatabaseContainerPool && x.Value is TContainerType)
         .Select(x => ((IDatabaseContainerPool)x.Key, (TContainerType)x.Value));
+    protected BaseWebApplicationFactory(params IContainerPool[] containerPools) => Array.ForEach(containerPools, (p) => _containerPools.Add(p));
 
-    protected BaseWebApplicationFactory(params IContainerPool[] containerPools) => _containerPools = containerPools;
+    protected void AddContainerPool(IContainerPool pool) => _containerPools.Add(pool);
 
-    public async ValueTask InitializeAsync()
+    protected abstract void ConfigureContainers();
+
+    public virtual async ValueTask InitializeAsync()
     {
+        ConfigureContainers();
         foreach (var pool in _containerPools)
         {
             var container = await pool.GetContainerAsync();
             _containers.Add(pool, container);
         }
     }
-
-    //private static readonly MethodInfo AddDbContextMethod = typeof(BaseWebApplicationFactory<TEntryPoint>)
-    //    .GetMethod(nameof(AddDbContext), BindingFlags.NonPublic | BindingFlags.Static)!;
-
-    //private static void AddDbContext<TDbContext>(IServiceCollection services, ICustomDatabaseContainer container)
-    //    where TDbContext : DbContext
-    //{
-    //    services.RemoveAll<DbContextOptions<TDbContext>>();
-
-    //    services.AddDbContext<TDbContext>(container.OptionsAction);
-    //}
 
     protected virtual void ConfigureCustomWebHost(IWebHostBuilder builder) { }
 

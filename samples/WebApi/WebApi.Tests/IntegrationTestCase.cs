@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.xUnit;
 using WebApi.Data;
 using WebApi.Models;
+
 namespace WebApi.Tests;
 
 public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factory, ITestOutputHelper? testOutputHelper = null) : BaseIntegrationTestCase<Program>(factory, testOutputHelper), IClassFixture<CustomWebApplicationFactory>
@@ -11,7 +12,6 @@ public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factor
     public async Task Test_Something()
     {
         // Arrange
-        await Client.PostAsync("/somemessage", null, CancellationToken);
         var dbContext = ScopedServices.GetRequiredService<WebApiDbContext>();
 
         // Act

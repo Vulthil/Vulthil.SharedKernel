@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Framework.Results;
@@ -10,7 +9,7 @@ using Vulthil.SharedKernel.Messaging.Abstractions.Publishers;
 
 namespace Vulthil.SharedKernel.Messaging.RabbitMq;
 
-internal sealed class RabbitMqRequester : IHostedService, IRequester, IDisposable
+internal sealed class RabbitMqRequester : IRequester, IDisposable
 {
     private readonly ConcurrentDictionary<string, TaskCompletionSource<MessageResult>> _callbackMapper = new();
 
@@ -28,7 +27,11 @@ internal sealed class RabbitMqRequester : IHostedService, IRequester, IDisposabl
 
     async Task<Result<TResponse>> IRequester.RequestAsync<TRequest, TResponse>(TRequest message, CancellationToken cancellationToken)
     {
-        _channel ??= await CreateChannelAsync(cancellationToken);
+        if (_channel is null)
+        {
+            throw new InvalidOperationException("Requester not started. Have any requests been configured?");
+        }
+
         var correlationId = Guid.NewGuid().ToString();
 
         var basicProperties = new BasicProperties
@@ -127,9 +130,6 @@ internal sealed class RabbitMqRequester : IHostedService, IRequester, IDisposabl
         await _channel.BasicConsumeAsync(_replyQueueName, true, consumer, cancellationToken: cancellationToken);
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken) =>
-        await (_channel?.DisposeAsync() ?? ValueTask.CompletedTask);
-
     private async Task<IChannel> CreateChannelAsync(CancellationToken cancellationToken)
     {
         var channel = await _rabbitMqConnection.CreateChannelAsync(cancellationToken: cancellationToken);
@@ -143,6 +143,7 @@ internal sealed class RabbitMqRequester : IHostedService, IRequester, IDisposabl
     {
         if (disposing)
         {
+            _channel?.Dispose();
             _channelSemaphore.Dispose();
         }
     }
@@ -153,14 +154,12 @@ internal sealed class RabbitMqRequester : IHostedService, IRequester, IDisposabl
         GC.SuppressFinalize(this);
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-
+        await (_channel?.DisposeAsync() ?? ValueTask.CompletedTask);
         _channelSemaphore.Dispose();
 
         Dispose(false);
-
-        return ValueTask.CompletedTask;
     }
 
     #endregion

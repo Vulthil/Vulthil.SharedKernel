@@ -1,13 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Vulthil.SharedKernel.Messaging\Vulthil.SharedKernel.Messaging.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -7,4 +7,7 @@ using WebApi.Tests;
 
 namespace WebApi.Tests;
 
-public sealed class CustomWebApplicationFactory(PostgreSqlPool postgreSqlPool, RabbitMqPod rabbitMqPod) : BaseWebApplicationFactory<Program>(postgreSqlPool, rabbitMqPod);
+public sealed class CustomWebApplicationFactory(PostgreSqlPool postgreSqlPool, RabbitMqPod rabbitMqPod) : BaseWebApplicationFactory<Program>(postgreSqlPool, rabbitMqPod)
+{
+    protected override void ConfigureContainers() { }
+}

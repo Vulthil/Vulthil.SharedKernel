@@ -8,6 +8,27 @@ using WebApi.Models;
 
 namespace WebApi.Data;
 
+public sealed class CosmosDbContext(DbContextOptions<CosmosDbContext> options) : DbContext(options), ISaveOutboxMessages
+{
+    public DbSet<WebApiEntity> WebApiEntities => Set<WebApiEntity>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<WebApiEntity>(b =>
+        {
+            b.HasKey(w => w.Id);
+            b.Property(w => w.Id)
+                .HasConversion(
+                    id => id.Value,
+                    value => new WebApiEntityId(value));
+        });
+
+        modelBuilder.Entity<OutboxMessage>().HasKey(o => o.Id);
+    }
+}
+
 /// <summary>
 /// Functionally equivalent with <see cref="WebApiDbContextNoBase"/>, by inheriting from <see cref="BaseDbContext"/>.
 /// </summary>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Vulthil.xUnit.Containers;
 
@@ -74,4 +75,5 @@ public abstract class ContainerPool<TContainerType, TBuilderEntity, TContainerEn
         }
     }
 
+    public abstract void ConfigureCustomServices(IServiceCollection services, ICustomContainer container);
 }

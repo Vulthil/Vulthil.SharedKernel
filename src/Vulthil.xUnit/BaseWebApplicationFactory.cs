@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.xUnit.Containers;
 
@@ -24,11 +25,8 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
     protected void AddContainerPool(IContainerPool pool) => _containerPools.Add(pool);
 
-    protected abstract void ConfigureContainers();
-
     public virtual async ValueTask InitializeAsync()
     {
-        ConfigureContainers();
         foreach (var pool in _containerPools)
         {
             var container = await pool.GetContainerAsync();
@@ -45,6 +43,13 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             var connectionString = p.GetConnectionString(container.Container);
             builder.UseSetting($"ConnectionStrings:{p.KeyName}", connectionString);
         }
+        builder.ConfigureTestServices(services =>
+        {
+            foreach (var (pool, container) in _containers)
+            {
+                pool.ConfigureCustomServices(services, container);
+            }
+        });
 
         ConfigureCustomWebHost(builder);
     }

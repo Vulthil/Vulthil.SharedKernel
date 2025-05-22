@@ -17,6 +17,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddInfrastructureWithUnitOfWork<WebApiDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString(ServiceNames.PostgresSqlServerServiceName)));
+builder.Services.AddInfrastructure<CosmosDbContext>(options =>
+    options.UseCosmos(builder.Configuration.GetConnectionString(ServiceNames.CosmosServiceName)!, "NewDatabase"));
 
 builder.AddInfrastructure(ServiceNames.RabbitMqServiceName);
 

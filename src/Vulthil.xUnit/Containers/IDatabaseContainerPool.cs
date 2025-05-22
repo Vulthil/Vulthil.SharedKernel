@@ -1,10 +1,12 @@
 ﻿
 using DotNet.Testcontainers.Containers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Vulthil.xUnit.Containers;
 
 public interface IContainerPool
 {
+    void ConfigureCustomServices(IServiceCollection services, ICustomContainer container);
     Task<ICustomContainer> GetContainerAsync();
     void ReleaseContainer(ICustomContainer container);
 }

@@ -11,7 +11,7 @@ namespace WebApi.Tests;
 
 public sealed class PostgreSqlPool : DatabaseContainerWithRespawnerPool<WebApiDbContext, PostgreSqlBuilder, PostgreSqlContainer>
 {
-    protected override int PoolSize => 2;
+    protected override int PoolSize => 1;
     public override string KeyName => ServiceNames.PostgresSqlServerServiceName;
 
     private readonly PostgreSqlBuilder _postgreSqlBuilder = new PostgreSqlBuilder()

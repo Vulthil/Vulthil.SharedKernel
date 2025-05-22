@@ -6,4 +6,6 @@ public static class ServiceNames
 
     public const string PostgresSqlServerServiceName = "postgres";
     public const string WebApiServiceName = "webapi";
+
+    public const string CosmosServiceName = "cosmos";
 }

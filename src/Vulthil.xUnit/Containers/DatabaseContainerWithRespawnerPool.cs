@@ -14,6 +14,8 @@ public abstract class ContainerWithConnectionStringPool<TContainerType, TBuilder
 {
     public abstract string KeyName { get; }
     public abstract string GetConnectionString(TContainerEntity container);
+    public sealed override void ConfigureCustomServices(IServiceCollection services, ICustomContainer container) => ConfigureCustomServices(services, (TContainerEntity)container);
+    public virtual void ConfigureCustomServices(IServiceCollection services, TContainerEntity container) { }
 }
 
 public abstract class ContainerWithConnectionStringPool<TBuilderEntity, TContainerEntity> : ContainerWithConnectionStringPool<ICustomContainer, TBuilderEntity, TContainerEntity>

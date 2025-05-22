@@ -80,6 +80,6 @@ internal class OutboxProcessor(
 
     private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, t => Type.GetType(t)!);
 
-    private readonly record struct OutboxMessageStruct(string Id, string Type, string Content);
-    private readonly record struct OutboxUpdate(string Id, DateTime ProcessedOnUtc, string? Error = null);
+    private readonly record struct OutboxMessageStruct(Guid Id, string Type, string Content);
+    private readonly record struct OutboxUpdate(Guid Id, DateTime ProcessedOnUtc, string? Error = null);
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
-using Vulthil.Messaging;
 
 namespace Vulthil.Messaging.RabbitMq;
 
@@ -64,7 +63,6 @@ internal sealed class RabbitMqHostedService : ITransport
         foreach (var queueDefinition in _queueDefinitions)
         {
             _logger.LogInformation("Declaring queue: {QueueName}", queueDefinition.Name);
-            await channel.ExchangeDeleteAsync(queueDefinition.Name, cancellationToken: cancellationToken);
             await channel.ExchangeDeclareAsync(queueDefinition.Name, ExchangeType.Fanout, true, false, cancellationToken: cancellationToken);
             await channel.QueueDeclareAsync(queueDefinition.Name, true, false, false, cancellationToken: cancellationToken);
             await channel.QueueBindAsync(queueDefinition.Name, queueDefinition.Name, "", cancellationToken: cancellationToken);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
@@ -11,7 +12,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
         where TDbContext : DbContext
     {
-        services.AddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
+        services.TryAddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
 
         services.AddDbContext<TDbContext>((sp, options) =>
         {

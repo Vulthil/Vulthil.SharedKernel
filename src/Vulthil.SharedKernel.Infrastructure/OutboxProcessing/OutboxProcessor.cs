@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Application.Messaging;
 
 namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
@@ -21,7 +22,11 @@ internal class OutboxProcessor(
 
     internal async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        await using var transaction = await _outboxMessagesDbContext.BeginTransactionAsync(cancellationToken);
+        IDbTransaction? transaction = null;
+        if (_outboxMessagesDbContext is IUnitOfWork unitOfWorkContext)
+        {
+            transaction = await unitOfWorkContext.BeginTransactionAsync(cancellationToken);
+        }
 
         var outboxMessages = await _outboxMessagesDbContext.OutboxMessages
             .Where(o => o.ProcessedOnUtc == null)
@@ -50,7 +55,10 @@ internal class OutboxProcessor(
                 cancellationToken);
         }
 
-        await transaction.CommitAsync(cancellationToken);
+        if (transaction is not null)
+        {
+            await transaction.CommitAsync(cancellationToken);
+        }
     }
 
     private static async Task PublishMessage(OutboxMessageStruct outboxMessage, ConcurrentQueue<OutboxUpdate> updateQueue, IDomainEventPublisher domainEventPublisher, CancellationToken stoppingToken)
@@ -72,6 +80,6 @@ internal class OutboxProcessor(
 
     private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, t => Type.GetType(t)!);
 
-    private readonly record struct OutboxMessageStruct(Guid Id, string Type, string Content);
-    private readonly record struct OutboxUpdate(Guid Id, DateTime ProcessedOnUtc, string? Error = null);
+    private readonly record struct OutboxMessageStruct(string Id, string Type, string Content);
+    private readonly record struct OutboxUpdate(string Id, DateTime ProcessedOnUtc, string? Error = null);
 }

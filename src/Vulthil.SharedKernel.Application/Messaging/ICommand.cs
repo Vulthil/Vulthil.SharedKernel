@@ -1,13 +1,12 @@
-﻿using MediatR;
-using Vulthil.Results;
-
-namespace Vulthil.SharedKernel.Application.Messaging;
+﻿namespace Vulthil.SharedKernel.Application.Messaging;
 
 public interface ITransactionalCommand : ICommand;
-public interface ITransactionalCommand<TResponse> : ICommand<TResponse>, ITransactionalCommand;
+public interface ITransactionalCommand<TResponse> : ICommand<TResponse>
+    where TResponse : class;
 
-public interface ICommand : IRequest<Result>, IBaseCommand;
+public interface ICommand : IBaseCommand;
 
-public interface ICommand<TResponse> : IRequest<Result<TResponse>>, IBaseCommand;
+public interface ICommand<TResponse> : IBaseCommand
+    where TResponse : class;
 
 public interface IBaseCommand;

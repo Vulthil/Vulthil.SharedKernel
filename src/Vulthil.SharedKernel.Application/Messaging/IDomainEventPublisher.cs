@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Collections.Concurrent;
+using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application.Messaging;
@@ -6,16 +7,68 @@ namespace Vulthil.SharedKernel.Application.Messaging;
 public interface IDomainEventPublisher
 {
     Task PublishAsync(object notification, CancellationToken cancellationToken = default);
-    Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : IDomainEvent;
+    Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : class, IDomainEvent;
 }
 
 
-internal sealed class DomainEventPublisher(IPublisher publisher) : IDomainEventPublisher
+internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : IDomainEventPublisher
 {
-    private readonly IPublisher _publisher = publisher;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+
+    private static readonly ConcurrentDictionary<Type, NotificationHandlerWrapper> _notificationHandlers = new();
 
     public Task PublishAsync(object notification, CancellationToken cancellationToken = default) =>
-        _publisher.Publish(notification, cancellationToken);
-    public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : IDomainEvent =>
-        _publisher.Publish(notification, cancellationToken);
+        notification switch
+        {
+            IDomainEvent instance => PublishAsync(instance, cancellationToken),
+            null => throw new ArgumentNullException(nameof(notification)),
+            _ => throw new ArgumentException($"{nameof(notification)} does not implement ${nameof(IDomainEvent)}")
+        };
+    public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
+        where TNotification : class, IDomainEvent =>
+        InternalPublish(notification, cancellationToken);
+    private Task InternalPublish<TNotification>(TNotification notification, CancellationToken cancellationToken) where TNotification : class, IDomainEvent
+    {
+
+        var handler = _notificationHandlers.GetOrAdd(notification.GetType(), static notificationType =>
+        {
+            var wrapperType = typeof(NotificationHandlerWrapperImpl<>).MakeGenericType(notificationType);
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {notificationType}");
+            return (NotificationHandlerWrapper)wrapper;
+        });
+
+        return handler.HandleAsync(notification, _serviceProvider, PublishCore, cancellationToken);
+    }
+
+    private async Task PublishCore(IEnumerable<NotificationHandlerExecutor> handlerExecutors, IDomainEvent notification, CancellationToken cancellationToken)
+    {
+        foreach (var executor in handlerExecutors)
+        {
+            await executor.HandlerCallback(notification, cancellationToken).ConfigureAwait(false);
+        }
+    }
+}
+
+public abstract class NotificationHandlerWrapper
+{
+    public abstract Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
+        Func<IEnumerable<NotificationHandlerExecutor>, IDomainEvent, CancellationToken, Task> publish,
+        CancellationToken cancellationToken);
+}
+
+public sealed record NotificationHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
+
+public sealed class NotificationHandlerWrapperImpl<TNotification> : NotificationHandlerWrapper
+    where TNotification : class, IDomainEvent
+{
+    public override Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
+        Func<IEnumerable<NotificationHandlerExecutor>, IDomainEvent, CancellationToken, Task> publish,
+        CancellationToken cancellationToken)
+    {
+        var handlers = serviceFactory
+            .GetServices<IDomainEventHandler<TNotification>>()
+            .Select(static x => new NotificationHandlerExecutor(x, (n, ct) => x.HandleAsync((TNotification)n, ct)));
+
+        return publish(handlers, domainEvent, cancellationToken);
+    }
 }

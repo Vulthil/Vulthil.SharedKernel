@@ -12,21 +12,6 @@ public sealed class IDomainEventHandlerTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task DomainHandlerShouldForwardINotificationHandlerCalls()
-    {
-        // Arrange
-        var domainEvent = new TestDomainEvent();
-        IDomainEventHandler<TestDomainEvent> handler = new TestDomainHandler();
-        var cancellationToken = CancellationToken.None;
-
-        // Act
-        Func<Task> act = async () => await handler.Handle(domainEvent, cancellationToken);
-
-        // Assert
-        await act.ShouldNotThrowAsync();
-    }
-
-    [Fact]
     public async Task DomainHandlerShouldHandleAsync()
     {
         // Arrange
@@ -35,7 +20,7 @@ public sealed class IDomainEventHandlerTests : BaseUnitTestCase
         var cancellationToken = CancellationToken.None;
 
         // Act
-        Func<Task> act = async () => await handler.HandleAsync(domainEvent, cancellationToken);
+        Func<Task> act = () => handler.HandleAsync(domainEvent, cancellationToken);
 
         // Assert
         await act.ShouldNotThrowAsync();

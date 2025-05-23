@@ -27,7 +27,8 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         return this;
     }
 
-    public IMessagingConfigurator AddRequest<TRequest>(string queueName, Action<RequestOption>? requestOptionAction = null) where TRequest : class
+    public IMessagingConfigurator AddRequest<TRequest>(string queueName, Action<RequestOption>? requestOptionAction = null)
+        where TRequest : notnull
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName);
         var requestOption = new RequestOption
@@ -39,7 +40,8 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         return this;
     }
 
-    public IMessagingConfigurator AddEvent<TEvent>(Action<EventOption>? eventOptionAction = null) where TEvent : class
+    public IMessagingConfigurator AddEvent<TEvent>(Action<EventOption>? eventOptionAction = null)
+        where TEvent : notnull
     {
         var messageType = new MessageType(typeof(TEvent));
         var eventOption = new EventOption(messageType);

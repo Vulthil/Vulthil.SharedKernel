@@ -25,7 +25,7 @@ public interface IMessagingConfigurator
     IServiceCollection Services { get; }
 
     IMessagingConfigurator AddQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction);
-    IMessagingConfigurator AddEvent<TEvent>(Action<EventOption>? eventOptionAction = null) where TEvent : class;
+    IMessagingConfigurator AddEvent<TEvent>(Action<EventOption>? eventOptionAction = null) where TEvent : notnull;
     IMessagingConfigurator AddRequest<TRequest>(string queueName, Action<RequestOption>? requestOptionAction = null)
-        where TRequest : class;
+        where TRequest : notnull;
 }

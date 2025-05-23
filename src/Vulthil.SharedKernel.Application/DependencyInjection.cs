@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Vulthil.SharedKernel.Application.Behaviours;
 using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application;
 
@@ -23,25 +23,12 @@ public static class DependencyInjection
             throw new InvalidOperationException($"Must add atleast one assembly, by using the {nameof(ApplicationOptions.RegisterMediatRAssemblies)} method.");
         }
 
-        services.AddMediatR(options =>
-        {
-            options.RegisterServicesFromAssemblies([.. applicationOptions.MediatRAssemblies]);
+        var types = typeof(DependencyInjection).Assembly.DefinedTypes.Where(t => t.IsAssignableTo(typeof(IHandler<,>)));
 
-            if (applicationOptions.AddRequestLoggingBehaviour)
-            {
-                options.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
-            }
+        services.Scan(s => s.FromAssemblies(applicationOptions.MediatRAssemblies)
+            .AddClasses(c => c.AssignableTo(typeof(IHandler<,>)), false).AsImplementedInterfaces().WithScopedLifetime()
+            .AddClasses(c => c.AssignableTo(typeof(IDomainEventHandler<>)), false).AsImplementedInterfaces().WithScopedLifetime());
 
-            if (applicationOptions.AddValidationPipelineBehaviour)
-            {
-                options.AddOpenBehavior(typeof(ValidationPipelineBehaviour<,>));
-            }
-
-            if (applicationOptions.AddTransactionalPipelineBehaviour)
-            {
-                options.AddOpenBehavior(typeof(TransactionalPipelineBehaviour<,>));
-            }
-        });
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
         return services;

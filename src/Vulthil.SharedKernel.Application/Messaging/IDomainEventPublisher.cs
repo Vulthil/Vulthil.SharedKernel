@@ -7,9 +7,8 @@ namespace Vulthil.SharedKernel.Application.Messaging;
 public interface IDomainEventPublisher
 {
     Task PublishAsync(object notification, CancellationToken cancellationToken = default);
-    Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : class, IDomainEvent;
+    Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : IDomainEvent;
 }
-
 
 internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : IDomainEventPublisher
 {
@@ -25,14 +24,14 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
             _ => throw new ArgumentException($"{nameof(notification)} does not implement ${nameof(IDomainEvent)}")
         };
     public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
-        where TNotification : class, IDomainEvent =>
+        where TNotification : IDomainEvent =>
         InternalPublish(notification, cancellationToken);
-    private Task InternalPublish<TNotification>(TNotification notification, CancellationToken cancellationToken) where TNotification : class, IDomainEvent
+    private Task InternalPublish<TNotification>(TNotification notification, CancellationToken cancellationToken) where TNotification : IDomainEvent
     {
 
         var handler = _notificationHandlers.GetOrAdd(notification.GetType(), static notificationType =>
         {
-            var wrapperType = typeof(NotificationHandlerWrapperImpl<>).MakeGenericType(notificationType);
+            var wrapperType = typeof(NotificationHandlerWrapper<>).MakeGenericType(notificationType);
             var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {notificationType}");
             return (NotificationHandlerWrapper)wrapper;
         });
@@ -58,8 +57,8 @@ public abstract class NotificationHandlerWrapper
 
 public sealed record NotificationHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
 
-public sealed class NotificationHandlerWrapperImpl<TNotification> : NotificationHandlerWrapper
-    where TNotification : class, IDomainEvent
+public sealed class NotificationHandlerWrapper<TNotification> : NotificationHandlerWrapper
+    where TNotification : IDomainEvent
 {
     public override Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
         Func<IEnumerable<NotificationHandlerExecutor>, IDomainEvent, CancellationToken, Task> publish,

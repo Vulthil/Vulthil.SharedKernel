@@ -1,10 +1,11 @@
-﻿using Vulthil.Results;
+﻿namespace Vulthil.SharedKernel.Application.Messaging;
 
-namespace Vulthil.SharedKernel.Application.Messaging;
+public interface IQueryHandler<TQuery, TResponse>
+    : IHandler<TQuery, TResponse>
+    where TQuery : IQuery<TResponse>;
 
-public interface IQueryHandler<in TQuery, TResponse>
-    where TQuery : class, IQuery<TResponse>
-    where TResponse : class
+public interface IHandler<TRequest, TResponse>
+    where TRequest : IHaveResponse<TResponse>
 {
-    Task<Result<TResponse>> HandleAsync(TQuery command, CancellationToken cancellationToken = default);
+    Task<TResponse> HandleAsync(TRequest command, CancellationToken cancellationToken = default);
 }

@@ -33,14 +33,14 @@ public sealed class TestTransportConfiguration
     private readonly Dictionary<Type, Func<object, object>> _responses = [];
 
     public void AddResponse<TRequest, TResponse>(TResponse response)
-        where TRequest : class
-        where TResponse : class => _responses.Add(typeof(TRequest), (_) => response);
+        where TRequest : notnull
+        where TResponse : notnull => _responses.Add(typeof(TRequest), (_) => response);
     public void AddResponse<TRequest, TResponse>(Func<TRequest, TResponse> responseFunction)
-        where TRequest : class
-        where TResponse : class => _responses.Add(typeof(TRequest), (o) => o is TRequest request ? responseFunction(request) : throw new ArgumentException($"Not {typeof(TRequest)}", nameof(o)));
+        where TRequest : notnull
+        where TResponse : notnull => _responses.Add(typeof(TRequest), (o) => o is TRequest request ? responseFunction(request) : throw new ArgumentException($"Not {typeof(TRequest)}", nameof(o)));
     internal TResponse GetResponse<TRequest, TResponse>(TRequest message)
-        where TRequest : class
-        where TResponse : class
+        where TRequest : notnull
+        where TResponse : notnull
     {
         if (!_responses.TryGetValue(typeof(TRequest), out var responseFunction))
         {
@@ -69,15 +69,15 @@ internal class TestTransport : ITransport, IRequester, IPublisher, ITestTranspor
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    public Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default) where TMessage : class
+    public Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default) where TMessage : notnull
     {
         _publishedMessages.Add(message);
         return Task.CompletedTask;
     }
 
     public Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(TRequest message, CancellationToken cancellationToken = default)
-        where TRequest : class
-        where TResponse : class
+        where TRequest : notnull
+        where TResponse : notnull
     {
         _publishedMessages.Add(message);
 
@@ -93,7 +93,7 @@ internal class TestTransport : ITransport, IRequester, IPublisher, ITestTranspor
 
     public Task StartAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-    public async Task ConsumeAsync<TMessage>(TMessage message) where TMessage : class
+    public async Task ConsumeAsync<TMessage>(TMessage message) where TMessage : notnull
     {
         var consumers = _queueDefinitions.Where(q => q.Messages.ContainsKey(new MessageType(typeof(TMessage))))
             .SelectMany(q => q.Messages.TryGetValue(new MessageType(typeof(TMessage)), out var consumers) ? consumers : []);
@@ -115,5 +115,5 @@ internal class TestTransport : ITransport, IRequester, IPublisher, ITestTranspor
 
 public interface ITestTransport
 {
-    Task ConsumeAsync<TMessage>(TMessage message) where TMessage : class;
+    Task ConsumeAsync<TMessage>(TMessage message) where TMessage : notnull;
 }

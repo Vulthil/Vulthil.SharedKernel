@@ -1,12 +1,14 @@
-﻿namespace Vulthil.SharedKernel.Application.Messaging;
+﻿using Vulthil.Results;
 
-public interface ITransactionalCommand : ICommand;
-public interface ITransactionalCommand<TResponse> : ICommand<TResponse>
-    where TResponse : class;
+namespace Vulthil.SharedKernel.Application.Messaging;
 
-public interface ICommand : IBaseCommand;
+public interface ITransactionalCommand : ITransactionalCommand<Result>;
+public interface ITransactionalCommand<out TResponse> : ICommand<TResponse>;
 
-public interface ICommand<TResponse> : IBaseCommand
-    where TResponse : class;
+public interface ICommand : ICommand<Result>, IBaseCommand;
+
+public interface ICommand<out TResponse> : IHaveResponse<TResponse>, IBaseCommand;
 
 public interface IBaseCommand;
+
+public interface IHaveResponse<out TResponse>;

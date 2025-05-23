@@ -2,13 +2,48 @@
 using FluentValidation.Results;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application.Behaviors;
 
-internal abstract class ValidationPipelineBehavior(IEnumerable<IValidator> validators)
+internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators) :
+    IPipelineHandler<TCommand, TResponse>
+    where TCommand : IHaveResponse<TResponse>
 {
-    private readonly IEnumerable<IValidator> _validators = validators;
-    protected async Task<ValidationFailure[]> ValidateAsync<TCommand>(TCommand command)
+    private readonly IEnumerable<IValidator<TCommand>> _validators = validators;
+
+    public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+    {
+        var validationFailures = await ValidateAsync(request);
+
+        if (validationFailures.Length == 0)
+        {
+            return await next(cancellationToken);
+        }
+
+        if (typeof(TResponse).IsGenericType &&
+            typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
+        {
+            var resultType = typeof(TResponse).GetGenericArguments()[0];
+            var failureMethod = typeof(Result<>)
+                .MakeGenericType(resultType)
+                .GetMethod(nameof(Result.ValidationFailure));
+
+            if (failureMethod is not null)
+            {
+                return (TResponse)failureMethod.Invoke(null, [CreateValidationError(validationFailures)])!;
+            }
+
+        }
+        else if (typeof(TResponse) == typeof(Result))
+        {
+            return (TResponse)(object)Result.Failure(CreateValidationError(validationFailures));
+        }
+
+        throw new ValidationException(validationFailures);
+    }
+
+    private async Task<ValidationFailure[]> ValidateAsync(TCommand command)
     {
         if (!_validators.Any())
         {
@@ -28,48 +63,6 @@ internal abstract class ValidationPipelineBehavior(IEnumerable<IValidator> valid
         return validationFailures;
     }
 
-    protected static ValidationError CreateValidationError(ValidationFailure[] validationFailures) =>
+    private static ValidationError CreateValidationError(ValidationFailure[] validationFailures) =>
         new(validationFailures.Select(f => Error.Problem(f.ErrorCode, f.ErrorMessage)).ToArray());
-}
-
-internal sealed class ValidationPipelineBehavior<TCommand>(
-    IEnumerable<IValidator<TCommand>> validators,
-    ICommandHandler<TCommand> innerHandler)
-    : ValidationPipelineBehavior(validators), ICommandHandler<TCommand>
-    where TCommand : class, ICommand
-{
-    private readonly ICommandHandler<TCommand> _innerHandler = innerHandler;
-
-    public async Task<Result> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
-    {
-        var validationFailures = await ValidateAsync(command);
-
-        if (validationFailures.Length == 0)
-        {
-            return await _innerHandler.HandleAsync(command, cancellationToken);
-        }
-
-        return Result.Failure(CreateValidationError(validationFailures));
-    }
-}
-internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(
-    IEnumerable<IValidator<TCommand>> validators,
-    ICommandHandler<TCommand, TResponse> innerHandler)
-    : ValidationPipelineBehavior(validators), ICommandHandler<TCommand, TResponse>
-    where TCommand : class, ICommand<TResponse>
-    where TResponse : class
-{
-    private readonly ICommandHandler<TCommand, TResponse> _innerHandler = innerHandler;
-
-    public async Task<Result<TResponse>> HandleAsync(TCommand command, CancellationToken cancellationToken = default)
-    {
-        var validationFailures = await ValidateAsync(command);
-
-        if (validationFailures.Length == 0)
-        {
-            return await _innerHandler.HandleAsync(command, cancellationToken);
-        }
-
-        return Result.Failure<TResponse>(CreateValidationError(validationFailures));
-    }
 }

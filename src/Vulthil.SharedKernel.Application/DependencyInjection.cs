@@ -23,13 +23,18 @@ public static class DependencyInjection
             throw new InvalidOperationException($"Must add atleast one assembly, by using the {nameof(ApplicationOptions.RegisterMediatRAssemblies)} method.");
         }
 
-        var types = typeof(DependencyInjection).Assembly.DefinedTypes.Where(t => t.IsAssignableTo(typeof(IHandler<,>)));
-
         services.Scan(s => s.FromAssemblies(applicationOptions.MediatRAssemblies)
-            .AddClasses(c => c.AssignableTo(typeof(IHandler<,>)), false).AsImplementedInterfaces().WithScopedLifetime()
+            .AddClasses(c => c.AssignableTo(typeof(IHandler<>)), false).AsImplementedInterfaces(t => t.GetGenericTypeDefinition() == typeof(IHandler<>)).WithScopedLifetime()
+            .AddClasses(c => c.AssignableTo(typeof(IHandler<,>)), false).AsImplementedInterfaces(t => t.GetGenericTypeDefinition() == typeof(IHandler<,>)).WithScopedLifetime()
             .AddClasses(c => c.AssignableTo(typeof(IDomainEventHandler<>)), false).AsImplementedInterfaces().WithScopedLifetime());
 
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+        services.AddScoped<ISender, Sender>();
+
+        foreach (var item in applicationOptions.PipelineHandlers)
+        {
+            services.Add(item);
+        }
 
         return services;
     }

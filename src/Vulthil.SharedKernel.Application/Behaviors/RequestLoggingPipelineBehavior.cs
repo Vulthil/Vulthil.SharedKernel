@@ -13,7 +13,7 @@ internal sealed class RequestLoggingPipelineBehavior<TRequest, TResponse>(
 {
     private readonly ILogger<RequestLoggingPipelineBehavior<TRequest, TResponse>> _logger = logger;
 
-    public async Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+    public async Task<Result<TResponse>> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
         var requestName = typeof(TRequest).Name;
 

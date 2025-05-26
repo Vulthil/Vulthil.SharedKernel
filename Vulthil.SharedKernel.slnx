@@ -42,6 +42,7 @@
     <Project Path="src/Vulthil.Messaging/Vulthil.Messaging.csproj" Id="bc8c8002-4379-4b05-b163-70adbe867fb9" />
   </Folder>
   <Folder Name="/src/Testing/" Id="84636569-eb40-4aad-9502-fb45eee5ab19">
+    <Project Path="src/Vulthil.Extensions.Testing/Vulthil.Extensions.Testing.csproj" Id="e83597e0-87ae-4a30-8b79-0aa3fd6671b8" />
     <Project Path="src/Vulthil.Messaging.TestHarness/Vulthil.Messaging.TestHarness.csproj" Id="48a56824-43ef-42b0-aa8a-83459ccfa769" />
     <Project Path="src/Vulthil.xUnit/Vulthil.xUnit.csproj" />
   </Folder>

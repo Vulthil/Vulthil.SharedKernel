@@ -1,4 +1,5 @@
-﻿using Vulthil.SharedKernel.Application.Data;
+﻿using Vulthil.Results;
+using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Application.Messaging;
 using Vulthil.SharedKernel.Application.Pipeline;
 
@@ -12,7 +13,7 @@ public sealed class TransactionalPipelineBehavior<TCommand, TResponse>(
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+    public async Task<Result<TResponse>> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 

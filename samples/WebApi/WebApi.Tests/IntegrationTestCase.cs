@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Vulthil.SharedKernel.Application.Messaging;
 using Vulthil.xUnit;
 using WebApi.Data;
 using WebApi.Models;
@@ -12,15 +12,23 @@ public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factor
     public async Task Test_Something()
     {
         // Arrange
+        var sender = ScopedServices.GetRequiredService<ISender>();
+        var command = new CreateWebApiEntityCommand(Guid.NewGuid().ToString());
         var dbContext = ScopedServices.GetRequiredService<WebApiDbContext>();
 
         // Act
-        var webApiEntity = WebApiEntity.Create(Guid.NewGuid().ToString());
-        dbContext.WebApiEntities.Add(webApiEntity);
-        await dbContext.SaveChangesAsync(CancellationToken);
+        var result = await sender.SendAsync(command, CancellationToken);
+
 
         // Assert
-        Assert.Single(await dbContext.WebApiEntities.ToListAsync(cancellationToken: CancellationToken));
+        Assert.True(result.IsSuccess);
+        var query = new GetWebApiEntityQuery(result.Value);
+
+        var queryResult = await sender.SendAsync(query, CancellationToken);
+
+        Assert.True(queryResult.IsSuccess);
+        Assert.Equal(queryResult.Value.Name, command.Name);
+
     }
 }
 

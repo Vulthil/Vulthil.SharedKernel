@@ -12,7 +12,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
 {
     private readonly IEnumerable<IValidator<TCommand>> _validators = validators;
 
-    public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+    public async Task<Result<TResponse>> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
         var validationFailures = await ValidateAsync(request);
 
@@ -37,7 +37,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
         }
         else if (typeof(TResponse) == typeof(Result))
         {
-            return (TResponse)(object)Result.Failure(CreateValidationError(validationFailures));
+            return Result.Failure<TResponse>(CreateValidationError(validationFailures));
         }
 
         throw new ValidationException(validationFailures);

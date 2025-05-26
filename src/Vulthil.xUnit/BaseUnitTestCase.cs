@@ -33,3 +33,4 @@ public abstract class BaseUnitTestCase<TTarget> : BaseUnitTestCase where TTarget
 
     protected virtual TTarget CreateInstance() => AutoMocker.CreateInstance<TTarget>();
 }
+

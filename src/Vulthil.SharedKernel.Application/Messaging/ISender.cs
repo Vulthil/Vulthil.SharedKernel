@@ -1,57 +1,41 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
-using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application.Messaging;
 public interface ISender
 {
     Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
-    Task<Result> SendAsync(IRequest request, CancellationToken cancellationToken = default);
 }
 
 
 internal sealed class Sender(IServiceProvider serviceProvider) : ISender
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private static readonly ConcurrentDictionary<Type, RequestHandlerBase> _requestHandlers = new();
+    private static readonly ConcurrentDictionary<Type, IRequestHandlerBase> _requestHandlers = new();
 
     public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var handler = (RequestHandlerWrapper<TResponse>)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
+        var handler = (IRequestHandlerWrapper<TResponse>)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
         {
             var wrapperType = typeof(RequestHandlerWrapperResult<,>).MakeGenericType(requestType, typeof(TResponse));
             var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {requestType}");
-            return (RequestHandlerBase)wrapper;
-        });
-
-        return handler.HandleAsync(request, _serviceProvider, cancellationToken);
-    }
-
-    public Task<Result> SendAsync(IRequest request, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-
-        var handler = (RequestHandlerWrapper)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
-        {
-            var wrapperType = typeof(RequestHandlerWrapperResult<>).MakeGenericType(requestType);
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {requestType}");
-            return (RequestHandlerBase)wrapper;
+            return (IRequestHandlerBase)wrapper;
         });
 
         return handler.HandleAsync(request, _serviceProvider, cancellationToken);
     }
 }
-internal class RequestHandlerWrapperResult<TRequest, TResponse> : RequestHandlerWrapper<TResponse>
+internal class RequestHandlerWrapperResult<TRequest, TResponse> : IRequestHandlerWrapper<TResponse>
     where TRequest : IRequest<TResponse>
 {
-    public override async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
+    public async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default) =>
         await HandleAsync((ICommand<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
 
-    public override Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
+    public Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {
         Task<TResponse> Handler(CancellationToken t) => serviceProvider.GetRequiredService<IHandler<TRequest, TResponse>>()
@@ -66,40 +50,15 @@ internal class RequestHandlerWrapperResult<TRequest, TResponse> : RequestHandler
         return pipeline(cancellationToken);
     }
 }
-internal class RequestHandlerWrapperResult<TRequest> : RequestHandlerWrapper
-    where TRequest : IRequest<Result>
+
+internal interface IRequestHandlerBase
 {
-    public override async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
-        CancellationToken cancellationToken = default) =>
-        await HandleAsync((IRequest)request, serviceProvider, cancellationToken).ConfigureAwait(false);
-
-    public override Task<Result> HandleAsync(IRequest request, IServiceProvider serviceProvider,
-        CancellationToken cancellationToken = default)
-    {
-        Task<Result> Handler(CancellationToken t) => serviceProvider.GetRequiredService<IHandler<TRequest, Result>>()
-                        .HandleAsync((TRequest)request, t);
-
-        var pipeline = serviceProvider
-            .GetServices<IPipelineHandler<TRequest, Result>>()
-            .Reverse()
-            .Aggregate((PipelineDelegate<Result>)Handler,
-                (next, pipeline) => (t) => pipeline.HandleAsync((TRequest)request, next, t));
-
-        return pipeline(cancellationToken);
-    }
-}
-internal abstract class RequestHandlerBase
-{
-    public abstract Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
+    Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default);
 }
-internal abstract class RequestHandlerWrapper : RequestHandlerBase
+
+internal interface IRequestHandlerWrapper<TResponse> : IRequestHandlerBase
 {
-    public abstract Task<Result> HandleAsync(IRequest request, IServiceProvider serviceProvider,
-        CancellationToken cancellationToken = default);
-}
-internal abstract class RequestHandlerWrapper<TResponse> : RequestHandlerBase
-{
-    public abstract Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
+    Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default);
 }

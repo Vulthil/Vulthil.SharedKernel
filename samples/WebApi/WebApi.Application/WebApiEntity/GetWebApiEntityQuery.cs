@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Vulthil.Results;
-using Vulthil.Results.Extensions;
 using Vulthil.SharedKernel.Application.Messaging;
 using WebApi.Domain.WebApiEntityModel;
 

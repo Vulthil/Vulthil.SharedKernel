@@ -1,4 +1,9 @@
-﻿namespace Vulthil.SharedKernel.Application.Messaging;
+﻿using Vulthil.Results;
 
-public interface IRequest<out TResponse> : IRequest;
-public interface IRequest;
+namespace Vulthil.SharedKernel.Application.Messaging;
+
+#pragma warning disable S2326 // Unused type parameters should be removed
+public interface IRequest<out TResponse>;
+#pragma warning restore S2326 // Unused type parameters should be removed
+public interface IRequest : IRequest<Result>;
+

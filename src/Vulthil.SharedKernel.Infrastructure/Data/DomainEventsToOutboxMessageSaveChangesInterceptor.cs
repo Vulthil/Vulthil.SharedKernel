@@ -13,7 +13,7 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
     {
         var dbContext = eventData.Context;
 
-        if (dbContext is null || dbContext is not ISaveOutboxMessages dbContextWithOutboxMessages)
+        if (dbContext is not ISaveOutboxMessages dbContextWithOutboxMessages)
         {
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }

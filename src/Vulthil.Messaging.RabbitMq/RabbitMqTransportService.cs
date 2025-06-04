@@ -29,11 +29,11 @@ internal sealed class RabbitMqTransportService : ITransport
         _queueDefinitions = queueDefinitions;
     }
 
-    public async Task StartAsync(CancellationToken stoppingToken)
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        await DeclareQueueAndExchanges(stoppingToken);
+        await DeclareQueueAndExchanges(cancellationToken);
 
-        await StartConsumers(stoppingToken);
+        await StartConsumers(cancellationToken);
     }
 
     private async Task StartConsumers(CancellationToken cancellationToken)
@@ -67,10 +67,10 @@ internal sealed class RabbitMqTransportService : ITransport
             await channel.QueueDeclareAsync(queueDefinition.Name, true, false, false, cancellationToken: cancellationToken);
             await channel.QueueBindAsync(queueDefinition.Name, queueDefinition.Name, "", cancellationToken: cancellationToken);
 
-            foreach (var messageType in queueDefinition.Messages.Keys)
+            foreach (var messageTypeName in queueDefinition.Messages.Keys.Select(x => x.Name))
             {
-                await channel.ExchangeDeclareAsync(messageType.Name, ExchangeType.Fanout, true, false, cancellationToken: cancellationToken);
-                await channel.ExchangeBindAsync(queueDefinition.Name, messageType.Name!, "", cancellationToken: cancellationToken);
+                await channel.ExchangeDeclareAsync(messageTypeName, ExchangeType.Fanout, true, false, cancellationToken: cancellationToken);
+                await channel.ExchangeBindAsync(queueDefinition.Name, messageTypeName, "", cancellationToken: cancellationToken);
             }
         }
     }

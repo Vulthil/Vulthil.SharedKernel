@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.SharedKernel.Application.Messaging;
 using Vulthil.SharedKernel.Events;
 
@@ -27,8 +28,8 @@ public static class DependencyInjection
             .AddClasses(c => c.AssignableTo(typeof(IHandler<,>)), false).AsImplementedInterfaces(t => t.GetGenericTypeDefinition() == typeof(IHandler<,>)).WithScopedLifetime()
             .AddClasses(c => c.AssignableTo(typeof(IDomainEventHandler<>)), false).AsImplementedInterfaces().WithScopedLifetime());
 
-        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
-        services.AddScoped<ISender, Sender>();
+        services.TryAddScoped<IDomainEventPublisher, DomainEventPublisher>();
+        services.TryAddScoped<ISender, Sender>();
 
         foreach (var item in applicationOptions.PipelineHandlers)
         {

@@ -15,7 +15,7 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    private static readonly ConcurrentDictionary<Type, NotificationHandlerWrapper> _notificationHandlers = new();
+    private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers = new();
 
     public Task PublishAsync(object notification, CancellationToken cancellationToken = default) =>
         notification switch
@@ -34,13 +34,13 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
         {
             var wrapperType = typeof(NotificationHandlerWrapper<>).MakeGenericType(notificationType);
             var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {notificationType}");
-            return (NotificationHandlerWrapper)wrapper;
+            return (INotificationHandlerWrapper)wrapper;
         });
 
         return handler.HandleAsync(notification, _serviceProvider, PublishCore, cancellationToken);
     }
 
-    private async Task PublishCore(IEnumerable<NotificationHandlerExecutor> handlerExecutors, IDomainEvent notification, CancellationToken cancellationToken)
+    private static async Task PublishCore(IEnumerable<NotificationHandlerExecutor> handlerExecutors, IDomainEvent notification, CancellationToken cancellationToken)
     {
         foreach (var executor in handlerExecutors)
         {
@@ -49,9 +49,9 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
     }
 }
 
-public abstract class NotificationHandlerWrapper
+public interface INotificationHandlerWrapper
 {
-    public abstract Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
+    Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
         Func<IEnumerable<NotificationHandlerExecutor>, IDomainEvent, CancellationToken, Task> publish,
         CancellationToken cancellationToken);
 }
@@ -59,10 +59,10 @@ public abstract class NotificationHandlerWrapper
 public sealed record NotificationHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
 public sealed record PipelineHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
 
-public sealed class NotificationHandlerWrapper<TNotification> : NotificationHandlerWrapper
+public sealed class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper
     where TNotification : IDomainEvent
 {
-    public override Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
+    public Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
         Func<IEnumerable<NotificationHandlerExecutor>, IDomainEvent, CancellationToken, Task> publish,
         CancellationToken cancellationToken)
     {

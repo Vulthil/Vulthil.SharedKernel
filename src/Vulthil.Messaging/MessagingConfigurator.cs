@@ -59,6 +59,10 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
             {
                 _typeCache.AddTypeMap(item);
             }
+            foreach (var (consumer, _) in queueDefinition.Consumers)
+            {
+                Services.AddScoped(consumer.Type);
+            }
 
             Services.AddSingleton(queueDefinition);
         }

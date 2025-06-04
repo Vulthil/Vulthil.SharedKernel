@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Vulthil.Messaging;
 using Vulthil.Messaging.Abstractions.Consumers;
 
 namespace Vulthil.Messaging.RabbitMq;

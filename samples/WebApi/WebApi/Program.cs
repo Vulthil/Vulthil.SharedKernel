@@ -1,7 +1,7 @@
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
-using Vulthil.SharedKernel.Application;
+using WebApi.Application;
 using WebApi.Infrastructure;
 using WebApi.ServiceDefaults;
 
@@ -13,16 +13,7 @@ builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 
-builder.Services.AddApplication(appOptions =>
-{
-    appOptions.AddRequestLoggingBehavior()
-        .AddDomainEventLoggingBehavior()
-        .AddValidationPipelineBehavior()
-        .AddTransactionalPipelineBehavior()
-        .RegisterMediatRAssemblies(typeof(Program).Assembly)
-        .RegisterFluentValidationAssemblies(typeof(Program).Assembly);
-});
-
+builder.Services.AddApplicationLayer();
 builder.AddDatabaseInfrastructure(ServiceNames.PostgresSqlServerServiceName)
     .AddRabbitMqMessagingInfrastructure(ServiceNames.RabbitMqServiceName);
 

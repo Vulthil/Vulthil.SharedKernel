@@ -14,11 +14,15 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
-		<PackageReference Update="MinVer">
+		<PackageReference Include="Meziantou.MSBuild.InternalsVisibleTo">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Update="SonarAnalyzer.CSharp" >
+		<PackageReference Include="MinVer">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SonarAnalyzer.CSharp" >
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -33,9 +37,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>Vulthil.SharedKernel.Tests</_Parameter1>
-		</AssemblyAttribute>
+		<InternalsVisibleToSuffix Include=".Tests" />
 	</ItemGroup>
 
 </Project>

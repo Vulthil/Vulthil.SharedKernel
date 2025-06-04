@@ -9,7 +9,7 @@ namespace Vulthil.xUnit;
 public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
     where TEntryPoint : class
 {
-    protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
+    protected static CancellationToken CancellationToken => TestContext.Current.CancellationToken;
     private readonly BaseWebApplicationFactory<TEntryPoint> _realFactory;
     private readonly Lazy<WebApplicationFactory<TEntryPoint>> _lazyFactory;
     protected WebApplicationFactory<TEntryPoint> Factory => _lazyFactory.Value;

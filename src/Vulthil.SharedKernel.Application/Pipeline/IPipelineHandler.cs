@@ -10,13 +10,11 @@ public interface IPipelineHandler<in TRequest, TResponse>
 {
     Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default);
 }
-public interface IPipelineHandler<in TRequest>
-    where TRequest : IRequest;
-
 
 public delegate Task DomainEventPipelineDelegate(CancellationToken cancellationToken = default);
+
 public interface IDomainEventPipelineHandler<in TDomainEvent>
     where TDomainEvent : IDomainEvent
 {
-    Task HandleAsync(TDomainEvent request, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default);
+    Task HandleAsync(TDomainEvent domainEvent, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default);
 }

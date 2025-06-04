@@ -12,4 +12,8 @@
 	  <ProjectReference Include="..\Vulthil.Messaging.Abstractions\Vulthil.Messaging.Abstractions.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Vulthil.Messaging.RabbitMq.Tests"/>
+	</ItemGroup>
+	
 </Project>

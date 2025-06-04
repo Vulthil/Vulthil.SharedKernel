@@ -8,8 +8,13 @@ public sealed class AggregateRootTests : BaseUnitTestCase
 {
     private sealed record TestEntityId(Guid Value);
     private sealed record TestEntityEvent(Guid Id) : IDomainEvent;
-    private sealed class TestEntity(TestEntityId testEntityId) : AggregateRoot<TestEntityId>(testEntityId)
+    private sealed class TestEntity : AggregateRoot<TestEntityId>
     {
+        private TestEntity(TestEntityId testEntityId) : base(testEntityId)
+        {
+        }
+
+
         public static TestEntity Create() => new(new(Guid.NewGuid()));
         public void RaiseEvent() => Raise(new TestEntityEvent(Id.Value));
     }

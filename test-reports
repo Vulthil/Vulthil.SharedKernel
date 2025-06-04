@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Save the current working directory
+original_dir=$(pwd)
+
+# Find and remove all TestResults folders before running tests
+find . -type d -name "TestResults" -exec rm -rf {} +
+
+dotnet test --collect:"XPlat Code Coverage;Include=[Vulthil.*]*"
+
+dotnet reportgenerator -reports:**/TestResults/**/*.cobertura.xml -targetdir:./TestReports -reporttypes:"Cobertura;Html;Badges"
+
+# Restore the original working directory
+cd "$original_dir"
+

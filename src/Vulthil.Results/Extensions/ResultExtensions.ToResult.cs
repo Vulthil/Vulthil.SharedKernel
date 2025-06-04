@@ -1,4 +1,5 @@
-﻿namespace Vulthil.Results.Extensions;
+﻿namespace Vulthil.Results;
+
 public static partial class ResultExtensions
 {
     public static Result<T> ToResult<T>(in this T? nullable, Error error)

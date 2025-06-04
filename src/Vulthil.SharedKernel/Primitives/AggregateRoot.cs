@@ -2,7 +2,7 @@
 
 namespace Vulthil.SharedKernel.Primitives;
 
-public abstract class AggregateRoot<TId> : Entity<TId>
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : notnull
 {
 
@@ -19,7 +19,7 @@ public abstract class AggregateRoot<TId> : Entity<TId>
 
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => [.. _domainEvents];
 
     public void ClearDomainEvents() => _domainEvents.Clear();
 

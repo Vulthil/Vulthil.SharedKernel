@@ -36,9 +36,33 @@ public sealed class ApplicationOptions
         return this;
     }
 
-    public ApplicationOptions AddRequestLoggingBehavior() => AddOpenPipelineHandler(typeof(RequestLoggingPipelineBehavior<,>));
+    public ApplicationOptions AddRequestLoggingBehavior() => AddOpenPipelineHandler(typeof(LoggingBehaviors.RequestLoggingPipelineBehavior<,>));
+    public ApplicationOptions AddDomainEventLoggingBehavior() => AddOpenDomainEventPipelineHandler(typeof(LoggingBehaviors.DomainEventLoggingPipelineBehavior<>));
     public ApplicationOptions AddValidationPipelineBehavior() => AddOpenPipelineHandler(typeof(TransactionalPipelineBehavior<,>));
     public ApplicationOptions AddTransactionalPipelineBehavior() => AddOpenPipelineHandler(typeof(ValidationPipelineBehavior<,>));
+
+    public ApplicationOptions AddOpenDomainEventPipelineHandler(Type pipelineHandler)
+    {
+        if (!pipelineHandler.IsGenericType)
+        {
+            throw new InvalidOperationException($"{pipelineHandler.Name} must be generic");
+        }
+
+        var implementedGenericInterfaces = pipelineHandler.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
+        var implementedOpenBehaviorInterfaces = new HashSet<Type>(implementedGenericInterfaces.Where(i => i == typeof(IDomainEventPipelineHandler<>)));
+
+        if (implementedOpenBehaviorInterfaces.Count == 0)
+        {
+            throw new InvalidOperationException($"{pipelineHandler.Name} must implement {typeof(IDomainEventPipelineHandler<>).FullName}");
+        }
+
+        foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
+        {
+            _pipelineHandlers.Add(new ServiceDescriptor(openBehaviorInterface, pipelineHandler, ServiceLifetime.Scoped));
+        }
+
+        return this;
+    }
 
     public ApplicationOptions AddOpenPipelineHandler(Type pipelineHandler)
     {

@@ -8,10 +8,12 @@ using Vulthil.SharedKernel.Application.Messaging;
 namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
 internal class OutboxProcessor(
+    TimeProvider timeProvider,
     ISaveOutboxMessages outboxMessagesDbContext,
     IDomainEventPublisher domainEventPublisher,
     IOptions<OutboxProcessingOptions> options)
 {
+    private readonly TimeProvider _timeProvider = timeProvider;
     private readonly ISaveOutboxMessages _outboxMessagesDbContext = outboxMessagesDbContext;
     private readonly IDomainEventPublisher _domainEventPublisher = domainEventPublisher;
     private readonly IOptions<OutboxProcessingOptions> _options = options;
@@ -38,7 +40,7 @@ internal class OutboxProcessor(
         var updateQueue = new ConcurrentQueue<OutboxUpdate>();
 
         var publishTasks = outboxMessages.
-            Select(m => PublishMessage(m, updateQueue, _domainEventPublisher, cancellationToken))
+            Select(m => PublishMessage(m, updateQueue, _timeProvider, _domainEventPublisher, cancellationToken))
             .ToList();
 
         await Task.WhenAll(publishTasks);
@@ -61,7 +63,7 @@ internal class OutboxProcessor(
         }
     }
 
-    private static async Task PublishMessage(OutboxMessageStruct outboxMessage, ConcurrentQueue<OutboxUpdate> updateQueue, IDomainEventPublisher domainEventPublisher, CancellationToken stoppingToken)
+    private static async Task PublishMessage(OutboxMessageStruct outboxMessage, ConcurrentQueue<OutboxUpdate> updateQueue, TimeProvider timeProvider, IDomainEventPublisher domainEventPublisher, CancellationToken stoppingToken)
     {
         try
         {
@@ -70,16 +72,16 @@ internal class OutboxProcessor(
 
             await domainEventPublisher.PublishAsync(message, stoppingToken);
 
-            updateQueue.Enqueue(new OutboxUpdate(outboxMessage.Id, DateTime.UtcNow));
+            updateQueue.Enqueue(new OutboxUpdate(outboxMessage.Id, timeProvider.GetUtcNow()));
         }
         catch (Exception exception)
         {
-            updateQueue.Enqueue(new OutboxUpdate(outboxMessage.Id, DateTime.UtcNow, exception.ToString()));
+            updateQueue.Enqueue(new OutboxUpdate(outboxMessage.Id, timeProvider.GetUtcNow(), exception.ToString()));
         }
     }
 
     private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, t => Type.GetType(t)!);
 
     private readonly record struct OutboxMessageStruct(Guid Id, string Type, string Content);
-    private readonly record struct OutboxUpdate(Guid Id, DateTime ProcessedOnUtc, string? Error = null);
+    private readonly record struct OutboxUpdate(Guid Id, DateTimeOffset ProcessedOnUtc, string? Error = null);
 }

@@ -7,7 +7,7 @@ public static class Polling
     private static readonly Error Timeout =
         Error.Failure("Polling.Timeout", "The poll timed out.");
 
-    internal static async Task<Result<T>> WaitAsync<T>(
+    public static async Task<Result<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<Task<Result<T>>> func,
         TimeSpan? timerTick = null)

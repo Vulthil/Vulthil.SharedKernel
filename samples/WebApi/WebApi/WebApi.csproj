@@ -2,12 +2,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -15,16 +14,9 @@
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.RabbitMq\Vulthil.Messaging.RabbitMq.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel\Vulthil.SharedKernel.csproj" />
+		<ProjectReference Include="..\WebApi.Application\WebApi.Application.csproj" />
 		<ProjectReference Include="..\WebApi.Infrastructure\WebApi.Infrastructure.csproj" />
 		<ProjectReference Include="..\WebApi.ServiceDefaults\WebApi.ServiceDefaults.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EditorConfigFiles Remove="C:\Development\Vulthil\Vulthil.SharedKernel\samples\WebApi\WebApi\Migrations\.editorconfig" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="C:\Development\Vulthil\Vulthil.SharedKernel\samples\WebApi\WebApi\Migrations\.editorconfig" />
 	</ItemGroup>
 
 </Project>

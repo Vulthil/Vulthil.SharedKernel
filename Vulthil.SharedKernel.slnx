@@ -2,6 +2,9 @@
   <Folder Name="/.github/">
     <File Path=".github/dependabot.yml" />
   </Folder>
+  <Folder Name="/.github/instructions/">
+    <File Path=".github/instructions/style-guidelines.instructions.md" />
+  </Folder>
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
@@ -9,6 +12,8 @@
   <Folder Name="/samples/" />
   <Folder Name="/samples/WebApi/">
     <Project Path="samples/WebApi/WebApi.AppHost/WebApi.AppHost.csproj" Id="ab4523a9-7dd9-443f-9daf-be336b15a5e2" />
+    <Project Path="samples/WebApi/WebApi.Application/WebApi.Application.csproj" Id="e9ef383c-a7ae-4c79-bbe2-6af10e4a342b" />
+    <Project Path="samples/WebApi/WebApi.Domain/WebApi.Domain.csproj" Id="2696fbaf-4158-4809-8899-5a229dbebade" />
     <Project Path="samples/WebApi/WebApi.Infrastructure/WebApi.Infrastructure.csproj" Id="c8067fd4-18ab-40eb-9a3c-6e0573062095" />
     <Project Path="samples/WebApi/WebApi.ServiceDefaults/WebApi.ServiceDefaults.csproj" />
     <Project Path="samples/WebApi/WebApi.Tests/WebApi.Tests.csproj" />

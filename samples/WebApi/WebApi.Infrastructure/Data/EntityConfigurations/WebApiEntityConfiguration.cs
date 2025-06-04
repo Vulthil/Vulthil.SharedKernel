@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebApi.Models;
+using WebApi.Domain.WebApiEntityModel;
 
-namespace WebApi.Data.EntityConfigurations;
+namespace WebApi.Infrastructure.Data.EntityConfigurations;
 
 public sealed class WebApiEntityConfiguration : IEntityTypeConfiguration<WebApiEntity>
 {

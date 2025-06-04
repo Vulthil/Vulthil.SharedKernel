@@ -24,7 +24,6 @@ public static class DependencyInjection
         }
 
         services.Scan(s => s.FromAssemblies(applicationOptions.MediatRAssemblies)
-            .AddClasses(c => c.AssignableTo(typeof(IHandler<>)), false).AsImplementedInterfaces(t => t.GetGenericTypeDefinition() == typeof(IHandler<>)).WithScopedLifetime()
             .AddClasses(c => c.AssignableTo(typeof(IHandler<,>)), false).AsImplementedInterfaces(t => t.GetGenericTypeDefinition() == typeof(IHandler<,>)).WithScopedLifetime()
             .AddClasses(c => c.AssignableTo(typeof(IDomainEventHandler<>)), false).AsImplementedInterfaces().WithScopedLifetime());
 

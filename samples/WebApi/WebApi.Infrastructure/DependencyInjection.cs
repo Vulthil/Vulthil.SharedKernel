@@ -1,14 +1,29 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging;
-using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.RabbitMq;
+using Vulthil.SharedKernel.Infrastructure;
+using WebApi.Application;
+using WebApi.Infrastructure.Data;
 
 namespace WebApi.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IHostApplicationBuilder AddInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
+    public static IHostApplicationBuilder AddDatabaseInfrastructure(this IHostApplicationBuilder builder, string connectionStringKey)
+    {
+        builder.Services
+            .AddDbContext<IWebApiDbContext, WebApiDbContext>(databaseInfrastructureConfigurator =>
+                    databaseInfrastructureConfigurator
+                        .ConfigureDbContextOptions(options =>
+                            options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringKey)))
+                        .EnableOutboxProcessing());
+
+        return builder;
+    }
+
+    public static IHostApplicationBuilder AddRabbitMqMessagingInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
     {
         builder.Services.AddMessaging(builder.Configuration, x =>
         {
@@ -26,27 +41,5 @@ public static class DependencyInjection
         builder.AddRabbitMqClient(rabbitMqConnectionStringKey);
 
         return builder;
-    }
-}
-
-public sealed record TestEvent(Guid Id, string Name);
-public sealed record TestRequest(Guid Id, string Name);
-internal sealed class TestConsumer(ILogger<TestConsumer> logger) : IConsumer<TestRequest>
-{
-    private readonly ILogger<TestConsumer> _logger = logger;
-
-    public Task ConsumeAsync(TestRequest message, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Received message: {Message}", message);
-        return Task.CompletedTask;
-    }
-}
-internal class TestRequestConsumer(ILogger<TestRequestConsumer> logger) : IRequestConsumer<TestRequest, TestEvent>
-{
-    private readonly ILogger<TestRequestConsumer> _logger = logger;
-    public Task<TestEvent> ConsumeAsync(TestRequest message, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Received request: {Message}", message);
-        return Task.FromResult(new TestEvent(Guid.NewGuid(), message.Name));
     }
 }

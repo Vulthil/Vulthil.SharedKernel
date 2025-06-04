@@ -9,7 +9,7 @@ public static class MessagingConfiguratorExtensions
 {
     public static IMessagingConfigurator UseRabbitMq(this IMessagingConfigurator configurator)
     {
-        configurator.Services.AddSingleton<ITransport, RabbitMqHostedService>();
+        configurator.Services.AddSingleton<ITransport, RabbitMqTransportService>();
 
         configurator.Services.AddSingleton<RabbitMqRequester>();
         configurator.Services.AddSingleton<IRequester>(sp => sp.GetRequiredService<RabbitMqRequester>());

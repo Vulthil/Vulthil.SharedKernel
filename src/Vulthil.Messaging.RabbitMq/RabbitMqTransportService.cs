@@ -4,17 +4,17 @@ using RabbitMQ.Client;
 
 namespace Vulthil.Messaging.RabbitMq;
 
-internal sealed class RabbitMqHostedService : ITransport
+internal sealed class RabbitMqTransportService : ITransport
 {
-    private readonly ILogger<RabbitMqHostedService> _logger;
+    private readonly ILogger<RabbitMqTransportService> _logger;
     private readonly RabbitMqRequester _requester;
     private readonly IConnection _rabbitMqConnection;
     private readonly TypeCache _typeCache;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IEnumerable<QueueDefinition> _queueDefinitions;
 
-    public RabbitMqHostedService(
-        ILogger<RabbitMqHostedService> logger,
+    public RabbitMqTransportService(
+        ILogger<RabbitMqTransportService> logger,
         RabbitMqRequester requester,
         IConnection rabbitMqConnection,
         TypeCache typeCache,

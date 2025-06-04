@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
+using Vulthil.SharedKernel.Application.Pipeline;
 using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application.Messaging;
@@ -56,6 +57,7 @@ public abstract class NotificationHandlerWrapper
 }
 
 public sealed record NotificationHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
+public sealed record PipelineHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
 
 public sealed class NotificationHandlerWrapper<TNotification> : NotificationHandlerWrapper
     where TNotification : IDomainEvent
@@ -68,6 +70,14 @@ public sealed class NotificationHandlerWrapper<TNotification> : NotificationHand
             .GetServices<IDomainEventHandler<TNotification>>()
             .Select(static x => new NotificationHandlerExecutor(x, (n, ct) => x.HandleAsync((TNotification)n, ct)));
 
-        return publish(handlers, domainEvent, cancellationToken);
+        Task Handlers(CancellationToken t = default) => publish(handlers, domainEvent, t);
+
+        var h = serviceFactory
+            .GetServices<IDomainEventPipelineHandler<TNotification>>()
+            .Reverse()
+            .Aggregate((DomainEventPipelineDelegate)Handlers,
+                (next, pipeline) => (t) => pipeline.HandleAsync((TNotification)domainEvent, next, t));
+
+        return h(cancellationToken);
     }
 }

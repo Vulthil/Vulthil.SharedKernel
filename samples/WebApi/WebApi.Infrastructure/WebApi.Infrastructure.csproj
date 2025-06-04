@@ -1,5 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Vulthil.Messaging.RabbitMq\Vulthil.Messaging.RabbitMq.csproj" />
-  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.RabbitMq\Vulthil.Messaging.RabbitMq.csproj" />
+		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj" />
+		<ProjectReference Include="..\WebApi.Application\WebApi.Application.csproj" />
+	</ItemGroup>
+	
 </Project>

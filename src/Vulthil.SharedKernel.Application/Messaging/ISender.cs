@@ -6,8 +6,8 @@ using Vulthil.SharedKernel.Application.Pipeline;
 namespace Vulthil.SharedKernel.Application.Messaging;
 public interface ISender
 {
-    Task<Result<TResponse>> SendAsync<TResponse>(IHaveResponse<TResponse> request, CancellationToken cancellationToken = default);
-    Task<Result> SendAsync<TResponse>(IHaveResponse request, CancellationToken cancellationToken = default);
+    Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
+    Task<Result> SendAsync(IRequest request, CancellationToken cancellationToken = default);
 }
 
 
@@ -16,7 +16,7 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private static readonly ConcurrentDictionary<Type, RequestHandlerBase> _requestHandlers = new();
 
-    public Task<Result<TResponse>> SendAsync<TResponse>(IHaveResponse<TResponse> request, CancellationToken cancellationToken = default)
+    public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -30,7 +30,7 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
         return handler.HandleAsync(request, _serviceProvider, cancellationToken);
     }
 
-    public Task<Result> SendAsync<TResponse>(IHaveResponse request, CancellationToken cancellationToken = default)
+    public Task<Result> SendAsync(IRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -45,16 +45,16 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
     }
 }
 internal class RequestHandlerWrapperResult<TRequest, TResponse> : RequestHandlerWrapper<TResponse>
-    where TRequest : IHaveResponse<TResponse>
+    where TRequest : IRequest<TResponse>
 {
     public override async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default) =>
         await HandleAsync((ICommand<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
 
-    public override Task<Result<TResponse>> HandleAsync(IHaveResponse<TResponse> request, IServiceProvider serviceProvider,
+    public override Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {
-        Task<Result<TResponse>> Handler(CancellationToken t) => serviceProvider.GetRequiredService<IHandler<TRequest, TResponse>>()
+        Task<TResponse> Handler(CancellationToken t) => serviceProvider.GetRequiredService<IHandler<TRequest, TResponse>>()
             .HandleAsync((TRequest)request, t);
 
         var pipeline = serviceProvider
@@ -67,22 +67,22 @@ internal class RequestHandlerWrapperResult<TRequest, TResponse> : RequestHandler
     }
 }
 internal class RequestHandlerWrapperResult<TRequest> : RequestHandlerWrapper
-    where TRequest : IHaveResponse
+    where TRequest : IRequest<Result>
 {
     public override async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default) =>
-        await HandleAsync((IHaveResponse)request, serviceProvider, cancellationToken).ConfigureAwait(false);
+        await HandleAsync((IRequest)request, serviceProvider, cancellationToken).ConfigureAwait(false);
 
-    public override Task<Result> HandleAsync(IHaveResponse request, IServiceProvider serviceProvider,
+    public override Task<Result> HandleAsync(IRequest request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {
-        Task<Result> Handler(CancellationToken t) => serviceProvider.GetRequiredService<IHandler<TRequest>>()
+        Task<Result> Handler(CancellationToken t) => serviceProvider.GetRequiredService<IHandler<TRequest, Result>>()
                         .HandleAsync((TRequest)request, t);
 
         var pipeline = serviceProvider
-            .GetServices<IPipelineHandler<TRequest>>()
+            .GetServices<IPipelineHandler<TRequest, Result>>()
             .Reverse()
-            .Aggregate((PipelineDelegate)Handler,
+            .Aggregate((PipelineDelegate<Result>)Handler,
                 (next, pipeline) => (t) => pipeline.HandleAsync((TRequest)request, next, t));
 
         return pipeline(cancellationToken);
@@ -95,11 +95,11 @@ internal abstract class RequestHandlerBase
 }
 internal abstract class RequestHandlerWrapper : RequestHandlerBase
 {
-    public abstract Task<Result> HandleAsync(IHaveResponse request, IServiceProvider serviceProvider,
+    public abstract Task<Result> HandleAsync(IRequest request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default);
 }
 internal abstract class RequestHandlerWrapper<TResponse> : RequestHandlerBase
 {
-    public abstract Task<Result<TResponse>> HandleAsync(IHaveResponse<TResponse> request, IServiceProvider serviceProvider,
+    public abstract Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default);
 }

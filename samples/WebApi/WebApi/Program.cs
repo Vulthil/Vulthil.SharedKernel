@@ -1,10 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Application;
-using Vulthil.SharedKernel.Infrastructure;
-using WebApi.Data;
 using WebApi.Infrastructure;
 using WebApi.ServiceDefaults;
 
@@ -16,19 +13,18 @@ builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 
-builder.Services.AddInfrastructureWithUnitOfWork<WebApiDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString(ServiceNames.PostgresSqlServerServiceName)));
-
-builder.AddInfrastructure(ServiceNames.RabbitMqServiceName);
-
 builder.Services.AddApplication(appOptions =>
 {
     appOptions.AddRequestLoggingBehavior()
+        .AddDomainEventLoggingBehavior()
         .AddValidationPipelineBehavior()
         .AddTransactionalPipelineBehavior()
         .RegisterMediatRAssemblies(typeof(Program).Assembly)
         .RegisterFluentValidationAssemblies(typeof(Program).Assembly);
 });
+
+builder.AddDatabaseInfrastructure(ServiceNames.PostgresSqlServerServiceName)
+    .AddRabbitMqMessagingInfrastructure(ServiceNames.RabbitMqServiceName);
 
 var app = builder.Build();
 

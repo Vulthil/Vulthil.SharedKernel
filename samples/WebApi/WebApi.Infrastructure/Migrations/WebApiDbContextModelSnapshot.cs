@@ -2,25 +2,22 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WebApi.Data;
+using WebApi.Infrastructure.Data;
 
 #nullable disable
 
 namespace WebApi.Migrations
 {
     [DbContext(typeof(WebApiDbContext))]
-    [Migration("20250422200748_OutboxMessages")]
-    partial class OutboxMessages
+    partial class WebApiDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -33,7 +30,7 @@ namespace WebApi.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("Error")
                         .HasColumnType("text");
@@ -41,10 +38,10 @@ namespace WebApi.Migrations
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("OccurredOnUtc")
+                    b.Property<DateTimeOffset>("OccurredOnUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("ProcessedOnUtc")
+                    b.Property<DateTimeOffset?>("ProcessedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Type")
@@ -61,7 +58,7 @@ namespace WebApi.Migrations
                     b.ToTable("OutboxMessages");
                 });
 
-            modelBuilder.Entity("WebApi.Models.WebApiEntity", b =>
+            modelBuilder.Entity("WebApi.WebApiEntityModel.WebApiEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");

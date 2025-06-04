@@ -18,9 +18,9 @@ namespace WebApi.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GroupId = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    OccurredOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProcessedOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Content = table.Column<string>(type: "jsonb", nullable: false),
+                    OccurredOnUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ProcessedOnUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     Error = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>

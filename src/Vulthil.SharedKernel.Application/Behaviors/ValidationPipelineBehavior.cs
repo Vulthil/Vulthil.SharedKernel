@@ -8,11 +8,11 @@ namespace Vulthil.SharedKernel.Application.Behaviors;
 
 internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators) :
     IPipelineHandler<TCommand, TResponse>
-    where TCommand : IHaveResponse<TResponse>
+    where TCommand : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TCommand>> _validators = validators;
 
-    public async Task<Result<TResponse>> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+    public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
         var validationFailures = await ValidateAsync(request);
 
@@ -37,7 +37,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
         }
         else if (typeof(TResponse) == typeof(Result))
         {
-            return Result.Failure<TResponse>(CreateValidationError(validationFailures));
+            return (TResponse)(object)Result.Failure(CreateValidationError(validationFailures));
         }
 
         throw new ValidationException(validationFailures);

@@ -1,15 +1,22 @@
-﻿using Vulthil.Results;
+﻿using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application.Pipeline;
 
-public delegate Task<Result<TResponse>> PipelineDelegate<TResponse>(CancellationToken cancellationToken = default);
-public delegate Task<Result> PipelineDelegate(CancellationToken cancellationToken = default);
+public delegate Task<TResponse> PipelineDelegate<TResponse>(CancellationToken cancellationToken = default);
+
 public interface IPipelineHandler<in TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
-    Task<Result<TResponse>> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default);
+    Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default);
 }
 public interface IPipelineHandler<in TRequest>
-{
-    Task<Result> HandleAsync(TRequest request, PipelineDelegate next, CancellationToken cancellationToken = default);
-}
+    where TRequest : IRequest;
 
+
+public delegate Task DomainEventPipelineDelegate(CancellationToken cancellationToken = default);
+public interface IDomainEventPipelineHandler<in TDomainEvent>
+    where TDomainEvent : IDomainEvent
+{
+    Task HandleAsync(TDomainEvent request, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default);
+}

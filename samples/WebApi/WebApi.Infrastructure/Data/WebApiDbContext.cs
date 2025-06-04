@@ -1,18 +1,21 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
-using WebApi.Models;
+using WebApi.Application;
+using WebApi.Domain.WebApiEntityModel;
 
-namespace WebApi.Data;
+namespace WebApi.Infrastructure.Data;
 
 /// <summary>
 /// Functionally equivalent with <see cref="WebApiDbContextNoBase"/>, by inheriting from <see cref="BaseDbContext"/>.
 /// </summary>
 /// <param name="options"></param>
-public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options)
+public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext
 {
     public DbSet<WebApiEntity> WebApiEntities => Set<WebApiEntity>();
     protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
@@ -29,7 +32,7 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
 /// Functionally equivalent with <see cref="WebApiDbContext"/>, without inheriting from <see cref="BaseDbContext"/>.
 /// </summary>
 /// <param name="options"></param>
-public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), IUnitOfWork, ISaveOutboxMessages
+public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), IUnitOfWork, ISaveOutboxMessages, IWebApiDbContext
 {
     public DbSet<WebApiEntity> WebApiEntities => Set<WebApiEntity>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
@@ -52,5 +55,21 @@ internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguratio
         builder.HasIndex(o => new { o.OccurredOnUtc, o.ProcessedOnUtc })
             .HasFilter($"\"{nameof(OutboxMessage.ProcessedOnUtc)}\" IS NULL")
             .IncludeProperties(o => new { o.Id, o.Type, o.Content });
+
+        builder.Property(o => o.Content)
+            .HasColumnType("jsonb");
+    }
+}
+
+public class WebApiDbContextFactory : IDesignTimeDbContextFactory<WebApiDbContext>
+{
+    public WebApiDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<WebApiDbContext>();
+
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=__dummy__;Username=__dummy__;Password=__dummy__;Pooling=false",
+ o => o.ExecutionStrategy(d => new NonRetryingExecutionStrategy(d)));
+
+        return new WebApiDbContext(optionsBuilder.Options);
     }
 }

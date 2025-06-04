@@ -1,7 +1,9 @@
-﻿namespace Vulthil.SharedKernel.Application.Messaging;
+﻿using Vulthil.Results;
+
+namespace Vulthil.SharedKernel.Application.Messaging;
 
 public interface ICommandHandler<TCommand>
-    : IHandler<TCommand>
+    : ICommandHandler<TCommand, Result>
     where TCommand : ICommand;
 
 public interface ICommandHandler<TCommand, TResponse>

@@ -34,6 +34,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             var container = await pool.GetContainerAsync();
             _containers.Add(pool, container);
         }
+        await InitializeRespawners();
     }
 
     protected virtual void ConfigureCustomWebHost(IWebHostBuilder builder) { }
@@ -68,7 +69,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         }
     }
 
-    internal async Task InitializeRespawners()
+    private async Task InitializeRespawners()
     {
         await using var scope = Services.CreateAsyncScope();
         foreach (var (pool, container) in DatabaseContainers<ICustomDatabaseContainer>())

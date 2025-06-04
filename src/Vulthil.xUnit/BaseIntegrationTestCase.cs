@@ -16,15 +16,15 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
 
     protected ITestOutputHelper? TestOutputHelper { get; }
 
-    private IServiceScope? _scope;
+    private AsyncServiceScope? _scope;
 
     public IServiceProvider ScopedServices
     {
         get
         {
-            _scope ??= Factory.Services.CreateScope();
+            _scope ??= Factory.Services.CreateAsyncScope();
 
-            return _scope.ServiceProvider;
+            return _scope.Value.ServiceProvider;
         }
     }
 
@@ -58,20 +58,19 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
     public virtual async ValueTask DisposeAsync()
     {
         await _realFactory.ResetDatabase();
-        _scope?.Dispose();
+        await (_scope?.DisposeAsync() ?? ValueTask.CompletedTask);
         _client?.Dispose();
         GC.SuppressFinalize(this);
     }
 
-    public void ResetScope()
+    public async ValueTask ResetScope()
     {
-        _scope?.Dispose();
+        await (_scope?.DisposeAsync() ?? ValueTask.CompletedTask);
         _scope = null;
     }
 
     public async ValueTask InitializeAsync()
     {
-        await _realFactory.InitializeRespawners();
         await Initialize();
     }
 

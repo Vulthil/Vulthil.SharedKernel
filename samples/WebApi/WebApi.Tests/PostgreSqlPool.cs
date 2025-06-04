@@ -4,7 +4,7 @@ using Npgsql;
 using Respawn;
 using Testcontainers.PostgreSql;
 using Vulthil.xUnit.Containers;
-using WebApi.Data;
+using WebApi.Infrastructure.Data;
 using WebApi.ServiceDefaults;
 
 namespace WebApi.Tests;

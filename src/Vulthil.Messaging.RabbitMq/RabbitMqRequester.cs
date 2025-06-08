@@ -3,13 +3,12 @@ using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Vulthil.Messaging;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Results;
 
 namespace Vulthil.Messaging.RabbitMq;
 
-internal sealed class RabbitMqRequester : IRequester, IDisposable
+internal sealed class RabbitMqRequester : IRequester, IDisposable, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<string, TaskCompletionSource<MessageResult>> _callbackMapper = new();
 

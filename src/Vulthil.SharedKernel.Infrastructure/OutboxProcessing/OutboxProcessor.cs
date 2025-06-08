@@ -3,7 +3,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Application.Data;
-using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 
 namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 

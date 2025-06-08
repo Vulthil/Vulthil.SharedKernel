@@ -7,9 +7,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-	</ItemGroup>
-	
+
 </Project>

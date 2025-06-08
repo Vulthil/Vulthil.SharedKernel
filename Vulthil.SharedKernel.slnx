@@ -59,6 +59,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" Id="1f579611-7ec6-4b60-b97e-9557cbc16f95" />
     <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" Id="d019ba9b-ca5d-4ec6-b302-e7a35838963b" />
+    <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" Id="4e699c2a-4c88-4f44-a80b-9c283234af71" />
     <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Test Items/">

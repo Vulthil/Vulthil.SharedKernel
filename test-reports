@@ -6,7 +6,21 @@ original_dir=$(pwd)
 # Find and remove all TestResults folders before running tests
 find . -type d -name "TestResults" -exec rm -rf {} +
 
-dotnet test --collect:"XPlat Code Coverage;Include=[Vulthil.*]*"
+test_projects=$(find . -type f -name "Vulthil.*.Tests.csproj" | xargs -n1 dirname | sort -u)
+
+# Run `dotnet test` in parallel for each test project
+pids=()
+for project_dir in $test_projects; do
+  (
+    cd "$project_dir" || exit
+    dotnet test --collect:"XPlat Code Coverage"
+  ) &
+  pids+=($!)
+done
+
+# Wait for all background processes to finish
+trap "kill ${pids[*]} 2>/dev/null; cd \"$original_dir\"; exit" INT TERM
+wait
 
 dotnet reportgenerator -reports:**/TestResults/**/*.cobertura.xml -targetdir:./TestReports -reporttypes:"Cobertura;Html;Badges"
 

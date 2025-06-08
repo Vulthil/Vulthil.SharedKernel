@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application;

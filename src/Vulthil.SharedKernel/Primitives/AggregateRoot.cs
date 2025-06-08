@@ -5,7 +5,6 @@ namespace Vulthil.SharedKernel.Primitives;
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : notnull
 {
-
     protected AggregateRoot(TId id) : base(id) { }
 
     private readonly List<IDomainEvent> _domainEvents = [];

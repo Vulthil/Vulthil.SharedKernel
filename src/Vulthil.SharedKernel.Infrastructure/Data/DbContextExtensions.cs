@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.Primitives;
 

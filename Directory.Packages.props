@@ -12,7 +12,7 @@
     <PackageVersion Include="FluentValidation" Version="12.0.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageVersion Include="MediatR" Version="12.5.0" />
-    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="1.1.5" />
+    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="1.1.6" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.6" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
@@ -39,7 +39,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageVersion Include="RabbitMQ.Client.OpenTelemetry" Version="1.0.0-rc.1" />
-    <PackageVersion Include="ReportGenerator" Version="5.4.7" />
+    <PackageVersion Include="ReportGenerator" Version="5.4.8" />
     <PackageVersion Include="Respawn" Version="6.2.1" />
     <PackageVersion Include="Scrutor" Version="6.0.1" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />

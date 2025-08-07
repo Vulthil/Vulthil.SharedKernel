@@ -69,10 +69,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
         _scope = null;
     }
 
-    public async ValueTask InitializeAsync()
-    {
-        await Initialize();
-    }
+    public ValueTask InitializeAsync() => Initialize();
 
     public virtual ValueTask Initialize() => ValueTask.CompletedTask;
 }

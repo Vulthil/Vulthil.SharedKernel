@@ -12,8 +12,8 @@ using WebApi.Infrastructure.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(WebApiDbContext))]
-    [Migration("20250603111838_OutboxMessages")]
-    partial class OutboxMessages
+    [Migration("20250609123723_SideEffects")]
+    partial class SideEffects
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,7 +61,7 @@ namespace WebApi.Migrations
                     b.ToTable("OutboxMessages");
                 });
 
-            modelBuilder.Entity("WebApi.MainEntityModel.MainEntity", b =>
+            modelBuilder.Entity("WebApi.Domain.MainEntities.MainEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -73,6 +73,23 @@ namespace WebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MainEntities");
+                });
+
+            modelBuilder.Entity("WebApi.Domain.SideEffects.SideEffect", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MainEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SideEffects");
                 });
 #pragma warning restore 612, 618
         }

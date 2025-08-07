@@ -31,7 +31,7 @@ public static partial class ResultExtensions
     }
 
     public static async Task<Result<T>> ToResultAsync<T>(this Task<T?> nullableTask, Error errors)
-    where T : class
+        where T : class
     {
         var nullable = await nullableTask.ConfigureAwait(false);
         return nullable.ToResult(errors);

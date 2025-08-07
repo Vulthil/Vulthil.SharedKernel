@@ -1,30 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
-using Vulthil.xUnit;
-using WebApi.Application.WebApiEntity;
-using WebApi.Domain.WebApiEntityModel.Events;
+using WebApi.Application.MainEntities.Create;
+using WebApi.Application.MainEntities.GetById;
+using WebApi.Application.MainEntities.Update;
+using WebApi.Domain.MainEntities.Events;
 using WebApi.Infrastructure.Data;
 
 namespace WebApi.Tests;
-
-public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factory, ITestOutputHelper? testOutputHelper = null) : BaseIntegrationTestCase<Program>(factory, testOutputHelper), IClassFixture<CustomWebApplicationFactory>
+public sealed class MainEntityIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper) : BaseIntegrationTestCase(factory, testOutputHelper)
 {
     [Fact]
     public async Task Test_Create()
     {
         // Arrange
         var sender = ScopedServices.GetRequiredService<ISender>();
-        var command = new CreateWebApiEntityCommand(Guid.NewGuid().ToString());
+        var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
 
         // Act
         var result = await sender.SendAsync(command, CancellationToken);
 
         // Assert
-        Assert.True(result.IsSuccess);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Fact]
@@ -32,17 +33,17 @@ public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factor
     {
         // Arrange
         var sender = ScopedServices.GetRequiredService<ISender>();
-        var command = new CreateWebApiEntityCommand(Guid.NewGuid().ToString());
+        var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
         var result = await sender.SendAsync(command, CancellationToken);
-        Assert.True(result.IsSuccess);
+        result.IsSuccess.ShouldBeTrue();
 
         // Act
-        var query = new GetWebApiEntityQuery(result.Value);
+        var query = new GetMainEntityByIdQuery(result.Value);
         var queryResult = await sender.SendAsync(query, CancellationToken);
 
         // Assert
-        Assert.True(queryResult.IsSuccess);
-        Assert.Equal(queryResult.Value.Name, command.Name);
+        queryResult.IsSuccess.ShouldBeTrue();
+        queryResult.Value.Name.ShouldBe(command.Name);
     }
 
     [Fact]
@@ -50,11 +51,11 @@ public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factor
     {
         // Arrange
         var sender = ScopedServices.GetRequiredService<ISender>();
-        var command = new CreateWebApiEntityCommand(Guid.NewGuid().ToString());
+        var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
         var result = await sender.SendAsync(command, CancellationToken);
-        Assert.True(result.IsSuccess);
+        result.IsSuccess.ShouldBeTrue();
 
-        var updateCommand = new UpdateWebApiEntityCommand(result.Value, Guid.NewGuid().ToString());
+        var updateCommand = new UpdateMainEntityNameCommand(result.Value, Guid.NewGuid().ToString());
 
         // Act
         var updateResult = await sender.SendAsync(updateCommand, CancellationToken);
@@ -63,7 +64,8 @@ public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factor
         var json = $$"""
                 {"Id": { "Value": "{{result.Value}}" } }
             """;
-        Assert.True(updateResult.IsSuccess);
+
+        updateResult.IsSuccess.ShouldBeTrue();
         var outboxMessageResult = await Polling.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
             var dbContext = ScopedServices.GetRequiredService<WebApiDbContext>();
@@ -72,7 +74,7 @@ public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factor
             var outboxMessage = await dbContext.OutboxMessages.Where(o =>
                     EF.Functions.JsonContains(o.Content, json) &&
                     o.ProcessedOnUtc.HasValue &&
-                    o.Type == typeof(WebApiEntityNameUpdatedEvent).AssemblyQualifiedName)
+                    o.Type == typeof(MainEntityNameUpdatedEvent).AssemblyQualifiedName)
                 .FirstOrDefaultAsync();
 
             if (outboxMessage is null)
@@ -83,13 +85,8 @@ public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factor
             return Result.Success(outboxMessage);
         });
 
-        Assert.True(outboxMessageResult.IsSuccess);
+        outboxMessageResult.IsSuccess.ShouldBeTrue();
     }
 }
 
-public sealed class IntegrationTestCase1(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper) : BaseIntegrationTestCase(factory, testOutputHelper);
-
-public sealed class IntegrationTestCase2(CustomWebApplicationFactory factory) : BaseIntegrationTestCase(factory);
-
-public sealed class IntegrationTestCase3(CustomWebApplicationFactory factory) : BaseIntegrationTestCase(factory);
 

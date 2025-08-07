@@ -25,7 +25,7 @@ namespace WebApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("WebApi.Models.WebApiEntity", b =>
+            modelBuilder.Entity("WebApi.Models.MainEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -36,7 +36,7 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WebApiEntities");
+                    b.ToTable("MainEntities");
                 });
 #pragma warning restore 612, 618
         }

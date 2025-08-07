@@ -7,7 +7,8 @@ using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 using WebApi.Application;
-using WebApi.Domain.WebApiEntityModel;
+using WebApi.Domain.MainEntities;
+using WebApi.Domain.SideEffects;
 
 namespace WebApi.Infrastructure.Data;
 
@@ -17,7 +18,8 @@ namespace WebApi.Infrastructure.Data;
 /// <param name="options"></param>
 public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext
 {
-    public DbSet<WebApiEntity> WebApiEntities => Set<WebApiEntity>();
+    public DbSet<MainEntity> MainEntities => Set<MainEntity>();
+    public DbSet<SideEffect> SideEffects => Set<SideEffect>();
     protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
 
     protected override Func<Type, bool>? ConfigurationTypeConstraints => base.ConfigurationTypeConstraints;
@@ -34,7 +36,8 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
 /// <param name="options"></param>
 public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), IUnitOfWork, ISaveOutboxMessages, IWebApiDbContext
 {
-    public DbSet<WebApiEntity> WebApiEntities => Set<WebApiEntity>();
+    public DbSet<MainEntity> MainEntities => Set<MainEntity>();
+    public DbSet<SideEffect> SideEffects => Set<SideEffect>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -5,6 +5,8 @@ using Vulthil.Messaging;
 using Vulthil.Messaging.RabbitMq;
 using Vulthil.SharedKernel.Infrastructure;
 using WebApi.Application;
+using WebApi.Application.MainEntities.Create;
+using WebApi.Application.SideEffects.Create;
 using WebApi.Infrastructure.Data;
 
 namespace WebApi.Infrastructure;
@@ -27,13 +29,12 @@ public static class DependencyInjection
     {
         builder.Services.AddMessaging(builder.Configuration, x =>
         {
-            x.AddQueue("test", queue =>
+            x.AddQueue("main-entity-events", queue =>
             {
-                queue.AddConsumer<TestConsumer>();
-                queue.AddRequestConsumer<TestRequestConsumer>();
+                queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>();
             });
 
-            x.AddRequest<TestRequest>("test");
+            x.AddEvent<MainEntityCreatedIntegrationEvent>();
 
             x.UseRabbitMq();
         });

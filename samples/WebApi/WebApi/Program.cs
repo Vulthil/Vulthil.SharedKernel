@@ -1,6 +1,3 @@
-using Vulthil.Messaging.Abstractions.Publishers;
-using Vulthil.Results;
-using Vulthil.SharedKernel.Api;
 using WebApi.Application;
 using WebApi.Infrastructure;
 using WebApi.ServiceDefaults;
@@ -29,17 +26,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapOpenApi();
-
-app.MapPost("/testEvent", async (ILogger<Program> logger, IRequester requester) =>
-{
-    var someMessage = new TestRequest(Guid.NewGuid(), "some name");
-    logger.LogInformation("Sending message: {SomeMessage}", someMessage);
-
-    var result = await requester.RequestAsync<TestRequest, TestEvent>(someMessage);
-    return result
-        .Tap(t => logger.LogInformation("Received response: {Message}", t))
-        .ToIResult();
-});
 
 await app.RunAsync();
 

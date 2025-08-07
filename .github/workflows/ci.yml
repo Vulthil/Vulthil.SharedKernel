@@ -71,7 +71,7 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: [ create_nuget, test ]
     steps:
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v5
       with:
         name: nuget
         path: ${{ env.NuGetDirectory }}
@@ -103,7 +103,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: [ create_nuget, test, create_release ]
     steps:
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v5
       with:
         name: nuget
         path: ${{ env.NuGetDirectory }}

@@ -1,5 +1,4 @@
-﻿using Vulthil.Results;
-using Vulthil.xUnit;
+﻿using Vulthil.xUnit;
 
 namespace Vulthil.Results.Tests.Results;
 

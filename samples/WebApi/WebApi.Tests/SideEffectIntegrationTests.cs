@@ -1,22 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
+﻿using Shouldly;
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
-using Vulthil.SharedKernel.Application.Messaging;
 using WebApi.Application.MainEntities.Create;
 using WebApi.Application.SideEffects.GetInProgress;
+using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
-public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper) : BaseIntegrationTestCase(factory, testOutputHelper)
+public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
+    : BaseIntegrationTestCase2(testFixture, testOutputHelper)
 {
     [Fact]
     public async Task TestCreate()
     {
         // Arrange
-        var sender = ScopedServices.GetRequiredService<ISender>();
         var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
-        var createResult = await sender.SendAsync(command, CancellationToken);
+        var createResult = await Sender.SendAsync(command, CancellationToken);
         createResult.IsSuccess.ShouldBeTrue();
 
         var query = new GetInProgressQuery();
@@ -24,7 +23,7 @@ public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory facto
         // Act
         var result = await Polling.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
-            var queryResult = await sender.SendAsync(query, CancellationToken);
+            var queryResult = await Sender.SendAsync(query, CancellationToken);
 
             if (queryResult.IsFailure)
             {

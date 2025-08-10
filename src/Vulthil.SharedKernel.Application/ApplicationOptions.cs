@@ -5,43 +5,38 @@ using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application;
 
-public sealed class ApplicationOptions
+public class FluentValidationOptions
 {
     private readonly HashSet<Assembly> _fluentValidationAssemblies = [];
-    private readonly HashSet<Assembly> _mediatRAssemblies = [];
-    private readonly List<ServiceDescriptor> _pipelineHandlers = [];
-
     public IReadOnlyList<Assembly> FluentValidationAssemblies => _fluentValidationAssemblies.ToList().AsReadOnly();
-    public IReadOnlyList<Assembly> MediatRAssemblies => _mediatRAssemblies.ToList().AsReadOnly();
 
+    public FluentValidationOptions RegisterFluentValidationAssemblies(params Assembly[] assemblies)
+    {
+        foreach (var item in assemblies)
+        {
+            _fluentValidationAssemblies.Add(item);
+        }
+
+        return this;
+    }
+}
+public class HandlerOptions
+{
+    private readonly HashSet<Assembly> _handlerAssemblies = [];
+    private readonly List<ServiceDescriptor> _pipelineHandlers = [];
+    public IReadOnlyList<Assembly> HandlerAssemblies => _handlerAssemblies.ToList().AsReadOnly();
     public IReadOnlyList<ServiceDescriptor> PipelineHandlers => _pipelineHandlers.AsReadOnly();
-
-    public ApplicationOptions RegisterMediatRAssemblies(params Assembly[] assemblies)
+    public HandlerOptions RegisterHandlerAssemblies(params Assembly[] assemblies)
     {
         foreach (var assembly in assemblies)
         {
-            _mediatRAssemblies.Add(assembly);
+            _handlerAssemblies.Add(assembly);
         }
 
         return this;
     }
 
-    public ApplicationOptions RegisterFluentValidationAssemblies(params Assembly[] assemblies)
-    {
-        foreach (var assembly in assemblies)
-        {
-            _fluentValidationAssemblies.Add(assembly);
-        }
-
-        return this;
-    }
-
-    public ApplicationOptions AddRequestLoggingBehavior() => AddOpenPipelineHandler(typeof(LoggingBehaviors.RequestLoggingPipelineBehavior<,>));
-    public ApplicationOptions AddDomainEventLoggingBehavior() => AddOpenDomainEventPipelineHandler(typeof(LoggingBehaviors.DomainEventLoggingPipelineBehavior<>));
-    public ApplicationOptions AddValidationPipelineBehavior() => AddOpenPipelineHandler(typeof(TransactionalPipelineBehavior<,>));
-    public ApplicationOptions AddTransactionalPipelineBehavior() => AddOpenPipelineHandler(typeof(ValidationPipelineBehavior<,>));
-
-    public ApplicationOptions AddOpenDomainEventPipelineHandler(Type pipelineHandler)
+    public HandlerOptions AddOpenDomainEventPipelineHandler(Type pipelineHandler)
     {
         if (!pipelineHandler.IsGenericType)
         {
@@ -64,7 +59,7 @@ public sealed class ApplicationOptions
         return this;
     }
 
-    public ApplicationOptions AddOpenPipelineHandler(Type pipelineHandler)
+    public HandlerOptions AddOpenPipelineHandler(Type pipelineHandler)
     {
         if (!pipelineHandler.IsGenericType)
         {
@@ -84,6 +79,53 @@ public sealed class ApplicationOptions
             _pipelineHandlers.Add(new ServiceDescriptor(openBehaviorInterface, pipelineHandler, ServiceLifetime.Scoped));
         }
 
+        return this;
+    }
+
+}
+
+public sealed class ApplicationOptions
+{
+    internal FluentValidationOptions FluentValidationOptions { get; } = new();
+    internal HandlerOptions HandlerOptions { get; } = new();
+    public IReadOnlyList<Assembly> FluentValidationAssemblies => FluentValidationOptions.FluentValidationAssemblies;
+    public IReadOnlyList<Assembly> HandlerAssemblies => HandlerOptions.HandlerAssemblies;
+
+    public IReadOnlyList<ServiceDescriptor> PipelineHandlers => HandlerOptions.PipelineHandlers;
+
+    public ApplicationOptions RegisterHandlerAssemblies(params Assembly[] assemblies)
+    {
+        HandlerOptions.RegisterHandlerAssemblies(assemblies);
+        return this;
+    }
+
+    public ApplicationOptions RegisterFluentValidationAssemblies(params Assembly[] assemblies)
+    {
+        FluentValidationOptions.RegisterFluentValidationAssemblies(assemblies);
+        return this;
+    }
+
+    public ApplicationOptions AddRequestLoggingBehavior()
+    {
+        HandlerOptions.AddOpenPipelineHandler(typeof(LoggingBehaviors.RequestLoggingPipelineBehavior<,>));
+        return this;
+    }
+
+    public ApplicationOptions AddDomainEventLoggingBehavior()
+    {
+        HandlerOptions.AddOpenDomainEventPipelineHandler(typeof(LoggingBehaviors.DomainEventLoggingPipelineBehavior<>));
+        return this;
+    }
+
+    public ApplicationOptions AddValidationPipelineBehavior()
+    {
+        HandlerOptions.AddOpenPipelineHandler(typeof(TransactionalPipelineBehavior<,>));
+        return this;
+    }
+
+    public ApplicationOptions AddTransactionalPipelineBehavior()
+    {
+        HandlerOptions.AddOpenPipelineHandler(typeof(ValidationPipelineBehavior<,>));
         return this;
     }
 }

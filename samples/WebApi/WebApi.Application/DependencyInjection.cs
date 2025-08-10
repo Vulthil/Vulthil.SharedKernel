@@ -12,7 +12,7 @@ public static class DependencyInjection
                 .AddDomainEventLoggingBehavior()
                 .AddValidationPipelineBehavior()
                 .AddTransactionalPipelineBehavior()
-                .RegisterMediatRAssemblies(typeof(DependencyInjection).Assembly)
+                .RegisterHandlerAssemblies(typeof(DependencyInjection).Assembly)
                 .RegisterFluentValidationAssemblies(typeof(DependencyInjection).Assembly);
         });
 

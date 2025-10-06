@@ -14,13 +14,10 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
-		<PackageReference Include="Meziantou.MSBuild.InternalsVisibleTo" />
 		<PackageReference Include="MinVer">
-			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="SonarAnalyzer.CSharp" >
-			<PrivateAssets>all</PrivateAssets>
+		<PackageReference Include="SonarAnalyzer.CSharp">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
@@ -34,7 +31,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleToSuffix Include=".Tests" />
+		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 

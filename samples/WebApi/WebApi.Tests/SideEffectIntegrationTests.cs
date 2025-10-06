@@ -8,7 +8,7 @@ using WebApi.Tests.Fixtures;
 namespace WebApi.Tests;
 
 public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase2(testFixture, testOutputHelper)
+    : BaseIntegrationTestCase(testFixture, testOutputHelper)
 {
     [Fact]
     public async Task TestCreate()
@@ -30,7 +30,7 @@ public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITest
                 return Result.Failure<List<SideEffectDto>>(Error.NullValue);
             }
 
-            if (queryResult.Value.Count(s => s.MainEntityId == createResult.Value) == 0)
+            if (!queryResult.Value.Any(s => s.MainEntityId == createResult.Value))
             {
                 return Result.Failure<List<SideEffectDto>>(Error.NotFound("NotFound", "No side effects found"));
             }

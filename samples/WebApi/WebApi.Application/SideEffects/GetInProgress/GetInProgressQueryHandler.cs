@@ -30,7 +30,7 @@ public enum StatusEnum
 
 public static class StatusExtensions
 {
-    public static StatusEnum ToDto(this Status status) => status switch
+    public static StatusEnum ToDto(this IStatus status) => status switch
     {
         InProgressStatus => StatusEnum.InProgress,
         CompletedStatus => StatusEnum.Completed,

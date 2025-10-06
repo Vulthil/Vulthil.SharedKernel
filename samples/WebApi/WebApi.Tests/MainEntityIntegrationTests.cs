@@ -13,7 +13,7 @@ using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase2(testFixture, testOutputHelper)
+    : BaseIntegrationTestCase(testFixture, testOutputHelper)
 {
     [Fact]
     public async Task Test_Create()

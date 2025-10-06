@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
 		<Using Include="Xunit" />
@@ -9,7 +9,6 @@
 		<PackageReference Include="Testcontainers.PostgreSql" />
 		<PackageReference Include="Testcontainers.XunitV3" />
 		<PackageReference Include="coverlet.collector">
-			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
@@ -18,11 +17,9 @@
 		<PackageReference Include="Testcontainers.RabbitMq" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.analyzers">
-			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="xunit.runner.visualstudio">
-			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>

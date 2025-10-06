@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<IsTestProject>false</IsTestProject>
@@ -17,7 +17,6 @@
 		<PackageReference Include="Testcontainers.XunitV3" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.analyzers">
-			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
@@ -31,7 +30,7 @@
 		<Using Include="Shouldly" />
 		<Using Include="Xunit" />
 		<Using Include="Moq" />
-		<Using Include="Moq.AutoMock"/>
+		<Using Include="Moq.AutoMock" />
 	</ItemGroup>
 
 </Project>

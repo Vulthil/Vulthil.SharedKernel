@@ -25,11 +25,11 @@ jobs:
     outputs:
       stable_version: ${{ steps.extract_version.outputs.stable_version }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0
         filter: tree:0
-    - uses: actions/setup-dotnet@v4
+    - uses: actions/setup-dotnet@v5
     - name: Restore .NET tools
       run: dotnet tool restore
     - name: Extract Version
@@ -61,8 +61,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
+    - uses: actions/checkout@v5
+    - uses: actions/setup-dotnet@v5
     - name: Test
       run: dotnet test --configuration Release
    
@@ -88,7 +88,7 @@ jobs:
     env:
       STABLE_VERSION: ${{ needs.create_nuget.outputs.stable_version }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Create GitHub Release
       uses: elgohr/Github-Release-Action@v5
       env:

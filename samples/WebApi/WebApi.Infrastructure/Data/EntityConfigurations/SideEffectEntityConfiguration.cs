@@ -21,7 +21,7 @@ public sealed class SideEffectEntityConfiguration : IEntityTypeConfiguration<Sid
                 v => new SideEffectId(v));
     }
 
-    private static string StatusToString(Status v) => v switch
+    private static string StatusToString(IStatus v) => v switch
     {
         InProgressStatus inProgress => $"I {inProgress.ProgressTime:o}",
         FailedStatus failed => $"F {failed.FailedTime} {failed.ErrorMessage:o}",
@@ -29,7 +29,7 @@ public sealed class SideEffectEntityConfiguration : IEntityTypeConfiguration<Sid
         _ => throw new ArgumentException("Unknown status type", nameof(v))
     };
 
-    private static Status StringToStatus(string v) => v.Split(" ") switch
+    private static IStatus StringToStatus(string v) => v.Split(" ") switch
     {
         [var type, var time] when type == "I" => new InProgressStatus(DateTimeOffset.Parse(time)),
         [var type, var time, var value] when type == "C" => new CompletedStatus(DateTimeOffset.Parse(time), int.Parse(value)),

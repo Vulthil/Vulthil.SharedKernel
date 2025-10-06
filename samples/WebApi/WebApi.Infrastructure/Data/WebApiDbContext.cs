@@ -21,13 +21,6 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
     public DbSet<MainEntity> MainEntities => Set<MainEntity>();
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
     protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
-
-    protected override Func<Type, bool>? ConfigurationTypeConstraints => base.ConfigurationTypeConstraints;
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-    }
 }
 
 /// <summary>

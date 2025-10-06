@@ -8,9 +8,9 @@ public sealed record SideEffectId(Guid Value);
 public sealed class SideEffect : AggregateRoot<SideEffectId>
 {
     public Guid MainEntityId { get; private set; }
-    public Status Status { get; private set; }
+    public IStatus Status { get; private set; }
 
-    private SideEffect(Guid mainEntityId, Status status) : base(new(Guid.CreateVersion7()))
+    private SideEffect(Guid mainEntityId, IStatus status) : base(new(Guid.CreateVersion7()))
     {
         MainEntityId = mainEntityId;
         Status = status;

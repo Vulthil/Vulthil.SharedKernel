@@ -12,10 +12,10 @@ public class MainEntity : AggregateRoot<MainEntityId>
     private MainEntity(string name) : base(new(Guid.CreateVersion7())) => Name = name;
     public static MainEntity Create(string name)
     {
-        var MainEntity = new MainEntity(name);
-        MainEntity.Raise(new MainEntityCreatedEvent(MainEntity.Id));
+        var mainEntity = new MainEntity(name);
+        mainEntity.Raise(new MainEntityCreatedEvent(mainEntity.Id));
 
-        return MainEntity;
+        return mainEntity;
     }
 
     public void UpdateName(string name)

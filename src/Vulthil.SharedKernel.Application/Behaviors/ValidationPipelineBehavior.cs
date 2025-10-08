@@ -8,7 +8,7 @@ namespace Vulthil.SharedKernel.Application.Behaviors;
 
 internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators) :
     IPipelineHandler<TCommand, TResponse>
-    where TCommand : IRequest<TResponse>
+    where TCommand : ICommand<TResponse>
 {
     private readonly IEnumerable<IValidator<TCommand>> _validators = validators;
 

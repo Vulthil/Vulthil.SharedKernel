@@ -57,18 +57,9 @@ internal static class LoggingBehaviors
 
             _logger.LogInformation("Processing event {DomainEventName}", domainEventName);
 
-#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
-            try
-            {
-                await next(cancellationToken);
-                _logger.LogInformation("Completed processing event {DomainEventName}", domainEventName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error processing event {DomainEventName}", domainEventName);
-                throw;
-            }
-#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
+            await next(cancellationToken);
+
+            _logger.LogInformation("Completed processing event {DomainEventName}", domainEventName);
         }
     }
 }

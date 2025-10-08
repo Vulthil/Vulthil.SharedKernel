@@ -27,9 +27,9 @@ internal sealed class OutboxBackgroundService(
                 await Task.Delay(TimeSpan.FromSeconds(_options.Value.OutboxProcessingDelayInSeconds), stoppingToken);
             }
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            _logger.LogInformation("Outbox processing stopped");
+            _logger.LogInformation(ex, "Outbox processing stopped");
         }
     }
 }

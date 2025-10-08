@@ -2,7 +2,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
-using Vulthil.Messaging;
 using Vulthil.Messaging.Abstractions.Publishers;
 
 namespace Vulthil.Messaging.RabbitMq;
@@ -24,7 +23,7 @@ internal sealed class RabbitMqPublisher : IPublisher, IDisposable, IAsyncDisposa
     }
 
     public async Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
-        where TMessage : class
+        where TMessage : notnull
     {
         _channel ??= await _rabbitMqConnection.CreateChannelAsync(cancellationToken: cancellationToken);
 

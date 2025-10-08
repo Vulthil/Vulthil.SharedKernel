@@ -1,9 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using Vulthil.Messaging.Abstractions.Publishers;
-using Vulthil.Results;
-using Vulthil.SharedKernel.Api;
-using Vulthil.SharedKernel.Infrastructure;
-using WebApi.Data;
+using WebApi.Application;
 using WebApi.Infrastructure;
 using WebApi.ServiceDefaults;
 
@@ -15,10 +10,9 @@ builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 
-builder.Services.AddInfrastructureWithUnitOfWork<WebApiDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString(ServiceNames.PostgresSqlServerServiceName)));
-
-builder.AddInfrastructure(ServiceNames.RabbitMqServiceName);
+builder.Services.AddApplicationLayer();
+builder.AddDatabaseInfrastructure(ServiceNames.PostgresSqlServerServiceName)
+    .AddRabbitMqMessagingInfrastructure(ServiceNames.RabbitMqServiceName);
 
 var app = builder.Build();
 
@@ -33,17 +27,8 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapOpenApi();
 
-app.MapPost("/testEvent", async (ILogger<Program> logger, IRequester requester) =>
-{
-    var someMessage = new TestRequest(Guid.NewGuid(), "some name");
-    logger.LogInformation("Sending message: {SomeMessage}", someMessage);
-
-    var result = await requester.RequestAsync<TestRequest, TestEvent>(someMessage);
-    return result
-        .Tap(t => logger.LogInformation("Received response: {Message}", t))
-        .ToIResult();
-});
-
 await app.RunAsync();
 
+#pragma warning disable S1118 // Utility classes should not have public constructors
 public partial class Program;
+#pragma warning restore S1118 // Utility classes should not have public constructors

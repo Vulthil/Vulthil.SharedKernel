@@ -5,18 +5,17 @@ using Vulthil.SharedKernel.Primitives;
 
 namespace Vulthil.SharedKernel.Infrastructure.Data;
 
-public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(
-    TimeProvider timeProvider) : SaveChangesInterceptor
+public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider timeProvider) : SaveChangesInterceptor
 {
     private readonly TimeProvider _timeProvider = timeProvider;
 
-    public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
         var dbContext = eventData.Context;
 
-        if (dbContext is null || dbContext is not ISaveOutboxMessages dbContextWithOutboxMessages)
+        if (dbContext is not ISaveOutboxMessages dbContextWithOutboxMessages)
         {
-            return base.SavedChangesAsync(eventData, result, cancellationToken);
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
         var groupId = Guid.CreateVersion7();
@@ -34,13 +33,13 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(
             .Select(d => new OutboxMessage
             {
                 GroupId = groupId,
-                OccurredOnUtc = _timeProvider.GetUtcNow().DateTime,
+                OccurredOnUtc = _timeProvider.GetUtcNow(),
                 Type = d.GetType().AssemblyQualifiedName!,
                 Content = JsonSerializer.Serialize(d, d.GetType())
-            });
+            }).ToList();
 
         dbContextWithOutboxMessages.OutboxMessages.AddRange(outboxMessages);
 
-        return base.SavedChangesAsync(eventData, result, cancellationToken);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }

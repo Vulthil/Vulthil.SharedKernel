@@ -1,7 +1,5 @@
-﻿using MediatR;
-using Vulthil.Results;
+﻿namespace Vulthil.SharedKernel.Application.Messaging;
 
-namespace Vulthil.SharedKernel.Application.Messaging;
-
-public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, Result<TResponse>>
+public interface IQueryHandler<TQuery, TResponse>
+    : IHandler<TQuery, TResponse>
     where TQuery : IQuery<TResponse>;

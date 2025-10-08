@@ -2,24 +2,14 @@
 
 namespace Vulthil.SharedKernel.Primitives;
 
-public abstract class AggregateRoot<TId> : Entity<TId>
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : notnull
 {
-
     protected AggregateRoot(TId id) : base(id) { }
-
-    /// <summary>
-    /// EF Core Only
-    /// </summary>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    protected AggregateRoot()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    {
-    }
 
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => [.. _domainEvents];
 
     public void ClearDomainEvents() => _domainEvents.Clear();
 

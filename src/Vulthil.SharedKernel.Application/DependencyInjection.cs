@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Vulthil.SharedKernel.Application.Behaviours;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
+using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application;
 
@@ -12,37 +14,59 @@ public static class DependencyInjection
         var applicationOptions = new ApplicationOptions();
         applicationOptionsAction?.Invoke(applicationOptions);
 
-        if (applicationOptions.FluentValidationAssemblies.Count != 0)
+        return services.AddApplication(applicationOptions);
+    }
+
+    public static IServiceCollection AddApplication(this IServiceCollection services, ApplicationOptions applicationOptions)
+    {
+        services.AddFluentValidation(applicationOptions.FluentValidationOptions);
+        services.AddHandlers(applicationOptions.HandlerOptions);
+        return services;
+    }
+
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services, Action<FluentValidationOptions>? fluentValidationOptionsAction = null)
+    {
+        var fluentValidationOptions = new FluentValidationOptions();
+        fluentValidationOptionsAction?.Invoke(fluentValidationOptions);
+
+        return services.AddFluentValidation(fluentValidationOptions);
+    }
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services, FluentValidationOptions fluentValidationOptions)
+    {
+        if (fluentValidationOptions.FluentValidationAssemblies.Count != 0)
         {
-            services.AddValidatorsFromAssemblies(applicationOptions.FluentValidationAssemblies,
-                includeInternalTypes: true);
+            services.AddValidatorsFromAssemblies(fluentValidationOptions.FluentValidationAssemblies,
+            includeInternalTypes: true);
+        }
+        return services;
+    }
+
+    public static IServiceCollection AddHandlers(this IServiceCollection services, Action<HandlerOptions>? handlerOptionsAction = null)
+    {
+        var handlerOptions = new HandlerOptions();
+        handlerOptionsAction?.Invoke(handlerOptions);
+
+        return services.AddHandlers(handlerOptions);
+    }
+
+    public static IServiceCollection AddHandlers(this IServiceCollection services, HandlerOptions handlerOptions)
+    {
+        if (handlerOptions.HandlerAssemblies.Count == 0)
+        {
+            throw new InvalidOperationException($"Must add atleast one assembly, by using the {nameof(HandlerOptions.RegisterHandlerAssemblies)} method.");
         }
 
-        if (applicationOptions.MediatRAssemblies.Count == 0)
+        services.TryAddScoped<IDomainEventPublisher, DomainEventPublisher>();
+        services.TryAddScoped<ISender, Sender>();
+
+        services.Scan(s => s.FromAssemblies(handlerOptions.HandlerAssemblies)
+            .AddClasses(c => c.AssignableTo(typeof(IHandler<,>)), false).AsImplementedInterfaces(t => t.GetGenericTypeDefinition() == typeof(IHandler<,>)).WithScopedLifetime()
+            .AddClasses(c => c.AssignableTo(typeof(IDomainEventHandler<>)), false).AsImplementedInterfaces().WithScopedLifetime());
+
+        foreach (var item in handlerOptions.PipelineHandlers)
         {
-            throw new InvalidOperationException($"Must add atleast one assembly, by using the {nameof(ApplicationOptions.RegisterMediatRAssemblies)} method.");
+            services.TryAddEnumerable(item);
         }
-
-        services.AddMediatR(options =>
-        {
-            options.RegisterServicesFromAssemblies([.. applicationOptions.MediatRAssemblies]);
-
-            if (applicationOptions.AddRequestLoggingBehaviour)
-            {
-                options.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
-            }
-
-            if (applicationOptions.AddValidationPipelineBehaviour)
-            {
-                options.AddOpenBehavior(typeof(ValidationPipelineBehaviour<,>));
-            }
-
-            if (applicationOptions.AddTransactionalPipelineBehaviour)
-            {
-                options.AddOpenBehavior(typeof(TransactionalPipelineBehaviour<,>));
-            }
-        });
-        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
         return services;
     }

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.Abstractions\Vulthil.Messaging.Abstractions.csproj" />
+		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj" />
+		<ProjectReference Include="..\WebApi.Domain\WebApi.Domain.csproj" />
+	</ItemGroup>
+	
+</Project>

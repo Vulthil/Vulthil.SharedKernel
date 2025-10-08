@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Vulthil.SharedKernel.Application.Data;
 
 namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
-public interface ISaveOutboxMessages : IUnitOfWork
+public interface ISaveOutboxMessages
 {
     DbSet<OutboxMessage> OutboxMessages { get; }
-};
+}

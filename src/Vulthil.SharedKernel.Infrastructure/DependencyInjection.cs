@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
@@ -8,40 +9,34 @@ namespace Vulthil.SharedKernel.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
-        where TDbContext : DbContext
+    public static IServiceCollection AddDbContext<TDbContext>(this IServiceCollection services, Action<DatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+        where TDbContext : BaseDbContext
     {
-        services.AddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
+        var databaseInfrastructureConfigurator = new DatabaseInfrastructureConfigurator();
+        databaseInfrastructureConfiguratorAction(databaseInfrastructureConfigurator);
 
-        services.AddDbContext<TDbContext>((sp, options) =>
+        services.AddDbContext<TDbContext>(databaseInfrastructureConfigurator.OptionsBuilder);
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<TDbContext>());
+        if (databaseInfrastructureConfigurator.OutboxProcessingEnabled)
         {
-            var interceptor = sp.GetRequiredService<DomainEventsToOutboxMessageSaveChangesInterceptor>();
-            var newAction = optionsBuilder + (o => o.AddInterceptors(interceptor));
-            newAction(options);
-        });
+            services.AddOutboxProcessing<TDbContext>(databaseInfrastructureConfigurator.OutboxOptionsAction);
+        }
 
         return services;
     }
 
-    public static IServiceCollection AddInfrastructureWithUnitOfWork<TDbContext, TUnitOfWork>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
-        where TDbContext : DbContext, TUnitOfWork
-        where TUnitOfWork : class, IUnitOfWork
+    public static IServiceCollection AddDbContext<TDbContextInterface, TDbContext>(this IServiceCollection services, Action<DatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+        where TDbContext : BaseDbContext, TDbContextInterface
+        where TDbContextInterface : class
     {
-        services.AddInfrastructure<TDbContext>(optionsBuilder);
-        services.AddScoped<TUnitOfWork>(sp => sp.GetRequiredService<TDbContext>());
+        services.AddDbContext<TDbContext>(databaseInfrastructureConfiguratorAction);
+        services.AddScoped<TDbContextInterface>(sp => sp.GetRequiredService<TDbContext>());
 
         return services;
     }
 
-    public static IServiceCollection AddInfrastructureWithUnitOfWork<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
-        where TDbContext : DbContext, IUnitOfWork
-    {
-        services.AddInfrastructureWithUnitOfWork<TDbContext, IUnitOfWork>(optionsBuilder);
-        return services;
-    }
-
-    public static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, Action<OutboxProcessingOptions>? optionsAction = null)
-        where TDbContext : DbContext, ISaveOutboxMessages
+    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, Action<OutboxProcessingOptions>? optionsAction = null)
+        where TDbContext : ISaveOutboxMessages
     {
         optionsAction ??= (o) => { };
         services.AddOptions<OutboxProcessingOptions>()
@@ -49,10 +44,51 @@ public static class DependencyInjection
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        services.TryAddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
         services.AddScoped<ISaveOutboxMessages>(sp => sp.GetRequiredService<TDbContext>());
         services.AddScoped<OutboxProcessor>();
         services.AddHostedService<OutboxBackgroundService>();
 
         return services;
+    }
+}
+
+
+public class DatabaseInfrastructureConfigurator
+{
+    public Action<IServiceProvider, DbContextOptionsBuilder>? OptionsBuilder { get; private set; }
+    public bool OutboxProcessingEnabled { get; private set; }
+    public Action<OutboxProcessingOptions>? OutboxOptionsAction { get; private set; }
+    internal DatabaseInfrastructureConfigurator() { }
+
+    public DatabaseInfrastructureConfigurator EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null)
+    {
+        OutboxProcessingEnabled = true;
+        OutboxOptionsAction = optionsAction ??= (o) => { };
+
+        return this;
+    }
+
+    public DatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<DbContextOptionsBuilder> optionsBuilder)
+    {
+        var n = (IServiceProvider sp, DbContextOptionsBuilder options) => optionsBuilder(options);
+
+        OptionsBuilder = n + ((sp, options) => AddInterceptors(options, sp));
+        return this;
+    }
+
+    public DatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<IServiceProvider, DbContextOptionsBuilder> optionsBuilder)
+    {
+        OptionsBuilder = optionsBuilder + ((sp, options) => AddInterceptors(options, sp));
+        return this;
+    }
+
+    private void AddInterceptors(DbContextOptionsBuilder options, IServiceProvider sp)
+    {
+        if (OutboxProcessingEnabled)
+        {
+            var interceptor = sp.GetRequiredService<DomainEventsToOutboxMessageSaveChangesInterceptor>();
+            options.AddInterceptors(interceptor);
+        }
     }
 }

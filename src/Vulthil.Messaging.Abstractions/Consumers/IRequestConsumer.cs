@@ -6,8 +6,8 @@ public interface IRequestConsumer
 }
 
 public interface IRequestConsumer<TRequest, TResponse> : IRequestConsumer
-    where TRequest : class
-    where TResponse : class
+    where TRequest : notnull
+    where TResponse : notnull
 {
     async Task<object> IRequestConsumer.ConsumeAsync(object message, CancellationToken cancellationToken)
     {

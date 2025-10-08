@@ -1,5 +1,3 @@
-﻿using MediatR;
+﻿namespace Vulthil.SharedKernel.Events;
 
-namespace Vulthil.SharedKernel.Events;
-
-public interface IDomainEvent : INotification;
+public interface IDomainEvent;

@@ -3,37 +3,44 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Vulthil.xUnit.Fixtures;
 
 namespace Vulthil.xUnit;
 
-public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
+public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLifetime
+    where TFactory : BaseWebApplicationFactory<TEntryPoint>, new()
     where TEntryPoint : class
 {
-    protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
-    private readonly BaseWebApplicationFactory<TEntryPoint> _realFactory;
+    protected static CancellationToken CancellationToken => TestContext.Current.CancellationToken;
+
+    private readonly TFactory _realFactory;
     private readonly Lazy<WebApplicationFactory<TEntryPoint>> _lazyFactory;
+
+    private readonly TestFixture _testFixture;
     protected WebApplicationFactory<TEntryPoint> Factory => _lazyFactory.Value;
 
     protected ITestOutputHelper? TestOutputHelper { get; }
 
-    private IServiceScope? _scope;
+    private AsyncServiceScope? _scope;
 
     public IServiceProvider ScopedServices
     {
         get
         {
-            _scope ??= Factory.Services.CreateScope();
+            _scope ??= Factory.Services.CreateAsyncScope();
 
-            return _scope.ServiceProvider;
+            return _scope.Value.ServiceProvider;
         }
     }
 
     private HttpClient? _client;
     public HttpClient Client => _client ??= Factory.CreateClient();
 
-    protected BaseIntegrationTestCase(BaseWebApplicationFactory<TEntryPoint> factory, ITestOutputHelper? testOutputHelper = null)
+    protected BaseIntegrationTestCase(TestFixture testFixture, ITestOutputHelper? testOutputHelper = null)
     {
-        _realFactory = factory;
+        _realFactory = new TFactory();
+        _realFactory.SetFixture(testFixture);
+        _testFixture = testFixture;
         TestOutputHelper = testOutputHelper;
         _lazyFactory = new(CreateFactory);
     }
@@ -57,22 +64,25 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : IAsyncLifetime
 
     public virtual async ValueTask DisposeAsync()
     {
-        await _realFactory.ResetDatabase();
-        _scope?.Dispose();
+        await _testFixture.ResetDatabase();
+        await ResetScope();
         _client?.Dispose();
+        await _realFactory.DisposeAsync();
         GC.SuppressFinalize(this);
     }
 
-    public void ResetScope()
+    public async ValueTask ResetScope()
     {
-        _scope?.Dispose();
+        await (_scope?.DisposeAsync() ?? ValueTask.CompletedTask);
         _scope = null;
     }
 
     public async ValueTask InitializeAsync()
     {
-        await _realFactory.InitializeRespawners();
+        await _testFixture.MigrateDatabases(ScopedServices);
+        await _testFixture.InitializeRespawners();
         await Initialize();
+        await ResetScope();
     }
 
     public virtual ValueTask Initialize() => ValueTask.CompletedTask;

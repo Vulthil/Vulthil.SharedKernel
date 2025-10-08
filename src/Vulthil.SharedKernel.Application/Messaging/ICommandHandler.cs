@@ -1,10 +1,11 @@
-﻿using MediatR;
-using Vulthil.Results;
+﻿using Vulthil.Results;
 
 namespace Vulthil.SharedKernel.Application.Messaging;
 
-public interface ICommandHandler<in TCommand> : IRequestHandler<TCommand, Result>
+public interface ICommandHandler<TCommand>
+    : ICommandHandler<TCommand, Result>
     where TCommand : ICommand;
 
-public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, Result<TResponse>>
+public interface ICommandHandler<TCommand, TResponse>
+    : IHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>;

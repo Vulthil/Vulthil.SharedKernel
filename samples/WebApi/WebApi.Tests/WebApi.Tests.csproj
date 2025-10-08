@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
 		<Using Include="Xunit" />
@@ -7,23 +7,25 @@
 
 	<ItemGroup>
 		<PackageReference Include="Testcontainers.PostgreSql" />
-		<PackageReference Include="coverlet.msbuild" />
+		<PackageReference Include="Testcontainers.XunitV3" />
+		<PackageReference Include="coverlet.collector">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Moq.AutoMock" />
 		<PackageReference Include="Shouldly" />
 		<PackageReference Include="Testcontainers.RabbitMq" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.analyzers">
-			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="xunit.runner.visualstudio">
-			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.xUnit\Vulthil.xUnit.csproj" />
 		<ProjectReference Include="..\WebApi\WebApi.csproj" />
 	</ItemGroup>

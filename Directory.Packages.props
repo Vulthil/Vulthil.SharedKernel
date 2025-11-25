@@ -41,7 +41,7 @@
     <PackageVersion Include="RabbitMQ.Client.OpenTelemetry" Version="1.0.0-rc.2" />
     <PackageVersion Include="ReportGenerator" Version="5.5.0" />
     <PackageVersion Include="Respawn" Version="6.2.1" />
-    <PackageVersion Include="Scrutor" Version="6.1.0" />
+    <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
     <PackageVersion Include="Testcontainers" Version="4.9.0" />

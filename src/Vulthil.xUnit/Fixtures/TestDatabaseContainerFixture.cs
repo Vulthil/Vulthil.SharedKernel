@@ -1,5 +1,6 @@
 ﻿
 using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,7 @@ namespace Vulthil.xUnit.Fixtures;
 
 public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
     : TestContainerFixture<TBuilderEntity, TContainerEntity>(messageSink), ITestContainerWithConnectionString
-    where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity>, new()
+    where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer
 {
     public abstract string ConnectionString { get; }
@@ -25,7 +26,7 @@ public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, T
 public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
     : DbContainerFixture<TBuilderEntity, TContainerEntity>(messageSink), ITestDatabaseContainer
     where TDbContext : DbContext
-    where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity>, new()
+    where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer, IDatabaseContainer
 {
     private Respawner? _respawner;

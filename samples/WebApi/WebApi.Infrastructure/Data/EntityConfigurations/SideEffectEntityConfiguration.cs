@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebApi.Domain.SideEffects;
+using static WebApi.Domain.SideEffects.Status;
 
 namespace WebApi.Infrastructure.Data.EntityConfigurations;
 
@@ -21,19 +23,19 @@ public sealed class SideEffectEntityConfiguration : IEntityTypeConfiguration<Sid
                 v => new SideEffectId(v));
     }
 
-    private static string StatusToString(IStatus v) => v switch
+    private static string StatusToString(Status v) => v switch
     {
-        InProgressStatus inProgress => $"I {inProgress.ProgressTime:o}",
-        FailedStatus failed => $"F {failed.FailedTime} {failed.ErrorMessage:o}",
-        CompletedStatus completed => $"I {completed.CompletedTime:o} {completed.Value}",
+        InProgressStatus inProgress => $"I {inProgress.ProgressTime:O}",
+        FailedStatus failed => $"F {failed.FailedTime:O} {failed.ErrorMessage}",
+        CompletedStatus completed => $"C {completed.CompletedTime:O} {completed.Value}",
         _ => throw new ArgumentException("Unknown status type", nameof(v))
     };
 
-    private static IStatus StringToStatus(string v) => v.Split(" ") switch
+    private static Status StringToStatus(string v) => v.Split(" ") switch
     {
-        [var type, var time] when type == "I" => new InProgressStatus(DateTimeOffset.Parse(time)),
-        [var type, var time, var value] when type == "C" => new CompletedStatus(DateTimeOffset.Parse(time), int.Parse(value)),
-        [var type, var time, var errorMessage] when type == "F" => new FailedStatus(DateTimeOffset.Parse(time), errorMessage),
+        [var type, var time] when type == "I" => Status.InProgress(DateTimeOffset.Parse(time, CultureInfo.InvariantCulture)),
+        [var type, var time, var value] when type == "C" => Status.Completed(DateTimeOffset.Parse(time, CultureInfo.InvariantCulture), int.Parse(value)),
+        [var type, var time, var errorMessage] when type == "F" => Status.Failed(DateTimeOffset.Parse(time, CultureInfo.InvariantCulture), errorMessage),
         _ => throw new ArgumentException("Unknown status string", nameof(v))
     };
 }

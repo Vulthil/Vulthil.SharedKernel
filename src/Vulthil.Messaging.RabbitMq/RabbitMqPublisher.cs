@@ -25,6 +25,7 @@ internal sealed class RabbitMqPublisher : IPublisher, IDisposable, IAsyncDisposa
     public async Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
         where TMessage : notnull
     {
+        ArgumentNullException.ThrowIfNull(message);
         _channel ??= await _rabbitMqConnection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         if (!_typeCache.TryGetEvent<TMessage>(out var eventOption) && !_undeclaredEvents.TryGetValue(typeof(TMessage), out eventOption))
@@ -35,7 +36,6 @@ internal sealed class RabbitMqPublisher : IPublisher, IDisposable, IAsyncDisposa
             await _channelSemaphore.WaitAsync(cancellationToken);
             try
             {
-
                 await _channel.ExchangeDeclareAsync(eventOption.ExchangeName, eventOption.ExchangeType, eventOption.ExchangeDurable, eventOption.ExchangeAutoDelete, cancellationToken: cancellationToken);
             }
             finally
@@ -43,7 +43,6 @@ internal sealed class RabbitMqPublisher : IPublisher, IDisposable, IAsyncDisposa
                 _channelSemaphore.Release();
             }
         }
-
 
         var properties = new BasicProperties()
         {
@@ -56,7 +55,6 @@ internal sealed class RabbitMqPublisher : IPublisher, IDisposable, IAsyncDisposa
         try
         {
             await _channelSemaphore.WaitAsync(cancellationToken);
-
             await _channel.BasicPublishAsync(eventOption.ExchangeName, string.Empty, false, properties, body, cancellationToken);
         }
         finally

@@ -11,33 +11,15 @@ public sealed record SideEffectDto
 {
     public Guid Id { get; init; }
     public Guid MainEntityId { get; init; }
-    public StatusEnum Status { get; init; }
+    public required Status Status { get; init; }
 
     public static SideEffectDto FromModel(SideEffect sideEffect) => new()
     {
         Id = sideEffect.Id.Value,
         MainEntityId = sideEffect.MainEntityId,
-        Status = sideEffect.Status.ToDto()
+        Status = sideEffect.Status
     };
 }
-
-public enum StatusEnum
-{
-    InProgress,
-    Completed,
-    Failed
-}
-
-public static class StatusExtensions
-{
-    public static StatusEnum ToDto(this IStatus status) => status switch
-    {
-        InProgressStatus => StatusEnum.InProgress,
-        CompletedStatus => StatusEnum.Completed,
-        _ => StatusEnum.Failed
-    };
-}
-
 
 internal class GetInProgressQueryHandler(IWebApiDbContext webApiDbContext) : IQueryHandler<GetInProgressQuery, Result<List<SideEffectDto>>>
 {
@@ -46,11 +28,13 @@ internal class GetInProgressQueryHandler(IWebApiDbContext webApiDbContext) : IQu
     public async Task<Result<List<SideEffectDto>>> HandleAsync(GetInProgressQuery request, CancellationToken cancellationToken = default)
     {
         var list = await _webApiDbContext.SideEffects
-            .Where(s => ((string)(object)s.Status).StartsWith("I"))
+            //.Where(s => s.Status is Status.InProgressStatus)
+            .Where(s => EF.Functions.Like((string)(object)s.Status, "I %"))
             .ToListAsync(cancellationToken);
 
         return list
-            .ToResult(Error.None)
-            .Map(s => s.Select(SideEffectDto.FromModel).ToList());
+            .Select(SideEffectDto.FromModel)
+            .ToList()
+            .ToResult(Error.None);
     }
 }

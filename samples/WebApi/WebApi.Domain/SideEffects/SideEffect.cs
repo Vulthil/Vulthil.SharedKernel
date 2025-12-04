@@ -8,9 +8,9 @@ public sealed record SideEffectId(Guid Value);
 public sealed class SideEffect : AggregateRoot<SideEffectId>
 {
     public Guid MainEntityId { get; private set; }
-    public IStatus Status { get; private set; }
+    public Status Status { get; private set; }
 
-    private SideEffect(Guid mainEntityId, IStatus status) : base(new(Guid.CreateVersion7()))
+    private SideEffect(Guid mainEntityId, Status status) : base(new(Guid.CreateVersion7()))
     {
         MainEntityId = mainEntityId;
         Status = status;
@@ -18,19 +18,19 @@ public sealed class SideEffect : AggregateRoot<SideEffectId>
 
     public static SideEffect Create(Guid mainEntityId, DateTimeOffset startTime)
     {
-        var inProgressStatus = StatusFactory.InProgress(startTime);
+        var inProgressStatus = Status.InProgress(startTime);
 
         return new SideEffect(mainEntityId, inProgressStatus);
     }
 
-    public Result UpdateStatus(DateTimeOffset completedTime, int value)
+    public Result Complete(DateTimeOffset completedTime, int value)
     {
-        if (Status is CompletedStatus)
+        if (Status is Status.CompletedStatus)
         {
             return Result.Failure(SideEffectErrors.AlreadyCompleted);
         }
 
-        Status = StatusFactory.Completed(completedTime, value);
+        Status = Status.Completed(completedTime, value);
 
         return Result.Success();
     }

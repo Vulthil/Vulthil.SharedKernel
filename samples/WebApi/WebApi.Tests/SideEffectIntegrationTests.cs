@@ -3,6 +3,7 @@ using Vulthil.Extensions.Testing;
 using Vulthil.Results;
 using WebApi.Application.MainEntities.Create;
 using WebApi.Application.SideEffects.GetInProgress;
+using WebApi.Domain.SideEffects;
 using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
@@ -41,7 +42,7 @@ public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITest
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldContain(s =>
-            s.MainEntityId == createResult.Value && s.Status == StatusEnum.InProgress);
+            s.MainEntityId == createResult.Value && s.Status is Status.InProgressStatus);
     }
 }
 

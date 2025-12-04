@@ -30,7 +30,9 @@ public class Result
 
 public class Result<TValue> : Result
 {
+#pragma warning disable IDE0032 // Use auto property
     private readonly TValue? _value;
+#pragma warning restore IDE0032
 
     [NotNull]
     public TValue Value => IsSuccess

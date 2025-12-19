@@ -9,7 +9,9 @@
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
   </Folder>
-  <Folder Name="/samples/" />
+  <Folder Name="/samples/">
+    <File Path="samples/Directory.Build.props" />
+  </Folder>
   <Folder Name="/samples/WebApi/">
     <Project Path="samples/WebApi/WebApi.AppHost/WebApi.AppHost.csproj" Id="ab4523a9-7dd9-443f-9daf-be336b15a5e2" />
     <Project Path="samples/WebApi/WebApi.Application/WebApi.Application.csproj" Id="e9ef383c-a7ae-4c79-bbe2-6af10e4a342b" />
@@ -19,10 +21,9 @@
     <Project Path="samples/WebApi/WebApi.Tests/WebApi.Tests.csproj" />
     <Project Path="samples/WebApi/WebApi/WebApi.csproj" />
   </Folder>
-  <Folder Name="/samples/WebApi/Sample Items/">
-    <File Path="samples/WebApi/Directory.Build.props" />
+  <Folder Name="/samples/WebApp/">
+    <Project Path="samples/WebApp/WebApp/WebApp.csproj" />
   </Folder>
-  <Folder Name="/samples/WebApp/" />
   <Folder Name="/Solution Items/">
     <File Path=".config/dotnet-tools.json" />
     <File Path=".editorconfig" />

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging;
 using Vulthil.Messaging.RabbitMq;
@@ -22,7 +23,21 @@ public static class DependencyInjection
                             options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringKey)))
                         .EnableOutboxProcessing());
 
+        builder.EnrichNpgsqlDbContext<WebApiDbContext>(
+            configureSettings: settings =>
+            {
+                settings.DisableRetry = true;
+                settings.CommandTimeout = 30;
+            });
+
         return builder;
+    }
+
+    public static async Task MigrateAsync(this IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<WebApiDbContext>();
+        await context.Database.MigrateAsync();
     }
 
     public static IHostApplicationBuilder AddRabbitMqMessagingInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)

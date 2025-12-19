@@ -11,9 +11,11 @@
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" />
     <PackageReference Include="Aspire.Hosting.RabbitMQ" />
+    <PackageReference Include="Scalar.Aspire" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\WebApp\WebApp\WebApp.csproj" />
     <ProjectReference Include="..\WebApi.ServiceDefaults\WebApi.ServiceDefaults.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="..\WebApi\WebApi.csproj" />
   </ItemGroup>

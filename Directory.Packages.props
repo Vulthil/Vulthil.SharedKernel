@@ -43,10 +43,10 @@
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.17.0.131074" />
-    <PackageVersion Include="Testcontainers" Version="4.9.0" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.9.0" />
-    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.9.0" />
-    <PackageVersion Include="Testcontainers.XunitV3" Version="4.9.0" />
+    <PackageVersion Include="Testcontainers" Version="4.10.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.10.0" />
+    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.10.0" />
+    <PackageVersion Include="Testcontainers.XunitV3" Version="4.10.0" />
     <PackageVersion Include="xunit.analyzers" Version="1.26.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="3.2.1" />

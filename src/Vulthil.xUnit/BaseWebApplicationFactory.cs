@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Vulthil.xUnit.Fixtures;
 
 
@@ -20,19 +22,37 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             builder.UseSetting($"ConnectionStrings:{container.ConnectionStringKey}", connectionString);
         }
 
+        builder.ConfigureServices(services => services.Insert(0, ServiceDescriptor.Singleton<IHostedService>(
+                    sp => new TestMigrationHostedService(() => _testFixture, sp))));
+
         ConfigureCustomWebHost(builder);
-
-        builder.ConfigureServices(services =>
-        {
-
-            var serviceProvider = services.BuildServiceProvider();
-
-            // Create a scope for the migration
-            using var scope = serviceProvider.CreateScope();
-
-            var scopedServices = scope.ServiceProvider;
-            _testFixture?.MigrateDatabases(scopedServices).GetAwaiter().GetResult();
-            _testFixture?.InitializeRespawners().GetAwaiter().GetResult();
-        });
     }
+}
+
+internal sealed class TestMigrationHostedService(Func<TestFixture?> testFixtureAction, IServiceProvider serviceProvider) : IHostedService
+{
+    private bool _completed;
+
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        if (_completed)
+        {
+            return;
+        }
+
+        var testFixture = testFixtureAction();
+
+        if(testFixture is null)
+        {
+            return;
+        }
+
+        await using var scope = serviceProvider.CreateAsyncScope();
+
+        await testFixture.MigrateDatabases(scope.ServiceProvider);
+        await testFixture.InitializeRespawners();
+        _completed = true;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

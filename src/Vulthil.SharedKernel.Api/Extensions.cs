@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Vulthil.Results;
-
 using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Vulthil.SharedKernel.Api;
@@ -69,21 +68,28 @@ public static class Extensions
         }
         return result.Error.ToIResult();
     }
-    public static IResult ToIResult(this Error error)
+    public static IResult ToIResult(this Error error) => CustomResults.Problem(error);
+
+}
+
+public static class CustomResults
+{
+    public static IResult Problem(Error error)
     {
         Dictionary<string, string[]> errors = error is ValidationError validationError
-            ? validationError.Errors
-                .GroupBy(e => e.Code, s => s.Description)
-                .ToDictionary(e => e.Key, errors => errors.ToArray())
-            : new Dictionary<string, string[]>
-            {
-                [error.Code] = [error.Description]
-            };
+           ? validationError.Errors
+               .GroupBy(e => e.Code, s => s.Description)
+               .ToDictionary(e => e.Key, errors => errors.ToArray())
+           : new Dictionary<string, string[]>
+           {
+               [error.Code] = [error.Description]
+           };
 
         return error.Type switch
         {
             ErrorType.Validation => HttpResults.ValidationProblem(errors, error.Description),
             ErrorType.NotFound => HttpResults.NotFound(),
+            ErrorType.Conflict => HttpResults.Conflict(),
 
             _ => HttpResults.Problem(extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value)),
         };

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -30,13 +31,18 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     where TContainerEntity : IContainer, IDatabaseContainer
 {
     private Respawner? _respawner;
+    private readonly SemaphoreSlim _migrationLock = new(1);
     private bool _hasBeenMigrated;
 
     protected abstract IDbAdapter DbAdapter { get; }
     public abstract string ConnectionStringKey { get; }
 
     protected override ValueTask InitializeAsync() => base.InitializeAsync();
-    protected override ValueTask DisposeAsyncCore() => base.DisposeAsyncCore();
+    protected override ValueTask DisposeAsyncCore()
+    {
+        _migrationLock.Dispose();
+        return base.DisposeAsyncCore();
+    }
 
     public async ValueTask MigrateDatabase(IServiceProvider serviceProvider)
     {
@@ -46,8 +52,19 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
         }
 
         var dbContext = serviceProvider.GetRequiredService<TDbContext>();
-        await dbContext.Database.MigrateAsync();
+        var aquiredLock = await _migrationLock.WaitAsync(TimeSpan.FromSeconds(5));
+        if (!aquiredLock)
+        {
+            throw new TimeoutException("Could not acquire migration lock in time.");
+        }
+
+        var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+        if (pendingMigrations.Any())
+        {
+            await dbContext.Database.MigrateAsync();
+        }
         _hasBeenMigrated = true;
+        _migrationLock.Release();
     }
 
     public async ValueTask InitializeRespawner()
@@ -62,6 +79,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
         {
             DbAdapter = DbAdapter,
             WithReseed = true,
+            TablesToIgnore = ["__EFMigrationsHistory"],
         });
     }
 

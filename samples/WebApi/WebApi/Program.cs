@@ -35,7 +35,7 @@ app.MapOpenApi();
 
 if (app.Environment.IsDevelopment())
 {
-    await app.Services.MigrateAsync();  
+    await app.MigrateAsync();
 }
 
 await app.RunAsync();

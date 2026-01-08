@@ -33,12 +33,7 @@ public static class DependencyInjection
         return builder;
     }
 
-    public static async Task MigrateAsync(this IServiceProvider services)
-    {
-        using var scope = services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<WebApiDbContext>();
-        await context.Database.MigrateAsync();
-    }
+    public static Task MigrateAsync(this IHost host) => host.MigrateAsync<WebApiDbContext>();
 
     public static IHostApplicationBuilder AddRabbitMqMessagingInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
     {

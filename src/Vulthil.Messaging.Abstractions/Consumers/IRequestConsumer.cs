@@ -1,22 +1,22 @@
 ﻿namespace Vulthil.Messaging.Abstractions.Consumers;
 
-public interface IRequestConsumer
+public interface IRequestConsumer : IConsumer
 {
-    Task<object> ConsumeAsync(object message, CancellationToken cancellationToken = default);
+    new Task<object> ConsumeAsync(IMessageContext messageContext, CancellationToken cancellationToken = default);
 }
 
-public interface IRequestConsumer<TRequest, TResponse> : IRequestConsumer
+public interface IRequestConsumer<in TRequest, TResponse> : IRequestConsumer, IConsumer<TRequest>
     where TRequest : notnull
     where TResponse : notnull
 {
-    async Task<object> IRequestConsumer.ConsumeAsync(object message, CancellationToken cancellationToken)
+    async Task<object> IRequestConsumer.ConsumeAsync(IMessageContext messageContext, CancellationToken cancellationToken)
     {
-        if (message is not TRequest typedMessage)
+        if (messageContext is not IMessageContext<TRequest> typedMessageContext)
         {
-            throw new ArgumentException($"Invalid message type: {message.GetType().Name}. Expected: {typeof(TRequest).Name}");
+            throw new ArgumentException($"Invalid message type: {messageContext.GetType().Name}. Expected: {typeof(IMessageContext<TRequest>).Name}");
         }
-        return await ConsumeAsync(typedMessage, cancellationToken);
+        return await ConsumeAsync(typedMessageContext, cancellationToken);
     }
 
-    Task<TResponse> ConsumeAsync(TRequest message, CancellationToken cancellationToken = default);
+    new Task<TResponse> ConsumeAsync(IMessageContext<TRequest> messageContext, CancellationToken cancellationToken = default);
 }

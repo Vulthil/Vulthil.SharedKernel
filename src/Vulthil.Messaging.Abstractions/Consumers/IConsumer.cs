@@ -2,21 +2,30 @@
 
 public interface IConsumer
 {
-    Task ConsumeAsync(object message, CancellationToken cancellationToken = default);
+    Task ConsumeAsync(IMessageContext messageContext, CancellationToken cancellationToken = default);
 }
 
 public interface IConsumer<in TMessage> : IConsumer
 {
-    Task IConsumer.ConsumeAsync(object message, CancellationToken cancellationToken)
+    Task IConsumer.ConsumeAsync(IMessageContext messageContext, CancellationToken cancellationToken)
     {
-        if (message is not TMessage typedMessage)
+        if (messageContext is not IMessageContext<TMessage> typedMessageContext)
         {
-            throw new ArgumentException($"Invalid message type: {message.GetType().Name}. Expected: {typeof(TMessage).Name}");
+            throw new ArgumentException($"Invalid message context type: {messageContext.GetType().Name}. Expected: {typeof(IMessageContext<TMessage>).Name}");
         }
-        return ConsumeAsync(typedMessage, cancellationToken);
+        return ConsumeAsync(typedMessageContext, cancellationToken);
     }
 
-    Task ConsumeAsync(TMessage message, CancellationToken cancellationToken = default);
+    Task ConsumeAsync(IMessageContext<TMessage> messageContext, CancellationToken cancellationToken = default);
 }
 
 
+public interface IMessageContext
+{
+    string CorrelationId { get; }
+    IDictionary<string, object?> Headers { get; }
+}
+public interface IMessageContext<out TMessage> : IMessageContext
+{
+    TMessage Message { get; }
+}

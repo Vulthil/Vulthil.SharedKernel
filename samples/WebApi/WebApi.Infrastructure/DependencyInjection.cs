@@ -6,7 +6,6 @@ using Vulthil.Messaging;
 using Vulthil.Messaging.RabbitMq;
 using Vulthil.SharedKernel.Infrastructure;
 using WebApi.Application;
-using WebApi.Application.MainEntities.Create;
 using WebApi.Application.SideEffects.Create;
 using WebApi.Infrastructure.Data;
 
@@ -37,19 +36,16 @@ public static class DependencyInjection
 
     public static IHostApplicationBuilder AddRabbitMqMessagingInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
     {
-        builder.Services.AddMessaging(builder.Configuration, x =>
+        builder.AddMessaging(x =>
         {
-            x.AddQueue("main-entity-events", queue =>
+            x.AddQueue("MainEntityEvents", queue =>
             {
                 queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>();
             });
 
-            x.AddEvent<MainEntityCreatedIntegrationEvent>();
-
-            x.UseRabbitMq();
+            x.UseRabbitMq(rabbitMqConnectionStringKey);
         });
 
-        builder.AddRabbitMqClient(rabbitMqConnectionStringKey);
 
         return builder;
     }

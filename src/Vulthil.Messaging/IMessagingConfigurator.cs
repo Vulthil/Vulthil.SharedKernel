@@ -1,31 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Hosting;
+using Vulthil.Messaging.Queues;
 
 namespace Vulthil.Messaging;
-public sealed record RequestOption
-{
-    public required string RecipientQueueName { get; init; }
-}
-
-public sealed record EventOption(MessageType MessageType)
-{
-    public string ExchangeName { get; init; } = MessageType.Name;
-    public string ExchangeType { get; init; } = ExchangeTypeMap.Fanout;
-    public bool ExchangeAutoDelete { get; init; }
-    public bool ExchangeDurable { get; init; } = true;
-}
-
-public static class ExchangeTypeMap
-{
-    public const string Fanout = "fanout";
-    public const string Direct = "direct";
-}
 
 public interface IMessagingConfigurator
 {
-    IServiceCollection Services { get; }
-
+    IHostApplicationBuilder HostApplicationBuilder { get; }
     IMessagingConfigurator AddQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction);
-    IMessagingConfigurator AddEvent<TEvent>(Action<EventOption>? eventOptionAction = null) where TEvent : notnull;
-    IMessagingConfigurator AddRequest<TRequest>(string queueName, Action<RequestOption>? requestOptionAction = null)
-        where TRequest : notnull;
+
+    void ConfigureMessagingOptions(Action<MessagingOptions> action);
+
+    IMessagingConfigurator RegisterRoutingKeyFormatter<T>(Func<T, string> picker) where T : class;
+    IMessagingConfigurator RegisterCorrelationIdFormatter<T>(Func<T, string> picker) where T : class;
 }

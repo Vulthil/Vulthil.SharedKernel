@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -23,10 +24,8 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
             It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(channelMock.Object);
 
-        var typeCache = new TypeCache();
         Use(logger);
         Use(connectionMock.Object);
-        Use(typeCache);
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 
@@ -37,7 +36,7 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         var message = new TestMessage { Content = "test" };
 
         // Act
-        await Target.PublishAsync(message, CancellationToken);
+        await Target.PublishAsync(message, cancellationToken: CancellationToken);
 
         // Assert - If we get here without exception, the test passes
         Assert.True(true);
@@ -47,7 +46,7 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
     public async Task PublishAsyncWithNullMessageThrowsArgumentNullException()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => Target.PublishAsync<TestMessage>(null!, CancellationToken));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => Target.PublishAsync<TestMessage>(null!, cancellationToken: CancellationToken));
     }
 
     private sealed class TestMessage

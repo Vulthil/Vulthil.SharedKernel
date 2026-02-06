@@ -2,6 +2,9 @@
 
 public interface IPublisher
 {
-    Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
-                where TMessage : notnull;
+    Task PublishAsync<TMessage>(
+        TMessage message,
+        string? routingKey = null,
+        CancellationToken cancellationToken = default)
+        where TMessage : notnull;
 }

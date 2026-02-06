@@ -9,9 +9,9 @@ public sealed class MainEntityCreatedIntegrationEventConsumer(IWebApiDbContext w
     private readonly IWebApiDbContext _webApiDbContext = webApiDbContext;
     private readonly TimeProvider _timeProvider = timeProvider;
 
-    public async Task ConsumeAsync(MainEntityCreatedIntegrationEvent message, CancellationToken cancellationToken = default)
+    public async Task ConsumeAsync(IMessageContext<MainEntityCreatedIntegrationEvent> message, CancellationToken cancellationToken = default)
     {
-        var sideEffect = SideEffect.Create(message.Id, _timeProvider.GetUtcNow());
+        var sideEffect = SideEffect.Create(message.Message.Id, _timeProvider.GetUtcNow());
 
         _webApiDbContext.SideEffects.Add(sideEffect);
 

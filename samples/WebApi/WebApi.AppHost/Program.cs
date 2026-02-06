@@ -21,6 +21,7 @@ builder.AddProject<Projects.WebApp>(ServiceNames.WebAppServiceName)
 
 var scalar = builder.AddScalarApiReference(options =>
     {
+        options.PreferHttpsEndpoint().AllowSelfSignedCertificates();
         options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     })
     .WithApiReference(wepApi);

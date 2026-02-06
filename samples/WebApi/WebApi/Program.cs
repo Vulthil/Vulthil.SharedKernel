@@ -12,8 +12,7 @@ builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
-builder.Services.AddOpenApi();
-
+builder.Services.AddOpenApiServices();
 
 builder.Services.AddApplicationLayer();
 builder.AddDatabaseInfrastructure(ServiceNames.PostgresSqlServerServiceName)
@@ -31,10 +30,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapEndpoints();
-app.MapOpenApi();
 
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApiEndpoints();
     await app.MigrateAsync();
 }
 

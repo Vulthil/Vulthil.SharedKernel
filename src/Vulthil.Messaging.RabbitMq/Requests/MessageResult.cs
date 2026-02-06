@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Vulthil.Messaging.RabbitMq;
+namespace Vulthil.Messaging.RabbitMq.Requests;
 
 internal sealed record MessageResult
 {

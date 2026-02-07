@@ -42,8 +42,7 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         // Act
         await Target.PublishAsync(message, cancellationToken: CancellationToken);
 
-        // Assert - If we get here without exception, the test passes
-
+        // Assert
         _channelMock.Verify(x => x.BasicPublishAsync(
             typeof(TestMessage).FullName!,
             string.Empty,

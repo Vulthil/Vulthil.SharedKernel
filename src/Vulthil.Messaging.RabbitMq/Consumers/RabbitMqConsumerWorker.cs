@@ -8,8 +8,8 @@ using Vulthil.Messaging.RabbitMq;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
-internal record MessageContextImplementation(string CorrelationId, IDictionary<string, object?> Headers) : IMessageContext;
-internal sealed record MessageContextImplementation<T>(T Message, IMessageContext Raw) : MessageContextImplementation(Raw.CorrelationId, Raw.Headers), IMessageContext<T>;
+internal record MessageContextImplementation(string CorrelationId, string RoutingKey, IDictionary<string, object?> Headers) : IMessageContext;
+internal sealed record MessageContextImplementation<T>(T Message, IMessageContext Raw) : MessageContextImplementation(Raw.CorrelationId, Raw.RoutingKey, Raw.Headers), IMessageContext<T>;
 
 internal sealed class RabbitMqConsumerWorker(
     IServiceScopeFactory serviceScopeFactory,
@@ -69,17 +69,24 @@ internal sealed class RabbitMqConsumerWorker(
         }
 
         await using var scope = _serviceScopeFactory.CreateAsyncScope();
-        var context = new MessageContextImplementation(ea.BasicProperties.CorrelationId ?? string.Empty, ea.BasicProperties.Headers ?? new Dictionary<string, object?>());
+        var routingKey = ea.RoutingKey ?? string.Empty;
+        var context = new MessageContextImplementation(
+            ea.BasicProperties.CorrelationId ?? string.Empty,
+            routingKey,
+            ea.BasicProperties.Headers ?? new Dictionary<string, object?>());
         var message = JsonSerializer.Deserialize(ea.Body.Span, plan.MessageType.Type, _jsonOptions);
 
-        foreach (var handler in plan.StandardHandlers)
+        foreach (var handlerEntry in plan.StandardHandlers)
         {
-            await handler(scope.ServiceProvider, message!, context, ea.CancellationToken);
+            if (handlerEntry.RoutingKey == "#" || handlerEntry.RoutingKey == routingKey)
+            {
+                await handlerEntry.Handler(scope.ServiceProvider, message!, context, ea.CancellationToken);
+            }
         }
 
-        if (plan.RpcHandler != null)
+        if (plan.RpcHandler != null && (plan.RpcHandlerRoutingKey == "#" || plan.RpcHandlerRoutingKey == routingKey))
         {
-            object response = await plan.RpcHandler(scope.ServiceProvider, message!, context, ea.CancellationToken);
+            object response = await plan.RpcHandler.Handler(scope.ServiceProvider, message!, context, ea.CancellationToken);
             await SendResponseAsync(ea, response);
         }
     }

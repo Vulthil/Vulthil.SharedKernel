@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.xUnit;
@@ -8,24 +9,27 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqPublisher> _lazyTarget;
+    private readonly Mock<IChannel> _channelMock;
+
     private RabbitMqPublisher Target => _lazyTarget.Value;
 
     public RabbitMqPublisherTests()
     {
-        var logger = new Mock<ILogger<RabbitMqPublisher>>().Object;
-        var channelMock = new Mock<IChannel>();
+        var logger = GetMock<ILogger<RabbitMqPublisher>>().Object;
+        _channelMock = GetMock<IChannel>();
         // Setup BasicPublishAsync with ReadOnlyMemory<byte> for the body parameter
-        channelMock.Setup(x => x.BasicPublishAsync(
+        _channelMock.Setup(x => x.BasicPublishAsync(
             It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<BasicProperties>(), It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()))
             .Returns(ValueTask.CompletedTask);
 
-        var connectionMock = new Mock<IConnection>();
+        var connectionMock = GetMock<IConnection>();
         connectionMock.Setup(x => x.CreateChannelAsync(
             It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(channelMock.Object);
+            .ReturnsAsync(_channelMock.Object);
 
         Use(logger);
         Use(connectionMock.Object);
+        Use(Options.Create(new MessagingOptions()));
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 
@@ -39,7 +43,14 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         await Target.PublishAsync(message, cancellationToken: CancellationToken);
 
         // Assert - If we get here without exception, the test passes
-        Assert.True(true);
+
+        _channelMock.Verify(x => x.BasicPublishAsync(
+            typeof(TestMessage).FullName!,
+            string.Empty,
+            true,
+            It.IsAny<BasicProperties>(),
+            It.IsAny<ReadOnlyMemory<byte>>(),
+            CancellationToken), Times.Once);
     }
 
     [Fact]

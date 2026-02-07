@@ -23,6 +23,7 @@ public interface IConsumer<in TMessage> : IConsumer
 public interface IMessageContext
 {
     string CorrelationId { get; }
+    string RoutingKey { get; }
     IDictionary<string, object?> Headers { get; }
 }
 public interface IMessageContext<out TMessage> : IMessageContext

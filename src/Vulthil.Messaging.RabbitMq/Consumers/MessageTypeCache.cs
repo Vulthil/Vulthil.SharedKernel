@@ -26,10 +26,15 @@ internal static class ExpressionHelpers
         return result;
     }
 }
+internal sealed record HandlerEntry(MessageHandlerDelegate Handler, string RoutingKey);
+internal sealed record RpcHandlerEntry(RpcHandlerDelegate Handler, string RoutingKey);
+
 internal sealed record MessageExecutionPlan(MessageType MessageType)
 {
-    public List<MessageHandlerDelegate> StandardHandlers { get; } = [];
-    public RpcHandlerDelegate? RpcHandler { get; set; }
+    public List<HandlerEntry> StandardHandlers { get; } = [];
+    public RpcHandlerEntry? RpcHandler { get; set; }
+
+    public string RpcHandlerRoutingKey => RpcHandler?.RoutingKey ?? "#";
 }
 internal sealed class MessageTypeCache
 {
@@ -40,7 +45,8 @@ internal sealed class MessageTypeCache
         {
             var msgType = consumer.MessageType;
             var plan = GetOrAddPlan(msgType.Name, msgType);
-            plan.StandardHandlers.Add(CompileHandler(consumer.ConsumerType, msgType));
+            var handler = CompileHandler(consumer.ConsumerType, msgType);
+            plan.StandardHandlers.Add(new HandlerEntry(handler, consumer.RoutingKey));
         }
 
         // 2. Process RPC
@@ -48,9 +54,8 @@ internal sealed class MessageTypeCache
         {
             var msgType = rpc.MessageType;
             var plan = GetOrAddPlan(msgType.Name, msgType);
-            plan.RpcHandler = CompileRpcHandler(rpc.ConsumerType, msgType, rpc.ResponseType);
-
-
+            var handler = CompileRpcHandler(rpc.ConsumerType, msgType, rpc.ResponseType);
+            plan.RpcHandler = new RpcHandlerEntry(handler, rpc.RoutingKey);
         }
     }
 
@@ -76,7 +81,7 @@ internal sealed class MessageTypeCache
         // 1. Resolve Consumer: sp.GetRequiredService(consumerType)
         var getServiceMethod = typeof(ServiceProviderServiceExtensions)
             .GetMethod(nameof(ServiceProviderServiceExtensions.GetRequiredService), [typeof(IServiceProvider), typeof(Type)])!;
-        var resolveConsumer = Expression.Call(null, getServiceMethod, spParam, Expression.Constant(consumerType));
+        var resolveConsumer = Expression.Call(null, getServiceMethod, spParam, Expression.Constant(consumerType.Type));
         var castConsumer = Expression.Convert(resolveConsumer, consumerType.Type);
 
         // 2. Create Context: new MessageContext<T>( (T)msg, ctx )
@@ -105,7 +110,7 @@ internal sealed class MessageTypeCache
         var getServiceMethod = typeof(ServiceProviderServiceExtensions)
             .GetMethod(nameof(ServiceProviderServiceExtensions.GetRequiredService), [typeof(IServiceProvider), typeof(Type)])!;
         var resolveConsumer = Expression.Convert(
-            Expression.Call(null, getServiceMethod, spParam, Expression.Constant(consumerType)),
+            Expression.Call(null, getServiceMethod, spParam, Expression.Constant(consumerType.Type)),
             consumerType.Type);
 
         // 2. Create Context: new MessageContextImplementation<TRequest>((TRequest)msg, ctx)

@@ -87,6 +87,7 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
     public async Task PublishAsync<TMessage>(TMessage message, string? routingKey = null, CancellationToken cancellationToken = default)
         where TMessage : notnull
     {
+        ArgumentNullException.ThrowIfNull(message);
         var type = message.GetType();
 
         var finalRoutingKey = routingKey

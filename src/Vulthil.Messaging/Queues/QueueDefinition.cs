@@ -10,10 +10,6 @@ public sealed record ConsumerType(Type Type)
     public string Name => Type.FullName!;
 }
 
-public sealed record ConsumerDefinition(ConsumerType ConsumerType, IReadOnlyList<MessageType> MessageTypes)
-{
-    public string RoutingKey { get; set; } = string.Empty;
-}
 public abstract record Registration
 {
     public required ConsumerType ConsumerType { get; init; }
@@ -26,11 +22,6 @@ public sealed record ConsumerRegistration : Registration;
 public sealed record RequestConsumerRegistration : Registration
 {
     public required Type ResponseType { get; init; }
-}
-
-public sealed record RequestHandlerDefinition(ConsumerType RequestConsumerType, IReadOnlyDictionary<MessageType, Type> RequestResponseTypes)
-{
-    public string RoutingKey { get; set; } = string.Empty;
 }
 
 public sealed record QueueDefinition(string Name)

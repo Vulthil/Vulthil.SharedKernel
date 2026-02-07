@@ -41,6 +41,9 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         return this;
     }
 
+    public IMessagingConfigurator RegisterRoutingKeyFormatter<T>(string routingKey) where T : class
+        => RegisterRoutingKeyFormatter<T>(_ => routingKey);
+
     public IMessagingConfigurator RegisterRoutingKeyFormatter<T>(Func<T, string> picker) where T : class
     {
         _messagingOptions.RoutingKeyFormatters[typeof(T)] = (msg) => picker((T)msg);

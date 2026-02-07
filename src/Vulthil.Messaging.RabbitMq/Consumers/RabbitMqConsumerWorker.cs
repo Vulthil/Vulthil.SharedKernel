@@ -109,10 +109,18 @@ internal sealed class RabbitMqConsumerWorker(
 
     public async ValueTask DisposeAsync()
     {
-        if (!string.IsNullOrEmpty(_consumerTag))
+        try
         {
-            await _channel.BasicCancelAsync(_consumerTag);
+            if (!string.IsNullOrEmpty(_consumerTag))
+            {
+                await _channel.BasicCancelAsync(_consumerTag);
+            }
+
+            await _channel.DisposeAsync();
         }
-        await _channel.DisposeAsync();
+        catch (ObjectDisposedException)
+        {
+            // Channel was already disposed (e.g., by AutoRecovery mechanism)
+        }
     }
 }

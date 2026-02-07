@@ -11,5 +11,7 @@ public interface IMessagingConfigurator
     void ConfigureMessagingOptions(Action<MessagingOptions> action);
 
     IMessagingConfigurator RegisterRoutingKeyFormatter<T>(Func<T, string> picker) where T : class;
+    IMessagingConfigurator RegisterRoutingKeyFormatter<T>(string routingKey) where T : class;
+
     IMessagingConfigurator RegisterCorrelationIdFormatter<T>(Func<T, string> picker) where T : class;
 }

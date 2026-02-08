@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/.config/">
+    <File Path=".config/dotnet-tools.json" />
+  </Folder>
+  <Folder Name="/.config/dotnet-affected/">
+    <File Path="dotnet-affected.json" />
+  </Folder>
   <Folder Name="/.github/">
     <File Path=".github/dependabot.yml" />
   </Folder>
@@ -8,6 +14,7 @@
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
+    <File Path=".github/workflows/new-ci.yml" />
   </Folder>
   <Folder Name="/samples/">
     <File Path="samples/Directory.Build.props" />
@@ -25,7 +32,6 @@
     <Project Path="samples/WebApp/WebApp/WebApp.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
-    <File Path=".config/dotnet-tools.json" />
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
@@ -34,6 +40,7 @@
     <File Path="global.json" />
     <File Path="README.md" />
     <File Path="test-reports" />
+    <File Path="version.json" />
     <File Path="watch" />
     <File Path="watch-samples" />
   </Folder>

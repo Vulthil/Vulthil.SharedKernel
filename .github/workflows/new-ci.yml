@@ -1,0 +1,92 @@
+name: Build and Test
+
+on: 
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+ 
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v5
+
+      - name: Install dotnet-affected
+        run: dotnet tool install -g dotnet-affected
+
+      # --- LOGIC FOR PULL REQUESTS ---
+      - name: Calculate Affected (PR)
+        if: github.event_name == 'pull_request'
+        id: affected_pr
+        run: |
+          dotnet affected --format text --from origin/main --to HEAD
+          if dotnet affected --from origin/main --to HEAD > /dev/null 2>&1; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pack Affected (PR)
+        if: github.event_name == 'pull_request' && steps.affected_pr.outputs.has_changes == 'true'
+        # NBGV automatically applies a prerelease suffix (e.g. 1.0.5-alpha)
+        # because we are not on the 'publicReleaseRefSpec' branch.
+        run: |
+          dotnet affected pack \
+            --from origin/main \
+            --to HEAD \
+            --output-dir ./nupkgs
+
+      # --- LOGIC FOR MAIN (MERGE) ---
+      - name: Calculate Affected (Main)
+        if: github.event_name == 'push'
+        id: affected_main
+        run: |
+          dotnet affected --format text --from HEAD~1 --to HEAD
+          if dotnet affected --from HEAD~1 --to HEAD > /dev/null 2>&1; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pack Affected (Release)
+        if: github.event_name == 'push' && steps.affected_main.outputs.has_changes == 'true'
+        # NBGV sees we are on 'main', so it builds a STABLE version (e.g. 1.0.5)
+        # It automatically increments the patch version based on git commit height.
+        run: |
+          dotnet affected pack \
+            --from HEAD~1 \
+            --to HEAD \
+            --output-dir ./nupkgs
+
+      # --- PUBLISHING STEPS (Unchanged) ---
+      - name: Publish to GitHub Packages (PRs)
+        if: github.event_name == 'pull_request' && steps.affected_pr.outputs.has_changes == 'true'
+        run: |
+          dotnet nuget push "./nupkgs/*.nupkg" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+            --skip-duplicate
+
+      - name: Publish to NuGet.org (Main)
+        if: github.event_name == 'push' && steps.affected_main.outputs.has_changes == 'true'
+        run: |
+          dotnet nuget push "./nupkgs/*.nupkg" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+            #--api-key ${{ secrets.NUGET_API_KEY }} \
+            #--source https://api.nuget.org/v3/index.json \
+            --skip-duplicate

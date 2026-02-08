@@ -14,9 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
-		<PackageReference Include="MinVer">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
 		<PackageReference Include="SonarAnalyzer.CSharp">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

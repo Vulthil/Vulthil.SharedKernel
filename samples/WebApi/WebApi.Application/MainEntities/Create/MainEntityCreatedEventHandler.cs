@@ -13,7 +13,7 @@ public sealed class MainEntityCreatedEventHandler(ILogger<MainEntityCreatedEvent
     public async Task HandleAsync(MainEntityCreatedEvent notification, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("MainEntityCreated: {Id}", notification.Id);
-        await _publisher.PublishAsync(new MainEntityCreatedIntegrationEvent(notification.Id.Value), cancellationToken);
+        await _publisher.PublishAsync(new MainEntityCreatedIntegrationEvent(notification.Id.Value), cancellationToken: cancellationToken);
     }
 }
 

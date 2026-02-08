@@ -79,8 +79,6 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
 
     public async ValueTask InitializeAsync()
     {
-        await _testFixture.MigrateDatabases(ScopedServices);
-        await _testFixture.InitializeRespawners();
         await Initialize();
         await ResetScope();
     }

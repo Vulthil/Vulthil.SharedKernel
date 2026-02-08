@@ -1,3 +1,5 @@
+using System.Reflection;
+using Vulthil.SharedKernel.Api;
 using WebApi.Application;
 using WebApi.Infrastructure;
 using WebApi.ServiceDefaults;
@@ -9,6 +11,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddOpenApiServices();
 
 builder.Services.AddApplicationLayer();
 builder.AddDatabaseInfrastructure(ServiceNames.PostgresSqlServerServiceName)
@@ -25,7 +29,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapOpenApi();
+app.MapEndpoints();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApiEndpoints();
+    await app.MigrateAsync();
+}
 
 await app.RunAsync();
 

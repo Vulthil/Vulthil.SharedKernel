@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Vulthil.Messaging.RabbitMq.Tests"/>
+		<InternalsVisibleTo Include="Vulthil.Messaging.RabbitMq.Tests" />
 	</ItemGroup>
 	
 </Project>

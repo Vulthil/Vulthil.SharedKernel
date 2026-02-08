@@ -12,6 +12,7 @@ using WebApi.Infrastructure.Data;
 using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
+
 public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase(testFixture, testOutputHelper)
 {

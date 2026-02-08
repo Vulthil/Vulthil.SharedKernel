@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 
 namespace Vulthil.Messaging;
+
 internal sealed class ConsumerHostedService : BackgroundService
 {
     private readonly ITransport _transport;

@@ -32,7 +32,7 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName);
         var queueDefinition = new QueueDefinition(queueName);
         _configuration.GetSection(ConstructSectionName(queueName)).Bind(queueDefinition);
-        var queueConfigurator = new QueueConfigurator(_services, queueDefinition);
+        var queueConfigurator = new QueueConfigurator(_services, _messagingOptions, queueDefinition);
 
         queueConfigurationAction(queueConfigurator);
         _queues.Add(queueDefinition);

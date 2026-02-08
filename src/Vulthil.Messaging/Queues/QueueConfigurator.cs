@@ -4,11 +4,10 @@ using Vulthil.Messaging.Abstractions.Consumers;
 
 namespace Vulthil.Messaging.Queues;
 
-internal sealed class QueueConfigurator(IServiceCollection services, QueueDefinition queueDefinition) : IQueueConfigurator
+internal sealed class QueueConfigurator(IServiceCollection services, MessagingOptions messagingOptions, QueueDefinition queueDefinition) : IQueueConfigurator
 {
-    private static readonly HashSet<MessageType> _registeredRequestTypes = [];
-
     private readonly IServiceCollection _services = services;
+    private readonly MessagingOptions _messagingOptions = messagingOptions;
     private readonly QueueDefinition _queueDefinition = queueDefinition;
 
     public IQueueConfigurator ConfigureQueue(Action<QueueDefinition> configureAction)
@@ -68,11 +67,10 @@ internal sealed class QueueConfigurator(IServiceCollection services, QueueDefini
             var resType = args[1];
 
             // Preservation of your original validation
-            if (_registeredRequestTypes.Contains(reqType))
+            if (!_messagingOptions.RegisterRequestType(reqType))
             {
                 throw new InvalidOperationException($"Request '{reqType.Name}' is already handled elsewhere.");
             }
-            _registeredRequestTypes.Add(reqType);
 
             var routingKey = configurator.Overrides.GetValueOrDefault(reqType, "#");
 

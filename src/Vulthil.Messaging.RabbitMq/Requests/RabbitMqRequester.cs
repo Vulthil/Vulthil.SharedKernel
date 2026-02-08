@@ -70,7 +70,6 @@ internal sealed class RabbitMqRequester(
             });
 
             return await tcs.Task;
-
         }
         catch (Exception ex)
         {

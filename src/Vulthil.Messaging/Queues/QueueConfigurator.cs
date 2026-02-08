@@ -26,13 +26,9 @@ internal sealed class QueueConfigurator(IServiceCollection services, QueueDefini
         var consumerType = new ConsumerType(typeof(TConsumer));
         _services.TryAddScoped<TConsumer>();
 
-        var allInterfaces = consumerType.Type.GetInterfaces()
+        var standardInterfaces = consumerType.Type.GetInterfaces()
             .Where(i => i.IsGenericType && !i.IsGenericTypeDefinition)
-            .ToArray();
-
-        var standardInterfaces = allInterfaces
                 .Where(i => i.GetGenericTypeDefinition() == typeof(IConsumer<>));
-
 
         foreach (var i in standardInterfaces)
         {
@@ -48,7 +44,21 @@ internal sealed class QueueConfigurator(IServiceCollection services, QueueDefini
                 RoutingKey = routingKey
             });
         }
-        var requestInterfaces = allInterfaces
+
+        return this;
+    }
+
+    public IQueueConfigurator AddRequestConsumer<TConsumer>(Action<RequestConsumerConfigurator<TConsumer>>? configure = null)
+        where TConsumer : class, IRequestConsumer
+    {
+        var configurator = new RequestConsumerConfigurator<TConsumer>();
+        configure?.Invoke(configurator);
+
+        var consumerType = new ConsumerType(typeof(TConsumer));
+        _services.TryAddScoped<TConsumer>();
+
+        var requestInterfaces = consumerType.Type.GetInterfaces()
+            .Where(i => i.IsGenericType && !i.IsGenericTypeDefinition)
             .Where(i => i.GetGenericTypeDefinition() == typeof(IRequestConsumer<,>));
 
         foreach (var i in requestInterfaces)

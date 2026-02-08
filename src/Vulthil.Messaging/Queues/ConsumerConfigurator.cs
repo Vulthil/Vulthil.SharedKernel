@@ -19,20 +19,5 @@ public class ConsumerConfigurator<TConsumer> where TConsumer : IConsumer
         Overrides[new(typeof(TMessage))] = routingKey;
         return this;
     }
-
-    public ConsumerConfigurator<TConsumer> BindRequest<TRequest, TResponse>(string routingKey)
-        where TRequest : notnull
-        where TResponse : notnull
-    {
-        if (!typeof(TConsumer).IsAssignableTo(typeof(IRequestConsumer<TRequest, TResponse>)))
-        {
-            throw new ArgumentException(
-                $"Registration Error: '{typeof(TConsumer).Name}' cannot bind to request '{typeof(TRequest).Name}' " +
-                $"because it does not implement IRequestHandler<{typeof(TRequest).Name}, {typeof(TResponse).Name}>.");
-        }
-
-        Overrides[new(typeof(TRequest))] = routingKey;
-        return this;
-    }
 }
 

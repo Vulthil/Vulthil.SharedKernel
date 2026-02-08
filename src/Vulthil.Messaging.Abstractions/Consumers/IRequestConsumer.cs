@@ -1,11 +1,11 @@
 ﻿namespace Vulthil.Messaging.Abstractions.Consumers;
 
-public interface IRequestConsumer : IConsumer
+public interface IRequestConsumer
 {
-    new Task<object> ConsumeAsync(IMessageContext messageContext, CancellationToken cancellationToken = default);
+    Task<object> ConsumeAsync(IMessageContext messageContext, CancellationToken cancellationToken = default);
 }
 
-public interface IRequestConsumer<in TRequest, TResponse> : IRequestConsumer, IConsumer<TRequest>
+public interface IRequestConsumer<in TRequest, TResponse> : IRequestConsumer
     where TRequest : notnull
     where TResponse : notnull
 {
@@ -18,5 +18,5 @@ public interface IRequestConsumer<in TRequest, TResponse> : IRequestConsumer, IC
         return await ConsumeAsync(typedMessageContext, cancellationToken);
     }
 
-    new Task<TResponse> ConsumeAsync(IMessageContext<TRequest> messageContext, CancellationToken cancellationToken = default);
+    Task<TResponse> ConsumeAsync(IMessageContext<TRequest> messageContext, CancellationToken cancellationToken = default);
 }

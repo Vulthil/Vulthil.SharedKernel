@@ -128,8 +128,9 @@ internal sealed class MessageTypeCache
 
         // 4. Convert Task<TResponse> to Task<object>
         // We call a small helper method to handle the async boxing efficiently
-        var taskHelper = typeof(ExpressionHelpers)
-            .GetMethod(nameof(ExpressionHelpers.CastTask), [responseType])!;
+        var taskHelperBase = typeof(ExpressionHelpers)
+            .GetMethod(nameof(ExpressionHelpers.CastTask))!;
+        var taskHelper = taskHelperBase.MakeGenericMethod(responseType);
 
         var finalExpression = Expression.Call(null, taskHelper, call);
 

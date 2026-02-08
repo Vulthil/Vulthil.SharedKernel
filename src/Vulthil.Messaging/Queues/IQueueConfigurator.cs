@@ -5,5 +5,6 @@ namespace Vulthil.Messaging.Queues;
 public interface IQueueConfigurator
 {
     IQueueConfigurator AddConsumer<TConsumer>(Action<ConsumerConfigurator<TConsumer>>? configure = null) where TConsumer : class, IConsumer;
+    IQueueConfigurator AddRequestConsumer<TConsumer>(Action<RequestConsumerConfigurator<TConsumer>>? configure = null) where TConsumer : class, IRequestConsumer;
     IQueueConfigurator ConfigureQueue(Action<QueueDefinition> configureAction);
 }

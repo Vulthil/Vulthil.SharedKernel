@@ -5,6 +5,7 @@ using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq;
+using Vulthil.Messaging.RabbitMq.Requests;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
@@ -86,12 +87,24 @@ internal sealed class RabbitMqConsumerWorker(
 
         if (plan.RpcHandler != null && (plan.RpcHandlerRoutingKey == "#" || plan.RpcHandlerRoutingKey == routingKey))
         {
-            object response = await plan.RpcHandler.Handler(scope.ServiceProvider, message!, context, ea.CancellationToken);
-            await SendResponseAsync(ea, response);
+            MessageResult messageResult;
+            try
+            {
+                var response = await plan.RpcHandler.Handler(scope.ServiceProvider, message!, context, ea.CancellationToken);
+
+                var responseJsonString = JsonSerializer.SerializeToUtf8Bytes(response, _jsonOptions);
+
+                messageResult = MessageResult.Success(responseJsonString);
+            }
+            catch (Exception exception)
+            {
+                messageResult = MessageResult.Failure(exception.Message);
+            }
+            await SendResponseAsync(ea, messageResult);
         }
     }
 
-    private async Task SendResponseAsync(BasicDeliverEventArgs ea, object response)
+    private async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageResult response)
     {
         // SEND RESPONSE
         if (!string.IsNullOrEmpty(ea.BasicProperties.ReplyTo))

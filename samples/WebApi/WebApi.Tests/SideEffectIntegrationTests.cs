@@ -2,6 +2,7 @@
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
 using WebApi.Application.MainEntities.Create;
+using WebApi.Application.SideEffects;
 using WebApi.Application.SideEffects.GetInProgress;
 using WebApi.Domain.SideEffects;
 using WebApi.Tests.Fixtures;

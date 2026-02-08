@@ -2,12 +2,12 @@ name: Build and Test
 
 on: 
   workflow_dispatch:
-  push:
-    branches: 
-      - 'main'
-  pull_request:
-    branches:
-      - '*'
+  # push:
+  #   branches: 
+  #     - 'main'
+  # pull_request:
+  #   branches:
+  #     - '*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_id || github.event.pull_request.number || github.ref }}

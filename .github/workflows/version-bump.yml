@@ -1,0 +1,47 @@
+name: Manual Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Type of bump'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - major
+          - minor
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to push the commit back to the repo
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install NBGV
+        run: dotnet tool install -g nbgv
+
+      - name: Perform Bump
+        run: |
+          # nbgv prepare-release calculates the next version and updates version.json
+          # Using --nextVersion allows us to specify Major or Minor logic
+          if [ "${{ github.event.inputs.bump_type }}" == "major" ]; then
+             nbgv prepare-release --nextVersion increment-major
+          else
+             nbgv prepare-release --nextVersion increment-minor
+          fi
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.json
+          git commit -m "chore: bump version to $(nbgv get-version -v SimpleVersion)"
+          git push origin main

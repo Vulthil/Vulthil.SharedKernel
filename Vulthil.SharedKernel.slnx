@@ -14,7 +14,7 @@
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
-    <File Path=".github/workflows/new-ci.yml" />
+    <File Path=".github/workflows/version-bump.yml" />
   </Folder>
   <Folder Name="/samples/">
     <File Path="samples/Directory.Build.props" />

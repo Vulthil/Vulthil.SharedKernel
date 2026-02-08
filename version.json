@@ -1,5 +1,9 @@
 {
   "version": "0.0",
+  "versionHeightOffset": 11,
+  "release": {
+    "firstUnstableTag": "preview"
+  },
   "publicReleaseRefSpec": [
     "^refs/heads/main$",
     "^refs/heads/master$"

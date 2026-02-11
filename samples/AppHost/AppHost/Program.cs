@@ -3,8 +3,8 @@ using ServiceDefaults;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var username = builder.AddParameter("rabbitmq-username", true);
-var password = builder.AddParameter("rabbitmq-password", true);
+var username = builder.AddParameter("rabbitmqUsername");
+var password = builder.AddParameter("rabbitmqPassword", true);
 var rmq = builder.AddRabbitMQ(ServiceNames.RabbitMqServiceName, username, password)
     .WithManagementPlugin();
 

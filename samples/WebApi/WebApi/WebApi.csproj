@@ -9,9 +9,9 @@
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.RabbitMq\Vulthil.Messaging.RabbitMq.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel\Vulthil.SharedKernel.csproj" />
+		<ProjectReference Include="..\..\AppHost\ServiceDefaults\ServiceDefaults.csproj" />
 		<ProjectReference Include="..\WebApi.Application\WebApi.Application.csproj" />
 		<ProjectReference Include="..\WebApi.Infrastructure\WebApi.Infrastructure.csproj" />
-		<ProjectReference Include="..\WebApi.ServiceDefaults\WebApi.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>

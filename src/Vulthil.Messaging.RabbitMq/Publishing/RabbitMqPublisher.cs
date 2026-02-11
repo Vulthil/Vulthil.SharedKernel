@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq;
+using Vulthil.Messaging.RabbitMq.Requests;
 
 namespace Vulthil.Messaging.RabbitMq.Publishing;
 
@@ -84,17 +85,22 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         }
     }
 
-    public async Task PublishAsync<TMessage>(TMessage message, string? routingKey = null, CancellationToken cancellationToken = default)
+    public async Task PublishAsync<TMessage>(TMessage message, Func<IPublishContext, Task>? configureContext = null, CancellationToken cancellationToken = default)
         where TMessage : notnull
     {
         ArgumentNullException.ThrowIfNull(message);
+
+        var publishContext = new PublishContext();
+        configureContext ??= (_ => Task.CompletedTask);
+        await configureContext(publishContext);
         var type = message.GetType();
 
-        var finalRoutingKey = routingKey
+        var routingKey = publishContext.RoutingKey
             ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyRoutingKeyFormatters)
             ?? string.Empty;
 
-        var correlationId = RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyCorrelationIdFormatters)
+        var correlationId = publishContext.CorrelationId
+            ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyCorrelationIdFormatters)
             ?? Guid.CreateVersion7().ToString();
 
         var properties = new BasicProperties()
@@ -102,14 +108,14 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
             Type = type.FullName,
             CorrelationId = correlationId,
             ContentType = RabbitMqConstants.ContentType,
-            Headers = new Dictionary<string, object?>(),
+            Headers = publishContext.Headers,
             Persistent = true,
-            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
         };
 
         var body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
 
-        await InternalPublishAsync<TMessage>(body, properties, finalRoutingKey, cancellationToken);
+        await InternalPublishAsync<TMessage>(body, properties, routingKey, cancellationToken);
     }
 
     public async ValueTask DisposeAsync()

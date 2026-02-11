@@ -1,9 +1,11 @@
 using Scalar.Aspire;
-using WebApi.ServiceDefaults;
+using ServiceDefaults;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var rmq = builder.AddRabbitMQ(ServiceNames.RabbitMqServiceName)
+var username = builder.AddParameter("rabbitmq-username", true);
+var password = builder.AddParameter("rabbitmq-password", true);
+var rmq = builder.AddRabbitMQ(ServiceNames.RabbitMqServiceName, username, password)
     .WithManagementPlugin();
 
 var postgres = builder.AddPostgres(ServiceNames.PostgresSqlServerServiceName);
@@ -17,7 +19,6 @@ var wepApi = builder.AddProject<Projects.WebApi>(ServiceNames.WebApiServiceName)
 builder.AddProject<Projects.WebApp>(ServiceNames.WebAppServiceName)
     .WithReference(wepApi)
     .WaitFor(wepApi);
-
 
 var scalar = builder.AddScalarApiReference(options =>
     {

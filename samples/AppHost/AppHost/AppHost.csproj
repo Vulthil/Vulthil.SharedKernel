@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.3.0" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<UserSecretsId>dd0fe63f-1e88-4f71-abce-d1ba93af2054</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
+		<PackageReference Include="Scalar.Aspire" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\WebApi\WebApi\WebApi.csproj" />
+		<ProjectReference Include="..\..\WebApp\WebApp\WebApp.csproj" />
+		<ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" IsAspireProjectResource="false"/>
+	</ItemGroup>
+
+</Project>

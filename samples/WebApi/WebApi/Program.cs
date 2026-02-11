@@ -1,8 +1,8 @@
 using System.Reflection;
+using ServiceDefaults;
 using Vulthil.SharedKernel.Api;
 using WebApi.Application;
 using WebApi.Infrastructure;
-using WebApi.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

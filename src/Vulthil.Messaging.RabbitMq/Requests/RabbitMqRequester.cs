@@ -21,11 +21,16 @@ internal sealed class RabbitMqRequester(
 
     public async Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
         TRequest message,
-        string? routingKey = null,
+        Func<IPublishContext, Task>? configureContext = null,
         CancellationToken cancellationToken = default)
         where TRequest : notnull
         where TResponse : notnull
     {
+        ArgumentNullException.ThrowIfNull(message);
+        var publishContext = new PublishContext();
+        configureContext ??= (_ => Task.CompletedTask);
+        await configureContext(publishContext);
+
         var tcs = new TaskCompletionSource<Result<TResponse>>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         using var timeoutCts = new CancellationTokenSource(_defaultTimeout);
@@ -33,12 +38,13 @@ internal sealed class RabbitMqRequester(
 
         var type = message.GetType();
 
-        var finalRoutingKey = routingKey
+        var routingKey = publishContext.RoutingKey
             ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyRoutingKeyFormatters)
             ?? string.Empty;
 
-        var correlationId = RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyCorrelationIdFormatters)
-            ?? Guid.CreateVersion7().ToString();
+        var correlationId = publishContext.CorrelationId
+                ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyCorrelationIdFormatters)
+                ?? Guid.CreateVersion7().ToString();
 
         _listener.RegisterWaiter(correlationId, tcs);
 
@@ -50,12 +56,13 @@ internal sealed class RabbitMqRequester(
                 ReplyTo = _listener.ReplyToQueueName,
                 ContentType = RabbitMqConstants.ContentType,
                 Type = typeof(TRequest).FullName,
-                Expiration = _defaultTimeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture)
+                Expiration = _defaultTimeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
+                Headers = publishContext.Headers,
             };
 
             var body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
 
-            await _publisher.InternalPublishAsync<TRequest>(body, props, finalRoutingKey, cancellationToken);
+            await _publisher.InternalPublishAsync<TRequest>(body, props, routingKey, cancellationToken);
 
             using var ctRegistration = linkedCts.Token.Register(() =>
             {

@@ -1,5 +1,5 @@
 using WebApp.Components;
-using WebApi.ServiceDefaults;
+using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

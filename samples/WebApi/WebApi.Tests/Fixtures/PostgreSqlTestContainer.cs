@@ -1,11 +1,11 @@
 ﻿using System.Data.Common;
 using Npgsql;
 using Respawn;
+using ServiceDefaults;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 using Vulthil.xUnit.Fixtures;
 using WebApi.Infrastructure.Data;
-using WebApi.ServiceDefaults;
 using Xunit.Sdk;
 
 namespace WebApi.Tests.Fixtures;

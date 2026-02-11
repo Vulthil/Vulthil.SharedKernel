@@ -1,4 +1,4 @@
-namespace WebApi.ServiceDefaults;
+namespace ServiceDefaults;
 
 public static class ServiceNames
 {

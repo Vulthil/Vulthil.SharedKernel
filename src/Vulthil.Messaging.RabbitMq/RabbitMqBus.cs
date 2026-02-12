@@ -36,29 +36,47 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
+        await SetupTopology(cancellationToken);
+
+        await StartConsumersAsync(cancellationToken);
+
+        await _responseListener.InitializeAsync(_connection);
+    }
+
+    private async Task StartConsumersAsync(CancellationToken cancellationToken)
+    {
+
+        foreach (var queue in _queueDefinitions)
+        {
+            _typeCache.RegisterQueue(queue);
+
+            for (int i = 0; i < queue.ChannelCount; i++)
+            {
+                var options = new CreateChannelOptions(
+                    publisherConfirmationsEnabled: false,
+                    publisherConfirmationTrackingEnabled: false,
+                    consumerDispatchConcurrency: queue.ConcurrencyLimit
+                );
+
+                var channel = await _connection.CreateChannelAsync(options, cancellationToken);
+                await channel.BasicQosAsync(0, queue.PrefetchCount, false, cancellationToken);
+
+                var worker = new RabbitMqConsumerWorker(_serviceScopeFactory, queue, channel, _typeCache, _messagingJsonOptions.JsonSerializerOptions);
+
+                _workers.Add(worker);
+            }
+        }
+        await Task.WhenAll(_workers.Select(w => w.StartAsync(cancellationToken)));
+    }
+
+    private async Task SetupTopology(CancellationToken cancellationToken)
+    {
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
         foreach (var queue in _queueDefinitions)
         {
             await SetupTopology(queue, channel, cancellationToken);
-
-            _typeCache.RegisterQueue(queue);
-
-            var options = new CreateChannelOptions(
-                publisherConfirmationsEnabled: false,
-                publisherConfirmationTrackingEnabled: false,
-                consumerDispatchConcurrency: queue.ConsumerCount
-            );
-
-            var workerChannel = await _connection.CreateChannelAsync(options, cancellationToken);
-            var worker = new RabbitMqConsumerWorker(_serviceScopeFactory, queue, workerChannel, _typeCache, _messagingJsonOptions.JsonSerializerOptions);
-
-            await worker.StartAsync(cancellationToken);
-
-            _workers.Add(worker);
         }
-
-        await _responseListener.InitializeAsync(_connection);
     }
 
     private static async Task SetupTopology(QueueDefinition queue, IChannel channel, CancellationToken cancellationToken)
@@ -124,5 +142,4 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 
         GC.SuppressFinalize(this);
     }
-
 }

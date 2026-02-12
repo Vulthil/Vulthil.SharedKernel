@@ -15,22 +15,22 @@ internal sealed record MessageContextImplementation<T>(T Message, IMessageContex
 internal sealed class RabbitMqConsumerWorker(
     IServiceScopeFactory serviceScopeFactory,
     QueueDefinition queue,
-    IChannel workerChannel,
+    IChannel channel,
     MessageTypeCache messageTypeCache,
     JsonSerializerOptions jsonSerializerOptions) : IAsyncDisposable
 {
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
     private readonly QueueDefinition _queueDefinition = queue;
-    private readonly IChannel _channel = workerChannel;
+    private readonly IChannel _channel = channel;
     private readonly MessageTypeCache _typeCache = messageTypeCache;
     private readonly JsonSerializerOptions _jsonOptions = jsonSerializerOptions;
 
     private string? _consumerTag;
 
-    public async Task StartAsync(CancellationToken ct)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         // 1. Configure QoS for this worker's channel
-        await _channel.BasicQosAsync(0, _queueDefinition.PrefetchCount, false, ct);
+        await _channel.BasicQosAsync(0, _queueDefinition.PrefetchCount, false, cancellationToken);
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
 
@@ -42,7 +42,7 @@ internal sealed class RabbitMqConsumerWorker(
             queue: _queueDefinition.Name,
             autoAck: false,
             consumer: consumer,
-            cancellationToken: ct);
+            cancellationToken: cancellationToken);
     }
 
     private async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs ea)
@@ -58,6 +58,7 @@ internal sealed class RabbitMqConsumerWorker(
             await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: true);
         }
     }
+
 
     private async Task HandleMessageAsync(BasicDeliverEventArgs ea)
     {

@@ -29,8 +29,9 @@ public sealed record QueueDefinition(string Name)
     private readonly HashSet<Registration> _registrations = [];
 
     public string Name { get; set; } = Name;
-    public ushort ConsumerCount { get; set; } = 1;
-    public ushort PrefetchCount { get; set; } = 1;
+    public ushort PrefetchCount { get; set; } = 16;
+    public ushort ChannelCount { get; set; } = 1;
+    public ushort ConcurrencyLimit { get; set; } = 1;
 
     public bool IsQuorum { get; set; } = true;
     public bool Durable { get; set; } = true;

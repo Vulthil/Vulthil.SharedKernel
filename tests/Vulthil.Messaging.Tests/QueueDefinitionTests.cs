@@ -1,5 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.xUnit;
@@ -42,8 +40,8 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
 
         // Assert
         queue.Name.ShouldBe("TestQueue");
-        queue.ConsumerCount.Equals((ushort)1).ShouldBeTrue();
-        queue.PrefetchCount.Equals((ushort)1).ShouldBeTrue();
+        queue.ConcurrencyLimit.Equals((ushort)1).ShouldBeTrue();
+        queue.PrefetchCount.Equals((ushort)16).ShouldBeTrue();
         queue.IsQuorum.ShouldBeTrue();
         queue.Durable.ShouldBeTrue();
         queue.AutoDelete.ShouldBeFalse();
@@ -66,7 +64,7 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
 
         // Act
         queue.Name = "NewQueueName";
-        queue.ConsumerCount = 5;
+        queue.ConcurrencyLimit = 5;
         queue.PrefetchCount = 10;
         queue.IsQuorum = false;
         queue.Durable = false;
@@ -78,7 +76,7 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
 
         // Assert
         queue.Name.ShouldBe("NewQueueName");
-        queue.ConsumerCount.Equals((ushort)5).ShouldBeTrue();
+        queue.ConcurrencyLimit.Equals((ushort)5).ShouldBeTrue();
         queue.PrefetchCount.Equals((ushort)10).ShouldBeTrue();
         queue.IsQuorum.ShouldBeFalse();
         queue.Durable.ShouldBeFalse();

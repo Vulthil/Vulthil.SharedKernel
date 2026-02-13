@@ -28,9 +28,11 @@ jobs:
         id: check
         run: |
           BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
-          
+          dotnet affected --from "$BASE_REF" --to HEAD --format json > affected.json
+          jq -r '.projects[]' affected.json > affected_list.txt
+
           dotnet affected --from "$BASE_REF" --to HEAD
-          
+
           if [ -f affected.proj ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
           else
@@ -42,9 +44,10 @@ jobs:
       - name: Publish Affected Projects 
         if: steps.check.outputs.has_changes == 'true' 
         run: | 
-          for proj in $(cat affected.proj | grep '<Project ' | sed 's/.*Include="\([^"]*\)".*/\1/'); do
-            dotnet publish "$proj" -c Release -o "./publish/$(basename $proj .csproj)" 
-          done
+          while read proj; do
+            name=$(basename "$proj" .csproj)
+            dotnet publish "$proj" -c Release -o "./publish/$name"
+          done < affected_list.txt
       - name: Upload Build Output
         if: steps.check.outputs.has_changes == 'true'
         uses: actions/upload-artifact@v6

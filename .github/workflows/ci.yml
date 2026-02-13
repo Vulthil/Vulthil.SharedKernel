@@ -32,13 +32,12 @@ jobs:
           if git diff --name-only "$BASE_REF" HEAD | grep -Eq '^\.github/workflows/|\.props$|\.targets$|^version\.json$'; then 
             echo "CI files changed, assuming all projects affected."
           
-            mapfile -t csproj_files < <(git ls-files '*.csproj')
-
-            if [ ${#csproj_files[@]} -eq 0 ]; then 
+            readarray -t proj_names < <(git ls-files '*.csproj' | xargs -n1 basename -s .csproj | sort -u)
+            
+            if [ ${#proj_names[@]} -gt 0 ]; then 
+              dotnet affected --from "$BASE_REF" --to HEAD "${proj_names[@]/#/--assume-changes }" 
+            else
               echo "No .csproj files found; skipping"
-            else 
-              # prefix each path with the flag and call dotnet affected 
-              dotnet affected --from "$BASE_REF" --to HEAD "${csproj_files[@]/#/--assume-changes }"
             fi 
           else 
             dotnet affected --from "$BASE_REF" --to HEAD

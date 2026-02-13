@@ -2,9 +2,6 @@
   <Folder Name="/.config/">
     <File Path=".config/dotnet-tools.json" />
   </Folder>
-  <Folder Name="/.config/dotnet-affected/">
-    <File Path="dotnet-affected.json" />
-  </Folder>
   <Folder Name="/.github/">
     <File Path=".github/dependabot.yml" />
   </Folder>

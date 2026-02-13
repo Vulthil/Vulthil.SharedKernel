@@ -39,15 +39,19 @@ jobs:
       - name: Build Affected
         if: steps.check.outputs.has_changes == 'true'
         run: dotnet build affected.proj --configuration Release
-
+      - name: Publish Affected Projects 
+        if: steps.check.outputs.has_changes == 'true' 
+        run: | 
+          for proj in $(cat affected.proj | grep '<Project ' | sed 's/.*Include="\([^"]*\)".*/\1/'); do
+            dotnet publish "$proj" -c Release -o "./publish/$(basename $proj .csproj)" 
+          done
       - name: Upload Build Output
         if: steps.check.outputs.has_changes == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: build-artifacts
           path: |
-            **/bin/Release/
-            **/obj/
+            publish/
             affected.proj
 
   test:
@@ -59,7 +63,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v5
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: build-artifacts
       - name: Run Tests
@@ -78,7 +82,7 @@ jobs:
         with:
           name: build-artifacts
       - name: Pack
-        run: dotnet pack affected.proj --configuration Release --output ./nupkgs --no-build
+        run: dotnet pack affected.proj --configuration Release -o ./nupkgs --no-build
 
       - name: Check if nupkgs exist
         id: check_files

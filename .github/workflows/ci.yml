@@ -33,7 +33,7 @@ jobs:
           
           if [ "$CI_CHANGED" = "true" ]; then
             echo "CI files changed, assuming all projects affected."
-            dotnet affected --from $BASE_REF --to HEAD --assume-changes "Directory.Build.props"
+            dotnet affected --from $BASE_REF --to HEAD --assume-changes "**/*.csproj"
           else
             dotnet affected --from $BASE_REF --to HEAD
           fi

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging;
 using Vulthil.Messaging.RabbitMq;
@@ -22,24 +23,41 @@ public static class DependencyInjection
                             options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringKey)))
                         .EnableOutboxProcessing());
 
+        builder.EnrichNpgsqlDbContext<WebApiDbContext>(
+            configureSettings: settings =>
+            {
+                settings.DisableRetry = true;
+                settings.CommandTimeout = 30;
+            });
+
         return builder;
     }
 
+    public static Task MigrateAsync(this IHost host) => host.MigrateAsync<WebApiDbContext>();
+
     public static IHostApplicationBuilder AddRabbitMqMessagingInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
     {
-        builder.Services.AddMessaging(builder.Configuration, x =>
+        builder.AddMessaging(x =>
         {
-            x.AddQueue("main-entity-events", queue =>
+            x.RegisterRoutingKeyFormatter<MainEntityCreatedIntegrationEvent>("main-entity.created");
+
+            x.AddQueue("MainEntityEvents", queue =>
             {
-                queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>();
+                queue.AddRequestConsumer<SideEffectRequestConsumer>();
+
+                queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
+                {
+                    c.Bind<MainEntityCreatedIntegrationEvent>("main-entity.created");
+                });
+                queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
+                {
+                    c.Bind<MainEntityCreatedIntegrationEvent>("main-entity.created2");
+                });
             });
 
-            x.AddEvent<MainEntityCreatedIntegrationEvent>();
-
-            x.UseRabbitMq();
+            x.UseRabbitMq(rabbitMqConnectionStringKey);
         });
 
-        builder.AddRabbitMqClient(rabbitMqConnectionStringKey);
 
         return builder;
     }

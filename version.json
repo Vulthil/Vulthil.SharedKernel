@@ -1,0 +1,16 @@
+{
+  "version": "0.0",
+  "versionHeightOffset": 7,
+  "release": {
+    "firstUnstableTag": "preview"
+  },
+  "publicReleaseRefSpec": [
+    "^refs/heads/main$",
+    "^refs/heads/master$"
+  ],
+  "cloudBuild": {
+    "buildNumber": {
+      "enabled": true
+    }
+  }
+}

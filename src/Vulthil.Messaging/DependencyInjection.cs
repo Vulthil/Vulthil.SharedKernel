@@ -1,19 +1,25 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Vulthil.Messaging;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddMessaging(this IServiceCollection services, IConfiguration configuration, Action<IMessagingConfigurator> messagingConfiguratorAction)
+    public static IServiceCollection AddMessaging(this IHostApplicationBuilder builder, Action<IMessagingConfigurator> messagingConfiguratorAction)
     {
-        services.AddHostedService<ConsumerHostedService>();
+        var messagingOptions = new MessagingOptions();
+        builder.Configuration.GetSection(MessagingOptions.SectionName).Bind(messagingOptions);
 
-        var messagingConfigurator = new MessagingConfigurator(services, configuration);
+        builder.Services.AddHostedService<ConsumerHostedService>();
+
+        var messagingConfigurator = new MessagingConfigurator(builder, messagingOptions);
         messagingConfiguratorAction(messagingConfigurator);
 
-        messagingConfigurator.RegisterTypes();
+        builder.Services.AddSingleton(Options.Create(messagingOptions));
 
-        return services;
+        return builder.Services;
     }
+
 }

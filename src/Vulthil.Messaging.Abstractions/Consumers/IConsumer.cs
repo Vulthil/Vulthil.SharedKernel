@@ -1,22 +1,18 @@
 ﻿namespace Vulthil.Messaging.Abstractions.Consumers;
 
-public interface IConsumer
-{
-    Task ConsumeAsync(object message, CancellationToken cancellationToken = default);
-}
-
+public interface IConsumer;
 public interface IConsumer<in TMessage> : IConsumer
 {
-    Task IConsumer.ConsumeAsync(object message, CancellationToken cancellationToken)
-    {
-        if (message is not TMessage typedMessage)
-        {
-            throw new ArgumentException($"Invalid message type: {message.GetType().Name}. Expected: {typeof(TMessage).Name}");
-        }
-        return ConsumeAsync(typedMessage, cancellationToken);
-    }
-
-    Task ConsumeAsync(TMessage message, CancellationToken cancellationToken = default);
+    Task ConsumeAsync(IMessageContext<TMessage> messageContext, CancellationToken cancellationToken = default);
 }
 
-
+public interface IMessageContext
+{
+    string CorrelationId { get; }
+    string RoutingKey { get; }
+    IDictionary<string, object?> Headers { get; }
+}
+public interface IMessageContext<out TMessage> : IMessageContext
+{
+    TMessage Message { get; }
+}

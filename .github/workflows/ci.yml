@@ -28,20 +28,8 @@ jobs:
         id: check
         run: |
           BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
-
-          if git diff --name-only "$BASE_REF" HEAD | grep -Eq '^\.github/workflows/|\.props$|\.targets$|^version\.json$'; then 
-            echo "CI files changed, assuming all projects affected."
           
-            readarray -t proj_names < <(git ls-files '*.csproj' | xargs -n1 basename -s .csproj | sort -u)
-            
-            if [ ${#proj_names[@]} -gt 0 ]; then 
-              dotnet affected --from "$BASE_REF" --to HEAD --assume-changes "${proj_names[@]/#/ }" 
-            else
-              echo "No .csproj files found; skipping"
-            fi 
-          else 
-            dotnet affected --from "$BASE_REF" --to HEAD
-          fi
+          dotnet affected --from "$BASE_REF" --to HEAD
           
           if [ -f affected.proj ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT

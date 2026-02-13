@@ -29,13 +29,19 @@ jobs:
         run: |
           BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
 
-          CI_CHANGED=$(git diff --name-only "$BASE_REF" HEAD | grep -Eq '^\.github/workflows/|\.props$|\.targets$|^version\.json$' && echo true || echo false)
-          
-          if [ "$CI_CHANGED" = "true" ]; then
+          if git diff --name-only "$BASE_REF" HEAD | grep -Eq '^\.github/workflows/|\.props$|\.targets$|^version\.json$'; then 
             echo "CI files changed, assuming all projects affected."
-            dotnet affected --from $BASE_REF --to HEAD --assume-changes "**/*.csproj"
-          else
-            dotnet affected --from $BASE_REF --to HEAD
+          
+            mapfile -t csproj_files < <(git ls-files '*.csproj')
+
+            if [ ${#csproj_files[@]} -eq 0 ]; then 
+              echo "No .csproj files found; skipping"
+            else 
+              # prefix each path with the flag and call dotnet affected 
+              dotnet affected --from "$BASE_REF" --to HEAD "${csproj_files[@]/#/--assume-changes }"
+            fi 
+          else 
+            dotnet affected --from "$BASE_REF" --to HEAD
           fi
           
           if [ -f affected.proj ]; then

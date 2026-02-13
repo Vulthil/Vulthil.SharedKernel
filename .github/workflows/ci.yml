@@ -26,7 +26,7 @@ jobs:
         id: dotnet_affected
         with:
           from: ${{ github.event_name == 'pull_request' && github.base_ref || 'HEAD~1' }}
-          tp: ${{ github.head_ref }}
+          to: ${{ github.head_ref }}
       - name: Build Affected
         if: success() && steps.dotnet_affected.outputs.affected != ''
         run: dotnet build affected.proj --configuration Release

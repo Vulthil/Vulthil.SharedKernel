@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/.config/">
+    <File Path=".config/dotnet-tools.json" />
+  </Folder>
+  <Folder Name="/.config/dotnet-affected/">
+    <File Path="dotnet-affected.json" />
+  </Folder>
   <Folder Name="/.github/">
     <File Path=".github/dependabot.yml" />
   </Folder>
@@ -8,23 +14,26 @@
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
+    <File Path=".github/workflows/version-bump.yml" />
   </Folder>
-  <Folder Name="/samples/" />
+  <Folder Name="/samples/">
+    <File Path="samples/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/samples/AppHost/">
+    <Project Path="samples/AppHost/AppHost/AppHost.csproj" />
+    <Project Path="samples/AppHost/ServiceDefaults/ServiceDefaults.csproj" />
+  </Folder>
   <Folder Name="/samples/WebApi/">
-    <Project Path="samples/WebApi/WebApi.AppHost/WebApi.AppHost.csproj" Id="ab4523a9-7dd9-443f-9daf-be336b15a5e2" />
-    <Project Path="samples/WebApi/WebApi.Application/WebApi.Application.csproj" Id="e9ef383c-a7ae-4c79-bbe2-6af10e4a342b" />
-    <Project Path="samples/WebApi/WebApi.Domain/WebApi.Domain.csproj" Id="2696fbaf-4158-4809-8899-5a229dbebade" />
-    <Project Path="samples/WebApi/WebApi.Infrastructure/WebApi.Infrastructure.csproj" Id="c8067fd4-18ab-40eb-9a3c-6e0573062095" />
-    <Project Path="samples/WebApi/WebApi.ServiceDefaults/WebApi.ServiceDefaults.csproj" />
+    <Project Path="samples/WebApi/WebApi.Application/WebApi.Application.csproj" />
+    <Project Path="samples/WebApi/WebApi.Domain/WebApi.Domain.csproj" />
+    <Project Path="samples/WebApi/WebApi.Infrastructure/WebApi.Infrastructure.csproj" />
     <Project Path="samples/WebApi/WebApi.Tests/WebApi.Tests.csproj" />
     <Project Path="samples/WebApi/WebApi/WebApi.csproj" />
   </Folder>
-  <Folder Name="/samples/WebApi/Sample Items/">
-    <File Path="samples/WebApi/Directory.Build.props" />
+  <Folder Name="/samples/WebApp/">
+    <Project Path="samples/WebApp/WebApp/WebApp.csproj" />
   </Folder>
-  <Folder Name="/samples/WebApp/" />
   <Folder Name="/Solution Items/">
-    <File Path=".config/dotnet-tools.json" />
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
@@ -33,6 +42,7 @@
     <File Path="global.json" />
     <File Path="README.md" />
     <File Path="test-reports" />
+    <File Path="version.json" />
     <File Path="watch" />
     <File Path="watch-samples" />
   </Folder>
@@ -41,26 +51,28 @@
     <File Path="TestReports/index.html" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Vulthil.Results/Vulthil.Results.csproj" Id="8e091949-f09e-4999-bcc7-cc25e55909b7" />
+    <Project Path="src/Vulthil.Results/Vulthil.Results.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Application/Vulthil.SharedKernel.Application.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Infrastructure/Vulthil.SharedKernel.Infrastructure.csproj" />
     <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
   </Folder>
-  <Folder Name="/src/Messaging/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
-    <Project Path="src/Vulthil.Messaging.Abstractions/Vulthil.Messaging.Abstractions.csproj" Id="ed7e652b-5802-4667-b911-11851a9b3dd9" />
-    <Project Path="src/Vulthil.Messaging.RabbitMq/Vulthil.Messaging.RabbitMq.csproj" Id="4b1d6486-9a33-45de-8e74-446041a0bd88" />
-    <Project Path="src/Vulthil.Messaging/Vulthil.Messaging.csproj" Id="bc8c8002-4379-4b05-b163-70adbe867fb9" />
+  <Folder Name="/src/Messaging/">
+    <Project Path="src/Vulthil.Messaging.Abstractions/Vulthil.Messaging.Abstractions.csproj" />
+    <Project Path="src/Vulthil.Messaging.RabbitMq/Vulthil.Messaging.RabbitMq.csproj" />
+    <Project Path="src/Vulthil.Messaging/Vulthil.Messaging.csproj" />
   </Folder>
-  <Folder Name="/src/Testing/" Id="84636569-eb40-4aad-9502-fb45eee5ab19">
-    <Project Path="src/Vulthil.Extensions.Testing/Vulthil.Extensions.Testing.csproj" Id="e83597e0-87ae-4a30-8b79-0aa3fd6671b8" />
-    <Project Path="src/Vulthil.Messaging.TestHarness/Vulthil.Messaging.TestHarness.csproj" Id="48a56824-43ef-42b0-aa8a-83459ccfa769" />
+  <Folder Name="/src/Testing/">
+    <Project Path="src/Vulthil.Extensions.Testing/Vulthil.Extensions.Testing.csproj" />
+    <Project Path="src/Vulthil.Messaging.TestHarness/Vulthil.Messaging.TestHarness.csproj" />
     <Project Path="src/Vulthil.xUnit/Vulthil.xUnit.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" Id="1f579611-7ec6-4b60-b97e-9557cbc16f95" />
-    <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" Id="d019ba9b-ca5d-4ec6-b302-e7a35838963b" />
-    <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" Id="4e699c2a-4c88-4f44-a80b-9c283234af71" />
+    <Project Path="tests/Vulthil.Messaging.Abstractions.Tests/Vulthil.Messaging.Abstractions.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.Tests/Vulthil.Messaging.Tests.csproj" />
+    <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" />
+    <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Test Items/">

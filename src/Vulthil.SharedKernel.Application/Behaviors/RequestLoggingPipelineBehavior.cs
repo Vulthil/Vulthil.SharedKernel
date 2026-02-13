@@ -7,9 +7,9 @@ using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application.Behaviors;
 
-internal static class LoggingBehaviors
+internal static partial class LoggingBehaviors
 {
-    internal sealed class RequestLoggingPipelineBehavior<TRequest, TResponse>(
+    internal sealed partial class RequestLoggingPipelineBehavior<TRequest, TResponse>(
         ILogger<RequestLoggingPipelineBehavior<TRequest, TResponse>> logger)
         : IPipelineHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
@@ -21,13 +21,13 @@ internal static class LoggingBehaviors
         {
             var requestName = typeof(TRequest).Name;
 
-            _logger.LogInformation("Processing request {RequestName}", requestName);
+            LogProcessingRequest(_logger, requestName);
 
             var result = await next(cancellationToken);
 
             if (result.IsSuccess)
             {
-                _logger.LogInformation("Completed request {RequestName}", requestName);
+                LogCompletedRequest(_logger, requestName);
             }
             else
             {
@@ -36,15 +36,23 @@ internal static class LoggingBehaviors
                     ["Error"] = JsonSerializer.Serialize(result.Error)
                 }))
                 {
-                    _logger.LogError("Completed request {RequestName} with error", requestName);
+                    LogCompletedRequestWithError(_logger, requestName);
                 }
             }
 
             return result;
         }
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Processing request {RequestName}")]
+        private static partial void LogProcessingRequest(ILogger logger, string requestName);
+        [LoggerMessage(Level = LogLevel.Information, Message = "Completed request {RequestName}")]
+        private static partial void LogCompletedRequest(ILogger logger, string requestName);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Completed request {RequestName} with error")]
+        private static partial void LogCompletedRequestWithError(ILogger logger, string requestName);
     }
 
-    internal sealed class DomainEventLoggingPipelineBehavior<TDomainEvent>(
+    internal sealed partial class DomainEventLoggingPipelineBehavior<TDomainEvent>(
         ILogger<DomainEventLoggingPipelineBehavior<TDomainEvent>> logger)
         : IDomainEventPipelineHandler<TDomainEvent>
         where TDomainEvent : IDomainEvent
@@ -55,11 +63,17 @@ internal static class LoggingBehaviors
         {
             var domainEventName = typeof(TDomainEvent).Name;
 
-            _logger.LogInformation("Processing event {DomainEventName}", domainEventName);
+            LogProcessingEvent(_logger, domainEventName);
 
             await next(cancellationToken);
 
-            _logger.LogInformation("Completed processing event {DomainEventName}", domainEventName);
+            LogCompletedEvent(_logger, domainEventName);
         }
+
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Processing event {DomainEventName}")]
+        private static partial void LogProcessingEvent(ILogger logger, string domainEventName);
+        [LoggerMessage(Level = LogLevel.Information, Message = "Completed processing event {DomainEventName}")]
+        private static partial void LogCompletedEvent(ILogger logger, string domainEventName);
     }
 }

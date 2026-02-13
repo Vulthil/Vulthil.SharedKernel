@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>   
+	  <ProjectReference Include="..\..\AppHost\ServiceDefaults\ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

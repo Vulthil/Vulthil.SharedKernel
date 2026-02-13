@@ -1,0 +1,8 @@
+{
+  "exclusionRegex": "",
+  "assumeChanges": [
+    "Directory.Build.props",
+    "Directory.Build.targets",
+    "version.json"
+  ]
+}

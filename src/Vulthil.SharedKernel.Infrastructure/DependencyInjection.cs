@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
@@ -51,8 +52,23 @@ public static class DependencyInjection
 
         return services;
     }
-}
 
+    public static Task MigrateAsync<TDbContext>(this IHost host)
+        where TDbContext : DbContext 
+        => host.Services.MigrateAsync<TDbContext>();
+
+    public static async Task MigrateAsync<TDbContext>(this IServiceProvider services)
+        where TDbContext : DbContext
+    {
+        await using var scope = services.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+        if (pendingMigrations.Any())
+        {
+            await context.Database.MigrateAsync();
+        }
+    }
+}
 
 public class DatabaseInfrastructureConfigurator
 {

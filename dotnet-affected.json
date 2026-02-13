@@ -3,6 +3,7 @@
   "assumeChanges": [
     "Directory.Build.props",
     "Directory.Build.targets",
-    "version.json"
+    "version.json",
+    ".github/workflows/**"
   ]
 }

@@ -30,9 +30,8 @@ jobs:
           # Use different comparison based on event
           BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
           
-          CI_CHANGED=(git diff --name-only $BASE_REF HEAD | grep -E "\.github/workflows/|\.props$|\.targets|version.json" || true)          
-          # 2. Run dotnet-affected
-          # If CI_CHANGED is not empty, use --assume-changes with a regex that matches all projects
+          CI_CHANGED=(git diff --name-only $BASE_REF HEAD | grep -E "\.github/workflows/|\.props|\.targets|version.json" || true)          
+
           if [ -n "$CI_CHANGED" ]; then
             echo "CI files changed, assuming all projects affected."
             dotnet affected --from $BASE_REF --to HEAD --assume-changes ".*"

@@ -29,8 +29,8 @@ jobs:
         run: |
           # Use different comparison based on event
           BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
-          
-          CI_CHANGED=(git diff --name-only $BASE_REF HEAD | grep -E "\.github/workflows/|\.props|\.targets|version.json" || true)          
+
+          CI_CHANGED=$(git diff --name-only "$BASE_REF" HEAD | grep -Eq '^\.github/workflows/|\.props$|\.targets$|^version\.json$' && echo true || echo false)
 
           if [ -n "$CI_CHANGED" ]; then
             echo "CI files changed, assuming all projects affected."

@@ -15,7 +15,7 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     outputs:
-      affected: ${{ steps.dotnet_affected.outputs.affected }}
+      has_changes: ${{ steps.check.outputs.has_changes }}
       
     steps:
       - uses: actions/checkout@v6

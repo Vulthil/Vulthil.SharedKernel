@@ -1,6 +1,6 @@
 {
-  "exclusionRegex": "",
-  "assumeChanges": [
+  "ExclusionRegex": "",
+  "AssumeChanges": [
     "dotnet-affected.json",
     ".github/workflows/*.yml",
     "Directory.Build.props",

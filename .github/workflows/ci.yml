@@ -35,7 +35,7 @@ jobs:
             readarray -t proj_names < <(git ls-files '*.csproj' | xargs -n1 basename -s .csproj | sort -u)
             
             if [ ${#proj_names[@]} -gt 0 ]; then 
-              dotnet affected --from "$BASE_REF" --to HEAD "${proj_names[@]/#/--assume-changes }" 
+              dotnet affected --from "$BASE_REF" --to HEAD --assume-changes "${proj_names[@]/#/ }" 
             else
               echo "No .csproj files found; skipping"
             fi 

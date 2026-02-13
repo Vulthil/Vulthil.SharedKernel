@@ -15,33 +15,24 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     outputs:
-      has_changes: ${{ steps.check.outputs.has_changes }}
+      affected: ${{ steps.dotnet_affected.outputs.affected }}
       
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v5
-      - name: Install dotnet-affected
-        run: dotnet tool install -g dotnet-affected
-      - name: Check Affected
-        id: check
-        run: |
-          # Use different comparison based on event
-          BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
-          dotnet affected --from $BASE_REF --to HEAD
-          
-          if [ -f affected.proj ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
+      - uses: leonardochaia/dotnet-affected-action@v1
+        id: dotnet_affected
+        with:
+          from: ${{ github.event_name == 'pull_request' && github.base_ref || 'HEAD~1' }}
+          tp: ${{ github.head_ref }}
       - name: Build Affected
-        if: steps.check.outputs.has_changes == 'true'
+        if: success() && steps.dotnet_affected.outputs.affected != ''
         run: dotnet build affected.proj --configuration Release
 
       - name: Upload Build Output
-        if: steps.check.outputs.has_changes == 'true'
+        if: success() && steps.dotnet_affected.outputs.affected != ''
         uses: actions/upload-artifact@v6
         with:
           name: build-artifacts
@@ -52,7 +43,7 @@ jobs:
 
   test:
     needs: analyze
-    if: needs.analyze.outputs.has_changes == 'true'
+    if: needs.analyze.outputs.affected != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -67,7 +58,7 @@ jobs:
 
   create_nuget:
     needs: analyze
-    if: needs.analyze.outputs.has_changes == 'true'
+    if: needs.analyze.outputs.affected != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

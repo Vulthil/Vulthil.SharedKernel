@@ -96,11 +96,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v5
-      - uses: actions/cache/restore@v4
-        with:
-          path: ~/.nuget/packages
-          key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
-          restore-keys: nuget-
       - name: Restore build output
         uses: actions/cache/restore@v4
         with:
@@ -121,11 +116,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v5
-      - uses: actions/cache/restore@v4
-        with:
-          path: ~/.nuget/packages
-          key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
-          restore-keys: nuget-
       - name: Restore build output
         uses: actions/cache/restore@v4
         with:

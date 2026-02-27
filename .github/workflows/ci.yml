@@ -38,7 +38,7 @@ jobs:
           fi
       - name: Upload Affected Project
         if: steps.check.outputs.has_changes == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: affected-project
           path: affected.proj
@@ -52,7 +52,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v5
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: affected-project
       - name: Run Tests
@@ -67,7 +67,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v5
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: affected-project
       - name: Pack
@@ -84,7 +84,7 @@ jobs:
 
       - name: Upload NuPkgs
         if: steps.check_files.outputs.found == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: nuget-packages
           path: ./nupkgs/*.nupkg
@@ -94,7 +94,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: nuget-packages
           path: ./nupkgs
@@ -139,7 +139,7 @@ jobs:
     needs: create_release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: nuget-packages
           path: ./nupkgs

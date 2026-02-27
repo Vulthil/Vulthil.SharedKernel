@@ -42,8 +42,12 @@ jobs:
     needs: analyze
     if: needs.analyze.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     outputs:
-      target: ${{ steps.scope.outputs.target }}
+      version: ${{ steps.version.outputs.version }}
+      has_packages: ${{ steps.check_nupkgs.outputs.found }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -54,8 +58,16 @@ jobs:
           path: ~/.nuget/packages
           key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-
-      - name: Install dotnet-affected
-        run: dotnet tool install -g dotnet-affected
+      - name: Install tools
+        run: |
+          dotnet tool install -g dotnet-affected
+          dotnet tool install -g nbgv
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(nbgv get-version -v NuGetPackageVersion)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "::notice::Version: $VERSION"
       - name: Determine build scope
         id: scope
         run: |
@@ -67,6 +79,11 @@ jobs:
           fi
 
           BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
+          if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
+            echo "::notice::Base ref '$BASE_REF' not found, falling back to full solution build"
+            echo "target=Vulthil.SharedKernel.slnx" >> $GITHUB_OUTPUT
+            exit 0
+          fi
           dotnet affected --from "$BASE_REF" --to HEAD 2>/dev/null || true
 
           if [ -f affected.proj ]; then
@@ -75,58 +92,18 @@ jobs:
             echo "::notice::No affected projects — falling back to full solution build"
             echo "target=Vulthil.SharedKernel.slnx" >> $GITHUB_OUTPUT
           fi
-      - name: Restore
-        run: dotnet restore ${{ steps.scope.outputs.target }}
       - name: Build
-        run: dotnet build ${{ steps.scope.outputs.target }} --configuration Release --no-restore
-      - name: Save build output
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            **/bin/Release
-            **/obj
-            affected.proj
-          key: build-output-${{ github.run_id }}-${{ github.run_attempt }}
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-dotnet@v5
-      - name: Restore build output
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            **/bin/Release
-            **/obj
-            affected.proj
-          key: build-output-${{ github.run_id }}-${{ github.run_attempt }}
-          fail-on-cache-miss: true
+        run: dotnet build ${{ steps.scope.outputs.target }} --configuration Release
       - name: Test
-        run: dotnet test ${{ needs.build.outputs.target }} --configuration Release --no-build
-
-  pack:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-dotnet@v5
-      - name: Restore build output
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            **/bin/Release
-            **/obj
-            affected.proj
-          key: build-output-${{ github.run_id }}-${{ github.run_attempt }}
-          fail-on-cache-miss: true
+        run: dotnet test ${{ steps.scope.outputs.target }} --configuration Release --no-build
       - name: Pack
-        run: dotnet pack ${{ needs.build.outputs.target }} --configuration Release --no-build -o ./nupkgs
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            VERSION="${VERSION}-preview.${{ github.run_number }}"
+          fi
+          echo "::notice::Packing with version: $VERSION"
+          dotnet pack ${{ steps.scope.outputs.target }} --configuration Release --no-build -o ./nupkgs -p:PackageVersion=$VERSION
       - name: Check if nupkgs exist
         id: check_nupkgs
         run: |
@@ -143,19 +120,21 @@ jobs:
           path: ./nupkgs/*.nupkg
 
   deploy_preview:
-    needs: [test, pack]
-    if: github.event_name == 'pull_request'
+    needs: build
+    if: github.event_name == 'pull_request' && needs.build.outputs.has_packages == 'true' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/download-artifact@v8
         with:
           name: nuget-packages
           path: ./nupkgs
-        continue-on-error: true
 
       - name: Push to GitHub Packages
         run: |
-          if [ -d "./nupkgs" ]; then
+          if ls ./nupkgs/*.nupkg >/dev/null 2>&1; then
             dotnet nuget push "./nupkgs/*.nupkg" \
               --api-key ${{ secrets.GITHUB_TOKEN }} \
               --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
@@ -163,8 +142,8 @@ jobs:
           fi
 
   create_release:
-    needs: [test, pack]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.outputs.has_packages == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -172,26 +151,21 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-dotnet@v5
-      - name: Install NBGV
-        run: dotnet tool install -g nbgv
-      - name: Get Version Tag
-        id: versioning
-        run: |
-          VERSION=$(nbgv get-version -v SemVer2)
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
       - name: Create Release
         uses: elgohr/Github-Release-Action@v5
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: "Release ${{ steps.versioning.outputs.tag }}"
-          tag: ${{ steps.versioning.outputs.tag }}
+          title: "Release v${{ needs.build.outputs.version }}"
+          tag: v${{ needs.build.outputs.version }}
           prerelease: false
 
   deploy:
     needs: create_release
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/download-artifact@v8
         with:
@@ -199,9 +173,11 @@ jobs:
           path: ./nupkgs
       - name: Push to GitHub Packages
         run: |
-          dotnet nuget push "./nupkgs/*.nupkg" \
-            --api-key ${{ secrets.GITHUB_TOKEN }} \
-            --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
-            --skip-duplicate
-            #--api-key ${{ secrets.NUGET_API_KEY }} \
-            #--source https://api.nuget.org/v3/index.json \
+          if ls ./nupkgs/*.nupkg >/dev/null 2>&1; then
+            dotnet nuget push "./nupkgs/*.nupkg" \
+              --api-key ${{ secrets.GITHUB_TOKEN }} \
+              --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+              --skip-duplicate
+              #--api-key ${{ secrets.NUGET_API_KEY }} \
+              #--source https://api.nuget.org/v3/index.json \
+          fi

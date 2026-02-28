@@ -1,4 +1,18 @@
 - name: Introduction
   href: index.md
+- name: Getting Started
+  href: getting-started.md
+- name: Result Pattern
+  href: result-pattern.md
+- name: Domain Modeling
+  href: domain-modeling.md
+- name: CQRS & Pipeline Behaviors
+  href: cqrs-pipeline.md
+- name: Messaging
+  href: messaging.md
+- name: Outbox Pattern
+  href: outbox-pattern.md
+- name: Testing
+  href: testing.md
 - name: Packages
   href: packages/

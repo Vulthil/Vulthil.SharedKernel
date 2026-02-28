@@ -23,7 +23,12 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         _messagingOptions = messagingOptions;
     }
 
-    public void ConfigureMessagingOptions(Action<MessagingOptions> action) => action(_messagingOptions);
+    public IMessagingConfigurator ConfigureMessagingOptions(Action<MessagingOptions> action)
+    {
+        action(_messagingOptions);
+        return this;
+    }
+    public IMessagingConfigurator ConfigureFaults(Action<IFaultConfigurator> configureFaults) => throw new NotImplementedException();
 
     private static string ConstructSectionName(string queueName) => $"{DefaultSectionName}:Queues:{queueName}";
 
@@ -55,4 +60,5 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         _messagingOptions.CorrelationIdFormatters[typeof(T)] = (msg) => picker((T)msg);
         return this;
     }
+
 }

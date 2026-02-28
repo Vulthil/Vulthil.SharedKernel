@@ -10,14 +10,15 @@ public static class Polling
     public static async Task<Result<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<Task<Result<T>>> func,
-        TimeSpan? timerTick = null)
+        TimeSpan? timerTick = null,
+        CancellationToken cancellationToken = default)
     {
         timerTick ??= TimeSpan.FromSeconds(1);
         using var timer = new PeriodicTimer(timerTick.Value);
 
         DateTime endTimeUtc = DateTime.UtcNow.Add(timeout);
         while (DateTime.UtcNow < endTimeUtc &&
-               await timer.WaitForNextTickAsync())
+               await timer.WaitForNextTickAsync(cancellationToken))
         {
             Result<T> result = await func();
 
@@ -28,5 +29,29 @@ public static class Polling
         }
 
         return Result.Failure<T>(Timeout);
+    }
+
+    public static async Task<Result> WaitAsync(
+        TimeSpan timeout,
+        Func<Task<Result>> func,
+        TimeSpan? timerTick = null,
+        CancellationToken cancellationToken = default)
+    {
+        timerTick ??= TimeSpan.FromSeconds(1);
+        using var timer = new PeriodicTimer(timerTick.Value);
+
+        DateTime endTimeUtc = DateTime.UtcNow.Add(timeout);
+        while (DateTime.UtcNow < endTimeUtc &&
+               await timer.WaitForNextTickAsync(cancellationToken))
+        {
+            Result result = await func();
+
+            if (result.IsSuccess)
+            {
+                return result;
+            }
+        }
+
+        return Result.Failure(Timeout);
     }
 }

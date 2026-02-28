@@ -20,7 +20,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<TDbContext>());
         if (databaseInfrastructureConfigurator.OutboxProcessingEnabled)
         {
-            services.AddOutboxProcessing<TDbContext>(databaseInfrastructureConfigurator.OutboxOptionsAction);
+            services.AddOutboxProcessing<TDbContext>(databaseInfrastructureConfigurator);
         }
 
         return services;
@@ -36,10 +36,10 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, Action<OutboxProcessingOptions>? optionsAction = null)
+    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator configurator)
         where TDbContext : ISaveOutboxMessages
     {
-        optionsAction ??= (o) => { };
+        var optionsAction = configurator.OutboxOptionsAction ?? (static o => { });
         services.AddOptions<OutboxProcessingOptions>()
             .Configure(optionsAction)
             .ValidateDataAnnotations()
@@ -47,14 +47,27 @@ public static class DependencyInjection
 
         services.TryAddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
         services.AddScoped<ISaveOutboxMessages>(sp => sp.GetRequiredService<TDbContext>());
+        services.AddScoped(typeof(IOutboxStrategy), configurator.OutboxStrategyType);
         services.AddScoped<OutboxProcessor>();
         services.AddHostedService<OutboxBackgroundService>();
 
         return services;
     }
 
+    public static Task EnsureCreatedAsync<TDbContext>(this IHost host)
+       where TDbContext : DbContext
+       => host.Services.EnsureCreatedAsync<TDbContext>();
+
+    public static async Task EnsureCreatedAsync<TDbContext>(this IServiceProvider services)
+        where TDbContext : DbContext
+    {
+        await using var scope = services.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        await context.Database.EnsureCreatedAsync();
+    }
+
     public static Task MigrateAsync<TDbContext>(this IHost host)
-        where TDbContext : DbContext 
+        where TDbContext : DbContext
         => host.Services.MigrateAsync<TDbContext>();
 
     public static async Task MigrateAsync<TDbContext>(this IServiceProvider services)
@@ -66,45 +79,6 @@ public static class DependencyInjection
         if (pendingMigrations.Any())
         {
             await context.Database.MigrateAsync();
-        }
-    }
-}
-
-public class DatabaseInfrastructureConfigurator
-{
-    public Action<IServiceProvider, DbContextOptionsBuilder>? OptionsBuilder { get; private set; }
-    public bool OutboxProcessingEnabled { get; private set; }
-    public Action<OutboxProcessingOptions>? OutboxOptionsAction { get; private set; }
-    internal DatabaseInfrastructureConfigurator() { }
-
-    public DatabaseInfrastructureConfigurator EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null)
-    {
-        OutboxProcessingEnabled = true;
-        OutboxOptionsAction = optionsAction ??= (o) => { };
-
-        return this;
-    }
-
-    public DatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<DbContextOptionsBuilder> optionsBuilder)
-    {
-        var n = (IServiceProvider sp, DbContextOptionsBuilder options) => optionsBuilder(options);
-
-        OptionsBuilder = n + ((sp, options) => AddInterceptors(options, sp));
-        return this;
-    }
-
-    public DatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<IServiceProvider, DbContextOptionsBuilder> optionsBuilder)
-    {
-        OptionsBuilder = optionsBuilder + ((sp, options) => AddInterceptors(options, sp));
-        return this;
-    }
-
-    private void AddInterceptors(DbContextOptionsBuilder options, IServiceProvider sp)
-    {
-        if (OutboxProcessingEnabled)
-        {
-            var interceptor = sp.GetRequiredService<DomainEventsToOutboxMessageSaveChangesInterceptor>();
-            options.AddInterceptors(interceptor);
         }
     }
 }

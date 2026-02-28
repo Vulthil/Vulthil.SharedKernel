@@ -14,7 +14,9 @@ public abstract record Registration
 {
     public required ConsumerType ConsumerType { get; init; }
     public required MessageType MessageType { get; init; }
-    public string RoutingKey { get; set; } = "#";
+    public string RoutingKey { get; init; } = "#";
+
+    public RetryPolicyDefinition? RetryPolicy { get; init; }
 }
 
 public sealed record ConsumerRegistration : Registration;
@@ -27,6 +29,9 @@ public sealed record RequestConsumerRegistration : Registration
 public sealed record QueueDefinition(string Name)
 {
     private readonly HashSet<Registration> _registrations = [];
+
+    public RetryPolicyDefinition? DefaultRetryPolicy { get; set; }
+    public DeadLetterDefinition? DeadLetter { get; set; }
 
     public string Name { get; set; } = Name;
     public ushort PrefetchCount { get; set; } = 16;
@@ -45,6 +50,9 @@ public sealed record QueueDefinition(string Name)
     public Dictionary<string, object?> ExchangeArguments { get; } = [];
 
     public IEnumerable<Registration> Registrations => _registrations.AsReadOnly();
+
+    public bool RetryEnabled => DefaultRetryPolicy is not null ||
+                    Registrations.Any(r => r.RetryPolicy is not null);
 
     internal void AddConsumer(Registration registration)
         => _registrations.Add(registration);

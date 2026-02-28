@@ -15,4 +15,9 @@ public interface IPublishContext
     void SetCorrelationId(string correlationId);
     void AddHeader(string key, object? value);
     void AddHeaders(IDictionary<string, object?> headers);
+    string? MessageId { get; set; }
+    string? ConversationId { get; set; }
+    string? InitiatorId { get; set; }
+    Uri? ResponseAddress { get; set; }
+    Uri? FaultAddress { get; set; }
 }

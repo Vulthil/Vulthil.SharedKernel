@@ -16,7 +16,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         return this;
     }
 
-    public IQueueConfigurator AddConsumer<TConsumer>(Action<ConsumerConfigurator<TConsumer>>? configure = null)
+    public IQueueConfigurator AddConsumer<TConsumer>(Action<IConsumerConfigurator<TConsumer>>? configure = null)
        where TConsumer : class, IConsumer
     {
         var configurator = new ConsumerConfigurator<TConsumer>();
@@ -40,14 +40,15 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
             {
                 ConsumerType = consumerType,
                 MessageType = messageType,
-                RoutingKey = routingKey
+                RoutingKey = routingKey,
+                RetryPolicy = configurator.RetryPolicy
             });
         }
 
         return this;
     }
 
-    public IQueueConfigurator AddRequestConsumer<TConsumer>(Action<RequestConsumerConfigurator<TConsumer>>? configure = null)
+    public IQueueConfigurator AddRequestConsumer<TConsumer>(Action<IRequestConfigurator<TConsumer>>? configure = null)
         where TConsumer : class, IRequestConsumer
     {
         var configurator = new RequestConsumerConfigurator<TConsumer>();
@@ -79,9 +80,32 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
                 ConsumerType = consumerType,
                 MessageType = reqType,
                 ResponseType = resType,
-                RoutingKey = routingKey
+                RoutingKey = routingKey,
+                RetryPolicy = configurator.RetryPolicy
             });
         }
+
+        return this;
+    }
+
+    public IQueueConfigurator UseRetry(Action<RetryPolicyConfigurator> configure)
+    {
+        var builder = new RetryPolicyConfigurator();
+        configure(builder);
+
+        _queueDefinition.DefaultRetryPolicy = builder.Build();
+
+        return this;
+    }
+
+    public IQueueConfigurator UseDeadLetterQueue(string? queueName = null, string? exchangeName = null)
+    {
+        _queueDefinition.DeadLetter = new DeadLetterDefinition
+        {
+            Enabled = true,
+            QueueName = queueName,
+            ExchangeName = exchangeName
+        };
 
         return this;
     }

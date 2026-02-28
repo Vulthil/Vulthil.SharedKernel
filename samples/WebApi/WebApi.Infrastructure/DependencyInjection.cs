@@ -43,11 +43,16 @@ public static class DependencyInjection
 
             x.AddQueue("MainEntityEvents", queue =>
             {
+                queue.UseRetry(r => r.SetIntervals(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5)));
+
+                queue.UseDeadLetterQueue();
+
                 queue.AddRequestConsumer<SideEffectRequestConsumer>();
 
                 queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
                 {
                     c.Bind<MainEntityCreatedIntegrationEvent>("main-entity.created");
+                    c.UseRetry(r => r.Immediate(5));
                 });
                 queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
                 {

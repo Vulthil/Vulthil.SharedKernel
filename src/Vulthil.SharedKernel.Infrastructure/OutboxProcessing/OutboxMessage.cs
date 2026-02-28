@@ -8,5 +8,6 @@ public sealed class OutboxMessage
     public required string Content { get; init; }
     public DateTimeOffset OccurredOnUtc { get; init; }
     public DateTimeOffset? ProcessedOnUtc { get; set; }
+    public int RetryCount { get; set; }
     public string? Error { get; set; }
 }

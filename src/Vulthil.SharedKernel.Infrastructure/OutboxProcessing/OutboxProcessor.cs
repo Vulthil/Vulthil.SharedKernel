@@ -1,87 +1,113 @@
 ﻿using System.Collections.Concurrent;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 
 namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
-internal class OutboxProcessor(
+internal sealed class OutboxProcessor(
     TimeProvider timeProvider,
     ISaveOutboxMessages outboxMessagesDbContext,
     IDomainEventPublisher domainEventPublisher,
-    IOptions<OutboxProcessingOptions> options)
+    IOutboxStrategy outboxStrategy,
+    IOptions<OutboxProcessingOptions> options,
+    ILogger<OutboxProcessor> logger)
 {
-    private readonly TimeProvider _timeProvider = timeProvider;
-    private readonly ISaveOutboxMessages _outboxMessagesDbContext = outboxMessagesDbContext;
-    private readonly IDomainEventPublisher _domainEventPublisher = domainEventPublisher;
-    private readonly IOptions<OutboxProcessingOptions> _options = options;
-
     private static readonly ConcurrentDictionary<string, Type> _typeCache = [];
 
-    private int BatchSize => _options.Value.BatchSize;
+    private OutboxProcessingOptions Options => options.Value;
 
-    internal async Task ExecuteAsync(CancellationToken cancellationToken)
+    internal async Task<int> ExecuteAsync(CancellationToken cancellationToken)
     {
-        IDbTransaction? transaction = null;
-        if (_outboxMessagesDbContext is IUnitOfWork unitOfWorkContext)
+        var transaction = await outboxStrategy.BeginTransactionAsync(outboxMessagesDbContext, cancellationToken);
+
+        try
         {
-            transaction = await unitOfWorkContext.BeginTransactionAsync(cancellationToken);
-        }
-
-        var outboxMessages = await _outboxMessagesDbContext.OutboxMessages
-            .Where(o => o.ProcessedOnUtc == null)
-            .OrderBy(o => o.OccurredOnUtc)
-            .Take(BatchSize)
-            .Select(x => new OutboxMessageStruct(x.Id, x.Type, x.Content))
-            .ToListAsync(cancellationToken);
-
-        var updateQueue = new ConcurrentQueue<OutboxUpdate>();
-
-        var publishTasks = outboxMessages.
-            Select(m => PublishMessage(m, updateQueue, _timeProvider, _domainEventPublisher, cancellationToken))
-            .ToList();
-
-        await Task.WhenAll(publishTasks);
-
-        foreach (var outboxUpdate in updateQueue)
-        {
-
-            await _outboxMessagesDbContext.OutboxMessages
-                .Where(x => x.Id == outboxUpdate.Id)
-                .ExecuteUpdateAsync(
-                setter => setter
-                    .SetProperty(o => o.ProcessedOnUtc, outboxUpdate.ProcessedOnUtc)
-                    .SetProperty(m => m.Error, outboxUpdate.Error),
+            var outboxMessages = await outboxStrategy.FetchMessagesAsync(
+                outboxMessagesDbContext.OutboxMessages,
+                Options.BatchSize,
+                Options.MaxRetries,
                 cancellationToken);
-        }
 
-        if (transaction is not null)
+            if (outboxMessages.Count == 0)
+            {
+                return 0;
+            }
+
+            List<PublishResult> results;
+
+            if (Options.EnableParallelPublishing)
+            {
+                var tasks = outboxMessages.Select(m => TryPublishAsync(m, cancellationToken));
+                results = [.. await Task.WhenAll(tasks)];
+            }
+            else
+            {
+                results = new(outboxMessages.Count);
+                foreach (var message in outboxMessages)
+                {
+                    results.Add(await TryPublishAsync(message, cancellationToken));
+                }
+            }
+
+            var now = timeProvider.GetUtcNow();
+            var successIds = results.Where(r => r.Success).Select(r => r.Id).ToList();
+            var failures = results.Where(r => !r.Success)
+                .Select(r => new OutboxMessageFailure(r.Id, r.Error!))
+                .ToList();
+
+            await outboxStrategy.UpdateMessagesAsync(
+                outboxMessagesDbContext.OutboxMessages,
+                successIds,
+                failures,
+                Options.MaxRetries,
+                now,
+                cancellationToken);
+
+            if (transaction is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+            }
+
+            return outboxMessages.Count;
+        }
+        finally
         {
-            await transaction.CommitAsync(cancellationToken);
+            if (transaction is not null)
+            {
+                await transaction.DisposeAsync();
+            }
         }
     }
 
-    private static async Task PublishMessage(OutboxMessageStruct outboxMessage, ConcurrentQueue<OutboxUpdate> updateQueue, TimeProvider timeProvider, IDomainEventPublisher domainEventPublisher, CancellationToken stoppingToken)
+    private async Task<PublishResult> TryPublishAsync(OutboxMessageData outboxMessage, CancellationToken cancellationToken)
     {
         try
         {
             var messageType = GetOrAddMessageType(outboxMessage.Type);
             var message = JsonSerializer.Deserialize(outboxMessage.Content, messageType)!;
 
-            await domainEventPublisher.PublishAsync(message, stoppingToken);
+            await domainEventPublisher.PublishAsync(message, cancellationToken);
 
-            updateQueue.Enqueue(new OutboxUpdate(outboxMessage.Id, timeProvider.GetUtcNow()));
+            return new PublishResult(outboxMessage.Id, Success: true);
         }
         catch (Exception exception)
         {
-            updateQueue.Enqueue(new OutboxUpdate(outboxMessage.Id, timeProvider.GetUtcNow(), exception.ToString()));
+            logger.LogError(exception, "Failed to publish outbox message {MessageId}", outboxMessage.Id);
+            return new PublishResult(outboxMessage.Id, Success: false, Error: exception.ToString());
         }
     }
 
-    private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, t => Type.GetType(t)!);
+    private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, t =>
+    {
+        var type = Type.GetType(t);
+        type ??= AppDomain.CurrentDomain.GetAssemblies()
+                .Select(a => a.GetType(t))
+                .FirstOrDefault(t => t is not null);
 
-    private readonly record struct OutboxMessageStruct(Guid Id, string Type, string Content);
-    private readonly record struct OutboxUpdate(Guid Id, DateTimeOffset ProcessedOnUtc, string? Error = null);
+        return type!;
+    });
+
+    private readonly record struct PublishResult(Guid Id, bool Success, string? Error = null);
 }

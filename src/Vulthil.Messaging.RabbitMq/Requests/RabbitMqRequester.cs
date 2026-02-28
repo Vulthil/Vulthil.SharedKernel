@@ -53,11 +53,13 @@ internal sealed class RabbitMqRequester(
             var props = new BasicProperties
             {
                 CorrelationId = correlationId,
-                ReplyTo = _listener.ReplyToQueueName,
+                ReplyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress) ?? _listener.ReplyToQueueName,
                 ContentType = RabbitMqConstants.ContentType,
                 Type = typeof(TRequest).FullName,
+                Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
                 Expiration = _defaultTimeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
                 Headers = publishContext.Headers,
+                MessageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString()
             };
 
             var body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);

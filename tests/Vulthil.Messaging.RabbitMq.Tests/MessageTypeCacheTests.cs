@@ -1,14 +1,44 @@
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using Vulthil.Messaging;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
+using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
 public sealed class MessageTypeCacheTests : BaseUnitTestCase
 {
-    private static MessageTypeCache CreateTarget() => new();
+    private readonly Lazy<MessageTypeCache> _lazyTarget;
+    private MessageTypeCache Target => _lazyTarget.Value;
+
+    public MessageTypeCacheTests()
+    {
+        _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
+    }
+
+    private static MessagingOptions CreateMessagingOptions() => new();
+
+    private static BasicDeliverEventArgs CreateDeliverEventArgs(string routingKey = "#", string? replyTo = null, string? correlationId = null)
+    {
+        return new BasicDeliverEventArgs(
+            "consumer-tag",
+            1,
+            false,
+            "test-exchange",
+            routingKey,
+            new BasicProperties
+            {
+                ReplyTo = replyTo,
+                CorrelationId = correlationId,
+                Headers = new Dictionary<string, object?>()
+            },
+            ReadOnlyMemory<byte>.Empty);
+    }
 
     #region Test Messages and Consumers
 
@@ -24,6 +54,14 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         {
             ReceivedMessages.Add(messageContext.Message);
             return Task.CompletedTask;
+        }
+    }
+
+    private sealed class ThrowingRequestConsumer : IRequestConsumer<TestRequest, TestResponse>
+    {
+        public Task<TestResponse> ConsumeAsync(IMessageContext<TestRequest> messageContext, CancellationToken cancellationToken = default)
+        {
+            throw new InvalidOperationException("failed to process request");
         }
     }
 
@@ -44,7 +82,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     public void RegisterQueueShouldRegisterStandardConsumers()
     {
         // Arrange
-        var target = CreateTarget();
         var consumer = new ConsumerType(typeof(TestMessageConsumer));
         var messageType = new MessageType(typeof(TestMessage));
         var registration = new ConsumerRegistration
@@ -57,10 +94,10 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration);
 
         // Act
-        target.RegisterQueue(queue);
+        Target.RegisterQueue(queue, CreateMessagingOptions());
 
         // Assert
-        var plan = target.GetPlan(messageType.Name);
+        var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
         plan.StandardHandlers.ShouldHaveSingleItem();
         plan.StandardHandlers[0].RoutingKey.ShouldBe("test.message");
@@ -70,7 +107,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     public void RegisterQueueShouldRegisterRequestConsumers()
     {
         // Arrange
-        var target = CreateTarget();
         var consumer = new ConsumerType(typeof(TestRequestConsumer));
         var messageType = new MessageType(typeof(TestRequest));
         var registration = new RequestConsumerRegistration
@@ -84,10 +120,10 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration);
 
         // Act
-        target.RegisterQueue(queue);
+        Target.RegisterQueue(queue, CreateMessagingOptions());
 
         // Assert
-        var plan = target.GetPlan(messageType.Name);
+        var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
         plan.RpcHandler.ShouldNotBeNull();
         plan.RpcHandler.RoutingKey.ShouldBe("test.request");
@@ -97,7 +133,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     public async Task CompiledHandlerShouldCallConsumerWithCorrectMessage()
     {
         // Arrange
-        var target = CreateTarget();
         var consumerInstance = new TestMessageConsumer();
         var services = new ServiceCollection();
         services.AddScoped(_ => consumerInstance);
@@ -113,15 +148,14 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        target.RegisterQueue(queue);
+        Target.RegisterQueue(queue, CreateMessagingOptions());
 
-        var plan = target.GetPlan(messageType.Name);
-        var handler = plan!.StandardHandlers[0].Handler;
+        var plan = Target.GetPlan(messageType.Name);
+        var handler = plan!.StandardHandlers[0];
         var testMessage = new TestMessage("Hello, World!");
-        var messageContext = new RabbitMqMessageContext("test-id", "test.message", new Dictionary<string, object?>());
 
         // Act
-        await handler(serviceProvider, testMessage, messageContext, CancellationToken.None);
+        await handler.InvokeAsync(serviceProvider, testMessage, CreateDeliverEventArgs(), CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedMessages.ShouldHaveSingleItem();
@@ -129,10 +163,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task CompiledRpcHandlerShouldCallConsumerAndReturnResponse()
+    public async Task CompiledRpcHandlerShouldCallConsumerAndPublishResponse()
     {
         // Arrange
-        var target = CreateTarget();
         var consumerInstance = new TestRequestConsumer();
         var services = new ServiceCollection();
         services.AddScoped(_ => consumerInstance);
@@ -149,32 +182,109 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        target.RegisterQueue(queue);
+        Target.RegisterQueue(queue, CreateMessagingOptions());
 
-        var plan = target.GetPlan(messageType.Name);
-        var handler = plan!.RpcHandler!.Handler;
+        var plan = Target.GetPlan(messageType.Name);
+        var handler = plan!.RpcHandler!;
         var testRequest = new TestRequest("Find users");
-        var messageContext = new RabbitMqMessageContext("test-id", "test.request", new Dictionary<string, object?>());
+        var deliveryArgs = CreateDeliverEventArgs(replyTo: "reply.queue", correlationId: "corr-1");
+
+        var channel = GetMock<IChannel>();
+        ReadOnlyMemory<byte> publishedBody = default;
+        BasicProperties? publishedProperties = null;
+
+        channel.Setup(x => x.BasicPublishAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>(),
+                It.IsAny<BasicProperties>(),
+                It.IsAny<ReadOnlyMemory<byte>>(),
+                It.IsAny<CancellationToken>()))
+            .Callback((string _, string _, bool _, BasicProperties props, ReadOnlyMemory<byte> body, CancellationToken _) =>
+            {
+                publishedProperties = props;
+                publishedBody = body;
+            })
+            .Returns(ValueTask.CompletedTask);
 
         // Act
-        var result = await handler(serviceProvider, testRequest, messageContext, CancellationToken.None);
+        await handler.InvokeAsync(serviceProvider, testRequest, deliveryArgs, channel.Object, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedRequests.ShouldHaveSingleItem();
         consumerInstance.ReceivedRequests[0].Query.ShouldBe("Find users");
-        result.ShouldNotBeNull();
-        var testResult = result.ShouldBeOfType<TestResponse>();
-        testResult.Result.ShouldBe("Processed: Find users");
+        publishedProperties.ShouldNotBeNull();
+        publishedProperties.CorrelationId.ShouldBe("corr-1");
+
+        var messageResult = JsonSerializer.Deserialize<MessageResult>(publishedBody.Span);
+        messageResult.ShouldNotBeNull();
+        messageResult.IsSuccess.ShouldBeTrue();
+        messageResult.Value.ShouldNotBeNull();
+
+        var response = JsonSerializer.Deserialize<TestResponse>(messageResult.Value);
+        response.ShouldNotBeNull();
+        response.Result.ShouldBe("Processed: Find users");
+    }
+
+    [Fact]
+    public async Task CompiledRpcHandlerShouldPublishFailureWhenConsumerThrows()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddScoped<ThrowingRequestConsumer>();
+        var serviceProvider = services.BuildServiceProvider();
+
+        var registration = new RequestConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(ThrowingRequestConsumer)),
+            MessageType = new MessageType(typeof(TestRequest)),
+            ResponseType = typeof(TestResponse),
+            RoutingKey = "#"
+        };
+
+        var queue = new QueueDefinition("TestQueue");
+        queue.AddConsumer(registration);
+        Target.RegisterQueue(queue, CreateMessagingOptions());
+
+        var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
+        var handler = plan!.RpcHandler!;
+
+        var channel = GetMock<IChannel>();
+        ReadOnlyMemory<byte> publishedBody = default;
+
+        channel.Setup(x => x.BasicPublishAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>(),
+                It.IsAny<BasicProperties>(),
+                It.IsAny<ReadOnlyMemory<byte>>(),
+                It.IsAny<CancellationToken>()))
+            .Callback((string _, string _, bool _, BasicProperties _, ReadOnlyMemory<byte> body, CancellationToken _) =>
+            {
+                publishedBody = body;
+            })
+            .Returns(ValueTask.CompletedTask);
+
+        // Act
+        await handler.InvokeAsync(
+            serviceProvider,
+            new TestRequest("throw"),
+            CreateDeliverEventArgs(replyTo: "reply.queue"),
+            channel.Object,
+            CancellationToken.None);
+
+        // Assert
+        var messageResult = JsonSerializer.Deserialize<MessageResult>(publishedBody.Span);
+        messageResult.ShouldNotBeNull();
+        messageResult.IsSuccess.ShouldBeFalse();
+        messageResult.ErrorMessage.ShouldContain("failed to process request");
     }
 
     [Fact]
     public void GetPlanShouldReturnNullForUnregisteredMessageType()
     {
-        // Arrange
-        var target = CreateTarget();
-
         // Act
-        var plan = target.GetPlan("NonExistentMessage");
+        var plan = Target.GetPlan("NonExistentMessage");
 
         // Assert
         plan.ShouldBeNull();
@@ -184,7 +294,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     public void RegisterQueueShouldSupportMultipleHandlersForSameMessageType()
     {
         // Arrange
-        var target = CreateTarget();
         var consumer = new ConsumerType(typeof(TestMessageConsumer));
         var messageType = new MessageType(typeof(TestMessage));
 
@@ -206,10 +315,10 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration2);
 
         // Act
-        target.RegisterQueue(queue);
+        Target.RegisterQueue(queue, CreateMessagingOptions());
 
         // Assert
-        var plan = target.GetPlan(messageType.Name);
+        var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
         plan.StandardHandlers.Count.ShouldBe(2);
         plan.StandardHandlers[0].RoutingKey.ShouldBe("route.1");
@@ -217,38 +326,16 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void RpcHandlerRoutingKeyShouldDefaultToHashWhenRpcHandlerIsNull()
-    {
-        // Arrange
-        var messageType = new MessageType(typeof(TestMessage));
-        var plan = new MessageExecutionPlan(messageType);
-
-        // Act & Assert
-        plan.RpcHandlerRoutingKey.ShouldBe("#");
-    }
-
-    [Fact]
     public void RpcHandlerRoutingKeyShouldReturnHandlerRoutingKey()
     {
         // Arrange
         var messageType = new MessageType(typeof(TestRequest));
-        var plan = new MessageExecutionPlan(messageType);
-
-        // Create a mock RPC handler
-        static async Task<object> MockHandler(IServiceProvider _, object __, IMessageContext ___, CancellationToken ____)
+        var plan = new MessageExecutionPlan(messageType)
         {
-            return await Task.FromResult(new TestResponse("test"));
-        }
-
-        plan.RpcHandler = new RpcHandlerEntry(MockHandler, "custom.routing.key");
+            RpcHandler = new RpcInvoker<TestRequestConsumer, TestRequest, TestResponse>(CreateMessagingOptions(), "custom.routing.key", null)
+        };
 
         // Act & Assert
-        plan.RpcHandlerRoutingKey.ShouldBe("custom.routing.key");
+        plan.RpcHandler.RoutingKey.ShouldBe("custom.routing.key");
     }
-
-    #region Helper Types
-
-    private sealed record RabbitMqMessageContext(string CorrelationId, string RoutingKey, IDictionary<string, object?> Headers) : IMessageContext;
-
-    #endregion
 }

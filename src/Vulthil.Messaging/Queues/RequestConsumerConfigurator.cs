@@ -2,11 +2,9 @@ using Vulthil.Messaging.Abstractions.Consumers;
 
 namespace Vulthil.Messaging.Queues;
 
-public class RequestConsumerConfigurator<TConsumer> where TConsumer : IRequestConsumer
+public class RequestConsumerConfigurator<TConsumer> : BaseConfigurator, IRequestConfigurator<TConsumer> where TConsumer : IRequestConsumer
 {
-    internal Dictionary<MessageType, string> Overrides { get; } = [];
-
-    public RequestConsumerConfigurator<TConsumer> BindRequest<TRequest, TResponse>(string routingKey)
+    public IRequestConfigurator<TConsumer> Bind<TRequest, TResponse>(string routingKey)
         where TRequest : notnull
         where TResponse : notnull
     {

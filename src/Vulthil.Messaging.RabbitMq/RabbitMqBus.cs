@@ -1,8 +1,6 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
-using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
 using Vulthil.Messaging.RabbitMq.Requests;
@@ -48,7 +46,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 
         foreach (var queue in _queueDefinitions)
         {
-            _typeCache.RegisterQueue(queue);
+            _typeCache.RegisterQueue(queue, _messagingJsonOptions);
 
             for (int i = 0; i < queue.ChannelCount; i++)
             {
@@ -66,7 +64,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 _workers.Add(worker);
             }
         }
-        await Task.WhenAll(_workers.Select(w => w.StartAsync(cancellationToken)));
+        await Task.WhenAll(_workers.Select(worker => worker.StartAsync(cancellationToken)));
     }
 
     private async Task SetupTopology(CancellationToken cancellationToken)
@@ -95,6 +93,34 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             args.Add("x-queue-type", "quorum");
         }
 
+        if (queue.DeadLetter is { Enabled: true })
+        {
+            var dlx = queue.DeadLetter.ExchangeName ?? $"{queue.Name}.Error";
+            var dlq = queue.DeadLetter.QueueName ?? $"{queue.Name}.Error";
+
+            await channel.ExchangeDeclareAsync(dlx, ExchangeType.Fanout, true, cancellationToken: cancellationToken);
+            await channel.QueueDeclareAsync(dlq, true, false, false, arguments: new Dictionary<string, object?> { ["x-queue-type"] = "quorum" }, cancellationToken: cancellationToken);
+            await channel.QueueBindAsync(dlq, dlx, "#", cancellationToken: cancellationToken);
+
+            args.Add("x-dead-letter-exchange", dlx);
+        }
+
+        if (queue.RetryEnabled)
+        {
+            var retryExchange = $"{queue.Name}.Retry";
+            var retryQueue = $"{queue.Name}.Retry";
+
+            var retryArgs = new Dictionary<string, object?>
+            {
+                ["x-dead-letter-exchange"] = queue.Name,
+                ["x-queue-type"] = "quorum",
+            };
+
+            await channel.ExchangeDeclareAsync(retryExchange, ExchangeType.Direct, true, cancellationToken: cancellationToken);
+            await channel.QueueDeclareAsync(retryQueue, true, false, false, retryArgs, cancellationToken: cancellationToken);
+            await channel.QueueBindAsync(retryQueue, retryExchange, "#", cancellationToken: cancellationToken);
+        }
+
         await channel.QueueDeclareAsync(
             queue: queue.Name,
             durable: queue.IsQuorum || queue.Durable,
@@ -114,7 +140,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         foreach (var registration in registrations)
         {
             var exchangeName = registration.MessageType.Name;
-            var bindingPattern = GetRoutingKey(registration);
+            var bindingPattern = RabbitMqConstants.GetRoutingKey(registration);
 
             await channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
@@ -129,9 +155,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 cancellationToken: cancellationToken);
         }
     }
-
-    private static string GetRoutingKey(Registration registration) =>
-        registration.ConsumerType.Type.GetCustomAttribute<RoutingKeyAttribute>()?.Pattern ?? registration.RoutingKey;
 
     public async ValueTask DisposeAsync()
     {

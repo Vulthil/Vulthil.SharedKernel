@@ -72,7 +72,7 @@ public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITest
             var outboxMessage = await dbContext.OutboxMessages.Where(o =>
                     EF.Functions.JsonContains(o.Content, json) &&
                     o.ProcessedOnUtc.HasValue &&
-                    o.Type == typeof(MainEntityNameUpdatedEvent).AssemblyQualifiedName)
+                    o.Type == typeof(MainEntityNameUpdatedEvent).FullName)
                 .FirstOrDefaultAsync();
 
             if (outboxMessage is null)
@@ -81,7 +81,7 @@ public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITest
             }
 
             return Result.Success(outboxMessage);
-        });
+        }, cancellationToken: CancellationToken);
 
         outboxMessageResult.IsSuccess.ShouldBeTrue();
     }

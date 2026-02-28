@@ -1,7 +1,4 @@
-﻿
-using Moq.AutoMock;
-
-namespace Vulthil.xUnit;
+﻿namespace Vulthil.xUnit;
 
 public abstract class BaseUnitTestCase : IAsyncLifetime
 {

@@ -3,7 +3,6 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
-using Vulthil.Messaging.RabbitMq;
 using Vulthil.Messaging.RabbitMq.Requests;
 
 namespace Vulthil.Messaging.RabbitMq.Publishing;
@@ -106,6 +105,8 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         var properties = new BasicProperties()
         {
             Type = type.FullName,
+            MessageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString(),
+            ReplyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress), // Map URI back to string
             CorrelationId = correlationId,
             ContentType = RabbitMqConstants.ContentType,
             Headers = publishContext.Headers,

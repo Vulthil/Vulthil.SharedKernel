@@ -38,7 +38,7 @@ public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITest
             }
 
             return queryResult;
-        });
+        }, cancellationToken: CancellationToken);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();

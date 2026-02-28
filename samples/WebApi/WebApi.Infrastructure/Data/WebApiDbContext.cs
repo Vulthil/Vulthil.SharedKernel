@@ -63,8 +63,10 @@ public class WebApiDbContextFactory : IDesignTimeDbContextFactory<WebApiDbContex
     {
         var optionsBuilder = new DbContextOptionsBuilder<WebApiDbContext>();
 
+#pragma warning disable S2068 // Credentials should not be hard-coded
         optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=__dummy__;Username=__dummy__;Password=__dummy__;Pooling=false",
  o => o.ExecutionStrategy(d => new NonRetryingExecutionStrategy(d)));
+#pragma warning restore S2068 // Credentials should not be hard-coded
 
         return new WebApiDbContext(optionsBuilder.Options);
     }

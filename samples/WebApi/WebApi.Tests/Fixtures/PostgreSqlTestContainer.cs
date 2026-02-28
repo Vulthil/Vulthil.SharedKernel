@@ -20,11 +20,11 @@ internal sealed class PostgreSqlTestContainer(IMessageSink messageSink) : TestDa
     public override DbProviderFactory DbProviderFactory => NpgsqlFactory.Instance;
     public override string ConnectionStringKey => ServiceNames.PostgresSqlServerServiceName;
 }
-   
+
 
 public sealed class RabbitMqTestContainer(IMessageSink messageSink) : TestContainerFixtureWithConnectionString<RabbitMqBuilder, RabbitMqContainer>(messageSink)
 {
-    private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4.2.2-management")
+    private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4-management")
         .WithUsername("guest")
         .WithPassword("guest");
 
@@ -32,5 +32,4 @@ public sealed class RabbitMqTestContainer(IMessageSink messageSink) : TestContai
 
     public override string ConnectionStringKey => ServiceNames.RabbitMqServiceName;
     public override string ConnectionString => Container.GetConnectionString();
-
 }

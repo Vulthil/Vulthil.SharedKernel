@@ -34,7 +34,7 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
             {
                 GroupId = groupId,
                 OccurredOnUtc = _timeProvider.GetUtcNow(),
-                Type = d.GetType().AssemblyQualifiedName!,
+                Type = d.GetType().FullName!,
                 Content = JsonSerializer.Serialize(d, d.GetType())
             }).ToList();
 

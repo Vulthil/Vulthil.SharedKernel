@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.Application.Pipeline;
 using Vulthil.SharedKernel.Events;
 
@@ -17,6 +17,7 @@ internal sealed record PipelineHandlerExecutor(object HandlerInstance, Func<IDom
 internal sealed class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper
     where TNotification : IDomainEvent
 {
+    /// <inheritdoc />
     public Task HandleAsync(IDomainEvent domainEvent, IServiceProvider serviceFactory,
         Func<IEnumerable<NotificationHandlerExecutor>, IDomainEvent, CancellationToken, Task> publish,
         CancellationToken cancellationToken)

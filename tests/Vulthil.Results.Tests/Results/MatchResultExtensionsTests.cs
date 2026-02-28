@@ -1,7 +1,13 @@
-﻿namespace Vulthil.Results.Tests.Results;
+namespace Vulthil.Results.Tests.Results;
 
+/// <summary>
+/// Represents the MatchResultExtensionsTests.
+/// </summary>
 public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultSuccess()
     {
@@ -15,6 +21,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultFailure()
     {
@@ -28,6 +37,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultSuccessT1()
     {
@@ -41,6 +53,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultFailureT1()
     {
@@ -54,6 +69,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultSuccessT2()
     {
@@ -67,6 +85,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultFailureT2()
     {
@@ -80,6 +101,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultSuccessT1T2()
     {
@@ -93,6 +117,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1T2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MatchResultFailureT1T2()
     {
@@ -107,6 +134,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResult()
     {
@@ -120,6 +150,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultLeft()
     {
@@ -133,6 +166,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultRight()
     {
@@ -146,6 +182,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTask1()
     {
@@ -159,6 +198,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTask2()
     {
@@ -172,6 +214,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskLeft()
     {
@@ -185,6 +230,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskRight()
     {
@@ -198,6 +246,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccess();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailure()
     {
@@ -211,6 +262,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureLeft()
     {
@@ -224,6 +278,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureRight()
     {
@@ -237,6 +294,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailure1()
     {
@@ -250,6 +310,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailure2()
     {
@@ -263,6 +326,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureLeft()
     {
@@ -276,6 +342,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureRight()
     {
@@ -289,6 +358,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT1()
     {
@@ -302,6 +374,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT1Left()
     {
@@ -315,6 +390,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT1Right()
     {
@@ -328,6 +406,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT11()
     {
@@ -341,6 +422,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT12()
     {
@@ -354,6 +438,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT1Left()
     {
@@ -367,6 +454,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT1Right()
     {
@@ -380,6 +470,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT1()
     {
@@ -393,6 +486,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT1Left()
     {
@@ -406,6 +502,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT1Right()
     {
@@ -419,6 +518,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT11()
     {
@@ -432,6 +534,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT12()
     {
@@ -445,6 +550,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT1Left()
     {
@@ -458,6 +566,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT1Right()
     {
@@ -471,6 +582,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailure();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT2()
     {
@@ -484,6 +598,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT2Left()
     {
@@ -497,6 +614,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT2Right()
     {
@@ -510,6 +630,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT21()
     {
@@ -523,6 +646,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT22()
     {
@@ -536,6 +662,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT2Left()
     {
@@ -549,6 +678,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT2Right()
     {
@@ -562,6 +694,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT2()
     {
@@ -575,6 +710,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT2Left()
     {
@@ -588,6 +726,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT2Right()
     {
@@ -601,6 +742,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT21()
     {
@@ -614,6 +758,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT22()
     {
@@ -627,6 +774,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT2Left()
     {
@@ -640,6 +790,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT2Right()
     {
@@ -653,6 +806,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT1T2()
     {
@@ -666,6 +822,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT1T2Left()
     {
@@ -679,6 +838,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1T2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultT1T2Right()
     {
@@ -692,6 +854,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1T2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT1T21()
     {
@@ -705,6 +870,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1T2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT1T22()
     {
@@ -718,6 +886,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1T2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT1T2Left()
     {
@@ -731,6 +902,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1T2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskT1T2Right()
     {
@@ -744,6 +918,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertSuccessT1T2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT1T2()
     {
@@ -757,6 +934,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT1T2Left()
     {
@@ -770,6 +950,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultFailureT1T2Right()
     {
@@ -783,6 +966,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT1T21()
     {
@@ -796,6 +982,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT1T22()
     {
@@ -809,6 +998,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT1T2Left()
     {
@@ -822,6 +1014,9 @@ public sealed class MatchResultExtensionsTests : MatchResultBaseTestCase
         AssertFailureT2(t2);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task MatchAsyncResultTaskFailureT1T2Right()
     {

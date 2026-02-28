@@ -40,5 +40,8 @@ if (app.Environment.IsDevelopment())
 await app.RunAsync();
 
 #pragma warning disable S1118 // Utility classes should not have public constructors
+/// <summary>
+/// Represents the Program.
+/// </summary>
 public partial class Program;
 #pragma warning restore S1118 // Utility classes should not have public constructors

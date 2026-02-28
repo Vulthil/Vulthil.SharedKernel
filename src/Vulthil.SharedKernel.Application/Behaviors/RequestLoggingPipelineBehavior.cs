@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
@@ -17,6 +17,7 @@ internal static partial class LoggingBehaviors
     {
         private readonly ILogger<RequestLoggingPipelineBehavior<TRequest, TResponse>> _logger = logger;
 
+        /// <inheritdoc />
         public async Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
         {
             var requestName = typeof(TRequest).Name;
@@ -59,6 +60,7 @@ internal static partial class LoggingBehaviors
     {
         private readonly ILogger<DomainEventLoggingPipelineBehavior<TDomainEvent>> _logger = logger;
 
+        /// <inheritdoc />
         public async Task HandleAsync(TDomainEvent domainEvent, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default)
         {
             var domainEventName = typeof(TDomainEvent).Name;

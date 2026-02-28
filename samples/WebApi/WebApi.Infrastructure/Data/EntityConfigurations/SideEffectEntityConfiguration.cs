@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebApi.Domain.SideEffects;
@@ -6,8 +6,14 @@ using static WebApi.Domain.SideEffects.Status;
 
 namespace WebApi.Infrastructure.Data.EntityConfigurations;
 
+/// <summary>
+/// Represents the SideEffectEntityConfiguration.
+/// </summary>
 public sealed class SideEffectEntityConfiguration : IEntityTypeConfiguration<SideEffect>
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public void Configure(EntityTypeBuilder<SideEffect> builder)
     {
         builder.HasKey(e => e.Id);

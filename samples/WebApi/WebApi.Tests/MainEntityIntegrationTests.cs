@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Vulthil.Extensions.Testing;
@@ -13,9 +13,15 @@ using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
+/// <summary>
+/// Represents the MainEntityIntegrationTests.
+/// </summary>
 public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase(testFixture, testOutputHelper)
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task Test_Create()
     {
@@ -29,6 +35,9 @@ public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITest
         result.IsSuccess.ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task Test_Get()
     {
@@ -46,6 +55,9 @@ public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITest
         queryResult.Value.Name.ShouldBe(command.Name);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task Test_Update()
     {

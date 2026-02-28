@@ -2,8 +2,14 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
+/// <summary>
+/// Represents the MessagingExchangeTypeTests.
+/// </summary>
 public sealed class MessagingExchangeTypeTests : BaseUnitTestCase
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void FanoutExchangeTypeShouldExist()
     {
@@ -11,6 +17,9 @@ public sealed class MessagingExchangeTypeTests : BaseUnitTestCase
         MessagingExchangeType.Fanout.ShouldBe(MessagingExchangeType.Fanout);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void DirectExchangeTypeShouldExist()
     {
@@ -18,6 +27,9 @@ public sealed class MessagingExchangeTypeTests : BaseUnitTestCase
         MessagingExchangeType.Direct.ShouldBe(MessagingExchangeType.Direct);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void TopicExchangeTypeShouldExist()
     {
@@ -25,6 +37,9 @@ public sealed class MessagingExchangeTypeTests : BaseUnitTestCase
         MessagingExchangeType.Topic.ShouldBe(MessagingExchangeType.Topic);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void HeadersExchangeTypeShouldExist()
     {
@@ -32,6 +47,9 @@ public sealed class MessagingExchangeTypeTests : BaseUnitTestCase
         MessagingExchangeType.Headers.ShouldBe(MessagingExchangeType.Headers);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AllExchangeTypesAreUnique()
     {

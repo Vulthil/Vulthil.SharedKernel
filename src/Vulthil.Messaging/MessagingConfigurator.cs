@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging.Queues;
@@ -13,25 +13,30 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
 
     private readonly MessagingOptions _messagingOptions;
 
+    /// <inheritdoc />
     public IHostApplicationBuilder HostApplicationBuilder { get; }
     private IServiceCollection _services => HostApplicationBuilder.Services;
     private IConfiguration _configuration => HostApplicationBuilder.Configuration;
 
+    /// <inheritdoc />
     public MessagingConfigurator(IHostApplicationBuilder hostApplicationBuilder, MessagingOptions messagingOptions)
     {
         HostApplicationBuilder = hostApplicationBuilder;
         _messagingOptions = messagingOptions;
     }
 
+    /// <inheritdoc />
     public IMessagingConfigurator ConfigureMessagingOptions(Action<MessagingOptions> action)
     {
         action(_messagingOptions);
         return this;
     }
+    /// <inheritdoc />
     public IMessagingConfigurator ConfigureFaults(Action<IFaultConfigurator> configureFaults) => throw new NotImplementedException();
 
     private static string ConstructSectionName(string queueName) => $"{DefaultSectionName}:Queues:{queueName}";
 
+    /// <inheritdoc />
     public IMessagingConfigurator AddQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName);

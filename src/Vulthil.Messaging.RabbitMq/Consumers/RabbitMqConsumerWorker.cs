@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
@@ -23,6 +23,9 @@ internal sealed class RabbitMqConsumerWorker(
 
     private string? _consumerTag;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         // 1. Configure QoS for this worker's channel
@@ -167,6 +170,9 @@ internal sealed class RabbitMqConsumerWorker(
         }
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         try

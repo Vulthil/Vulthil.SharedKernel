@@ -1,27 +1,75 @@
-﻿using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
 internal record MessageContext : IMessageContext
 {
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public string? MessageId { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public required string CorrelationId { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public string? RequestId { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public required string RoutingKey { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public required IDictionary<string, object?> Headers { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public int RetryCount { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public bool Redelivered { get; init; }
 
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public string? ConversationId { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public string? InitiatorId { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public Uri? SourceAddress { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public Uri? DestinationAddress { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public Uri? ResponseAddress { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public Uri? FaultAddress { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public DateTimeOffset? SentTime { get; init; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public DateTimeOffset? ExpirationTime { get; init; }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static MessageContext CreateContext(BasicDeliverEventArgs ea)
     {
         var props = ea.BasicProperties;
@@ -52,6 +100,9 @@ internal record MessageContext : IMessageContext
         };
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static MessageContext<TMessage> CreateContext<TMessage>(
         TMessage message,
         BasicDeliverEventArgs ea)
@@ -88,6 +139,9 @@ internal record MessageContext : IMessageContext
 }
 internal sealed record MessageContext<TMessage> : MessageContext, IMessageContext<TMessage>
 {
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public required TMessage Message { get; init; }
 }
 

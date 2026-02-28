@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.Messaging.Abstractions.Consumers;
 
@@ -10,12 +10,14 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
     private readonly MessagingOptions _messagingOptions = messagingOptions;
     private readonly QueueDefinition _queueDefinition = queueDefinition;
 
+    /// <inheritdoc />
     public IQueueConfigurator ConfigureQueue(Action<QueueDefinition> configureAction)
     {
         configureAction(_queueDefinition);
         return this;
     }
 
+    /// <inheritdoc />
     public IQueueConfigurator AddConsumer<TConsumer>(Action<IConsumerConfigurator<TConsumer>>? configure = null)
        where TConsumer : class, IConsumer
     {
@@ -48,6 +50,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         return this;
     }
 
+    /// <inheritdoc />
     public IQueueConfigurator AddRequestConsumer<TConsumer>(Action<IRequestConfigurator<TConsumer>>? configure = null)
         where TConsumer : class, IRequestConsumer
     {
@@ -88,6 +91,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         return this;
     }
 
+    /// <inheritdoc />
     public IQueueConfigurator UseRetry(Action<RetryPolicyConfigurator> configure)
     {
         var builder = new RetryPolicyConfigurator();
@@ -98,6 +102,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         return this;
     }
 
+    /// <inheritdoc />
     public IQueueConfigurator UseDeadLetterQueue(string? queueName = null, string? exchangeName = null)
     {
         _queueDefinition.DeadLetter = new DeadLetterDefinition

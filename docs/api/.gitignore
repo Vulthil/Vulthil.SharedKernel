@@ -1,0 +1,5 @@
+###############
+# Generated API metadata — rebuilt by DocFX on every run
+###############
+*.yml
+.manifest

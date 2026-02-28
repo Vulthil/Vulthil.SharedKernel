@@ -1,10 +1,20 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application.Messaging;
+/// <summary>
+/// Dispatches requests to their registered handlers through the pipeline.
+/// </summary>
 public interface ISender
 {
+    /// <summary>
+    /// Sends a request through the pipeline and returns the response.
+    /// </summary>
+    /// <typeparam name="TResponse">The type of response expected.</typeparam>
+    /// <param name="request">The request to send.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>A task containing the response.</returns>
     Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
 }
 
@@ -14,6 +24,7 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private static readonly ConcurrentDictionary<Type, IRequestHandlerBase> _requestHandlers = new();
 
+    /// <inheritdoc />
     public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -31,10 +42,12 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
 internal class RequestHandlerWrapperResult<TRequest, TResponse> : IRequestHandlerWrapper<TResponse>
     where TRequest : IRequest<TResponse>
 {
+    /// <inheritdoc />
     public async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default) =>
         await HandleAsync((ICommand<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
 
+    /// <inheritdoc />
     public Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {

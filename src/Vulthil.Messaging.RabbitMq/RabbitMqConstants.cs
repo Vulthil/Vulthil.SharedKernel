@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
@@ -7,8 +7,14 @@ namespace Vulthil.Messaging.RabbitMq;
 
 internal static class RabbitMqConstants
 {
+    /// <summary>
+    /// Represents this member.
+    /// </summary>
     public const string ContentType = "application/json";
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static string? GetMetadata(Type type, object message, IReadOnlyDictionary<Type, Func<object, string>> registry)
     {
         var current = type;
@@ -24,9 +30,15 @@ internal static class RabbitMqConstants
         return null;
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static string GetRoutingKey(Registration registration) =>
        registration.ConsumerType.Type.GetCustomAttribute<RoutingKeyAttribute>()?.Pattern ?? registration.RoutingKey;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static int GetRetryCount(IDictionary<string, object?>? headers)
     {
         if (headers?.TryGetValue("x-retry-count", out var countObj) == true)
@@ -42,6 +54,9 @@ internal static class RabbitMqConstants
 
         return 0;
     }
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static DateTimeOffset? TryParseExpiration(string? expiration)
     {
         // RabbitMQ stores expiration as a string representing milliseconds
@@ -62,6 +77,9 @@ internal static class RabbitMqConstants
         return null;
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static string? GetHeaderString(IDictionary<string, object?> headers, string key)
     {
         if (headers.TryGetValue(key, out var value) && value is byte[] bytes)
@@ -72,6 +90,9 @@ internal static class RabbitMqConstants
         return value?.ToString();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static Uri? GetHeaderUri(IDictionary<string, object?> headers, string key)
     {
         var str = GetHeaderString(headers, key);

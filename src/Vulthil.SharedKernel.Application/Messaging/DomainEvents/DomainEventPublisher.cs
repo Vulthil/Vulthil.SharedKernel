@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application.Messaging.DomainEvents;
@@ -9,6 +9,7 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
 
     private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers = new();
 
+    /// <inheritdoc />
     public Task PublishAsync(object notification, CancellationToken cancellationToken = default) =>
         notification switch
         {
@@ -16,6 +17,7 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
             null => throw new ArgumentNullException(nameof(notification)),
             _ => throw new ArgumentException($"{nameof(notification)} does not implement ${nameof(IDomainEvent)}")
         };
+    /// <inheritdoc />
     public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
         where TNotification : IDomainEvent =>
         InternalPublish(notification, cancellationToken);

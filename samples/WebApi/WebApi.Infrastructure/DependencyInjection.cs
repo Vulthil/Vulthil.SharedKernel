@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,8 +12,14 @@ using WebApi.Infrastructure.Data;
 
 namespace WebApi.Infrastructure;
 
+/// <summary>
+/// Represents the DependencyInjection.
+/// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static IHostApplicationBuilder AddDatabaseInfrastructure(this IHostApplicationBuilder builder, string connectionStringKey)
     {
         builder.Services
@@ -33,8 +39,14 @@ public static class DependencyInjection
         return builder;
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static Task MigrateAsync(this IHost host) => host.MigrateAsync<WebApiDbContext>();
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static IHostApplicationBuilder AddRabbitMqMessagingInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
     {
         builder.AddMessaging(x =>

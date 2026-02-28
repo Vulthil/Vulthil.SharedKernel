@@ -5,6 +5,9 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
+/// <summary>
+/// Represents the ConsumerRegistrationTests.
+/// </summary>
 public sealed class ConsumerRegistrationTests : BaseUnitTestCase
 {
     private static HostApplicationBuilder CreateHostBuilder()
@@ -12,6 +15,9 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         return Host.CreateApplicationBuilder();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddConsumerShouldRegisterConsumerInServiceCollection()
     {
@@ -32,6 +38,9 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         consumerServices.Count.ShouldBeGreaterThan(0);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddConsumerShouldRegisterConsumerOnlyOnce()
     {
@@ -56,6 +65,9 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         registrations.Count.ShouldBe(1);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddConsumerShouldAddConsumerRegistrationToQueueDefinition()
     {
@@ -82,6 +94,9 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         queue.Registrations.First().MessageType.Type.ShouldBe(typeof(TestMessage));
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddConsumerWithRoutingKeyShouldUseCustomRoutingKey()
     {
@@ -109,6 +124,9 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         queue.Registrations.First().RoutingKey.ShouldBe(customRoutingKey);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddConsumerWithoutRoutingKeyBindingShouldUseDefaultWildcard()
     {
@@ -132,6 +150,9 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         queue.Registrations.First().RoutingKey.ShouldBe("#");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddMultipleConsumersToSameQueueShouldRegisterAll()
     {
@@ -159,6 +180,9 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         types.Contains(typeof(AnotherTestConsumer)).ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void SameConsumerInMultipleQueuesWithDifferentRoutingKeysShouldRegisterBoth()
     {
@@ -199,11 +223,17 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
 
     private class TestMessage
     {
+        /// <summary>
+        /// Gets or sets this member value.
+        /// </summary>
         public string Content { get; set; } = string.Empty;
     }
 
     private class TestMessageConsumer : IConsumer<TestMessage>
     {
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
@@ -212,11 +242,17 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
 
     private class AnotherMessage
     {
+        /// <summary>
+        /// Gets or sets this member value.
+        /// </summary>
         public string Data { get; set; } = string.Empty;
     }
 
     private class AnotherTestConsumer : IConsumer<AnotherMessage>
     {
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task ConsumeAsync(IMessageContext<AnotherMessage> messageContext, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;

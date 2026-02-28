@@ -2,8 +2,14 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Results.Tests;
 
+/// <summary>
+/// Represents the ValidationErrorTests.
+/// </summary>
 public sealed class ValidationErrorTests : BaseUnitTestCase
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void WithSingleErrorCreatesValidationError()
     {
@@ -21,6 +27,9 @@ public sealed class ValidationErrorTests : BaseUnitTestCase
             e => Assert.Equal(error, e));
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void FromResultsWithMultipleResultsCollectsErrors()
     {

@@ -11,6 +11,8 @@ public sealed record MessageType(Type Type)
     /// </summary>
     public string Name => Type.FullName!;
 }
+/// <summary>
+/// Wraps a CLR type representing a consumer in the messaging infrastructure.
 /// </summary>
 /// <param name="Type">The CLR type of the consumer.</param>
 public sealed record ConsumerType(Type Type)

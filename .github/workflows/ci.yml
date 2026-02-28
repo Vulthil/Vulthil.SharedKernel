@@ -116,7 +116,12 @@ jobs:
           fi
 
           if [ -z "$PROJECTS" ]; then
-            echo "::notice::No packable src projects in current scope"
+            echo "::notice::No packable src projects in affected scope, falling back to all src projects"
+            PROJECTS=$(find src -name "*.csproj" | sort)
+          fi
+
+          if [ -z "$PROJECTS" ]; then
+            echo "::notice::No packable src projects found"
             exit 0
           fi
 

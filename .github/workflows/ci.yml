@@ -94,7 +94,7 @@ jobs:
             echo "target=Vulthil.SharedKernel.slnx" >> $GITHUB_OUTPUT
           fi
       - name: Build
-        run: dotnet build ${{ steps.scope.outputs.target }} --configuration Release
+        run: dotnet build ${{ steps.scope.outputs.target }} --configuration Release --no-restore
       - name: Test
         run: dotnet test ${{ steps.scope.outputs.target }} --configuration Release --no-build
       - name: Pack
@@ -102,10 +102,7 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             PREVIEW_NUMBER=$(git rev-list --count origin/main..HEAD)
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            VERSION="${VERSION}-preview.pr${PR_NUMBER}.${PREVIEW_NUMBER}"
-          elif [ "${{ github.ref }}" != "refs/heads/main" ]; then
-            VERSION="${VERSION}-dev.${{ github.run_number }}"
+            VERSION="${VERSION}-preview.${PREVIEW_NUMBER}"
           fi
           echo "::notice::Packing with version: $VERSION"
 
@@ -127,7 +124,7 @@ jobs:
 
           while IFS= read -r proj; do
             [ -z "$proj" ] && continue
-            dotnet pack "$proj" --configuration Release --no-build -o ./nupkgs -p:PackageVersion=$VERSION
+            dotnet pack "$proj" --configuration Release -o ./nupkgs -p:DisableNbgv=true -p:PackageVersion="$VERSION"
           done <<< "$PROJECTS"
       - name: Check if nupkgs exist
         id: check_nupkgs

@@ -94,7 +94,7 @@ jobs:
             echo "target=Vulthil.SharedKernel.slnx" >> $GITHUB_OUTPUT
           fi
       - name: Build
-        run: dotnet build ${{ steps.scope.outputs.target }} --configuration Release --no-restore
+        run: dotnet build ${{ steps.scope.outputs.target }} --configuration Release
       - name: Test
         run: dotnet test ${{ steps.scope.outputs.target }} --configuration Release --no-build
       - name: Pack

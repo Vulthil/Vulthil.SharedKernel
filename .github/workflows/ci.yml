@@ -65,9 +65,10 @@ jobs:
       - name: Get version
         id: version
         run: |
-          VERSION=$(nbgv get-version -v NuGetPackageVersion)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "::notice::Version: $VERSION"
+          RAW_VERSION=$(nbgv get-version -v NuGetPackageVersion)
+          STABLE_VERSION="${RAW_VERSION%%-*}"
+          echo "version=$STABLE_VERSION" >> $GITHUB_OUTPUT
+          echo "::notice::Base package version: $STABLE_VERSION"
       - name: Determine build scope
         id: scope
         run: |
@@ -100,7 +101,11 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            VERSION="${VERSION}-preview.${{ github.run_number }}"
+            PREVIEW_NUMBER=$(git rev-list --count origin/main..HEAD)
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            VERSION="${VERSION}-preview.pr${PR_NUMBER}.${PREVIEW_NUMBER}"
+          elif [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            VERSION="${VERSION}-dev.${{ github.run_number }}"
           fi
           echo "::notice::Packing with version: $VERSION"
           dotnet pack ${{ steps.scope.outputs.target }} --configuration Release --no-build -o ./nupkgs -p:PackageVersion=$VERSION

@@ -108,7 +108,22 @@ jobs:
             VERSION="${VERSION}-dev.${{ github.run_number }}"
           fi
           echo "::notice::Packing with version: $VERSION"
-          dotnet pack ${{ steps.scope.outputs.target }} --configuration Release --no-build -o ./nupkgs -p:PackageVersion=$VERSION
+
+          if [ "${{ steps.scope.outputs.target }}" = "affected.proj" ] && [ -f affected.proj ]; then
+            PROJECTS=$(grep -oP 'Include="\K[^"]+' affected.proj | grep '^src/.*\.csproj$' || true)
+          else
+            PROJECTS=$(find src -name "*.csproj" | sort)
+          fi
+
+          if [ -z "$PROJECTS" ]; then
+            echo "::notice::No packable src projects in current scope"
+            exit 0
+          fi
+
+          while IFS= read -r proj; do
+            [ -z "$proj" ] && continue
+            dotnet pack "$proj" --configuration Release --no-build -o ./nupkgs -p:PackageVersion=$VERSION
+          done <<< "$PROJECTS"
       - name: Check if nupkgs exist
         id: check_nupkgs
         run: |

@@ -22,11 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- Only referenced to fix vulnerability in Respawn -->
-		<PackageReference Include="Microsoft.Data.SqlClient" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Using Include="Shouldly" />
 		<Using Include="Xunit" />
 		<Using Include="Moq" />

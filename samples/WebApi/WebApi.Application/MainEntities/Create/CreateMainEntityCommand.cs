@@ -1,17 +1,26 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
 using WebApi.Domain.MainEntities;
 
 namespace WebApi.Application.MainEntities.Create;
 
+/// <summary>
+/// Represents the CreateMainEntityCommand.
+/// </summary>
 public sealed record CreateMainEntityCommand(string Name) : ITransactionalCommand<Result<Guid>>;
 
+/// <summary>
+/// Represents the CreateMainEntityCommandHandler.
+/// </summary>
 public sealed class CreateMainEntityCommandHandler(ILogger<CreateMainEntityCommandHandler> logger, IWebApiDbContext dbContext) : ICommandHandler<CreateMainEntityCommand, Result<Guid>>
 {
     private readonly ILogger<CreateMainEntityCommandHandler> _logger = logger;
     private readonly IWebApiDbContext _dbContext = dbContext;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task<Result<Guid>> HandleAsync(CreateMainEntityCommand command, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Creating MainEntity With name: {Name}", command.Name);

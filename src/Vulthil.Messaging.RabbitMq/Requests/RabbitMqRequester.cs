@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -19,6 +19,9 @@ internal sealed class RabbitMqRequester(
     private JsonSerializerOptions _jsonOptions => _messagingOptions.JsonSerializerOptions;
     private TimeSpan _defaultTimeout => _messagingOptions.DefaultTimeout;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
         TRequest message,
         Func<IPublishContext, Task>? configureContext = null,

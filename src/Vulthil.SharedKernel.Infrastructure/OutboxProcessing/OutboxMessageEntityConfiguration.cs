@@ -10,6 +10,7 @@ namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 /// </summary>
 public class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
+    /// <inheritdoc />
     public virtual void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
         builder.HasKey(o => o.Id);

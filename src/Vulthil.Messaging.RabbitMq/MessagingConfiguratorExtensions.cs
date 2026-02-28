@@ -1,4 +1,4 @@
-﻿using Aspire.RabbitMQ.Client;
+using Aspire.RabbitMQ.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
@@ -9,9 +9,15 @@ using Vulthil.Messaging.RabbitMq.Requests;
 
 namespace Vulthil.Messaging.RabbitMq;
 
+/// <summary>
+/// Represents the MessagingConfiguratorExtensions.
+/// </summary>
 public static class MessagingConfiguratorExtensions
 {
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public static IMessagingConfigurator UseRabbitMq(this IMessagingConfigurator configurator,
         string connectionStringKey = "rabbitMq", // The name used in Aspire AppHost
         Action<RabbitMQClientSettings>? configureSettings = null,

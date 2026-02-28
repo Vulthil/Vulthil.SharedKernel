@@ -1,4 +1,4 @@
-﻿using RabbitMQ.Client;
+using RabbitMQ.Client;
 
 namespace Vulthil.Messaging.RabbitMq;
 
@@ -6,6 +6,9 @@ internal static class ExchangeTypeMapper
 {
     extension(MessagingExchangeType type)
     {
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public string ToRabbitExchangeType() => type switch
         {
             MessagingExchangeType.Topic => ExchangeType.Topic,

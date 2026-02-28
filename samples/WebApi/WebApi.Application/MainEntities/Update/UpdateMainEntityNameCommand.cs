@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
@@ -6,13 +6,22 @@ using WebApi.Domain.MainEntities;
 
 namespace WebApi.Application.MainEntities.Update;
 
+/// <summary>
+/// Represents the UpdateMainEntityNameCommand.
+/// </summary>
 public sealed record UpdateMainEntityNameCommand(Guid Id, string Name) : ITransactionalCommand;
 
+/// <summary>
+/// Represents the UpdateMainEntityNameCommandHandler.
+/// </summary>
 public sealed class UpdateMainEntityNameCommandHandler(ILogger<UpdateMainEntityNameCommandHandler> logger, IWebApiDbContext dbContext) : ICommandHandler<UpdateMainEntityNameCommand>
 {
     private readonly ILogger<UpdateMainEntityNameCommandHandler> _logger = logger;
     private readonly IWebApiDbContext _dbContext = dbContext;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task<Result> HandleAsync(UpdateMainEntityNameCommand command, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating MainEntity With name: {Name}", command.Name);

@@ -1,14 +1,21 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 using Vulthil.SharedKernel.Primitives;
 
 namespace Vulthil.SharedKernel.Infrastructure.Data;
 
+/// <summary>
+/// EF Core save-changes interceptor that captures domain events from tracked aggregate roots
+/// and persists them as <see cref="OutboxMessage"/> entries before the main save completes.
+/// </summary>
 public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider timeProvider) : SaveChangesInterceptor
 {
     private readonly TimeProvider _timeProvider = timeProvider;
 
+    /// <summary>
+    /// Captures domain events from tracked aggregate roots and stores them as outbox messages before persisting changes.
+    /// </summary>
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
         var dbContext = eventData.Context;

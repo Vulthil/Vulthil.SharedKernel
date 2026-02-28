@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Vulthil.Results;
 
 namespace Vulthil.Messaging.RabbitMq.Requests;
@@ -7,6 +7,9 @@ internal sealed class ResponseWaiter<T>(
     TaskCompletionSource<Result<T>> tcs,
     JsonSerializerOptions options) : IResponseWaiter where T : notnull
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public void Complete(ReadOnlySpan<byte> body)
     {
         try

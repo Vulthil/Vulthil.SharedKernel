@@ -1,7 +1,10 @@
-﻿using Vulthil.Results;
+using Vulthil.Results;
 
 namespace Vulthil.SharedKernel.Exceptions;
 
+/// <summary>
+/// Base exception for domain rule violations, carrying a structured <see cref="Error"/>.
+/// </summary>
 public abstract class DomainException : Exception
 {
     /// <summary>
@@ -12,5 +15,8 @@ public abstract class DomainException : Exception
         : base(error.Description)
         => Error = error;
 
+    /// <summary>
+    /// Gets the structured error describing the domain rule violation.
+    /// </summary>
     public Error Error { get; }
 }

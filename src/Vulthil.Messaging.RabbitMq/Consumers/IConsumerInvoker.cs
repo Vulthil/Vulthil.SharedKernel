@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -19,10 +19,19 @@ internal sealed class ConsumerInvoker<TConsumer, TMessage>(string routingKey, Re
     where TConsumer : class, IConsumer<TMessage>
     where TMessage : notnull
 {
+    /// <summary>
+    /// Represents this member.
+    /// </summary>
     public string RoutingKey => routingKey;
 
+    /// <summary>
+    /// Represents this member.
+    /// </summary>
     public RetryPolicyDefinition? RetryPolicy => retryPolicy;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task InvokeAsync(
         IServiceProvider sp,
         object message,
@@ -50,9 +59,18 @@ internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(MessagingOption
 {
     private readonly MessagingOptions _messagingOptions = messagingOptions;
     private JsonSerializerOptions _jsonOptions => _messagingOptions.JsonSerializerOptions;
+    /// <summary>
+    /// Represents this member.
+    /// </summary>
     public string RoutingKey => routingKey;
+    /// <summary>
+    /// Represents this member.
+    /// </summary>
     public RetryPolicyDefinition? RetryPolicy => retryPolicy;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task InvokeAsync(IServiceProvider sp, object message, BasicDeliverEventArgs ea, IChannel channel, CancellationToken ct)
     {
         var consumer = sp.GetRequiredService<TConsumer>();

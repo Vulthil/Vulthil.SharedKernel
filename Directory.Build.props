@@ -3,8 +3,16 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(IsPackable)' != 'false' and Exists('README.md')">
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsPackable)' != 'false' and Exists('README.md')">
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 	<PropertyGroup>
 		<Authors>Vulthil</Authors>

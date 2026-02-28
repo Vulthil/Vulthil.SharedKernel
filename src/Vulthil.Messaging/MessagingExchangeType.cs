@@ -1,5 +1,8 @@
-﻿namespace Vulthil.Messaging;
+namespace Vulthil.Messaging;
 
+/// <summary>
+/// Specifies values for MessagingExchangeType.
+/// </summary>
 public enum MessagingExchangeType
 {
     /// <summary>

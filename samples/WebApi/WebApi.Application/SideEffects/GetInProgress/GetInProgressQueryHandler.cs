@@ -1,16 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
 using WebApi.Domain.SideEffects;
 
 namespace WebApi.Application.SideEffects.GetInProgress;
 
+/// <summary>
+/// Represents the GetInProgressQuery.
+/// </summary>
 public sealed record GetInProgressQuery : IQuery<Result<List<SideEffectDto>>>;
 
 internal class GetInProgressQueryHandler(IWebApiDbContext webApiDbContext) : IQueryHandler<GetInProgressQuery, Result<List<SideEffectDto>>>
 {
     private readonly IWebApiDbContext _webApiDbContext = webApiDbContext;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task<Result<List<SideEffectDto>>> HandleAsync(GetInProgressQuery request, CancellationToken cancellationToken = default)
     {
         var list = await _webApiDbContext.SideEffects

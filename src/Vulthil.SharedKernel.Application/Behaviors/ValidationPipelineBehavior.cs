@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.Results;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
@@ -12,6 +12,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
 {
     private readonly IEnumerable<IValidator<TCommand>> _validators = validators;
 
+    /// <inheritdoc />
     public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
         var validationFailures = await ValidateAsync(request);

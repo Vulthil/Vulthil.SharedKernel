@@ -7,8 +7,14 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
+/// <summary>
+/// Represents the MessagingOptionsTests.
+/// </summary>
 public sealed class MessagingOptionsTests : BaseUnitTestCase
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MessagingOptionsShouldHaveDefaultTimeout()
     {
@@ -19,6 +25,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.DefaultTimeout.ShouldBe(TimeSpan.FromSeconds(30));
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MessagingOptionsShouldHaveJsonSerializerOptions()
     {
@@ -29,6 +38,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.JsonSerializerOptions.ShouldNotBeNull();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void SectionNameShouldBe()
     {
@@ -36,6 +48,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         MessagingOptions.SectionName.ShouldBe("Messaging:Options");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RoutingKeyFormattersShouldBeEmpty()
     {
@@ -46,6 +61,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.RoutingKeyFormatters.Count.ShouldBe(0);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void CorrelationIdFormattersShouldBeEmpty()
     {
@@ -56,6 +74,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.CorrelationIdFormatters.Count.ShouldBe(0);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void ReadOnlyRoutingKeyFormattersShouldReturnFormatters()
     {
@@ -71,6 +92,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         readOnly.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void ReadOnlyCorrelationIdFormattersShouldReturnFormatters()
     {
@@ -86,6 +110,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         readOnly.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void DefaultTimeoutShouldBeModifiable()
     {
@@ -100,6 +127,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.DefaultTimeout.ShouldBe(newTimeout);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void JsonSerializerOptionsShouldBeModifiable()
     {

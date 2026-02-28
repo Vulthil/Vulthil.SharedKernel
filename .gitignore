@@ -363,3 +363,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /tests/html-coverage-report
+
+# DocFX generated output
+docs/_site/

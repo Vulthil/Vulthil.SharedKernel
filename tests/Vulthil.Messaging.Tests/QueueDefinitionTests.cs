@@ -4,8 +4,14 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
+/// <summary>
+/// Represents the QueueDefinitionTests.
+/// </summary>
 public sealed class QueueDefinitionTests : BaseUnitTestCase
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void MessageTypeShouldReturnFullName()
     {
@@ -19,6 +25,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         name.ShouldBe(typeof(string).FullName);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void ConsumerTypeShouldReturnFullName()
     {
@@ -32,6 +41,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         name.ShouldContain(nameof(TestConsumer));
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void QueueDefinitionShouldHaveCorrectDefaults()
     {
@@ -52,6 +64,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         queue.Registrations.Count().ShouldBe(0);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void QueueDefinitionShouldAllowModifyingProperties()
     {
@@ -87,6 +102,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         queue.ExchangeAutoDelete.ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void QueueDefinitionShouldTrackExchangeArguments()
     {
@@ -105,6 +123,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         queue.ExchangeArguments["key2"].ShouldBe(42);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddConsumerShouldRegisterInQueue()
     {
@@ -127,6 +148,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         queue.Registrations.First().ShouldBe(registration);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RequestConsumerRegistrationShouldHaveResponseType()
     {
@@ -142,6 +166,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         registration.ResponseType.ShouldBe(typeof(string));
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void ConsumerRegistrationDefaultRoutingKeyShouldBeWildcard()
     {
@@ -156,6 +183,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         registration.RoutingKey.ShouldBe("#");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RegistrationsShouldBeReadOnly()
     {
@@ -179,6 +209,9 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
     private class TestMessage { }
     private class TestConsumer : IConsumer<TestMessage>
     {
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 }

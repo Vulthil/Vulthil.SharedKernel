@@ -1,16 +1,25 @@
-﻿using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.Queues;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
 internal sealed record MessageExecutionPlan(MessageType MessageType)
 {
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public List<IConsumerInvoker> StandardHandlers { get; } = [];
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public IRpcInvoker? RpcHandler { get; set; }
 }
 
 internal sealed class MessageTypeCache
 {
     private readonly Dictionary<string, MessageExecutionPlan> _plans = [];
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public void RegisterQueue(QueueDefinition queue, MessagingOptions messagingOptions)
     {
         foreach (var consumer in queue.Registrations.OfType<ConsumerRegistration>())
@@ -54,5 +63,8 @@ internal sealed class MessageTypeCache
         return plan;
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public MessageExecutionPlan? GetPlan(string key) => _plans.GetValueOrDefault(key);
 }

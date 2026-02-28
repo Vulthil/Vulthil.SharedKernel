@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 using Vulthil.SharedKernel.Application.Pipeline;
 using Vulthil.SharedKernel.Events;
@@ -6,12 +6,21 @@ using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Application.Tests;
 
+/// <summary>
+/// Represents the DomainEventPublisherTests.
+/// </summary>
 public sealed class DomainEventPublisherTests : BaseUnitTestCase
 {
     private readonly Lazy<DomainEventPublisher> _lazyTarget;
     private DomainEventPublisher Target => _lazyTarget.Value;
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public DomainEventPublisherTests() => _lazyTarget = new(CreateInstance<DomainEventPublisher>);
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task PublishDomainEventNull()
     {
@@ -22,6 +31,9 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
         await action.ShouldThrowAsync<ArgumentNullException>();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task PublishDomainEventNonDomainEvent()
     {
@@ -39,13 +51,22 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
 
     internal sealed class TestEventHandler(TextWriter textWriter) : IDomainEventHandler<TestEvent>
     {
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task HandleAsync(TestEvent notification, CancellationToken cancellationToken = default) => textWriter.WriteLineAsync("Success");
     }
     internal sealed class TestEventHandlerPipeline : IDomainEventPipelineHandler<TestEvent>
     {
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task HandleAsync(TestEvent domainEvent, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default) => next(cancellationToken);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task PublishDomainEvent()
     {

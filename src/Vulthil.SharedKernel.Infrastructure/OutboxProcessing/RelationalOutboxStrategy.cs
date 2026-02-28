@@ -5,12 +5,13 @@ namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
 /// <summary>
 /// Base outbox strategy for relational database providers.
-/// Uses EF Core relational APIs (<see cref="RelationalQueryableExtensions.ExecuteUpdateAsync{TSource}"/>)
+/// Uses EF Core relational APIs (<see cref="RelationalQueryableExtensions"/>)
 /// for batch updates. Provider-specific strategies (e.g., Npgsql, SqlServer) should inherit
 /// from this class and override <see cref="FetchMessagesAsync"/> to add row-level locking.
 /// </summary>
 public class RelationalOutboxStrategy : IOutboxStrategy
 {
+    /// <inheritdoc />
     public virtual async Task<IDbTransaction?> BeginTransactionAsync(ISaveOutboxMessages context, CancellationToken cancellationToken)
     {
         if (context is IUnitOfWork unitOfWork)
@@ -21,6 +22,7 @@ public class RelationalOutboxStrategy : IOutboxStrategy
         return null;
     }
 
+    /// <inheritdoc />
     public virtual async Task<List<OutboxMessageData>> FetchMessagesAsync(DbSet<OutboxMessage> outboxMessages, int batchSize, int maxRetries, CancellationToken cancellationToken)
     {
         return await outboxMessages
@@ -31,6 +33,7 @@ public class RelationalOutboxStrategy : IOutboxStrategy
             .ToListAsync(cancellationToken);
     }
 
+    /// <inheritdoc />
     public virtual async Task UpdateMessagesAsync(DbSet<OutboxMessage> outboxMessages, IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
     {
         if (successIds.Count > 0)

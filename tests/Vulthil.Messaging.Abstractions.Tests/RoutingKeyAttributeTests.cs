@@ -3,8 +3,14 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Abstractions.Tests;
 
+/// <summary>
+/// Represents the RoutingKeyAttributeTests.
+/// </summary>
 public sealed class RoutingKeyAttributeTests : BaseUnitTestCase
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RoutingKeyAttributeShouldStorePattern()
     {
@@ -15,6 +21,9 @@ public sealed class RoutingKeyAttributeTests : BaseUnitTestCase
         attribute.Pattern.ShouldBe("test.pattern");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RoutingKeyAttributeShouldBeApplicableToClass()
     {
@@ -26,6 +35,9 @@ public sealed class RoutingKeyAttributeTests : BaseUnitTestCase
         attribute!.ValidOn.ShouldBe(AttributeTargets.Class);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void ClassCanHaveRoutingKeyAttribute()
     {

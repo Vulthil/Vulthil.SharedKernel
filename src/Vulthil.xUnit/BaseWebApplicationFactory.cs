@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,12 +8,21 @@ using Vulthil.xUnit.Fixtures;
 
 namespace Vulthil.xUnit;
 
+/// <summary>
+/// Abstract <see cref="WebApplicationFactory{TEntryPoint}"/> that injects test container connection strings
+/// and runs database migrations automatically during startup.
+/// </summary>
 public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>
     where TEntryPoint : class
 {
     private TestFixture? _testFixture;
     internal void SetFixture(TestFixture testFixture) => _testFixture = testFixture;
+    /// <summary>
+    /// Override to apply additional <see cref="IWebHostBuilder"/> configuration for tests.
+    /// </summary>
+    /// <param name="builder">The web host builder to configure.</param>
     protected virtual void ConfigureCustomWebHost(IWebHostBuilder builder) { }
+    /// <inheritdoc />
     protected override sealed void ConfigureWebHost(IWebHostBuilder builder)
     {
         foreach (var container in _testFixture?.ContainersWithConnectionStrings ?? [])
@@ -33,6 +42,7 @@ internal sealed class TestMigrationHostedService(Func<TestFixture?> testFixtureA
 {
     private bool _completed;
 
+    /// <inheritdoc />
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         if (_completed)
@@ -54,5 +64,6 @@ internal sealed class TestMigrationHostedService(Func<TestFixture?> testFixtureA
         _completed = true;
     }
 
+    /// <inheritdoc />
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

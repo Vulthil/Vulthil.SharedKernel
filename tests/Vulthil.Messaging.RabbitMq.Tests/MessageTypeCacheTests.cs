@@ -11,11 +11,17 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
+/// <summary>
+/// Represents the MessageTypeCacheTests.
+/// </summary>
 public sealed class MessageTypeCacheTests : BaseUnitTestCase
 {
     private readonly Lazy<MessageTypeCache> _lazyTarget;
     private MessageTypeCache Target => _lazyTarget.Value;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public MessageTypeCacheTests()
     {
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
@@ -48,8 +54,14 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     private sealed class TestMessageConsumer : IConsumer<TestMessage>
     {
+        /// <summary>
+        /// Gets or sets this member value.
+        /// </summary>
         public List<TestMessage> ReceivedMessages { get; } = [];
 
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
         {
             ReceivedMessages.Add(messageContext.Message);
@@ -59,6 +71,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     private sealed class ThrowingRequestConsumer : IRequestConsumer<TestRequest, TestResponse>
     {
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task<TestResponse> ConsumeAsync(IMessageContext<TestRequest> messageContext, CancellationToken cancellationToken = default)
         {
             throw new InvalidOperationException("failed to process request");
@@ -67,8 +82,14 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     private sealed class TestRequestConsumer : IRequestConsumer<TestRequest, TestResponse>
     {
+        /// <summary>
+        /// Gets or sets this member value.
+        /// </summary>
         public List<TestRequest> ReceivedRequests { get; } = [];
 
+        /// <summary>
+        /// Executes this member.
+        /// </summary>
         public Task<TestResponse> ConsumeAsync(IMessageContext<TestRequest> messageContext, CancellationToken cancellationToken = default)
         {
             ReceivedRequests.Add(messageContext.Message);
@@ -78,6 +99,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     #endregion
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RegisterQueueShouldRegisterStandardConsumers()
     {
@@ -103,6 +127,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.StandardHandlers[0].RoutingKey.ShouldBe("test.message");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RegisterQueueShouldRegisterRequestConsumers()
     {
@@ -129,6 +156,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.RpcHandler.RoutingKey.ShouldBe("test.request");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task CompiledHandlerShouldCallConsumerWithCorrectMessage()
     {
@@ -162,6 +192,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         consumerInstance.ReceivedMessages[0].Content.ShouldBe("Hello, World!");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task CompiledRpcHandlerShouldCallConsumerAndPublishResponse()
     {
@@ -226,6 +259,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         response.Result.ShouldBe("Processed: Find users");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task CompiledRpcHandlerShouldPublishFailureWhenConsumerThrows()
     {
@@ -280,6 +316,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         messageResult.ErrorMessage.ShouldContain("failed to process request");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void GetPlanShouldReturnNullForUnregisteredMessageType()
     {
@@ -290,6 +329,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.ShouldBeNull();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RegisterQueueShouldSupportMultipleHandlersForSameMessageType()
     {
@@ -325,6 +367,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.StandardHandlers[1].RoutingKey.ShouldBe("route.2");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RpcHandlerRoutingKeyShouldReturnHandlerRoutingKey()
     {

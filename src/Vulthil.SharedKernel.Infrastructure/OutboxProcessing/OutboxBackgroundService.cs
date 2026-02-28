@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,6 +10,7 @@ internal sealed class OutboxBackgroundService(
     IServiceScopeFactory serviceScopeFactory,
     IOptions<OutboxProcessingOptions> options) : BackgroundService
 {
+    /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         int baseDelayMs = options.Value.OutboxProcessingDelayInSeconds * 1000;

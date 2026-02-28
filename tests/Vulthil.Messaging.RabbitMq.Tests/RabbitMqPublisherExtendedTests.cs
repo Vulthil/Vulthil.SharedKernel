@@ -6,6 +6,9 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
+/// <summary>
+/// Represents the RabbitMqPublisherExtendedTests.
+/// </summary>
 public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqPublisher> _lazyTarget;
@@ -13,6 +16,9 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
 
     private RabbitMqPublisher Target => _lazyTarget.Value;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public RabbitMqPublisherExtendedTests()
     {
         var logger = GetMock<ILogger<RabbitMqPublisher>>().Object;
@@ -33,6 +39,9 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task PublishAsyncShouldSetMessageTypeInBasicProperties()
     {
@@ -56,6 +65,9 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
         capturedProperties.Type.ShouldBe(typeof(TestMessage).FullName);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task PublishAsyncWithMultipleMessagesPublishesEach()
     {
@@ -81,6 +93,9 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
             Times.Exactly(3));
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task PublishAsyncShouldPublishToCorrectExchange()
     {
@@ -105,6 +120,9 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
 
     private sealed class TestMessage
     {
+        /// <summary>
+        /// Gets or sets this member value.
+        /// </summary>
         public string Content { get; set; } = string.Empty;
     }
 }

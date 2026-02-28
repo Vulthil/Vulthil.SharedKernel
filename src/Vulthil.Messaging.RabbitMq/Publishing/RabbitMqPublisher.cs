@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -17,6 +17,9 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
 
     private readonly ConcurrentDictionary<string, bool> _knownExchanges = new();
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public RabbitMqPublisher(IConnection rabbitMqConnection, IOptions<MessagingOptions> messagingOptions)
     {
         _rabbitMqConnection = rabbitMqConnection;
@@ -24,6 +27,9 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         _jsonOptions = _messagingOptions.JsonSerializerOptions;
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task InternalPublishAsync<TMessage>(byte[] body, BasicProperties props, string routingKey, CancellationToken cancellationToken)
     {
         var exchange = typeof(TMessage).FullName!;
@@ -84,6 +90,9 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         }
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task PublishAsync<TMessage>(TMessage message, Func<IPublishContext, Task>? configureContext = null, CancellationToken cancellationToken = default)
         where TMessage : notnull
     {
@@ -119,6 +128,9 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         await InternalPublishAsync<TMessage>(body, properties, routingKey, cancellationToken);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         if (_channel != null)

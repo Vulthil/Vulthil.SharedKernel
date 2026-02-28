@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Results;
@@ -9,11 +9,26 @@ using WebApi.Domain.MainEntities;
 
 namespace WebApi.Application.MainEntities.GetById;
 
+/// <summary>
+/// Represents the GetMainEntityByIdQuery.
+/// </summary>
 public sealed record GetMainEntityByIdQuery(Guid Id) : IQuery<Result<MainEntityDto>>;
+/// <summary>
+/// Represents the MainEntityDto.
+/// </summary>
 public sealed record MainEntityDto
 {
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public Guid Id { get; private set; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public string Name { get; private set; }
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public required List<SideEffectDto> SideEffects { get; init; }
 
     private MainEntityDto(Guid id, string name) => (Id, Name) = (id, name);
@@ -24,12 +39,18 @@ public sealed record MainEntityDto
         };
 }
 
+/// <summary>
+/// Represents the GetMainEntityQueryHandler.
+/// </summary>
 public sealed class GetMainEntityQueryHandler(ILogger<GetMainEntityQueryHandler> logger, IWebApiDbContext dbContext, IRequester requester) : IQueryHandler<GetMainEntityByIdQuery, Result<MainEntityDto>>
 {
     private readonly ILogger<GetMainEntityQueryHandler> _logger = logger;
     private readonly IWebApiDbContext _dbContext = dbContext;
     private readonly IRequester _requester = requester;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task<Result<MainEntityDto>> HandleAsync(GetMainEntityByIdQuery query, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Querying MainEntity With Id: {Id}", query.Id);

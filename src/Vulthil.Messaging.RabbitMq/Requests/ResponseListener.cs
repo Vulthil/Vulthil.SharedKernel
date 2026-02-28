@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -14,13 +14,25 @@ internal sealed class ResponseListener(IOptions<MessagingOptions> messagingOptio
     private readonly JsonSerializerOptions _jsonOptions = messagingOptions.Value.JsonSerializerOptions;
 
     private IChannel? _channel;
+    /// <summary>
+    /// Gets or sets this member value.
+    /// </summary>
     public string ReplyToQueueName { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public void RegisterWaiter<T>(string correlationId, TaskCompletionSource<Result<T>> tcs) where T : notnull
         => _waiters[correlationId] = new ResponseWaiter<T>(tcs, _jsonOptions);
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public void RemoveWaiter(string correlationId) => _waiters.TryRemove(correlationId, out _);
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task InitializeAsync(IConnection connection)
     {
         _channel = await connection.CreateChannelAsync();
@@ -46,5 +58,8 @@ internal sealed class ResponseListener(IOptions<MessagingOptions> messagingOptio
         await _channel.BasicConsumeAsync(ReplyToQueueName, false, consumer);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public ValueTask DisposeAsync() => _channel?.DisposeAsync() ?? ValueTask.CompletedTask;
 }

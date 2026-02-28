@@ -6,6 +6,9 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
+/// <summary>
+/// Represents the MessagingConfiguratiorTests.
+/// </summary>
 public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
 {
     private static HostApplicationBuilder CreateHostBuilder()
@@ -13,6 +16,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         return Host.CreateApplicationBuilder();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddMessagingShouldRegisterConsumerHostedService()
     {
@@ -28,6 +34,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         hostedServices[0].Lifetime.ShouldBe(ServiceLifetime.Singleton);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddMessagingShouldRegisterMessagingOptions()
     {
@@ -42,6 +51,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         optionsServices.ShouldNotBeEmpty();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddMessagingQueueShouldRegisterQueueDefinition()
     {
@@ -61,6 +73,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddMessagingShouldThrowWhenQueueNameIsNull()
     {
@@ -77,6 +92,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         });
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddMessagingShouldThrowWhenQueueNameIsEmpty()
     {
@@ -93,6 +111,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         });
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void AddMessagingMultipleQueuesShouldRegisterAll()
     {
@@ -112,6 +133,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         queueServices.Count.ShouldBe(3);
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RegisterRoutingKeyFormatterShouldStoreFormatterForType()
     {
@@ -129,6 +153,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         formatter(testMessage).ShouldBe("test.route");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RegisterRoutingKeyFormatterWithFuncShouldUseCustomLogic()
     {
@@ -145,6 +172,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         formatter(testMessage).ShouldBe("route.test-123");
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public void RegisterCorrelationIdFormatterShouldStoreFormatterForType()
     {
@@ -164,6 +194,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
 
     private class TestMessage
     {
+        /// <summary>
+        /// Gets or sets this member value.
+        /// </summary>
         public string Id { get; set; } = string.Empty;
     }
 }

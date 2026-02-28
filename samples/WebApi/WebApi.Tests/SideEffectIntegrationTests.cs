@@ -1,4 +1,4 @@
-﻿using Shouldly;
+using Shouldly;
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
 using WebApi.Application.MainEntities.Create;
@@ -9,9 +9,15 @@ using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
+/// <summary>
+/// Represents the SideEffectIntegrationTests.
+/// </summary>
 public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase(testFixture, testOutputHelper)
 {
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     [Fact]
     public async Task TestCreate()
     {

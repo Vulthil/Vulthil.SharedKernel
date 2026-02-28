@@ -1,4 +1,4 @@
-﻿
+
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -7,11 +7,16 @@ using Xunit.Sdk;
 
 namespace Vulthil.xUnit.Fixtures;
 
+/// <summary>
+/// Base fixture that wraps a Testcontainers container as an <see cref="ITestContainer"/> for use in <see cref="TestFixture"/>.
+/// </summary>
 public abstract class TestContainerFixture<TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
     : ContainerFixture<TBuilderEntity, TContainerEntity>(messageSink), ITestContainer
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer
 {
+    /// <inheritdoc />
     protected override ValueTask InitializeAsync() => base.InitializeAsync();
+    /// <inheritdoc />
     protected override ValueTask DisposeAsyncCore() => base.DisposeAsyncCore();
 }

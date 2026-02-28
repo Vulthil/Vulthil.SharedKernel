@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Queues;
@@ -18,6 +18,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     private readonly MessageTypeCache _typeCache = new();
     private readonly List<RabbitMqConsumerWorker> _workers = [];
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public RabbitMqBus(
         IServiceScopeFactory serviceScopeFactory,
         IConnection connection,
@@ -32,6 +35,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         _messagingJsonOptions = messagingJsonOptions.Value;
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         await SetupTopology(cancellationToken);
@@ -156,6 +162,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         }
     }
 
+    /// <summary>
+    /// Executes this member.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         foreach (var worker in _workers)

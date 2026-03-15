@@ -1,0 +1,138 @@
+#nullable enable
+const Vulthil.Messaging.MessagingOptions.SectionName = "Messaging:Options" -> string!
+static Vulthil.Messaging.DependencyInjection.AddMessaging(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, System.Action<Vulthil.Messaging.IMessagingConfigurator!>! messagingConfiguratorAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Vulthil.Messaging.DependencyInjection
+Vulthil.Messaging.IFaultConfigurator
+Vulthil.Messaging.IFaultConfigurator.AddConsumer<TConsumer>() -> void
+Vulthil.Messaging.IFaultConfigurator.Bind(params string![]! routingKeys) -> void
+Vulthil.Messaging.IFaultConfigurator.UseExchange(string! exchangeName) -> void
+Vulthil.Messaging.IFaultConfigurator.UseQueue(string! queueName) -> void
+Vulthil.Messaging.IMessagingConfigurator
+Vulthil.Messaging.IMessagingConfigurator.AddQueue(string! queueName, System.Action<Vulthil.Messaging.Queues.IQueueConfigurator!>! queueConfigurationAction) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.ConfigureFaults(System.Action<Vulthil.Messaging.IFaultConfigurator!>! configureFaults) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action<Vulthil.Messaging.MessagingOptions!>! action) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.HostApplicationBuilder.get -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
+Vulthil.Messaging.IMessagingConfigurator.RegisterCorrelationIdFormatter<T>(System.Func<T!, string!>! picker) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.RegisterRoutingKeyFormatter<T>(string! routingKey) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.RegisterRoutingKeyFormatter<T>(System.Func<T!, string!>! picker) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.ITransport
+Vulthil.Messaging.ITransport.StartAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.MessagingExchangeType
+Vulthil.Messaging.MessagingExchangeType.Direct = 1 -> Vulthil.Messaging.MessagingExchangeType
+Vulthil.Messaging.MessagingExchangeType.Fanout = 0 -> Vulthil.Messaging.MessagingExchangeType
+Vulthil.Messaging.MessagingExchangeType.Headers = 3 -> Vulthil.Messaging.MessagingExchangeType
+Vulthil.Messaging.MessagingExchangeType.Topic = 2 -> Vulthil.Messaging.MessagingExchangeType
+Vulthil.Messaging.MessagingOptions
+Vulthil.Messaging.MessagingOptions.AutoDeclareFaultStatus.get -> bool
+Vulthil.Messaging.MessagingOptions.AutoDeclareFaultStatus.set -> void
+Vulthil.Messaging.MessagingOptions.DefaultTimeout.get -> System.TimeSpan
+Vulthil.Messaging.MessagingOptions.DefaultTimeout.set -> void
+Vulthil.Messaging.MessagingOptions.FaultExchangeName.get -> string!
+Vulthil.Messaging.MessagingOptions.FaultExchangeName.set -> void
+Vulthil.Messaging.MessagingOptions.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
+Vulthil.Messaging.MessagingOptions.JsonSerializerOptions.set -> void
+Vulthil.Messaging.MessagingOptions.MessagingOptions() -> void
+Vulthil.Messaging.MessagingOptions.ReadOnlyCorrelationIdFormatters.get -> System.Collections.Generic.IReadOnlyDictionary<System.Type!, System.Func<object!, string!>!>!
+Vulthil.Messaging.MessagingOptions.ReadOnlyRoutingKeyFormatters.get -> System.Collections.Generic.IReadOnlyDictionary<System.Type!, System.Func<object!, string!>!>!
+Vulthil.Messaging.Queues.BaseConfigurator
+Vulthil.Messaging.Queues.BaseConfigurator.BaseConfigurator() -> void
+Vulthil.Messaging.Queues.BaseConfigurator.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> void
+Vulthil.Messaging.Queues.ConsumerConfigurator<TConsumer>
+Vulthil.Messaging.Queues.ConsumerConfigurator<TConsumer>.Bind<TMessage>(string! routingKey) -> Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>!
+Vulthil.Messaging.Queues.ConsumerConfigurator<TConsumer>.ConsumerConfigurator() -> void
+Vulthil.Messaging.Queues.ConsumerRegistration
+Vulthil.Messaging.Queues.ConsumerType
+Vulthil.Messaging.Queues.ConsumerType.ConsumerType(System.Type! Type) -> void
+Vulthil.Messaging.Queues.ConsumerType.Name.get -> string!
+Vulthil.Messaging.Queues.ConsumerType.Type.get -> System.Type!
+Vulthil.Messaging.Queues.ConsumerType.Type.init -> void
+Vulthil.Messaging.Queues.DeadLetterDefinition
+Vulthil.Messaging.Queues.DeadLetterDefinition.Enabled.get -> bool
+Vulthil.Messaging.Queues.DeadLetterDefinition.Enabled.set -> void
+Vulthil.Messaging.Queues.DeadLetterDefinition.ExchangeName.get -> string?
+Vulthil.Messaging.Queues.DeadLetterDefinition.ExchangeName.set -> void
+Vulthil.Messaging.Queues.DeadLetterDefinition.QueueName.get -> string?
+Vulthil.Messaging.Queues.DeadLetterDefinition.QueueName.set -> void
+Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>
+Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>.Bind<TMessage>(string! routingKey) -> Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>!
+Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> void
+Vulthil.Messaging.Queues.IQueueConfigurator
+Vulthil.Messaging.Queues.IQueueConfigurator.AddConsumer<TConsumer>(System.Action<Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer!>!>? configure = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
+Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer<TConsumer>(System.Action<Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer!>!>? configure = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
+Vulthil.Messaging.Queues.IQueueConfigurator.ConfigureQueue(System.Action<Vulthil.Messaging.Queues.QueueDefinition!>! configureAction) -> Vulthil.Messaging.Queues.IQueueConfigurator!
+Vulthil.Messaging.Queues.IQueueConfigurator.UseDeadLetterQueue(string? queueName = null, string? exchangeName = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
+Vulthil.Messaging.Queues.IQueueConfigurator.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! configure) -> Vulthil.Messaging.Queues.IQueueConfigurator!
+Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>
+Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>.Bind<TRequest, TResponse>(string! routingKey) -> Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>!
+Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> void
+Vulthil.Messaging.Queues.MessageType
+Vulthil.Messaging.Queues.MessageType.MessageType(System.Type! Type) -> void
+Vulthil.Messaging.Queues.MessageType.Name.get -> string!
+Vulthil.Messaging.Queues.MessageType.Type.get -> System.Type!
+Vulthil.Messaging.Queues.MessageType.Type.init -> void
+Vulthil.Messaging.Queues.QueueDefinition
+Vulthil.Messaging.Queues.QueueDefinition.AutoDelete.get -> bool
+Vulthil.Messaging.Queues.QueueDefinition.AutoDelete.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.ChannelCount.get -> ushort
+Vulthil.Messaging.Queues.QueueDefinition.ChannelCount.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.ConcurrencyLimit.get -> ushort
+Vulthil.Messaging.Queues.QueueDefinition.ConcurrencyLimit.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.DeadLetter.get -> Vulthil.Messaging.Queues.DeadLetterDefinition?
+Vulthil.Messaging.Queues.QueueDefinition.DeadLetter.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.DefaultRetryPolicy.get -> Vulthil.Messaging.Queues.RetryPolicyDefinition?
+Vulthil.Messaging.Queues.QueueDefinition.DefaultRetryPolicy.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.Durable.get -> bool
+Vulthil.Messaging.Queues.QueueDefinition.Durable.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeArguments.get -> System.Collections.Generic.Dictionary<string!, object?>!
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeAutoDelete.get -> bool
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeAutoDelete.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeDurable.get -> bool
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeDurable.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeType.get -> Vulthil.Messaging.MessagingExchangeType
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeType.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.Exclusive.get -> bool
+Vulthil.Messaging.Queues.QueueDefinition.Exclusive.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.IsQuorum.get -> bool
+Vulthil.Messaging.Queues.QueueDefinition.IsQuorum.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.Name.get -> string!
+Vulthil.Messaging.Queues.QueueDefinition.Name.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.PrefetchCount.get -> ushort
+Vulthil.Messaging.Queues.QueueDefinition.PrefetchCount.set -> void
+Vulthil.Messaging.Queues.QueueDefinition.QueueDefinition(string! Name) -> void
+Vulthil.Messaging.Queues.QueueDefinition.Registrations.get -> System.Collections.Generic.IEnumerable<Vulthil.Messaging.Queues.Registration!>!
+Vulthil.Messaging.Queues.QueueDefinition.RetryEnabled.get -> bool
+Vulthil.Messaging.Queues.Registration
+Vulthil.Messaging.Queues.Registration.ConsumerType.get -> Vulthil.Messaging.Queues.ConsumerType!
+Vulthil.Messaging.Queues.Registration.ConsumerType.init -> void
+Vulthil.Messaging.Queues.Registration.MessageType.get -> Vulthil.Messaging.Queues.MessageType!
+Vulthil.Messaging.Queues.Registration.MessageType.init -> void
+Vulthil.Messaging.Queues.Registration.RetryPolicy.get -> Vulthil.Messaging.Queues.RetryPolicyDefinition?
+Vulthil.Messaging.Queues.Registration.RetryPolicy.init -> void
+Vulthil.Messaging.Queues.Registration.RoutingKey.get -> string!
+Vulthil.Messaging.Queues.Registration.RoutingKey.init -> void
+Vulthil.Messaging.Queues.RequestConsumerConfigurator<TConsumer>
+Vulthil.Messaging.Queues.RequestConsumerConfigurator<TConsumer>.Bind<TRequest, TResponse>(string! routingKey) -> Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>!
+Vulthil.Messaging.Queues.RequestConsumerConfigurator<TConsumer>.RequestConsumerConfigurator() -> void
+Vulthil.Messaging.Queues.RequestConsumerRegistration
+Vulthil.Messaging.Queues.RequestConsumerRegistration.ResponseType.get -> System.Type!
+Vulthil.Messaging.Queues.RequestConsumerRegistration.ResponseType.init -> void
+Vulthil.Messaging.Queues.RetryPolicyConfigurator
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.Build() -> Vulthil.Messaging.Queues.RetryPolicyDefinition!
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.Exponential(int retryCount, System.TimeSpan initialInterval, System.TimeSpan maxInterval, double multiplier = 2) -> void
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.Ignore<TException>() -> void
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.IgnoredExceptions.get -> System.Collections.Generic.IReadOnlySet<System.Type!>!
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.Immediate(int retryCount) -> void
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.Intervals.get -> System.Collections.Generic.IReadOnlyList<System.TimeSpan>!
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.RetryLimit.get -> int
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.RetryPolicyConfigurator() -> void
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.SetIntervals(params System.TimeSpan[]! intervals) -> void
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.UseJitter(double factor) -> void
+Vulthil.Messaging.Queues.RetryPolicyDefinition
+Vulthil.Messaging.Queues.RetryPolicyDefinition.GetDelay(int attempt) -> System.TimeSpan
+Vulthil.Messaging.Queues.RetryPolicyDefinition.GetIgnoredExceptionTypes() -> System.Collections.Generic.HashSet<System.Type!>!
+Vulthil.Messaging.Queues.RetryPolicyDefinition.IgnoreExceptions.get -> System.Collections.Generic.ICollection<string!>!
+Vulthil.Messaging.Queues.RetryPolicyDefinition.Intervals.get -> System.Collections.Generic.ICollection<System.TimeSpan>!
+Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.get -> double
+Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.set -> void
+Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.get -> int
+Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.set -> void

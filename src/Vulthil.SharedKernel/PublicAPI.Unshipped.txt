@@ -1,0 +1,18 @@
+#nullable enable
+Vulthil.SharedKernel.Events.IDomainEvent
+Vulthil.SharedKernel.Events.IDomainEventHandler<TDomainEvent>
+Vulthil.SharedKernel.Events.IDomainEventHandler<TDomainEvent>.HandleAsync(TDomainEvent notification, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Exceptions.DomainException
+Vulthil.SharedKernel.Exceptions.DomainException.DomainException(Vulthil.Results.Error! error) -> void
+Vulthil.SharedKernel.Exceptions.DomainException.Error.get -> Vulthil.Results.Error!
+Vulthil.SharedKernel.Primitives.AggregateRoot<TId>
+Vulthil.SharedKernel.Primitives.AggregateRoot<TId>.AggregateRoot(TId id) -> void
+Vulthil.SharedKernel.Primitives.AggregateRoot<TId>.ClearDomainEvents() -> void
+Vulthil.SharedKernel.Primitives.AggregateRoot<TId>.DomainEvents.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.SharedKernel.Events.IDomainEvent!>!
+Vulthil.SharedKernel.Primitives.AggregateRoot<TId>.Raise(Vulthil.SharedKernel.Events.IDomainEvent! domainEvent) -> void
+Vulthil.SharedKernel.Primitives.Entity<TId>
+Vulthil.SharedKernel.Primitives.Entity<TId>.Entity(TId id) -> void
+Vulthil.SharedKernel.Primitives.Entity<TId>.Id.get -> TId
+Vulthil.SharedKernel.Primitives.IAggregateRoot
+Vulthil.SharedKernel.Primitives.IAggregateRoot.ClearDomainEvents() -> void
+Vulthil.SharedKernel.Primitives.IAggregateRoot.DomainEvents.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.SharedKernel.Events.IDomainEvent!>!

@@ -1,4 +1,3 @@
-using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Application.Messaging;
 using WebApi.Application.MainEntities.GetById;
@@ -24,9 +23,7 @@ public static class GetById
             {
                 var query = new GetMainEntityByIdQuery(id);
                 var result = await sender.SendAsync(query);
-                return result.Match(
-                    Results.Ok,
-                    e => e.ToIResult());
+                return result.ToIResult();
             })
             .WithName("GetMainEntity");
         }

@@ -16,15 +16,35 @@ public static class DependencyInjection
     public const string DefaultDocumentName = "v1";
 
     /// <summary>
-    /// Registers OpenAPI services with the specified document name and optional configuration.
+    /// Registers OpenAPI services with the default document name.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddOpenApiServices(this IServiceCollection services)
+    {
+        return services.AddOpenApiServices(DefaultDocumentName, static (OpenApiOptions options) => { });
+    }
+
+    /// <summary>
+    /// Registers OpenAPI services with the specified document name.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="documentName">The OpenAPI document name.</param>
-    /// <param name="configure">An optional action to configure OpenAPI options.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddOpenApiServices(this IServiceCollection services, string documentName = DefaultDocumentName, Action<OpenApiOptions>? configure = null)
+    public static IServiceCollection AddOpenApiServices(this IServiceCollection services, string documentName)
     {
-        configure += (OpenApiOptions options) => { };
+        return services.AddOpenApiServices(documentName, static (OpenApiOptions options) => { });
+    }
+
+    /// <summary>
+    /// Registers OpenAPI services with the specified document name and configuration.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="documentName">The OpenAPI document name.</param>
+    /// <param name="configure">An action to configure OpenAPI options.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddOpenApiServices(this IServiceCollection services, string documentName, Action<OpenApiOptions> configure)
+    {
         services.AddOpenApi(documentName, configure);
 
         return services;

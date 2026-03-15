@@ -1,0 +1,3 @@
+#nullable enable
+static Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq(this Vulthil.Messaging.IMessagingConfigurator! configurator, string! connectionStringKey = "rabbitMq", System.Action<Aspire.RabbitMQ.Client.RabbitMQClientSettings!>? configureSettings = null, System.Action<RabbitMQ.Client.ConnectionFactory!>? configureConnectionFactory = null) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions

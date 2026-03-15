@@ -10,17 +10,19 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
     private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers = new();
 
     /// <inheritdoc />
-    public Task PublishAsync(object notification, CancellationToken cancellationToken = default) =>
+    public Task PublishAsync(object notification, CancellationToken cancellationToken) =>
         notification switch
         {
             IDomainEvent instance => PublishAsync(instance, cancellationToken),
             null => throw new ArgumentNullException(nameof(notification)),
             _ => throw new ArgumentException($"{nameof(notification)} does not implement ${nameof(IDomainEvent)}")
         };
+
     /// <inheritdoc />
-    public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
+    public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken)
         where TNotification : IDomainEvent =>
         InternalPublish(notification, cancellationToken);
+
     private Task InternalPublish<TNotification>(TNotification notification, CancellationToken cancellationToken) where TNotification : IDomainEvent
     {
 

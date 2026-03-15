@@ -1,0 +1,60 @@
+#nullable enable
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.ExceptionMessage.get -> string!
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.ExceptionMessage.init -> void
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.ExceptionType.get -> string!
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.ExceptionType.init -> void
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.FaultedAt.get -> System.DateTimeOffset
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.FaultedAt.init -> void
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.Message.get -> TMessage
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.Message.init -> void
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.OriginalContext.get -> Vulthil.Messaging.Abstractions.Consumers.IMessageContext!
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.OriginalContext.init -> void
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.StackTrace.get -> string?
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.StackTrace.init -> void
+Vulthil.Messaging.Abstractions.Consumers.IConsumer
+Vulthil.Messaging.Abstractions.Consumers.IConsumer<TMessage>
+Vulthil.Messaging.Abstractions.Consumers.IConsumer<TMessage>.ConsumeAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>! messageContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ConversationId.get -> string?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.CorrelationId.get -> string?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.DestinationAddress.get -> System.Uri?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ExpirationTime.get -> System.DateTimeOffset?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.FaultAddress.get -> System.Uri?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Headers.get -> System.Collections.Generic.IDictionary<string!, object?>!
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.InitiatorId.get -> string?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.MessageId.get -> string?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Redelivered.get -> bool
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RequestId.get -> string?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ResponseAddress.get -> System.Uri?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RetryCount.get -> int
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RoutingKey.get -> string!
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SentTime.get -> System.DateTimeOffset?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SourceAddress.get -> System.Uri?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>.Message.get -> TMessage
+Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer
+Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer<TRequest, TResponse>
+Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer<TRequest, TResponse>.ConsumeAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TRequest>! messageContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResponse>!
+Vulthil.Messaging.Abstractions.Consumers.RoutingKeyAttribute
+Vulthil.Messaging.Abstractions.Consumers.RoutingKeyAttribute.Pattern.get -> string!
+Vulthil.Messaging.Abstractions.Consumers.RoutingKeyAttribute.RoutingKeyAttribute(string! pattern) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeader(string! key, object? value) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary<string!, object?>! headers) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ConversationId.get -> string?
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ConversationId.set -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.FaultAddress.get -> System.Uri?
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.FaultAddress.set -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.InitiatorId.get -> string?
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.InitiatorId.set -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.MessageId.get -> string?
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.MessageId.set -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ResponseAddress.get -> System.Uri?
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ResponseAddress.set -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetCorrelationId(string! correlationId) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetRoutingKey(string! routingKey) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublisher
+Vulthil.Messaging.Abstractions.Publishers.IPublisher.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.Task!>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Abstractions.Publishers.IRequester
+Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.Task!>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!

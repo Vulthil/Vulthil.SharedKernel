@@ -72,6 +72,7 @@ public record Error
     public static Error Conflict(string code, string description) => new(code, description, ErrorType.Conflict);
 }
 
+
 /// <summary>
 /// Represents a validation error containing one or more inner errors.
 /// </summary>

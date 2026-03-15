@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<Description>Testing-oriented extensions for asserting and composing application behaviors.</Description>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Vulthil.Results\Vulthil.Results.csproj" />
 	</ItemGroup>

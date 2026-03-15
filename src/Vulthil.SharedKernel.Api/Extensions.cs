@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vulthil.Results;
-using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Vulthil.SharedKernel.Api;
 
@@ -63,34 +63,67 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Converts a <see cref="Result{T}"/> to an <see cref="IResult"/> for minimal API endpoints.
+    /// Converts a <see cref="Result{T}"/> to a typed <see cref="IResult"/> for minimal API and controller endpoints,
+    /// returning distinct HTTP result types for OpenAPI documentation generation.
     /// </summary>
-    public static IResult ToIResult<T>(this Result<T> result)
+    public static Results<CreatedAtRoute<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToCreatedAtRouteHttpResult<T>(this Result<T> result, string? routeName = null, Func<T, object?>? routeValueFactory = null)
     {
         if (result.IsSuccess)
         {
-            return HttpResults.Ok(result.Value);
+            return TypedResults.CreatedAtRoute(result.Value, routeName, routeValueFactory != null ? routeValueFactory(result.Value) : null);
         }
 
-        return ((Result)result).ToIResult();
+        return MapError<CreatedAtRoute<T>>(result.Error);
     }
 
     /// <summary>
-    /// Converts a <see cref="Result"/> to an <see cref="IResult"/> for minimal API endpoints.
+    /// Converts a <see cref="Result{T}"/> to a typed <see cref="IResult"/> for minimal API and controller endpoints,
+    /// returning distinct HTTP result types for OpenAPI documentation generation.
     /// </summary>
-    public static IResult ToIResult(this Result result)
+    public static Results<Ok<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToIResult<T>(this Result<T> result)
     {
         if (result.IsSuccess)
         {
-            return HttpResults.NoContent();
+            return TypedResults.Ok(result.Value);
         }
-        return result.Error.ToIResult();
-    }
-    /// <summary>
-    /// Converts an <see cref="Error"/> to an <see cref="IResult"/> problem response for minimal API endpoints.
-    /// </summary>
-    public static IResult ToIResult(this Error error) => CustomResults.Problem(error);
 
+        return MapError<Ok<T>>(result.Error);
+    }
+
+    /// <summary>
+    /// Converts a <see cref="Result"/> to a typed <see cref="IResult"/> for minimal API and controller endpoints,
+    /// returning distinct HTTP result types for OpenAPI documentation generation.
+    /// </summary>
+    public static Results<NoContent, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToIResult(this Result result)
+    {
+        if (result.IsSuccess)
+        {
+            return TypedResults.NoContent();
+        }
+
+        return MapError<NoContent>(result.Error);
+    }
+
+    /// <summary>
+    /// Converts an <see cref="Error"/> to a <see cref="ProblemHttpResult"/> problem response for minimal API endpoints.
+    /// </summary>
+    public static ProblemHttpResult ToIResult(this Error error) => CustomResults.Problem(error);
+
+    private static Results<TSuccess, ValidationProblem, NotFound, Conflict, ProblemHttpResult> MapError<TSuccess>(Error error)
+        where TSuccess : IResult
+    {
+        var errors = CustomResults.GetErrorsDictionary(error);
+
+        return error.Type switch
+        {
+            ErrorType.Validation => TypedResults.ValidationProblem(errors, error.Description),
+            ErrorType.NotFound => TypedResults.NotFound(),
+            ErrorType.Conflict => TypedResults.Conflict(),
+            _ => TypedResults.Problem(
+                detail: error.Description,
+                extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value)),
+        };
+    }
 }
 
 /// <summary>
@@ -99,28 +132,40 @@ public static class Extensions
 public static class CustomResults
 {
     /// <summary>
-    /// Creates a problem-detail <see cref="IResult"/> from an <see cref="Error"/>, mapping the error type to the appropriate HTTP status code.
+    /// Creates a <see cref="ProblemHttpResult"/> from an <see cref="Error"/>, mapping the error type to the appropriate HTTP status code.
     /// </summary>
     /// <param name="error">The error to convert.</param>
-    /// <returns>An <see cref="IResult"/> representing the problem response.</returns>
-    public static IResult Problem(Error error)
+    /// <returns>A <see cref="ProblemHttpResult"/> representing the problem response.</returns>
+    public static ProblemHttpResult Problem(Error error)
     {
-        Dictionary<string, string[]> errors = error is ValidationError validationError
-           ? validationError.Errors
-               .GroupBy(e => e.Code, s => s.Description)
-               .ToDictionary(e => e.Key, errors => errors.ToArray())
-           : new Dictionary<string, string[]>
-           {
-               [error.Code] = [error.Description]
-           };
+        var errors = GetErrorsDictionary(error);
 
-        return error.Type switch
+        var statusCode = error.Type switch
         {
-            ErrorType.Validation => HttpResults.ValidationProblem(errors, error.Description),
-            ErrorType.NotFound => HttpResults.NotFound(),
-            ErrorType.Conflict => HttpResults.Conflict(),
-
-            _ => HttpResults.Problem(extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value)),
+            ErrorType.Validation => StatusCodes.Status400BadRequest,
+            ErrorType.NotFound => StatusCodes.Status404NotFound,
+            ErrorType.Conflict => StatusCodes.Status409Conflict,
+            _ => StatusCodes.Status500InternalServerError,
         };
+
+        return TypedResults.Problem(
+            detail: error.Description,
+            statusCode: statusCode,
+            extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value));
     }
+
+    /// <summary>
+    /// Builds a dictionary of error codes and their descriptions from the given <see cref="Error"/>.
+    /// </summary>
+    /// <param name="error">The error to extract details from.</param>
+    /// <returns>A dictionary mapping error codes to arrays of descriptions.</returns>
+    internal static Dictionary<string, string[]> GetErrorsDictionary(Error error) =>
+        error is ValidationError validationError
+            ? validationError.Errors
+                .GroupBy(e => e.Code, s => s.Description)
+                .ToDictionary(e => e.Key, errors => errors.ToArray())
+            : new Dictionary<string, string[]>
+            {
+                [error.Code] = [error.Description]
+            };
 }

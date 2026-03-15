@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -83,8 +84,14 @@ internal sealed class OutboxProcessor(
 
     private async Task<PublishResult> TryPublishAsync(OutboxMessageData outboxMessage, CancellationToken cancellationToken)
     {
+        Activity? activity = null;
         try
         {
+            if (!string.IsNullOrWhiteSpace(outboxMessage.TraceParent))
+            {
+                var parent = ActivityContext.Parse(outboxMessage.TraceParent, outboxMessage.TraceState);
+                activity = Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
+            }
             var messageType = GetOrAddMessageType(outboxMessage.Type);
             var message = JsonSerializer.Deserialize(outboxMessage.Content, messageType)!;
 
@@ -96,6 +103,10 @@ internal sealed class OutboxProcessor(
         {
             logger.LogError(exception, "Failed to publish outbox message {MessageId}", outboxMessage.Id);
             return new PublishResult(outboxMessage.Id, Success: false, Error: exception.ToString());
+        }
+        finally
+        {
+            activity?.Dispose();
         }
     }
 
@@ -110,4 +121,19 @@ internal sealed class OutboxProcessor(
     });
 
     private readonly record struct PublishResult(Guid Id, bool Success, string? Error = null);
+}
+
+/// <summary>
+/// Static class for holding the Telemetry ActivitySource used for all outbox processing operations, enabling consistent correlation of telemetry across the capture, processing, and publishing stages.
+/// </summary>
+public static class Telemetry
+{
+    /// <summary>
+    /// ActivitySourceName for all outbox processing operations, allowing correlation of events across the capture, processing, and publishing stages.
+    /// </summary>
+    public static readonly string ActivitySourceName = "Vulthil.SharedKernel.Infrastructure";
+    /// <summary>
+    /// ActivitySource for all outbox processing operations, allowing correlation of events across the capture, processing, and publishing stages.
+    /// </summary>
+    internal static readonly ActivitySource ActivitySource = new(ActivitySourceName);
 }

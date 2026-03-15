@@ -50,6 +50,7 @@
     <File Path="TestReports/index.html" />
   </Folder>
   <Folder Name="/src/">
+    <File Path="src/Directory.Build.props" />
     <Project Path="src/Vulthil.Results/Vulthil.Results.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Application/Vulthil.SharedKernel.Application.csproj" />

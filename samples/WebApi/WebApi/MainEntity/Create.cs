@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Application.Messaging;
@@ -13,7 +14,14 @@ public static class Create
     /// <summary>
     /// Represents the Request.
     /// </summary>
-    public record Request(string Name);
+    public sealed record Request(string Name);
+
+    /// <summary>
+    /// The response for the Create endpoint, containing the unique identifier of the newly created MainEntity.
+    /// </summary>
+    /// <param name="Id">The id of the newly created MainEntity.</param>
+    public sealed record Response(Guid Id);
+
     /// <summary>
     /// Represents the Endpoint.
     /// </summary>
@@ -24,13 +32,13 @@ public static class Create
         /// </summary>
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("mainentity", async (ISender sender, Request request) =>
+            app.MapPost("mainentity", async Task<Results<CreatedAtRoute<Response>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>> (ISender sender, Request request) =>
             {
                 var command = new CreateMainEntityCommand(request.Name);
                 var result = await sender.SendAsync(command);
-                return result.Match(
-                    (id) => Results.CreatedAtRoute("GetMainEntity", new { id }),
-                    CustomResults.Problem);
+                return result
+                    .Map(id => new Response(id))
+                    .ToCreatedAtRouteHttpResult("GetMainEntity", r => r);
             });
         }
 

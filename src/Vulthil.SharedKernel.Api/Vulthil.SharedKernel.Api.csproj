@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<Description>API-layer helpers for endpoints, controllers, and cross-cutting HTTP concerns.</Description>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		

@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<Description>Core domain primitives and base abstractions for shared domain logic.</Description>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <ProjectReference Include="..\Vulthil.Results\Vulthil.Results.csproj" />
 	</ItemGroup>

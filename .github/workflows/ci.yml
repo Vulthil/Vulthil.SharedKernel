@@ -1,219 +1,85 @@
-name: Build and Test
+name: CI
 
-on: 
-  workflow_dispatch:
+on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
 
 jobs:
-  analyze:
-    runs-on: ubuntu-latest
-    outputs:
-      has_changes: ${{ steps.check.outputs.has_changes }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Check for changes
-        id: check
-        run: |
-          # Manual triggers always run the full pipeline
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
-          CHANGED=$(git diff --name-only "$BASE_REF" HEAD 2>/dev/null || true)
-
-          if [ -n "$CHANGED" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-
   build:
-    needs: analyze
-    if: needs.analyze.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-      has_packages: ${{ steps.check_nupkgs.outputs.found }}
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
       - uses: actions/setup-dotnet@v5
+
       - uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
           key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-
-      - name: Install tools
-        run: |
-          dotnet tool install -g dotnet-affected
-          dotnet tool install -g nbgv
-      - name: Get version
-        id: version
-        run: |
-          RAW_VERSION=$(nbgv get-version -v NuGetPackageVersion)
-          STABLE_VERSION="${RAW_VERSION%%-*}"
-          echo "version=$STABLE_VERSION" >> $GITHUB_OUTPUT
-          echo "::notice::Base package version: $STABLE_VERSION"
-      - name: Determine build scope
-        id: scope
-        run: |
-          # Manual triggers always build the full solution
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "::notice::Manual trigger — building full solution"
-            echo "target=Vulthil.SharedKernel.slnx" >> $GITHUB_OUTPUT
-            exit 0
-          fi
 
-          BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
-          if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
-            echo "::notice::Base ref '$BASE_REF' not found, falling back to full solution build"
-            echo "target=Vulthil.SharedKernel.slnx" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          dotnet affected --from "$BASE_REF" --to HEAD 2>/dev/null || true
-
-          if [ -f affected.proj ]; then
-            echo "target=affected.proj" >> $GITHUB_OUTPUT
-          else
-            echo "::notice::No affected projects — falling back to full solution build"
-            echo "target=Vulthil.SharedKernel.slnx" >> $GITHUB_OUTPUT
-          fi
       - name: Build
-        run: dotnet build ${{ steps.scope.outputs.target }} --configuration Release
-      - name: Test
-        run: dotnet test ${{ steps.scope.outputs.target }} --configuration Release --no-build
-      - name: Pack
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            PREVIEW_NUMBER=$(git rev-list --count origin/main..HEAD)
-            VERSION="${VERSION}-preview.${PREVIEW_NUMBER}"
-          fi
-          echo "::notice::Packing with version: $VERSION"
+        run: dotnet build -c Release
 
-          if [ "${{ steps.scope.outputs.target }}" = "affected.proj" ] && [ -f affected.proj ]; then
-            PROJECTS=$(grep -oP 'Include="\K[^"]+' affected.proj | grep '^src/.*\.csproj$' || true)
-          else
-            PROJECTS=$(find src -name "*.csproj" | sort)
-          fi
+      - name: Test with coverage
+        run: >
+          dotnet test -c Release --no-build
+          --collect:"XPlat Code Coverage"
+          --results-directory ./TestResults
 
-          if [ -z "$PROJECTS" ]; then
-            echo "::notice::No packable src projects in affected scope, falling back to all src projects"
-            PROJECTS=$(find src -name "*.csproj" | sort)
-          fi
+      - name: Restore tools
+        run: dotnet tool restore
 
-          if [ -z "$PROJECTS" ]; then
-            echo "::notice::No packable src projects found"
-            exit 0
-          fi
+      - name: Generate coverage report & badges
+        run: >
+          dotnet reportgenerator
+          -reports:"./TestResults/**/coverage.cobertura.xml"
+          -targetdir:"./CoverageReport"
+          -reporttypes:"Html;Badges"
 
-          while IFS= read -r proj; do
-            [ -z "$proj" ] && continue
-            dotnet pack "$proj" --configuration Release -o ./nupkgs --include-symbols -p:SymbolPackageFormat=snupkg -p:DisableNbgv=true -p:PackageVersion="$VERSION"
-          done <<< "$PROJECTS"
-      - name: Check if nupkgs exist
-        id: check_nupkgs
-        run: |
-          if [ -z "$(ls -A ./nupkgs/*.nupkg 2>/dev/null)" ]; then
-            echo "found=false" >> $GITHUB_OUTPUT
-          else
-            echo "found=true" >> $GITHUB_OUTPUT
-          fi
-      - name: Upload NuGet Packages
-        if: steps.check_nupkgs.outputs.found == 'true'
+      - name: Upload coverage report
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: ./CoverageReport
+
+      - name: Publish coverage badge to Gist
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.GIST_TOKEN }}
+          gist_id: 2852f1400e27493b185559c76b38e9b7
+          file_path: ./CoverageReport/badge_combined.svg
+          file_type: binary
+
+      # Preview packages — only on PRs from the same repo
+      - name: Pack preview
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: dotnet pack -c Release -o ./artifacts
+
+      - name: Upload artifacts
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/upload-artifact@v7
         with:
           name: nuget-packages
-          path: |
-            ./nupkgs/*.nupkg
-            ./nupkgs/*.snupkg
+          path: ./artifacts/*
 
-  deploy_preview:
-    needs: build
-    if: github.event_name == 'pull_request' && needs.build.outputs.has_packages == 'true' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/download-artifact@v8
-        with:
-          name: nuget-packages
-          path: ./nupkgs
-
-      - name: Push to GitHub Packages
+      - name: Publish preview to GitHub Packages
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
-          if ls ./nupkgs/*.nupkg >/dev/null 2>&1; then
-            dotnet nuget push "./nupkgs/*.nupkg" \
-              --api-key ${{ secrets.GITHUB_TOKEN }} \
-              --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
-              --skip-duplicate
-          fi
-          if ls ./nupkgs/*.snupkg >/dev/null 2>&1; then
-            dotnet nuget push "./nupkgs/*.snupkg" \
-              --api-key ${{ secrets.GITHUB_TOKEN }} \
-              --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
-              --skip-duplicate
-          fi
-
-  create_release:
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.outputs.has_packages == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Create Release
-        uses: elgohr/Github-Release-Action@v5
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          title: "Release v${{ needs.build.outputs.version }}"
-          tag: v${{ needs.build.outputs.version }}
-          prerelease: false
-
-  deploy:
-    needs: create_release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/download-artifact@v8
-        with:
-          name: nuget-packages
-          path: ./nupkgs
-      - name: Push to GitHub Packages
-        run: |
-          if ls ./nupkgs/*.nupkg >/dev/null 2>&1; then
-            dotnet nuget push "./nupkgs/*.nupkg" \
-              --api-key ${{ secrets.GITHUB_TOKEN }} \
-              --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
-              --skip-duplicate
-              #--api-key ${{ secrets.NUGET_API_KEY }} \
-              #--source https://api.nuget.org/v3/index.json \
-          fi
-          if ls ./nupkgs/*.snupkg >/dev/null 2>&1; then
-            dotnet nuget push "./nupkgs/*.snupkg" \
-              --api-key ${{ secrets.GITHUB_TOKEN }} \
-              --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
-              --skip-duplicate
-          fi
+          dotnet nuget push "./artifacts/*.nupkg" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+            --skip-duplicate

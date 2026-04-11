@@ -9,19 +9,19 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
 
     private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers = new();
 
-    /// <inheritdoc />
     public Task PublishAsync(object notification, CancellationToken cancellationToken) =>
         notification switch
         {
             IDomainEvent instance => PublishAsync(instance, cancellationToken),
             null => throw new ArgumentNullException(nameof(notification)),
-            _ => throw new ArgumentException($"{nameof(notification)} does not implement ${nameof(IDomainEvent)}")
+            _ => throw new ArgumentException($"{nameof(notification)} does not implement {nameof(IDomainEvent)}")
         };
 
-    /// <inheritdoc />
     public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken)
         where TNotification : IDomainEvent =>
-        InternalPublish(notification, cancellationToken);
+        notification is null
+            ? throw new ArgumentNullException(nameof(notification))
+            : InternalPublish(notification, cancellationToken);
 
     private Task InternalPublish<TNotification>(TNotification notification, CancellationToken cancellationToken) where TNotification : IDomainEvent
     {
@@ -38,9 +38,23 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
 
     private static async Task PublishCore(IEnumerable<NotificationHandlerExecutor> handlerExecutors, IDomainEvent notification, CancellationToken cancellationToken)
     {
+        List<Exception>? exceptions = null;
+
         foreach (var executor in handlerExecutors)
         {
-            await executor.HandlerCallback(notification, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await executor.HandlerCallback(notification, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                (exceptions ??= new()).Add(ex);
+            }
+        }
+
+        if (exceptions is not null)
+        {
+            throw new AggregateException("One or more domain event handlers failed.", exceptions);
         }
     }
 }

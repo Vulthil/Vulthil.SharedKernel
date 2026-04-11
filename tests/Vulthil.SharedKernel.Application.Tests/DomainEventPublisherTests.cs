@@ -44,7 +44,7 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
 
         // Assert
         var argumentException = await action.ShouldThrowAsync<ArgumentException>();
-        argumentException.Message.ShouldBe($"notification does not implement ${nameof(IDomainEvent)}");
+        argumentException.Message.ShouldBe($"notification does not implement {nameof(IDomainEvent)}");
     }
 
     internal sealed record TestEvent : IDomainEvent;

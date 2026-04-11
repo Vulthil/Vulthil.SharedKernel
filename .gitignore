@@ -46,6 +46,8 @@ Generated\ Files/
 [Tt]est[Rr]eport*/
 [Bb]uild[Ll]og.*
 
+/CoverageReport
+
 # NUnit
 *.VisualState.xml
 TestResult.xml

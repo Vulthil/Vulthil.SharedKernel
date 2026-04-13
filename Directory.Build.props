@@ -6,6 +6,26 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
+	<!-- SourceLink & deterministic builds -->
+	<PropertyGroup>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+	</PropertyGroup>
+
+	<!-- Symbol packages -->
+	<PropertyGroup>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<!-- NuGet package validation -->
+	<PropertyGroup Condition="'$(IsPackable)' != 'false'">
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<!-- Set this after shipping the first stable release:
+		<PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion> -->
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(IsPackable)' != 'false' and Exists('README.md')">
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
@@ -14,13 +34,19 @@
 		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
+	<!-- Package metadata -->
 	<PropertyGroup>
 		<Authors>Vulthil</Authors>
+		<Copyright>Copyright © Vulthil</Copyright>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/Vulthil/Vulthil.SharedKernel</PackageProjectUrl>
+		<PackageTags>shared-kernel;ddd;cqrs;result-pattern;dotnet</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/Vulthil/Vulthil.SharedKernel</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
 		<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" Condition="'$(DisableNbgv)' != 'true'" />
 		<PackageReference Include="SonarAnalyzer.CSharp">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

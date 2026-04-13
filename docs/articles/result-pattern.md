@@ -96,17 +96,24 @@ All extensions have synchronous and asynchronous overloads so they compose natur
 
 ## Mapping to HTTP Responses
 
-`Vulthil.SharedKernel.Api` provides helpers that turn a `Result` into the correct HTTP response:
+`Vulthil.SharedKernel.Api` provides helpers that turn a `Result` into the correct HTTP response with typed results for OpenAPI documentation:
 
 ```csharp
-// Minimal API endpoint
+// Minimal API endpoint – returns Results<Ok<UserDto>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>
 app.MapGet("/users/{id:guid}", async (Guid id, ISender sender) =>
 {
     var result = await sender.SendAsync(new GetUserQuery(id));
     return result.ToIResult();
 });
 
-// Controller-based endpoint
+// Controller-based endpoint with typed results
+public async Task<Results<Ok<UserDto>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>> Get(Guid id)
+{
+    var result = await _sender.SendAsync(new GetUserQuery(id));
+    return result.ToIResult();
+}
+
+// Controller-based endpoint with IActionResult
 public async Task<IActionResult> Get(Guid id)
 {
     var result = await _sender.SendAsync(new GetUserQuery(id));

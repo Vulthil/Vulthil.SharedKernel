@@ -1,0 +1,17 @@
+#nullable enable
+static readonly Vulthil.Extensions.Testing.Polling.Timeout -> Vulthil.Results.Error!
+static Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan timeout, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! func) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult!>!
+static Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan timeout, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! func, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult!>!
+static Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan timeout, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! func, System.TimeSpan timerTick, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult!>!
+static Vulthil.Extensions.Testing.Polling.WaitAsync<T>(System.TimeSpan timeout, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!>! func) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult<T>!>!
+static Vulthil.Extensions.Testing.Polling.WaitAsync<T>(System.TimeSpan timeout, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!>! func, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult<T>!>!
+static Vulthil.Extensions.Testing.Polling.WaitAsync<T>(System.TimeSpan timeout, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!>! func, System.TimeSpan timerTick, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult<T>!>!
+static Vulthil.Extensions.Testing.PollingError.FromErrors(System.Collections.Generic.IEnumerable<Vulthil.Results.Error!>! errors) -> Vulthil.Extensions.Testing.PollingError!
+Vulthil.Extensions.Testing.Polling
+Vulthil.Extensions.Testing.PollingError
+Vulthil.Extensions.Testing.PollingError.Errors.get -> Vulthil.Results.Error![]!
+Vulthil.Extensions.Testing.PollingError.PollingError(Vulthil.Results.Error![]! errors) -> void
+Vulthil.Extensions.Testing.PollingResult
+Vulthil.Extensions.Testing.PollingResult.PollingError.get -> Vulthil.Extensions.Testing.PollingError?
+Vulthil.Extensions.Testing.PollingResult<T>
+Vulthil.Extensions.Testing.PollingResult<T>.PollingError.get -> Vulthil.Extensions.Testing.PollingError?

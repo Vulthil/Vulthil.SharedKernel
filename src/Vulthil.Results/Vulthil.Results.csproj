@@ -1,1 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description>Small result primitives for explicit success/failure flows without exceptions.</Description>
+    </PropertyGroup>
+
+</Project>

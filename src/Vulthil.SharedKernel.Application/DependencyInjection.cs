@@ -12,16 +12,27 @@ namespace Vulthil.SharedKernel.Application;
 /// </summary>
 public static class DependencyInjection
 {
+
+    /// <summary>
+    /// Registers application-layer services with default options.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        return services.AddApplication(new ApplicationOptions());
+    }
+
     /// <summary>
     /// Registers application-layer services including handlers and FluentValidation validators.
     /// </summary>
     /// <param name="services">The service collection.</param>
-    /// <param name="applicationOptionsAction">An optional action to configure application options.</param>
+    /// <param name="applicationOptionsAction">An action to configure application options.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddApplication(this IServiceCollection services, Action<ApplicationOptions>? applicationOptionsAction = null)
+    public static IServiceCollection AddApplication(this IServiceCollection services, Action<ApplicationOptions> applicationOptionsAction)
     {
         var applicationOptions = new ApplicationOptions();
-        applicationOptionsAction?.Invoke(applicationOptions);
+        applicationOptionsAction.Invoke(applicationOptions);
 
         return services.AddApplication(applicationOptions);
     }
@@ -40,15 +51,26 @@ public static class DependencyInjection
     }
 
     /// <summary>
+    /// Registers FluentValidation validators with default options.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services)
+    {
+        return services.AddFluentValidation(new FluentValidationOptions());
+    }
+
+
+    /// <summary>
     /// Registers FluentValidation validators from the configured assemblies.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="fluentValidationOptionsAction">An optional action to configure validation options.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddFluentValidation(this IServiceCollection services, Action<FluentValidationOptions>? fluentValidationOptionsAction = null)
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services, Action<FluentValidationOptions> fluentValidationOptionsAction)
     {
         var fluentValidationOptions = new FluentValidationOptions();
-        fluentValidationOptionsAction?.Invoke(fluentValidationOptions);
+        fluentValidationOptionsAction.Invoke(fluentValidationOptions);
 
         return services.AddFluentValidation(fluentValidationOptions);
     }
@@ -69,15 +91,25 @@ public static class DependencyInjection
     }
 
     /// <summary>
+    /// Registers request handlers, domain event handlers, and pipeline handlers with default options.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddHandlers(this IServiceCollection services)
+    {
+        return services.AddHandlers(new HandlerOptions());
+    }
+
+    /// <summary>
     /// Registers request handlers, domain event handlers, and pipeline handlers from the configured assemblies.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="handlerOptionsAction">An optional action to configure handler options.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddHandlers(this IServiceCollection services, Action<HandlerOptions>? handlerOptionsAction = null)
+    public static IServiceCollection AddHandlers(this IServiceCollection services, Action<HandlerOptions> handlerOptionsAction)
     {
         var handlerOptions = new HandlerOptions();
-        handlerOptionsAction?.Invoke(handlerOptions);
+        handlerOptionsAction.Invoke(handlerOptions);
 
         return services.AddHandlers(handlerOptions);
     }

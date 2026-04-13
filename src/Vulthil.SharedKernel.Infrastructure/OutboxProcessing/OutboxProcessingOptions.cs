@@ -31,4 +31,14 @@ public sealed class OutboxProcessingOptions
     /// Gets a value indicating whether messages within a batch should be published in parallel.
     /// </summary>
     public bool EnableParallelPublishing { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether Trace Identifiers should be included when publishing outbox messages.
+    /// <br />
+    /// This allows the originating action that persisted the outbox message to act as an owner for the resulting scope,
+    /// even after the outbox delay
+    /// <br/>
+    /// Default: <see langword="true"/>
+    /// </summary>
+    public bool EnableTracing { get; init; } = true;
 }

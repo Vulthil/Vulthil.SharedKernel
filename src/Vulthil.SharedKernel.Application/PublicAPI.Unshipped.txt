@@ -1,0 +1,69 @@
+#nullable enable
+static Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Application.ApplicationOptions!>! applicationOptionsAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Vulthil.SharedKernel.Application.ApplicationOptions! applicationOptions) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Application.FluentValidationOptions!>! fluentValidationOptionsAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Vulthil.SharedKernel.Application.FluentValidationOptions! fluentValidationOptions) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Application.HandlerOptions!>! handlerOptionsAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Vulthil.SharedKernel.Application.HandlerOptions! handlerOptions) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.FluentValidationExtensions.WithError<T, TProperty>(this FluentValidation.IRuleBuilderOptions<T, TProperty>! rule, Vulthil.Results.Error! error) -> FluentValidation.IRuleBuilderOptions<T, TProperty>!
+Vulthil.SharedKernel.Application.ApplicationOptions
+Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.AddTransactionalPipelineBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.AddValidationPipelineBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.ApplicationOptions() -> void
+Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies.get -> System.Collections.Generic.IReadOnlyList<System.Reflection.Assembly!>!
+Vulthil.SharedKernel.Application.ApplicationOptions.HandlerAssemblies.get -> System.Collections.Generic.IReadOnlyList<System.Reflection.Assembly!>!
+Vulthil.SharedKernel.Application.ApplicationOptions.PipelineHandlers.get -> System.Collections.Generic.IReadOnlyList<Microsoft.Extensions.DependencyInjection.ServiceDescriptor!>!
+Vulthil.SharedKernel.Application.ApplicationOptions.RegisterFluentValidationAssemblies(params System.Reflection.Assembly![]! assemblies) -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.RegisterHandlerAssemblies(params System.Reflection.Assembly![]! assemblies) -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior<TCommand, TResponse>
+Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior<TCommand, TResponse>.HandleAsync(TCommand request, Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>! next, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResponse>!
+Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior<TCommand, TResponse>.TransactionalPipelineBehavior(Vulthil.SharedKernel.Application.Data.IUnitOfWork! unitOfWork) -> void
+Vulthil.SharedKernel.Application.Data.IDbTransaction
+Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Data.IUnitOfWork
+Vulthil.SharedKernel.Application.Data.IUnitOfWork.BeginTransactionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction!>!
+Vulthil.SharedKernel.Application.Data.IUnitOfWork.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+Vulthil.SharedKernel.Application.DependencyInjection
+Vulthil.SharedKernel.Application.FluentValidationExtensions
+Vulthil.SharedKernel.Application.FluentValidationOptions
+Vulthil.SharedKernel.Application.FluentValidationOptions.FluentValidationAssemblies.get -> System.Collections.Generic.IReadOnlyList<System.Reflection.Assembly!>!
+Vulthil.SharedKernel.Application.FluentValidationOptions.FluentValidationOptions() -> void
+Vulthil.SharedKernel.Application.FluentValidationOptions.RegisterFluentValidationAssemblies(params System.Reflection.Assembly![]! assemblies) -> Vulthil.SharedKernel.Application.FluentValidationOptions!
+Vulthil.SharedKernel.Application.HandlerOptions
+Vulthil.SharedKernel.Application.HandlerOptions.AddOpenDomainEventPipelineHandler(System.Type! pipelineHandler) -> Vulthil.SharedKernel.Application.HandlerOptions!
+Vulthil.SharedKernel.Application.HandlerOptions.AddOpenPipelineHandler(System.Type! pipelineHandler) -> Vulthil.SharedKernel.Application.HandlerOptions!
+Vulthil.SharedKernel.Application.HandlerOptions.HandlerAssemblies.get -> System.Collections.Generic.IReadOnlyList<System.Reflection.Assembly!>!
+Vulthil.SharedKernel.Application.HandlerOptions.HandlerOptions() -> void
+Vulthil.SharedKernel.Application.HandlerOptions.PipelineHandlers.get -> System.Collections.Generic.IReadOnlyList<Microsoft.Extensions.DependencyInjection.ServiceDescriptor!>!
+Vulthil.SharedKernel.Application.HandlerOptions.RegisterHandlerAssemblies(params System.Reflection.Assembly![]! assemblies) -> Vulthil.SharedKernel.Application.HandlerOptions!
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(object! notification) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(object! notification, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync<TNotification>(TNotification notification) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync<TNotification>(TNotification notification, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Messaging.ICommand
+Vulthil.SharedKernel.Application.Messaging.ICommand<TResponse>
+Vulthil.SharedKernel.Application.Messaging.ICommandHandler<TCommand, TResponse>
+Vulthil.SharedKernel.Application.Messaging.ICommandHandler<TCommand>
+Vulthil.SharedKernel.Application.Messaging.IHandler<TRequest, TResponse>
+Vulthil.SharedKernel.Application.Messaging.IHandler<TRequest, TResponse>.HandleAsync(TRequest request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResponse>!
+Vulthil.SharedKernel.Application.Messaging.IQuery<TResponse>
+Vulthil.SharedKernel.Application.Messaging.IQueryHandler<TQuery, TResponse>
+Vulthil.SharedKernel.Application.Messaging.IRequest
+Vulthil.SharedKernel.Application.Messaging.IRequest<TResponse>
+Vulthil.SharedKernel.Application.Messaging.ISender
+Vulthil.SharedKernel.Application.Messaging.ISender.SendAsync<TResponse>(Vulthil.SharedKernel.Application.Messaging.IRequest<TResponse>! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResponse>!
+Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand
+Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand<TResponse>
+Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate
+Vulthil.SharedKernel.Application.Pipeline.IDomainEventPipelineHandler<TDomainEvent>
+Vulthil.SharedKernel.Application.Pipeline.IDomainEventPipelineHandler<TDomainEvent>.HandleAsync(TDomainEvent domainEvent, Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate! next, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Pipeline.IPipelineHandler<TRequest, TResponse>
+Vulthil.SharedKernel.Application.Pipeline.IPipelineHandler<TRequest, TResponse>.HandleAsync(TRequest request, Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>! next, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResponse>!
+Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>

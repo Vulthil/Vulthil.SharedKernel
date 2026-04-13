@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<IsTestProject>false</IsTestProject>
+		<Description>Reusable xUnit base infrastructure for integration and unit test composition.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>

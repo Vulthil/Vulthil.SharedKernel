@@ -1,0 +1,109 @@
+#nullable enable
+abstract Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ConfigurationAssembly.get -> System.Reflection.Assembly?
+override Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> void
+override Vulthil.SharedKernel.Infrastructure.OutboxProcessing.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChangesAsync(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData! eventData, Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int> result, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int>>
+static readonly Vulthil.SharedKernel.Infrastructure.OutboxProcessing.Telemetry.ActivitySourceName -> string!
+static Vulthil.SharedKernel.Infrastructure.Data.DbContextExtensions.SaveAndPublishChangesAsync(this Microsoft.EntityFrameworkCore.DbContext! dbContext, Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher! publisher, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static Vulthil.SharedKernel.Infrastructure.DependencyInjection.AddDbContext<TDbContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator!>! databaseInfrastructureConfiguratorAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Infrastructure.DependencyInjection.AddDbContext<TDbContextInterface, TDbContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator!>! databaseInfrastructureConfiguratorAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Infrastructure.DependencyInjection.EnsureCreatedAsync<TDbContext>(this Microsoft.Extensions.Hosting.IHost! host) -> System.Threading.Tasks.Task!
+static Vulthil.SharedKernel.Infrastructure.DependencyInjection.EnsureCreatedAsync<TDbContext>(this System.IServiceProvider! services) -> System.Threading.Tasks.Task!
+static Vulthil.SharedKernel.Infrastructure.DependencyInjection.MigrateAsync<TDbContext>(this Microsoft.Extensions.Hosting.IHost! host) -> System.Threading.Tasks.Task!
+static Vulthil.SharedKernel.Infrastructure.DependencyInjection.MigrateAsync<TDbContext>(this System.IServiceProvider! services) -> System.Threading.Tasks.Task!
+virtual Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ConfigurationTypeConstraints.get -> System.Func<System.Type!, bool>?
+virtual Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! builder) -> void
+virtual Vulthil.SharedKernel.Infrastructure.OutboxProcessing.RelationalOutboxStrategy.BeginTransactionAsync(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction?>!
+virtual Vulthil.SharedKernel.Infrastructure.OutboxProcessing.RelationalOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData>!>!
+virtual Vulthil.SharedKernel.Infrastructure.OutboxProcessing.RelationalOutboxStrategy.UpdateMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, System.Collections.Generic.IReadOnlyList<System.Guid>! successIds, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure>! failures, int maxRetries, System.DateTimeOffset processedOnUtc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+virtual Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GetByIdAsync(TId! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TEntity?>!
+Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext
+Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.BaseDbContext(Microsoft.EntityFrameworkCore.DbContextOptions! options) -> void
+Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.BeginTransactionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction!>!
+Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>!
+Vulthil.SharedKernel.Infrastructure.Data.DbContextExtensions
+Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper
+Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.CommitAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.DbContextTransactionWrapper(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction! dbContextTransaction) -> void
+Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.RollbackAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator.ConfigureDbContextOptions(System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! optionsBuilder) -> Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator!
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator.ConfigureDbContextOptions(System.Action<System.IServiceProvider!, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! optionsBuilder) -> Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator!
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator.EnableOutboxProcessing(System.Action<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions!>? optionsAction = null) -> Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator!
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator.OptionsBuilder.get -> System.Action<System.IServiceProvider!, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>?
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator.OutboxOptionsAction.get -> System.Action<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions!>?
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator.OutboxProcessingEnabled.get -> bool
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator.UseOutboxStrategy<TStrategy>() -> Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator!
+Vulthil.SharedKernel.Infrastructure.DependencyInjection
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.DomainEventsToOutboxMessageSaveChangesInterceptor
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions!>! outboxProcessingOptions) -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxStrategy
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxStrategy.BeginTransactionAsync(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction?>!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData>!>!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxStrategy.UpdateMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, System.Collections.Generic.IReadOnlyList<System.Guid>! successIds, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure>! failures, int maxRetries, System.DateTimeOffset processedOnUtc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Content.get -> string!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Content.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Error.get -> string?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Error.set -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.GroupId.get -> System.Guid
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.GroupId.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Id.get -> System.Guid
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Id.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.OccurredOnUtc.get -> System.DateTimeOffset
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.OccurredOnUtc.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.OutboxMessage() -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.ProcessedOnUtc.get -> System.DateTimeOffset?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.ProcessedOnUtc.set -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.RetryCount.get -> int
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.RetryCount.set -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.TraceParent.get -> string?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.TraceParent.set -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.TraceState.get -> string?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.TraceState.set -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Type.get -> string!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Type.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Content.get -> string!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Content.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Id.get -> System.Guid
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Id.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.OutboxMessageData() -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.OutboxMessageData(System.Guid Id, string! Type, string! Content, string? TraceParent, string? TraceState) -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceParent.get -> string?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceParent.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceState.get -> string?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceState.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Type.get -> string!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Type.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageEntityConfiguration
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure.Error.get -> string!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure.Error.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure.Id.get -> System.Guid
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure.Id.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure.OutboxMessageFailure() -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure.OutboxMessageFailure(System.Guid Id, string! Error) -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.BatchSize.get -> int
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.BatchSize.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.EnableParallelPublishing.get -> bool
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.EnableParallelPublishing.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.EnableTracing.get -> bool
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.EnableTracing.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.MaxDelaySeconds.get -> int
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.MaxDelaySeconds.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.MaxRetries.get -> int
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.MaxRetries.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.get -> int
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.OutboxProcessingOptions() -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.RelationalOutboxStrategy
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.RelationalOutboxStrategy.RelationalOutboxStrategy() -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.Telemetry
+Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>
+Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.DbContext.get -> TDbContext!
+Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GenericRepository(TDbContext! dbContext) -> void

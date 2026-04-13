@@ -46,7 +46,9 @@ public interface IOutboxStrategy
 /// <param name="Id">The message identifier.</param>
 /// <param name="Type">The fully-qualified type name of the domain event.</param>
 /// <param name="Content">The JSON-serialized domain event content.</param>
-public readonly record struct OutboxMessageData(Guid Id, string Type, string Content);
+/// <param name="TraceParent">Distributed TraceParent</param>
+/// <param name="TraceState">Distributed TraceState</param>
+public readonly record struct OutboxMessageData(Guid Id, string Type, string Content, string? TraceParent, string? TraceState);
 /// <summary>
 /// Contains failure details for an outbox message that could not be published.
 /// </summary>

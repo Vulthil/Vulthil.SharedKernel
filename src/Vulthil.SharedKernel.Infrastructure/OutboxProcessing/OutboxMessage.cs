@@ -37,4 +37,12 @@ public sealed class OutboxMessage
     /// Gets or sets the error message from the last failed delivery attempt, or <see langword="null"/> if no failures.
     /// </summary>
     public string? Error { get; set; }
+    /// <summary>
+    /// Activity TraceParent, for distributed tracing correlation.
+    /// </summary>
+    public string? TraceParent { get; set; }
+    /// <summary>
+    /// Activity TraceState, for distributed tracing correlation.
+    /// </summary>
+    public string? TraceState { get; set; }
 }

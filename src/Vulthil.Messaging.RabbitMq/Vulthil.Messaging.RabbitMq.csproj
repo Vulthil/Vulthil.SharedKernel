@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<Description>RabbitMQ implementation for the Vulthil messaging abstractions.</Description>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Aspire.RabbitMQ.Client.v7" />
 	</ItemGroup>

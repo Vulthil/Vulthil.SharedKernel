@@ -1,0 +1,99 @@
+#nullable enable
+abstract Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.ConnectionString.get -> string!
+abstract Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.ConnectionStringKey.get -> string!
+abstract Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ConnectionStringKey.get -> string!
+abstract Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.DbAdapter.get -> Respawn.IDbAdapter!
+abstract Vulthil.xUnit.Fixtures.TestFixture.ConfigureContainers() -> System.Threading.Tasks.Task!
+override sealed Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+override Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.DisposeAsyncCore() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.DisposeAsyncCore() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.DisposeAsyncCore() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+static Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CancellationToken.get -> System.Threading.CancellationToken
+static Vulthil.xUnit.BaseUnitTestCase.CancellationToken.get -> System.Threading.CancellationToken
+virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseUnitTestCase.CreateInstance<TTarget>() -> TTarget!
+virtual Vulthil.xUnit.BaseUnitTestCase.GetMock<TMock>() -> Moq.Mock<TMock!>!
+virtual Vulthil.xUnit.BaseUnitTestCase.Initialize() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseUnitTestCase.Use<TService>(TService service) -> void
+virtual Vulthil.xUnit.BaseUnitTestCase<TTarget>.CreateInstance() -> TTarget!
+virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureCustomWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase(Vulthil.xUnit.Fixtures.TestFixture! testFixture, Xunit.ITestOutputHelper? testOutputHelper = null) -> void
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Client.get -> System.Net.Http.HttpClient!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Factory.get -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices.get -> System.IServiceProvider!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper.get -> Xunit.ITestOutputHelper?
+Vulthil.xUnit.BaseUnitTestCase
+Vulthil.xUnit.BaseUnitTestCase.AutoMocker.get -> Moq.AutoMock.AutoMocker!
+Vulthil.xUnit.BaseUnitTestCase.BaseUnitTestCase() -> void
+Vulthil.xUnit.BaseUnitTestCase.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseUnitTestCase.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseUnitTestCase<TTarget>
+Vulthil.xUnit.BaseUnitTestCase<TTarget>.BaseUnitTestCase() -> void
+Vulthil.xUnit.BaseUnitTestCase<TTarget>.Target.get -> TTarget!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory() -> void
+Vulthil.xUnit.Containers.ContainerWrapper
+Vulthil.xUnit.Containers.ContainerWrapper.Container.get -> DotNet.Testcontainers.Containers.IContainer!
+Vulthil.xUnit.Containers.ContainerWrapper.ContainerWrapper(DotNet.Testcontainers.Containers.IContainer! container) -> void
+Vulthil.xUnit.Containers.ContainerWrapper.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>
+Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.ConnectionString.get -> string!
+Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.DatabaseContainer(DotNet.Testcontainers.Containers.IDatabaseContainer! container) -> void
+Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.DbContextType.get -> System.Type!
+Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.HasBeenMigrated.get -> bool
+Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.MarkMigrated() -> void
+Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>
+Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>.DatabaseContainerWithRespawner(DotNet.Testcontainers.Containers.IDatabaseContainer! container, Respawn.RespawnerOptions! respawnerOptions, System.Func<string!, System.Threading.Tasks.Task<System.Data.Common.DbConnection!>!>! connectionFactory) -> void
+Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>.InitializeRespawner() -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>.ResetAsync() -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Containers.IContainerPool
+Vulthil.xUnit.Containers.IContainerPool.GetContainerAsync() -> System.Threading.Tasks.Task<Vulthil.xUnit.Containers.ICustomContainer!>!
+Vulthil.xUnit.Containers.IContainerPool.ReleaseContainer(Vulthil.xUnit.Containers.ICustomContainer! container) -> void
+Vulthil.xUnit.Containers.IContainerWithConnectionStringPool
+Vulthil.xUnit.Containers.IContainerWithConnectionStringPool.GetConnectionString(DotNet.Testcontainers.Containers.IContainer! container) -> string!
+Vulthil.xUnit.Containers.IContainerWithConnectionStringPool.KeyName.get -> string!
+Vulthil.xUnit.Containers.IContainerWithConnectionStringPool<TContainerEntity>
+Vulthil.xUnit.Containers.IContainerWithConnectionStringPool<TContainerEntity>.GetConnectionString(TContainerEntity container) -> string!
+Vulthil.xUnit.Containers.ICustomContainer
+Vulthil.xUnit.Containers.ICustomContainer.Container.get -> DotNet.Testcontainers.Containers.IContainer!
+Vulthil.xUnit.Containers.ICustomDatabaseContainer
+Vulthil.xUnit.Containers.ICustomDatabaseContainer.DbContextType.get -> System.Type!
+Vulthil.xUnit.Containers.ICustomDatabaseContainer.HasBeenMigrated.get -> bool
+Vulthil.xUnit.Containers.ICustomDatabaseContainer.MarkMigrated() -> void
+Vulthil.xUnit.Containers.ICustomDatabaseContainerWithRespawner
+Vulthil.xUnit.Containers.ICustomDatabaseContainerWithRespawner.InitializeRespawner() -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Containers.ICustomDatabaseContainerWithRespawner.ResetAsync() -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Containers.IDatabaseContainerPool
+Vulthil.xUnit.Containers.IDatabaseContainerPool.ApplyMigrations(System.IServiceProvider! services, Vulthil.xUnit.Containers.ICustomDatabaseContainer! container) -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Containers.IDatabaseContainerPool<TContainerEntity>
+Vulthil.xUnit.Fixtures.ITestContainer
+Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString
+Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.ConnectionString.get -> string!
+Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.ConnectionStringKey.get -> string!
+Vulthil.xUnit.Fixtures.ITestDatabaseContainer
+Vulthil.xUnit.Fixtures.ITestDatabaseContainer.InitializeRespawner() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ITestDatabaseContainer.ResetDatabase() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.InitializeRespawner() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetDatabase() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Fixtures.TestFixture
+Vulthil.xUnit.Fixtures.TestFixture.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> void
+Vulthil.xUnit.Fixtures.TestFixture.ContainersWithConnectionStrings.get -> System.Collections.Generic.IEnumerable<Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString!>!
+Vulthil.xUnit.Fixtures.TestFixture.DatabaseContainers.get -> System.Collections.Generic.IEnumerable<Vulthil.xUnit.Fixtures.ITestDatabaseContainer!>!
+Vulthil.xUnit.Fixtures.TestFixture.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestFixture.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestFixture.TestFixture() -> void

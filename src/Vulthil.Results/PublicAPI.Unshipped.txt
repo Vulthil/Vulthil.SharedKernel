@@ -1,0 +1,109 @@
+#nullable enable
+static readonly Vulthil.Results.Error.None -> Vulthil.Results.Error!
+static readonly Vulthil.Results.Error.NullValue -> Vulthil.Results.Error!
+static Vulthil.Results.Error.Conflict(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Error.Failure(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Error.NotFound(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Error.Problem(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Result.Failure(Vulthil.Results.Error! error) -> Vulthil.Results.Result!
+static Vulthil.Results.Result.Failure<TValue>(Vulthil.Results.Error! error) -> Vulthil.Results.Result<TValue>!
+static Vulthil.Results.Result.Success() -> Vulthil.Results.Result!
+static Vulthil.Results.Result.Success<TValue>(TValue value) -> Vulthil.Results.Result<TValue>!
+static Vulthil.Results.Result.ValidationFailure<TValue>(Vulthil.Results.ValidationError! error) -> Vulthil.Results.Result<TValue>!
+static Vulthil.Results.Result<TValue>.implicit operator Vulthil.Results.Result<TValue>!(TValue? value) -> Vulthil.Results.Result<TValue>!
+static Vulthil.Results.ResultExtensions.Bind(this Vulthil.Results.Result! result, System.Func<Vulthil.Results.Result!>! bind) -> Vulthil.Results.Result!
+static Vulthil.Results.ResultExtensions.Bind<T1, T2>(this Vulthil.Results.Result<T1>! result, System.Func<T1, Vulthil.Results.Result<T2>!>! bind) -> Vulthil.Results.Result<T2>!
+static Vulthil.Results.ResultExtensions.Bind<T1>(this Vulthil.Results.Result<T1>! result, System.Func<T1, Vulthil.Results.Result!>! bind) -> Vulthil.Results.Result!
+static Vulthil.Results.ResultExtensions.Bind<T2>(this Vulthil.Results.Result! result, System.Func<Vulthil.Results.Result<T2>!>! bind) -> Vulthil.Results.Result<T2>!
+static Vulthil.Results.ResultExtensions.BindAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.BindAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<Vulthil.Results.Result!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.BindAsync(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T1, T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T1, T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, Vulthil.Results.Result<T2>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T1, T2>(this Vulthil.Results.Result<T1>! result, System.Func<T1, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, Vulthil.Results.Result!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T1>(this Vulthil.Results.Result<T1>! result, System.Func<T1, System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<Vulthil.Results.Result<T2>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.BindAsync<T2>(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!>! bind) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.Map<T1, T2>(this Vulthil.Results.Result<T1>! result, System.Func<T1, T2>! map) -> Vulthil.Results.Result<T2>!
+static Vulthil.Results.ResultExtensions.Map<T2>(this Vulthil.Results.Result! result, System.Func<T2>! map) -> Vulthil.Results.Result<T2>!
+static Vulthil.Results.ResultExtensions.MapAsync<T1, T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, System.Threading.Tasks.Task<T2>!>! map) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.MapAsync<T1, T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, T2>! map) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.MapAsync<T1, T2>(this Vulthil.Results.Result<T1>! result, System.Func<T1, System.Threading.Tasks.Task<T2>!>! map) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.MapAsync<T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task<T2>!>! map) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.MapAsync<T2>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<T2>! map) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.MapAsync<T2>(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task<T2>!>! map) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>!
+static Vulthil.Results.ResultExtensions.Match(this Vulthil.Results.Result! result, System.Action! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> void
+static Vulthil.Results.ResultExtensions.Match<T1>(this Vulthil.Results.Result<T1>! result, System.Action<T1>! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> void
+static Vulthil.Results.ResultExtensions.Match<TIn, TOut>(this Vulthil.Results.Result<TIn>! result, System.Func<TIn, TOut>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> TOut
+static Vulthil.Results.ResultExtensions.Match<TOut>(this Vulthil.Results.Result! result, System.Func<TOut>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> TOut
+static Vulthil.Results.ResultExtensions.MatchAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Action! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Action! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task!>! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync(this Vulthil.Results.Result! result, System.Action! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task!>! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Action<T1>! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Action<T1>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, System.Threading.Tasks.Task!>! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, System.Threading.Tasks.Task!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<T1>(this Vulthil.Results.Result<T1>! result, System.Action<T1>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<T1>(this Vulthil.Results.Result<T1>! result, System.Func<T1, System.Threading.Tasks.Task!>! onSuccess, System.Action<Vulthil.Results.Error!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<T1>(this Vulthil.Results.Result<T1>! result, System.Func<T1, System.Threading.Tasks.Task!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! onFailure) -> System.Threading.Tasks.Task!
+static Vulthil.Results.ResultExtensions.MatchAsync<TIn, TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result<TIn>!>! resultTask, System.Func<TIn, System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TIn, TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result<TIn>!>! resultTask, System.Func<TIn, System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TIn, TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result<TIn>!>! resultTask, System.Func<TIn, TOut>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TIn, TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result<TIn>!>! resultTask, System.Func<TIn, TOut>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TIn, TOut>(this Vulthil.Results.Result<TIn>! result, System.Func<TIn, System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TIn, TOut>(this Vulthil.Results.Result<TIn>! result, System.Func<TIn, System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TIn, TOut>(this Vulthil.Results.Result<TIn>! result, System.Func<TIn, TOut>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<TOut>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<TOut>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TOut>(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TOut>(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task<TOut>!>! onSuccess, System.Func<Vulthil.Results.Error!, TOut>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.MatchAsync<TOut>(this Vulthil.Results.Result! result, System.Func<TOut>! onSuccess, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task<TOut>!>! onFailure) -> System.Threading.Tasks.Task<TOut>!
+static Vulthil.Results.ResultExtensions.Tap(this Vulthil.Results.Result! result, System.Action! action) -> Vulthil.Results.Result!
+static Vulthil.Results.ResultExtensions.Tap<T1>(this Vulthil.Results.Result<T1>! result, System.Action! action) -> Vulthil.Results.Result<T1>!
+static Vulthil.Results.ResultExtensions.Tap<T1>(this Vulthil.Results.Result<T1>! result, System.Action<T1>! action) -> Vulthil.Results.Result<T1>!
+static Vulthil.Results.ResultExtensions.TapAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Action! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.TapAsync(this System.Threading.Tasks.Task<Vulthil.Results.Result!>! resultTask, System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.TapAsync(this Vulthil.Results.Result! result, System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.TapAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Action! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>!
+static Vulthil.Results.ResultExtensions.TapAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Action<T1>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>!
+static Vulthil.Results.ResultExtensions.TapAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>!
+static Vulthil.Results.ResultExtensions.TapAsync<T1>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! resultTask, System.Func<T1, System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>!
+static Vulthil.Results.ResultExtensions.TapAsync<T1>(this Vulthil.Results.Result<T1>! result, System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>!
+static Vulthil.Results.ResultExtensions.TapAsync<T1>(this Vulthil.Results.Result<T1>! result, System.Func<T1, System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>!
+static Vulthil.Results.ResultExtensions.ToResult<T>(this in T? nullable, Vulthil.Results.Error! error) -> Vulthil.Results.Result<T>!
+static Vulthil.Results.ResultExtensions.ToResult<T>(this T? obj, Vulthil.Results.Error! error) -> Vulthil.Results.Result<T!>!
+static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! errors) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T!>!>!
+static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! errors) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!
+static Vulthil.Results.ValidationError.FromResults(System.Collections.Generic.IEnumerable<Vulthil.Results.Result!>! results) -> Vulthil.Results.ValidationError!
+Vulthil.Results.Error
+Vulthil.Results.Error.Code.get -> string!
+Vulthil.Results.Error.Description.get -> string!
+Vulthil.Results.Error.Error(string! code, string! description, Vulthil.Results.ErrorType type) -> void
+Vulthil.Results.Error.Type.get -> Vulthil.Results.ErrorType
+Vulthil.Results.ErrorType
+Vulthil.Results.ErrorType.Conflict = 4 -> Vulthil.Results.ErrorType
+Vulthil.Results.ErrorType.Failure = 0 -> Vulthil.Results.ErrorType
+Vulthil.Results.ErrorType.NotFound = 3 -> Vulthil.Results.ErrorType
+Vulthil.Results.ErrorType.Problem = 2 -> Vulthil.Results.ErrorType
+Vulthil.Results.ErrorType.Validation = 1 -> Vulthil.Results.ErrorType
+Vulthil.Results.Result
+Vulthil.Results.Result.Error.get -> Vulthil.Results.Error!
+Vulthil.Results.Result.IsFailure.get -> bool
+Vulthil.Results.Result.IsSuccess.get -> bool
+Vulthil.Results.Result.Result(bool isSuccess, Vulthil.Results.Error! error) -> void
+Vulthil.Results.Result<TValue>
+Vulthil.Results.Result<TValue>.Result(TValue? value, bool isSuccess, Vulthil.Results.Error! error) -> void
+Vulthil.Results.Result<TValue>.Value.get -> TValue
+Vulthil.Results.ResultExtensions
+Vulthil.Results.ValidationError
+Vulthil.Results.ValidationError.Errors.get -> Vulthil.Results.Error![]!
+Vulthil.Results.ValidationError.ValidationError(Vulthil.Results.Error![]! errors) -> void

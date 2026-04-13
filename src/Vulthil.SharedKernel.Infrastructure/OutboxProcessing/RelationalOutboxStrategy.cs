@@ -29,7 +29,7 @@ public class RelationalOutboxStrategy : IOutboxStrategy
             .Where(o => o.ProcessedOnUtc == null && o.RetryCount < maxRetries)
             .OrderBy(o => o.OccurredOnUtc)
             .Take(batchSize)
-            .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content))
+            .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState))
             .ToListAsync(cancellationToken);
     }
 

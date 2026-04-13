@@ -42,6 +42,7 @@
     <File Path="README.md" />
     <File Path="test-reports" />
     <File Path="version.json" />
+    <File Path="Vulthil.SharedKernel.png" />
     <File Path="watch" />
     <File Path="watch-samples" />
   </Folder>

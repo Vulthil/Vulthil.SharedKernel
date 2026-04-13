@@ -1,5 +1,9 @@
 # Vulthil.SharedKernel
 
+<p align="center">
+  <img src="Vulthil.SharedKernel.png" alt="Vulthil.SharedKernel" style="max-width:200px; height:auto;" />
+</p>
+
 [![Build and Test](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/ci.yml/badge.svg)](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/ci.yml)
 [![Release](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/release.yml/badge.svg)](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/release.yml)
 [![Coverage](https://gist.githubusercontent.com/Vulthil/2852f1400e27493b185559c76b38e9b7/raw/badge_combined.svg)](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/ci.yml)

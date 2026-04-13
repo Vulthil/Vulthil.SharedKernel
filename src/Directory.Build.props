@@ -1,6 +1,15 @@
 <Project>
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
+	<!-- Package icon -->
+	<PropertyGroup>
+		<PackageIcon>Vulthil.SharedKernel.png</PackageIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="$(MSBuildThisFileDirectory)..\Vulthil.SharedKernel.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
 	<!-- Public API surface tracking -->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all">

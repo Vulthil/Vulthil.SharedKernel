@@ -38,8 +38,8 @@
       "_appName": "Vulthil.SharedKernel",
       "_appTitle": "Vulthil.SharedKernel",
       "_enableSearch": true,
-      "_appLogoPath": "",
-      "_appFaviconPath": "",
+      "_appLogoPath": "images/logo.png",
+      "_appFaviconPath": "images/favicon.ico",
       "_gitContribute": {
         "repo": "https://github.com/Vulthil/Vulthil.SharedKernel",
         "branch": "main",

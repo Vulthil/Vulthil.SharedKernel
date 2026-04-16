@@ -42,9 +42,9 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageVersion Include="RabbitMQ.Client.OpenTelemetry" Version="1.0.0-rc.2" />
-    <PackageVersion Include="ReportGenerator" Version="5.5.4" />
+    <PackageVersion Include="ReportGenerator" Version="5.5.5" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
-    <PackageVersion Include="Scalar.Aspire" Version="0.9.22" />
+    <PackageVersion Include="Scalar.Aspire" Version="0.9.23" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.11.6" />
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />

@@ -109,12 +109,22 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
 
         var correlationId = publishContext.CorrelationId
             ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyCorrelationIdFormatters)
-            ?? Guid.CreateVersion7().ToString();
+            ??
+#if NET10_0_OR_GREATER
+            Guid.CreateVersion7().ToString();
+#else
+            Guid.NewGuid().ToString();
+#endif
 
         var properties = new BasicProperties()
         {
             Type = type.FullName,
-            MessageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString(),
+            MessageId = publishContext.MessageId ??
+#if NET10_0_OR_GREATER
+                Guid.CreateVersion7().ToString(),
+#else
+                Guid.NewGuid().ToString(),
+#endif
             ReplyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress), // Map URI back to string
             CorrelationId = correlationId,
             ContentType = RabbitMqConstants.ContentType,

@@ -15,6 +15,7 @@ public static class DependencyInjection
     /// </summary>
     public const string DefaultDocumentName = "v1";
 
+#if NET9_0_OR_GREATER
     /// <summary>
     /// Registers OpenAPI services with the default document name.
     /// </summary>
@@ -59,4 +60,5 @@ public static class DependencyInjection
     {
         return app.MapOpenApi();
     }
+#endif
 }

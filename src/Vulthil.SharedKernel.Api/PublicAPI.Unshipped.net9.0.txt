@@ -1,0 +1,25 @@
+#nullable enable
+const Vulthil.SharedKernel.Api.DependencyInjection.DefaultDocumentName = "v1" -> string!
+static Vulthil.SharedKernel.Api.CustomResults.Problem(Vulthil.Results.Error! error) -> Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!
+static Vulthil.SharedKernel.Api.DependencyInjection.AddOpenApiServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Api.DependencyInjection.AddOpenApiServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! documentName) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Api.DependencyInjection.AddOpenApiServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! documentName, System.Action<Microsoft.AspNetCore.OpenApi.OpenApiOptions!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Api.DependencyInjection.MapOpenApiEndpoints(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static Vulthil.SharedKernel.Api.EndpointExtensions.AddEndpoints(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Reflection.Assembly! assembly) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(this Microsoft.AspNetCore.Builder.WebApplication! app, Microsoft.AspNetCore.Routing.RouteGroupBuilder? routeGroupBuilder = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+static Vulthil.SharedKernel.Api.Extensions.ToActionResult(this Vulthil.Results.Error! error, Microsoft.AspNetCore.Mvc.ControllerBase! controller) -> Microsoft.AspNetCore.Mvc.IActionResult!
+static Vulthil.SharedKernel.Api.Extensions.ToActionResult(this Vulthil.Results.Result! result, Microsoft.AspNetCore.Mvc.ControllerBase! controller) -> Microsoft.AspNetCore.Mvc.IActionResult!
+static Vulthil.SharedKernel.Api.Extensions.ToActionResult<T>(this Vulthil.Results.Result<T>! result, Microsoft.AspNetCore.Mvc.ControllerBase! controller) -> Microsoft.AspNetCore.Mvc.IActionResult!
+static Vulthil.SharedKernel.Api.Extensions.ToCreatedAtRouteHttpResult<T>(this Vulthil.Results.Result<T>! result, string? routeName = null, System.Func<T, object?>? routeValueFactory = null) -> Microsoft.AspNetCore.Http.HttpResults.Results<Microsoft.AspNetCore.Http.HttpResults.CreatedAtRoute<T>!, Microsoft.AspNetCore.Http.HttpResults.ValidationProblem!, Microsoft.AspNetCore.Http.HttpResults.NotFound!, Microsoft.AspNetCore.Http.HttpResults.Conflict!, Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!>!
+static Vulthil.SharedKernel.Api.Extensions.ToIResult(this Vulthil.Results.Error! error) -> Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!
+static Vulthil.SharedKernel.Api.Extensions.ToIResult(this Vulthil.Results.Result! result) -> Microsoft.AspNetCore.Http.HttpResults.Results<Microsoft.AspNetCore.Http.HttpResults.NoContent!, Microsoft.AspNetCore.Http.HttpResults.ValidationProblem!, Microsoft.AspNetCore.Http.HttpResults.NotFound!, Microsoft.AspNetCore.Http.HttpResults.Conflict!, Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!>!
+static Vulthil.SharedKernel.Api.Extensions.ToIResult<T>(this Vulthil.Results.Result<T>! result) -> Microsoft.AspNetCore.Http.HttpResults.Results<Microsoft.AspNetCore.Http.HttpResults.Ok<T>!, Microsoft.AspNetCore.Http.HttpResults.ValidationProblem!, Microsoft.AspNetCore.Http.HttpResults.NotFound!, Microsoft.AspNetCore.Http.HttpResults.Conflict!, Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!>!
+Vulthil.SharedKernel.Api.BaseController
+Vulthil.SharedKernel.Api.BaseController.BaseController(Microsoft.Extensions.Logging.ILogger! logger) -> void
+Vulthil.SharedKernel.Api.BaseController.Logger.get -> Microsoft.Extensions.Logging.ILogger!
+Vulthil.SharedKernel.Api.CustomResults
+Vulthil.SharedKernel.Api.DependencyInjection
+Vulthil.SharedKernel.Api.EndpointExtensions
+Vulthil.SharedKernel.Api.Extensions
+Vulthil.SharedKernel.Api.IEndpoint
+Vulthil.SharedKernel.Api.IEndpoint.MapEndpoint(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app) -> void

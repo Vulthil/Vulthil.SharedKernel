@@ -5,8 +5,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<AdditionalFiles Include="PublicAPI.Shipped.$(TargetFramework).txt">
+			<Link>PublicAPI.Shipped.txt</Link>
+		</AdditionalFiles>
+
+		<AdditionalFiles Include="PublicAPI.Unshipped.$(TargetFramework).txt">
+			<Link>PublicAPI.Unshipped.txt</Link>
+		</AdditionalFiles>
+	</ItemGroup>
+	
+	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 	</ItemGroup>
 

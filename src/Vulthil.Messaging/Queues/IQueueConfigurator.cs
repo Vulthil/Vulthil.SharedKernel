@@ -97,8 +97,12 @@ public sealed record RetryPolicyDefinition
             return interval;
         }
 
-
+#if NET10_0_OR_GREATER
         var randomValue = RandomNumberGenerator.GetDouble();
+#else
+        var bytes = RandomNumberGenerator.GetBytes(8);
+        var randomValue = BitConverter.ToUInt64(bytes, 0) / (1 << 11);
+#endif
         var jitterMultiplier = randomValue * 2 * JitterFactor - JitterFactor;
 
         var jitterDelta = interval.TotalMilliseconds * jitterMultiplier;
@@ -110,6 +114,7 @@ public sealed record RetryPolicyDefinition
 
 internal static class RandomNumberGeneratorExtensions
 {
+#if NET10_0_OR_GREATER
     extension(RandomNumberGenerator)
     {
         /// <summary>
@@ -122,6 +127,7 @@ internal static class RandomNumberGeneratorExtensions
             return ul / (double)(1UL << 53);
         }
     }
+#endif
 }
 
 /// <summary>

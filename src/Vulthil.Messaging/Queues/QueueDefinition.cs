@@ -135,7 +135,12 @@ public sealed record QueueDefinition(string Name)
     /// <summary>
     /// Gets the collection of consumer-to-message bindings configured for this queue.
     /// </summary>
-    public IEnumerable<Registration> Registrations => _registrations.AsReadOnly();
+    public IReadOnlyCollection<Registration> Registrations =>
+#if NET10_0_OR_GREATER
+        _registrations.AsReadOnly();
+#else
+        _registrations.ToList().AsReadOnly();
+#endif
 
     /// <summary>
     /// Gets a value indicating whether any retry policy is configured, either at the queue or consumer level.

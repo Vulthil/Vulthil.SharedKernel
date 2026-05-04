@@ -8,7 +8,11 @@ public sealed class OutboxMessage
     /// <summary>
     /// Gets the unique identifier for this outbox message, generated as a version-7 UUID for natural ordering.
     /// </summary>
+#if NET10_0_OR_GREATER
     public Guid Id { get; init; } = Guid.CreateVersion7();
+#else
+    public Guid Id { get; init; } = Guid.NewGuid();
+#endif
     /// <summary>
     /// Gets the group identifier linking messages that were captured during the same <c>SaveChanges</c> call.
     /// </summary>

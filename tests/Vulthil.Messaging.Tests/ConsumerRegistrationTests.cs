@@ -174,7 +174,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
         var queue = queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
         queue.ShouldNotBeNull();
-        queue.Registrations.Count().ShouldBe(2);
+        queue.Registrations.Count.ShouldBe(2);
         var types = queue.Registrations.Select(r => r.ConsumerType.Type).ToList();
         types.Contains(typeof(TestMessageConsumer)).ShouldBeTrue();
         types.Contains(typeof(AnotherTestConsumer)).ShouldBeTrue();

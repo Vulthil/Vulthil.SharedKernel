@@ -47,7 +47,12 @@ internal sealed class RabbitMqRequester(
 
         var correlationId = publishContext.CorrelationId
                 ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyCorrelationIdFormatters)
-                ?? Guid.CreateVersion7().ToString();
+                ??
+#if NET10_0_OR_GREATER
+            Guid.CreateVersion7().ToString();
+#else
+            Guid.NewGuid().ToString();
+#endif
 
         _listener.RegisterWaiter(correlationId, tcs);
 
@@ -62,7 +67,12 @@ internal sealed class RabbitMqRequester(
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
                 Expiration = _defaultTimeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
                 Headers = publishContext.Headers,
-                MessageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString()
+                MessageId = publishContext.MessageId ??
+#if NET10_0_OR_GREATER
+                    Guid.CreateVersion7().ToString(),
+#else
+                    Guid.NewGuid().ToString(),
+#endif
             };
 
             var body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);

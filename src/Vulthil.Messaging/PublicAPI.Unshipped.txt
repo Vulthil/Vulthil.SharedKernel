@@ -99,7 +99,7 @@ Vulthil.Messaging.Queues.QueueDefinition.Name.set -> void
 Vulthil.Messaging.Queues.QueueDefinition.PrefetchCount.get -> ushort
 Vulthil.Messaging.Queues.QueueDefinition.PrefetchCount.set -> void
 Vulthil.Messaging.Queues.QueueDefinition.QueueDefinition(string! Name) -> void
-Vulthil.Messaging.Queues.QueueDefinition.Registrations.get -> System.Collections.Generic.IEnumerable<Vulthil.Messaging.Queues.Registration!>!
+Vulthil.Messaging.Queues.QueueDefinition.Registrations.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.Registration!>!
 Vulthil.Messaging.Queues.QueueDefinition.RetryEnabled.get -> bool
 Vulthil.Messaging.Queues.Registration
 Vulthil.Messaging.Queues.Registration.ConsumerType.get -> Vulthil.Messaging.Queues.ConsumerType!

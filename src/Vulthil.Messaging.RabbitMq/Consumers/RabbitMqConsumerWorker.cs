@@ -28,15 +28,10 @@ internal sealed class RabbitMqConsumerWorker(
     /// </summary>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        // 1. Configure QoS for this worker's channel
-        await _channel.BasicQosAsync(0, _queueDefinition.PrefetchCount, false, cancellationToken);
-
         var consumer = new AsyncEventingBasicConsumer(_channel);
 
-        // 2. Attach the handler
         consumer.ReceivedAsync += OnMessageReceivedAsync;
 
-        // 3. Begin consuming
         _consumerTag = await _channel.BasicConsumeAsync(
             queue: _queueDefinition.Name,
             autoAck: false,

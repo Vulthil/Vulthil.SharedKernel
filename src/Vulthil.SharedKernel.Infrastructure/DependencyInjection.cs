@@ -17,23 +17,23 @@ public static class DependencyInjection
     /// Registers a <see cref="BaseDbContext"/>-derived context with unit-of-work and optional outbox processing.
     /// </summary>
     /// <typeparam name="TDbContext">The concrete DbContext type.</typeparam>
-    /// <param name="services">The service collection.</param>
+    /// <param name="hostApplicationBuilder">The host application builder.</param>
     /// <param name="databaseInfrastructureConfiguratorAction">An action to configure the database infrastructure.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddDbContext<TDbContext>(this IServiceCollection services, Action<DatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+    /// <returns>The host application builder for chaining.</returns>
+    public static IHostApplicationBuilder AddDbContext<TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
         where TDbContext : BaseDbContext
     {
-        var databaseInfrastructureConfigurator = new DatabaseInfrastructureConfigurator();
+        var databaseInfrastructureConfigurator = new DatabaseInfrastructureConfigurator(hostApplicationBuilder);
         databaseInfrastructureConfiguratorAction(databaseInfrastructureConfigurator);
 
-        services.AddDbContext<TDbContext>(databaseInfrastructureConfigurator.OptionsBuilder);
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<TDbContext>());
+        hostApplicationBuilder.Services.AddDbContext<TDbContext>(databaseInfrastructureConfigurator.OptionsBuilder);
+        hostApplicationBuilder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<TDbContext>());
         if (databaseInfrastructureConfigurator.OutboxProcessingEnabled)
         {
-            services.AddOutboxProcessing<TDbContext>(databaseInfrastructureConfigurator);
+            hostApplicationBuilder.Services.AddOutboxProcessing<TDbContext>(databaseInfrastructureConfigurator);
         }
 
-        return services;
+        return hostApplicationBuilder;
     }
 
     /// <summary>
@@ -41,17 +41,18 @@ public static class DependencyInjection
     /// </summary>
     /// <typeparam name="TDbContextInterface">The service interface to register the context as.</typeparam>
     /// <typeparam name="TDbContext">The concrete DbContext type.</typeparam>
-    /// <param name="services">The service collection.</param>
+    /// <param name="hostApplicationBuilder">The host application builder.</param>
     /// <param name="databaseInfrastructureConfiguratorAction">An action to configure the database infrastructure.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddDbContext<TDbContextInterface, TDbContext>(this IServiceCollection services, Action<DatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+    /// <returns>The host application builder for chaining.</returns>
+
+    public static IHostApplicationBuilder AddDbContext<TDbContextInterface, TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
         where TDbContext : BaseDbContext, TDbContextInterface
         where TDbContextInterface : class
     {
-        services.AddDbContext<TDbContext>(databaseInfrastructureConfiguratorAction);
-        services.AddScoped<TDbContextInterface>(sp => sp.GetRequiredService<TDbContext>());
+        hostApplicationBuilder.AddDbContext<TDbContext>(databaseInfrastructureConfiguratorAction);
+        hostApplicationBuilder.Services.AddScoped<TDbContextInterface>(sp => sp.GetRequiredService<TDbContext>());
 
-        return services;
+        return hostApplicationBuilder;
     }
 
     private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator configurator)
@@ -92,31 +93,5 @@ public static class DependencyInjection
         await using var scope = services.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
         await context.Database.EnsureCreatedAsync();
-    }
-
-    /// <summary>
-    /// Applies any pending EF Core migrations for <typeparamref name="TDbContext"/>.
-    /// </summary>
-    /// <typeparam name="TDbContext">The DbContext type.</typeparam>
-    /// <param name="host">The host whose services to use.</param>
-    public static Task MigrateAsync<TDbContext>(this IHost host)
-        where TDbContext : DbContext
-        => host.Services.MigrateAsync<TDbContext>();
-
-    /// <summary>
-    /// Applies any pending EF Core migrations for <typeparamref name="TDbContext"/> using the provided service provider.
-    /// </summary>
-    /// <typeparam name="TDbContext">The DbContext type.</typeparam>
-    /// <param name="services">The service provider to resolve the context from.</param>
-    public static async Task MigrateAsync<TDbContext>(this IServiceProvider services)
-        where TDbContext : DbContext
-    {
-        await using var scope = services.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
-        if (pendingMigrations.Any())
-        {
-            await context.Database.MigrateAsync();
-        }
     }
 }

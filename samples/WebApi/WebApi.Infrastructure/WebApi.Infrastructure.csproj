@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -9,7 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.RabbitMq\Vulthil.Messaging.RabbitMq.csproj" />
-		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure.Npgsql\Vulthil.SharedKernel.Infrastructure.Npgsql.csproj" />
 		<ProjectReference Include="..\WebApi.Application\WebApi.Application.csproj" />
 	</ItemGroup>
 	

@@ -19,7 +19,16 @@ public interface IMessagingConfigurator
     /// <param name="queueName">The name of the queue.</param>
     /// <param name="queueConfigurationAction">An action to configure the queue's consumers and settings.</param>
     /// <returns>The current configurator instance for chaining.</returns>
-    IMessagingConfigurator AddQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction);
+    IMessagingConfigurator ConfigureQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction);
+
+    /// <summary>
+    /// Registers a publish definition for messages of type <typeparamref name="TMessage"/>. This allows you to specify exchange and routing configurations for outgoing messages of that type.
+    /// </summary>
+    /// <typeparam name="TMessage">The type of the message to publish.</typeparam>
+    /// <param name="configureMessageAction">An action to configure the message's publish settings.</param>
+    /// <returns></returns>
+    IMessagingConfigurator ConfigureMessage<TMessage>(Action<MessageConfiguration<TMessage>> configureMessageAction)
+        where TMessage : class;
 
     /// <summary>
     /// Configures global messaging options such as serialization and timeouts.
@@ -33,29 +42,6 @@ public interface IMessagingConfigurator
     /// <param name="configureFaults">An action to configure fault handling.</param>
     /// <returns>The current configurator instance for chaining.</returns>
     IMessagingConfigurator ConfigureFaults(Action<IFaultConfigurator> configureFaults);
-
-    /// <summary>
-    /// Registers a function that extracts the routing key from a message of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The message type.</typeparam>
-    /// <param name="picker">A function that produces the routing key from the message.</param>
-    /// <returns>The current configurator instance for chaining.</returns>
-    IMessagingConfigurator RegisterRoutingKeyFormatter<T>(Func<T, string> picker) where T : class;
-    /// <summary>
-    /// Registers a fixed routing key for messages of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The message type.</typeparam>
-    /// <param name="routingKey">The fixed routing key to use.</param>
-    /// <returns>The current configurator instance for chaining.</returns>
-    IMessagingConfigurator RegisterRoutingKeyFormatter<T>(string routingKey) where T : class;
-
-    /// <summary>
-    /// Registers a function that extracts the correlation identifier from a message of type <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The message type.</typeparam>
-    /// <param name="picker">A function that produces the correlation identifier from the message.</param>
-    /// <returns>The current configurator instance for chaining.</returns>
-    IMessagingConfigurator RegisterCorrelationIdFormatter<T>(Func<T, string> picker) where T : class;
 
 }
 /// <summary>

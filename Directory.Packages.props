@@ -3,52 +3,44 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
+	
+  <PropertyGroup>
+    <FrameworkVersion>10.0.8</FrameworkVersion>
+    <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.16</FrameworkVersion>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.2.4" />
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.2.4" />
-    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="13.2.4" />
-    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.2.4" />
-    <PackageVersion Include="Aspire.RabbitMQ.Client" Version="13.2.4" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.3.3" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.3.3" />
+    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="13.3.3" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="13.3.3" />
+    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.3.3" />
+    <PackageVersion Include="Aspire.RabbitMQ.Client" Version="13.3.3" />
     <PackageVersion Include="coverlet.collector" Version="10.0.0" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="1.1.27" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
-    <!-- EF Core versions vary by target framework. Provide a base (net10) version and update it for other TFMs. -->
-    <!-- Base: .NET 10 -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-    <!-- Override for .NET 9 projects -->
-    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="9.0.3" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Design" Version="9.0.3" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Relational" Version="9.0.3" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageVersion Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.15" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageVersion Update="Microsoft.AspNetCore.OpenApi" Version="9.0.15" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <!-- Override for .NET 8 projects -->
-    <PackageVersion Update="Microsoft.EntityFrameworkCore" Version="8.0.14" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Design" Version="8.0.14" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageVersion Update="Microsoft.EntityFrameworkCore.Relational" Version="8.0.14" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageVersion Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.7" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.26" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageVersion Update="Microsoft.AspNetCore.OpenApi" Version="8.0.26" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.1" />
+	  
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
+	  
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.5.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.5.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.6.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.6.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" PrivateAssets="all" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.203" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.9.50" />
     <PackageVersion Include="Moq.AutoMock" Version="4.0.2" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
@@ -56,9 +48,9 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
-    <PackageVersion Include="ReportGenerator" Version="5.5.9" />
+    <PackageVersion Include="ReportGenerator" Version="5.5.10" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
-    <PackageVersion Include="Scalar.Aspire" Version="0.9.32" />
+    <PackageVersion Include="Scalar.Aspire" Version="0.9.37" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.11.6" />
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
@@ -68,7 +60,7 @@
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.11.0" />
     <PackageVersion Include="Testcontainers.XunitV3" Version="4.11.0" />
     <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />
   </ItemGroup>
 </Project>

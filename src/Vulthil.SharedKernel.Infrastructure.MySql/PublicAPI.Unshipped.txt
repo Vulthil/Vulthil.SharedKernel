@@ -1,0 +1,9 @@
+#nullable enable
+override Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData>!>!
+static Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMysql(this Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator! configurator) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator!
+Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions
+Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStrategy
+Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStrategy.MySqlOutboxStrategy() -> void
+Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration
+Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
+Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! builder) -> void

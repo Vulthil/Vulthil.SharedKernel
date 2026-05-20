@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	
-      <ItemGroup>
-        <ProjectReference Include="..\..\src\Vulthil.Results\Vulthil.Results.csproj" />
-      </ItemGroup>
-	
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Vulthil.Results\Vulthil.Results.csproj" />
+	</ItemGroup>
+
 </Project>

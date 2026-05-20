@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Publishing;
@@ -11,13 +10,13 @@ namespace Vulthil.Messaging.RabbitMq.Requests;
 internal sealed class RabbitMqRequester(
     IInternalPublisher publisher,
     ResponseListener listener,
-    IOptions<MessagingOptions> messagingOptions) : IRequester
+    IMessageConfigurationProvider messageConfigurationProvider) : IRequester
 {
     private readonly IInternalPublisher _publisher = publisher;
     private readonly ResponseListener _listener = listener;
-    private readonly MessagingOptions _messagingOptions = messagingOptions.Value;
-    private JsonSerializerOptions _jsonOptions => _messagingOptions.JsonSerializerOptions;
-    private TimeSpan _defaultTimeout => _messagingOptions.DefaultTimeout;
+    private readonly IMessageConfigurationProvider _messageConfigurationProvider = messageConfigurationProvider;
+    private JsonSerializerOptions _jsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
+    private TimeSpan _defaultTimeout => _messageConfigurationProvider.DefaultTimeout;
 
     /// <summary>
     /// Executes this member.
@@ -41,18 +40,15 @@ internal sealed class RabbitMqRequester(
 
         var type = message.GetType();
 
+        var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(type);
+
         var routingKey = publishContext.RoutingKey
-            ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyRoutingKeyFormatters)
+            ?? messageConfiguration.RoutingKeyFormatter?.Invoke(message)
             ?? string.Empty;
 
         var correlationId = publishContext.CorrelationId
-                ?? RabbitMqConstants.GetMetadata(type, message, _messagingOptions.ReadOnlyCorrelationIdFormatters)
-                ??
-#if NET10_0_OR_GREATER
-            Guid.CreateVersion7().ToString();
-#else
-            Guid.NewGuid().ToString();
-#endif
+                ?? messageConfiguration.CorrelationIdFormatter?.Invoke(message)
+                ?? Guid.CreateVersion7().ToString();
 
         _listener.RegisterWaiter(correlationId, tcs);
 
@@ -67,17 +63,12 @@ internal sealed class RabbitMqRequester(
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
                 Expiration = _defaultTimeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
                 Headers = publishContext.Headers,
-                MessageId = publishContext.MessageId ??
-#if NET10_0_OR_GREATER
-                    Guid.CreateVersion7().ToString(),
-#else
-                    Guid.NewGuid().ToString(),
-#endif
+                MessageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString(),
             };
 
             var body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
 
-            await _publisher.InternalPublishAsync<TRequest>(body, props, routingKey, cancellationToken);
+            await _publisher.InternalPublishAsync<TRequest>(body, props, routingKey, messageConfiguration, cancellationToken);
 
             using var ctRegistration = linkedCts.Token.Register(() =>
             {

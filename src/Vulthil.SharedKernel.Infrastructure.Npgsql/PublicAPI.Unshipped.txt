@@ -1,0 +1,9 @@
+#nullable enable
+override Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData>!>!
+static Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql<TContext>(this Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator! configurator, string! connectionStringKey, System.Action<Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings!>? configureSettings = null) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator!
+Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions
+Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStrategy
+Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStrategy.NpgsqlOutboxStrategy() -> void
+Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration
+Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
+Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! builder) -> void

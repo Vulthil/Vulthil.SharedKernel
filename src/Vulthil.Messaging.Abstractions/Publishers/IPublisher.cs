@@ -14,7 +14,7 @@ public interface IPublisher
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     Task PublishAsync<TMessage>(
         TMessage message,
-        Func<IPublishContext, Task>? configureContext = null,
+        Func<IPublishContext, ValueTask>? configureContext = null,
         CancellationToken cancellationToken = default)
         where TMessage : notnull;
 }

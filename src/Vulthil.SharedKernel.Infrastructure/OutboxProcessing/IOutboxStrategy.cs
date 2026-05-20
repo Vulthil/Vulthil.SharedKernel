@@ -5,10 +5,6 @@ namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
 /// <summary>
 /// Abstraction for provider-specific outbox lock acquisition, message fetching, updating, and transactional boundary.
-/// The default implementation (<see cref="RelationalOutboxStrategy"/>) uses EF Core relational APIs.
-/// Relational provider packages (e.g., Npgsql, SqlServer) should inherit from <see cref="RelationalOutboxStrategy"/>
-/// to share update logic and override fetching with row-level locking.
-/// Non-relational providers (e.g., Cosmos DB) should implement this interface directly.
 /// </summary>
 public interface IOutboxStrategy
 {
@@ -31,13 +27,13 @@ public interface IOutboxStrategy
     /// <summary>
     /// Marks processed messages as complete and records failures with retry counts.
     /// </summary>
-    /// <param name="outboxMessages">The outbox message set.</param>
+    /// <param name="context">The outbox message context.</param>
     /// <param name="successIds">Identifiers of successfully published messages.</param>
     /// <param name="failures">Details of messages that failed to publish.</param>
     /// <param name="maxRetries">The maximum retry count; messages reaching this limit are also marked as processed.</param>
     /// <param name="processedOnUtc">The UTC timestamp to record for processed messages.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    Task UpdateMessagesAsync(DbSet<OutboxMessage> outboxMessages, IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken);
+    Task UpdateMessagesAsync(ISaveOutboxMessages context, IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken);
 }
 
 /// <summary>

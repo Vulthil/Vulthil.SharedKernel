@@ -8,5 +8,6 @@ internal interface IInternalPublisher
         byte[] body,
         BasicProperties props,
         string routingKey,
+        MessageConfiguration messageConfiguration,
         CancellationToken cancellationToken);
 }

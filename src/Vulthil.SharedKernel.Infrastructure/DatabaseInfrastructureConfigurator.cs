@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
 namespace Vulthil.SharedKernel.Infrastructure;
@@ -7,7 +8,7 @@ namespace Vulthil.SharedKernel.Infrastructure;
 /// <summary>
 /// Fluent configurator for database infrastructure including DbContext options and outbox processing.
 /// </summary>
-public sealed class DatabaseInfrastructureConfigurator
+public sealed class DatabaseInfrastructureConfigurator : IDatabaseInfrastructureConfigurator
 {
     /// <summary>
     /// Gets the configured <see cref="DbContextOptionsBuilder"/> delegate used when registering the DbContext,
@@ -22,15 +23,25 @@ public sealed class DatabaseInfrastructureConfigurator
     /// Gets the outbox processing options configuration action, or <see langword="null"/> if not set.
     /// </summary>
     public Action<OutboxProcessingOptions>? OutboxOptionsAction { get; private set; }
-    internal Type OutboxStrategyType { get; private set; } = typeof(RelationalOutboxStrategy);
-    internal DatabaseInfrastructureConfigurator() { }
+    /// <summary>
+    /// Gets the outbox strategy type used by outbox processing.
+    /// </summary>
+    internal Type OutboxStrategyType { get; private set; } = typeof(BaseOutboxStrategy);
+
+    /// <inheritdoc />
+    public IHostApplicationBuilder HostApplicationBuilder { get; }
 
     /// <summary>
-    /// Enables outbox processing with optional configuration.
+    /// Initializes a new instance of the <see cref="DatabaseInfrastructureConfigurator"/> class.
     /// </summary>
-    /// <param name="optionsAction">An optional action to configure outbox processing options.</param>
-    /// <returns>The current configurator instance for chaining.</returns>
-    public DatabaseInfrastructureConfigurator EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null)
+    internal DatabaseInfrastructureConfigurator(IHostApplicationBuilder hostApplicationBuilder)
+    {
+        HostApplicationBuilder = hostApplicationBuilder;
+    }
+
+
+    /// <inheritdoc />
+    public IDatabaseInfrastructureConfigurator EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null)
     {
         OutboxProcessingEnabled = true;
         OutboxOptionsAction = optionsAction ??= (o) => { };
@@ -38,24 +49,16 @@ public sealed class DatabaseInfrastructureConfigurator
         return this;
     }
 
-    /// <summary>
-    /// Specifies a custom outbox strategy implementation.
-    /// </summary>
-    /// <typeparam name="TStrategy">The outbox strategy type.</typeparam>
-    /// <returns>The current configurator instance for chaining.</returns>
-    public DatabaseInfrastructureConfigurator UseOutboxStrategy<TStrategy>()
+    /// <inheritdoc/>
+    public IDatabaseInfrastructureConfigurator UseOutboxStrategy<TStrategy>()
         where TStrategy : class, IOutboxStrategy
     {
         OutboxStrategyType = typeof(TStrategy);
         return this;
     }
 
-    /// <summary>
-    /// Configures the DbContext options.
-    /// </summary>
-    /// <param name="optionsBuilder">An action to configure <see cref="DbContextOptionsBuilder"/>.</param>
-    /// <returns>The current configurator instance for chaining.</returns>
-    public DatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<DbContextOptionsBuilder> optionsBuilder)
+    /// <inheritdoc/>
+    public IDatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<DbContextOptionsBuilder> optionsBuilder)
     {
         var n = (IServiceProvider sp, DbContextOptionsBuilder options) => optionsBuilder(options);
 
@@ -63,12 +66,8 @@ public sealed class DatabaseInfrastructureConfigurator
         return this;
     }
 
-    /// <summary>
-    /// Configures the DbContext options with access to the service provider.
-    /// </summary>
-    /// <param name="optionsBuilder">An action to configure <see cref="DbContextOptionsBuilder"/> with service provider access.</param>
-    /// <returns>The current configurator instance for chaining.</returns>
-    public DatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<IServiceProvider, DbContextOptionsBuilder> optionsBuilder)
+    /// <inheritdoc/>
+    public IDatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<IServiceProvider, DbContextOptionsBuilder> optionsBuilder)
     {
         OptionsBuilder = optionsBuilder + ((sp, options) => AddInterceptors(options, sp));
         return this;

@@ -6,7 +6,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ProducerService\Vulthil.Messaging.IntegrationTest.ProducerService.csproj" />
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
 	</ItemGroup>
-	
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ProducerService\Vulthil.Messaging.IntegrationTest.ProducerService.csproj" />
+		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ConsumerService\Vulthil.Messaging.IntegrationTest.ConsumerService.csproj" />
+	</ItemGroup>
+
 </Project>

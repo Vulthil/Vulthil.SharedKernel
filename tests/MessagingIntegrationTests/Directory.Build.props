@@ -5,7 +5,7 @@
 	<PropertyGroup>
 		<TargetFrameworks></TargetFrameworks>
 		<TargetFramework>net10.0</TargetFramework>
-		<NoWarn>$(NoWarn);CS1591;S125</NoWarn>
+		<NoWarn>$(NoWarn);CA1873;CS1591;S125</NoWarn>
 	</PropertyGroup>
 
 </Project>

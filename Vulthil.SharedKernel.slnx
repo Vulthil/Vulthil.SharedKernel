@@ -89,7 +89,10 @@
     <File Path="tests/MessagingIntegrationTests/aspire.config.json" />
     <File Path="tests/MessagingIntegrationTests/Directory.Build.props" />
     <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.AppHost/Vulthil.Messaging.IntegrationTest.AppHost.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.ConsumerService/Vulthil.Messaging.IntegrationTest.ConsumerService.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.Contracts/Vulthil.Messaging.IntegrationTest.Contracts.csproj" />
     <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.ProducerService/Vulthil.Messaging.IntegrationTest.ProducerService.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.Tests/Vulthil.Messaging.IntegrationTest.Tests.csproj" />
     <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTests.ServiceDefaults/Vulthil.Messaging.IntegrationTests.ServiceDefaults.csproj" Id="ad509043-e1f6-4e2e-be2c-a687049ad305" />
   </Folder>
   <Folder Name="/tests/Test Items/">

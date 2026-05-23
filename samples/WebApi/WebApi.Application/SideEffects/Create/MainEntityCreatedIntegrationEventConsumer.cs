@@ -32,9 +32,9 @@ public sealed class MainEntityCreatedIntegrationEventConsumer(ILogger<MainEntity
 /// <summary>
 /// Represents the SideEffectRequestConsumer.
 /// </summary>
-public sealed class SideEffectRequestConsumer(ILogger<MainEntityCreatedIntegrationEventConsumer> logger, IWebApiDbContext webApiDbContext) : IRequestConsumer<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>
+public sealed class SideEffectRequestConsumer(ILogger<SideEffectRequestConsumer> logger, IWebApiDbContext webApiDbContext) : IRequestConsumer<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>
 {
-    private readonly ILogger<MainEntityCreatedIntegrationEventConsumer> _logger = logger;
+    private readonly ILogger<SideEffectRequestConsumer> _logger = logger;
     private readonly IWebApiDbContext _webApiDbContext = webApiDbContext;
 
 

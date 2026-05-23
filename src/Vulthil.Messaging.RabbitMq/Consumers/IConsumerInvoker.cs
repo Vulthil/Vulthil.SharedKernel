@@ -52,13 +52,13 @@ internal interface IRpcInvoker
     Task InvokeAsync(IServiceProvider sp, object message, BasicDeliverEventArgs ea, IChannel channel, CancellationToken ct);
 }
 
-internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(MessagingOptions messagingOptions, string routingKey, RetryPolicyDefinition? retryPolicy) : IRpcInvoker
+internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(IMessageConfigurationProvider messageConfigurationProvider, string routingKey, RetryPolicyDefinition? retryPolicy) : IRpcInvoker
     where TConsumer : class, IRequestConsumer<TRequest, TResponse>
     where TRequest : notnull
     where TResponse : notnull
 {
-    private readonly MessagingOptions _messagingOptions = messagingOptions;
-    private JsonSerializerOptions _jsonOptions => _messagingOptions.JsonSerializerOptions;
+    private readonly IMessageConfigurationProvider _messageConfigurationProvider = messageConfigurationProvider;
+    private JsonSerializerOptions _jsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
     /// <summary>
     /// Represents this member.
     /// </summary>

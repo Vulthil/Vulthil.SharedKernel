@@ -2,15 +2,10 @@
 const Vulthil.Messaging.MessagingOptions.SectionName = "Messaging:Options" -> string!
 static Vulthil.Messaging.DependencyInjection.AddMessaging(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, System.Action<Vulthil.Messaging.IMessagingConfigurator!>! messagingConfiguratorAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 Vulthil.Messaging.DependencyInjection
-Vulthil.Messaging.IFaultConfigurator
-Vulthil.Messaging.IFaultConfigurator.AddConsumer<TConsumer>() -> void
-Vulthil.Messaging.IFaultConfigurator.Bind(params string![]! routingKeys) -> void
-Vulthil.Messaging.IFaultConfigurator.UseExchange(string! exchangeName) -> void
-Vulthil.Messaging.IFaultConfigurator.UseQueue(string! queueName) -> void
+Vulthil.Messaging.IMessageConfigurationProvider.FaultExchangeName.get -> string!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration(System.Type! messageType) -> Vulthil.Messaging.MessageConfiguration!
-Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage>() -> Vulthil.Messaging.MessageConfiguration<TMessage!>!
+Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage>() -> Vulthil.Messaging.MessageConfiguration!
 Vulthil.Messaging.IMessagingConfigurator
-Vulthil.Messaging.IMessagingConfigurator.ConfigureFaults(System.Action<Vulthil.Messaging.IFaultConfigurator!>! configureFaults) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage<TMessage>(System.Action<Vulthil.Messaging.MessageConfiguration<TMessage!>!>! configureMessageAction) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action<Vulthil.Messaging.MessagingOptions!>! action) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureQueue(string! queueName, System.Action<Vulthil.Messaging.Queues.IQueueConfigurator!>! queueConfigurationAction) -> Vulthil.Messaging.IMessagingConfigurator!
@@ -25,13 +20,15 @@ Vulthil.Messaging.MessageConfiguration.CorrelationIdFormatter.get -> System.Func
 Vulthil.Messaging.MessageConfiguration.CorrelationIdFormatter.set -> void
 Vulthil.Messaging.MessageConfiguration.Durable.get -> bool
 Vulthil.Messaging.MessageConfiguration.Durable.set -> void
-Vulthil.Messaging.MessageConfiguration.Exchange.get -> string?
+Vulthil.Messaging.MessageConfiguration.Exchange.get -> string!
 Vulthil.Messaging.MessageConfiguration.Exchange.set -> void
 Vulthil.Messaging.MessageConfiguration.ExchangeType.get -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessageConfiguration.ExchangeType.set -> void
+Vulthil.Messaging.MessageConfiguration.MessageConfiguration(string! exchange) -> void
 Vulthil.Messaging.MessageConfiguration.RoutingKeyFormatter.get -> System.Func<object!, string!>?
 Vulthil.Messaging.MessageConfiguration.RoutingKeyFormatter.set -> void
 Vulthil.Messaging.MessageConfiguration<TMessage>
+Vulthil.Messaging.MessageConfiguration<TMessage>.MessageConfiguration() -> void
 Vulthil.Messaging.MessageConfiguration<TMessage>.UseCorrelationId(System.Func<TMessage!, string!>! selector) -> Vulthil.Messaging.MessageConfiguration<TMessage!>!
 Vulthil.Messaging.MessageConfiguration<TMessage>.UseRoutingKey(string! routingKey) -> Vulthil.Messaging.MessageConfiguration<TMessage!>!
 Vulthil.Messaging.MessageConfiguration<TMessage>.UseRoutingKey(System.Func<TMessage!, string!>! selector) -> Vulthil.Messaging.MessageConfiguration<TMessage!>!
@@ -41,8 +38,6 @@ Vulthil.Messaging.MessagingExchangeType.Fanout = 0 -> Vulthil.Messaging.Messagin
 Vulthil.Messaging.MessagingExchangeType.Headers = 3 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Topic = 2 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingOptions
-Vulthil.Messaging.MessagingOptions.AutoDeclareFaultStatus.get -> bool
-Vulthil.Messaging.MessagingOptions.AutoDeclareFaultStatus.set -> void
 Vulthil.Messaging.MessagingOptions.DefaultTimeout.get -> System.TimeSpan
 Vulthil.Messaging.MessagingOptions.DefaultTimeout.set -> void
 Vulthil.Messaging.MessagingOptions.FaultExchangeName.get -> string!

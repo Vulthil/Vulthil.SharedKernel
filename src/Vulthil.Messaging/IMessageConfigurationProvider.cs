@@ -18,8 +18,8 @@ public interface IMessageConfigurationProvider
     /// Gets the message configuration for the specified generic message type.
     /// </summary>
     /// <typeparam name="TMessage">The message CLR type.</typeparam>
-    /// <returns>The resolved <see cref="MessageConfiguration{TMessage}"/> instance.</returns>
-    MessageConfiguration<TMessage> GetMessageConfiguration<TMessage>() where TMessage : class;
+    /// <returns>The resolved <see cref="MessageConfiguration"/> instance.</returns>
+    MessageConfiguration GetMessageConfiguration<TMessage>() where TMessage : class;
 
     /// <summary>
     /// Gets the JSON serializer options used by the messaging system.
@@ -30,4 +30,9 @@ public interface IMessageConfigurationProvider
     /// Gets the default request/response timeout used by transports.
     /// </summary>
     TimeSpan DefaultTimeout { get; }
+
+    /// <summary>
+    /// Gets the name of the exchange used for fault messages.
+    /// </summary>
+    string FaultExchangeName { get; }
 }

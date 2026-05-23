@@ -14,9 +14,10 @@ internal sealed class MessageConfigurationProvider : IMessageConfigurationProvid
     public MessageConfiguration GetMessageConfiguration(Type messageType)
         => _options.GetMessageConfiguration(messageType);
 
-    public MessageConfiguration<TMessage> GetMessageConfiguration<TMessage>() where TMessage : class
-        => (MessageConfiguration<TMessage>)_options.GetMessageConfiguration<TMessage>();
+    public MessageConfiguration GetMessageConfiguration<TMessage>() where TMessage : class
+        => _options.GetMessageConfiguration<TMessage>();
 
     public JsonSerializerOptions JsonSerializerOptions => _options.JsonSerializerOptions;
     public TimeSpan DefaultTimeout => _options.DefaultTimeout;
+    public string FaultExchangeName => _options.FaultExchangeName;
 }

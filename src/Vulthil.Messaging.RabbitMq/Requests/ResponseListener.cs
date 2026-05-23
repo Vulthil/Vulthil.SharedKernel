@@ -1,65 +1,128 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Vulthil.Messaging.RabbitMq;
+using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Results;
 
 namespace Vulthil.Messaging.RabbitMq.Requests;
 
-internal sealed class ResponseListener(IOptions<MessagingOptions> messagingOptions) : IAsyncDisposable
+internal sealed class ResponseListener : IAsyncDisposable
 {
+    private readonly IConnection _connection;
+    private readonly ILogger<ResponseListener> _logger;
     private readonly ConcurrentDictionary<string, IResponseWaiter> _waiters = new();
-    private readonly JsonSerializerOptions _jsonOptions = messagingOptions.Value.JsonSerializerOptions;
+    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly SemaphoreSlim _initLock = new(1, 1);
 
     private IChannel? _channel;
-    /// <summary>
-    /// Gets or sets this member value.
-    /// </summary>
-    public string ReplyToQueueName { get; private set; } = string.Empty;
+    private string _replyToQueueName = string.Empty;
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
-    public void RegisterWaiter<T>(string correlationId, TaskCompletionSource<Result<T>> tcs) where T : notnull
-        => _waiters[correlationId] = new ResponseWaiter<T>(tcs, _jsonOptions);
-
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
-    public void RemoveWaiter(string correlationId) => _waiters.TryRemove(correlationId, out _);
-
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
-    public async Task InitializeAsync(IConnection connection)
+    public ResponseListener(
+        IConnection connection,
+        IOptions<MessagingOptions> messagingOptions,
+        ILogger<ResponseListener> logger)
     {
-        _channel = await connection.CreateChannelAsync();
-
-        // exclusive: true ensures this queue dies when this app instance shuts down
-        var declareResult = await _channel.QueueDeclareAsync(
-            queue: $"callback.{Guid.NewGuid():N}",
-            durable: false, exclusive: true, autoDelete: true);
-
-        ReplyToQueueName = declareResult.QueueName;
-
-        var consumer = new AsyncEventingBasicConsumer(_channel);
-        consumer.ReceivedAsync += async (s, ea) =>
-        {
-            if (ea.BasicProperties.CorrelationId != null &&
-                _waiters.TryGetValue(ea.BasicProperties.CorrelationId, out var waiter))
-            {
-                waiter.Complete(ea.Body.Span);
-            }
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
-        };
-
-        await _channel.BasicConsumeAsync(ReplyToQueueName, false, consumer);
+        _connection = connection;
+        _logger = logger;
+        _jsonOptions = messagingOptions.Value.JsonSerializerOptions;
     }
 
     /// <summary>
-    /// Executes this member.
+    /// Gets the name of the exclusive reply-to queue this listener subscribes to.
+    /// Awaits initialization on first access if the listener has not started yet.
     /// </summary>
-    public ValueTask DisposeAsync() => _channel?.DisposeAsync() ?? ValueTask.CompletedTask;
+    public async ValueTask<string> GetReplyToQueueNameAsync(CancellationToken cancellationToken = default)
+    {
+        if (_channel is not null)
+        {
+            return _replyToQueueName;
+        }
+
+        await EnsureStartedAsync(cancellationToken);
+        return _replyToQueueName;
+    }
+
+    public void RegisterWaiter<T>(string correlationId, TaskCompletionSource<Result<T>> tcs) where T : notnull
+        => _waiters[correlationId] = new ResponseWaiter<T>(tcs, _jsonOptions);
+
+    public void RemoveWaiter(string correlationId) => _waiters.TryRemove(correlationId, out _);
+
+    private async Task EnsureStartedAsync(CancellationToken cancellationToken)
+    {
+        if (_channel is not null)
+        {
+            return;
+        }
+
+        await _initLock.WaitAsync(cancellationToken);
+        try
+        {
+#pragma warning disable CA1508 // Double-check after acquiring the lock; another thread may have initialized.
+            if (_channel is not null)
+            {
+                return;
+            }
+#pragma warning restore CA1508
+
+            var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+
+            var declareResult = await channel.QueueDeclareAsync(
+                queue: $"callback.{Guid.NewGuid():N}",
+                durable: false,
+                exclusive: true,
+                autoDelete: true,
+                cancellationToken: cancellationToken);
+
+            _replyToQueueName = declareResult.QueueName;
+
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.ReceivedAsync += OnResponseReceivedAsync;
+
+            await channel.BasicConsumeAsync(
+                queue: _replyToQueueName,
+                autoAck: false,
+                consumer: consumer,
+                cancellationToken: cancellationToken);
+
+            _channel = channel;
+            MessagingLog.ResponseListenerStarted(_logger, _replyToQueueName);
+        }
+        finally
+        {
+            _initLock.Release();
+        }
+    }
+
+    private async Task OnResponseReceivedAsync(object sender, BasicDeliverEventArgs ea)
+    {
+        var correlationId = ea.BasicProperties.CorrelationId;
+        if (!string.IsNullOrEmpty(correlationId) && _waiters.TryGetValue(correlationId, out var waiter))
+        {
+            waiter.Complete(ea.Body.Span);
+        }
+        else if (!string.IsNullOrEmpty(correlationId))
+        {
+            MessagingLog.ResponseWaiterNotFound(_logger, correlationId);
+        }
+
+        if (_channel is not null)
+        {
+            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_channel is not null)
+        {
+            await _channel.DisposeAsync();
+            _channel = null;
+        }
+
+        _initLock.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

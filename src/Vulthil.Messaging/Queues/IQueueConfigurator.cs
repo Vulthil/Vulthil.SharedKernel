@@ -97,12 +97,8 @@ public sealed record RetryPolicyDefinition
             return interval;
         }
 
-#if NET10_0_OR_GREATER
-        var randomValue = RandomNumberGenerator.GetDouble();
-#else
-        var bytes = RandomNumberGenerator.GetBytes(8);
-        var randomValue = BitConverter.ToUInt64(bytes, 0) / (1 << 11);
-#endif
+
+        var randomValue = RandomNumberGeneratorExtensions.GetDouble();
         var jitterMultiplier = randomValue * 2 * JitterFactor - JitterFactor;
 
         var jitterDelta = interval.TotalMilliseconds * jitterMultiplier;
@@ -114,20 +110,15 @@ public sealed record RetryPolicyDefinition
 
 internal static class RandomNumberGeneratorExtensions
 {
-#if NET10_0_OR_GREATER
-    extension(RandomNumberGenerator)
+    /// <summary>
+    /// Generates a cryptographically random <see langword="double"/> in the range [0, 1).
+    /// </summary>
+    public static double GetDouble()
     {
-        /// <summary>
-        /// Generates a cryptographically random <see langword="double"/> in the range [0, 1).
-        /// </summary>
-        public static double GetDouble()
-        {
-            var bytes = RandomNumberGenerator.GetBytes(8);
-            var ul = BitConverter.ToUInt64(bytes, 0) / (1 << 11);
-            return ul / (double)(1UL << 53);
-        }
+        var bytes = RandomNumberGenerator.GetBytes(8);
+        var ul = BitConverter.ToUInt64(bytes, 0) / (1 << 11);
+        return ul / (double)(1UL << 53);
     }
-#endif
 }
 
 /// <summary>

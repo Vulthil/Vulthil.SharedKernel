@@ -1,15 +1,22 @@
-﻿namespace Vulthil.Messaging;
+namespace Vulthil.Messaging;
 
 /// <summary>
-/// Represents configuration used when publishing a message type.
+/// Configuration used when publishing or binding a message type.
 /// Contains exchange declaration settings and optional formatters for routing keys and correlation ids.
 /// </summary>
 public record MessageConfiguration
 {
     /// <summary>
-    /// The name of the exchange to publish to. When <c>null</c> the transport may fall back to a convention (for example the message CLR type name).
+    /// Initializes a new <see cref="MessageConfiguration"/> for the specified exchange name.
     /// </summary>
-    public string? Exchange { get; set; }
+    /// <param name="exchange">The name of the exchange to declare and bind for this message type.</param>
+    public MessageConfiguration(string exchange) => Exchange = exchange;
+
+    /// <summary>
+    /// The name of the exchange to declare and bind for this message type.
+    /// Defaults to the message CLR full type name when constructed via <see cref="MessageConfiguration{TMessage}"/>.
+    /// </summary>
+    public string Exchange { get; set; }
 
     /// <summary>
     /// The exchange type to declare when creating the exchange (if applicable to the transport).
@@ -46,15 +53,19 @@ public record MessageConfiguration
 }
 
 /// <summary>
-/// Represents configuration options for a specific message type, including routing key and correlation ID selection.
+/// Configuration options for a specific message type, including exchange, routing key and correlation ID selection.
 /// </summary>
 /// <typeparam name="TMessage">The message type to configure.</typeparam>
 public sealed record MessageConfiguration<TMessage> : MessageConfiguration
     where TMessage : class
 {
+    /// <summary>
+    /// Initializes a new <see cref="MessageConfiguration{TMessage}"/> whose exchange defaults to the CLR full type name of <typeparamref name="TMessage"/>.
+    /// </summary>
+    public MessageConfiguration() : base(typeof(TMessage).FullName!) { }
 
     /// <summary>
-    /// Configures the routing key using the specified selector function.
+    /// Configures the routing key using the specified literal value.
     /// </summary>
     /// <param name="routingKey">The routing key to use for the message.</param>
     /// <returns>The current message configuration instance.</returns>
@@ -69,8 +80,8 @@ public sealed record MessageConfiguration<TMessage> : MessageConfiguration
     {
         RoutingKeyFormatter = message => selector((TMessage)message);
         return this;
-
     }
+
     /// <summary>
     /// Configures the correlation ID for the message using the specified selector function.
     /// </summary>

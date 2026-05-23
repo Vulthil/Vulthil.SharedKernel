@@ -1,58 +1,70 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
-using Vulthil.Messaging.RabbitMq.Requests;
+using Vulthil.Messaging.RabbitMq.HealthChecks;
+using Vulthil.Messaging.RabbitMq.Logging;
 
 namespace Vulthil.Messaging.RabbitMq;
-
 
 internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IConnection _connection;
-    private readonly ResponseListener _responseListener;
     private readonly IEnumerable<QueueDefinition> _queueDefinitions;
-    private readonly MessagingOptions _messagingJsonOptions;
+    private readonly IMessageConfigurationProvider _messageConfigurationProvider;
+    private readonly RabbitMqBusStartupStatus _startupStatus;
+    private readonly ILogger<RabbitMqBus> _logger;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly MessageTypeCache _typeCache = new();
     private readonly List<RabbitMqConsumerWorker> _workers = [];
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public RabbitMqBus(
         IServiceScopeFactory serviceScopeFactory,
         IConnection connection,
-        ResponseListener responseListener,
         IEnumerable<QueueDefinition> queueDefinitions,
-        IOptions<MessagingOptions> messagingJsonOptions)
+        IMessageConfigurationProvider messageConfigurationProvider,
+        RabbitMqBusStartupStatus startupStatus,
+        ILogger<RabbitMqBus> logger,
+        ILoggerFactory loggerFactory)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _connection = connection;
-        _responseListener = responseListener;
         _queueDefinitions = queueDefinitions;
-        _messagingJsonOptions = messagingJsonOptions.Value;
+        _messageConfigurationProvider = messageConfigurationProvider;
+        _startupStatus = startupStatus;
+        _logger = logger;
+        _loggerFactory = loggerFactory;
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        await SetupTopology(cancellationToken);
+        try
+        {
+            var queues = _queueDefinitions.ToList();
+            MessagingLog.BusStarting(_logger, queues.Count);
 
-        await StartConsumersAsync(cancellationToken);
+            await SetupTopology(queues, cancellationToken);
+            await StartConsumersAsync(queues, cancellationToken);
 
-        await _responseListener.InitializeAsync(_connection);
+            MessagingLog.BusStarted(_logger);
+            _startupStatus.MarkStarted();
+        }
+        catch (Exception ex)
+        {
+            _startupStatus.MarkFailed(ex);
+            throw;
+        }
     }
 
-    private async Task StartConsumersAsync(CancellationToken cancellationToken)
+    private async Task StartConsumersAsync(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
     {
+        var workerLogger = _loggerFactory.CreateLogger<RabbitMqConsumerWorker>();
 
-        foreach (var queue in _queueDefinitions)
+        foreach (var queue in queues)
         {
-            _typeCache.RegisterQueue(queue, _messagingJsonOptions);
+            _typeCache.RegisterQueue(queue, _messageConfigurationProvider);
 
             for (int i = 0; i < queue.ChannelCount; i++)
             {
@@ -65,7 +77,14 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 var channel = await _connection.CreateChannelAsync(options, cancellationToken);
                 await channel.BasicQosAsync(0, queue.PrefetchCount, false, cancellationToken);
 
-                var worker = new RabbitMqConsumerWorker(_serviceScopeFactory, queue, channel, _typeCache, _messagingJsonOptions.JsonSerializerOptions);
+                var worker = new RabbitMqConsumerWorker(
+                    _serviceScopeFactory,
+                    queue,
+                    channel,
+                    _typeCache,
+                    _messageConfigurationProvider,
+                    workerLogger,
+                    i);
 
                 _workers.Add(worker);
             }
@@ -73,17 +92,18 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         await Task.WhenAll(_workers.Select(worker => worker.StartAsync(cancellationToken)));
     }
 
-    private async Task SetupTopology(CancellationToken cancellationToken)
+    private async Task SetupTopology(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
     {
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
-        foreach (var queue in _queueDefinitions)
+        foreach (var queue in queues)
         {
-            await SetupTopology(queue, channel, cancellationToken);
+            await SetupQueueTopology(queue, channel, cancellationToken);
+            MessagingLog.QueueDeclared(_logger, queue.Name, queue.Registrations.Count);
         }
     }
 
-    private static async Task SetupTopology(QueueDefinition queue, IChannel channel, CancellationToken cancellationToken)
+    private async Task SetupQueueTopology(QueueDefinition queue, IChannel channel, CancellationToken cancellationToken)
     {
         await channel.ExchangeDeclareAsync(
             exchange: queue.Name,
@@ -122,7 +142,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 ["x-queue-type"] = "quorum",
             };
 
-            await channel.ExchangeDeclareAsync(retryExchange, ExchangeType.Direct, true, cancellationToken: cancellationToken);
+            await channel.ExchangeDeclareAsync(retryExchange, ExchangeType.Topic, true, cancellationToken: cancellationToken);
             await channel.QueueDeclareAsync(retryQueue, true, false, false, retryArgs, cancellationToken: cancellationToken);
             await channel.QueueBindAsync(retryQueue, retryExchange, "#", cancellationToken: cancellationToken);
         }
@@ -141,17 +161,18 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             routingKey: "#",
             cancellationToken: cancellationToken);
 
-        var registrations = queue.Registrations;
-
-        foreach (var registration in registrations)
+        foreach (var registration in queue.Registrations)
         {
-            var exchangeName = registration.MessageType.Name;
+            var messageConfig = _messageConfigurationProvider.GetMessageConfiguration(registration.MessageType.Type);
+            var exchangeName = messageConfig.Exchange;
             var bindingPattern = RabbitMqConstants.GetRoutingKey(registration);
 
             await channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
-                type: ExchangeType.Topic,
-                durable: true,
+                type: messageConfig.ExchangeType.ToRabbitExchangeType(),
+                durable: messageConfig.Durable,
+                autoDelete: messageConfig.AutoDelete,
+                arguments: messageConfig.Arguments,
                 cancellationToken: cancellationToken);
 
             await channel.ExchangeBindAsync(
@@ -162,9 +183,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         }
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public async ValueTask DisposeAsync()
     {
         foreach (var worker in _workers)

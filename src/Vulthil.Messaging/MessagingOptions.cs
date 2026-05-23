@@ -24,13 +24,10 @@ public sealed class MessagingOptions
     /// </summary>
     public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
     /// <summary>
-    /// Gets or sets the name of the fault exchange. Default is "Fault.Exchange".
+    /// Gets or sets the name of the exchange to which faults are published when a consumed message carries a <c>FaultAddress</c> header.
+    /// Default is <c>"Fault.Exchange"</c>.
     /// </summary>
     public string FaultExchangeName { get; set; } = "Fault.Exchange";
-    /// <summary>
-    /// Gets or sets a value indicating whether the fault exchange is automatically declared. Default is <see langword="true"/>.
-    /// </summary>
-    public bool AutoDeclareFaultStatus { get; set; } = true;
 
     internal Dictionary<Type, MessageConfiguration> MessageConfigurations { get; } = [];
 
@@ -47,7 +44,7 @@ public sealed class MessagingOptions
             current = current.BaseType;
         }
 
-        return new MessageConfiguration();
+        return new MessageConfiguration(messageType.FullName!);
     }
 
     internal MessageConfiguration GetMessageConfiguration<TMessage>() =>

@@ -1,3 +1,7 @@
 #nullable enable
+const Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.ActivitySourceName = "Vulthil.Messaging.RabbitMq" -> string!
 static Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq(this Vulthil.Messaging.IMessagingConfigurator! configurator, string! connectionStringKey = "rabbitMq", System.Action<Aspire.RabbitMQ.Client.RabbitMQClientSettings!>? configureSettings = null, System.Action<RabbitMQ.Client.ConnectionFactory!>? configureConnectionFactory = null) -> Vulthil.Messaging.IMessagingConfigurator!
+static Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
 Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions
+Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation
+Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions

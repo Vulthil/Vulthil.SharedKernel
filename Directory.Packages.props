@@ -3,24 +3,23 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
-	
   <PropertyGroup>
     <FrameworkVersion>10.0.8</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.16</FrameworkVersion>
+    <AspireVersion>13.3.5</AspireVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.3.3" />
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.3.3" />
-    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="13.3.3" />
-    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="13.3.3" />
-    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.3.3" />
-    <PackageVersion Include="Aspire.RabbitMQ.Client" Version="13.3.3" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.0" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.RabbitMQ.Client" Version="$(AspireVersion)" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.1" />
-	  
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />
@@ -28,10 +27,10 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
-	  
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.6.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
@@ -43,6 +42,7 @@
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.9.50" />
     <PackageVersion Include="Moq.AutoMock" Version="4.0.2" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.15.3" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
@@ -54,11 +54,11 @@
     <PackageVersion Include="Scalar.AspNetCore" Version="2.11.6" />
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.25.0.139117" />
-    <PackageVersion Include="Testcontainers" Version="4.11.0" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.11.0" />
-    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.11.0" />
-    <PackageVersion Include="Testcontainers.XunitV3" Version="4.11.0" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.26.0.140279" />
+    <PackageVersion Include="Testcontainers" Version="4.12.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.12.0" />
+    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.12.0" />
+    <PackageVersion Include="Testcontainers.XunitV3" Version="4.12.0" />
     <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />

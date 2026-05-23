@@ -1,0 +1,12 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.3.5">
+
+	<PropertyGroup>
+		<UserSecretsId>f7b7f8ec-0e80-44c4-bf3f-6bbdcf5d7b64</UserSecretsId>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ProducerService\Vulthil.Messaging.IntegrationTest.ProducerService.csproj" />
+	</ItemGroup>
+	
+</Project>

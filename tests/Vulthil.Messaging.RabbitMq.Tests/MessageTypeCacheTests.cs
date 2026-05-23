@@ -2,7 +2,6 @@ using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Vulthil.Messaging;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
@@ -27,7 +26,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
     }
 
-    private static MessagingOptions CreateMessagingOptions() => new();
+    private static MessageConfigurationProvider CreateMessageConfigurationProvider() => new(new MessagingOptions());
 
     private static BasicDeliverEventArgs CreateDeliverEventArgs(string routingKey = "#", string? replyTo = null, string? correlationId = null)
     {
@@ -118,7 +117,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration);
 
         // Act
-        Target.RegisterQueue(queue, CreateMessagingOptions());
+        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
 
         // Assert
         var plan = Target.GetPlan(messageType.Name);
@@ -147,7 +146,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration);
 
         // Act
-        Target.RegisterQueue(queue, CreateMessagingOptions());
+        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
 
         // Assert
         var plan = Target.GetPlan(messageType.Name);
@@ -178,7 +177,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        Target.RegisterQueue(queue, CreateMessagingOptions());
+        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
 
         var plan = Target.GetPlan(messageType.Name);
         var handler = plan!.StandardHandlers[0];
@@ -215,7 +214,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        Target.RegisterQueue(queue, CreateMessagingOptions());
+        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
 
         var plan = Target.GetPlan(messageType.Name);
         var handler = plan!.RpcHandler!;
@@ -280,7 +279,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        Target.RegisterQueue(queue, CreateMessagingOptions());
+        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
 
         var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
         var handler = plan!.RpcHandler!;
@@ -357,7 +356,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration2);
 
         // Act
-        Target.RegisterQueue(queue, CreateMessagingOptions());
+        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
 
         // Assert
         var plan = Target.GetPlan(messageType.Name);
@@ -377,7 +376,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var messageType = new MessageType(typeof(TestRequest));
         var plan = new MessageExecutionPlan(messageType)
         {
-            RpcHandler = new RpcInvoker<TestRequestConsumer, TestRequest, TestResponse>(CreateMessagingOptions(), "custom.routing.key", null)
+            RpcHandler = new RpcInvoker<TestRequestConsumer, TestRequest, TestResponse>(CreateMessageConfigurationProvider(), "custom.routing.key", null)
         };
 
         // Act & Assert

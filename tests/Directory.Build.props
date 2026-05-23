@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
 		<OutputType>Exe</OutputType>
-		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<NoWarn>$(NoWarn);CS1591;S125</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Vulthil.xUnit\Vulthil.xUnit.csproj" />
+		<ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Vulthil.xUnit\Vulthil.xUnit.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,34 +1,44 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Requests;
+using Vulthil.Messaging.RabbitMq.Telemetry;
 
 namespace Vulthil.Messaging.RabbitMq.Publishing;
-
 
 internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsyncDisposable
 {
     private readonly IConnection _rabbitMqConnection;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
+    private readonly ILogger<RabbitMqPublisher> _logger;
 
     private readonly SemaphoreSlim _channelSemaphore = new(1, 1);
     private IChannel? _channel;
 
     private readonly ConcurrentDictionary<string, bool> _knownExchanges = new();
 
-    public RabbitMqPublisher(IConnection rabbitMqConnection, IMessageConfigurationProvider messageConfigurationProvider)
+    public RabbitMqPublisher(
+        IConnection rabbitMqConnection,
+        IMessageConfigurationProvider messageConfigurationProvider,
+        ILogger<RabbitMqPublisher> logger)
     {
         _rabbitMqConnection = rabbitMqConnection;
         _messageConfigurationProvider = messageConfigurationProvider;
+        _logger = logger;
     }
 
-    public async Task InternalPublishAsync<TMessage>(byte[] body, BasicProperties props, string routingKey, MessageConfiguration messageConfiguration, CancellationToken cancellationToken)
+    public async Task InternalPublishAsync<TMessage>(
+        byte[] body,
+        BasicProperties props,
+        string routingKey,
+        MessageConfiguration messageConfiguration,
+        CancellationToken cancellationToken)
     {
-        var type = typeof(TMessage);
-
-        // Prefer explicit exchange from publish definition, otherwise use the CLR type full name
-        var exchange = messageConfiguration.Exchange ?? type.FullName!;
+        var exchange = messageConfiguration.Exchange;
 
         await EnsureChannelAsync(cancellationToken);
         await EnsureExchangeTopologyAsync(exchange, messageConfiguration, cancellationToken);
@@ -51,7 +61,10 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         }
     }
 
-    public async Task PublishAsync<TMessage>(TMessage message, Func<IPublishContext, ValueTask>? configureContext = null, CancellationToken cancellationToken = default)
+    public async Task PublishAsync<TMessage>(
+        TMessage message,
+        Func<IPublishContext, ValueTask>? configureContext = null,
+        CancellationToken cancellationToken = default)
         where TMessage : notnull
     {
         ArgumentNullException.ThrowIfNull(message);
@@ -71,11 +84,29 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
             ?? messageConfiguration.CorrelationIdFormatter?.Invoke(message)
             ?? Guid.CreateVersion7().ToString();
 
+        var messageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString();
+        var exchange = messageConfiguration.Exchange;
+
+        using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
+            $"{exchange} publish",
+            ActivityKind.Producer);
+
+        if (activity is not null)
+        {
+            activity.SetTag(MessagingInstrumentation.Tags.MessagingSystem, MessagingInstrumentation.SystemValue);
+            activity.SetTag(MessagingInstrumentation.Tags.MessagingOperation, "publish");
+            activity.SetTag(MessagingInstrumentation.Tags.MessagingDestination, exchange);
+            activity.SetTag(MessagingInstrumentation.Tags.MessagingRoutingKey, routingKey);
+            activity.SetTag(MessagingInstrumentation.Tags.MessageType, type.FullName);
+            activity.SetTag(MessagingInstrumentation.Tags.MessagingMessageId, messageId);
+            activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, correlationId);
+        }
+
         var properties = new BasicProperties()
         {
             Type = type.FullName,
-            MessageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString(),
-            ReplyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress), // Map URI back to string
+            MessageId = messageId,
+            ReplyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress),
             CorrelationId = correlationId,
             ContentType = RabbitMqConstants.ContentType,
             Headers = publishContext.Headers,
@@ -85,7 +116,19 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
 
         var body = JsonSerializer.SerializeToUtf8Bytes(message, _messageConfigurationProvider.JsonSerializerOptions);
 
-        await InternalPublishAsync<TMessage>(body, properties, routingKey, messageConfiguration, cancellationToken);
+        MessagingLog.Publishing(_logger, type.FullName ?? type.Name, exchange, routingKey, messageId);
+
+        try
+        {
+            await InternalPublishAsync<TMessage>(body, properties, routingKey, messageConfiguration, cancellationToken);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            throw;
+        }
     }
 
     private async ValueTask EnsureExchangeTopologyAsync(string exchange, MessageConfiguration messageConfiguration, CancellationToken cancellationToken)
@@ -98,7 +141,6 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         await _channelSemaphore.WaitAsync(cancellationToken);
         try
         {
-            // Double-check inside lock to prevent race conditions
             if (_knownExchanges.ContainsKey(exchange))
             {
                 return;
@@ -113,7 +155,7 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
                 cancellationToken: cancellationToken);
 
             _knownExchanges.TryAdd(exchange, true);
-
+            MessagingLog.ExchangeDeclared(_logger, exchange, messageConfiguration.ExchangeType);
         }
         finally
         {
@@ -133,12 +175,11 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         try
         {
 #pragma warning disable CA1508 // Avoid dead conditional code
-            // Double-check inside lock to prevent race conditions
             if (_channel is not null)
             {
                 return;
             }
-#pragma warning restore CA1508 // Avoid dead conditional code
+#pragma warning restore CA1508
 
             _channel = await _rabbitMqConnection.CreateChannelAsync(cancellationToken: cancellationToken);
         }

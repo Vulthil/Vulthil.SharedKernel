@@ -32,8 +32,6 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         return this;
     }
 
-    public IMessagingConfigurator ConfigureFaults(Action<IFaultConfigurator> configureFaults) => throw new NotImplementedException();
-
     private static string ConstructQueueSectionName(string queueName) => $"{DefaultSectionName}:Queues:{queueName}";
 
     public IMessagingConfigurator ConfigureQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction)

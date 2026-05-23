@@ -20,7 +20,7 @@ internal sealed class MessageTypeCache
     /// <summary>
     /// Executes this member.
     /// </summary>
-    public void RegisterQueue(QueueDefinition queue, MessagingOptions messagingOptions)
+    public void RegisterQueue(QueueDefinition queue, IMessageConfigurationProvider messageConfigurationProvider)
     {
         foreach (var consumer in queue.Registrations.OfType<ConsumerRegistration>())
         {
@@ -47,7 +47,7 @@ internal sealed class MessageTypeCache
 
             var invoker = (IRpcInvoker)Activator.CreateInstance(
                      invokerType,
-                     args: [messagingOptions, RabbitMqConstants.GetRoutingKey(rpc), rpc.RetryPolicy]
+                     args: [messageConfigurationProvider, RabbitMqConstants.GetRoutingKey(rpc), rpc.RetryPolicy]
             )!;
             plan.RpcHandler = invoker;
         }

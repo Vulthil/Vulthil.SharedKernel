@@ -52,7 +52,7 @@ builder.AddMessaging(messaging =>
 {
     messaging.UseRabbitMq();
 
-    messaging.AddQueue("order-events", queue =>
+    messaging.ConfigureQueue("order-events", queue =>
     {
         queue.AddConsumer<OrderCreatedConsumer>();
         queue.UseRetry(retry =>
@@ -63,7 +63,7 @@ builder.AddMessaging(messaging =>
         queue.UseDeadLetterQueue();
     });
 
-    messaging.AddQueue("order-requests", queue =>
+    messaging.ConfigureQueue("order-requests", queue =>
     {
         queue.AddRequestConsumer<GetOrderConsumer>();
     });
@@ -99,8 +99,11 @@ public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent> { ... }
 ### Dynamic routing keys
 
 ```csharp
-messaging.RegisterRoutingKeyFormatter<OrderCreatedEvent>(e => $"order.{e.Region}");
-messaging.RegisterCorrelationIdFormatter<OrderCreatedEvent>(e => e.OrderId.ToString());
+messaging.ConfigureMessage<OrderCreatedEvent>(message =>
+{
+    message.UseRoutingKey(e => $"order.{e.Region}");
+    message.UseCorrelationId(e => e.OrderId.ToString());
+});
 ```
 
 ## Queue Configuration

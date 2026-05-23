@@ -6,13 +6,13 @@ var rabbitMq = builder.AddRabbitMQ("rabbitmq")
 builder.AddProject<Projects.Vulthil_Messaging_IntegrationTest_ProducerService>("producer")
     .WithReference(rabbitMq)
     .WaitFor(rabbitMq)
-    .WithHttpHealthCheck("/health")
+    .WithHttpHealthCheck("/health", endpointName: "http")
     .WithExternalHttpEndpoints();
 
 builder.AddProject<Projects.Vulthil_Messaging_IntegrationTest_ConsumerService>("consumer")
     .WithReference(rabbitMq)
     .WaitFor(rabbitMq)
-    .WithHttpHealthCheck("/health")
+    .WithHttpHealthCheck("/health", endpointName: "http")
     .WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();

@@ -66,7 +66,7 @@ public sealed record UserEmailChangedEvent(UserId UserId, string NewEmail) : IDo
 ```csharp
 public sealed class UserCreatedEventHandler : IDomainEventHandler<UserCreatedEvent>
 {
-    public Task HandleAsync(UserCreatedEvent domainEvent, CancellationToken cancellationToken)
+    public Task HandleAsync(UserCreatedEvent notification, CancellationToken cancellationToken = default)
     {
         // Send welcome email, update read model, etc.
         return Task.CompletedTask;
@@ -84,14 +84,17 @@ See [Outbox Pattern](outbox-pattern.md) for configuration details.
 
 ## Protecting Invariants
 
-Use `DomainException` for invariant violations that represent programming errors or impossible states rather than expected business failures:
+Use `DomainException` for invariant violations that represent programming errors or impossible states rather than expected business failures. `DomainException` is **abstract** and takes an `Error`, so define a concrete subclass per invariant:
 
 ```csharp
+public sealed class UserAlreadyInactiveException()
+    : DomainException(Error.Conflict("User.AlreadyInactive", "User is already inactive."));
+
 public void Deactivate()
 {
     if (!IsActive)
     {
-        throw new DomainException("User is already inactive.");
+        throw new UserAlreadyInactiveException();
     }
 
     IsActive = false;

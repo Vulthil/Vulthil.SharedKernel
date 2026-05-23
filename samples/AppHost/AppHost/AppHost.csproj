@@ -1,4 +1,4 @@
-﻿<Project Sdk="Aspire.AppHost.Sdk/13.1">
+<Project Sdk="Aspire.AppHost.Sdk/13.3.5">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -6,7 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Hosting.AppHost" />
 		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
 		<PackageReference Include="Scalar.Aspire" />
@@ -15,7 +14,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\WebApi\WebApi\WebApi.csproj" />
 		<ProjectReference Include="..\..\WebApp\WebApp\WebApp.csproj" />
-		<ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" IsAspireProjectResource="false"/>
+		<ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" IsAspireProjectResource="false" />
 	</ItemGroup>
 
 </Project>

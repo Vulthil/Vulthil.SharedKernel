@@ -12,4 +12,11 @@ public interface ISaveOutboxMessages
     /// Used by the outbox processor to read, update, and add outbox messages.
     /// </summary>
     DbSet<OutboxMessage> OutboxMessages { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

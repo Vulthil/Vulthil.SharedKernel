@@ -59,7 +59,7 @@ internal sealed class OutboxProcessor(
                 .ToList();
 
             await outboxStrategy.UpdateMessagesAsync(
-                outboxMessagesDbContext.OutboxMessages,
+                outboxMessagesDbContext,
                 successIds,
                 failures,
                 Options.MaxRetries,

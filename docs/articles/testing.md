@@ -43,7 +43,7 @@ public sealed class CreateUserCommandHandlerTests : BaseUnitTestCase
 
 ### BaseUnitTestCase&lt;TTarget&gt;
 
-When the system-under-test type is accessible, use the generic variant which lazily creates the target for you:
+When the system-under-test type is accessible, use the generic variant which lazily creates the target for you. The `Target` property unwraps the underlying `Lazy<TTarget>` so you access it directly:
 
 ```csharp
 public sealed class OrderServiceTests : BaseUnitTestCase<OrderService>
@@ -51,7 +51,7 @@ public sealed class OrderServiceTests : BaseUnitTestCase<OrderService>
     [Fact]
     public async Task PlaceOrder_ReturnsSuccess()
     {
-        var result = await Target.Value.PlaceOrderAsync(new PlaceOrderRequest(), CancellationToken);
+        var result = await Target.PlaceOrderAsync(new PlaceOrderRequest(), CancellationToken);
         Assert.True(result.IsSuccess);
     }
 }

@@ -1,20 +1,9 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Vulthil.Messaging.Abstractions.Consumers;
-using Vulthil.Messaging.Queues;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
-/// <summary>
-/// Represents the MessagingOptionsTests.
-/// </summary>
 public sealed class MessagingOptionsTests : BaseUnitTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void MessagingOptionsShouldHaveDefaultTimeout()
     {
@@ -25,9 +14,6 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.DefaultTimeout.ShouldBe(TimeSpan.FromSeconds(30));
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void MessagingOptionsShouldHaveJsonSerializerOptions()
     {
@@ -38,9 +24,6 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.JsonSerializerOptions.ShouldNotBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void SectionNameShouldBe()
     {
@@ -48,9 +31,6 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         MessagingOptions.SectionName.ShouldBe("Messaging:Options");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RoutingKeyFormattersShouldBeEmpty()
     {
@@ -58,12 +38,9 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         var options = new MessagingOptions();
 
         // Assert
-        options.RoutingKeyFormatters.Count.ShouldBe(0);
+        options.MessageConfigurations.Count.ShouldBe(0);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void CorrelationIdFormattersShouldBeEmpty()
     {
@@ -71,48 +48,12 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         var options = new MessagingOptions();
 
         // Assert
-        options.CorrelationIdFormatters.Count.ShouldBe(0);
+        var config = options.GetMessageConfiguration<TestMessage>();
+        config.CorrelationIdFormatter.ShouldBeNull();
+        config.RoutingKeyFormatter.ShouldBeNull();
+        config.Exchange.ShouldBe(typeof(TestMessage).FullName!);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
-    [Fact]
-    public void ReadOnlyRoutingKeyFormattersShouldReturnFormatters()
-    {
-        // Arrange
-        var options = new MessagingOptions();
-        options.RoutingKeyFormatters[typeof(TestMessage)] = msg => "test";
-
-        // Act
-        var readOnly = options.ReadOnlyRoutingKeyFormatters;
-
-        // Assert
-        readOnly.ShouldNotBeNull();
-        readOnly.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
-    }
-
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
-    [Fact]
-    public void ReadOnlyCorrelationIdFormattersShouldReturnFormatters()
-    {
-        // Arrange
-        var options = new MessagingOptions();
-        options.CorrelationIdFormatters[typeof(TestMessage)] = msg => "correlation";
-
-        // Act
-        var readOnly = options.ReadOnlyCorrelationIdFormatters;
-
-        // Assert
-        readOnly.ShouldNotBeNull();
-        readOnly.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
-    }
-
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void DefaultTimeoutShouldBeModifiable()
     {
@@ -127,9 +68,6 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         options.DefaultTimeout.ShouldBe(newTimeout);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void JsonSerializerOptionsShouldBeModifiable()
     {

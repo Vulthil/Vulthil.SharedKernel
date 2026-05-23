@@ -34,9 +34,10 @@ jobs:
 
       - name: Test with coverage
         run: >
-          dotnet test -c Release --no-build
-          --collect:"XPlat Code Coverage"
-          --results-directory ./TestResults
+          dotnet test -c Release --no-build --
+          --coverage
+          --coverage-output-format cobertura
+          --coverage-output coverage.cobertura.xml
 
       - name: Restore tools
         run: dotnet tool restore
@@ -44,7 +45,7 @@ jobs:
       - name: Generate coverage report & badges
         run: >
           dotnet reportgenerator
-          -reports:"./TestResults/**/coverage.cobertura.xml"
+          -reports:"**/TestResults/coverage.cobertura.xml"
           -targetdir:"./CoverageReport"
           -reporttypes:"Html;Badges"
 

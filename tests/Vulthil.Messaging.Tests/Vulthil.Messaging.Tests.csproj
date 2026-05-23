@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Vulthil.TestRunner.props', '$(MSBuildThisFileDirectory)'))" />
+
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Vulthil.Messaging\Vulthil.Messaging.csproj" />
 	</ItemGroup>

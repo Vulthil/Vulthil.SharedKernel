@@ -16,17 +16,18 @@ This guarantees **at-least-once delivery** because the event and the business da
 
 ### Enable outbox processing during DbContext registration
 
-```csharp
-builder.Services.AddDbContext<AppDbContext>(config =>
-{
-    config.ConfigureDbContextOptions(options =>
-        options.UseNpgsql(connectionString));
+`AddDbContext` is an extension on `IHostApplicationBuilder` (not `IServiceCollection`). Provider extensions such as `UseNpgsql` are called directly on the configurator — they register the EF Core context for you, so no separate `AddDbContext`/options callback is needed.
 
-    config.EnableOutboxProcessing(o =>
-    {
-        o.BatchSize = 20;       // Messages fetched per poll cycle
-        o.MaxRetries = 5;       // Retry limit before a message is abandoned
-    });
+```csharp
+builder.AddDbContext<AppDbContext>(config =>
+{
+    config
+        .UseNpgsql(connectionStringKey)
+        .EnableOutboxProcessing(o =>
+        {
+            o.BatchSize = 10;   // Messages fetched per poll cycle
+            o.MaxRetries = 3;   // Retry limit before a message is abandoned
+        });
 });
 ```
 
@@ -51,19 +52,25 @@ The `OutboxMessage` entity configuration is applied automatically by `BaseDbCont
 
 | Property | Default | Description |
 |---|---|---|
-| `BatchSize` | 20 | Number of messages fetched per poll cycle |
-| `MaxRetries` | 5 | Maximum publish attempts before a message is abandoned |
+| `BatchSize` | 10 | Number of messages fetched per poll cycle |
+| `MaxRetries` | 3 | Maximum publish attempts before a message is abandoned |
 | `EnableParallelPublishing` | `false` | Publish messages in parallel within a batch |
+| `OutboxProcessingDelayInSeconds` | 2 | Base polling delay between processing cycles |
+| `MaxDelaySeconds` | 60 | Maximum back-off delay when no messages are found |
+| `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 
 ## Custom Outbox Strategy
 
-The default strategy uses a relational query with row locking (`RelationalOutboxStrategy`). You can replace it by implementing `IOutboxStrategy` and registering your implementation:
+The default strategy is provided by `Vulthil.SharedKernel.Infrastructure.Relational` (`RelationalOutboxStrategy`) and runs a relational query with row locking. You can replace it by implementing `IOutboxStrategy` and registering your implementation with `UseOutboxStrategy<T>()`:
 
 ```csharp
-config.EnableOutboxProcessing<CustomOutboxStrategy>(o =>
-{
-    o.BatchSize = 50;
-});
+config
+    .UseNpgsql(connectionStringKey)
+    .UseOutboxStrategy<CustomOutboxStrategy>()
+    .EnableOutboxProcessing(o =>
+    {
+        o.BatchSize = 50;
+    });
 ```
 
 ## Typical Flow

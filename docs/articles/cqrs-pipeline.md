@@ -98,7 +98,7 @@ No additional wiring is needed – the validator is picked up automatically from
 
 ### Request Logging
 
-`RequestLoggingPipelineBehavior` logs the start and completion of every request, including execution time.
+`RequestLoggingPipelineBehavior` logs the start and completion of every request, attaching the serialised error to the logging scope when the result is a failure.
 
 ### Transactional
 

@@ -17,23 +17,29 @@ public static class DependencyInjection
     /// Registers a <see cref="BaseDbContext"/>-derived context with unit-of-work and optional outbox processing.
     /// </summary>
     /// <typeparam name="TDbContext">The concrete DbContext type.</typeparam>
-    /// <param name="services">The service collection.</param>
+    /// <param name="hostApplicationBuilder">The host application builder.</param>
     /// <param name="databaseInfrastructureConfiguratorAction">An action to configure the database infrastructure.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddDbContext<TDbContext>(this IServiceCollection services, Action<DatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+    /// <returns>The host application builder for chaining.</returns>
+    public static IHostApplicationBuilder AddDbContext<TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator<TDbContext>> databaseInfrastructureConfiguratorAction)
         where TDbContext : BaseDbContext
     {
-        var databaseInfrastructureConfigurator = new DatabaseInfrastructureConfigurator();
+        var databaseInfrastructureConfigurator = new DatabaseInfrastructureConfigurator<TDbContext>(hostApplicationBuilder);
         databaseInfrastructureConfiguratorAction(databaseInfrastructureConfigurator);
+        databaseInfrastructureConfigurator.FinalizeConfiguration();
 
-        services.AddDbContext<TDbContext>(databaseInfrastructureConfigurator.OptionsBuilder);
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<TDbContext>());
+        var dbContextLifetime = databaseInfrastructureConfigurator.DbContextLifetime;
+
+        hostApplicationBuilder.Services.Add(new ServiceDescriptor(
+            typeof(IUnitOfWork),
+            sp => sp.GetRequiredService<TDbContext>(),
+            dbContextLifetime));
+
         if (databaseInfrastructureConfigurator.OutboxProcessingEnabled)
         {
-            services.AddOutboxProcessing<TDbContext>(databaseInfrastructureConfigurator);
+            hostApplicationBuilder.Services.AddOutboxProcessing(databaseInfrastructureConfigurator);
         }
 
-        return services;
+        return hostApplicationBuilder;
     }
 
     /// <summary>
@@ -41,21 +47,28 @@ public static class DependencyInjection
     /// </summary>
     /// <typeparam name="TDbContextInterface">The service interface to register the context as.</typeparam>
     /// <typeparam name="TDbContext">The concrete DbContext type.</typeparam>
-    /// <param name="services">The service collection.</param>
+    /// <param name="hostApplicationBuilder">The host application builder.</param>
     /// <param name="databaseInfrastructureConfiguratorAction">An action to configure the database infrastructure.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddDbContext<TDbContextInterface, TDbContext>(this IServiceCollection services, Action<DatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+    /// <returns>The host application builder for chaining.</returns>
+
+    public static IHostApplicationBuilder AddDbContext<TDbContextInterface, TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator<TDbContext>> databaseInfrastructureConfiguratorAction)
         where TDbContext : BaseDbContext, TDbContextInterface
         where TDbContextInterface : class
     {
-        services.AddDbContext<TDbContext>(databaseInfrastructureConfiguratorAction);
-        services.AddScoped<TDbContextInterface>(sp => sp.GetRequiredService<TDbContext>());
+        hostApplicationBuilder.AddDbContext(databaseInfrastructureConfiguratorAction);
 
-        return services;
+        var dbContextLifetime = FindLifetime(hostApplicationBuilder.Services, typeof(TDbContext));
+
+        hostApplicationBuilder.Services.Add(new ServiceDescriptor(
+            typeof(TDbContextInterface),
+            sp => sp.GetRequiredService<TDbContext>(),
+            dbContextLifetime));
+
+        return hostApplicationBuilder;
     }
 
-    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator configurator)
-        where TDbContext : ISaveOutboxMessages
+    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator<TDbContext> configurator)
+        where TDbContext : DbContext, ISaveOutboxMessages
     {
         var optionsAction = configurator.OutboxOptionsAction ?? (static o => { });
         services.AddOptions<OutboxProcessingOptions>()
@@ -64,12 +77,42 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         services.TryAddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
-        services.AddScoped<ISaveOutboxMessages>(sp => sp.GetRequiredService<TDbContext>());
-        services.AddScoped(typeof(IOutboxStrategy), configurator.OutboxStrategyType);
-        services.AddScoped<OutboxProcessor>();
+
+        var dbContextLifetime = configurator.DbContextLifetime;
+        services.Add(new ServiceDescriptor(
+            typeof(ISaveOutboxMessages),
+            sp => sp.GetRequiredService<TDbContext>(),
+            dbContextLifetime));
+        services.Add(new ServiceDescriptor(
+            typeof(IOutboxStrategy),
+            configurator.OutboxStrategyType,
+            dbContextLifetime));
+        services.Add(new ServiceDescriptor(
+            typeof(OutboxProcessor),
+            typeof(OutboxProcessor),
+            dbContextLifetime));
         services.AddHostedService<OutboxBackgroundService>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Returns the <see cref="ServiceLifetime"/> of the last descriptor in <paramref name="services"/>
+    /// whose <see cref="ServiceDescriptor.ServiceType"/> equals <paramref name="serviceType"/>, or
+    /// <see cref="ServiceLifetime.Scoped"/> if no such descriptor exists. Walking in reverse mirrors
+    /// the DI container's "last registration wins" rule when resolving a single service.
+    /// </summary>
+    internal static ServiceLifetime FindLifetime(IServiceCollection services, Type serviceType)
+    {
+        for (var i = services.Count - 1; i >= 0; i--)
+        {
+            var descriptor = services[i];
+            if (descriptor.ServiceType == serviceType)
+            {
+                return descriptor.Lifetime;
+            }
+        }
+        return ServiceLifetime.Scoped;
     }
 
     /// <summary>
@@ -92,31 +135,5 @@ public static class DependencyInjection
         await using var scope = services.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
         await context.Database.EnsureCreatedAsync();
-    }
-
-    /// <summary>
-    /// Applies any pending EF Core migrations for <typeparamref name="TDbContext"/>.
-    /// </summary>
-    /// <typeparam name="TDbContext">The DbContext type.</typeparam>
-    /// <param name="host">The host whose services to use.</param>
-    public static Task MigrateAsync<TDbContext>(this IHost host)
-        where TDbContext : DbContext
-        => host.Services.MigrateAsync<TDbContext>();
-
-    /// <summary>
-    /// Applies any pending EF Core migrations for <typeparamref name="TDbContext"/> using the provided service provider.
-    /// </summary>
-    /// <typeparam name="TDbContext">The DbContext type.</typeparam>
-    /// <param name="services">The service provider to resolve the context from.</param>
-    public static async Task MigrateAsync<TDbContext>(this IServiceProvider services)
-        where TDbContext : DbContext
-    {
-        await using var scope = services.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
-        if (pendingMigrations.Any())
-        {
-            await context.Database.MigrateAsync();
-        }
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Vulthil.SharedKernel.Application.Data;
+using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 
 /// <summary>
 /// Base outbox strategy for relational database providers.
@@ -9,21 +9,11 @@ namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 /// for batch updates. Provider-specific strategies (e.g., Npgsql, SqlServer) should inherit
 /// from this class and override <see cref="FetchMessagesAsync"/> to add row-level locking.
 /// </summary>
-public class RelationalOutboxStrategy : IOutboxStrategy
+public class RelationalOutboxStrategy : BaseOutboxStrategy
 {
-    /// <inheritdoc />
-    public virtual async Task<IDbTransaction?> BeginTransactionAsync(ISaveOutboxMessages context, CancellationToken cancellationToken)
-    {
-        if (context is IUnitOfWork unitOfWork)
-        {
-            return await unitOfWork.BeginTransactionAsync(cancellationToken);
-        }
-
-        return null;
-    }
 
     /// <inheritdoc />
-    public virtual async Task<List<OutboxMessageData>> FetchMessagesAsync(DbSet<OutboxMessage> outboxMessages, int batchSize, int maxRetries, CancellationToken cancellationToken)
+    public override async Task<List<OutboxMessageData>> FetchMessagesAsync(DbSet<OutboxMessage> outboxMessages, int batchSize, int maxRetries, CancellationToken cancellationToken)
     {
         return await outboxMessages
             .Where(o => o.ProcessedOnUtc == null && o.RetryCount < maxRetries)
@@ -34,11 +24,11 @@ public class RelationalOutboxStrategy : IOutboxStrategy
     }
 
     /// <inheritdoc />
-    public virtual async Task UpdateMessagesAsync(DbSet<OutboxMessage> outboxMessages, IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
+    public override async Task UpdateMessagesAsync(ISaveOutboxMessages context, IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
     {
         if (successIds.Count > 0)
         {
-            await outboxMessages
+            await context.OutboxMessages
                 .Where(x => successIds.Contains(x.Id))
                 .ExecuteUpdateAsync(
                     setter => setter.SetProperty(o => o.ProcessedOnUtc, processedOnUtc),
@@ -47,7 +37,7 @@ public class RelationalOutboxStrategy : IOutboxStrategy
 
         foreach (var failure in failures)
         {
-            await outboxMessages
+            await context.OutboxMessages
                 .Where(x => x.Id == failure.Id)
                 .ExecuteUpdateAsync(
                     setter => setter
@@ -60,7 +50,7 @@ public class RelationalOutboxStrategy : IOutboxStrategy
         {
             var failedIds = failures.Select(f => f.Id).ToList();
 
-            await outboxMessages
+            await context.OutboxMessages
                 .Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries)
                 .ExecuteUpdateAsync(
                     setter => setter.SetProperty(o => o.ProcessedOnUtc, processedOnUtc),

@@ -1,0 +1,17 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.3.5">
+
+	<PropertyGroup>
+		<UserSecretsId>f7b7f8ec-0e80-44c4-bf3f-6bbdcf5d7b64</UserSecretsId>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ProducerService\Vulthil.Messaging.IntegrationTest.ProducerService.csproj" />
+		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ConsumerService\Vulthil.Messaging.IntegrationTest.ConsumerService.csproj" />
+	</ItemGroup>
+
+</Project>

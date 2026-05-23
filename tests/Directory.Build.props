@@ -3,34 +3,7 @@
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
+		<NoWarn>$(NoWarn);CS1591;S125</NoWarn>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Shouldly" />
-		<PackageReference Include="coverlet.collector">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-		<PackageReference Include="Moq.AutoMock" />
-		<PackageReference Include="xunit.v3" />
-		<PackageReference Include="xunit.analyzers">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit.runner.visualstudio">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="ReportGenerator" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\Vulthil.xUnit\Vulthil.xUnit.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Using Include="Shouldly" />
-		<Using Include="Xunit" />
-		<Using Include="Moq" />
-		<Using Include="Moq.AutoMock"/>
-	</ItemGroup>
-	
 </Project>

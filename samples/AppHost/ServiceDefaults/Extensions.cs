@@ -71,7 +71,6 @@ public static class Extensions
             {
                 tracing.AddSource(builder.Environment.ApplicationName)
                     .AddAspNetCoreInstrumentation()
-                    .AddRabbitMQInstrumentation()
                     .AddSource("Vulthil.SharedKernel.*")
                     .AddHttpClientInstrumentation();
             });

@@ -17,10 +17,8 @@ internal sealed record MessageExecutionPlan(MessageType MessageType)
 internal sealed class MessageTypeCache
 {
     private readonly Dictionary<string, MessageExecutionPlan> _plans = [];
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
-    public void RegisterQueue(QueueDefinition queue, MessagingOptions messagingOptions)
+
+    public void RegisterQueue(QueueDefinition queue)
     {
         foreach (var consumer in queue.Registrations.OfType<ConsumerRegistration>())
         {
@@ -47,7 +45,7 @@ internal sealed class MessageTypeCache
 
             var invoker = (IRpcInvoker)Activator.CreateInstance(
                      invokerType,
-                     args: [messagingOptions, RabbitMqConstants.GetRoutingKey(rpc), rpc.RetryPolicy]
+                     args: [RabbitMqConstants.GetRoutingKey(rpc), rpc.RetryPolicy]
             )!;
             plan.RpcHandler = invoker;
         }
@@ -63,8 +61,5 @@ internal sealed class MessageTypeCache
         return plan;
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public MessageExecutionPlan? GetPlan(string key) => _plans.GetValueOrDefault(key);
 }

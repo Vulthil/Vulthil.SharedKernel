@@ -24,27 +24,32 @@ public sealed class MessagingOptions
     /// </summary>
     public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
     /// <summary>
-    /// Gets or sets the name of the fault exchange. Default is "Fault.Exchange".
+    /// Gets or sets the name of the exchange to which faults are published when a consumed message carries a <c>FaultAddress</c> header.
+    /// Default is <c>"Fault.Exchange"</c>.
     /// </summary>
     public string FaultExchangeName { get; set; } = "Fault.Exchange";
-    /// <summary>
-    /// Gets or sets a value indicating whether the fault exchange is automatically declared. Default is <see langword="true"/>.
-    /// </summary>
-    public bool AutoDeclareFaultStatus { get; set; } = true;
 
-    internal Dictionary<Type, Func<object, string>> RoutingKeyFormatters { get; } = [];
-    internal Dictionary<Type, Func<object, string>> CorrelationIdFormatters { get; } = [];
+    internal Dictionary<Type, MessageConfiguration> MessageConfigurations { get; } = [];
+
+    internal MessageConfiguration GetMessageConfiguration(Type messageType)
+    {
+        var current = messageType;
+        while (current != null && current != typeof(object))
+        {
+            if (MessageConfigurations.TryGetValue(current, out var def))
+            {
+                return def;
+            }
+
+            current = current.BaseType;
+        }
+
+        return new MessageConfiguration(messageType.FullName!);
+    }
+
+    internal MessageConfiguration GetMessageConfiguration<TMessage>() =>
+        GetMessageConfiguration(typeof(TMessage));
 
     internal bool RegisterRequestType(MessageType messageType) => _registeredRequestTypes.Add(messageType);
 
-    /// <summary>
-    /// Gets the read-only collection of registered routing key formatters, keyed by message type.
-    /// Used by the transport to determine the routing key when publishing a message.
-    /// </summary>
-    public IReadOnlyDictionary<Type, Func<object, string>> ReadOnlyRoutingKeyFormatters => RoutingKeyFormatters;
-    /// <summary>
-    /// Gets the read-only collection of registered correlation identifier formatters, keyed by message type.
-    /// Used by the transport to set the correlation ID when publishing a message.
-    /// </summary>
-    public IReadOnlyDictionary<Type, Func<object, string>> ReadOnlyCorrelationIdFormatters => CorrelationIdFormatters;
 }

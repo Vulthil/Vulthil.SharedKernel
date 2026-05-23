@@ -27,7 +27,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue("TestQueue", q =>
+            x.ConfigureQueue("TestQueue", q =>
             {
                 q.AddConsumer<TestMessageConsumer>();
             });
@@ -50,11 +50,11 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue("Queue1", q =>
+            x.ConfigureQueue("Queue1", q =>
             {
                 q.AddConsumer<TestMessageConsumer>();
             });
-            x.AddQueue("Queue2", q =>
+            x.ConfigureQueue("Queue2", q =>
             {
                 q.AddConsumer<TestMessageConsumer>();
             });
@@ -78,7 +78,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue(queueName, q =>
+            x.ConfigureQueue(queueName, q =>
             {
                 q.AddConsumer<TestMessageConsumer>();
             });
@@ -108,7 +108,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue(queueName, q =>
+            x.ConfigureQueue(queueName, q =>
             {
                 q.AddConsumer<TestMessageConsumer>(c =>
                 {
@@ -137,7 +137,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue(queueName, q =>
+            x.ConfigureQueue(queueName, q =>
             {
                 q.AddConsumer<TestMessageConsumer>();
             });
@@ -163,7 +163,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue(queueName, q =>
+            x.ConfigureQueue(queueName, q =>
             {
                 q.AddConsumer<TestMessageConsumer>();
                 q.AddConsumer<AnotherTestConsumer>();
@@ -174,7 +174,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
         var queue = queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
         queue.ShouldNotBeNull();
-        queue.Registrations.Count().ShouldBe(2);
+        queue.Registrations.Count.ShouldBe(2);
         var types = queue.Registrations.Select(r => r.ConsumerType.Type).ToList();
         types.Contains(typeof(TestMessageConsumer)).ShouldBeTrue();
         types.Contains(typeof(AnotherTestConsumer)).ShouldBeTrue();
@@ -192,14 +192,14 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue("Queue1", q =>
+            x.ConfigureQueue("Queue1", q =>
             {
                 q.AddConsumer<TestMessageConsumer>(c =>
                 {
                     c.Bind<TestMessage>("route1");
                 });
             });
-            x.AddQueue("Queue2", q =>
+            x.ConfigureQueue("Queue2", q =>
             {
                 q.AddConsumer<TestMessageConsumer>(c =>
                 {

@@ -64,7 +64,7 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue(queueName, _ => { });
+            x.ConfigureQueue(queueName, _ => { });
         });
 
         // Assert
@@ -87,7 +87,7 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         {
             builder.AddMessaging(x =>
             {
-                x.AddQueue(null!, _ => { });
+                x.ConfigureQueue(null!, _ => { });
             });
         });
     }
@@ -106,7 +106,7 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         {
             builder.AddMessaging(x =>
             {
-                x.AddQueue(string.Empty, _ => { });
+                x.ConfigureQueue(string.Empty, _ => { });
             });
         });
     }
@@ -123,9 +123,9 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         // Act
         builder.AddMessaging(x =>
         {
-            x.AddQueue("Queue1", _ => { });
-            x.AddQueue("Queue2", _ => { });
-            x.AddQueue("Queue3", _ => { });
+            x.ConfigureQueue("Queue1", _ => { });
+            x.ConfigureQueue("Queue2", _ => { });
+            x.ConfigureQueue("Queue3", _ => { });
         });
 
         // Assert
@@ -140,17 +140,19 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
     public void RegisterRoutingKeyFormatterShouldStoreFormatterForType()
     {
         // Arrange
-        var testMessage = new TestMessage { Id = "123" };
         var options = new MessagingOptions();
 
         // Act
         var messagingConfigurator = new MessagingConfigurator(CreateHostBuilder(), options);
-        messagingConfigurator.RegisterRoutingKeyFormatter<TestMessage>("test.route");
+        messagingConfigurator.ConfigureMessage<TestMessage>(pd => pd.UseRoutingKey("test.route"));
 
         // Assert
-        options.RoutingKeyFormatters.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
-        var formatter = options.RoutingKeyFormatters[typeof(TestMessage)];
-        formatter(testMessage).ShouldBe("test.route");
+        options.MessageConfigurations.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
+        var def = options.MessageConfigurations[typeof(TestMessage)];
+        def.RoutingKeyFormatter
+            .ShouldNotBeNull()
+            .Invoke(It.IsAny<TestMessage>())
+            .ShouldBe("test.route");
     }
 
     /// <summary>
@@ -165,11 +167,12 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
 
         // Act
         var messagingConfigurator = new MessagingConfigurator(CreateHostBuilder(), options);
-        messagingConfigurator.RegisterRoutingKeyFormatter<TestMessage>(m => $"route.{m.Id}");
+        messagingConfigurator.ConfigureMessage<TestMessage>(pd => pd.UseRoutingKey((obj) => $"route.{obj.Id}"));
 
         // Assert
-        var formatter = options.RoutingKeyFormatters[typeof(TestMessage)];
-        formatter(testMessage).ShouldBe("route.test-123");
+        var def = options.MessageConfigurations[typeof(TestMessage)];
+        def.RoutingKeyFormatter.ShouldNotBeNull();
+        def.RoutingKeyFormatter!(testMessage).ShouldBe("route.test-123");
     }
 
     /// <summary>
@@ -184,12 +187,14 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
 
         // Act
         var messagingConfigurator = new MessagingConfigurator(CreateHostBuilder(), options);
-        messagingConfigurator.RegisterCorrelationIdFormatter<TestMessage>(m => m.Id);
+        messagingConfigurator.ConfigureMessage<TestMessage>(pd => pd.UseCorrelationId((obj) => obj.Id));
 
         // Assert
-        options.CorrelationIdFormatters.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
-        var formatter = options.CorrelationIdFormatters[typeof(TestMessage)];
-        formatter(testMessage).ShouldBe("correlation-456");
+        options.MessageConfigurations.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
+        var def = options.MessageConfigurations[typeof(TestMessage)];
+        def.CorrelationIdFormatter.ShouldNotBeNull()
+            .Invoke(testMessage)
+            .ShouldBe(testMessage.Id);
     }
 
     private class TestMessage

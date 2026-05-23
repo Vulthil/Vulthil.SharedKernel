@@ -33,7 +33,11 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
             activity = Activity.Current;
         }
 
+#if NET10_0_OR_GREATER
         var groupId = Guid.CreateVersion7();
+#else
+        var groupId = Guid.NewGuid();
+#endif
 
         var outboxMessages = dbContext.ChangeTracker.Entries<IAggregateRoot>()
             .Select(x => x.Entity)

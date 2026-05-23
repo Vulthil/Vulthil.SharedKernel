@@ -194,7 +194,7 @@ public sealed class ApplicationOptions
     /// <returns>The current options instance for chaining.</returns>
     public ApplicationOptions AddValidationPipelineBehavior()
     {
-        HandlerOptions.AddOpenPipelineHandler(typeof(TransactionalPipelineBehavior<,>));
+        HandlerOptions.AddOpenPipelineHandler(typeof(ValidationPipelineBehavior<,>));
         return this;
     }
 
@@ -204,7 +204,7 @@ public sealed class ApplicationOptions
     /// <returns>The current options instance for chaining.</returns>
     public ApplicationOptions AddTransactionalPipelineBehavior()
     {
-        HandlerOptions.AddOpenPipelineHandler(typeof(ValidationPipelineBehavior<,>));
+        HandlerOptions.AddOpenPipelineHandler(typeof(TransactionalPipelineBehavior<,>));
         return this;
     }
 }

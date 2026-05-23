@@ -8,14 +8,22 @@
   </Folder>
   <Folder Name="/.github/instructions/">
     <File Path=".github/instructions/style-guidelines.instructions.md" />
+    <File Path="documentation-guidelines.instructions.md" />
   </Folder>
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/claude-code-review.yml" />
+    <File Path=".github/workflows/claude.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
     <File Path=".github/workflows/docs.yml" />
+    <File Path=".github/workflows/release.yml" />
     <File Path=".github/workflows/version-bump.yml" />
   </Folder>
+  <Folder Name="/docs/">
+    <File Path="docs/docfx.json" />
+  </Folder>
   <Folder Name="/samples/">
+    <File Path="samples/aspire.config.json" />
     <File Path="samples/Directory.Build.props" />
   </Folder>
   <Folder Name="/samples/AppHost/">
@@ -55,6 +63,10 @@
     <Project Path="src/Vulthil.Results/Vulthil.Results.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Application/Vulthil.SharedKernel.Application.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Cosmos/Vulthil.SharedKernel.Infrastructure.Cosmos.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.MySql/Vulthil.SharedKernel.Infrastructure.MySql.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Npgsql/Vulthil.SharedKernel.Infrastructure.Npgsql.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Relational/Vulthil.SharedKernel.Infrastructure.Relational.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Infrastructure/Vulthil.SharedKernel.Infrastructure.csproj" />
     <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
   </Folder>
@@ -75,6 +87,16 @@
     <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/MessagingIntegrationTests/">
+    <File Path="tests/MessagingIntegrationTests/aspire.config.json" />
+    <File Path="tests/MessagingIntegrationTests/Directory.Build.props" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.AppHost/Vulthil.Messaging.IntegrationTest.AppHost.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.ConsumerService/Vulthil.Messaging.IntegrationTest.ConsumerService.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.Contracts/Vulthil.Messaging.IntegrationTest.Contracts.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.ProducerService/Vulthil.Messaging.IntegrationTest.ProducerService.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTest.Tests/Vulthil.Messaging.IntegrationTest.Tests.csproj" />
+    <Project Path="tests/MessagingIntegrationTests/Vulthil.Messaging.IntegrationTests.ServiceDefaults/Vulthil.Messaging.IntegrationTests.ServiceDefaults.csproj" Id="ad509043-e1f6-4e2e-be2c-a687049ad305" />
   </Folder>
   <Folder Name="/tests/Test Items/">
     <File Path="tests/Directory.Build.props" />

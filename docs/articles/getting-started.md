@@ -12,6 +12,10 @@ The packages are organised into layers so you can adopt only what you need:
 | Domain | `Vulthil.Results` | Railway-oriented `Result<T>` for explicit error handling |
 | Application | `Vulthil.SharedKernel.Application` | Commands, queries, handlers, and pipeline behaviors |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure` | EF Core base context, generic repository, and outbox processing |
+| Infrastructure | `Vulthil.SharedKernel.Infrastructure.Relational` | Shared relational support and the default relational outbox strategy |
+| Infrastructure | `Vulthil.SharedKernel.Infrastructure.Npgsql` | PostgreSQL provider integration (`UseNpgsql`) |
+| Infrastructure | `Vulthil.SharedKernel.Infrastructure.MySql` | MySQL provider integration (`UseMySql`) |
+| Infrastructure | `Vulthil.SharedKernel.Infrastructure.Cosmos` | Azure Cosmos DB provider integration (`UseCosmosDb`) |
 | API | `Vulthil.SharedKernel.Api` | Minimal API endpoint conventions and `Result` → HTTP mapping |
 | Messaging | `Vulthil.Messaging.Abstractions` | Transport-agnostic consumer and publisher contracts |
 | Messaging | `Vulthil.Messaging` | Queue/consumer registration and hosted service orchestration |
@@ -36,13 +40,12 @@ builder.Services.AddApplication(options =>
     options.AddValidationPipelineBehavior();
 });
 
-// Infrastructure layer – EF Core context with outbox
-builder.Services.AddDbContext<AppDbContext>(config =>
-{
-    config.ConfigureDbContextOptions(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-    config.EnableOutboxProcessing();
-});
+// Infrastructure layer – EF Core context with outbox.
+// AddDbContext is an extension on IHostApplicationBuilder; the provider
+// extension (UseNpgsql) registers the EF Core context itself.
+builder.AddDbContext<AppDbContext>(config => config
+    .UseNpgsql("Default")
+    .EnableOutboxProcessing());
 
 // API layer – endpoint discovery
 builder.Services.AddEndpoints(typeof(Program).Assembly);

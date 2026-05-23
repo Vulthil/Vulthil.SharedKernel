@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Vulthil.TestRunner.props', '$(MSBuildThisFileDirectory)'))" />
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.Testing" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.AppHost\Vulthil.Messaging.IntegrationTest.AppHost.csproj" />
+		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.Contracts\Vulthil.Messaging.IntegrationTest.Contracts.csproj" />
+		<ProjectReference Include="..\..\..\src\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -61,7 +61,7 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         queue.ExchangeType.ShouldBe(MessagingExchangeType.Fanout);
         queue.ExchangeDurable.ShouldBeTrue();
         queue.ExchangeAutoDelete.ShouldBeFalse();
-        queue.Registrations.Count().ShouldBe(0);
+        queue.Registrations.Count.ShouldBe(0);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         queue.AddConsumer(registration);
 
         // Assert
-        queue.Registrations.Count().ShouldBe(1);
+        queue.Registrations.Count.ShouldBe(1);
         queue.Registrations.First().ShouldBe(registration);
     }
 
@@ -203,7 +203,7 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
 
         // Assert
         registrations.ShouldNotBeNull();
-        registrations.Count().ShouldBe(1);
+        registrations.Count.ShouldBe(1);
     }
 
     private class TestMessage { }

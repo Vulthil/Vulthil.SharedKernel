@@ -23,25 +23,22 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
     {
         HostApplicationBuilder = hostApplicationBuilder;
         _messagingOptions = messagingOptions;
+        _services.AddSingleton<IMessageConfigurationProvider>(_ => new MessageConfigurationProvider(_messagingOptions));
     }
 
-    /// <inheritdoc />
     public IMessagingConfigurator ConfigureMessagingOptions(Action<MessagingOptions> action)
     {
         action(_messagingOptions);
         return this;
     }
-    /// <inheritdoc />
-    public IMessagingConfigurator ConfigureFaults(Action<IFaultConfigurator> configureFaults) => throw new NotImplementedException();
 
-    private static string ConstructSectionName(string queueName) => $"{DefaultSectionName}:Queues:{queueName}";
+    private static string ConstructQueueSectionName(string queueName) => $"{DefaultSectionName}:Queues:{queueName}";
 
-    /// <inheritdoc />
-    public IMessagingConfigurator AddQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction)
+    public IMessagingConfigurator ConfigureQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName);
         var queueDefinition = new QueueDefinition(queueName);
-        _configuration.GetSection(ConstructSectionName(queueName)).Bind(queueDefinition);
+        _configuration.GetSection(ConstructQueueSectionName(queueName)).Bind(queueDefinition);
         var queueConfigurator = new QueueConfigurator(_services, _messagingOptions, queueDefinition);
 
         queueConfigurationAction(queueConfigurator);
@@ -51,19 +48,17 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         return this;
     }
 
-    public IMessagingConfigurator RegisterRoutingKeyFormatter<T>(string routingKey) where T : class
-        => RegisterRoutingKeyFormatter<T>(_ => routingKey);
+    private static string ConstructMessageSectionName<TMessage>() => $"{DefaultSectionName}:Messages:{typeof(TMessage).FullName}";
 
-    public IMessagingConfigurator RegisterRoutingKeyFormatter<T>(Func<T, string> picker) where T : class
+    public IMessagingConfigurator ConfigureMessage<TMessage>(Action<MessageConfiguration<TMessage>> configureMessageAction)
+        where TMessage : class
     {
-        _messagingOptions.RoutingKeyFormatters[typeof(T)] = (msg) => picker((T)msg);
+        var messageConfiguration = new MessageConfiguration<TMessage>();
+        _configuration.GetSection(ConstructMessageSectionName<TMessage>()).Bind(messageConfiguration);
+
+        configureMessageAction(messageConfiguration);
+        _messagingOptions.MessageConfigurations[typeof(TMessage)] = messageConfiguration;
+
         return this;
     }
-
-    public IMessagingConfigurator RegisterCorrelationIdFormatter<T>(Func<T, string> picker) where T : class
-    {
-        _messagingOptions.CorrelationIdFormatters[typeof(T)] = (msg) => picker((T)msg);
-        return this;
-    }
-
 }

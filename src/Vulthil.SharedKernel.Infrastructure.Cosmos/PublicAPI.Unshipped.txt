@@ -1,0 +1,9 @@
+#nullable enable
+override Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStrategy.BeginTransactionAsync(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction?>!
+static Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb<TDbContext>(this Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>! configurator, string! connectionName, System.Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings!>? configureSettings) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
+Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions
+Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStrategy
+Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStrategy.CosmosOutboxStrategy() -> void
+Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration
+Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
+Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! builder) -> void

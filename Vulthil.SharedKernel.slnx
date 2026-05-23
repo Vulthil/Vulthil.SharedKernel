@@ -12,8 +12,11 @@
   </Folder>
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/claude-code-review.yml" />
+    <File Path=".github/workflows/claude.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
     <File Path=".github/workflows/docs.yml" />
+    <File Path=".github/workflows/release.yml" />
     <File Path=".github/workflows/version-bump.yml" />
   </Folder>
   <Folder Name="/docs/">

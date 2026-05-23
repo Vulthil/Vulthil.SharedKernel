@@ -19,15 +19,8 @@ public static class DependencyInjection
         builder
             .AddDbContext<IWebApiDbContext, WebApiDbContext>(databaseInfrastructureConfigurator =>
                     databaseInfrastructureConfigurator
-                        .UseNpgsql<WebApiDbContext>(connectionStringKey)
+                        .UseNpgsql(connectionStringKey)
                         .EnableOutboxProcessing());
-
-        //builder.EnrichNpgsqlDbContext<WebApiDbContext>(
-        //    configureSettings: settings =>
-        //    {
-        //        settings.DisableRetry = true;
-        //        settings.CommandTimeout = 30;
-        //    });
 
         return builder;
     }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Requests;
 
@@ -39,7 +40,8 @@ internal sealed class ConsumerInvoker<TConsumer, TMessage>(string routingKey, Re
         CancellationToken ct)
     {
         var consumer = sp.GetRequiredService<TConsumer>();
-        var context = MessageContext.CreateContext((TMessage)message, ea);
+        var publisher = sp.GetRequiredService<IPublisher>();
+        var context = MessageContext.CreateContext((TMessage)message, ea, publisher, ct);
 
         await consumer.ConsumeAsync(context, ct);
     }
@@ -52,30 +54,23 @@ internal interface IRpcInvoker
     Task InvokeAsync(IServiceProvider sp, object message, BasicDeliverEventArgs ea, IChannel channel, CancellationToken ct);
 }
 
-internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(IMessageConfigurationProvider messageConfigurationProvider, string routingKey, RetryPolicyDefinition? retryPolicy) : IRpcInvoker
+internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(string routingKey, RetryPolicyDefinition? retryPolicy) : IRpcInvoker
     where TConsumer : class, IRequestConsumer<TRequest, TResponse>
     where TRequest : notnull
     where TResponse : notnull
 {
-    private readonly IMessageConfigurationProvider _messageConfigurationProvider = messageConfigurationProvider;
-    private JsonSerializerOptions _jsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
-    /// <summary>
-    /// Represents this member.
-    /// </summary>
     public string RoutingKey => routingKey;
-    /// <summary>
-    /// Represents this member.
-    /// </summary>
+
     public RetryPolicyDefinition? RetryPolicy => retryPolicy;
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public async Task InvokeAsync(IServiceProvider sp, object message, BasicDeliverEventArgs ea, IChannel channel, CancellationToken ct)
     {
+        var messageConfigurationProvider = sp.GetRequiredService<IMessageConfigurationProvider>();
+        var jsonOptions = messageConfigurationProvider.JsonSerializerOptions;
         var consumer = sp.GetRequiredService<TConsumer>();
+        var publisher = sp.GetRequiredService<IPublisher>();
 
-        var context = MessageContext.CreateContext((TRequest)message, ea);
+        var context = MessageContext.CreateContext((TRequest)message, ea, publisher, ct);
 
         MessageResult messageResult;
         try
@@ -83,7 +78,7 @@ internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(IMessageConfigu
             // Execute consumer and get response
             TResponse response = await consumer.ConsumeAsync(context, ct);
 
-            var responseByteArray = JsonSerializer.SerializeToUtf8Bytes(response, _jsonOptions);
+            var responseByteArray = JsonSerializer.SerializeToUtf8Bytes(response, jsonOptions);
 
             messageResult = MessageResult.Success(responseByteArray);
         }
@@ -92,15 +87,15 @@ internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(IMessageConfigu
             messageResult = MessageResult.Failure(exception.Message);
         }
 
-        await SendResponseAsync(ea, messageResult, channel);
+        await SendResponseAsync(ea, messageResult, channel, jsonOptions);
     }
 
-    private async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageResult response, IChannel channel)
+    private static async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageResult response, IChannel channel, JsonSerializerOptions jsonOptions)
     {
         // SEND RESPONSE
         if (!string.IsNullOrEmpty(ea.BasicProperties.ReplyTo))
         {
-            var responseBytes = JsonSerializer.SerializeToUtf8Bytes(response, _jsonOptions);
+            var responseBytes = JsonSerializer.SerializeToUtf8Bytes(response, jsonOptions);
             var replyProps = new BasicProperties
             {
                 CorrelationId = ea.BasicProperties.CorrelationId,

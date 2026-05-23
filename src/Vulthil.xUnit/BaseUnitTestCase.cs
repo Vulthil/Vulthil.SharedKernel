@@ -47,6 +47,24 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
         => AutoMocker.Use(service);
 
     /// <summary>
+    /// Configures the auto-mocker to create a real instance of <typeparamref name="TService"/> with all dependencies auto-mocked.
+    /// </summary>
+    /// <typeparam name="TService">The service type.</typeparam>
+    protected virtual void UseReal<TService>()
+        where TService : class
+        => AutoMocker.Use(AutoMocker.CreateInstance<TService>());
+
+    /// <summary>
+    /// Configures the auto-mocker to create a real instance of <typeparamref name="TImplementation"/> registered as <typeparamref name="TService"/> with all dependencies auto-mocked.
+    /// </summary>
+    /// <typeparam name="TService">The service type.</typeparam>
+    /// <typeparam name="TImplementation">The implementation type.</typeparam>
+    protected virtual void UseRealFor<TService, TImplementation>()
+        where TService : notnull
+        where TImplementation : class, TService
+        => AutoMocker.Use<TService>(AutoMocker.CreateInstance<TImplementation>());
+
+    /// <summary>
     /// Creates an instance of <typeparamref name="TTarget"/> using the configured automocker.
     /// </summary>
     /// <typeparam name="TTarget">The target type to instantiate.</typeparam>

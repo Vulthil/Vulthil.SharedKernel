@@ -20,17 +20,23 @@ public static class DependencyInjection
     /// <param name="hostApplicationBuilder">The host application builder.</param>
     /// <param name="databaseInfrastructureConfiguratorAction">An action to configure the database infrastructure.</param>
     /// <returns>The host application builder for chaining.</returns>
-    public static IHostApplicationBuilder AddDbContext<TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+    public static IHostApplicationBuilder AddDbContext<TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator<TDbContext>> databaseInfrastructureConfiguratorAction)
         where TDbContext : BaseDbContext
     {
-        var databaseInfrastructureConfigurator = new DatabaseInfrastructureConfigurator(hostApplicationBuilder);
+        var databaseInfrastructureConfigurator = new DatabaseInfrastructureConfigurator<TDbContext>(hostApplicationBuilder);
         databaseInfrastructureConfiguratorAction(databaseInfrastructureConfigurator);
+        databaseInfrastructureConfigurator.FinalizeConfiguration();
 
-        hostApplicationBuilder.Services.AddDbContext<TDbContext>(databaseInfrastructureConfigurator.OptionsBuilder);
-        hostApplicationBuilder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<TDbContext>());
+        var dbContextLifetime = databaseInfrastructureConfigurator.DbContextLifetime;
+
+        hostApplicationBuilder.Services.Add(new ServiceDescriptor(
+            typeof(IUnitOfWork),
+            sp => sp.GetRequiredService<TDbContext>(),
+            dbContextLifetime));
+
         if (databaseInfrastructureConfigurator.OutboxProcessingEnabled)
         {
-            hostApplicationBuilder.Services.AddOutboxProcessing<TDbContext>(databaseInfrastructureConfigurator);
+            hostApplicationBuilder.Services.AddOutboxProcessing(databaseInfrastructureConfigurator);
         }
 
         return hostApplicationBuilder;
@@ -45,18 +51,24 @@ public static class DependencyInjection
     /// <param name="databaseInfrastructureConfiguratorAction">An action to configure the database infrastructure.</param>
     /// <returns>The host application builder for chaining.</returns>
 
-    public static IHostApplicationBuilder AddDbContext<TDbContextInterface, TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator> databaseInfrastructureConfiguratorAction)
+    public static IHostApplicationBuilder AddDbContext<TDbContextInterface, TDbContext>(this IHostApplicationBuilder hostApplicationBuilder, Action<IDatabaseInfrastructureConfigurator<TDbContext>> databaseInfrastructureConfiguratorAction)
         where TDbContext : BaseDbContext, TDbContextInterface
         where TDbContextInterface : class
     {
-        hostApplicationBuilder.AddDbContext<TDbContext>(databaseInfrastructureConfiguratorAction);
-        hostApplicationBuilder.Services.AddScoped<TDbContextInterface>(sp => sp.GetRequiredService<TDbContext>());
+        hostApplicationBuilder.AddDbContext(databaseInfrastructureConfiguratorAction);
+
+        var dbContextLifetime = FindLifetime(hostApplicationBuilder.Services, typeof(TDbContext));
+
+        hostApplicationBuilder.Services.Add(new ServiceDescriptor(
+            typeof(TDbContextInterface),
+            sp => sp.GetRequiredService<TDbContext>(),
+            dbContextLifetime));
 
         return hostApplicationBuilder;
     }
 
-    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator configurator)
-        where TDbContext : ISaveOutboxMessages
+    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator<TDbContext> configurator)
+        where TDbContext : DbContext, ISaveOutboxMessages
     {
         var optionsAction = configurator.OutboxOptionsAction ?? (static o => { });
         services.AddOptions<OutboxProcessingOptions>()
@@ -65,12 +77,42 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         services.TryAddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
-        services.AddScoped<ISaveOutboxMessages>(sp => sp.GetRequiredService<TDbContext>());
-        services.AddScoped(typeof(IOutboxStrategy), configurator.OutboxStrategyType);
-        services.AddScoped<OutboxProcessor>();
+
+        var dbContextLifetime = configurator.DbContextLifetime;
+        services.Add(new ServiceDescriptor(
+            typeof(ISaveOutboxMessages),
+            sp => sp.GetRequiredService<TDbContext>(),
+            dbContextLifetime));
+        services.Add(new ServiceDescriptor(
+            typeof(IOutboxStrategy),
+            configurator.OutboxStrategyType,
+            dbContextLifetime));
+        services.Add(new ServiceDescriptor(
+            typeof(OutboxProcessor),
+            typeof(OutboxProcessor),
+            dbContextLifetime));
         services.AddHostedService<OutboxBackgroundService>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Returns the <see cref="ServiceLifetime"/> of the last descriptor in <paramref name="services"/>
+    /// whose <see cref="ServiceDescriptor.ServiceType"/> equals <paramref name="serviceType"/>, or
+    /// <see cref="ServiceLifetime.Scoped"/> if no such descriptor exists. Walking in reverse mirrors
+    /// the DI container's "last registration wins" rule when resolving a single service.
+    /// </summary>
+    internal static ServiceLifetime FindLifetime(IServiceCollection services, Type serviceType)
+    {
+        for (var i = services.Count - 1; i >= 0; i--)
+        {
+            var descriptor = services[i];
+            if (descriptor.ServiceType == serviceType)
+            {
+                return descriptor.Lifetime;
+            }
+        }
+        return ServiceLifetime.Scoped;
     }
 
     /// <summary>

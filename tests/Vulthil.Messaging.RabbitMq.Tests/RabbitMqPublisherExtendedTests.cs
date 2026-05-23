@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.xUnit;
@@ -13,6 +12,7 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqPublisher> _lazyTarget;
     private readonly Mock<IChannel> _channelMock;
+    private readonly Mock<IMessageConfigurationProvider> _messageConfigurationProviderMock;
 
     private RabbitMqPublisher Target => _lazyTarget.Value;
 
@@ -33,9 +33,12 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
             It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(_channelMock.Object);
 
+        _messageConfigurationProviderMock = GetMock<IMessageConfigurationProvider>();
+        _messageConfigurationProviderMock.Setup(x => x.GetMessageConfiguration(It.IsAny<Type>()))
+            .Returns<Type>(t => new MessageConfiguration(t.FullName!));
+
         Use(logger);
         Use(connectionMock.Object);
-        Use(Options.Create(new MessagingOptions()));
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 

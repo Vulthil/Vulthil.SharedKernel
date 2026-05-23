@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing;
 
 namespace Vulthil.SharedKernel.Infrastructure.MySql;
@@ -12,8 +13,9 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="configurator">The database infrastructure configurator.</param>
     /// <returns>The configurator for chaining.</returns>
-    public static IDatabaseInfrastructureConfigurator UseMysql(
-        this IDatabaseInfrastructureConfigurator configurator)
+    public static IDatabaseInfrastructureConfigurator<TContext> UseMySql<TContext>(
+        this IDatabaseInfrastructureConfigurator<TContext> configurator)
+        where TContext : DbContext
     {
         configurator.UseOutboxStrategy<MySqlOutboxStrategy>();
         return configurator;

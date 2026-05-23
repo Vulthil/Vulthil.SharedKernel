@@ -64,7 +64,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 
         foreach (var queue in queues)
         {
-            _typeCache.RegisterQueue(queue, _messageConfigurationProvider);
+            _typeCache.RegisterQueue(queue);
 
             for (int i = 0; i < queue.ChannelCount; i++)
             {

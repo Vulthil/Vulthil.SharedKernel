@@ -16,6 +16,7 @@ Vulthil.Messaging.Abstractions.Consumers.IConsumer
 Vulthil.Messaging.Abstractions.Consumers.IConsumer<TMessage>
 Vulthil.Messaging.Abstractions.Consumers.IConsumer<TMessage>.ConsumeAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>! messageContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.CancellationToken.get -> System.Threading.CancellationToken
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ConversationId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.CorrelationId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.DestinationAddress.get -> System.Uri?
@@ -24,6 +25,7 @@ Vulthil.Messaging.Abstractions.Consumers.IMessageContext.FaultAddress.get -> Sys
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Headers.get -> System.Collections.Generic.IDictionary<string!, object?>!
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.InitiatorId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.MessageId.get -> string?
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configure = null) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Redelivered.get -> bool
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RequestId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ResponseAddress.get -> System.Uri?

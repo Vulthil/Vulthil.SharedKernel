@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
@@ -16,17 +15,15 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 public sealed class MessageTypeCacheTests : BaseUnitTestCase
 {
     private readonly Lazy<MessageTypeCache> _lazyTarget;
+    private readonly IServiceProvider _serviceProvider;
+
     private MessageTypeCache Target => _lazyTarget.Value;
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public MessageTypeCacheTests()
     {
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
+        _serviceProvider = AutoMocker;
     }
-
-    private static MessageConfigurationProvider CreateMessageConfigurationProvider() => new(new MessagingOptions());
 
     private static BasicDeliverEventArgs CreateDeliverEventArgs(string routingKey = "#", string? replyTo = null, string? correlationId = null)
     {
@@ -53,14 +50,8 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     private sealed class TestMessageConsumer : IConsumer<TestMessage>
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public List<TestMessage> ReceivedMessages { get; } = [];
 
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
         {
             ReceivedMessages.Add(messageContext.Message);
@@ -70,9 +61,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     private sealed class ThrowingRequestConsumer : IRequestConsumer<TestRequest, TestResponse>
     {
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public Task<TestResponse> ConsumeAsync(IMessageContext<TestRequest> messageContext, CancellationToken cancellationToken = default)
         {
             throw new InvalidOperationException("failed to process request");
@@ -81,14 +69,8 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     private sealed class TestRequestConsumer : IRequestConsumer<TestRequest, TestResponse>
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public List<TestRequest> ReceivedRequests { get; } = [];
 
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public Task<TestResponse> ConsumeAsync(IMessageContext<TestRequest> messageContext, CancellationToken cancellationToken = default)
         {
             ReceivedRequests.Add(messageContext.Message);
@@ -98,9 +80,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
     #endregion
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RegisterQueueShouldRegisterStandardConsumers()
     {
@@ -117,7 +96,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration);
 
         // Act
-        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
+        Target.RegisterQueue(queue);
 
         // Assert
         var plan = Target.GetPlan(messageType.Name);
@@ -126,9 +105,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.StandardHandlers[0].RoutingKey.ShouldBe("test.message");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RegisterQueueShouldRegisterRequestConsumers()
     {
@@ -146,7 +122,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration);
 
         // Act
-        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
+        Target.RegisterQueue(queue);
 
         // Assert
         var plan = Target.GetPlan(messageType.Name);
@@ -155,17 +131,12 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.RpcHandler.RoutingKey.ShouldBe("test.request");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task CompiledHandlerShouldCallConsumerWithCorrectMessage()
     {
         // Arrange
         var consumerInstance = new TestMessageConsumer();
-        var services = new ServiceCollection();
-        services.AddScoped(_ => consumerInstance);
-        var serviceProvider = services.BuildServiceProvider();
+        Use(consumerInstance);
 
         var consumer = new ConsumerType(typeof(TestMessageConsumer));
         var messageType = new MessageType(typeof(TestMessage));
@@ -177,31 +148,26 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
+        Target.RegisterQueue(queue);
 
         var plan = Target.GetPlan(messageType.Name);
         var handler = plan!.StandardHandlers[0];
         var testMessage = new TestMessage("Hello, World!");
 
         // Act
-        await handler.InvokeAsync(serviceProvider, testMessage, CreateDeliverEventArgs(), CancellationToken.None);
+        await handler.InvokeAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedMessages.ShouldHaveSingleItem();
         consumerInstance.ReceivedMessages[0].Content.ShouldBe("Hello, World!");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task CompiledRpcHandlerShouldCallConsumerAndPublishResponse()
     {
         // Arrange
         var consumerInstance = new TestRequestConsumer();
-        var services = new ServiceCollection();
-        services.AddScoped(_ => consumerInstance);
-        var serviceProvider = services.BuildServiceProvider();
+        Use(consumerInstance);
 
         var consumer = new ConsumerType(typeof(TestRequestConsumer));
         var messageType = new MessageType(typeof(TestRequest));
@@ -214,7 +180,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
+        Target.RegisterQueue(queue);
 
         var plan = Target.GetPlan(messageType.Name);
         var handler = plan!.RpcHandler!;
@@ -240,7 +206,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await handler.InvokeAsync(serviceProvider, testRequest, deliveryArgs, channel.Object, CancellationToken.None);
+        await handler.InvokeAsync(_serviceProvider, testRequest, deliveryArgs, channel.Object, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedRequests.ShouldHaveSingleItem();
@@ -258,16 +224,11 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         response.Result.ShouldBe("Processed: Find users");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task CompiledRpcHandlerShouldPublishFailureWhenConsumerThrows()
     {
         // Arrange
-        var services = new ServiceCollection();
-        services.AddScoped<ThrowingRequestConsumer>();
-        var serviceProvider = services.BuildServiceProvider();
+        UseReal<ThrowingRequestConsumer>();
 
         var registration = new RequestConsumerRegistration
         {
@@ -279,7 +240,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
-        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
+        Target.RegisterQueue(queue);
 
         var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
         var handler = plan!.RpcHandler!;
@@ -302,7 +263,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
         // Act
         await handler.InvokeAsync(
-            serviceProvider,
+            _serviceProvider,
             new TestRequest("throw"),
             CreateDeliverEventArgs(replyTo: "reply.queue"),
             channel.Object,
@@ -315,9 +276,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         messageResult.ErrorMessage.ShouldContain("failed to process request");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void GetPlanShouldReturnNullForUnregisteredMessageType()
     {
@@ -328,9 +286,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RegisterQueueShouldSupportMultipleHandlersForSameMessageType()
     {
@@ -356,7 +311,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         queue.AddConsumer(registration2);
 
         // Act
-        Target.RegisterQueue(queue, CreateMessageConfigurationProvider());
+        Target.RegisterQueue(queue);
 
         // Assert
         var plan = Target.GetPlan(messageType.Name);
@@ -366,9 +321,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.StandardHandlers[1].RoutingKey.ShouldBe("route.2");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RpcHandlerRoutingKeyShouldReturnHandlerRoutingKey()
     {
@@ -376,7 +328,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var messageType = new MessageType(typeof(TestRequest));
         var plan = new MessageExecutionPlan(messageType)
         {
-            RpcHandler = new RpcInvoker<TestRequestConsumer, TestRequest, TestResponse>(CreateMessageConfigurationProvider(), "custom.routing.key", null)
+            RpcHandler = new RpcInvoker<TestRequestConsumer, TestRequest, TestResponse>("custom.routing.key", null)
         };
 
         // Act & Assert

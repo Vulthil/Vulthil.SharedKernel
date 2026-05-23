@@ -16,13 +16,17 @@ public static class DependencyInjectionExtensions
     /// <param name="connectionName">The name of the Cosmos DB connection.</param>
     /// <param name="configureSettings">An action to configure the Cosmos DB settings.</param>
     /// <returns>The configurator for chaining.</returns>
-    public static IDatabaseInfrastructureConfigurator UseCosmosDb<TDbContext>(
-        this IDatabaseInfrastructureConfigurator configurator,
+    public static IDatabaseInfrastructureConfigurator<TDbContext> UseCosmosDb<TDbContext>(
+        this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionName,
         Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>? configureSettings)
         where TDbContext : DbContext
     {
-        configurator.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionName, configureSettings);
-        return configurator.UseOutboxStrategy<CosmosOutboxStrategy>();
+        configurator.UseOutboxStrategy<CosmosOutboxStrategy>();
+        configurator.OnConfigured(c =>
+        {
+            c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionName, configureSettings);
+        });
+        return configurator;
     }
 }

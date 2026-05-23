@@ -19,6 +19,8 @@ virtual Vulthil.xUnit.BaseUnitTestCase.CreateInstance<TTarget>() -> TTarget!
 virtual Vulthil.xUnit.BaseUnitTestCase.GetMock<TMock>() -> Moq.Mock<TMock!>!
 virtual Vulthil.xUnit.BaseUnitTestCase.Initialize() -> System.Threading.Tasks.ValueTask
 virtual Vulthil.xUnit.BaseUnitTestCase.Use<TService>(TService service) -> void
+virtual Vulthil.xUnit.BaseUnitTestCase.UseReal<TService>() -> void
+virtual Vulthil.xUnit.BaseUnitTestCase.UseRealFor<TService, TImplementation>() -> void
 virtual Vulthil.xUnit.BaseUnitTestCase<TTarget>.CreateInstance() -> TTarget!
 virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureCustomWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
 Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>

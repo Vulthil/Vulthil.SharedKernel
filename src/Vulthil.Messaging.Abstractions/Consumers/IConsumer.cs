@@ -1,3 +1,5 @@
+using Vulthil.Messaging.Abstractions.Publishers;
+
 namespace Vulthil.Messaging.Abstractions.Consumers;
 
 /// <summary>
@@ -93,6 +95,27 @@ public interface IMessageContext
     /// Gets a value indicating whether the broker redelivered this message (e.g., after a consumer crash).
     /// </summary>
     bool Redelivered { get; }
+
+    // --- Consumer Capabilities ---
+    /// <summary>
+    /// Gets the cancellation token associated with the current delivery. Combines the transport's stop signal
+    /// with the consumer scope, allowing handlers to observe both.
+    /// </summary>
+    CancellationToken CancellationToken { get; }
+
+    /// <summary>
+    /// Publishes a message via the underlying transport, automatically propagating correlation metadata
+    /// (<c>CorrelationId</c>, <c>ConversationId</c>, <c>InitiatorId</c>) from the incoming context to the outgoing message.
+    /// The caller-supplied <paramref name="configure"/> callback runs after propagation, so it can override any auto-set value.
+    /// </summary>
+    /// <typeparam name="TMessage">The type of message to publish.</typeparam>
+    /// <param name="message">The message to publish.</param>
+    /// <param name="configure">Optional callback for customizing the outgoing publish context.</param>
+    /// <returns>A task representing the asynchronous publish operation.</returns>
+    Task PublishAsync<TMessage>(
+        TMessage message,
+        Func<IPublishContext, ValueTask>? configure = null)
+        where TMessage : notnull;
 }
 /// <summary>
 /// Provides transport-level metadata and the deserialized payload for a received message.

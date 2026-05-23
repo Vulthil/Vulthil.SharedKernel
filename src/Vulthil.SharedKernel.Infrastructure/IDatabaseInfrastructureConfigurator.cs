@@ -7,7 +7,8 @@ namespace Vulthil.SharedKernel.Infrastructure;
 /// <summary>
 /// Defines methods for configuring database infrastructure options for Entity Framework Core DbContext instances.
 /// </summary>
-public interface IDatabaseInfrastructureConfigurator
+public interface IDatabaseInfrastructureConfigurator<TDbContext>
+    where TDbContext : DbContext
 {
     /// <summary>
     /// Provides access to the host application builder for configuring services and settings.
@@ -15,30 +16,35 @@ public interface IDatabaseInfrastructureConfigurator
     IHostApplicationBuilder HostApplicationBuilder { get; }
 
     /// <summary>
-    /// Configures the DbContext options using the specified builder action.
+    /// Gets a value indicating whether outbox processing has been enabled on this configurator.
+    /// Provider extensions can read this inside an <see cref="OnConfigured"/> callback to make
+    /// decisions that depend on the final state of the configuration (for example, enforcing
+    /// settings that are required for the outbox transaction strategy to work).
     /// </summary>
-    /// <param name="optionsBuilder">An action to configure the DbContextOptionsBuilder.</param>
-    /// <returns>The current database infrastructure configurator instance.</returns>
-    IDatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<DbContextOptionsBuilder> optionsBuilder);
-
-    /// <summary>
-    /// Configures the DbContext options using the specified delegate.
-    /// </summary>
-    /// <param name="optionsBuilder">A delegate to configure the DbContextOptionsBuilder with the service provider.</param>
-    /// <returns>The current database infrastructure configurator instance.</returns>
-    IDatabaseInfrastructureConfigurator ConfigureDbContextOptions(Action<IServiceProvider, DbContextOptionsBuilder> optionsBuilder);
+    bool OutboxProcessingEnabled { get; }
 
     /// <summary>
     /// Enables outbox processing with optional configuration.
     /// </summary>
     /// <param name="optionsAction">An optional action to configure outbox processing options.</param>
     /// <returns>The current configurator instance for chaining.</returns>
-    IDatabaseInfrastructureConfigurator EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null);
+    IDatabaseInfrastructureConfigurator<TDbContext> EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null);
 
     /// <summary>
     /// Configures the database infrastructure to use the specified outbox strategy.
     /// </summary>
     /// <typeparam name="T">The type of outbox strategy to use.</typeparam>
     /// <returns>The database infrastructure configurator instance.</returns>
-    IDatabaseInfrastructureConfigurator UseOutboxStrategy<T>() where T : class, IOutboxStrategy;
+    IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStrategy<T>() where T : class, IOutboxStrategy;
+
+    /// <summary>
+    /// Registers a callback that runs once the configurator action has finished executing
+    /// but before the DbContext is registered with the service collection. Use this hook
+    /// from provider-specific extension methods (e.g. <c>UseNpgsql</c>) to defer work that
+    /// depends on the final state of the configurator — most notably whether outbox
+    /// processing has been enabled — regardless of the order in which the user chained calls.
+    /// </summary>
+    /// <param name="action">The callback to invoke. It receives the configurator in its final state.</param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IDatabaseInfrastructureConfigurator<TDbContext> OnConfigured(Action<IDatabaseInfrastructureConfigurator<TDbContext>> action);
 }

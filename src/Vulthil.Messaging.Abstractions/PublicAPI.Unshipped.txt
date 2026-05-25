@@ -58,5 +58,7 @@ Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetCorrelationId(strin
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetRoutingKey(string! routingKey) -> void
 Vulthil.Messaging.Abstractions.Publishers.IPublisher
 Vulthil.Messaging.Abstractions.Publishers.IPublisher.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Abstractions.Publishers.IPublisher.PublishAsync<TMessage>(TMessage message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Abstractions.Publishers.IRequester
 Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.Task!>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!
+Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!

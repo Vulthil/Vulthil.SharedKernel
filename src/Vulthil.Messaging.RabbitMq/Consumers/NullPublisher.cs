@@ -5,14 +5,17 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 /// <summary>
 /// A placeholder <see cref="IPublisher"/> used by <see cref="MessageContext"/> snapshots
 /// (e.g. <see cref="Vulthil.Messaging.Abstractions.Consumers.Fault{TMessage}.OriginalContext"/>) where no live
-/// transport publisher is bound. Calling <see cref="PublishAsync"/> on a snapshot is a programmer error.
+/// transport publisher is bound. Calling <see cref="PublishAsync{TMessage}(TMessage, CancellationToken)"/> or <see cref="PublishAsync{TMessage}(TMessage, Func{IPublishContext, ValueTask}?, CancellationToken)"/> on a snapshot is a programmer error.
 /// </summary>
 internal sealed class NullPublisher : IPublisher
 {
     public static readonly NullPublisher Instance = new();
 
     private NullPublisher() { }
-
+    public Task PublishAsync<TMessage>(
+       TMessage message,
+       CancellationToken cancellationToken)
+       where TMessage : notnull => PublishAsync(message, null, cancellationToken);
     public Task PublishAsync<TMessage>(
         TMessage message,
         Func<IPublishContext, ValueTask>? configureContext = null,

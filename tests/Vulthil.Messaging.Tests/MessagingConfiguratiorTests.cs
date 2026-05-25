@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Vulthil.Messaging.Queues;
 using Vulthil.xUnit;
 
@@ -9,46 +8,41 @@ namespace Vulthil.Messaging.Tests;
 /// <summary>
 /// Represents the MessagingConfiguratiorTests.
 /// </summary>
-public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
+public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicationBuilder>
 {
-    private static HostApplicationBuilder CreateHostBuilder()
+    protected override HostApplicationBuilder CreateInstance() => Host.CreateApplicationBuilder();
+
+    private static IReadOnlyCollection<QueueDefinition> GetQueueDefinitions(HostApplicationBuilder builder)
     {
-        return Host.CreateApplicationBuilder();
+        using var sp = builder.Services.BuildServiceProvider();
+        return [.. sp.GetRequiredService<IMessageConfigurationProvider>().QueueDefinitions];
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddMessagingShouldRegisterConsumerHostedService()
     {
         // Arrange
-        var builder = CreateHostBuilder();
 
         // Act
-        builder.AddMessaging(x => { });
+        Target.AddMessaging(x => { });
 
         // Assert
-        var hostedServices = builder.Services.Where(sd => sd.ImplementationType == typeof(ConsumerHostedService)).ToList();
+        var hostedServices = Target.Services.Where(sd => sd.ImplementationType == typeof(ConsumerHostedService)).ToList();
         hostedServices.ShouldNotBeEmpty();
         hostedServices[0].Lifetime.ShouldBe(ServiceLifetime.Singleton);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
-    public void AddMessagingShouldRegisterMessagingOptions()
+    public void AddMessagingShouldRegisterMessageConfigurationProvider()
     {
         // Arrange
-        var builder = CreateHostBuilder();
 
         // Act
-        builder.AddMessaging(x => { });
+        Target.AddMessaging(x => { });
 
         // Assert
-        var optionsServices = builder.Services.Where(sd => sd.ServiceType == typeof(IOptions<MessagingOptions>)).ToList();
-        optionsServices.ShouldNotBeEmpty();
+        var messageConfigurationProviderService = Target.Services.Where(sd => sd.ServiceType == typeof(IMessageConfigurationProvider)).ToList();
+        messageConfigurationProviderService.ShouldNotBeEmpty();
     }
 
     /// <summary>
@@ -58,70 +52,56 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
     public void AddMessagingQueueShouldRegisterQueueDefinition()
     {
         // Arrange
-        var builder = CreateHostBuilder();
         var queueName = "TestQueue";
 
         // Act
-        builder.AddMessaging(x =>
+        Target.AddMessaging(x =>
         {
             x.ConfigureQueue(queueName, _ => { });
         });
 
         // Assert
-        var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
-        queueServices.ShouldNotBeEmpty();
-        queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
+        var queues = GetQueueDefinitions(Target);
+        queues.ShouldNotBeEmpty();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddMessagingShouldThrowWhenQueueNameIsNull()
     {
         // Arrange
-        var builder = CreateHostBuilder();
 
         // Act & Assert
         Should.Throw<ArgumentException>(() =>
         {
-            builder.AddMessaging(x =>
+            Target.AddMessaging(x =>
             {
                 x.ConfigureQueue(null!, _ => { });
             });
         });
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddMessagingShouldThrowWhenQueueNameIsEmpty()
     {
         // Arrange
-        var builder = CreateHostBuilder();
 
         // Act & Assert
         Should.Throw<ArgumentException>(() =>
         {
-            builder.AddMessaging(x =>
+            Target.AddMessaging(x =>
             {
                 x.ConfigureQueue(string.Empty, _ => { });
             });
         });
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddMessagingMultipleQueuesShouldRegisterAll()
     {
         // Arrange
-        var builder = CreateHostBuilder();
 
         // Act
-        builder.AddMessaging(x =>
+        Target.AddMessaging(x =>
         {
             x.ConfigureQueue("Queue1", _ => { });
             x.ConfigureQueue("Queue2", _ => { });
@@ -129,13 +109,10 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         });
 
         // Assert
-        var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
-        queueServices.Count.ShouldBe(3);
+        var queues = GetQueueDefinitions(Target);
+        queues.Count.ShouldBe(3);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RegisterRoutingKeyFormatterShouldStoreFormatterForType()
     {
@@ -143,21 +120,18 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         var options = new MessagingOptions();
 
         // Act
-        var messagingConfigurator = new MessagingConfigurator(CreateHostBuilder(), options);
+        var messagingConfigurator = new MessagingConfigurator(Target, options);
         messagingConfigurator.ConfigureMessage<TestMessage>(pd => pd.UseRoutingKey("test.route"));
 
         // Assert
-        options.MessageConfigurations.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
-        var def = options.MessageConfigurations[typeof(TestMessage)];
+        options.MessageConfigurations.ContainsKey(typeof(TestMessage).FullName!).ShouldBeTrue();
+        var def = options.MessageConfigurations[typeof(TestMessage).FullName!];
         def.RoutingKeyFormatter
             .ShouldNotBeNull()
             .Invoke(It.IsAny<TestMessage>())
             .ShouldBe("test.route");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RegisterRoutingKeyFormatterWithFuncShouldUseCustomLogic()
     {
@@ -166,18 +140,15 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         var options = new MessagingOptions();
 
         // Act
-        var messagingConfigurator = new MessagingConfigurator(CreateHostBuilder(), options);
+        var messagingConfigurator = new MessagingConfigurator(Target, options);
         messagingConfigurator.ConfigureMessage<TestMessage>(pd => pd.UseRoutingKey((obj) => $"route.{obj.Id}"));
 
         // Assert
-        var def = options.MessageConfigurations[typeof(TestMessage)];
+        var def = options.MessageConfigurations[typeof(TestMessage).FullName!];
         def.RoutingKeyFormatter.ShouldNotBeNull();
         def.RoutingKeyFormatter!(testMessage).ShouldBe("route.test-123");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void RegisterCorrelationIdFormatterShouldStoreFormatterForType()
     {
@@ -186,22 +157,19 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase
         var options = new MessagingOptions();
 
         // Act
-        var messagingConfigurator = new MessagingConfigurator(CreateHostBuilder(), options);
+        var messagingConfigurator = new MessagingConfigurator(Target, options);
         messagingConfigurator.ConfigureMessage<TestMessage>(pd => pd.UseCorrelationId((obj) => obj.Id));
 
         // Assert
-        options.MessageConfigurations.ContainsKey(typeof(TestMessage)).ShouldBeTrue();
-        var def = options.MessageConfigurations[typeof(TestMessage)];
+        options.MessageConfigurations.ContainsKey(typeof(TestMessage).FullName!).ShouldBeTrue();
+        var def = options.MessageConfigurations[typeof(TestMessage).FullName!];
         def.CorrelationIdFormatter.ShouldNotBeNull()
             .Invoke(testMessage)
             .ShouldBe(testMessage.Id);
     }
 
-    private class TestMessage
+    private sealed record TestMessage
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public string Id { get; set; } = string.Empty;
     }
 }

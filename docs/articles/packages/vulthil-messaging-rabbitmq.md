@@ -51,3 +51,13 @@ Queue settings can be bound from `appsettings.json` under `Messaging:Queues:{nam
   }
 }
 ```
+
+### Tracing and health checks
+
+`UseRabbitMq` registers an OpenTelemetry `ActivitySource`
+(`"Vulthil.Messaging.RabbitMq"`) and a startup health check
+(`"vulthil_messaging_rabbitmq_bus"`). Both registrations are gated on the Aspire
+client's `DisableTracing` / `DisableHealthChecks` flags, so the toggles propagate
+through to the Vulthil instrumentation. See
+[Messaging — Observability](../messaging.md#observability) and
+[Messaging — Health Checks](../messaging.md#health-checks).

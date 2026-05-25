@@ -29,14 +29,24 @@ public sealed class MessagingOptions
     /// </summary>
     public string FaultExchangeName { get; set; } = "Fault.Exchange";
 
-    internal Dictionary<Type, MessageConfiguration> MessageConfigurations { get; } = [];
+    /// <summary>
+    /// Message configurations keyed by the CLR full type name. Populated eagerly from <c>Messaging:Messages:*</c>
+    /// at <c>AddMessaging</c> time, then merged with whatever <c>ConfigureMessage&lt;T&gt;</c> registers in code.
+    /// </summary>
+    internal Dictionary<string, MessageConfiguration> MessageConfigurations { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Queue definitions keyed by queue name. Populated eagerly from <c>Messaging:Queues:*</c> at <c>AddMessaging</c>
+    /// time, then merged with whatever <c>ConfigureQueue</c> registers in code.
+    /// </summary>
+    internal Dictionary<string, QueueDefinition> QueueDefinitions { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     internal MessageConfiguration GetMessageConfiguration(Type messageType)
     {
         var current = messageType;
         while (current != null && current != typeof(object))
         {
-            if (MessageConfigurations.TryGetValue(current, out var def))
+            if (current.FullName is { } fullName && MessageConfigurations.TryGetValue(fullName, out var def))
             {
                 return def;
             }
@@ -51,5 +61,4 @@ public sealed class MessagingOptions
         GetMessageConfiguration(typeof(TMessage));
 
     internal bool RegisterRequestType(MessageType messageType) => _registeredRequestTypes.Add(messageType);
-
 }

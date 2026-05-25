@@ -20,7 +20,7 @@ public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
 {
     public Task ConsumeAsync(
         IMessageContext<OrderCreatedEvent> messageContext,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var order = messageContext.Message;
         // Process the event
@@ -36,16 +36,21 @@ public sealed class GetOrderConsumer : IRequestConsumer<GetOrderRequest, OrderDt
 {
     public Task<OrderDto> ConsumeAsync(
         IMessageContext<GetOrderRequest> messageContext,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return Task.FromResult(new OrderDto());
     }
 }
 ```
 
+The request consumer keeps its strongly-typed `Task<TResponse>` contract — the requester
+on the other side will receive a typed `Result<TResponse>`.
+
 ## Registering Queues and Consumers
 
-Registration happens in the composition root using the `AddMessaging` builder:
+Registration happens in the composition root using the `AddMessaging` builder. Queue
+definitions and message configurations are first loaded eagerly from `IConfiguration`,
+then merged with whatever code-side calls add; code wins on conflict.
 
 ```csharp
 builder.AddMessaging(messaging =>
@@ -80,10 +85,42 @@ public sealed class PlaceOrderHandler(IPublisher publisher)
     public async Task HandleAsync(PlaceOrderCommand command, CancellationToken ct)
     {
         // ... create order ...
-        await publisher.PublishAsync(new OrderCreatedEvent(order.Id), ct);
+        await publisher.PublishAsync(new OrderCreatedEvent(order.Id), cancellationToken: ct);
     }
 }
 ```
+
+### Publishing from inside a consumer
+
+`IMessageContext` exposes `PublishAsync` directly, so consumers can emit follow-up
+messages without injecting `IPublisher`. Correlation metadata
+(`CorrelationId`, `ConversationId`, `InitiatorId`) is automatically propagated from
+the incoming message to the outgoing one. The optional `configure` callback runs
+after auto-propagation, so explicit values override the inherited ones.
+
+```csharp
+public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
+{
+    public async Task ConsumeAsync(
+        IMessageContext<OrderCreatedEvent> ctx,
+        CancellationToken cancellationToken = default)
+    {
+        // Inherits CorrelationId/ConversationId/InitiatorId from ctx
+        await ctx.PublishAsync(new InventoryReserveRequested(ctx.Message.OrderId));
+
+        // Or override specific fields explicitly
+        await ctx.PublishAsync(new ShippingScheduled(ctx.Message.OrderId), c =>
+        {
+            c.SetCorrelationId("new-correlation");
+            c.AddHeader("priority", "high");
+            return ValueTask.CompletedTask;
+        });
+    }
+}
+```
+
+`IMessageContext.CancellationToken` exposes the delivery's cancellation token for
+handlers that want to observe it alongside the explicit method parameter.
 
 ## Routing Keys
 
@@ -106,35 +143,162 @@ messaging.ConfigureMessage<OrderCreatedEvent>(message =>
 });
 ```
 
-## Queue Configuration
+## Message Configuration
 
-Queue settings can be tuned in code or bound from `appsettings.json`:
+Each message type is associated with a `MessageConfiguration` that controls the
+exchange name, exchange type, durability, and routing/correlation formatters used
+when publishing. The `Exchange` defaults to the message CLR full type name when
+constructed via `MessageConfiguration<TMessage>`; the publisher and bus topology
+share that same source of truth, so they never get out of sync.
+
+```csharp
+messaging.ConfigureMessage<OrderCreatedEvent>(m =>
+{
+    m.Exchange = "orders.events";            // override default of typeof().FullName
+    m.ExchangeType = MessagingExchangeType.Topic;
+    m.Durable = true;
+    m.UseRoutingKey(e => $"order.{e.Region}");
+});
+```
+
+`MessageConfiguration` instances can also come from configuration — see below.
+
+## Configuration-driven Setup
+
+Queue and message settings can be defined entirely in `appsettings.json`. The
+`AddMessaging` call loads every section under `Messaging:Queues:*` and
+`Messaging:Messages:*` into the runtime before running the configurator action.
+Subsequent `ConfigureQueue` / `ConfigureMessage<T>` calls mutate the loaded
+instances, with code taking precedence on conflict.
 
 ```json
 {
   "Messaging": {
+    "Options": {
+      "DefaultTimeout": "00:00:30",
+      "FaultExchangeName": "Fault.Exchange"
+    },
     "Queues": {
       "order-events": {
         "PrefetchCount": 64,
         "ChannelCount": 2,
-        "ConcurrencyLimit": 4
+        "ConcurrencyLimit": 4,
+        "IsQuorum": true,
+        "DefaultRetryPolicy": {
+          "MaxRetryCount": 3,
+          "JitterFactor": 0.2,
+          "Intervals": [ "00:00:01", "00:00:05", "00:00:30" ]
+        }
+      }
+    },
+    "Messages": {
+      "Acme.Orders.OrderCreatedEvent": {
+        "Exchange": "orders.events",
+        "ExchangeType": "Topic",
+        "Durable": true
       }
     }
   }
 }
 ```
 
+### Config-only setup
+
+A service can declare its topology purely in `appsettings.json` and skip the code
+side entirely — useful for publisher-only services or environments where queue
+shape is owned by ops:
+
 ```csharp
-queue.ConfigureQueue(q =>
+builder.AddMessaging(m => m.UseRabbitMq());
+```
+
+### Code-only override
+
+Code values always win over configuration values:
+
+```csharp
+builder.AddMessaging(m =>
 {
-    q.PrefetchCount = 32;
-    q.ExchangeType = MessagingExchangeType.Topic;
+    m.UseRabbitMq();
+    m.ConfigureQueue("order-events", q =>
+    {
+        q.ConfigureQueue(d => d.PrefetchCount = 128);  // overrides appsettings value
+        q.AddConsumer<OrderCreatedConsumer>();
+    });
 });
 ```
 
+### Merged
+
+The common case — topology from config, consumer wiring from code:
+
+```json
+{ "Messaging": { "Queues": { "order-events": { "PrefetchCount": 64 } } } }
+```
+
+```csharp
+m.ConfigureQueue("order-events", q => q.AddConsumer<OrderCreatedConsumer>());
+// PrefetchCount=64 (from config) + OrderCreatedConsumer registration (from code)
+```
+
+## Observability
+
+The RabbitMQ transport emits an `ActivitySource` named `"Vulthil.Messaging.RabbitMq"`
+with `Producer`/`Consumer` spans for publish, request, and receive operations. Tag
+conventions follow the OpenTelemetry messaging semantic conventions, with a few
+Vulthil-specific tags (`vulthil.messaging.message_type`, `.consumer_type`,
+`.retry_count`, `.queue`).
+
+`UseRabbitMq` registers the source with the application's `TracerProvider`
+automatically, gated on the Aspire client's `DisableTracing` setting — so disabling
+RabbitMQ tracing in Aspire suppresses the Vulthil spans too. If you bring your own
+`TracerProvider` configuration, you can register the source manually:
+
+```csharp
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing => tracing.AddVulthilMessagingInstrumentation());
+```
+
+W3C trace context (`traceparent` / `tracestate`) propagation is handled by
+`RabbitMQ.Client` itself, so producer-side activities link to consumer-side
+activities on the receiving service without any extra setup.
+
+## Health Checks
+
+`UseRabbitMq` also registers a startup health check named
+`"vulthil_messaging_rabbitmq_bus"` (tagged `ready`, `messaging`, `rabbitmq`). It
+reports:
+
+- `Unhealthy("starting")` until `RabbitMqBus.StartAsync` completes (topology
+  declaration + consumer registration finished).
+- `Healthy("started")` after a successful startup.
+- `Unhealthy(...)` with the original exception if startup fails.
+
+Registration is gated on the Aspire client's `DisableHealthChecks` setting; set
+that to `true` to suppress the health check alongside Aspire's connection-level
+health check.
+
+## Request/Reply
+
+`IRequester` is registered automatically by `UseRabbitMq` and returns a typed
+`Result<TResponse>`:
+
+```csharp
+public sealed class OrderLookupService(IRequester requester)
+{
+    public Task<Result<OrderDto>> GetAsync(Guid orderId, CancellationToken ct)
+        => requester.RequestAsync<GetOrderRequest, OrderDto>(
+            new GetOrderRequest(orderId), cancellationToken: ct);
+}
+```
+
+The reply queue is created lazily on the first request, so producer-only services
+that never call `RequestAsync` do not declare any reply infrastructure.
+
 ## Testing Messaging
 
-`Vulthil.Messaging.TestHarness` provides an in-memory transport that captures published messages for assertion:
+`Vulthil.Messaging.TestHarness` provides an in-memory transport that captures
+published messages for assertion:
 
 ```csharp
 var published = testHarness.Published<OrderCreatedEvent>();

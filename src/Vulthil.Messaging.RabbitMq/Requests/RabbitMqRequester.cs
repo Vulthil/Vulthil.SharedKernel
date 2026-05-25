@@ -33,6 +33,12 @@ internal sealed class RabbitMqRequester : IRequester
     private JsonSerializerOptions JsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
     private TimeSpan DefaultTimeout => _messageConfigurationProvider.DefaultTimeout;
 
+    public Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
+       TRequest message,
+       CancellationToken cancellationToken)
+       where TRequest : notnull
+       where TResponse : notnull => RequestAsync<TRequest, TResponse>(message, null, cancellationToken);
+
     public async Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
         TRequest message,
         Func<IPublishContext, Task>? configureContext = null,

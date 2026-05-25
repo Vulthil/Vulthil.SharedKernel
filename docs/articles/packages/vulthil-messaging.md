@@ -56,3 +56,11 @@ queue.AddConsumer<OrderCreatedConsumer>(c =>
     c.Bind<OrderCreatedEvent>("order.eu");
 });
 ```
+
+### Configuration-driven setup
+
+Queue and message settings under `Messaging:Queues:*` and `Messaging:Messages:*`
+are loaded from `IConfiguration` before the configurator action runs, so a service
+can be configured entirely via `appsettings.json`. Code calls merge on top of the
+loaded values, with code winning on conflict. See
+[Messaging — Configuration-driven Setup](../messaging.md#configuration-driven-setup).

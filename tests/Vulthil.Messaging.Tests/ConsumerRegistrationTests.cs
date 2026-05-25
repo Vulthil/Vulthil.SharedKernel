@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
@@ -13,6 +14,12 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
     private static HostApplicationBuilder CreateHostBuilder()
     {
         return Host.CreateApplicationBuilder();
+    }
+
+    private static IReadOnlyCollection<QueueDefinition> GetQueueDefinitions(HostApplicationBuilder builder)
+    {
+        using var sp = builder.Services.BuildServiceProvider();
+        return [.. sp.GetRequiredService<IMessageConfigurationProvider>().QueueDefinitions];
     }
 
     /// <summary>
@@ -85,9 +92,8 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         });
 
         // Assert
-        var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
-        var queue = queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
-        queue.ShouldNotBeNull();
+        var queues = GetQueueDefinitions(builder);
+        var queue = queues.First();
         queue.Name.ShouldBe(queueName);
         queue.Registrations.ShouldNotBeEmpty();
         queue.Registrations.First().ConsumerType.Type.ShouldBe(typeof(TestMessageConsumer));
@@ -118,9 +124,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         });
 
         // Assert
-        var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
-        var queue = queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
-        queue.ShouldNotBeNull();
+        var queue = GetQueueDefinitions(builder).First();
         queue.Registrations.First().RoutingKey.ShouldBe(customRoutingKey);
     }
 
@@ -144,9 +148,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         });
 
         // Assert
-        var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
-        var queue = queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
-        queue.ShouldNotBeNull();
+        var queue = GetQueueDefinitions(builder).First();
         queue.Registrations.First().RoutingKey.ShouldBe("#");
     }
 
@@ -171,9 +173,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         });
 
         // Assert
-        var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
-        var queue = queueServices[0].ImplementationInstance.ShouldBeOfType<QueueDefinition>();
-        queue.ShouldNotBeNull();
+        var queue = GetQueueDefinitions(builder).First();
         queue.Registrations.Count.ShouldBe(2);
         var types = queue.Registrations.Select(r => r.ConsumerType.Type).ToList();
         types.Contains(typeof(TestMessageConsumer)).ShouldBeTrue();
@@ -209,15 +209,13 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         });
 
         // Assert
-        var queueServices = builder.Services.Where(sd => sd.ServiceType == typeof(QueueDefinition)).ToList();
-        queueServices.Count.ShouldBe(2);
+        var queues = GetQueueDefinitions(builder);
+        queues.Count.ShouldBe(2);
 
-        var queue1 = queueServices.FirstOrDefault(q => q.ImplementationInstance is QueueDefinition { Name: "Queue1" })?.ImplementationInstance.ShouldBeOfType<QueueDefinition>();
-        queue1.ShouldNotBeNull();
+        var queue1 = queues.First(q => q.Name == "Queue1");
         queue1.Registrations.First().RoutingKey.ShouldBe("route1");
 
-        var queue2 = queueServices.FirstOrDefault(q => q.ImplementationInstance is QueueDefinition { Name: "Queue2" })?.ImplementationInstance.ShouldBeOfType<QueueDefinition>();
-        queue2.ShouldNotBeNull();
+        var queue2 = queues.First(q => q.Name == "Queue2");
         queue2.Registrations.First().RoutingKey.ShouldBe("route2");
     }
 

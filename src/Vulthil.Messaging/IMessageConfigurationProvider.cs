@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Vulthil.Messaging.Queues;
 
 namespace Vulthil.Messaging;
 
@@ -35,4 +36,10 @@ public interface IMessageConfigurationProvider
     /// Gets the name of the exchange used for fault messages.
     /// </summary>
     string FaultExchangeName { get; }
+
+    /// <summary>
+    /// Gets the queue definitions that were assembled from configuration and code at <c>AddMessaging</c> time.
+    /// Returned as a snapshot; subsequent mutations to the underlying store are not reflected.
+    /// </summary>
+    IReadOnlyCollection<QueueDefinition> QueueDefinitions { get; }
 }

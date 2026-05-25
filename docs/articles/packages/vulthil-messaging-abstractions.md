@@ -58,3 +58,14 @@ await publisher.PublishAsync(new OrderCreatedEvent(orderId), cancellationToken: 
 Result<OrderDto> result = await requester.RequestAsync<GetOrderRequest, OrderDto>(
     new GetOrderRequest(orderId), cancellationToken: ct);
 ```
+
+### Publishing from a consumer
+
+`IMessageContext` exposes `PublishAsync` with automatic correlation propagation
+(`CorrelationId`, `ConversationId`, `InitiatorId` flow from the incoming context):
+
+```csharp
+await ctx.PublishAsync(new InventoryReserveRequested(ctx.Message.OrderId));
+```
+
+See [Messaging](../messaging.md#publishing-from-inside-a-consumer) for details.

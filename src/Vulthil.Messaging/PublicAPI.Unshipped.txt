@@ -149,4 +149,5 @@ Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.get -> int
 Vulthil.Messaging.IMessageConfigurationProvider
 Vulthil.Messaging.IMessageConfigurationProvider.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
 Vulthil.Messaging.IMessageConfigurationProvider.DefaultTimeout.get -> System.TimeSpan
+Vulthil.Messaging.IMessageConfigurationProvider.QueueDefinitions.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.QueueDefinition!>!
 Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.set -> void

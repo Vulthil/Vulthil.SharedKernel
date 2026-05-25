@@ -61,6 +61,11 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         }
     }
 
+    public Task PublishAsync<TMessage>(
+       TMessage message,
+       CancellationToken cancellationToken)
+       where TMessage : notnull => PublishAsync(message, null, cancellationToken);
+
     public async Task PublishAsync<TMessage>(
         TMessage message,
         Func<IPublishContext, ValueTask>? configureContext = null,

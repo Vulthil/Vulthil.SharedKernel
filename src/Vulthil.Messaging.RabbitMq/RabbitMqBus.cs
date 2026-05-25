@@ -12,7 +12,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IConnection _connection;
-    private readonly IEnumerable<QueueDefinition> _queueDefinitions;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly RabbitMqBusStartupStatus _startupStatus;
     private readonly ILogger<RabbitMqBus> _logger;
@@ -23,7 +22,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     public RabbitMqBus(
         IServiceScopeFactory serviceScopeFactory,
         IConnection connection,
-        IEnumerable<QueueDefinition> queueDefinitions,
         IMessageConfigurationProvider messageConfigurationProvider,
         RabbitMqBusStartupStatus startupStatus,
         ILogger<RabbitMqBus> logger,
@@ -31,7 +29,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     {
         _serviceScopeFactory = serviceScopeFactory;
         _connection = connection;
-        _queueDefinitions = queueDefinitions;
         _messageConfigurationProvider = messageConfigurationProvider;
         _startupStatus = startupStatus;
         _logger = logger;
@@ -42,7 +39,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     {
         try
         {
-            var queues = _queueDefinitions.ToList();
+            var queues = _messageConfigurationProvider.QueueDefinitions;
             MessagingLog.BusStarting(_logger, queues.Count);
 
             await SetupTopology(queues, cancellationToken);

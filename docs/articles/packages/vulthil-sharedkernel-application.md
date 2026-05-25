@@ -85,3 +85,17 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
 ```csharp
 var result = await sender.SendAsync(new CreateUserCommand("user@example.com"), cancellationToken);
 ```
+
+### Direct handler injection
+
+`ICommandHandler<TCommand, TResponse>`, `ICommandHandler<TCommand>`, `IQueryHandler<TQuery, TResponse>` and `IHandler<TRequest, TResponse>` can also be injected directly. The resolved instance shares the same pipeline as `ISender`, so any registered behavior (validation, logging, transactions, custom) still applies.
+
+```csharp
+public sealed class CreateUserEndpoint(ICommandHandler<CreateUserCommand, Result<Guid>> handler)
+{
+    public Task<Result<Guid>> ExecuteAsync(CreateUserCommand command, CancellationToken ct)
+        => handler.HandleAsync(command, ct);
+}
+```
+
+Custom behaviors registered from any assembly with `services.AddOpenPipelineHandler(typeof(MyBehavior<,>))` apply to every handler resolved afterwards — order of registration relative to `AddApplication` does not matter.

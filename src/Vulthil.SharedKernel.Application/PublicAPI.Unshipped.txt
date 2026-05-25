@@ -8,11 +8,15 @@ static Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(
 static Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Application.HandlerOptions!>! handlerOptionsAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Vulthil.SharedKernel.Application.HandlerOptions! handlerOptions) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddOpenPipelineHandler(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Type! pipelineHandler) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Application.DependencyInjection.AddOpenDomainEventPipelineHandler(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Type! pipelineHandler) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Vulthil.SharedKernel.Application.FluentValidationExtensions.WithError<T, TProperty>(this FluentValidation.IRuleBuilderOptions<T, TProperty>! rule, Vulthil.Results.Error! error) -> FluentValidation.IRuleBuilderOptions<T, TProperty>!
 Vulthil.SharedKernel.Application.ApplicationOptions
 Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
 Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
 Vulthil.SharedKernel.Application.ApplicationOptions.AddTransactionalPipelineBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenDomainEventPipelineHandler(System.Type! pipelineHandler) -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenPipelineHandler(System.Type! pipelineHandler) -> Vulthil.SharedKernel.Application.ApplicationOptions!
 Vulthil.SharedKernel.Application.ApplicationOptions.AddValidationPipelineBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
 Vulthil.SharedKernel.Application.ApplicationOptions.ApplicationOptions() -> void
 Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies.get -> System.Collections.Generic.IReadOnlyList<System.Reflection.Assembly!>!

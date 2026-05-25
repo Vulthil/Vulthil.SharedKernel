@@ -23,7 +23,7 @@ public static class GetAll
         /// </summary>
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapGet("mainentity", async (ISender sender) =>
+            app.MapGet("main-entities", async (ISender sender) =>
             {
                 var query = new GetMainEntities();
                 var result = await sender.SendAsync(query);

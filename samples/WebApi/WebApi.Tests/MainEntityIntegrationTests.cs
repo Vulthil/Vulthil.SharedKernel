@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -9,19 +10,28 @@ using WebApi.Application.MainEntities.GetById;
 using WebApi.Application.MainEntities.Update;
 using WebApi.Domain.MainEntities.Events;
 using WebApi.Infrastructure.Data;
+using WebApi.MainEntity;
 using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
-/// <summary>
-/// Represents the MainEntityIntegrationTests.
-/// </summary>
 public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase(testFixture, testOutputHelper)
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
+    [Fact]
+    public async Task Test_Create_Endpoint()
+    {
+        // Arrange
+        var client = Client;
+        var response = await client.PostAsJsonAsync("api/main-entities", new Create.Request("Test Name"), CancellationToken);
+
+        // Act
+        var result = await response.GetResponseAsync<Create.Response>(CancellationToken);
+
+        // Assert
+        result.Id.ShouldNotBe(Guid.Empty);
+    }
+
     [Fact]
     public async Task Test_Create()
     {
@@ -35,9 +45,6 @@ public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITest
         result.IsSuccess.ShouldBeTrue();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task Test_Get()
     {
@@ -55,9 +62,6 @@ public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITest
         queryResult.Value.Name.ShouldBe(command.Name);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task Test_Update()
     {

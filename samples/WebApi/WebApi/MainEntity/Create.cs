@@ -32,10 +32,10 @@ public static class Create
         /// </summary>
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("mainentity", async Task<Results<CreatedAtRoute<Response>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>> (ISender sender, Request request) =>
+            app.MapPost("main-entities", async Task<Results<CreatedAtRoute<Response>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>> (ICommandHandler<CreateMainEntityCommand, Result<Guid>> handler, Request request) =>
             {
                 var command = new CreateMainEntityCommand(request.Name);
-                var result = await sender.SendAsync(command);
+                var result = await handler.HandleAsync(command);
                 return result
                     .Map(id => new Response(id))
                     .ToCreatedAtRouteHttpResult("GetMainEntity", r => r);

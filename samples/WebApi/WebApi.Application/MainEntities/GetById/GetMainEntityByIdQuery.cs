@@ -56,7 +56,7 @@ public sealed class GetMainEntityQueryHandler(ILogger<GetMainEntityQueryHandler>
         _logger.LogInformation("Querying MainEntity With Id: {Id}", query.Id);
 
         var id = new MainEntityId(query.Id);
-        return await _dbContext.MainEntities.FirstOrDefaultAsync(w => w.Id == id)
+        return await _dbContext.MainEntities.FirstOrDefaultAsync(w => w.Id == id, cancellationToken)
             .ToResultAsync(MainEntityErrors.NotFound(query.Id))
             .BindAsync(m => _requester.RequestAsync<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>(new GetSideEffectsBelongingToMainEntity(id.Value), cancellationToken: cancellationToken)
                 .MapAsync(sideEffects => (m, sideEffects)))

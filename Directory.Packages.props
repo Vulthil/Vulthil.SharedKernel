@@ -52,7 +52,6 @@
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Scalar.Aspire" Version="0.9.37" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.11.6" />
-    <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.26.0.140279" />
     <PackageVersion Include="Testcontainers" Version="4.12.0" />

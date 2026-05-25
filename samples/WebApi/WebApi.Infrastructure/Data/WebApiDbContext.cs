@@ -18,17 +18,8 @@ namespace WebApi.Infrastructure.Data;
 /// <param name="options"></param>
 public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<MainEntity> MainEntities => Set<MainEntity>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
 }
 
@@ -36,24 +27,12 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
 /// Functionally equivalent with <see cref="WebApiDbContext"/>, without inheriting from <see cref="BaseDbContext"/>.
 /// </summary>
 /// <param name="options"></param>
-public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), IUnitOfWork, ISaveOutboxMessages, IWebApiDbContext
+public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), ISaveOutboxMessages, IWebApiDbContext
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<MainEntity> MainEntities => Set<MainEntity>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -61,17 +40,11 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WebApiDbContextNoBase).Assembly);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
 }
 
 internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
         builder.HasKey(o => o.Id);
@@ -84,14 +57,8 @@ internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguratio
     }
 }
 
-/// <summary>
-/// Represents the WebApiDbContextFactory.
-/// </summary>
 public class WebApiDbContextFactory : IDesignTimeDbContextFactory<WebApiDbContext>
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public WebApiDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<WebApiDbContext>();

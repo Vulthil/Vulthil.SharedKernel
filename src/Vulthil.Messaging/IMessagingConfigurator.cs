@@ -35,4 +35,22 @@ public interface IMessagingConfigurator
     /// <param name="action">An action to configure the messaging options.</param>
     /// <returns>The current configurator instance for chaining.</returns>
     IMessagingConfigurator ConfigureMessagingOptions(Action<MessagingOptions> action);
+
+    /// <summary>
+    /// Registers a closed-generic consume filter. The filter is applied to every delivery whose
+    /// message type matches the filter's <c>IConsumeFilter&lt;TMessage&gt;</c> interface.
+    /// Multiple filters for the same message type are composed in registration order
+    /// (first registered is outermost).
+    /// </summary>
+    /// <typeparam name="TFilter">The filter implementation. Must implement at least one <c>IConsumeFilter&lt;TMessage&gt;</c>.</typeparam>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator AddConsumeFilter<TFilter>() where TFilter : class;
+
+    /// <summary>
+    /// Registers an open-generic consume filter that applies to every message type. Use this for
+    /// cross-cutting filters that do not depend on the typed payload (logging, telemetry, etc.).
+    /// </summary>
+    /// <param name="openFilterType">An open generic type (e.g. <c>typeof(LoggingFilter&lt;&gt;)</c>) implementing <c>IConsumeFilter&lt;&gt;</c>.</param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator AddOpenConsumeFilter(Type openFilterType);
 }

@@ -12,6 +12,9 @@ Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.OriginalContext.get -> 
 Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.OriginalContext.init -> void
 Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.StackTrace.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.StackTrace.init -> void
+Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate<TMessage>
+Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter<TMessage>
+Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter<TMessage>.ConsumeAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>! context, Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate<TMessage>! next) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Abstractions.Consumers.IConsumer
 Vulthil.Messaging.Abstractions.Consumers.IConsumer<TMessage>
 Vulthil.Messaging.Abstractions.Consumers.IConsumer<TMessage>.ConsumeAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>! messageContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!

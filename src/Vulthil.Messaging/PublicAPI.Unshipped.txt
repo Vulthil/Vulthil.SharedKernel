@@ -8,6 +8,8 @@ Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage
 Vulthil.Messaging.IMessagingConfigurator
 Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage<TMessage>(System.Action<Vulthil.Messaging.MessageConfiguration<TMessage!>!>! configureMessageAction) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action<Vulthil.Messaging.MessagingOptions!>! action) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.AddConsumeFilter<TFilter>() -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.AddOpenConsumeFilter(System.Type! openFilterType) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureQueue(string! queueName, System.Action<Vulthil.Messaging.Queues.IQueueConfigurator!>! queueConfigurationAction) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.HostApplicationBuilder.get -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
 Vulthil.Messaging.ITransport

@@ -122,6 +122,88 @@ public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
 `IMessageContext.CancellationToken` exposes the delivery's cancellation token for
 handlers that want to observe it alongside the explicit method parameter.
 
+## Consume Filters
+
+Consume filters wrap the consumer invocation, allowing cross-cutting concerns
+(logging, validation, scoped resource management, telemetry, etc.) to be composed
+without modifying transport or consumer code. They mirror the ASP.NET Core
+middleware shape:
+
+```csharp
+public sealed class LoggingConsumeFilter<TMessage> : IConsumeFilter<TMessage>
+    where TMessage : notnull
+{
+    private readonly ILogger<LoggingConsumeFilter<TMessage>> _logger;
+
+    public LoggingConsumeFilter(ILogger<LoggingConsumeFilter<TMessage>> logger)
+        => _logger = logger;
+
+    public async Task ConsumeAsync(IMessageContext<TMessage> context, ConsumeDelegate<TMessage> next)
+    {
+        _logger.LogInformation("Consuming {Type} (correlation={CorrelationId})",
+            typeof(TMessage).Name, context.CorrelationId);
+        try
+        {
+            await next(context);
+            _logger.LogInformation("Consumed {Type}", typeof(TMessage).Name);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Consume of {Type} failed", typeof(TMessage).Name);
+            throw;
+        }
+    }
+}
+```
+
+### Registering filters
+
+```csharp
+builder.AddMessaging(messaging =>
+{
+    messaging.UseRabbitMq();
+
+    // Open-generic — applies to every message type
+    messaging.AddOpenConsumeFilter(typeof(LoggingConsumeFilter<>));
+
+    // Closed-generic — applies only to OrderCreatedEvent
+    messaging.AddConsumeFilter<OrderValidationFilter>();
+
+    messaging.ConfigureQueue("order-events", queue =>
+    {
+        queue.AddConsumer<OrderCreatedConsumer>();
+    });
+});
+```
+
+Filters are resolved per delivery from the same scope as the consumer, so they
+may depend on scoped services (e.g. <c>DbContext</c>, scoped <c>ILogger&lt;T&gt;</c>).
+Multiple filters compose in registration order — the first registered is the
+outermost.
+
+### Short-circuiting
+
+A filter may skip calling `next` to reject a message:
+
+```csharp
+public sealed class TenantGate<TMessage> : IConsumeFilter<TMessage>
+    where TMessage : notnull
+{
+    public Task ConsumeAsync(IMessageContext<TMessage> context, ConsumeDelegate<TMessage> next)
+    {
+        if (context.Headers.TryGetValue("Tenant", out var t) && t is "blocked")
+        {
+            // Don't invoke next — consumer is skipped, delivery is acked normally.
+            return Task.CompletedTask;
+        }
+        return next(context);
+    }
+}
+```
+
+For request/reply consumers, short-circuiting causes the requester to receive a
+`Result<TResponse>` failure (with an explanatory error) instead of timing out.
+
 ## Routing Keys
 
 Routing keys control which consumers receive a message on topic exchanges.

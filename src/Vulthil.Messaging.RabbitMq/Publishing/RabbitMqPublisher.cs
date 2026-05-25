@@ -43,6 +43,28 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         await EnsureChannelAsync(cancellationToken);
         await EnsureExchangeTopologyAsync(exchange, messageConfiguration, cancellationToken);
 
+        await BasicPublishAsync(exchange, routingKey, props, body, cancellationToken);
+    }
+
+    public async Task InternalSendAsync(
+        byte[] body,
+        BasicProperties props,
+        string queueName,
+        CancellationToken cancellationToken)
+    {
+        // Sends route via the broker's default exchange (always exists, always routes by queue name).
+        // The destination queue is owned by the receiving service, so we do not declare it here.
+        await EnsureChannelAsync(cancellationToken);
+        await BasicPublishAsync(exchange: string.Empty, routingKey: queueName, props, body, cancellationToken);
+    }
+
+    private async Task BasicPublishAsync(
+        string exchange,
+        string routingKey,
+        BasicProperties props,
+        byte[] body,
+        CancellationToken cancellationToken)
+    {
         await _channelSemaphore.WaitAsync(cancellationToken);
 
         try

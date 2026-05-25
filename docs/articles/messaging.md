@@ -122,6 +122,55 @@ public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
 `IMessageContext.CancellationToken` exposes the delivery's cancellation token for
 handlers that want to observe it alongside the explicit method parameter.
 
+## Point-to-point Send
+
+`IPublisher.PublishAsync` fans a message out via its per-type exchange to any number of
+interested consumers. When you need to address a single, named destination — typically
+a specific queue on a specific service — use `ISendEndpoint` instead. Sends route
+through the broker's default exchange using the destination queue name as the routing
+key; topology for that queue is owned by the receiving service and is not declared by
+the sender.
+
+Inject `ISendEndpointProvider` and resolve an endpoint by `Uri`:
+
+```csharp
+public sealed class OrderRouter(ISendEndpointProvider sendEndpoints)
+{
+    public async Task RouteAsync(PlaceOrderCommand command, CancellationToken ct)
+    {
+        var endpoint = await sendEndpoints.GetSendEndpointAsync(new Uri("queue:order-commands"), ct);
+        await endpoint.SendAsync(command, ct);
+    }
+}
+```
+
+The default address scheme is `queue:<name>`. Absolute `amqp://`, `amqps://`, and
+`rabbitmq://` URIs are also recognized — the queue name is taken from the path. Endpoints
+are cached per `Uri` by the provider for the lifetime of the bus.
+
+`MessageConfiguration<T>.CorrelationIdFormatter` still applies on the send path; the
+`Exchange` and `RoutingKeyFormatter` settings are intentionally ignored because the
+URI is authoritative for the destination.
+
+### Sending from inside a consumer
+
+`IMessageContext` exposes `SendAsync` directly, with the same auto-propagation of
+`CorrelationId`/`ConversationId`/`InitiatorId` as `PublishAsync`:
+
+```csharp
+public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
+{
+    public async Task ConsumeAsync(
+        IMessageContext<OrderCreatedEvent> ctx,
+        CancellationToken cancellationToken = default)
+    {
+        await ctx.SendAsync(
+            new Uri("queue:fulfillment-commands"),
+            new FulfillOrderCommand(ctx.Message.OrderId));
+    }
+}
+```
+
 ## Consume Filters
 
 Consume filters wrap the consumer invocation, allowing cross-cutting concerns

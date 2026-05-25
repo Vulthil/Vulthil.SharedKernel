@@ -1,6 +1,7 @@
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.RabbitMq.Sending;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
@@ -8,6 +9,9 @@ internal record MessageContext : IMessageContext
 {
     /// <summary>The publisher backing <see cref="PublishAsync"/>. Defaults to <see cref="NullPublisher.Instance"/> for snapshots.</summary>
     public required IPublisher Publisher { get; init; }
+
+    /// <summary>The send endpoint provider backing <see cref="SendAsync"/>. Defaults to <see cref="NullSendEndpointProvider.Instance"/> for snapshots.</summary>
+    public required ISendEndpointProvider SendEndpointProvider { get; init; }
 
     /// <inheritdoc />
     public CancellationToken CancellationToken { get; init; }
@@ -48,60 +52,87 @@ internal record MessageContext : IMessageContext
         where TMessage : notnull
         => Publisher.PublishAsync(
             message,
-            async ctx =>
-            {
-                // 1. Auto-propagate correlation metadata from the incoming context first.
-                if (!string.IsNullOrEmpty(CorrelationId))
-                {
-                    ctx.SetCorrelationId(CorrelationId);
-                }
-                ctx.ConversationId = ConversationId ?? (string.IsNullOrEmpty(CorrelationId) ? null : CorrelationId);
-                ctx.InitiatorId = MessageId;
-
-                // 2. Caller's configure callback runs last so it can override any auto-set value.
-                if (configure is not null)
-                {
-                    await configure(ctx);
-                }
-            },
+            ctx => PropagateAndConfigureAsync(ctx, configure),
             CancellationToken);
 
+    /// <inheritdoc />
+    public async Task SendAsync<TMessage>(
+        Uri destinationAddress,
+        TMessage message,
+        Func<IPublishContext, ValueTask>? configure = null)
+        where TMessage : notnull
+    {
+        ArgumentNullException.ThrowIfNull(destinationAddress);
+        var endpoint = await SendEndpointProvider.GetSendEndpointAsync(destinationAddress, CancellationToken);
+        await endpoint.SendAsync(
+            message,
+            ctx => PropagateAndConfigureAsync(ctx, configure),
+            CancellationToken);
+    }
+
+    private async ValueTask PropagateAndConfigureAsync(IPublishContext ctx, Func<IPublishContext, ValueTask>? configure)
+    {
+        // 1. Auto-propagate correlation metadata from the incoming context first.
+        if (!string.IsNullOrEmpty(CorrelationId))
+        {
+            ctx.SetCorrelationId(CorrelationId);
+        }
+        ctx.ConversationId = ConversationId ?? (string.IsNullOrEmpty(CorrelationId) ? null : CorrelationId);
+        ctx.InitiatorId = MessageId;
+
+        // 2. Caller's configure callback runs last so it can override any auto-set value.
+        if (configure is not null)
+        {
+            await configure(ctx);
+        }
+    }
+
     /// <summary>
-    /// Creates a snapshot <see cref="MessageContext"/> with no live publisher binding.
+    /// Creates a snapshot <see cref="MessageContext"/> with no live transport binding.
     /// Used by fault publishing to capture the original context for serialization.
     /// </summary>
     public static MessageContext CreateContext(BasicDeliverEventArgs ea) =>
-        BuildMetadata(ea, NullPublisher.Instance, cancellationToken: default);
+        BuildMetadata(ea, NullPublisher.Instance, NullSendEndpointProvider.Instance, cancellationToken: default);
 
     /// <summary>
-    /// Creates a live <see cref="MessageContext"/> bound to the specified publisher and cancellation token.
+    /// Creates a live <see cref="MessageContext"/> bound to the specified transport services and cancellation token.
     /// </summary>
-    public static MessageContext CreateContext(BasicDeliverEventArgs ea, IPublisher publisher, CancellationToken cancellationToken) =>
-        BuildMetadata(ea, publisher, cancellationToken);
+    public static MessageContext CreateContext(
+        BasicDeliverEventArgs ea,
+        IPublisher publisher,
+        ISendEndpointProvider sendEndpointProvider,
+        CancellationToken cancellationToken) =>
+        BuildMetadata(ea, publisher, sendEndpointProvider, cancellationToken);
 
     /// <summary>
-    /// Creates a snapshot typed <see cref="MessageContext{TMessage}"/> with no live publisher binding.
+    /// Creates a snapshot typed <see cref="MessageContext{TMessage}"/> with no live transport binding.
     /// </summary>
     public static MessageContext<TMessage> CreateContext<TMessage>(TMessage message, BasicDeliverEventArgs ea) =>
-        BuildTypedMetadata(message, ea, NullPublisher.Instance, cancellationToken: default);
+        BuildTypedMetadata(message, ea, NullPublisher.Instance, NullSendEndpointProvider.Instance, cancellationToken: default);
 
     /// <summary>
-    /// Creates a live typed <see cref="MessageContext{TMessage}"/> bound to the specified publisher and cancellation token.
+    /// Creates a live typed <see cref="MessageContext{TMessage}"/> bound to the specified transport services and cancellation token.
     /// </summary>
     public static MessageContext<TMessage> CreateContext<TMessage>(
         TMessage message,
         BasicDeliverEventArgs ea,
         IPublisher publisher,
+        ISendEndpointProvider sendEndpointProvider,
         CancellationToken cancellationToken) =>
-        BuildTypedMetadata(message, ea, publisher, cancellationToken);
+        BuildTypedMetadata(message, ea, publisher, sendEndpointProvider, cancellationToken);
 
-    private static MessageContext BuildMetadata(BasicDeliverEventArgs ea, IPublisher publisher, CancellationToken cancellationToken)
+    private static MessageContext BuildMetadata(
+        BasicDeliverEventArgs ea,
+        IPublisher publisher,
+        ISendEndpointProvider sendEndpointProvider,
+        CancellationToken cancellationToken)
     {
         var props = ea.BasicProperties;
         var headers = props.Headers ?? new Dictionary<string, object?>();
         return new MessageContext
         {
             Publisher = publisher,
+            SendEndpointProvider = sendEndpointProvider,
             CancellationToken = cancellationToken,
             MessageId = props.MessageId,
             CorrelationId = props.CorrelationId ?? string.Empty,
@@ -126,6 +157,7 @@ internal record MessageContext : IMessageContext
         TMessage message,
         BasicDeliverEventArgs ea,
         IPublisher publisher,
+        ISendEndpointProvider sendEndpointProvider,
         CancellationToken cancellationToken)
     {
         var props = ea.BasicProperties;
@@ -134,6 +166,7 @@ internal record MessageContext : IMessageContext
         {
             Message = message,
             Publisher = publisher,
+            SendEndpointProvider = sendEndpointProvider,
             CancellationToken = cancellationToken,
             MessageId = props.MessageId,
             CorrelationId = props.CorrelationId ?? string.Empty,

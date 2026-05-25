@@ -94,6 +94,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var services = new ServiceCollection();
         services.AddScoped(_ => consumerInstance);
         services.AddSingleton(Mock.Of<IPublisher>());
+        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
         var serviceProvider = services.BuildServiceProvider();
 
         var queue = new QueueDefinition("TestQueue");
@@ -123,6 +124,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var services = new ServiceCollection();
         services.AddScoped(_ => consumerInstance);
         services.AddSingleton(Mock.Of<IPublisher>());
+        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
         // Order matters: First registered should be outermost.
         services.AddScoped<IConsumeFilter<TestMessage>>(_ => new RecordingFilter<TestMessage>(trace, "outer"));
         services.AddScoped<IConsumeFilter<TestMessage>>(_ => new RecordingFilter<TestMessage>(trace, "inner"));
@@ -156,6 +158,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var services = new ServiceCollection();
         services.AddScoped(_ => consumerInstance);
         services.AddSingleton(Mock.Of<IPublisher>());
+        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
         services.AddScoped<IConsumeFilter<TestMessage>>(_ =>
             new RecordingFilter<TestMessage>(trace, "gate") { ShortCircuit = true });
         var serviceProvider = services.BuildServiceProvider();
@@ -188,6 +191,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var services = new ServiceCollection();
         services.AddScoped(_ => consumerInstance);
         services.AddSingleton(Mock.Of<IPublisher>());
+        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
         services.AddSingleton<IMessageConfigurationProvider>(new MessagingOptions());
         services.AddScoped<IConsumeFilter<TestRequest>>(_ => new RecordingFilter<TestRequest>(trace, "log"));
         var serviceProvider = services.BuildServiceProvider();
@@ -246,6 +250,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var services = new ServiceCollection();
         services.AddScoped(_ => consumerInstance);
         services.AddSingleton(Mock.Of<IPublisher>());
+        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
         services.AddSingleton<IMessageConfigurationProvider>(new MessagingOptions());
         services.AddScoped<IConsumeFilter<TestRequest>>(_ =>
             new RecordingFilter<TestRequest>([], "gate") { ShortCircuit = true });

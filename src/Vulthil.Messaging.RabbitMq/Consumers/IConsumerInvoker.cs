@@ -73,7 +73,8 @@ internal sealed class ConsumerInvoker<TConsumer, TMessage>(string routingKey, Re
     {
         var consumer = sp.GetRequiredService<TConsumer>();
         var publisher = sp.GetRequiredService<IPublisher>();
-        var context = MessageContext.CreateContext((TMessage)message, ea, publisher, ct);
+        var sendEndpointProvider = sp.GetRequiredService<ISendEndpointProvider>();
+        var context = MessageContext.CreateContext((TMessage)message, ea, publisher, sendEndpointProvider, ct);
 
         var pipeline = ConsumePipelineFactory.Build<TMessage>(
             sp,
@@ -111,8 +112,9 @@ internal sealed class RpcInvoker<TConsumer, TRequest, TResponse>(string routingK
     {
         var consumer = sp.GetRequiredService<TConsumer>();
         var publisher = sp.GetRequiredService<IPublisher>();
+        var sendEndpointProvider = sp.GetRequiredService<ISendEndpointProvider>();
         var jsonOptions = sp.GetRequiredService<IMessageConfigurationProvider>().JsonSerializerOptions;
-        var context = MessageContext.CreateContext((TRequest)message, ea, publisher, ct);
+        var context = MessageContext.CreateContext((TRequest)message, ea, publisher, sendEndpointProvider, ct);
 
         MessageResult messageResult;
         try

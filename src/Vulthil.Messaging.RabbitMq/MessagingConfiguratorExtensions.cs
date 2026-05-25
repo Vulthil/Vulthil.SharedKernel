@@ -7,6 +7,7 @@ using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
+using Vulthil.Messaging.RabbitMq.Sending;
 using Vulthil.Messaging.RabbitMq.Telemetry;
 
 namespace Vulthil.Messaging.RabbitMq;
@@ -56,6 +57,8 @@ public static class MessagingConfiguratorExtensions
         services.AddSingleton<RabbitMqPublisher>();
         services.AddSingleton<IPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
         services.AddSingleton<IInternalPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
+
+        services.AddSingleton<ISendEndpointProvider, RabbitMqSendEndpointProvider>();
 
         // ResponseListener is lazily initialized on the first IRequester.RequestAsync call.
         // Services that never make request/reply calls do not pay the cost of declaring a reply queue.

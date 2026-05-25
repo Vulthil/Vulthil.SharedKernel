@@ -31,6 +31,8 @@ public sealed class LoggingConsumeFilterTests : BaseUnitTestCase
         public CancellationToken CancellationToken { get; init; }
         public Task PublishAsync<TMsg>(TMsg message, Func<IPublishContext, ValueTask>? configure = null) where TMsg : notnull
             => Task.CompletedTask;
+        public Task SendAsync<TMsg>(Uri destinationAddress, TMsg message, Func<IPublishContext, ValueTask>? configure = null) where TMsg : notnull
+            => Task.CompletedTask;
     }
 
     private sealed record LogRecord(LogLevel Level, EventId EventId, Exception? Exception, string Message);

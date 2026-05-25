@@ -29,6 +29,7 @@ Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Headers.get -> System.C
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.InitiatorId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.MessageId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configure = null) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SendAsync<TMessage>(System.Uri! destinationAddress, TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configure = null) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Redelivered.get -> bool
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RequestId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ResponseAddress.get -> System.Uri?
@@ -65,3 +66,9 @@ Vulthil.Messaging.Abstractions.Publishers.IPublisher.PublishAsync<TMessage>(TMes
 Vulthil.Messaging.Abstractions.Publishers.IRequester
 Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.Task!>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!
 Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!
+Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint
+Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.Address.get -> System.Uri!
+Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.SendAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.SendAsync<TMessage>(TMessage message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider
+Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.GetSendEndpointAsync(System.Uri! address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint!>

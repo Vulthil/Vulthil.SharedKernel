@@ -8,6 +8,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
 	</ItemGroup>
 
@@ -16,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Vulthil.Messaging.Tests" />
 		<InternalsVisibleTo Include="Vulthil.Messaging.RabbitMq.Tests" />
 	</ItemGroup>
 	

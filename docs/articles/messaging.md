@@ -204,6 +204,41 @@ public sealed class TenantGate<TMessage> : IConsumeFilter<TMessage>
 For request/reply consumers, short-circuiting causes the requester to receive a
 `Result<TResponse>` failure (with an explanatory error) instead of timing out.
 
+### Built-in filters
+
+`AddMessaging` registers a default open-generic `LoggingConsumeFilter<TMessage>` as
+the outermost filter in the pipeline. It emits structured Debug logs at consume
+entry/exit and a Warning log on uncaught exceptions, with timing information:
+
+```
+dbug: Consuming Acme.Orders.OrderCreatedEvent (messageId=..., correlationId=...)
+dbug: Consumed Acme.Orders.OrderCreatedEvent (messageId=...) in 12ms
+```
+
+User-registered filters compose INSIDE the defaults, so the logging filter wraps
+every other filter and the consumer itself.
+
+Toggle the built-in filter via `MessagingOptions.ConsumeFilters`:
+
+```json
+{
+  "Messaging": {
+    "Options": {
+      "ConsumeFilters": { "EnableLogging": false }
+    }
+  }
+}
+```
+
+Or in code:
+
+```csharp
+m.ConfigureMessagingOptions(opts => opts.ConsumeFilters.EnableLogging = false);
+```
+
+The filter stays registered in DI; only its behavior is skipped, so it's still
+resolvable in unit tests if you want to assert against it.
+
 ## Routing Keys
 
 Routing keys control which consumers receive a message on topic exchanges.

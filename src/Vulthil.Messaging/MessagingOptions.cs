@@ -30,6 +30,11 @@ public sealed class MessagingOptions
     public string FaultExchangeName { get; set; } = "Fault.Exchange";
 
     /// <summary>
+    /// Gets the options that control which built-in consume filters are active.
+    /// </summary>
+    public ConsumeFilterOptions ConsumeFilters { get; } = new();
+
+    /// <summary>
     /// Message configurations keyed by the CLR full type name. Populated eagerly from <c>Messaging:Messages:*</c>
     /// at <c>AddMessaging</c> time, then merged with whatever <c>ConfigureMessage&lt;T&gt;</c> registers in code.
     /// </summary>

@@ -1,5 +1,10 @@
 #nullable enable
 const Vulthil.Messaging.MessagingOptions.SectionName = "Messaging:Options" -> string!
+Vulthil.Messaging.ConsumeFilterOptions
+Vulthil.Messaging.ConsumeFilterOptions.ConsumeFilterOptions() -> void
+Vulthil.Messaging.ConsumeFilterOptions.EnableLogging.get -> bool
+Vulthil.Messaging.ConsumeFilterOptions.EnableLogging.set -> void
+Vulthil.Messaging.MessagingOptions.ConsumeFilters.get -> Vulthil.Messaging.ConsumeFilterOptions!
 static Vulthil.Messaging.DependencyInjection.AddMessaging(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, System.Action<Vulthil.Messaging.IMessagingConfigurator!>! messagingConfiguratorAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 Vulthil.Messaging.DependencyInjection
 Vulthil.Messaging.IMessageConfigurationProvider.FaultExchangeName.get -> string!

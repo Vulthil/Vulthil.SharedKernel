@@ -17,7 +17,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Vulthil.Messaging.Tests" />
 		<InternalsVisibleTo Include="Vulthil.Messaging.RabbitMq.Tests" />
 	</ItemGroup>
 	

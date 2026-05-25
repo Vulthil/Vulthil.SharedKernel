@@ -1,22 +1,33 @@
 #nullable enable
-const Vulthil.Messaging.MessagingOptions.SectionName = "Messaging:Options" -> string!
 Vulthil.Messaging.ConsumeFilterOptions
 Vulthil.Messaging.ConsumeFilterOptions.ConsumeFilterOptions() -> void
 Vulthil.Messaging.ConsumeFilterOptions.EnableLogging.get -> bool
 Vulthil.Messaging.ConsumeFilterOptions.EnableLogging.set -> void
-Vulthil.Messaging.MessagingOptions.ConsumeFilters.get -> Vulthil.Messaging.ConsumeFilterOptions!
 static Vulthil.Messaging.DependencyInjection.AddMessaging(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, System.Action<Vulthil.Messaging.IMessagingConfigurator!>! messagingConfiguratorAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 Vulthil.Messaging.DependencyInjection
+Vulthil.Messaging.IMessageConfigurationProvider
+Vulthil.Messaging.IMessageConfigurationProvider.ConsumeFilters.get -> Vulthil.Messaging.ConsumeFilterOptions!
+Vulthil.Messaging.IMessageConfigurationProvider.DefaultTimeout.get -> System.TimeSpan
 Vulthil.Messaging.IMessageConfigurationProvider.FaultExchangeName.get -> string!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration(System.Type! messageType) -> Vulthil.Messaging.MessageConfiguration!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage>() -> Vulthil.Messaging.MessageConfiguration!
+Vulthil.Messaging.IMessageConfigurationProvider.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
+Vulthil.Messaging.IMessageConfigurationProvider.QueueDefinitions.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.QueueDefinition!>!
 Vulthil.Messaging.IMessagingConfigurator
-Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage<TMessage>(System.Action<Vulthil.Messaging.MessageConfiguration<TMessage!>!>! configureMessageAction) -> Vulthil.Messaging.IMessagingConfigurator!
-Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action<Vulthil.Messaging.MessagingOptions!>! action) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.AddConsumeFilter<TFilter>() -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.AddOpenConsumeFilter(System.Type! openFilterType) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage<TMessage>(System.Action<Vulthil.Messaging.MessageConfiguration<TMessage!>!>! configureMessageAction) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action<Vulthil.Messaging.IMessagingOptionsConfigurator!>! action) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureQueue(string! queueName, System.Action<Vulthil.Messaging.Queues.IQueueConfigurator!>! queueConfigurationAction) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.HostApplicationBuilder.get -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
+Vulthil.Messaging.IMessagingOptionsConfigurator
+Vulthil.Messaging.IMessagingOptionsConfigurator.ConsumeFilters.get -> Vulthil.Messaging.ConsumeFilterOptions!
+Vulthil.Messaging.IMessagingOptionsConfigurator.DefaultTimeout.get -> System.TimeSpan
+Vulthil.Messaging.IMessagingOptionsConfigurator.DefaultTimeout.set -> void
+Vulthil.Messaging.IMessagingOptionsConfigurator.FaultExchangeName.get -> string!
+Vulthil.Messaging.IMessagingOptionsConfigurator.FaultExchangeName.set -> void
+Vulthil.Messaging.IMessagingOptionsConfigurator.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
+Vulthil.Messaging.IMessagingOptionsConfigurator.JsonSerializerOptions.set -> void
 Vulthil.Messaging.ITransport
 Vulthil.Messaging.ITransport.StartAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.MessageConfiguration
@@ -44,14 +55,6 @@ Vulthil.Messaging.MessagingExchangeType.Direct = 1 -> Vulthil.Messaging.Messagin
 Vulthil.Messaging.MessagingExchangeType.Fanout = 0 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Headers = 3 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Topic = 2 -> Vulthil.Messaging.MessagingExchangeType
-Vulthil.Messaging.MessagingOptions
-Vulthil.Messaging.MessagingOptions.DefaultTimeout.get -> System.TimeSpan
-Vulthil.Messaging.MessagingOptions.DefaultTimeout.set -> void
-Vulthil.Messaging.MessagingOptions.FaultExchangeName.get -> string!
-Vulthil.Messaging.MessagingOptions.FaultExchangeName.set -> void
-Vulthil.Messaging.MessagingOptions.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
-Vulthil.Messaging.MessagingOptions.JsonSerializerOptions.set -> void
-Vulthil.Messaging.MessagingOptions.MessagingOptions() -> void
 Vulthil.Messaging.Queues.BaseConfigurator
 Vulthil.Messaging.Queues.BaseConfigurator.BaseConfigurator() -> void
 Vulthil.Messaging.Queues.BaseConfigurator.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> void
@@ -153,8 +156,4 @@ Vulthil.Messaging.Queues.RetryPolicyDefinition.Intervals.get -> System.Collectio
 Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.get -> double
 Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.set -> void
 Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.get -> int
-Vulthil.Messaging.IMessageConfigurationProvider
-Vulthil.Messaging.IMessageConfigurationProvider.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
-Vulthil.Messaging.IMessageConfigurationProvider.DefaultTimeout.get -> System.TimeSpan
-Vulthil.Messaging.IMessageConfigurationProvider.QueueDefinitions.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.QueueDefinition!>!
 Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.set -> void

@@ -4,8 +4,8 @@ using Vulthil.Messaging.Queues;
 namespace Vulthil.Messaging;
 
 /// <summary>
-/// Provides access to message configuration and a few transport-friendly helpers.
-/// Implementations live in the messaging assembly and may call internal APIs.
+/// Read-only view of the messaging options resolved at runtime by transports, consumers, and filters.
+/// Backed by the same instance that <see cref="IMessagingOptionsConfigurator"/> writes to during composition.
 /// </summary>
 public interface IMessageConfigurationProvider
 {
@@ -15,6 +15,7 @@ public interface IMessageConfigurationProvider
     /// <param name="messageType">The message CLR type.</param>
     /// <returns>The resolved <see cref="MessageConfiguration"/> instance.</returns>
     MessageConfiguration GetMessageConfiguration(Type messageType);
+
     /// <summary>
     /// Gets the message configuration for the specified generic message type.
     /// </summary>
@@ -42,4 +43,11 @@ public interface IMessageConfigurationProvider
     /// Returned as a snapshot; subsequent mutations to the underlying store are not reflected.
     /// </summary>
     IReadOnlyCollection<QueueDefinition> QueueDefinitions { get; }
+
+    /// <summary>
+    /// Gets the options controlling which built-in consume filters perform their work at runtime.
+    /// Filters check the appropriate flag on this object on every delivery, so toggles take effect
+    /// without re-registering the filter.
+    /// </summary>
+    ConsumeFilterOptions ConsumeFilters { get; }
 }

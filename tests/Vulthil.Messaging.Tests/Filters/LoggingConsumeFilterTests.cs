@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Filters;
@@ -53,39 +52,12 @@ public sealed class LoggingConsumeFilterTests : BaseUnitTestCase
             => Records.Add(new LogRecord(logLevel, eventId, exception, formatter(state, exception)));
     }
 
-    private static LoggingConsumeFilter<TestMessage> CreateFilter(ILogger<LoggingConsumeFilter<TestMessage>> logger, bool enabled)
-    {
-        var options = new MessagingOptions();
-        options.ConsumeFilters.EnableLogging = enabled;
-        return new LoggingConsumeFilter<TestMessage>(logger, Options.Create(options));
-    }
-
     [Fact]
-    public async Task DisabledFilterPassesThroughWithoutLogging()
+    public async Task LogsConsumingAndConsumedOnSuccess()
     {
         // Arrange
         var logger = new RecordingLogger<LoggingConsumeFilter<TestMessage>>();
-        var filter = CreateFilter(logger, enabled: false);
-        var nextCalled = false;
-
-        // Act
-        await filter.ConsumeAsync(new StubMessageContext(), _ =>
-        {
-            nextCalled = true;
-            return Task.CompletedTask;
-        });
-
-        // Assert
-        nextCalled.ShouldBeTrue();
-        logger.Records.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public async Task EnabledFilterLogsConsumingAndConsumedOnSuccess()
-    {
-        // Arrange
-        var logger = new RecordingLogger<LoggingConsumeFilter<TestMessage>>();
-        var filter = CreateFilter(logger, enabled: true);
+        var filter = new LoggingConsumeFilter<TestMessage>(logger);
 
         // Act
         await filter.ConsumeAsync(
@@ -101,11 +73,11 @@ public sealed class LoggingConsumeFilterTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task EnabledFilterLogsWarningAndRethrowsOnException()
+    public async Task LogsWarningAndRethrowsOnException()
     {
         // Arrange
         var logger = new RecordingLogger<LoggingConsumeFilter<TestMessage>>();
-        var filter = CreateFilter(logger, enabled: true);
+        var filter = new LoggingConsumeFilter<TestMessage>(logger);
         var boom = new InvalidOperationException("boom");
 
         // Act
@@ -115,7 +87,7 @@ public sealed class LoggingConsumeFilterTests : BaseUnitTestCase
         // Assert
         thrown.ShouldBe(boom);
         logger.Records.Count.ShouldBe(2);
-        logger.Records[0].Level.ShouldBe(LogLevel.Debug);  // Consuming
+        logger.Records[0].Level.ShouldBe(LogLevel.Debug);   // Consuming
         logger.Records[1].Level.ShouldBe(LogLevel.Warning); // ConsumeFailed
         logger.Records[1].Exception.ShouldBe(boom);
     }

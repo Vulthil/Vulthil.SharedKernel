@@ -30,11 +30,11 @@ public interface IMessagingConfigurator
         where TMessage : class;
 
     /// <summary>
-    /// Configures global messaging options such as serialization and timeouts.
+    /// Configures global messaging options such as serialization, timeouts, and built-in filters.
     /// </summary>
-    /// <param name="action">An action to configure the messaging options.</param>
+    /// <param name="action">An action that receives the writable options surface.</param>
     /// <returns>The current configurator instance for chaining.</returns>
-    IMessagingConfigurator ConfigureMessagingOptions(Action<MessagingOptions> action);
+    IMessagingConfigurator ConfigureMessagingOptions(Action<IMessagingOptionsConfigurator> action);
 
     /// <summary>
     /// Registers a closed-generic consume filter. The filter is applied to every delivery whose

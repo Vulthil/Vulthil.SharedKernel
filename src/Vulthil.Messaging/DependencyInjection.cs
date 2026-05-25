@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Filters;
 using Vulthil.Messaging.Queues;
@@ -37,21 +36,28 @@ public static class DependencyInjection
 
         builder.Services.AddHostedService<ConsumerHostedService>();
 
-        // Default consume filters register first so they sit outermost; user-added filters
-        // compose inside. Each default filter checks its own flag on ConsumeFilterOptions at
-        // invocation time, so toggling the flag in code or appsettings disables the work
-        // without unregistering the filter.
-        builder.Services.TryAddEnumerable(new ServiceDescriptor(
-            typeof(IConsumeFilter<>),
-            typeof(LoggingConsumeFilter<>),
-            ServiceLifetime.Scoped));
-
         var messagingConfigurator = new MessagingConfigurator(builder, messagingOptions);
         messagingConfiguratorAction(messagingConfigurator);
 
-        builder.Services.AddSingleton(Options.Create(messagingOptions));
+        // Default consume filters register AFTER the configurator action so users can toggle
+        // them via ConfigureMessagingOptions. A disabled filter is not added to DI at all —
+        // there is no runtime IsEnabled check. We insert at index 0 so the default open-generic
+        // descriptor comes first in IEnumerable<IConsumeFilter<T>> resolution, keeping it
+        // outermost in the composed pipeline even though chronologically it registers last.
+        RegisterDefaultConsumeFilters(builder.Services, messagingOptions);
 
         return builder.Services;
+    }
+
+    private static void RegisterDefaultConsumeFilters(IServiceCollection services, MessagingOptions options)
+    {
+        if (options.ConsumeFilters.EnableLogging)
+        {
+            services.Insert(0, new ServiceDescriptor(
+                typeof(IConsumeFilter<>),
+                typeof(LoggingConsumeFilter<>),
+                ServiceLifetime.Scoped));
+        }
     }
 
     private static void LoadQueueDefinitionsFromConfiguration(IConfiguration configuration, MessagingOptions options)

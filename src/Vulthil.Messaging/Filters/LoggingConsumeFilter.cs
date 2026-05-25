@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Vulthil.Messaging.Abstractions.Consumers;
 
 namespace Vulthil.Messaging.Filters;
@@ -8,26 +7,18 @@ namespace Vulthil.Messaging.Filters;
 /// <summary>
 /// Default open-generic consume filter that emits structured Debug logs on consume entry/exit
 /// and a Warning log on uncaught exceptions, with timing information. Registered as the
-/// outermost filter by <c>AddMessaging</c>. Toggle via
-/// <see cref="ConsumeFilterOptions.EnableLogging"/>.
+/// outermost filter by <c>AddMessaging</c> when <see cref="ConsumeFilterOptions.EnableLogging"/>
+/// is <see langword="true"/> (the default); otherwise it is not registered at all.
 /// </summary>
 /// <typeparam name="TMessage">The consumed message type.</typeparam>
 internal sealed class LoggingConsumeFilter<TMessage>(
-    ILogger<LoggingConsumeFilter<TMessage>> logger,
-    IOptions<MessagingOptions> options) : IConsumeFilter<TMessage>
+    ILogger<LoggingConsumeFilter<TMessage>> logger) : IConsumeFilter<TMessage>
     where TMessage : notnull
 {
     private readonly ILogger<LoggingConsumeFilter<TMessage>> _logger = logger;
-    private readonly bool _enabled = options.Value.ConsumeFilters.EnableLogging;
 
     public async Task ConsumeAsync(IMessageContext<TMessage> context, ConsumeDelegate<TMessage> next)
     {
-        if (!_enabled)
-        {
-            await next(context);
-            return;
-        }
-
         var messageType = typeof(TMessage).FullName ?? typeof(TMessage).Name;
         FilterLog.Consuming(_logger, messageType, context.MessageId, context.CorrelationId);
 

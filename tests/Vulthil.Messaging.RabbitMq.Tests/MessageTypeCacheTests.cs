@@ -22,12 +22,8 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     public MessageTypeCacheTests()
     {
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
-        // Register a real configuration provider so the RPC invoker can resolve JsonSerializerOptions
-        // through the scoped resolver path instead of falling back to AutoMocker's auto-mocked default.
-        Use<IMessageConfigurationProvider>(new MessageConfigurationProvider(new MessagingOptions()));
-        // AutoMocker auto-mocks every requested service, including IEnumerable<IConsumeFilter<T>>,
-        // and its default mock enumerable yields a mocked filter whose no-op ConsumeAsync silently
-        // short-circuits the pipeline. Register empty arrays explicitly to opt out for tested types.
+        UseRealFor<IMessageConfigurationProvider, MessagingOptions>();
+
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
         _serviceProvider = AutoMocker;

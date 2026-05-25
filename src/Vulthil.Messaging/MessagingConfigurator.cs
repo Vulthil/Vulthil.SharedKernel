@@ -23,10 +23,10 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
     {
         HostApplicationBuilder = hostApplicationBuilder;
         _messagingOptions = messagingOptions;
-        Services.AddSingleton<IMessageConfigurationProvider>(_ => new MessageConfigurationProvider(_messagingOptions));
+        Services.AddSingleton<IMessageConfigurationProvider>(_messagingOptions);
     }
 
-    public IMessagingConfigurator ConfigureMessagingOptions(Action<MessagingOptions> action)
+    public IMessagingConfigurator ConfigureMessagingOptions(Action<IMessagingOptionsConfigurator> action)
     {
         action(_messagingOptions);
         return this;

@@ -106,10 +106,10 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         });
         Target.RegisterQueue(queue);
 
-        var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.StandardHandlers[0];
+        var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
-        // Act
-        await handler.InvokeAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), CancellationToken.None);
+        // Act — consumer-kind handlers ignore the channel argument.
+        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         consumerInstance.Received.ShouldHaveSingleItem().Content.ShouldBe("payload");
@@ -139,10 +139,10 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         });
         Target.RegisterQueue(queue);
 
-        var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.StandardHandlers[0];
+        var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
-        // Act
-        await handler.InvokeAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), CancellationToken.None);
+        // Act — consumer-kind handlers ignore the channel argument.
+        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["outer:before", "inner:before", "inner:after", "outer:after"]);
@@ -172,10 +172,10 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         });
         Target.RegisterQueue(queue);
 
-        var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.StandardHandlers[0];
+        var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
-        // Act
-        await handler.InvokeAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), CancellationToken.None);
+        // Act — consumer-kind handlers ignore the channel argument.
+        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["gate:before", "gate:short-circuit"]);
@@ -206,7 +206,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         });
         Target.RegisterQueue(queue);
 
-        var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.RpcHandler!;
+        var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
         var channel = GetMock<IChannel>();
         ReadOnlyMemory<byte> publishedBody = default;
@@ -224,7 +224,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await handler.InvokeAsync(
+        await handler.DispatchAsync(
             serviceProvider,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply", correlationId: "corr-1"),
@@ -266,7 +266,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         });
         Target.RegisterQueue(queue);
 
-        var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.RpcHandler!;
+        var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
         var channel = GetMock<IChannel>();
         ReadOnlyMemory<byte> publishedBody = default;
@@ -284,7 +284,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await handler.InvokeAsync(
+        await handler.DispatchAsync(
             serviceProvider,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply"),

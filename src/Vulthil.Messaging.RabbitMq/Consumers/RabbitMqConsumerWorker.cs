@@ -208,20 +208,11 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             return;
         }
 
-        var routingKey = ea.RoutingKey;
         await using var scope = _serviceScopeFactory.CreateAsyncScope();
 
-        foreach (var handlerEntry in plan.StandardHandlers)
+        foreach (var handler in plan.Handlers)
         {
-            if (handlerEntry.RoutingKey == "#" || handlerEntry.RoutingKey == routingKey)
-            {
-                await handlerEntry.InvokeAsync(scope.ServiceProvider, message, ea, ea.CancellationToken);
-            }
-        }
-
-        if (plan.RpcHandler is not null && (plan.RpcHandler.RoutingKey == "#" || plan.RpcHandler.RoutingKey == routingKey))
-        {
-            await plan.RpcHandler.InvokeAsync(scope.ServiceProvider, message, ea, _channel, ea.CancellationToken);
+            await handler.DispatchAsync(scope.ServiceProvider, message, ea, _channel, ea.CancellationToken);
         }
     }
 

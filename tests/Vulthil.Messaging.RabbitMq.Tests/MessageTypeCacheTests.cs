@@ -105,8 +105,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         // Assert
         var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
-        plan.StandardHandlers.ShouldHaveSingleItem();
-        plan.StandardHandlers[0].RoutingKey.ShouldBe("test.message");
+        plan.Handlers.ShouldHaveSingleItem();
+        plan.Handlers[0].Kind.ShouldBe(HandlerKind.Consumer);
+        plan.Handlers[0].RoutingKey.ShouldBe("test.message");
     }
 
     [Fact]
@@ -131,8 +132,8 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         // Assert
         var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
-        plan.RpcHandler.ShouldNotBeNull();
-        plan.RpcHandler.RoutingKey.ShouldBe("test.request");
+        var rpcHandler = plan.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
+        rpcHandler.RoutingKey.ShouldBe("test.request");
     }
 
     [Fact]
@@ -155,11 +156,11 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         Target.RegisterQueue(queue);
 
         var plan = Target.GetPlan(messageType.Name);
-        var handler = plan!.StandardHandlers[0];
+        var handler = plan!.Handlers[0];
         var testMessage = new TestMessage("Hello, World!");
 
-        // Act
-        await handler.InvokeAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), CancellationToken.None);
+        // Act — consumer-kind handlers ignore the channel argument.
+        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedMessages.ShouldHaveSingleItem();
@@ -187,7 +188,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         Target.RegisterQueue(queue);
 
         var plan = Target.GetPlan(messageType.Name);
-        var handler = plan!.RpcHandler!;
+        var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
         var testRequest = new TestRequest("Find users");
         var deliveryArgs = CreateDeliverEventArgs(replyTo: "reply.queue", correlationId: "corr-1");
 
@@ -210,7 +211,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await handler.InvokeAsync(_serviceProvider, testRequest, deliveryArgs, channel.Object, CancellationToken.None);
+        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, channel.Object, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedRequests.ShouldHaveSingleItem();
@@ -247,7 +248,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         Target.RegisterQueue(queue);
 
         var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
-        var handler = plan!.RpcHandler!;
+        var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
         var channel = GetMock<IChannel>();
         ReadOnlyMemory<byte> publishedBody = default;
@@ -266,7 +267,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await handler.InvokeAsync(
+        await handler.DispatchAsync(
             _serviceProvider,
             new TestRequest("throw"),
             CreateDeliverEventArgs(replyTo: "reply.queue"),
@@ -291,9 +292,11 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void RegisterQueueShouldSupportMultipleHandlersForSameMessageType()
+    public void RegisterQueueShouldRecordEveryConsumerRegistration()
     {
-        // Arrange
+        // Arrange — two ConsumerRegistrations for the same message type on the same queue. The broker is
+        // authoritative for delivery; the plan records every handler and the worker dispatches each one
+        // on every delivery. Distinct routing-key semantics belong on distinct queues.
         var consumer = new ConsumerType(typeof(TestMessageConsumer));
         var messageType = new MessageType(typeof(TestMessage));
 
@@ -320,22 +323,50 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         // Assert
         var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
-        plan.StandardHandlers.Count.ShouldBe(2);
-        plan.StandardHandlers[0].RoutingKey.ShouldBe("route.1");
-        plan.StandardHandlers[1].RoutingKey.ShouldBe("route.2");
+        plan.Handlers.Count.ShouldBe(2);
+        plan.Handlers[0].RoutingKey.ShouldBe("route.1");
+        plan.Handlers[1].RoutingKey.ShouldBe("route.2");
+        plan.Handlers.ShouldAllBe(h => h.Kind == HandlerKind.Consumer);
     }
 
     [Fact]
-    public void RpcHandlerRoutingKeyShouldReturnHandlerRoutingKey()
+    public void RegisterQueueShouldRejectSecondRequestConsumerForSameMessageType()
     {
-        // Arrange
-        var messageType = new MessageType(typeof(TestRequest));
-        var plan = new MessageExecutionPlan(messageType)
+        // Arrange — two request consumers for the same message type on the same queue would produce
+        // ambiguous responses, so registration must fail loudly.
+        var first = new RequestConsumerRegistration
         {
-            RpcHandler = new RpcInvoker<TestRequestConsumer, TestRequest, TestResponse>("custom.routing.key", null)
+            ConsumerType = new ConsumerType(typeof(TestRequestConsumer)),
+            MessageType = new MessageType(typeof(TestRequest)),
+            ResponseType = typeof(TestResponse),
+            RoutingKey = "test.request"
+        };
+        var second = new RequestConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(ThrowingRequestConsumer)),
+            MessageType = new MessageType(typeof(TestRequest)),
+            ResponseType = typeof(TestResponse),
+            RoutingKey = "test.request.alt"
         };
 
+        var queue = new QueueDefinition("TestQueue");
+        queue.AddConsumer(first);
+        queue.AddConsumer(second);
+
         // Act & Assert
-        plan.RpcHandler.RoutingKey.ShouldBe("custom.routing.key");
+        var ex = Should.Throw<InvalidOperationException>(() => Target.RegisterQueue(queue));
+        ex.Message.ShouldContain("request consumer");
+        ex.Message.ShouldContain("TestQueue");
+    }
+
+    [Fact]
+    public void HandlerRoutingKeyFromFactoryShouldRoundTrip()
+    {
+        // Arrange — exercises the typed-generic factory path directly.
+        var handler = MessageHandlerFactory.ForRequestConsumer<TestRequestConsumer, TestRequest, TestResponse>("custom.routing.key", retryPolicy: null);
+
+        // Act & Assert
+        handler.RoutingKey.ShouldBe("custom.routing.key");
+        handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
     }
 }

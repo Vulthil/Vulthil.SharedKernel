@@ -16,7 +16,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     private readonly RabbitMqBusStartupStatus _startupStatus;
     private readonly ILogger<RabbitMqBus> _logger;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly MessageTypeCache _typeCache = new();
+    private readonly MessageTypeCache _typeCache;
     private readonly List<RabbitMqConsumerWorker> _workers = [];
 
     public RabbitMqBus(
@@ -33,6 +33,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         _startupStatus = startupStatus;
         _logger = logger;
         _loggerFactory = loggerFactory;
+        _typeCache = new MessageTypeCache(messageConfigurationProvider);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)

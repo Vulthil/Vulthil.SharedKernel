@@ -11,6 +11,8 @@ Vulthil.Messaging.IMessageConfigurationProvider.DefaultTimeout.get -> System.Tim
 Vulthil.Messaging.IMessageConfigurationProvider.FaultExchangeName.get -> string!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration(System.Type! messageType) -> Vulthil.Messaging.MessageConfiguration!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage>() -> Vulthil.Messaging.MessageConfiguration!
+Vulthil.Messaging.IMessageConfigurationProvider.GetMessageType(System.Uri! urn) -> System.Type?
+Vulthil.Messaging.IMessageConfigurationProvider.GetUrn(System.Type! messageType) -> System.Uri!
 Vulthil.Messaging.IMessageConfigurationProvider.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
 Vulthil.Messaging.IMessageConfigurationProvider.QueueDefinitions.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.QueueDefinition!>!
 Vulthil.Messaging.IMessagingConfigurator
@@ -45,6 +47,8 @@ Vulthil.Messaging.MessageConfiguration.ExchangeType.set -> void
 Vulthil.Messaging.MessageConfiguration.MessageConfiguration(string! exchange) -> void
 Vulthil.Messaging.MessageConfiguration.RoutingKeyFormatter.get -> System.Func<object!, string!>?
 Vulthil.Messaging.MessageConfiguration.RoutingKeyFormatter.set -> void
+Vulthil.Messaging.MessageConfiguration.Urn.get -> System.Uri!
+Vulthil.Messaging.MessageConfiguration.Urn.set -> void
 Vulthil.Messaging.MessageConfiguration<TMessage>
 Vulthil.Messaging.MessageConfiguration<TMessage>.MessageConfiguration() -> void
 Vulthil.Messaging.MessageConfiguration<TMessage>.UseCorrelationId(System.Func<TMessage!, string!>! selector) -> Vulthil.Messaging.MessageConfiguration<TMessage!>!

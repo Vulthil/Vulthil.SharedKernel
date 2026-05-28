@@ -2,21 +2,42 @@ namespace Vulthil.Messaging;
 
 /// <summary>
 /// Configuration used when publishing or binding a message type.
-/// Contains exchange declaration settings and optional formatters for routing keys and correlation ids.
+/// Contains exchange declaration settings, the stable wire URN, and optional formatters for routing keys and correlation ids.
 /// </summary>
 public record MessageConfiguration
 {
     /// <summary>
     /// Initializes a new <see cref="MessageConfiguration"/> for the specified exchange name.
+    /// The URN defaults to <c>urn:message:&lt;namespace&gt;:&lt;name&gt;</c> derived from the exchange (which itself
+    /// defaults to the CLR full type name).
     /// </summary>
     /// <param name="exchange">The name of the exchange to declare and bind for this message type.</param>
-    public MessageConfiguration(string exchange) => Exchange = exchange;
+    public MessageConfiguration(string exchange)
+    {
+        Exchange = exchange;
+        Urn = DefaultUrnFromFullName(exchange);
+    }
+
+    private static Uri DefaultUrnFromFullName(string fullName)
+    {
+        var lastDot = fullName.LastIndexOf('.');
+        return lastDot < 0
+            ? new($"urn:message:{fullName}")
+            : new($"urn:message:{fullName[..lastDot]}:{fullName[(lastDot + 1)..]}");
+    }
 
     /// <summary>
     /// The name of the exchange to declare and bind for this message type.
     /// Defaults to the message CLR full type name when constructed via <see cref="MessageConfiguration{TMessage}"/>.
     /// </summary>
     public string Exchange { get; set; }
+
+    /// <summary>
+    /// Stable wire identity for this message type, used in the message envelope's <c>messageType</c> field.
+    /// Defaults to <c>urn:message:&lt;namespace&gt;:&lt;name&gt;</c> when constructed via <see cref="MessageConfiguration{TMessage}"/>.
+    /// Override this to keep the wire identity stable across CLR renames.
+    /// </summary>
+    public Uri Urn { get; set; }
 
     /// <summary>
     /// The exchange type to declare when creating the exchange (if applicable to the transport).
@@ -60,7 +81,8 @@ public sealed record MessageConfiguration<TMessage> : MessageConfiguration
     where TMessage : class
 {
     /// <summary>
-    /// Initializes a new <see cref="MessageConfiguration{TMessage}"/> whose exchange defaults to the CLR full type name of <typeparamref name="TMessage"/>.
+    /// Initializes a new <see cref="MessageConfiguration{TMessage}"/> whose exchange defaults to the CLR full type name of <typeparamref name="TMessage"/>
+    /// and whose URN defaults to <c>urn:message:&lt;namespace&gt;:&lt;name&gt;</c> derived from <typeparamref name="TMessage"/>.
     /// </summary>
     public MessageConfiguration() : base(typeof(TMessage).FullName!) { }
 

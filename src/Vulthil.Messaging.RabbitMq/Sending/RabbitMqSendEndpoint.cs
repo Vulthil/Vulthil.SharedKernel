@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
@@ -58,6 +59,8 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
             ?? messageConfiguration.CorrelationIdFormatter?.Invoke(message)
             ?? Guid.CreateVersion7().ToString();
         var messageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString();
+        var urn = messageConfiguration.Urn;
+        var urnString = urn.AbsoluteUri;
 
         using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
             $"{_queueName} send",
@@ -69,14 +72,14 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
             activity.SetTag(MessagingInstrumentation.Tags.MessagingOperation, "send");
             activity.SetTag(MessagingInstrumentation.Tags.MessagingDestination, _queueName);
             activity.SetTag(MessagingInstrumentation.Tags.MessagingRoutingKey, _queueName);
-            activity.SetTag(MessagingInstrumentation.Tags.MessageType, type.FullName);
+            activity.SetTag(MessagingInstrumentation.Tags.MessageType, urnString);
             activity.SetTag(MessagingInstrumentation.Tags.MessagingMessageId, messageId);
             activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, correlationId);
         }
 
         var properties = new BasicProperties
         {
-            Type = type.FullName,
+            Type = urnString,
             MessageId = messageId,
             ReplyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress),
             CorrelationId = correlationId,
@@ -86,9 +89,11 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
             Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
         };
 
-        var body = JsonSerializer.SerializeToUtf8Bytes(message, _messageConfigurationProvider.JsonSerializerOptions);
+        var envelope = MessageEnvelopeFactory.Create(
+            message, publishContext, messageId, correlationId, urn, _messageConfigurationProvider.JsonSerializerOptions);
+        var body = JsonSerializer.SerializeToUtf8Bytes(envelope, _messageConfigurationProvider.JsonSerializerOptions);
 
-        MessagingLog.Sending(_logger, type.FullName ?? type.Name, _queueName, messageId, correlationId);
+        MessagingLog.Sending(_logger, urnString, _queueName, messageId, correlationId);
 
         try
         {

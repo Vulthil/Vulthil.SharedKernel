@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Telemetry;
@@ -69,6 +70,8 @@ internal sealed class RabbitMqRequester : IRequester
 
         var messageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString();
         var exchange = messageConfiguration.Exchange;
+        var urn = messageConfiguration.Urn;
+        var urnString = urn.AbsoluteUri;
 
         var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken);
         var replyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress) ?? replyQueue;
@@ -83,13 +86,13 @@ internal sealed class RabbitMqRequester : IRequester
             activity.SetTag(MessagingInstrumentation.Tags.MessagingOperation, "request");
             activity.SetTag(MessagingInstrumentation.Tags.MessagingDestination, exchange);
             activity.SetTag(MessagingInstrumentation.Tags.MessagingRoutingKey, routingKey);
-            activity.SetTag(MessagingInstrumentation.Tags.MessageType, type.FullName);
+            activity.SetTag(MessagingInstrumentation.Tags.MessageType, urnString);
             activity.SetTag(MessagingInstrumentation.Tags.MessagingMessageId, messageId);
             activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, correlationId);
         }
 
         _listener.RegisterWaiter(correlationId, tcs);
-        MessagingLog.RequestSending(_logger, type.FullName ?? type.Name, correlationId, DefaultTimeout.TotalSeconds);
+        MessagingLog.RequestSending(_logger, urnString, correlationId, DefaultTimeout.TotalSeconds);
 
         try
         {
@@ -98,14 +101,15 @@ internal sealed class RabbitMqRequester : IRequester
                 CorrelationId = correlationId,
                 ReplyTo = replyTo,
                 ContentType = RabbitMqConstants.ContentType,
-                Type = type.FullName,
+                Type = urnString,
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
                 Expiration = DefaultTimeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
                 Headers = publishContext.Headers,
                 MessageId = messageId,
             };
 
-            var body = JsonSerializer.SerializeToUtf8Bytes(message, JsonOptions);
+            var envelope = MessageEnvelopeFactory.Create(message, publishContext, messageId, correlationId, urn, JsonOptions);
+            var body = JsonSerializer.SerializeToUtf8Bytes(envelope, JsonOptions);
 
             await _publisher.InternalPublishAsync<TRequest>(body, props, routingKey, messageConfiguration, cancellationToken);
 
@@ -113,7 +117,7 @@ internal sealed class RabbitMqRequester : IRequester
             {
                 if (timeoutCts.IsCancellationRequested)
                 {
-                    MessagingLog.RequestTimedOut(_logger, type.FullName ?? type.Name, correlationId, DefaultTimeout.TotalSeconds);
+                    MessagingLog.RequestTimedOut(_logger, urnString, correlationId, DefaultTimeout.TotalSeconds);
                     tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure("Messaging.Request.Timeout", $"Request timed out after {DefaultTimeout.TotalSeconds}s")));
                 }
                 else
@@ -124,7 +128,7 @@ internal sealed class RabbitMqRequester : IRequester
 
             var result = await tcs.Task;
             activity?.SetStatus(result.IsSuccess ? ActivityStatusCode.Ok : ActivityStatusCode.Error, result.IsSuccess ? null : result.Error.Description);
-            MessagingLog.RequestCompleted(_logger, type.FullName ?? type.Name, correlationId, result.IsSuccess);
+            MessagingLog.RequestCompleted(_logger, urnString, correlationId, result.IsSuccess);
             return result;
         }
         catch (Exception ex)

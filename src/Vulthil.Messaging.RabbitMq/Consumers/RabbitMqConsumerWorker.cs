@@ -7,6 +7,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Telemetry;
 
@@ -180,30 +181,39 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
     private async Task HandleMessageAsync(BasicDeliverEventArgs ea)
     {
-        var messageTypeName = ea.BasicProperties.Type ?? ea.Exchange;
-        var plan = _typeCache.GetPlan(messageTypeName);
+        var bareTypeName = ea.BasicProperties.Type ?? ea.Exchange;
+
+        var envelope = TryParseEnvelope(ea.Body, _jsonOptions);
+
+        var plan = envelope is not null
+            ? _typeCache.GetPlanByUrn(envelope.MessageType)
+            : _typeCache.GetPlan(bareTypeName);
+
+        var diagnosticTypeName = envelope?.MessageType.AbsoluteUri ?? bareTypeName;
 
         if (plan == null)
         {
-            MessagingLog.NoExecutionPlan(_logger, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
+            MessagingLog.NoExecutionPlan(_logger, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
             return;
         }
 
         object? message;
         try
         {
-            message = JsonSerializer.Deserialize(ea.Body.Span, plan.MessageType.Type, _jsonOptions);
+            message = envelope is not null
+                ? envelope.Message.Deserialize(plan.MessageType.Type, _jsonOptions)
+                : JsonSerializer.Deserialize(ea.Body.Span, plan.MessageType.Type, _jsonOptions);
         }
         catch (JsonException jsonEx)
         {
-            MessagingLog.PoisonMessage(_logger, jsonEx, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
+            MessagingLog.PoisonMessage(_logger, jsonEx, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
             await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
             return;
         }
 
         if (message is null)
         {
-            MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, messageTypeName, ea.RoutingKey);
+            MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
             await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
             return;
         }
@@ -212,7 +222,29 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
         foreach (var handler in plan.Handlers)
         {
-            await handler.DispatchAsync(scope.ServiceProvider, message, ea, _channel, ea.CancellationToken);
+            await handler.DispatchAsync(scope.ServiceProvider, message, ea, envelope, _channel, ea.CancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// Attempts to deserialize the body as a <see cref="MessageEnvelope"/>. Returns <see langword="null"/>
+    /// on any parse error or when the body is not envelope-shaped — the caller then takes the bare-JSON path.
+    /// </summary>
+    private static MessageEnvelope? TryParseEnvelope(ReadOnlyMemory<byte> body, JsonSerializerOptions options)
+    {
+        try
+        {
+            var envelope = JsonSerializer.Deserialize<MessageEnvelope>(body.Span, options);
+
+            if (envelope is null || envelope.MessageType is null || envelope.Message.ValueKind == JsonValueKind.Undefined)
+            {
+                return null;
+            }
+            return envelope;
+        }
+        catch (JsonException)
+        {
+            return null;
         }
     }
 

@@ -5,6 +5,7 @@ using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Requests;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
@@ -27,12 +28,14 @@ internal static class MessageHandlerFactory
             RoutingKey = routingKey,
             RetryPolicy = retryPolicy,
             Kind = HandlerKind.Consumer,
-            DispatchAsync = async (sp, message, ea, _, ct) =>
+            DispatchAsync = async (sp, message, ea, envelope, _, ct) =>
             {
                 var consumer = sp.GetRequiredService<TConsumer>();
                 var publisher = sp.GetRequiredService<IPublisher>();
                 var sendEndpointProvider = sp.GetRequiredService<ISendEndpointProvider>();
-                var context = MessageContext.CreateContext((TMessage)message, ea, publisher, sendEndpointProvider, ct);
+                var context = envelope is null
+                    ? MessageContext.CreateContext((TMessage)message, ea, publisher, sendEndpointProvider, ct)
+                    : MessageContext.CreateContext((TMessage)message, ea, envelope, publisher, sendEndpointProvider, ct);
 
                 var pipeline = ConsumePipelineFactory.Build<TMessage>(
                     sp,
@@ -54,13 +57,15 @@ internal static class MessageHandlerFactory
             RoutingKey = routingKey,
             RetryPolicy = retryPolicy,
             Kind = HandlerKind.RequestConsumer,
-            DispatchAsync = async (sp, message, ea, channel, ct) =>
+            DispatchAsync = async (sp, message, ea, envelope, channel, ct) =>
             {
                 var consumer = sp.GetRequiredService<TConsumer>();
                 var publisher = sp.GetRequiredService<IPublisher>();
                 var sendEndpointProvider = sp.GetRequiredService<ISendEndpointProvider>();
                 var jsonOptions = sp.GetRequiredService<IMessageConfigurationProvider>().JsonSerializerOptions;
-                var context = MessageContext.CreateContext((TRequest)message, ea, publisher, sendEndpointProvider, ct);
+                var context = envelope is null
+                    ? MessageContext.CreateContext((TRequest)message, ea, publisher, sendEndpointProvider, ct)
+                    : MessageContext.CreateContext((TRequest)message, ea, envelope, publisher, sendEndpointProvider, ct);
 
                 MessageResult messageResult;
                 try

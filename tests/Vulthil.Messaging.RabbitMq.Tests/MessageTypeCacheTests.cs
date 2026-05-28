@@ -159,8 +159,8 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var handler = plan!.Handlers[0];
         var testMessage = new TestMessage("Hello, World!");
 
-        // Act — consumer-kind handlers ignore the channel argument.
-        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
+        // Act
+        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), null, Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedMessages.ShouldHaveSingleItem();
@@ -211,7 +211,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, channel.Object, CancellationToken.None);
+        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, null, channel.Object, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedRequests.ShouldHaveSingleItem();
@@ -271,6 +271,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             _serviceProvider,
             new TestRequest("throw"),
             CreateDeliverEventArgs(replyTo: "reply.queue"),
+            null,
             channel.Object,
             CancellationToken.None);
 
@@ -294,9 +295,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     [Fact]
     public void RegisterQueueShouldRecordEveryConsumerRegistration()
     {
-        // Arrange — two ConsumerRegistrations for the same message type on the same queue. The broker is
-        // authoritative for delivery; the plan records every handler and the worker dispatches each one
-        // on every delivery. Distinct routing-key semantics belong on distinct queues.
+        // Arrange
         var consumer = new ConsumerType(typeof(TestMessageConsumer));
         var messageType = new MessageType(typeof(TestMessage));
 
@@ -332,8 +331,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     [Fact]
     public void RegisterQueueShouldRejectSecondRequestConsumerForSameMessageType()
     {
-        // Arrange — two request consumers for the same message type on the same queue would produce
-        // ambiguous responses, so registration must fail loudly.
+        // Arrange
         var first = new RequestConsumerRegistration
         {
             ConsumerType = new ConsumerType(typeof(TestRequestConsumer)),
@@ -362,7 +360,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     [Fact]
     public void HandlerRoutingKeyFromFactoryShouldRoundTrip()
     {
-        // Arrange — exercises the typed-generic factory path directly.
+        // Arrange
         var handler = MessageHandlerFactory.ForRequestConsumer<TestRequestConsumer, TestRequest, TestResponse>("custom.routing.key", retryPolicy: null);
 
         // Act & Assert

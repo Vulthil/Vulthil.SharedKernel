@@ -82,12 +82,14 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         }
 
         configureMessageAction(typed);
+        _messagingOptions.RegisterMessageType(typeof(TMessage), typed);
         return this;
     }
 
     private static void CopyMessageConfiguration(MessageConfiguration src, MessageConfiguration dst)
     {
         dst.Exchange = src.Exchange;
+        dst.Urn = src.Urn;
         dst.ExchangeType = src.ExchangeType;
         dst.Durable = src.Durable;
         dst.AutoDelete = src.AutoDelete;

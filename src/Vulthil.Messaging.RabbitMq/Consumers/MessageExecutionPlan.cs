@@ -2,7 +2,7 @@ using Vulthil.Messaging.Queues;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
-internal sealed record MessageExecutionPlan(MessageType MessageType)
+internal sealed record MessageExecutionPlan(MessageType MessageType, Uri Urn)
 {
     /// <summary>
     /// The set of handlers that should run when a message of <see cref="MessageType"/> is delivered.

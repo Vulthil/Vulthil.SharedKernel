@@ -1,6 +1,7 @@
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Sending;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
@@ -112,6 +113,7 @@ internal record MessageContext : IMessageContext
 
     /// <summary>
     /// Creates a live typed <see cref="MessageContext{TMessage}"/> bound to the specified transport services and cancellation token.
+    /// Used by the bare-JSON receive path; metadata comes from <paramref name="ea"/> and its <c>BasicProperties</c> headers.
     /// </summary>
     public static MessageContext<TMessage> CreateContext<TMessage>(
         TMessage message,
@@ -120,6 +122,19 @@ internal record MessageContext : IMessageContext
         ISendEndpointProvider sendEndpointProvider,
         CancellationToken cancellationToken) =>
         BuildTypedMetadata(message, ea, publisher, sendEndpointProvider, cancellationToken);
+
+    /// <summary>
+    /// Creates a live typed <see cref="MessageContext{TMessage}"/> from the envelope-bearing receive path.
+    /// Metadata comes from the envelope; transport-level fields (RoutingKey, Redelivered, retry count) still come from <paramref name="ea"/>.
+    /// </summary>
+    public static MessageContext<TMessage> CreateContext<TMessage>(
+        TMessage message,
+        BasicDeliverEventArgs ea,
+        MessageEnvelope envelope,
+        IPublisher publisher,
+        ISendEndpointProvider sendEndpointProvider,
+        CancellationToken cancellationToken) =>
+        BuildTypedMetadataFromEnvelope(message, ea, envelope, publisher, sendEndpointProvider, cancellationToken);
 
     private static MessageContext BuildMetadata(
         BasicDeliverEventArgs ea,
@@ -185,6 +200,54 @@ internal record MessageContext : IMessageContext
             SentTime = props.Timestamp.UnixTime > 0 ? DateTimeOffset.FromUnixTimeSeconds(props.Timestamp.UnixTime) : null,
             ExpirationTime = RabbitMqConstants.TryParseExpiration(props.Expiration)
         };
+    }
+
+    private static MessageContext<TMessage> BuildTypedMetadataFromEnvelope<TMessage>(
+        TMessage message,
+        BasicDeliverEventArgs ea,
+        MessageEnvelope envelope,
+        IPublisher publisher,
+        ISendEndpointProvider sendEndpointProvider,
+        CancellationToken cancellationToken)
+    {
+        var props = ea.BasicProperties;
+        var transportHeaders = props.Headers ?? new Dictionary<string, object?>();
+        var userHeaders = envelope.Headers is { } h ? new Dictionary<string, object?>(h) : [];
+
+        return new MessageContext<TMessage>
+        {
+            Message = message,
+            Publisher = publisher,
+            SendEndpointProvider = sendEndpointProvider,
+            CancellationToken = cancellationToken,
+            MessageId = envelope.MessageId,
+            CorrelationId = envelope.CorrelationId ?? string.Empty,
+            RequestId = envelope.RequestId ?? envelope.CorrelationId,
+            RoutingKey = ea.RoutingKey,
+            Headers = userHeaders,
+            Redelivered = ea.Redelivered,
+            RetryCount = RabbitMqConstants.GetRetryCount(transportHeaders),
+            ConversationId = envelope.ConversationId,
+            InitiatorId = envelope.InitiatorId,
+            SourceAddress = ParseAddress(envelope.SourceAddress),
+            DestinationAddress = ParseAddress(envelope.DestinationAddress),
+            ResponseAddress = ParseAddress(envelope.ResponseAddress)
+                ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : new Uri($"queue:{props.ReplyTo}")),
+            FaultAddress = ParseAddress(envelope.FaultAddress),
+            SentTime = envelope.SentTime,
+            ExpirationTime = envelope.ExpirationTime,
+        };
+    }
+
+    private static Uri? ParseAddress(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+        return Uri.TryCreate(value, UriKind.Absolute, out var uri)
+            ? uri
+            : new Uri($"queue:{value}");
     }
 }
 

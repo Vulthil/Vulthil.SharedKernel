@@ -6,6 +6,7 @@ using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.xUnit;
 
@@ -18,6 +19,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
     public ConsumeFilterPipelineTests()
     {
+        UseRealFor<IMessageConfigurationProvider, MessagingOptions>();
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
     }
 
@@ -108,8 +110,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
-        // Act — consumer-kind handlers ignore the channel argument.
-        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
+        // Act
+        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         consumerInstance.Received.ShouldHaveSingleItem().Content.ShouldBe("payload");
@@ -141,8 +143,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
-        // Act — consumer-kind handlers ignore the channel argument.
-        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
+        // Act
+        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["outer:before", "inner:before", "inner:after", "outer:after"]);
@@ -174,8 +176,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
-        // Act — consumer-kind handlers ignore the channel argument.
-        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), Mock.Of<IChannel>(), CancellationToken.None);
+        // Act
+        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["gate:before", "gate:short-circuit"]);
@@ -228,6 +230,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             serviceProvider,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply", correlationId: "corr-1"),
+            (MessageEnvelope?)null,
             channel.Object,
             CancellationToken.None);
 
@@ -288,6 +291,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             serviceProvider,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply"),
+            (MessageEnvelope?)null,
             channel.Object,
             CancellationToken.None);
 

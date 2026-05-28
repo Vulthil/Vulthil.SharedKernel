@@ -1,6 +1,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.RabbitMq.Envelope;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
@@ -23,7 +24,9 @@ internal sealed record MessageHandler
 
     /// <summary>
     /// Dispatches a deserialized message through the consume pipeline and (for RPC) publishes the response on the supplied channel.
-    /// Consumer-kind handlers ignore the channel parameter.
+    /// Consumer-kind handlers ignore the channel parameter. The envelope is non-null on the standard receive path
+    /// (Vulthil-produced messages) and null on the bare-JSON compat path (external producers); the closure picks the
+    /// appropriate <c>MessageContext.CreateContext</c> overload.
     /// </summary>
-    public required Func<IServiceProvider, object, BasicDeliverEventArgs, IChannel, CancellationToken, Task> DispatchAsync { get; init; }
+    public required Func<IServiceProvider, object, BasicDeliverEventArgs, MessageEnvelope?, IChannel, CancellationToken, Task> DispatchAsync { get; init; }
 }

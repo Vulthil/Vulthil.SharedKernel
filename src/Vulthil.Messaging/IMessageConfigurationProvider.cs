@@ -24,6 +24,23 @@ public interface IMessageConfigurationProvider
     MessageConfiguration GetMessageConfiguration<TMessage>() where TMessage : class;
 
     /// <summary>
+    /// Gets the stable wire URN for the supplied message type. Equivalent to
+    /// <c>GetMessageConfiguration(messageType).Urn</c> — provided for clarity at call sites.
+    /// </summary>
+    /// <param name="messageType">The message CLR type.</param>
+    /// <returns>The configured or default URN, e.g. <c>urn:message:Acme.Orders:OrderPlaced</c>.</returns>
+    Uri GetUrn(Type messageType);
+
+    /// <summary>
+    /// Resolves a CLR type from its wire URN. Returns <see langword="null"/> when no registered
+    /// type matches the supplied URN — receive-side callers must handle this (typically by dropping
+    /// the delivery as unknown).
+    /// </summary>
+    /// <param name="urn">The URN as it appeared on the wire.</param>
+    /// <returns>The registered CLR type, or <see langword="null"/> if none.</returns>
+    Type? GetMessageType(Uri urn);
+
+    /// <summary>
     /// Gets the JSON serializer options used by the messaging system.
     /// </summary>
     JsonSerializerOptions JsonSerializerOptions { get; }

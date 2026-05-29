@@ -39,12 +39,14 @@ builder.AddMessaging(messaging =>
 
     messaging.ConfigureQueue("weather-commands", queue =>
     {
-        queue.AddConsumer<RecordWeatherCommandConsumer>(c => c.Bind<RecordWeatherCommand>("weather.record"));
+        queue.Subscribe<RecordWeatherCommand>("weather.record");
+        queue.AddConsumer<RecordWeatherCommandConsumer>();
     });
 
     messaging.ConfigureQueue("weather-requests", queue =>
     {
-        queue.AddRequestConsumer<GetWeatherRequestConsumer>(c => c.Bind<GetWeatherRequest, GetWeatherResponse>("weather.get"));
+        queue.Subscribe<GetWeatherRequest>("weather.get");
+        queue.AddRequestConsumer<GetWeatherRequestConsumer>();
     });
 
     messaging.UseRabbitMq("rabbitmq");

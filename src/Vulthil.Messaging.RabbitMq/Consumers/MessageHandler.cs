@@ -13,10 +13,7 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 /// </summary>
 internal sealed record MessageHandler
 {
-    /// <summary>The routing key (or topic pattern) the handler was registered with. Used for diagnostics; the broker is authoritative for delivery.</summary>
-    public required string RoutingKey { get; init; }
-
-    /// <summary>The retry policy applied by the worker when this handler throws.</summary>
+    /// <summary>The retry policy applied by the worker when this handler's plan throws.</summary>
     public RetryPolicyDefinition? RetryPolicy { get; init; }
 
     /// <summary>The consumer contract the handler implements.</summary>

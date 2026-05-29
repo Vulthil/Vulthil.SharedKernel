@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.Messaging.Abstractions.Consumers;
@@ -35,14 +36,10 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         {
             var messageType = new MessageType(i.GetGenericArguments()[0]);
 
-            // Use the override if it exists, otherwise default to "#"
-            var routingKey = configurator.Overrides.GetValueOrDefault(messageType, "#");
-
             _queueDefinition.AddConsumer(new ConsumerRegistration
             {
                 ConsumerType = consumerType,
                 MessageType = messageType,
-                RoutingKey = routingKey,
                 RetryPolicy = configurator.RetryPolicy
             });
         }
@@ -76,18 +73,47 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
                 throw new InvalidOperationException($"Request '{reqType.Name}' is already handled elsewhere.");
             }
 
-            var routingKey = configurator.Overrides.GetValueOrDefault(reqType, "#");
-
             _queueDefinition.AddConsumer(new RequestConsumerRegistration
             {
                 ConsumerType = consumerType,
                 MessageType = reqType,
                 ResponseType = resType,
-                RoutingKey = routingKey,
                 RetryPolicy = configurator.RetryPolicy
             });
         }
 
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IQueueConfigurator Subscribe<TMessage>(string? routingKey = null) where TMessage : class
+        => SubscribeCore(typeof(TMessage), routingKey);
+
+    /// <inheritdoc />
+    public IQueueConfigurator SubscribeAll<TInterface>(Assembly assembly, string? routingKey = null) where TInterface : class
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        foreach (var concrete in assembly.GetTypes()
+            .Where(t => t is { IsAbstract: false, IsInterface: false } && typeof(TInterface).IsAssignableFrom(t)))
+        {
+            SubscribeCore(concrete, routingKey);
+        }
+        return this;
+    }
+
+    private QueueConfigurator SubscribeCore(Type concrete, string? routingKey)
+    {
+        if (concrete.IsAbstract || concrete.IsInterface)
+        {
+            throw new InvalidOperationException(
+                $"Cannot Subscribe to abstract or interface type '{concrete.FullName}'. " +
+                "Only concrete message types have exchanges; use SubscribeAll<TInterface>(assembly) to discover implementers " +
+                "or call Subscribe<TConcrete>() for each one.");
+        }
+
+        _messagingOptions.GetMessageConfiguration(concrete);
+        _queueDefinition.AddSubscription(new Subscription(new MessageType(concrete), routingKey));
         return this;
     }
 
@@ -113,5 +139,65 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         };
 
         return this;
+    }
+
+    /// <summary>
+    /// Final resolution pass — runs once after the user's configurator action completes. Auto-subscribes
+    /// any concrete TMessage from consumer registrations that wasn't explicitly subscribed, and validates
+    /// that every consumer has at least one matching concrete subscription and every concrete subscription
+    /// has at least one matching consumer. Request consumers must target concrete types.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when a consumer has no matching subscription, a subscription has no matching consumer,
+    /// or a request consumer is registered against an abstract/interface request type.
+    /// </exception>
+    internal void Build()
+    {
+        // 1. Auto-subscribe any concrete TMessage from consumer registrations not yet subscribed.
+        // Registrations no longer carry a routing key — that's a Subscription-level concern — so auto-subscribed
+        // subscriptions get a null routing key (broker uses an empty pattern). For direct/topic exchanges that
+        // require a specific pattern, the caller must explicitly q.Subscribe<TConcrete>("pattern") first.
+        var concreteConsumerMessageTypes = _queueDefinition.Registrations
+            .Select(r => r.MessageType)
+            .Where(m => m.Type is { IsAbstract: false, IsInterface: false });
+        foreach (var messageType in concreteConsumerMessageTypes)
+        {
+            _messagingOptions.GetMessageConfiguration(messageType.Type);
+            _queueDefinition.AddSubscription(new Subscription(messageType));
+        }
+
+        // 2. Request consumers cannot be polymorphic — the response type is fixed and can't be selected
+        // by the incoming concrete type.
+        foreach (var rpc in _queueDefinition.Registrations.OfType<RequestConsumerRegistration>())
+        {
+            var t = rpc.MessageType.Type;
+            if (t.IsAbstract || t.IsInterface)
+            {
+                throw new InvalidOperationException(
+                    $"Queue '{_queueDefinition.Name}': request consumer '{rpc.ConsumerType.Name}' has polymorphic request type '{t.FullName}'. " +
+                    "Request consumers must use a concrete request type since the response is typed.");
+            }
+        }
+
+        // 3. Every consumer must have at least one matching concrete subscription.
+        var orphanConsumer = _queueDefinition.Registrations.FirstOrDefault(
+            r => !_queueDefinition.Subscriptions.Any(s => r.MessageType.Type.IsAssignableFrom(s.MessageType.Type)));
+        if (orphanConsumer is not null)
+        {
+            throw new InvalidOperationException(
+                $"Queue '{_queueDefinition.Name}': consumer '{orphanConsumer.ConsumerType.Name}' targets message type '{orphanConsumer.MessageType.Type.FullName}' " +
+                "but no concrete subscribed type on this queue is assignable to it. " +
+                "Call q.Subscribe<TConcrete>() or q.SubscribeAll<TInterface>(assembly) for at least one implementer.");
+        }
+
+        // 4. Every subscription must have at least one matching consumer.
+        var orphanSubscription = _queueDefinition.Subscriptions.FirstOrDefault(
+            s => !_queueDefinition.Registrations.Any(r => r.MessageType.Type.IsAssignableFrom(s.MessageType.Type)));
+        if (orphanSubscription is not null)
+        {
+            throw new InvalidOperationException(
+                $"Queue '{_queueDefinition.Name}': concrete subscription '{orphanSubscription.MessageType.Type.FullName}' has no matching consumer. " +
+                "Either AddConsumer<TConsumer>() that handles this message type, or remove the subscription.");
+        }
     }
 }

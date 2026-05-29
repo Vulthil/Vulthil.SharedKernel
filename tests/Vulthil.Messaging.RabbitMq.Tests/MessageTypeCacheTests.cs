@@ -94,7 +94,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         {
             ConsumerType = consumer,
             MessageType = messageType,
-            RoutingKey = "test.message"
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
@@ -107,7 +106,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         plan.ShouldNotBeNull();
         plan.Handlers.ShouldHaveSingleItem();
         plan.Handlers[0].Kind.ShouldBe(HandlerKind.Consumer);
-        plan.Handlers[0].RoutingKey.ShouldBe("test.message");
     }
 
     [Fact]
@@ -121,7 +119,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             ConsumerType = consumer,
             MessageType = messageType,
             ResponseType = typeof(TestResponse),
-            RoutingKey = "test.request"
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
@@ -132,8 +129,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         // Assert
         var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
-        var rpcHandler = plan.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
-        rpcHandler.RoutingKey.ShouldBe("test.request");
+        plan.Handlers.ShouldContain(h => h.Kind == HandlerKind.RequestConsumer);
     }
 
     [Fact]
@@ -149,7 +145,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         {
             ConsumerType = consumer,
             MessageType = messageType,
-            RoutingKey = "#"
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
@@ -181,7 +176,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             ConsumerType = consumer,
             MessageType = messageType,
             ResponseType = typeof(TestResponse),
-            RoutingKey = "#"
         };
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration);
@@ -240,7 +234,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(ThrowingRequestConsumer)),
             MessageType = new MessageType(typeof(TestRequest)),
             ResponseType = typeof(TestResponse),
-            RoutingKey = "#"
         };
 
         var queue = new QueueDefinition("TestQueue");
@@ -293,24 +286,14 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void RegisterQueueShouldRecordEveryConsumerRegistration()
+    public void RegisterQueueShouldDedupeIdenticalRegistrationsIntoOneHandler()
     {
         // Arrange
         var consumer = new ConsumerType(typeof(TestMessageConsumer));
         var messageType = new MessageType(typeof(TestMessage));
 
-        var registration1 = new ConsumerRegistration
-        {
-            ConsumerType = consumer,
-            MessageType = messageType,
-            RoutingKey = "route.1"
-        };
-        var registration2 = new ConsumerRegistration
-        {
-            ConsumerType = consumer,
-            MessageType = messageType,
-            RoutingKey = "route.2"
-        };
+        var registration1 = new ConsumerRegistration { ConsumerType = consumer, MessageType = messageType };
+        var registration2 = new ConsumerRegistration { ConsumerType = consumer, MessageType = messageType };
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration1);
@@ -322,10 +305,8 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         // Assert
         var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
-        plan.Handlers.Count.ShouldBe(2);
-        plan.Handlers[0].RoutingKey.ShouldBe("route.1");
-        plan.Handlers[1].RoutingKey.ShouldBe("route.2");
-        plan.Handlers.ShouldAllBe(h => h.Kind == HandlerKind.Consumer);
+        plan.Handlers.ShouldHaveSingleItem();
+        plan.Handlers[0].Kind.ShouldBe(HandlerKind.Consumer);
     }
 
     [Fact]
@@ -337,14 +318,12 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(TestRequestConsumer)),
             MessageType = new MessageType(typeof(TestRequest)),
             ResponseType = typeof(TestResponse),
-            RoutingKey = "test.request"
         };
         var second = new RequestConsumerRegistration
         {
             ConsumerType = new ConsumerType(typeof(ThrowingRequestConsumer)),
             MessageType = new MessageType(typeof(TestRequest)),
             ResponseType = typeof(TestResponse),
-            RoutingKey = "test.request.alt"
         };
 
         var queue = new QueueDefinition("TestQueue");
@@ -358,13 +337,12 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void HandlerRoutingKeyFromFactoryShouldRoundTrip()
+    public void HandlerFromFactoryShouldCarryKind()
     {
         // Arrange
-        var handler = MessageHandlerFactory.ForRequestConsumer<TestRequestConsumer, TestRequest, TestResponse>("custom.routing.key", retryPolicy: null);
+        var handler = MessageHandlerFactory.ForRequestConsumer<TestRequestConsumer, TestRequest, TestResponse>(retryPolicy: null);
 
         // Act & Assert
-        handler.RoutingKey.ShouldBe("custom.routing.key");
         handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
     }
 }

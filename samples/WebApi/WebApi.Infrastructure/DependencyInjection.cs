@@ -41,14 +41,11 @@ public static class DependencyInjection
 
                 queue.AddRequestConsumer<SideEffectRequestConsumer>();
 
+                queue.Subscribe<MainEntityCreatedIntegrationEvent>("main-entity.created");
+                queue.Subscribe<MainEntityCreatedIntegrationEvent>("main-entity.created2");
                 queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
                 {
-                    c.Bind<MainEntityCreatedIntegrationEvent>("main-entity.created");
                     c.UseRetry(r => r.Immediate(5));
-                });
-                queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
-                {
-                    c.Bind<MainEntityCreatedIntegrationEvent>("main-entity.created2");
                 });
             });
 

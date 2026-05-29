@@ -59,11 +59,11 @@ Vulthil.Messaging.MessagingExchangeType.Direct = 1 -> Vulthil.Messaging.Messagin
 Vulthil.Messaging.MessagingExchangeType.Fanout = 0 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Headers = 3 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Topic = 2 -> Vulthil.Messaging.MessagingExchangeType
-Vulthil.Messaging.Queues.BaseConfigurator
-Vulthil.Messaging.Queues.BaseConfigurator.BaseConfigurator() -> void
-Vulthil.Messaging.Queues.BaseConfigurator.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> void
+Vulthil.Messaging.Queues.BaseConfigurator<TConfigurator>
+Vulthil.Messaging.Queues.BaseConfigurator<TConfigurator>.BaseConfigurator() -> void
+Vulthil.Messaging.Queues.BaseConfigurator<TConfigurator>.Self.get -> TConfigurator!
+Vulthil.Messaging.Queues.BaseConfigurator<TConfigurator>.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> TConfigurator!
 Vulthil.Messaging.Queues.ConsumerConfigurator<TConsumer>
-Vulthil.Messaging.Queues.ConsumerConfigurator<TConsumer>.Bind<TMessage>(string! routingKey) -> Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>!
 Vulthil.Messaging.Queues.ConsumerConfigurator<TConsumer>.ConsumerConfigurator() -> void
 Vulthil.Messaging.Queues.ConsumerRegistration
 Vulthil.Messaging.Queues.ConsumerType
@@ -78,18 +78,18 @@ Vulthil.Messaging.Queues.DeadLetterDefinition.ExchangeName.get -> string?
 Vulthil.Messaging.Queues.DeadLetterDefinition.ExchangeName.set -> void
 Vulthil.Messaging.Queues.DeadLetterDefinition.QueueName.get -> string?
 Vulthil.Messaging.Queues.DeadLetterDefinition.QueueName.set -> void
+Vulthil.Messaging.Queues.IBaseConfigurator<TConfigurator>
+Vulthil.Messaging.Queues.IBaseConfigurator<TConfigurator>.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> TConfigurator
 Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>
-Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>.Bind<TMessage>(string! routingKey) -> Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>!
-Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> void
 Vulthil.Messaging.Queues.IQueueConfigurator
 Vulthil.Messaging.Queues.IQueueConfigurator.AddConsumer<TConsumer>(System.Action<Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer!>!>? configure = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
 Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer<TConsumer>(System.Action<Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer!>!>? configure = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
 Vulthil.Messaging.Queues.IQueueConfigurator.ConfigureQueue(System.Action<Vulthil.Messaging.Queues.QueueDefinition!>! configureAction) -> Vulthil.Messaging.Queues.IQueueConfigurator!
+Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe<TMessage>(string? routingKey = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
+Vulthil.Messaging.Queues.IQueueConfigurator.SubscribeAll<TInterface>(System.Reflection.Assembly! assembly, string? routingKey = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
 Vulthil.Messaging.Queues.IQueueConfigurator.UseDeadLetterQueue(string? queueName = null, string? exchangeName = null) -> Vulthil.Messaging.Queues.IQueueConfigurator!
 Vulthil.Messaging.Queues.IQueueConfigurator.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! configure) -> Vulthil.Messaging.Queues.IQueueConfigurator!
 Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>
-Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>.Bind<TRequest, TResponse>(string! routingKey) -> Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>!
-Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>.UseRetry(System.Action<Vulthil.Messaging.Queues.RetryPolicyConfigurator!>! value) -> void
 Vulthil.Messaging.Queues.MessageType
 Vulthil.Messaging.Queues.MessageType.MessageType(System.Type! Type) -> void
 Vulthil.Messaging.Queues.MessageType.Name.get -> string!
@@ -125,6 +125,13 @@ Vulthil.Messaging.Queues.QueueDefinition.PrefetchCount.get -> ushort
 Vulthil.Messaging.Queues.QueueDefinition.PrefetchCount.set -> void
 Vulthil.Messaging.Queues.QueueDefinition.QueueDefinition(string! Name) -> void
 Vulthil.Messaging.Queues.QueueDefinition.Registrations.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.Registration!>!
+Vulthil.Messaging.Queues.QueueDefinition.Subscriptions.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.Subscription!>!
+Vulthil.Messaging.Queues.Subscription
+Vulthil.Messaging.Queues.Subscription.MessageType.get -> Vulthil.Messaging.Queues.MessageType!
+Vulthil.Messaging.Queues.Subscription.MessageType.init -> void
+Vulthil.Messaging.Queues.Subscription.RoutingKey.get -> string?
+Vulthil.Messaging.Queues.Subscription.RoutingKey.init -> void
+Vulthil.Messaging.Queues.Subscription.Subscription(Vulthil.Messaging.Queues.MessageType! MessageType, string? RoutingKey = null) -> void
 Vulthil.Messaging.Queues.QueueDefinition.RetryEnabled.get -> bool
 Vulthil.Messaging.Queues.Registration
 Vulthil.Messaging.Queues.Registration.ConsumerType.get -> Vulthil.Messaging.Queues.ConsumerType!
@@ -133,10 +140,7 @@ Vulthil.Messaging.Queues.Registration.MessageType.get -> Vulthil.Messaging.Queue
 Vulthil.Messaging.Queues.Registration.MessageType.init -> void
 Vulthil.Messaging.Queues.Registration.RetryPolicy.get -> Vulthil.Messaging.Queues.RetryPolicyDefinition?
 Vulthil.Messaging.Queues.Registration.RetryPolicy.init -> void
-Vulthil.Messaging.Queues.Registration.RoutingKey.get -> string!
-Vulthil.Messaging.Queues.Registration.RoutingKey.init -> void
 Vulthil.Messaging.Queues.RequestConsumerConfigurator<TConsumer>
-Vulthil.Messaging.Queues.RequestConsumerConfigurator<TConsumer>.Bind<TRequest, TResponse>(string! routingKey) -> Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>!
 Vulthil.Messaging.Queues.RequestConsumerConfigurator<TConsumer>.RequestConsumerConfigurator() -> void
 Vulthil.Messaging.Queues.RequestConsumerRegistration
 Vulthil.Messaging.Queues.RequestConsumerRegistration.ResponseType.get -> System.Type!

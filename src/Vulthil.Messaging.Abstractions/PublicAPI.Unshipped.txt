@@ -42,9 +42,6 @@ Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>.Message.get -
 Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer
 Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer<TRequest, TResponse>
 Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer<TRequest, TResponse>.ConsumeAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TRequest>! messageContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResponse>!
-Vulthil.Messaging.Abstractions.Consumers.RoutingKeyAttribute
-Vulthil.Messaging.Abstractions.Consumers.RoutingKeyAttribute.Pattern.get -> string!
-Vulthil.Messaging.Abstractions.Consumers.RoutingKeyAttribute.RoutingKeyAttribute(string! pattern) -> void
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeader(string! key, object? value) -> void
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary<string!, object?>! headers) -> void

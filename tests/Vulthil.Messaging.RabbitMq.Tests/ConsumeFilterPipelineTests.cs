@@ -104,7 +104,6 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         {
             ConsumerType = new ConsumerType(typeof(RecordingConsumer)),
             MessageType = new MessageType(typeof(TestMessage)),
-            RoutingKey = "#"
         });
         Target.RegisterQueue(queue);
 
@@ -137,7 +136,6 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         {
             ConsumerType = new ConsumerType(typeof(RecordingConsumer)),
             MessageType = new MessageType(typeof(TestMessage)),
-            RoutingKey = "#"
         });
         Target.RegisterQueue(queue);
 
@@ -170,7 +168,6 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         {
             ConsumerType = new ConsumerType(typeof(RecordingConsumer)),
             MessageType = new MessageType(typeof(TestMessage)),
-            RoutingKey = "#"
         });
         Target.RegisterQueue(queue);
 
@@ -204,7 +201,6 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(RecordingRequestConsumer)),
             MessageType = new MessageType(typeof(TestRequest)),
             ResponseType = typeof(TestResponse),
-            RoutingKey = "#"
         });
         Target.RegisterQueue(queue);
 
@@ -265,7 +261,6 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(RecordingRequestConsumer)),
             MessageType = new MessageType(typeof(TestRequest)),
             ResponseType = typeof(TestResponse),
-            RoutingKey = "#"
         });
         Target.RegisterQueue(queue);
 

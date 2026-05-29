@@ -9,8 +9,8 @@ internal sealed class MessageTypeCache
     private readonly IMessageConfigurationProvider _provider;
     private readonly Dictionary<Uri, MessageExecutionPlan> _plansByUrn = [];
     private readonly Dictionary<string, MessageExecutionPlan> _plansByFullName = new(StringComparer.Ordinal);
-    private readonly ConcurrentDictionary<(Type Consumer, Type Message), Func<string, RetryPolicyDefinition?, MessageHandler>> _consumerFactoryCache = new();
-    private readonly ConcurrentDictionary<(Type Consumer, Type Request, Type Response), Func<string, RetryPolicyDefinition?, MessageHandler>> _requestConsumerFactoryCache = new();
+    private readonly ConcurrentDictionary<(Type Consumer, Type Message), Func<RetryPolicyDefinition?, MessageHandler>> _consumerFactoryCache = new();
+    private readonly ConcurrentDictionary<(Type Consumer, Type Request, Type Response), Func<RetryPolicyDefinition?, MessageHandler>> _requestConsumerFactoryCache = new();
 
     private static readonly MethodInfo _forConsumerMethod = typeof(MessageHandlerFactory)
         .GetMethod(nameof(MessageHandlerFactory.ForConsumer), BindingFlags.Public | BindingFlags.Static)
@@ -26,45 +26,59 @@ internal sealed class MessageTypeCache
 
     public void RegisterQueue(QueueDefinition queue)
     {
-        foreach (var consumer in queue.Registrations.OfType<ConsumerRegistration>())
+        var effectiveSubscriptions = new HashSet<MessageType>(queue.Subscriptions.Select(s => s.MessageType));
+        var concreteRegistrationTypes = queue.Registrations
+            .Select(r => r.MessageType)
+            .Where(m => m.Type is { IsAbstract: false, IsInterface: false });
+        foreach (var concrete in concreteRegistrationTypes)
         {
-            var msgType = consumer.MessageType;
-            var plan = GetOrAddPlan(msgType);
-
-            var factory = GetConsumerFactory(consumer.ConsumerType.Type, msgType.Type);
-            var handler = factory(RabbitMqConstants.GetRoutingKey(consumer), consumer.RetryPolicy);
-            plan.Handlers.Add(handler);
+            effectiveSubscriptions.Add(concrete);
         }
 
-        foreach (var rpc in queue.Registrations.OfType<RequestConsumerRegistration>())
+        foreach (var subscription in effectiveSubscriptions)
         {
-            var msgType = rpc.MessageType;
-            var plan = GetOrAddPlan(msgType);
+            var concreteType = subscription.Type;
+            var plan = GetOrAddPlan(subscription);
 
-            if (plan.Handlers.Any(h => h.Kind == HandlerKind.RequestConsumer))
+            foreach (var registration in queue.Registrations)
             {
-                throw new InvalidOperationException(
-                    $"Queue '{queue.Name}' already has a request consumer registered for message type '{msgType.Name}'. " +
-                    "A message type can have at most one request consumer per queue, since multiple responses would be ambiguous.");
-            }
+                if (!registration.MessageType.Type.IsAssignableFrom(concreteType))
+                {
+                    continue;
+                }
 
-            var factory = GetRequestConsumerFactory(rpc.ConsumerType.Type, msgType.Type, rpc.ResponseType);
-            var handler = factory(RabbitMqConstants.GetRoutingKey(rpc), rpc.RetryPolicy);
-            plan.Handlers.Add(handler);
+                if (registration is RequestConsumerRegistration rpc)
+                {
+                    if (plan.Handlers.Any(h => h.Kind == HandlerKind.RequestConsumer))
+                    {
+                        throw new InvalidOperationException(
+                            $"Queue '{queue.Name}' already has a request consumer registered for message type '{subscription.Name}'. " +
+                            "A message type can have at most one request consumer per queue, since multiple responses would be ambiguous.");
+                    }
+
+                    var rpcFactory = GetRequestConsumerFactory(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType);
+                    plan.Handlers.Add(rpcFactory(rpc.RetryPolicy));
+                }
+                else
+                {
+                    var consumerFactory = GetConsumerFactory(registration.ConsumerType.Type, registration.MessageType.Type);
+                    plan.Handlers.Add(consumerFactory(registration.RetryPolicy));
+                }
+            }
         }
     }
 
-    private Func<string, RetryPolicyDefinition?, MessageHandler> GetConsumerFactory(Type consumerType, Type messageType)
+    private Func<RetryPolicyDefinition?, MessageHandler> GetConsumerFactory(Type consumerType, Type messageType)
         => _consumerFactoryCache.GetOrAdd((consumerType, messageType), static key =>
             _forConsumerMethod
                 .MakeGenericMethod(key.Consumer, key.Message)
-                .CreateDelegate<Func<string, RetryPolicyDefinition?, MessageHandler>>());
+                .CreateDelegate<Func<RetryPolicyDefinition?, MessageHandler>>());
 
-    private Func<string, RetryPolicyDefinition?, MessageHandler> GetRequestConsumerFactory(Type consumerType, Type requestType, Type responseType)
+    private Func<RetryPolicyDefinition?, MessageHandler> GetRequestConsumerFactory(Type consumerType, Type requestType, Type responseType)
         => _requestConsumerFactoryCache.GetOrAdd((consumerType, requestType, responseType), static key =>
             _forRequestConsumerMethod
                 .MakeGenericMethod(key.Consumer, key.Request, key.Response)
-                .CreateDelegate<Func<string, RetryPolicyDefinition?, MessageHandler>>());
+                .CreateDelegate<Func<RetryPolicyDefinition?, MessageHandler>>());
 
     private MessageExecutionPlan GetOrAddPlan(MessageType messageType)
     {

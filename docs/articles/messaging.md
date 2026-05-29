@@ -290,32 +290,42 @@ resolvable in unit tests if you want to assert against it.
 
 ## Routing Keys
 
-Routing keys control which consumers receive a message on topic exchanges.
+Routing keys flow through two distinct configuration sites, one on each side of the wire:
 
-### Attribute-based routing
+- **Producer side** — `MessageConfiguration<TMessage>.UseRoutingKey(selector)` controls the key the
+  publisher writes onto each outgoing message.
+- **Consumer side** — `q.Subscribe<TMessage>(routingKey)` controls the binding pattern the broker
+  uses to filter deliveries for the queue.
+
+The two sites can use the same value (typical for direct exchanges) or different values (e.g. a topic
+binding `order.*` matching producer keys like `order.created`). When the binding pattern is left null,
+the broker receives an empty pattern: fanout/headers exchanges ignore it; direct/topic exchanges only
+match an empty published key — supply a specific pattern explicitly when needed.
 
 ```csharp
-[RoutingKey("order.created")]
-public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent> { ... }
-```
-
-### Dynamic routing keys
-
-```csharp
+// Producer side: what the publisher writes on the wire.
 messaging.ConfigureMessage<OrderCreatedEvent>(message =>
 {
     message.UseRoutingKey(e => $"order.{e.Region}");
     message.UseCorrelationId(e => e.OrderId.ToString());
+});
+
+// Consumer side: how the queue binds. Pattern matches the producer's published key.
+messaging.ConfigureQueue("order-projector", q =>
+{
+    q.Subscribe<OrderCreatedEvent>("order.*");
+    q.AddConsumer<OrderProjector>();
 });
 ```
 
 ## Message Configuration
 
 Each message type is associated with a `MessageConfiguration` that controls the
-exchange name, exchange type, durability, and routing/correlation formatters used
-when publishing. The `Exchange` defaults to the message CLR full type name when
-constructed via `MessageConfiguration<TMessage>`; the publisher and bus topology
-share that same source of truth, so they never get out of sync.
+exchange name, exchange type, durability, routing/correlation formatters used
+when publishing, and the stable wire URN. The `Exchange` defaults to the message
+CLR full type name when constructed via `MessageConfiguration<TMessage>`; the
+publisher and bus topology share that same source of truth, so they never get
+out of sync.
 
 ```csharp
 messaging.ConfigureMessage<OrderCreatedEvent>(m =>
@@ -326,6 +336,128 @@ messaging.ConfigureMessage<OrderCreatedEvent>(m =>
     m.UseRoutingKey(e => $"order.{e.Region}");
 });
 ```
+
+### Wire identity (URN)
+
+Every message type carries a stable wire URN that identifies it on the broker
+independent of its CLR type name. The default is derived from the CLR type:
+
+```
+urn:message:Acme.Orders:OrderCreatedEvent
+```
+
+Override it via `MessageConfiguration<T>.Urn` to keep the wire identity stable
+across CLR renames — producers and consumers on different versions agree on the
+URN even if their C# class names diverge:
+
+```csharp
+messaging.ConfigureMessage<OrderCreatedEvent>(m =>
+{
+    m.Urn = new Uri("urn:message:Acme.Orders:OrderPlaced");
+});
+```
+
+The URN is the dispatch key on the receive side — it appears in the message
+envelope's `messageType` field, and `MessageTypeCache` keys its execution plans
+by URN.
+
+### Message envelope (wire format)
+
+Vulthil-produced messages are wrapped in a JSON envelope with explicit metadata
+fields rather than relying on AMQP `BasicProperties` headers:
+
+```json
+{
+  "messageId":      "01931d7e-...",
+  "correlationId":  "a3f1...",
+  "conversationId": "a3f1...",
+  "initiatorId":    "01931d7d-...",
+  "sourceAddress":  "queue:order-service",
+  "messageType":    "urn:message:Acme.Orders:OrderPlaced",
+  "message":        { "orderId": "abc", "amount": 100 },
+  "sentTime":       "2026-05-27T12:00:00Z",
+  "headers":        { "tenant": "acme" }
+}
+```
+
+`BasicProperties.MessageId`, `CorrelationId`, and `Type` (= URN) are still
+mirrored into AMQP for broker tooling and trace propagation, but the envelope
+is the source of truth.
+
+External producers that emit bare JSON (no envelope) are accepted on the
+receive path — the worker probes the body and falls back to using
+`BasicProperties.Type` as the type identity.
+
+## Subscriptions and Polymorphism
+
+Topology and dispatch are separated:
+
+- **Subscriptions** = exchange bindings. A queue is subscribed to a concrete
+  message type via `q.Subscribe<TConcrete>()`; at topology setup time, the
+  queue's binding to `TConcrete`'s exchange is declared.
+- **Consumers** = handlers. A consumer is registered via
+  `q.AddConsumer<TConsumer>()` where `TConsumer` implements
+  `IConsumer<TMessage>` — `TMessage` may be a concrete type, an interface, or
+  an abstract base.
+
+When `TMessage` is **concrete**, the consumer's message type is auto-subscribed
+at build time — preserves the today's ergonomic for the simple case:
+
+```csharp
+m.ConfigureQueue("orders", q => q.AddConsumer<OrderCreatedConsumer>());
+// → q is auto-subscribed to OrderCreatedEvent.
+```
+
+When `TMessage` is **polymorphic** (an interface or abstract base), the
+consumer fires for any concrete delivery whose CLR type is assignable to it —
+but the queue must explicitly subscribe to the concrete types it wants to bind:
+
+```csharp
+// OrderProjector : IConsumer<IOrderEvent>
+m.ConfigureQueue("order-projector", q =>
+{
+    q.Subscribe<OrderPlaced>();      // bind queue to OrderPlaced exchange
+    q.Subscribe<OrderCancelled>();   // bind queue to OrderCancelled exchange
+    q.AddConsumer<OrderProjector>(); // fires on either delivery
+});
+```
+
+`SubscribeAll<TInterface>(Assembly)` discovers concrete implementers in the
+supplied assembly and calls `Subscribe<TConcrete>` for each — abstract types
+and interfaces are skipped (only concrete types have exchanges):
+
+```csharp
+m.ConfigureQueue("order-projector", q =>
+{
+    q.SubscribeAll<IOrderEvent>(typeof(OrderPlaced).Assembly);
+    q.AddConsumer<OrderProjector>();
+});
+```
+
+Dispatch is transitive: with a hierarchy `OrderPlaced : IOrder : IOrderEvent`,
+a single `OrderPlaced` delivery fires consumers registered against the concrete
+`OrderPlaced`, against `IOrder` (immediate interface), and against
+`IOrderEvent` (transitive interface).
+
+### Validation at composition time
+
+After `ConfigureQueue` returns, a build pass validates the queue's wiring and
+throws with a descriptive message if anything is incoherent:
+
+- A consumer with no matching concrete subscription (e.g. `IConsumer<IOrderEvent>`
+  but no `Subscribe<TConcrete>` for any implementer).
+- A subscription with no matching consumer.
+- A request consumer registered against an abstract or interface request type
+  (responses are typed and can't depend on the concrete request type).
+
+These failures surface at app startup, not at the first message delivery.
+
+### Request consumers stay non-polymorphic
+
+`IRequestConsumer<TRequest, TResponse>` requires a concrete `TRequest` — the
+response type is fixed and can't be selected by the incoming concrete type.
+Each `(queue, message type)` pair admits at most one request consumer; a
+second one fails fast at composition.
 
 `MessageConfiguration` instances can also come from configuration — see below.
 

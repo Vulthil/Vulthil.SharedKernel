@@ -9,6 +9,7 @@
 - When modifying a public member, make sure to update the XML Documentation and the corresponding docs in the docs folder and the README file if applicable.
 - When modifying a public member, make sure to check the Public.API files for the affected assembly and update them if necessary.
 - Do not ignore CS1591 warnings; analyze and add missing XML comments instead.
+- Do not add comments inside methods; for complex logic, consider extracting it into a separate method with a descriptive name instead of adding comments.
 
 ## Testing Guidelines
 - Prefer using the Vulthil.xUnit testing framework for tests.
@@ -17,6 +18,7 @@
 - Prefer using the AutoMocker instance for dependency injection in tests to simplify test setup and improve readability.
 - Use the methods on the BaseUnitTestCase class for modifying the AutoMocker instance, such as `Use<T>(T instance)` or `Use<T>()` for registering dependencies, and `GetMock<T>()` for retrieving mocks from the AutoMocker.
 - Override the CreateInstance or CreateInstance<T> methods and use the Target property to lazily create the instance under test.
+- Do not add comments inside test methods except Arrange, Act and Assert; rename the test method to be descriptive of the behavior being tested instead of adding comments.
 
 ## Documentation Guidelines
 - When generating package README files, keep them short and concise, and use the docs folder for more elaborate usage patterns.

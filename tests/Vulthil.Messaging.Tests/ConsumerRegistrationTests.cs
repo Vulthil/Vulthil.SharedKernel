@@ -6,9 +6,6 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
-/// <summary>
-/// Represents the ConsumerRegistrationTests.
-/// </summary>
 public sealed class ConsumerRegistrationTests : BaseUnitTestCase
 {
     private static HostApplicationBuilder CreateHostBuilder()
@@ -22,9 +19,6 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         return [.. sp.GetRequiredService<IMessageConfigurationProvider>().QueueDefinitions];
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddConsumerShouldRegisterConsumerInServiceCollection()
     {
@@ -45,9 +39,6 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         consumerServices.Count.ShouldBeGreaterThan(0);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddConsumerShouldRegisterConsumerOnlyOnce()
     {
@@ -72,9 +63,6 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         registrations.Count.ShouldBe(1);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddConsumerShouldAddConsumerRegistrationToQueueDefinition()
     {
@@ -100,11 +88,8 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         queue.Registrations.First().MessageType.Type.ShouldBe(typeof(TestMessage));
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
-    public void AddConsumerWithRoutingKeyShouldUseCustomRoutingKey()
+    public void SubscribeWithRoutingKeyShouldRecordOnSubscription()
     {
         // Arrange
         var builder = CreateHostBuilder();
@@ -116,23 +101,19 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         {
             x.ConfigureQueue(queueName, q =>
             {
-                q.AddConsumer<TestMessageConsumer>(c =>
-                {
-                    c.Bind<TestMessage>(customRoutingKey);
-                });
+                q.Subscribe<TestMessage>(customRoutingKey);
+                q.AddConsumer<TestMessageConsumer>();
             });
         });
 
         // Assert
         var queue = GetQueueDefinitions(builder).First();
-        queue.Registrations.First().RoutingKey.ShouldBe(customRoutingKey);
+        queue.Subscriptions.ShouldContain(s =>
+            s.MessageType.Type == typeof(TestMessage) && s.RoutingKey == customRoutingKey);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
-    public void AddConsumerWithoutRoutingKeyBindingShouldUseDefaultWildcard()
+    public void AddConsumerShouldAutoSubscribeWithNullRoutingKey()
     {
         // Arrange
         var builder = CreateHostBuilder();
@@ -149,12 +130,10 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
 
         // Assert
         var queue = GetQueueDefinitions(builder).First();
-        queue.Registrations.First().RoutingKey.ShouldBe("#");
+        queue.Subscriptions.ShouldContain(s =>
+            s.MessageType.Type == typeof(TestMessage) && s.RoutingKey == null);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddMultipleConsumersToSameQueueShouldRegisterAll()
     {
@@ -180,9 +159,6 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         types.Contains(typeof(AnotherTestConsumer)).ShouldBeTrue();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void SameConsumerInMultipleQueuesWithDifferentRoutingKeysShouldRegisterBoth()
     {
@@ -194,17 +170,13 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         {
             x.ConfigureQueue("Queue1", q =>
             {
-                q.AddConsumer<TestMessageConsumer>(c =>
-                {
-                    c.Bind<TestMessage>("route1");
-                });
+                q.Subscribe<TestMessage>("route1");
+                q.AddConsumer<TestMessageConsumer>();
             });
             x.ConfigureQueue("Queue2", q =>
             {
-                q.AddConsumer<TestMessageConsumer>(c =>
-                {
-                    c.Bind<TestMessage>("route2");
-                });
+                q.Subscribe<TestMessage>("route2");
+                q.AddConsumer<TestMessageConsumer>();
             });
         });
 
@@ -213,25 +185,19 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
         queues.Count.ShouldBe(2);
 
         var queue1 = queues.First(q => q.Name == "Queue1");
-        queue1.Registrations.First().RoutingKey.ShouldBe("route1");
+        queue1.Subscriptions.ShouldContain(s => s.RoutingKey == "route1");
 
         var queue2 = queues.First(q => q.Name == "Queue2");
-        queue2.Registrations.First().RoutingKey.ShouldBe("route2");
+        queue2.Subscriptions.ShouldContain(s => s.RoutingKey == "route2");
     }
 
     private class TestMessage
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public string Content { get; set; } = string.Empty;
     }
 
     private class TestMessageConsumer : IConsumer<TestMessage>
     {
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
@@ -240,17 +206,11 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
 
     private class AnotherMessage
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public string Data { get; set; } = string.Empty;
     }
 
     private class AnotherTestConsumer : IConsumer<AnotherMessage>
     {
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public Task ConsumeAsync(IMessageContext<AnotherMessage> messageContext, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;

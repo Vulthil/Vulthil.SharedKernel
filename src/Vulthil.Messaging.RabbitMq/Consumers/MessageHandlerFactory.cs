@@ -20,12 +20,11 @@ internal static class MessageHandlerFactory
     /// <summary>
     /// Builds a handler for a one-way <see cref="IConsumer{TMessage}"/>.
     /// </summary>
-    public static MessageHandler ForConsumer<TConsumer, TMessage>(string routingKey, RetryPolicyDefinition? retryPolicy)
+    public static MessageHandler ForConsumer<TConsumer, TMessage>(RetryPolicyDefinition? retryPolicy)
         where TConsumer : class, IConsumer<TMessage>
         where TMessage : notnull
         => new()
         {
-            RoutingKey = routingKey,
             RetryPolicy = retryPolicy,
             Kind = HandlerKind.Consumer,
             DispatchAsync = async (sp, message, ea, envelope, _, ct) =>
@@ -48,13 +47,12 @@ internal static class MessageHandlerFactory
     /// <summary>
     /// Builds a handler for a request/reply <see cref="IRequestConsumer{TRequest, TResponse}"/>.
     /// </summary>
-    public static MessageHandler ForRequestConsumer<TConsumer, TRequest, TResponse>(string routingKey, RetryPolicyDefinition? retryPolicy)
+    public static MessageHandler ForRequestConsumer<TConsumer, TRequest, TResponse>(RetryPolicyDefinition? retryPolicy)
         where TConsumer : class, IRequestConsumer<TRequest, TResponse>
         where TRequest : notnull
         where TResponse : notnull
         => new()
         {
-            RoutingKey = routingKey,
             RetryPolicy = retryPolicy,
             Kind = HandlerKind.RequestConsumer,
             DispatchAsync = async (sp, message, ea, envelope, channel, ct) =>

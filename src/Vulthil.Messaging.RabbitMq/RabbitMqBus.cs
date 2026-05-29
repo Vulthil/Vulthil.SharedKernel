@@ -156,14 +156,13 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         await channel.QueueBindAsync(
             queue: queue.Name,
             exchange: queue.Name,
-            routingKey: "#",
+            routingKey: string.Empty,
             cancellationToken: cancellationToken);
 
-        foreach (var registration in queue.Registrations)
+        foreach (var subscription in queue.Subscriptions)
         {
-            var messageConfig = _messageConfigurationProvider.GetMessageConfiguration(registration.MessageType.Type);
+            var messageConfig = _messageConfigurationProvider.GetMessageConfiguration(subscription.MessageType.Type);
             var exchangeName = messageConfig.Exchange;
-            var bindingPattern = RabbitMqConstants.GetRoutingKey(registration);
 
             await channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
@@ -176,7 +175,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             await channel.ExchangeBindAsync(
                 destination: queue.Name,
                 source: exchangeName,
-                routingKey: bindingPattern,
+                routingKey: subscription.RoutingKey ?? string.Empty,
                 cancellationToken: cancellationToken);
         }
     }

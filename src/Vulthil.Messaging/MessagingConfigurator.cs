@@ -47,6 +47,7 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
 
         var queueConfigurator = new QueueConfigurator(Services, _messagingOptions, queueDefinition);
         queueConfigurationAction(queueConfigurator);
+        queueConfigurator.Build();
 
         return this;
     }

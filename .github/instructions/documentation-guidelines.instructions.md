@@ -7,7 +7,10 @@ apply-to: "src/**/*.*"
 When assisting with this C# solution, you MUST adhere to the following documentation standards for all code modifications, additions, and refactors. Failure to maintain these standards will result in build warnings, CI/CD failures, or degraded documentation.
 
 ## 1. XML Documentation for Public Members
-All `public` types and members (classes, structs, interfaces, records, enums, methods, properties, events, and fields) REQUIRE standard C# XML documentation comments (`///`). 
+Add standard C# XML documentation comments (`///`) only where the compiler would otherwise emit **CS1591** ("Missing XML comment for publicly visible type or member").
+In practice this covers `public` types and members (classes, structs, interfaces, records, enums, methods, properties, events, and fields) in assemblies that generate a documentation file.
+Do not add `///` comments to members the compiler does not warn about (e.g., `internal`, `private`, or `protected` members, or members already covered by an enclosing `<inheritdoc />`),
+as this adds noise without satisfying any analyzer requirement. 
 
 *   **Required Tags:** Always include a `<summary>`. 
 *   **Contextual Tags:** Include `<param>`, `<returns>`, `<value>`, `<remarks>`, and `<exception>` tags wherever applicable.
@@ -33,7 +36,7 @@ The conceptual documentation is housed in the `docs` folder and is built using D
 
 ## Agent Verification Checklist
 Before completing your task, verify the following:
-- [ ] Did I add `///` comments to all newly created or modified `public` members?
+- [ ] Did I add `///` comments to every newly created or modified member that would otherwise trigger CS1591 (and avoid adding them where the compiler does not warn)?
 - [ ] Did I add the exact API signature to `PublicAPI.Unshipped.txt`?
 - [ ] Did I add/update usage examples in the `docs` folder?
 - [ ] Are my conceptual doc changes compatible with `docs/docfx.json` and the Table of Contents?

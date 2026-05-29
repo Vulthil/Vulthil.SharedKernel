@@ -97,7 +97,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
     private async Task HandleFailureAsync(Exception ex, BasicDeliverEventArgs ea, string messageTypeName)
     {
-        var policy = GetPolicy(ea.RoutingKey, _queueDefinition);
+        var plan = _typeCache.GetPlan(messageTypeName);
+        var policy = GetPolicy(plan, _queueDefinition);
         var headers = ea.BasicProperties.Headers ?? new Dictionary<string, object?>();
         int currentRetry = RabbitMqConstants.GetRetryCount(headers);
 
@@ -170,13 +171,18 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
     }
 
-    private static RetryPolicyDefinition? GetPolicy(string routingKey, QueueDefinition queue)
+    private static RetryPolicyDefinition? GetPolicy(MessageExecutionPlan? plan, QueueDefinition queue)
     {
-        var registration = queue.Registrations
-            .FirstOrDefault(r => RabbitMqConstants.GetRoutingKey(r) == routingKey);
-
-        return registration?.RetryPolicy
-               ?? queue.DefaultRetryPolicy;
+        if (plan is not null)
+        {
+            var registration = queue.Registrations
+                .FirstOrDefault(r => r.MessageType.Type == plan.MessageType.Type && r.RetryPolicy is not null);
+            if (registration?.RetryPolicy is { } policy)
+            {
+                return policy;
+            }
+        }
+        return queue.DefaultRetryPolicy;
     }
 
     private async Task HandleMessageAsync(BasicDeliverEventArgs ea)

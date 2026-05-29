@@ -24,7 +24,9 @@ public sealed record ConsumerType(Type Type)
 }
 
 /// <summary>
-/// Base record for a consumer-to-message binding within a queue.
+/// Base record for a consumer registration on a queue. Routing-key patterns no longer live here —
+/// they belong on <see cref="Subscription"/> (queue→exchange binding) or
+/// <see cref="MessageConfiguration{TMessage}"/> (producer-side routing key).
 /// </summary>
 public abstract record Registration
 {
@@ -36,10 +38,6 @@ public abstract record Registration
     /// Gets the message type that this consumer is registered to handle.
     /// </summary>
     public required MessageType MessageType { get; init; }
-    /// <summary>
-    /// Gets the routing key pattern used to filter messages for this binding. Default is "#" (match all).
-    /// </summary>
-    public string RoutingKey { get; init; } = "#";
 
     /// <summary>
     /// Gets the per-consumer retry policy, or <see langword="null"/> to inherit the queue-level default.
@@ -51,6 +49,19 @@ public abstract record Registration
 /// A consumer registration for one-way message consumption.
 /// </summary>
 public sealed record ConsumerRegistration : Registration;
+
+/// <summary>
+/// Binds the queue to a concrete message type's exchange. One <see cref="Subscription"/> = one
+/// <c>exchange→queue</c> binding declared at topology setup time.
+/// </summary>
+/// <param name="MessageType">The concrete message type whose exchange will be bound.</param>
+/// <param name="RoutingKey">
+/// The binding pattern used by the broker to filter deliveries. <see langword="null"/> = the broker
+/// receives an empty pattern: fanout/headers exchanges ignore it, direct/topic exchanges only match
+/// messages published with an empty (direct) or unmatchable (topic) routing key. Supply a specific
+/// pattern (e.g. <c>"order.created"</c> for direct, <c>"order.*"</c> for topic) when needed.
+/// </param>
+public sealed record Subscription(MessageType MessageType, string? RoutingKey = null);
 
 /// <summary>
 /// A consumer registration for request/reply message consumption.
@@ -70,6 +81,7 @@ public sealed record RequestConsumerRegistration : Registration
 public sealed record QueueDefinition(string Name)
 {
     private readonly HashSet<Registration> _registrations = [];
+    private readonly HashSet<Subscription> _subscriptions = [];
 
     /// <summary>
     /// Gets or sets the default retry policy applied to all consumers on this queue.
@@ -143,6 +155,20 @@ public sealed record QueueDefinition(string Name)
 #endif
 
     /// <summary>
+    /// Gets the exchange bindings configured for this queue — each <see cref="Subscription"/> becomes one
+    /// <c>exchange→queue</c> binding declared at topology setup time. Populated by
+    /// <see cref="IQueueConfigurator.Subscribe{TMessage}"/> and <see cref="IQueueConfigurator.SubscribeAll{TInterface}"/>,
+    /// and auto-populated by <c>Build</c> for any consumer whose concrete <c>TMessage</c> isn't explicitly subscribed
+    /// (the consumer's routing-key pattern is carried into the subscription).
+    /// </summary>
+    public IReadOnlyCollection<Subscription> Subscriptions =>
+#if NET10_0_OR_GREATER
+        _subscriptions.AsReadOnly();
+#else
+        _subscriptions.ToList().AsReadOnly();
+#endif
+
+    /// <summary>
     /// Gets a value indicating whether any retry policy is configured, either at the queue or consumer level.
     /// </summary>
     public bool RetryEnabled => DefaultRetryPolicy is not null ||
@@ -150,4 +176,7 @@ public sealed record QueueDefinition(string Name)
 
     internal void AddConsumer(Registration registration)
         => _registrations.Add(registration);
+
+    internal void AddSubscription(Subscription subscription)
+        => _subscriptions.Add(subscription);
 }

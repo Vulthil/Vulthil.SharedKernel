@@ -593,6 +593,31 @@ public sealed class OrderLookupService(IRequester requester)
 The reply queue is created lazily on the first request, so producer-only services
 that never call `RequestAsync` do not declare any reply infrastructure.
 
+### Configuring the request
+
+`RequestAsync` accepts an optional `Func<IRequestContext, Task>` to configure the
+outgoing request. `IRequestContext` extends `IPublishContext` — so the routing key,
+correlation id, and headers can be set just like a publish — and adds
+`SetTimeout(TimeSpan)` for overriding the response timeout on a per-request basis:
+
+```csharp
+var result = await requester.RequestAsync<GetOrderRequest, OrderDto>(
+    new GetOrderRequest(orderId),
+    ctx =>
+    {
+        ctx.SetTimeout(TimeSpan.FromSeconds(5));
+        ctx.AddHeader("priority", "high");
+        return Task.CompletedTask;
+    },
+    cancellationToken: ct);
+```
+
+When no timeout is set on the context, the request falls back to
+`Messaging:Options:DefaultTimeout` (see
+[Configuration-driven Setup](#configuration-driven-setup)). A request that exceeds
+its timeout completes with a `Result<TResponse>` failure carrying the
+`Messaging.Request.Timeout` error code rather than throwing.
+
 ## Testing Messaging
 
 `Vulthil.Messaging.TestHarness` provides an in-memory transport that captures

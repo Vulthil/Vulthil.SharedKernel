@@ -32,7 +32,6 @@ internal sealed class RabbitMqRequester : IRequester
     }
 
     private JsonSerializerOptions JsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
-    private TimeSpan DefaultTimeout => _messageConfigurationProvider.DefaultTimeout;
 
     public Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
        TRequest message,
@@ -42,39 +41,40 @@ internal sealed class RabbitMqRequester : IRequester
 
     public async Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
         TRequest message,
-        Func<IPublishContext, Task>? configureContext = null,
+        Func<IRequestContext, Task>? configureContext = null,
         CancellationToken cancellationToken = default)
         where TRequest : notnull
         where TResponse : notnull
     {
         ArgumentNullException.ThrowIfNull(message);
-        var publishContext = new PublishContext();
+        var requestContext = new RequestContext();
         configureContext ??= (_ => Task.CompletedTask);
-        await configureContext(publishContext);
+        await configureContext(requestContext);
 
         var tcs = new TaskCompletionSource<Result<TResponse>>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        using var timeoutCts = new CancellationTokenSource(DefaultTimeout);
+        var timeout = requestContext.Timeout ?? _messageConfigurationProvider.DefaultTimeout;
+        using var timeoutCts = new CancellationTokenSource(timeout);
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
         var type = message.GetType();
         var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(type);
 
-        var routingKey = publishContext.RoutingKey
+        var routingKey = requestContext.RoutingKey
             ?? messageConfiguration.RoutingKeyFormatter?.Invoke(message)
             ?? string.Empty;
 
-        var correlationId = publishContext.CorrelationId
+        var correlationId = requestContext.CorrelationId
                 ?? messageConfiguration.CorrelationIdFormatter?.Invoke(message)
                 ?? Guid.CreateVersion7().ToString();
 
-        var messageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString();
+        var messageId = requestContext.MessageId ?? Guid.CreateVersion7().ToString();
         var exchange = messageConfiguration.Exchange;
         var urn = messageConfiguration.Urn;
         var urnString = urn.AbsoluteUri;
 
         var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken);
-        var replyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress) ?? replyQueue;
+        var replyTo = PublishContext.ResolveRoutingKeyFromUri(requestContext.ResponseAddress) ?? replyQueue;
 
         using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
             $"{exchange} request",
@@ -92,7 +92,7 @@ internal sealed class RabbitMqRequester : IRequester
         }
 
         _listener.RegisterWaiter(correlationId, tcs);
-        MessagingLog.RequestSending(_logger, urnString, correlationId, DefaultTimeout.TotalSeconds);
+        MessagingLog.RequestSending(_logger, urnString, correlationId, timeout.TotalSeconds);
 
         try
         {
@@ -103,12 +103,12 @@ internal sealed class RabbitMqRequester : IRequester
                 ContentType = RabbitMqConstants.ContentType,
                 Type = urnString,
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
-                Expiration = DefaultTimeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
-                Headers = publishContext.Headers,
+                Expiration = timeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
+                Headers = requestContext.Headers,
                 MessageId = messageId,
             };
 
-            var envelope = MessageEnvelopeFactory.Create(message, publishContext, messageId, correlationId, urn, JsonOptions);
+            var envelope = MessageEnvelopeFactory.Create(message, requestContext, messageId, correlationId, urn, JsonOptions);
             var body = JsonSerializer.SerializeToUtf8Bytes(envelope, JsonOptions);
 
             await _publisher.InternalPublishAsync<TRequest>(body, props, routingKey, messageConfiguration, cancellationToken);
@@ -117,8 +117,8 @@ internal sealed class RabbitMqRequester : IRequester
             {
                 if (timeoutCts.IsCancellationRequested)
                 {
-                    MessagingLog.RequestTimedOut(_logger, urnString, correlationId, DefaultTimeout.TotalSeconds);
-                    tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure("Messaging.Request.Timeout", $"Request timed out after {DefaultTimeout.TotalSeconds}s")));
+                    MessagingLog.RequestTimedOut(_logger, urnString, correlationId, timeout.TotalSeconds);
+                    tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure("Messaging.Request.Timeout", $"Request timed out after {timeout.TotalSeconds}s")));
                 }
                 else
                 {

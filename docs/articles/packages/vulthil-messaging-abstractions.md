@@ -59,6 +59,19 @@ Result<OrderDto> result = await requester.RequestAsync<GetOrderRequest, OrderDto
     new GetOrderRequest(orderId), cancellationToken: ct);
 ```
 
+Pass an optional `Func<IRequestContext, Task>` to configure the request. The
+context exposes the `IPublishContext` members (routing key, correlation id,
+headers) plus `SetTimeout` for overriding the default response timeout per request:
+
+```csharp
+Result<OrderDto> result = await requester.RequestAsync<GetOrderRequest, OrderDto>(
+    new GetOrderRequest(orderId),
+    ctx => { ctx.SetTimeout(TimeSpan.FromSeconds(5)); return Task.CompletedTask; },
+    cancellationToken: ct);
+```
+
+See [Messaging — Request/Reply](../messaging.md#configuring-the-request) for details.
+
 ### Publishing from a consumer
 
 `IMessageContext` exposes `PublishAsync` with automatic correlation propagation

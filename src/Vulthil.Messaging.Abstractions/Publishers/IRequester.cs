@@ -32,7 +32,7 @@ public interface IRequester
     /// <returns>A <see cref="Result{TResponse}"/> containing the response on success or an error on failure.</returns>
     Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
         TRequest message,
-        Func<IPublishContext, Task>? configureContext = null,
+        Func<IRequestContext, Task>? configureContext = null,
         CancellationToken cancellationToken = default)
         where TRequest : notnull
         where TResponse : notnull;

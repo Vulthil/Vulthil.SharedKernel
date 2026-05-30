@@ -5,9 +5,6 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
 
-/// <summary>
-/// Represents the MessagingConfiguratiorTests.
-/// </summary>
 public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicationBuilder>
 {
     protected override HostApplicationBuilder CreateInstance() => Host.CreateApplicationBuilder();
@@ -45,9 +42,6 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicati
         messageConfigurationProviderService.ShouldNotBeEmpty();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void AddMessagingQueueShouldRegisterQueueDefinition()
     {

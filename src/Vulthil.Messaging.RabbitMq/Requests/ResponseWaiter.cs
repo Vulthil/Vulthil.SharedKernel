@@ -8,8 +8,10 @@ internal sealed class ResponseWaiter<T>(
     JsonSerializerOptions options) : IResponseWaiter where T : notnull
 {
     /// <summary>
-    /// Executes this member.
+    /// Completes the pending request by deserializing the reply body into a <see cref="MessageResult"/>
+    /// and resolving the awaiting task with the typed success value or a failure error.
     /// </summary>
+    /// <param name="body">The raw reply payload received on the reply queue.</param>
     public void Complete(ReadOnlySpan<byte> body)
     {
         try

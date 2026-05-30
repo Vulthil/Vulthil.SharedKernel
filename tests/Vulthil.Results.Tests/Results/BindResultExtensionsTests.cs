@@ -1,13 +1,7 @@
 namespace Vulthil.Results.Tests.Results;
 
-/// <summary>
-/// Represents the BindResultExtensionsTests.
-/// </summary>
 public sealed class BindResultExtensionsTests : BindResultBaseTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultSuccess()
     {
@@ -21,9 +15,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertSuccess(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultFailure()
     {
@@ -37,9 +28,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertFailure(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultSuccessT1()
     {
@@ -54,9 +42,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBe(result.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultFailureT1()
     {
@@ -71,9 +56,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultSuccessT2()
     {
@@ -88,9 +70,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         result2.Value.ShouldBe(T2.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultFailureT2()
     {
@@ -104,9 +83,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertFailure(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultSuccessT1T2()
     {
@@ -122,9 +98,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         result2.Value.ShouldBe(T2.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void BindResultFailureT1T2()
     {
@@ -139,9 +112,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResult()
     {
@@ -155,9 +125,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultLeft()
     {
@@ -171,9 +138,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultRight()
     {
@@ -187,9 +151,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailure()
     {
@@ -203,9 +164,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureLeft()
     {
@@ -219,9 +177,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureRight()
     {
@@ -235,9 +190,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT1()
     {
@@ -252,9 +204,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT1Left()
     {
@@ -269,9 +218,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT1Right()
     {
@@ -286,9 +232,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT1()
     {
@@ -303,9 +246,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT1Left()
     {
@@ -320,9 +260,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT1Right()
     {
@@ -337,9 +274,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT2()
     {
@@ -353,9 +287,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT2Left()
     {
@@ -369,9 +300,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT2Right()
     {
@@ -385,9 +313,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT2()
     {
@@ -402,9 +327,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT2Left()
     {
@@ -419,9 +341,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT2Right()
     {
@@ -436,9 +355,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT1T2()
     {
@@ -453,9 +369,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT1T2Left()
     {
@@ -470,9 +383,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultSuccessT1T2Right()
     {
@@ -487,9 +397,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT1T2()
     {
@@ -504,9 +411,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT1T2Left()
     {
@@ -521,9 +425,6 @@ public sealed class BindResultExtensionsTests : BindResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task BindAsyncResultFailureT1T2Right()
     {

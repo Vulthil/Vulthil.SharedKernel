@@ -1,13 +1,7 @@
 namespace Vulthil.Results.Tests.Results;
 
-/// <summary>
-/// Represents the MapResultExtensionsTests.
-/// </summary>
 public sealed class MapResultExtensionsTests : MapResultBaseTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void MapResultSuccess()
     {
@@ -21,9 +15,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void MapResultSuccessT1T2()
     {
@@ -37,9 +28,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void MapResultFailure()
     {
@@ -53,9 +41,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertFailure(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void MapResultFailureT1T2()
     {
@@ -69,9 +54,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertFailure(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResult()
     {
@@ -85,9 +67,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultLeft()
     {
@@ -101,9 +80,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultRight()
     {
@@ -117,9 +93,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultFailure()
     {
@@ -133,9 +106,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultFailureLeft()
     {
@@ -149,9 +119,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultFailureRight()
     {
@@ -165,9 +132,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultSuccessT1T2()
     {
@@ -181,9 +145,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultSuccessT1T2Left()
     {
@@ -197,9 +158,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultSuccessT1T2Right()
     {
@@ -213,9 +171,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultFailureT1T2()
     {
@@ -229,9 +184,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultFailureT1T2Left()
     {
@@ -245,9 +197,6 @@ public sealed class MapResultExtensionsTests : MapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task MapAsyncResultFailureT1T2Right()
     {

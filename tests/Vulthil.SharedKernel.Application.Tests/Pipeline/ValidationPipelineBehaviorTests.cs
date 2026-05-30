@@ -8,14 +8,8 @@ using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Application.Tests.Pipeline;
 
-/// <summary>
-/// Represents the ValidationPipelineBehaviorTests.
-/// </summary>
 public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task WithValidRequestCallsNextDelegate()
     {
@@ -42,9 +36,6 @@ public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
         Assert.Equal(expectedResult, result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task WithInvalidRequestReturnsValidationError()
     {
@@ -73,13 +64,7 @@ public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
     }
 }
 
-/// <summary>
-/// Represents the TestCommand.
-/// </summary>
 public class TestCommand : ICommand<Result>
 {
-    /// <summary>
-    /// Gets or sets this member value.
-    /// </summary>
     public string Name { get; set; } = string.Empty;
 }

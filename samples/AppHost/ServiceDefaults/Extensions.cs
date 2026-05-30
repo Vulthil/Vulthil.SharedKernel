@@ -10,17 +10,8 @@ using OpenTelemetry.Trace;
 
 namespace ServiceDefaults;
 
-// Adds common .NET Aspire services: service discovery, resilience, health checks, and OpenTelemetry.
-// This project should be referenced by each service project in your solution.
-// To learn more about using this project, see https://aka.ms/dotnet/aspire/service-defaults
-/// <summary>
-/// Represents the Extensions.
-/// </summary>
 public static class Extensions
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         builder.ConfigureOpenTelemetry();
@@ -47,9 +38,6 @@ public static class Extensions
         return builder;
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         builder.Logging.AddOpenTelemetry(logging =>
@@ -99,9 +87,6 @@ public static class Extensions
         return builder;
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         builder.Services.AddRequestTimeouts();
@@ -123,9 +108,6 @@ public static class Extensions
         return builder;
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         app.UseRequestTimeouts();

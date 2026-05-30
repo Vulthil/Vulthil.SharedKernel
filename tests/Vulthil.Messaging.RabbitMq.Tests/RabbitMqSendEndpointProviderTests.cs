@@ -5,9 +5,6 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the RabbitMqSendEndpointProviderTests.
-/// </summary>
 public sealed class RabbitMqSendEndpointProviderTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqSendEndpointProvider> _lazyTarget;

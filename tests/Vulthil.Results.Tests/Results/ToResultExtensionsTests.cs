@@ -1,8 +1,5 @@
 namespace Vulthil.Results.Tests.Results;
 
-/// <summary>
-/// Represents the ToResultExtensionsTests.
-/// </summary>
 public sealed class ToResultExtensionsTests : ResultBaseTestCase
 {
     private static void AssertSuccess(Result result)
@@ -16,9 +13,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         result.Error.ShouldBe(NullError);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ToResultStruct()
     {
@@ -32,9 +26,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         AssertSuccess(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ToResultNullStruct()
     {
@@ -48,9 +39,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         AssertFailure(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ToResultObject()
     {
@@ -64,9 +52,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         AssertSuccess(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ToResultNullObject()
     {
@@ -80,9 +65,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         AssertFailure(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task ToResultAsyncStruct()
     {
@@ -96,9 +78,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         AssertSuccess(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task ToResultAsyncNullStruct()
     {
@@ -112,9 +91,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         AssertFailure(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task ToResultAsyncObject()
     {
@@ -128,9 +104,6 @@ public sealed class ToResultExtensionsTests : ResultBaseTestCase
         AssertSuccess(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task ToResultAsyncNullObject()
     {

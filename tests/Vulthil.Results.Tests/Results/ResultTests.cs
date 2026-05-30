@@ -2,14 +2,8 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Results.Tests.Results;
 
-/// <summary>
-/// Represents the ResultTests.
-/// </summary>
 public sealed class ResultTests : BaseUnitTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ResultShouldBeSuccess()
     {
@@ -22,9 +16,6 @@ public sealed class ResultTests : BaseUnitTestCase
         result.Error.ShouldBe(Error.None);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ResultInternalConstructorShouldThrowIfSuccessAndError()
     {
@@ -35,9 +26,6 @@ public sealed class ResultTests : BaseUnitTestCase
         act.ShouldThrow<ArgumentException>();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Theory]
     [InlineData(["string"])]
     [InlineData([1])]
@@ -59,9 +47,6 @@ public sealed class ResultTests : BaseUnitTestCase
         implicitOperator.Error.ShouldBe(Error.None);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ResultShouldBeFailure()
     {
@@ -77,9 +62,6 @@ public sealed class ResultTests : BaseUnitTestCase
         result.Error.Type.ShouldBe(Error.NullValue.Type);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ResultShouldThrowIfFailureIsNone()
     {
@@ -90,9 +72,6 @@ public sealed class ResultTests : BaseUnitTestCase
         act.ShouldThrow<ArgumentException>();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ResultShouldThrowFailureWithValue()
     {
@@ -113,9 +92,6 @@ public sealed class ResultTests : BaseUnitTestCase
         Should.Throw<InvalidOperationException>(() => implicitOperator.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ResultShouldReturnValidationError()
     {

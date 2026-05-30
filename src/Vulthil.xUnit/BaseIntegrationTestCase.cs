@@ -97,8 +97,10 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     }
 
     /// <summary>
-    /// Executes this member.
+    /// Disposes the current service scope, if one exists, so the next access to
+    /// <see cref="ScopedServices"/> resolves a fresh scope.
     /// </summary>
+    /// <returns>A task representing the asynchronous dispose operation.</returns>
     public async ValueTask ResetScope()
     {
         await (_scope?.DisposeAsync() ?? ValueTask.CompletedTask);

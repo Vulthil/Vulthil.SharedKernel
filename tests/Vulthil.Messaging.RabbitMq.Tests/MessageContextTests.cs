@@ -6,16 +6,10 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the MessageContextTests.
-/// </summary>
 public sealed class MessageContextTests : BaseUnitTestCase
 {
     private sealed record TestMessage(string Content);
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void CreateContextShouldMapPropertiesHeadersAndTiming()
     {
@@ -59,9 +53,6 @@ public sealed class MessageContextTests : BaseUnitTestCase
         context.ExpirationTime.Value.ShouldBeLessThan(DateTimeOffset.UtcNow.AddSeconds(10));
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void CreateContextShouldFallbackResponseAddressFromReplyTo()
     {
@@ -75,9 +66,6 @@ public sealed class MessageContextTests : BaseUnitTestCase
         context.ResponseAddress.ShouldBe(new Uri("queue:reply-queue"));
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void CreateContextShouldUseDefaultsWhenPropertiesAreMissing()
     {
@@ -103,9 +91,6 @@ public sealed class MessageContextTests : BaseUnitTestCase
         context.ExpirationTime.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void CreateContextGenericShouldIncludeTypedMessage()
     {

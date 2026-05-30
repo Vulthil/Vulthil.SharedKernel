@@ -9,9 +9,6 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the MessageTypeCacheTests.
-/// </summary>
 public sealed class MessageTypeCacheTests : BaseUnitTestCase
 {
     private readonly Lazy<MessageTypeCache> _lazyTarget;

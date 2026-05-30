@@ -5,9 +5,6 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the RabbitMqPublisherTests.
-/// </summary>
 public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqPublisher> _lazyTarget;
@@ -16,9 +13,6 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 
     private RabbitMqPublisher Target => _lazyTarget.Value;
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public RabbitMqPublisherTests()
     {
         var logger = GetMock<ILogger<RabbitMqPublisher>>().Object;
@@ -41,9 +35,6 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task PublishAsyncWithValidMessagePublishesSuccessfully()
     {
@@ -63,9 +54,6 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
             CancellationToken), Times.Once);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task PublishAsyncWithNullMessageThrowsArgumentNullException()
     {
@@ -75,9 +63,6 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 
     private sealed class TestMessage
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public string Content { get; set; } = string.Empty;
     }
 }

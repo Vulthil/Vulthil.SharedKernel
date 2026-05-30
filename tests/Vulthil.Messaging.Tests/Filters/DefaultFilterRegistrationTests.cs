@@ -66,8 +66,51 @@ public sealed class DefaultFilterRegistrationTests : BaseUnitTestCase
         descriptors[1].ImplementationType.ShouldBe(typeof(UserFilter<>));
     }
 
+    [Fact]
+    public void AddConsumeFilterThrowsWhenTypeImplementsNoConsumeFilterInterface()
+    {
+        // Arrange
+        var builder = CreateHostBuilder();
+
+        // Act & Assert
+        var ex = Should.Throw<InvalidOperationException>(() =>
+            builder.AddMessaging(m => m.AddConsumeFilter<NotAFilter>()));
+
+        ex.Message.ShouldContain("must implement at least one");
+    }
+
+    [Fact]
+    public void AddOpenConsumeFilterThrowsWhenTypeIsNotOpenGeneric()
+    {
+        // Arrange
+        var builder = CreateHostBuilder();
+
+        // Act & Assert
+        var ex = Should.Throw<InvalidOperationException>(() =>
+            builder.AddMessaging(m => m.AddOpenConsumeFilter(typeof(NotAFilter))));
+
+        ex.Message.ShouldContain("must be an open generic type");
+    }
+
+    [Fact]
+    public void AddOpenConsumeFilterThrowsWhenOpenGenericDoesNotImplementConsumeFilter()
+    {
+        // Arrange
+        var builder = CreateHostBuilder();
+
+        // Act & Assert
+        var ex = Should.Throw<InvalidOperationException>(() =>
+            builder.AddMessaging(m => m.AddOpenConsumeFilter(typeof(NotAFilterOpen<>))));
+
+        ex.Message.ShouldContain("must implement");
+    }
+
     private sealed class UserFilter<TMessage> : IConsumeFilter<TMessage> where TMessage : notnull
     {
         public Task ConsumeAsync(IMessageContext<TMessage> context, ConsumeDelegate<TMessage> next) => next(context);
     }
+
+    private sealed record NotAFilter(string Name);
+
+    private sealed record NotAFilterOpen<TMessage>(TMessage Payload);
 }

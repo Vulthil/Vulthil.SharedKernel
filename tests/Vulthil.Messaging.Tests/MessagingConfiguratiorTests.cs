@@ -168,8 +168,29 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicati
             .ShouldBe(testMessage.Id);
     }
 
+    [Fact]
+    public void RegisteringTwoMessageTypesWithTheSameUrnThrows()
+    {
+        // Arrange
+        var options = new MessagingOptions();
+        var messagingConfigurator = new MessagingConfigurator(Target, options);
+        messagingConfigurator.ConfigureMessage<UrnAlpha>(c => c.Urn = new Uri("urn:message:duplicate"));
+
+        // Act
+        var ex = Should.Throw<InvalidOperationException>(() =>
+            messagingConfigurator.ConfigureMessage<UrnBeta>(c => c.Urn = new Uri("urn:message:duplicate")));
+
+        // Assert
+        ex.Message.ShouldContain("already registered");
+        ex.Message.ShouldContain(typeof(UrnBeta).FullName!);
+    }
+
     private sealed record TestMessage
     {
         public string Id { get; set; } = string.Empty;
     }
+
+    private sealed record UrnAlpha(string Value);
+
+    private sealed record UrnBeta(string Value);
 }

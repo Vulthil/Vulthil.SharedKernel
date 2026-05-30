@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.IntegrationTest.ConsumerService.Infrastructure;
 using Vulthil.Messaging.IntegrationTest.Contracts;
 
-namespace Vulthil.Messaging.IntegrationTest.ConsumerService;
+namespace Vulthil.Messaging.IntegrationTest.ConsumerService.Events;
 
 public sealed partial class WeatherUpdatedEventConsumer(
     ILogger<WeatherUpdatedEventConsumer> logger,
@@ -11,7 +12,7 @@ public sealed partial class WeatherUpdatedEventConsumer(
     public Task ConsumeAsync(IMessageContext<WeatherUpdatedEvent> messageContext, CancellationToken cancellationToken = default)
     {
         LogReceived(logger, messageContext.Message.Id, messageContext.Message.Location);
-        tracker.RecordEvent(messageContext.Message);
+        tracker.Record("events", messageContext.Message);
         return Task.CompletedTask;
     }
 

@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.IntegrationTest.ConsumerService.Infrastructure;
 using Vulthil.Messaging.IntegrationTest.Contracts;
 
-namespace Vulthil.Messaging.IntegrationTest.ConsumerService;
+namespace Vulthil.Messaging.IntegrationTest.ConsumerService.Requests;
 
 public sealed partial class GetWeatherRequestConsumer(
     ILogger<GetWeatherRequestConsumer> logger,
@@ -12,7 +13,7 @@ public sealed partial class GetWeatherRequestConsumer(
     public Task<GetWeatherResponse> ConsumeAsync(IMessageContext<GetWeatherRequest> messageContext, CancellationToken cancellationToken = default)
     {
         LogReceived(logger, messageContext.Message.Location);
-        tracker.RecordRequest(messageContext.Message);
+        tracker.Record("requests", messageContext.Message);
 
         var response = new GetWeatherResponse(
             Location: messageContext.Message.Location,

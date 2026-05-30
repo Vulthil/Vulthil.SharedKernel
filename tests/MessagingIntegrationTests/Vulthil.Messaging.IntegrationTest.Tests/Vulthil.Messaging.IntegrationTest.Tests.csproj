@@ -4,6 +4,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.Testing" />
+		<PackageReference Include="Aspire.RabbitMQ.Client" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -71,9 +71,7 @@ public static class Extensions
                     .AddHttpClientInstrumentation();
             });
 
-        builder.AddOpenTelemetryExporters();
-
-        return builder;
+        return builder.AddOpenTelemetryExporters();
     }
 
     private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder

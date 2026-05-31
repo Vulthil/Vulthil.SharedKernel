@@ -9,15 +9,9 @@ using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
-/// <summary>
-/// Represents the SideEffectIntegrationTests.
-/// </summary>
-public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase(testFixture, testOutputHelper)
+public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+    : BaseIntegrationTestCase(factory, testOutputHelper)
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TestCreate()
     {

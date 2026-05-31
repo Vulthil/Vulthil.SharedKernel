@@ -88,10 +88,44 @@ internal sealed class MessageTypeCache
             return existing;
         }
 
-        var plan = new MessageExecutionPlan(messageType, urn);
+        var partition = _provider.GetPartition(messageType.Type);
+        var plan = new MessageExecutionPlan(messageType, urn)
+        {
+            Partitioner = partition?.Partitioner,
+            PartitionKeyExtractor = partition is null
+                ? null
+                : PartitionKeyExtractorFactory.Build(messageType.Type, partition.KeySelector),
+        };
         _plansByUrn[urn] = plan;
         _plansByFullName[messageType.Name] = plan;
         return plan;
+    }
+
+    /// <summary>
+    /// Indicates whether any concrete message type consumed by <paramref name="queue"/> is partitioned.
+    /// Call after <see cref="RegisterQueue"/> so the plans exist. Drives ordered single dispatch on the queue.
+    /// </summary>
+    public bool IsQueuePartitioned(QueueDefinition queue)
+    {
+        foreach (var subscription in queue.Subscriptions)
+        {
+            if (GetPlanByUrn(_provider.GetUrn(subscription.MessageType.Type))?.IsPartitioned == true)
+            {
+                return true;
+            }
+        }
+
+        foreach (var registration in queue.Registrations)
+        {
+            var type = registration.MessageType.Type;
+            if (type is { IsAbstract: false, IsInterface: false }
+                && GetPlanByUrn(_provider.GetUrn(type))?.IsPartitioned == true)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>

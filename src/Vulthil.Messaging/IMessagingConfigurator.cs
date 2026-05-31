@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Hosting;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 
 namespace Vulthil.Messaging;
@@ -53,4 +54,35 @@ public interface IMessagingConfigurator
     /// <param name="openFilterType">An open generic type (e.g. <c>typeof(LoggingFilter&lt;&gt;)</c>) implementing <c>IConsumeFilter&lt;&gt;</c>.</param>
     /// <returns>The current configurator instance for chaining.</returns>
     IMessagingConfigurator AddOpenConsumeFilter(Type openFilterType);
+
+    /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries that share a partition key, so
+    /// messages correlated to the same aggregate are handled one at a time and in order, while messages with
+    /// different keys process concurrently. Effective only when the consuming queue allows concurrency
+    /// (<c>ConcurrencyLimit &gt; 1</c>); at a concurrency of one, processing is already serial.
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitionCount">The number of partitions (lanes) to distribute keys across.</param>
+    /// <param name="keySelector">
+    /// Selects the partition key from a delivery (e.g. <c>ctx =&gt; ctx.CorrelationId</c>). A delivery whose
+    /// key is <see langword="null"/> or empty bypasses the partitioner.
+    /// </param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount, Func<IMessageContext<TMessage>, string?> keySelector)
+        where TMessage : notnull;
+
+    /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries that share a partition key using a
+    /// caller-supplied <see cref="Partitioner"/>. Share one <see cref="Partitioner"/> across several message
+    /// types to serialize messages correlated to the same key regardless of their type (e.g. a saga).
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitioner">The partitioner whose lanes serialize same-key processing.</param>
+    /// <param name="keySelector">
+    /// Selects the partition key from a delivery (e.g. <c>ctx =&gt; ctx.CorrelationId</c>). A delivery whose
+    /// key is <see langword="null"/> or empty bypasses the partitioner.
+    /// </param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner, Func<IMessageContext<TMessage>, string?> keySelector)
+        where TMessage : notnull;
 }

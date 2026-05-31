@@ -16,6 +16,7 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
     private readonly Dictionary<Type, MessageConfiguration> _typeConfigurations = [];
     private readonly Dictionary<Uri, Type> _urnToType = [];
     private readonly HashSet<MessageType> _registeredRequestTypes = [];
+    private readonly Dictionary<Type, PartitionSpec> _partitions = [];
     internal Dictionary<string, MessageConfiguration> MessageConfigurations { get; } = new(StringComparer.Ordinal);
     internal Dictionary<string, QueueDefinition> QueueDefinitions { get; } = new(StringComparer.OrdinalIgnoreCase);
 
@@ -63,6 +64,12 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
     IReadOnlyCollection<QueueDefinition> IMessageConfigurationProvider.QueueDefinitions => QueueDefinitions.Values;
 
     internal bool RegisterRequestType(MessageType messageType) => _registeredRequestTypes.Add(messageType);
+
+    /// <summary>Records the partition configuration for a message type (overwrites any prior registration).</summary>
+    internal void RegisterPartition(Type messageType, PartitionSpec spec) => _partitions[messageType] = spec;
+
+    /// <inheritdoc />
+    public PartitionSpec? GetPartition(Type messageType) => _partitions.GetValueOrDefault(messageType);
 
     /// <summary>
     /// Records a CLR type ↔ <see cref="MessageConfiguration"/> mapping and updates the URN reverse index.

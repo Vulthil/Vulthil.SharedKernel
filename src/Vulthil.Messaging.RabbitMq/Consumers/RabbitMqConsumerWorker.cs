@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -22,6 +23,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<RabbitMqConsumerWorker> _logger;
     private readonly int _channelIndex;
+    private readonly bool _partitioned;
+    private readonly ConcurrentDictionary<ulong, Task> _inFlight = new();
 
     private JsonSerializerOptions _jsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
 
@@ -34,7 +37,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         MessageTypeCache messageTypeCache,
         IMessageConfigurationProvider messageConfigurationProvider,
         ILogger<RabbitMqConsumerWorker> logger,
-        int channelIndex)
+        int channelIndex,
+        bool partitioned)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _queueDefinition = queue;
@@ -43,6 +47,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         _messageConfigurationProvider = messageConfigurationProvider;
         _logger = logger;
         _channelIndex = channelIndex;
+        _partitioned = partitioned;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -62,9 +67,92 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
     private async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs ea)
     {
-        var messageTypeName = ea.BasicProperties.Type ?? ea.Exchange;
+        if (!_partitioned)
+        {
+            await ProcessDeliveryAsync(ea);
+            return;
+        }
 
-        using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
+        // Partitioned queue: dispatch is ordered (single channel, dispatch concurrency 1). Assign the
+        // delivery to its partition lane in arrival order, then return so the next delivery is laned in
+        // order; the actual processing and ack happen on the lane (deferred ack), giving cross-key
+        // parallelism bounded by PrefetchCount while preserving per-key order.
+        var prepared = await TryPrepareAsync(ea);
+        if (prepared is null)
+        {
+            return;
+        }
+
+        Task work;
+        if (prepared.Plan.IsPartitioned)
+        {
+            var key = prepared.Plan.PartitionKeyExtractor!(prepared.Message, ea, prepared.Envelope);
+            work = string.IsNullOrEmpty(key)
+                ? ProcessPreparedAsync(prepared, ea)
+                : prepared.Plan.Partitioner!.RunSequentialAsync(key, () => ProcessPreparedAsync(prepared, ea));
+        }
+        else
+        {
+            // A non-partitioned type sharing a partitioned queue still runs off the receive loop so it does
+            // not block ordered dispatch of subsequent deliveries.
+            work = ProcessPreparedAsync(prepared, ea);
+        }
+
+        TrackInFlight(ea.DeliveryTag, work);
+    }
+
+    private void TrackInFlight(ulong deliveryTag, Task work)
+    {
+        _inFlight[deliveryTag] = work;
+        _ = work.ContinueWith(
+            _ => _inFlight.TryRemove(deliveryTag, out Task? _),
+            CancellationToken.None,
+            TaskContinuationOptions.DenyChildAttach,
+            TaskScheduler.Default);
+    }
+
+    /// <summary>Non-partitioned path: process the delivery inline and settle on this dispatcher invocation.</summary>
+    private async Task ProcessDeliveryAsync(BasicDeliverEventArgs ea)
+    {
+        var messageTypeName = ea.BasicProperties.Type ?? ea.Exchange;
+        using var activity = StartReceiveActivity(ea, messageTypeName);
+
+        try
+        {
+            await HandleMessageAsync(ea);
+            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            await HandleFailureAsync(ex, ea, messageTypeName);
+        }
+    }
+
+    /// <summary>Partitioned path: dispatch the already-prepared delivery's handlers and settle (deferred ack).</summary>
+    private async Task ProcessPreparedAsync(PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    {
+        using var activity = StartReceiveActivity(ea, prepared.DiagnosticTypeName);
+
+        try
+        {
+            await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
+            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            await HandleFailureAsync(ex, ea, prepared.DiagnosticTypeName);
+        }
+    }
+
+    private Activity? StartReceiveActivity(BasicDeliverEventArgs ea, string messageTypeName)
+    {
+        var activity = MessagingInstrumentation.ActivitySource.StartActivity(
             $"{_queueDefinition.Name} receive",
             ActivityKind.Consumer);
 
@@ -81,18 +169,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             activity.SetTag(MessagingInstrumentation.Tags.RetryCount, RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers));
         }
 
-        try
-        {
-            await HandleMessageAsync(ea);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
-            activity?.SetStatus(ActivityStatusCode.Ok);
-        }
-        catch (Exception ex)
-        {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.AddException(ex);
-            await HandleFailureAsync(ex, ea, messageTypeName);
-        }
+        return activity;
     }
 
     private async Task HandleFailureAsync(Exception ex, BasicDeliverEventArgs ea, string messageTypeName)
@@ -187,8 +264,23 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
     private async Task HandleMessageAsync(BasicDeliverEventArgs ea)
     {
-        var bareTypeName = ea.BasicProperties.Type ?? ea.Exchange;
+        var prepared = await TryPrepareAsync(ea);
+        if (prepared is null)
+        {
+            return;
+        }
 
+        await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
+    }
+
+    /// <summary>
+    /// Parses the envelope, resolves the execution plan, and deserializes the message. Settles the delivery
+    /// itself for terminal cases — acks (drops) when no plan matches, nacks on a poison/undeserializable body —
+    /// and returns <see langword="null"/> in those cases. Otherwise returns the prepared delivery for dispatch.
+    /// </summary>
+    private async Task<PreparedDelivery?> TryPrepareAsync(BasicDeliverEventArgs ea)
+    {
+        var bareTypeName = ea.BasicProperties.Type ?? ea.Exchange;
         var envelope = TryParseEnvelope(ea.Body, _jsonOptions);
 
         var plan = envelope is not null
@@ -197,10 +289,11 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
         var diagnosticTypeName = envelope?.MessageType.AbsoluteUri ?? bareTypeName;
 
-        if (plan == null)
+        if (plan is null)
         {
             MessagingLog.NoExecutionPlan(_logger, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            return;
+            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            return null;
         }
 
         object? message;
@@ -214,16 +307,21 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         {
             MessagingLog.PoisonMessage(_logger, jsonEx, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
             await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-            return;
+            return null;
         }
 
         if (message is null)
         {
             MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
             await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-            return;
+            return null;
         }
 
+        return new PreparedDelivery(plan, message, envelope, diagnosticTypeName);
+    }
+
+    private async Task DispatchHandlersAsync(MessageExecutionPlan plan, object message, BasicDeliverEventArgs ea, MessageEnvelope? envelope)
+    {
         await using var scope = _serviceScopeFactory.CreateAsyncScope();
 
         foreach (var handler in plan.Handlers)
@@ -263,11 +361,25 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 await _channel.BasicCancelAsync(_consumerTag);
             }
 
+            // Drain in-flight partitioned work so deferred acks complete before the channel closes; anything
+            // still unacked after the timeout is requeued by the broker on channel close.
+            var pending = _inFlight.Values.ToArray();
+            if (pending.Length > 0)
+            {
+                await Task.WhenAll(pending).WaitAsync(TimeSpan.FromSeconds(30));
+            }
+
             await _channel.DisposeAsync();
         }
         catch (ObjectDisposedException)
         {
             // Channel was already disposed by AutoRecovery; safe to ignore on shutdown.
         }
+        catch (TimeoutException)
+        {
+            // Draining took too long; unacked deliveries are requeued when the channel closes.
+        }
     }
+
+    private sealed record PreparedDelivery(MessageExecutionPlan Plan, object Message, MessageEnvelope? Envelope, string DiagnosticTypeName);
 }

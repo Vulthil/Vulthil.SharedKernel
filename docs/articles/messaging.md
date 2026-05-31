@@ -288,6 +288,64 @@ m.ConfigureMessagingOptions(opts => opts.ConsumeFilters.EnableLogging = false);
 The filter stays registered in DI; only its behavior is skipped, so it's still
 resolvable in unit tests if you want to assert against it.
 
+## Ordered Processing (per-aggregate)
+
+Without ordering controls a queue processing messages concurrently does not preserve
+order. `UsePartitioner<TMessage>` restores **per-aggregate ordering**: deliveries that
+share a partition key are processed one at a time and in publish order, while deliveries
+with different keys run concurrently.
+
+```csharp
+builder.AddMessaging(m =>
+{
+    // Order OrderUpdated deliveries per OrderId across 16 lanes.
+    m.UsePartitioner<OrderUpdated>(partitionCount: 16, ctx => ctx.Message.OrderId.ToString());
+
+    // The CorrelationId is the natural key when it carries the aggregate id.
+    m.UsePartitioner<OrderUpdated>(16, ctx => ctx.CorrelationId);
+
+    m.ConfigureQueue("orders", q => q.AddConsumer<OrderUpdatedConsumer>());
+});
+```
+
+Share one `Partitioner` across several message types to serialize messages correlated
+to the same key regardless of their type (e.g. a saga):
+
+```csharp
+var orders = new Partitioner(16);
+m.UsePartitioner<OrderUpdated>(orders, ctx => ctx.CorrelationId);
+m.UsePartitioner<OrderShipped>(orders, ctx => ctx.CorrelationId);
+```
+
+### How it works
+
+Ordering is enforced by the RabbitMQ transport, not a consume filter. When a queue
+consumes a partitioned message type, its worker:
+
+1. Receives deliveries from a **single channel in FIFO order** (`consumerDispatchConcurrency = 1`),
+   so the partition key is read and the delivery assigned to its lane in arrival order.
+2. Hands each delivery to the key's lane and immediately returns, so the next delivery is
+   laned in order while lanes process **concurrently** (cross-key parallelism).
+3. **Acknowledges each message when its lane finishes** (deferred ack). `PrefetchCount`
+   bounds the number of in-flight deliveries and therefore the effective parallelism.
+
+Notes:
+
+- For a partitioned queue, `ConcurrencyLimit` no longer drives dispatch (it is forced to
+  ordered single dispatch); tune throughput with `PrefetchCount` instead.
+- A delivery whose selected key is `null` or empty is processed without lane
+  serialization (it still runs off the receive loop, so it does not block ordering of
+  other keys).
+- The partition count affects only fan-out (how many distinct keys progress at once),
+  never correctness. The lane hash is in-process, so a key's lane need not be stable
+  across processes.
+- This preserves order on a **single instance**. Ordering across load-balanced consumers
+  additionally requires a single active consumer per partition (a later enhancement),
+  mirroring MassTransit's model.
+- Ordering holds for the success path. Preserving order when a handler fails — instead of
+  the delayed re-delivery used today, which reorders — is handled by the in-place retry
+  mode tracked separately.
+
 ## Routing Keys
 
 Routing keys flow through two distinct configuration sites, one on each side of the wire:

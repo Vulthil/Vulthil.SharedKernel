@@ -12,6 +12,7 @@ Vulthil.Messaging.IMessageConfigurationProvider.FaultExchangeName.get -> string!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration(System.Type! messageType) -> Vulthil.Messaging.MessageConfiguration!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage>() -> Vulthil.Messaging.MessageConfiguration!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageType(System.Uri! urn) -> System.Type?
+Vulthil.Messaging.IMessageConfigurationProvider.GetPartition(System.Type! messageType) -> Vulthil.Messaging.PartitionSpec?
 Vulthil.Messaging.IMessageConfigurationProvider.GetUrn(System.Type! messageType) -> System.Uri!
 Vulthil.Messaging.IMessageConfigurationProvider.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions!
 Vulthil.Messaging.IMessageConfigurationProvider.QueueDefinitions.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Queues.QueueDefinition!>!
@@ -59,6 +60,13 @@ Vulthil.Messaging.MessagingExchangeType.Direct = 1 -> Vulthil.Messaging.Messagin
 Vulthil.Messaging.MessagingExchangeType.Fanout = 0 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Headers = 3 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Topic = 2 -> Vulthil.Messaging.MessagingExchangeType
+Vulthil.Messaging.Partitioner.RunSequentialAsync(string! key, System.Func<System.Threading.Tasks.Task!>! work) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.PartitionSpec
+Vulthil.Messaging.PartitionSpec.KeySelector.get -> System.Delegate!
+Vulthil.Messaging.PartitionSpec.KeySelector.init -> void
+Vulthil.Messaging.PartitionSpec.Partitioner.get -> Vulthil.Messaging.Partitioner!
+Vulthil.Messaging.PartitionSpec.Partitioner.init -> void
+Vulthil.Messaging.PartitionSpec.PartitionSpec(Vulthil.Messaging.Partitioner! Partitioner, System.Delegate! KeySelector) -> void
 Vulthil.Messaging.Queues.BaseConfigurator<TConfigurator>
 Vulthil.Messaging.Queues.BaseConfigurator<TConfigurator>.BaseConfigurator() -> void
 Vulthil.Messaging.Queues.BaseConfigurator<TConfigurator>.Self.get -> TConfigurator!
@@ -165,3 +173,8 @@ Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.get -> double
 Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.set -> void
 Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.get -> int
 Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount.set -> void
+Vulthil.Messaging.Partitioner
+Vulthil.Messaging.Partitioner.Partitioner(int partitionCount) -> void
+Vulthil.Messaging.Partitioner.PartitionCount.get -> int
+Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(int partitionCount, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>! keySelector) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(Vulthil.Messaging.Partitioner! partitioner, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>! keySelector) -> Vulthil.Messaging.IMessagingConfigurator!

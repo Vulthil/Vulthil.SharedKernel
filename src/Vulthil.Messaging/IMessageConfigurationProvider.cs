@@ -67,4 +67,7 @@ public interface IMessageConfigurationProvider
     /// without re-registering the filter.
     /// </summary>
     ConsumeFilterOptions ConsumeFilters { get; }
+
+    /// <summary>Returns the partition configuration for a message type, or <see langword="null"/> if it is not partitioned.</summary>
+    PartitionSpec? GetPartition(Type messageType);
 }

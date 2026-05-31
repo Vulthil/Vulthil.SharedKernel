@@ -45,6 +45,9 @@ builder.AddMessaging(messaging =>
     // Cross-cutting consume filter: records the message type of every delivery it wraps.
     messaging.AddOpenConsumeFilter(typeof(AuditConsumeFilter<>));
 
+    // Per-aggregate ordering: serialize OrderedEvent deliveries by their Key across lanes.
+    messaging.UsePartitioner<OrderedEvent>(8, context => context.Message.Key);
+
     messaging.ConfigureQueue("weather-events", queue =>
     {
         queue.AddConsumer<WeatherUpdatedEventConsumer>();
@@ -98,6 +101,13 @@ builder.AddMessaging(messaging =>
             queueName: "poison-commands.dead-letter",
             exchangeName: "poison-commands.dead-letter-exchange");
         queue.AddConsumer<PoisonCommandConsumer>();
+    });
+
+    // Ordered processing: queue runs with concurrency, partitioner keeps per-key order.
+    messaging.ConfigureQueue("ordered-events", queue =>
+    {
+        queue.ConfigureQueue(definition => definition.ConcurrencyLimit = 8);
+        queue.AddConsumer<OrderedEventConsumer>();
     });
 
     messaging.UseRabbitMq("rabbitmq");

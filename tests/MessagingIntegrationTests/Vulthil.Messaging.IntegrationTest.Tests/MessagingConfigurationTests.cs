@@ -244,6 +244,67 @@ public sealed class MessagingConfigurationTests(AppHostFixture fixture)
         stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(12));
     }
 
+    [Fact]
+    public async Task PartitionerPreservesPerKeyOrderUnderConcurrency()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        const int count = 10;
+        var keyA = $"A-{Guid.NewGuid():N}";
+        var keyB = $"B-{Guid.NewGuid():N}";
+
+        // Interleave the two keys so the broker delivers them mixed and the queue (concurrency 8)
+        // would process them out of order without the partitioner.
+        for (var sequence = 0; sequence < count; sequence++)
+        {
+            foreach (var key in new[] { keyA, keyB })
+            {
+                using var response = await fixture.ProducerClient.PostAsJsonAsync(
+                    "/api/publish-ordered",
+                    new OrderedEvent(key, sequence),
+                    cancellationToken);
+                response.IsSuccessStatusCode.ShouldBeTrue();
+            }
+        }
+
+        var expected = Enumerable.Range(0, count).ToList();
+
+        var resultA = await Polling.WaitAsync(
+            PollTimeout,
+            ct => TryGetSequencesAsync(fixture.ConsumerClient, keyA, count, ct),
+            PollInterval,
+            cancellationToken);
+
+        var resultB = await Polling.WaitAsync(
+            PollTimeout,
+            ct => TryGetSequencesAsync(fixture.ConsumerClient, keyB, count, ct),
+            PollInterval,
+            cancellationToken);
+
+        resultA.IsSuccess.ShouldBeTrue();
+        resultB.IsSuccess.ShouldBeTrue();
+        resultA.Value.ShouldBe(expected);
+        resultB.Value.ShouldBe(expected);
+    }
+
+    private static async Task<Result<List<int>>> TryGetSequencesAsync(
+        HttpClient client,
+        string key,
+        int expectedCount,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var items = await client.GetFromJsonAsync<List<int>>($"/api/received/ordered-{key}", cancellationToken);
+            return items is not null && items.Count >= expectedCount
+                ? Result.Success(items)
+                : Result.Failure<List<int>>(Error.NotFound("Polling.Incomplete", $"Have {items?.Count ?? 0}/{expectedCount} for {key}."));
+        }
+        catch (HttpRequestException ex)
+        {
+            return Result.Failure<List<int>>(Error.Failure("Polling.HttpRequest", ex.Message));
+        }
+    }
+
     private static async Task<Result<T>> TryFindMatchAsync<T>(
         HttpClient client,
         string endpoint,

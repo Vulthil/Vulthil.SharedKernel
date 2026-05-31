@@ -152,4 +152,20 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         Services.TryAddEnumerable(new ServiceDescriptor(typeof(IConsumeFilter<>), openFilterType, ServiceLifetime.Scoped));
         return this;
     }
+
+    public IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount, Func<IMessageContext<TMessage>, string?> keySelector)
+        where TMessage : notnull
+        => UsePartitioner(new Partitioner(partitionCount), keySelector);
+
+    public IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner, Func<IMessageContext<TMessage>, string?> keySelector)
+        where TMessage : notnull
+    {
+        ArgumentNullException.ThrowIfNull(partitioner);
+        ArgumentNullException.ThrowIfNull(keySelector);
+
+        // Recorded for the transport, which extracts the key and dispatches same-key deliveries through the
+        // partitioner's lanes in arrival order (ordered fan-out + deferred ack), rather than via a consume filter.
+        _messagingOptions.RegisterPartition(typeof(TMessage), new PartitionSpec(partitioner, keySelector));
+        return this;
+    }
 }

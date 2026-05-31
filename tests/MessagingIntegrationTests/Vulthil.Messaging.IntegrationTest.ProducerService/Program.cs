@@ -65,6 +65,13 @@ api.MapPost("publish-inventory", async (StockChangedEvent message, IPublisher pu
 })
 .WithName("PublishStockChangedEvent");
 
+api.MapPost("publish-ordered", async (OrderedEvent message, IPublisher publisher, CancellationToken cancellationToken) =>
+{
+    await publisher.PublishAsync(message, cancellationToken: cancellationToken);
+    return Results.Accepted(value: message);
+})
+.WithName("PublishOrderedEvent");
+
 api.MapPost("send-command", async (RecordWeatherCommand message, IPublisher publisher, CancellationToken cancellationToken) =>
 {
     await publisher.PublishAsync(message, cancellationToken: cancellationToken);

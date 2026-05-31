@@ -64,12 +64,19 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         {
             _typeCache.RegisterQueue(queue);
 
-            for (int i = 0; i < queue.ChannelCount; i++)
+            // A partitioned queue must dispatch in FIFO order from a single channel so the worker can assign
+            // deliveries to partition lanes in arrival order; parallelism comes from the lanes (bounded by
+            // PrefetchCount) rather than concurrent dispatch.
+            var partitioned = _typeCache.IsQueuePartitioned(queue);
+            var channelCount = partitioned ? 1 : queue.ChannelCount;
+            var dispatchConcurrency = partitioned ? (ushort)1 : queue.ConcurrencyLimit;
+
+            for (int i = 0; i < channelCount; i++)
             {
                 var options = new CreateChannelOptions(
                     publisherConfirmationsEnabled: false,
                     publisherConfirmationTrackingEnabled: false,
-                    consumerDispatchConcurrency: queue.ConcurrencyLimit
+                    consumerDispatchConcurrency: dispatchConcurrency
                 );
 
                 var channel = await _connection.CreateChannelAsync(options, cancellationToken);
@@ -82,7 +89,8 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                     _typeCache,
                     _messageConfigurationProvider,
                     workerLogger,
-                    i);
+                    i,
+                    partitioned);
 
                 _workers.Add(worker);
             }

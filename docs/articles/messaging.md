@@ -342,9 +342,24 @@ Notes:
 - This preserves order on a **single instance**. Ordering across load-balanced consumers
   additionally requires a single active consumer per partition (a later enhancement),
   mirroring MassTransit's model.
-- Ordering holds for the success path. Preserving order when a handler fails — instead of
-  the delayed re-delivery used today, which reorders — is handled by the in-place retry
-  mode tracked separately.
+- **Failure path:** a partitioned queue retries **in-memory** automatically — the consumer
+  is re-invoked in-process while the delivery (and its lane) is held — so a failing message
+  cannot be overtaken by a later same-key message. See *Retries* below.
+
+## Retries
+
+`q.UseRetry(...)` configures the retry policy for a queue's consumers. There are two
+execution modes:
+
+- **Delayed re-delivery (default):** a failed message is re-published to the queue's retry
+  exchange with a delay and re-delivered later. Good for back-off without holding a consumer,
+  but it **reorders** relative to other messages.
+- **In-memory:** the consumer is re-invoked in-process while the delivery is held, preserving
+  order. Opt in with `q.UseRetry(r => { r.Immediate(3); r.InMemory(); })`. Partitioned queues
+  use in-memory retry **automatically**, since ordering requires it.
+
+On exhaustion the message is dead-lettered (when a dead-letter queue is configured) in both
+modes.
 
 ## Routing Keys
 

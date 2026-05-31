@@ -67,35 +67,35 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
     private async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs ea)
     {
-        if (!_partitioned)
-        {
-            await ProcessDeliveryAsync(ea);
-            return;
-        }
-
-        // Partitioned queue: dispatch is ordered (single channel, dispatch concurrency 1). Assign the
-        // delivery to its partition lane in arrival order, then return so the next delivery is laned in
-        // order; the actual processing and ack happen on the lane (deferred ack), giving cross-key
-        // parallelism bounded by PrefetchCount while preserving per-key order.
         var prepared = await TryPrepareAsync(ea);
         if (prepared is null)
         {
             return;
         }
 
+        if (!_partitioned)
+        {
+            await ProcessAsync(prepared, ea);
+            return;
+        }
+
+        // Partitioned queue: dispatch is ordered (single channel, dispatch concurrency 1). Assign the
+        // delivery to its partition lane in arrival order, then return so the next delivery is laned in
+        // order; processing, retry, and ack happen on the lane (deferred ack), giving cross-key parallelism
+        // bounded by PrefetchCount while preserving per-key order.
         Task work;
         if (prepared.Plan.IsPartitioned)
         {
             var key = prepared.Plan.PartitionKeyExtractor!(prepared.Message, ea, prepared.Envelope);
             work = string.IsNullOrEmpty(key)
-                ? ProcessPreparedAsync(prepared, ea)
-                : prepared.Plan.Partitioner!.RunSequentialAsync(key, () => ProcessPreparedAsync(prepared, ea));
+                ? ProcessAsync(prepared, ea)
+                : prepared.Plan.Partitioner!.RunSequentialAsync(key, () => ProcessAsync(prepared, ea));
         }
         else
         {
             // A non-partitioned type sharing a partitioned queue still runs off the receive loop so it does
             // not block ordered dispatch of subsequent deliveries.
-            work = ProcessPreparedAsync(prepared, ea);
+            work = ProcessAsync(prepared, ea);
         }
 
         TrackInFlight(ea.DeliveryTag, work);
@@ -111,30 +111,22 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             TaskScheduler.Default);
     }
 
-    /// <summary>Non-partitioned path: process the delivery inline and settle on this dispatcher invocation.</summary>
-    private async Task ProcessDeliveryAsync(BasicDeliverEventArgs ea)
-    {
-        var messageTypeName = ea.BasicProperties.Type ?? ea.Exchange;
-        using var activity = StartReceiveActivity(ea, messageTypeName);
-
-        try
-        {
-            await HandleMessageAsync(ea);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
-            activity?.SetStatus(ActivityStatusCode.Ok);
-        }
-        catch (Exception ex)
-        {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.AddException(ex);
-            await HandleFailureAsync(ex, ea, messageTypeName);
-        }
-    }
-
-    /// <summary>Partitioned path: dispatch the already-prepared delivery's handlers and settle (deferred ack).</summary>
-    private async Task ProcessPreparedAsync(PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    /// <summary>
+    /// Dispatches a prepared delivery and settles it. When the effective retry policy is in-memory — set
+    /// explicitly via <c>UseRetry(r =&gt; r.InMemory())</c> or implied by a partitioned queue — the consumer
+    /// is retried in-process while the delivery is held (preserving order); otherwise a failure goes through
+    /// the delay-queue re-delivery path.
+    /// </summary>
+    private async Task ProcessAsync(PreparedDelivery prepared, BasicDeliverEventArgs ea)
     {
         using var activity = StartReceiveActivity(ea, prepared.DiagnosticTypeName);
+        var policy = GetPolicy(prepared.Plan, _queueDefinition);
+
+        if (policy is not null && (policy.InMemory || _partitioned))
+        {
+            await ExecuteWithInMemoryRetryAsync(policy, prepared, ea, activity);
+            return;
+        }
 
         try
         {
@@ -147,6 +139,60 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             activity?.AddException(ex);
             await HandleFailureAsync(ex, ea, prepared.DiagnosticTypeName);
+        }
+    }
+
+    /// <summary>
+    /// Re-invokes the consumer in-process up to the policy's retry count, holding the delivery (and, on a
+    /// partitioned queue, its lane) so a later message cannot overtake the one being retried. Each attempt
+    /// runs in a fresh scope. On exhaustion the message is faulted (if requested) and nacked for dead-lettering.
+    /// </summary>
+    private async Task ExecuteWithInMemoryRetryAsync(RetryPolicyDefinition policy, PreparedDelivery prepared, BasicDeliverEventArgs ea, Activity? activity)
+    {
+        for (var attempt = 0; attempt <= policy.MaxRetryCount; attempt++)
+        {
+            try
+            {
+                await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
+                await _channel.BasicAckAsync(ea.DeliveryTag, false);
+                activity?.SetStatus(ActivityStatusCode.Ok);
+                return;
+            }
+            catch (Exception ex)
+            {
+                if (ex is OperationCanceledException && ea.CancellationToken.IsCancellationRequested)
+                {
+                    // Worker is stopping; leave the delivery unacked so the broker re-delivers it later.
+                    return;
+                }
+
+                var canRetry = attempt < policy.MaxRetryCount && !policy.GetIgnoredExceptionTypes().Contains(ex.GetType());
+                if (!canRetry)
+                {
+                    activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                    activity?.AddException(ex);
+                    MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey);
+                    await PublishFaultIfRequestedAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>());
+                    await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
+                    return;
+                }
+
+                var delay = policy.GetDelay(attempt);
+                MessagingLog.ConsumerThrew(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey, attempt, policy.MaxRetryCount);
+                MessagingLog.SchedulingRetry(_logger, _queueDefinition.Name, attempt + 1, policy.MaxRetryCount, delay);
+
+                if (delay > TimeSpan.Zero)
+                {
+                    try
+                    {
+                        await Task.Delay(delay, ea.CancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                }
+            }
         }
     }
 
@@ -260,17 +306,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             }
         }
         return queue.DefaultRetryPolicy;
-    }
-
-    private async Task HandleMessageAsync(BasicDeliverEventArgs ea)
-    {
-        var prepared = await TryPrepareAsync(ea);
-        if (prepared is null)
-        {
-            return;
-        }
-
-        await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
     }
 
     /// <summary>

@@ -14,6 +14,14 @@ public sealed partial class OrderedEventConsumer(
         var message = messageContext.Message;
         LogReceived(logger, message.Key, message.Sequence);
 
+        // Fail the first FailAttempts invocations. With in-memory retry the delivery is held (and the lane
+        // with it), so a later same-key message cannot be recorded before this one finally succeeds.
+        var attempt = tracker.RecordAttempt($"{message.Key}:{message.Sequence}");
+        if (attempt <= message.FailAttempts)
+        {
+            throw new InvalidOperationException($"Ordered {message.Key}#{message.Sequence} failing attempt {attempt}.");
+        }
+
         // Even sequences process slower than odd ones. Without per-key ordering and with queue
         // concurrency, a faster later message would overtake a slower earlier one and be recorded
         // out of order — so a strictly increasing recorded sequence proves the partitioner works.

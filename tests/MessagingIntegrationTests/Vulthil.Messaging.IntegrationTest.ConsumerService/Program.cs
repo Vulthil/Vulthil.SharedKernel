@@ -103,10 +103,12 @@ builder.AddMessaging(messaging =>
         queue.AddConsumer<PoisonCommandConsumer>();
     });
 
-    // Ordered processing: queue runs with concurrency, partitioner keeps per-key order.
+    // Ordered processing: queue runs with concurrency, partitioner keeps per-key order. Retries run
+    // in-memory automatically (partitioned queue), so a failing message keeps its lane and order holds.
     messaging.ConfigureQueue("ordered-events", queue =>
     {
         queue.ConfigureQueue(definition => definition.ConcurrencyLimit = 8);
+        queue.UseRetry(retry => retry.Immediate(5));
         queue.AddConsumer<OrderedEventConsumer>();
     });
 

@@ -32,4 +32,25 @@ public sealed class RetryPolicyConfiguratorTests : BaseUnitTestCase<RetryPolicyC
         Target.Intervals.Count.ShouldBe(3);
         Target.Intervals.ShouldAllBe(interval => interval == TimeSpan.Zero);
     }
+
+    [Fact]
+    public void RetryDefaultsToDelayedRedelivery()
+    {
+        // Act
+        Target.Immediate(2);
+
+        // Assert
+        Target.Build().InMemory.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void InMemoryEnablesInMemoryRetry()
+    {
+        // Act
+        Target.Immediate(2);
+        Target.InMemory();
+
+        // Assert
+        Target.Build().InMemory.ShouldBeTrue();
+    }
 }

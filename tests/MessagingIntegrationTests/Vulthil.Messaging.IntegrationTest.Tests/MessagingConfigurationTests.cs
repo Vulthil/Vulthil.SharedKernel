@@ -286,6 +286,37 @@ public sealed class MessagingConfigurationTests(AppHostFixture fixture)
         resultB.Value.ShouldBe(expected);
     }
 
+    [Fact]
+    public async Task PartitionedQueueRetriesInMemoryPreservingOrderOnFailure()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var key = $"R-{Guid.NewGuid():N}";
+
+        // Sequence 0 fails its first two attempts; in-memory retry holds the lane while it retries, so
+        // sequence 1 must not be recorded before sequence 0 finally succeeds.
+        using (var first = await fixture.ProducerClient.PostAsJsonAsync(
+            "/api/publish-ordered", new OrderedEvent(key, 0, FailAttempts: 2), cancellationToken))
+        {
+            first.IsSuccessStatusCode.ShouldBeTrue();
+        }
+
+        using (var second = await fixture.ProducerClient.PostAsJsonAsync(
+            "/api/publish-ordered", new OrderedEvent(key, 1), cancellationToken))
+        {
+            second.IsSuccessStatusCode.ShouldBeTrue();
+        }
+
+        var result = await Polling.WaitAsync(
+            PollTimeout,
+            ct => TryGetSequencesAsync(fixture.ConsumerClient, key, 2, ct),
+            PollInterval,
+            cancellationToken);
+
+        var expected = Enumerable.Range(0, 2).ToList();
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBe(expected);
+    }
+
     private static async Task<Result<List<int>>> TryGetSequencesAsync(
         HttpClient client,
         string key,

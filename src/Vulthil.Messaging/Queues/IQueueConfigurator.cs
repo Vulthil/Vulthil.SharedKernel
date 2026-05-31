@@ -79,6 +79,13 @@ public sealed record RetryPolicyDefinition
     /// </summary>
     public double JitterFactor { get; set; }
     /// <summary>
+    /// Gets or sets a value indicating whether retries run in-memory — the consumer is re-invoked in-process
+    /// while the delivery is held — rather than via delayed re-delivery through the retry queue. In-memory
+    /// retries preserve message order (a later message cannot overtake the one being retried), so they are
+    /// used automatically for partitioned queues. Defaults to <see langword="false"/> (delayed re-delivery).
+    /// </summary>
+    public bool InMemory { get; set; }
+    /// <summary>
     /// Gets the delay intervals between successive retry attempts.
     /// </summary>
     public ICollection<TimeSpan> Intervals { get; } = [];
@@ -184,6 +191,7 @@ public sealed class RetryPolicyConfigurator
     /// </summary>
     public int RetryLimit { get; private set; }
     private double _jitterFactor;
+    private bool _inMemory;
     /// <summary>
     /// Gets the configured delay intervals between successive retry attempts.
     /// </summary>
@@ -268,6 +276,13 @@ public sealed class RetryPolicyConfigurator
     public void Ignore<TException>() where TException : Exception => _ignoredExceptions.Add(typeof(TException));
 
     /// <summary>
+    /// Configures retries to run in-memory: the consumer is re-invoked in-process while the delivery is held,
+    /// instead of being re-delivered later through the retry queue. This preserves message order, so it is the
+    /// behavior used automatically for partitioned queues.
+    /// </summary>
+    public void InMemory() => _inMemory = true;
+
+    /// <summary>
     /// Builds the <see cref="RetryPolicyDefinition"/> from the current configuration.
     /// </summary>
     /// <returns>The constructed retry policy definition.</returns>
@@ -276,7 +291,8 @@ public sealed class RetryPolicyConfigurator
         var definition = new RetryPolicyDefinition
         {
             MaxRetryCount = RetryLimit,
-            JitterFactor = _jitterFactor
+            JitterFactor = _jitterFactor,
+            InMemory = _inMemory
         };
 
         foreach (var interval in _intervals)

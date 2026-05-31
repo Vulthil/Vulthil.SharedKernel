@@ -159,6 +159,7 @@ Vulthil.Messaging.Queues.RetryPolicyConfigurator.Exponential(int retryCount, Sys
 Vulthil.Messaging.Queues.RetryPolicyConfigurator.Ignore<TException>() -> void
 Vulthil.Messaging.Queues.RetryPolicyConfigurator.IgnoredExceptions.get -> System.Collections.Generic.IReadOnlySet<System.Type!>!
 Vulthil.Messaging.Queues.RetryPolicyConfigurator.Immediate(int retryCount) -> void
+Vulthil.Messaging.Queues.RetryPolicyConfigurator.InMemory() -> void
 Vulthil.Messaging.Queues.RetryPolicyConfigurator.Intervals.get -> System.Collections.Generic.IReadOnlyList<System.TimeSpan>!
 Vulthil.Messaging.Queues.RetryPolicyConfigurator.RetryLimit.get -> int
 Vulthil.Messaging.Queues.RetryPolicyConfigurator.RetryPolicyConfigurator() -> void
@@ -168,6 +169,8 @@ Vulthil.Messaging.Queues.RetryPolicyDefinition
 Vulthil.Messaging.Queues.RetryPolicyDefinition.GetDelay(int attempt) -> System.TimeSpan
 Vulthil.Messaging.Queues.RetryPolicyDefinition.GetIgnoredExceptionTypes() -> System.Collections.Generic.HashSet<System.Type!>!
 Vulthil.Messaging.Queues.RetryPolicyDefinition.IgnoreExceptions.get -> System.Collections.Generic.ICollection<string!>!
+Vulthil.Messaging.Queues.RetryPolicyDefinition.InMemory.get -> bool
+Vulthil.Messaging.Queues.RetryPolicyDefinition.InMemory.set -> void
 Vulthil.Messaging.Queues.RetryPolicyDefinition.Intervals.get -> System.Collections.Generic.ICollection<System.TimeSpan>!
 Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.get -> double
 Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor.set -> void

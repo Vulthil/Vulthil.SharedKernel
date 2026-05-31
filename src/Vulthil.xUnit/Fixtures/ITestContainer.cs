@@ -19,9 +19,10 @@ public interface ITestContainerWithConnectionString : ITestContainer
     string ConnectionStringKey { get; }
 }
 /// <summary>
-/// Extends <see cref="ITestContainerWithConnectionString"/> with database migration and reset capabilities.
+/// Extends <see cref="ITestContainerWithConnectionString"/> with database migration capabilities. Data is reset
+/// between tests through <see cref="IResettableResource.ResetAsync"/> (Respawn).
 /// </summary>
-public interface ITestDatabaseContainer : ITestContainerWithConnectionString
+public interface ITestDatabaseContainer : ITestContainerWithConnectionString, IResettableResource
 {
     /// <summary>
     /// Ensures pending EF Core migrations are applied to the containerized database. Invoked during host startup,
@@ -32,8 +33,4 @@ public interface ITestDatabaseContainer : ITestContainerWithConnectionString
     /// <param name="serviceProvider">The scoped service provider to resolve the DbContext from.</param>
     /// <returns>A task representing the asynchronous migration work.</returns>
     ValueTask MigrateDatabase(IServiceProvider serviceProvider);
-    /// <summary>
-    /// Resets the database to a clean state by removing all data. The Respawn snapshot is initialized on first use.
-    /// </summary>
-    ValueTask ResetDatabase();
 }

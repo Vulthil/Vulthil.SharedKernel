@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Vulthil.xUnit.Http;
 
 namespace Vulthil.xUnit;
 
@@ -86,10 +87,28 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
             }
         });
 
+    /// <summary>
+    /// Gets the HTTP mock registered for the named HTTP client <paramref name="name"/>, for configuring stubbed
+    /// responses and inspecting captured requests. The mock is reset after each test.
+    /// </summary>
+    /// <param name="name">The logical name of the HTTP client registered via <c>AddHttpMock</c> on the factory.</param>
+    /// <returns>The registered HTTP mock.</returns>
+    protected IHttpMock HttpMock(string name) => _factory.GetHttpMock(name);
+
+    /// <summary>
+    /// Gets the HTTP mock registered for the typed client <typeparamref name="TClient"/>, for configuring stubbed
+    /// responses and inspecting captured requests. The mock is reset after each test.
+    /// </summary>
+    /// <typeparam name="TClient">The typed client service type registered via <c>AddHttpMock</c> on the factory.</typeparam>
+    /// <returns>The registered HTTP mock.</returns>
+    protected IHttpMock HttpMock<TClient>()
+        where TClient : class
+        => _factory.GetHttpMock<TClient>();
+
     /// <inheritdoc />
     public virtual async ValueTask DisposeAsync()
     {
-        await _factory.ResetDatabase();
+        await _factory.ResetAsync();
         await ResetScope();
         _client?.Dispose();
         if (_lazyFactory.IsValueCreated)

@@ -87,7 +87,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     }
 
     /// <inheritdoc />
-    public async ValueTask ResetDatabase()
+    public async ValueTask ResetAsync()
     {
         if (!_hasBeenMigrated)
         {

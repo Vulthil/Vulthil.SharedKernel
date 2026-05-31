@@ -136,6 +136,50 @@ public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
 
 Migrations run from a startup initializer placed at the front of the host's hosted-service list, so the schema exists **before the application's own background services start** (e.g. an outbox processor that polls the database immediately). It applies only migrations that are still pending and tolerates a concurrent migrator, so an application that already migrates itself on startup (for example `app.MigrateAsync()` in `Program.cs`) keeps ownership — the factory sees the schema is up to date and does nothing. Apps that don't self-migrate get migrated by the factory automatically. No test-only environment or production-code changes are required.
 
+### Mocking outbound HTTP dependencies
+
+For a service that calls an external API through an `HttpClient` from `IHttpClientFactory`, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both **typed** clients (`AddHttpClient<TClient, ...>()`) and **named** clients (`AddHttpClient("name")`) are supported; for typed clients the implementation type does not need to be accessible:
+
+```csharp
+public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
+{
+    public AppWebFactory(IMessageSink messageSink)
+    {
+        AddContainer(new PostgresTestContainer(messageSink));
+        AddHttpMock<IWeatherClient>();   // typed:  AddHttpClient<IWeatherClient, WeatherClient>()
+        AddHttpMock("inventory");        // named:  AddHttpClient("inventory")
+    }
+}
+```
+
+Retrieve the named mock the same way — `HttpMock("inventory")` (or `GetHttpMock("inventory")` on the factory) — and configure it exactly like the typed one.
+
+Configure responses per test via `HttpMock<TClient>()` and inspect what was sent via `ReceivedRequests`:
+
+```csharp
+[Fact]
+public async Task Uses_external_forecast()
+{
+    // Strongly-typed body, serialized to JSON, plus a response header:
+    HttpMock<IWeatherClient>()
+        .On(HttpMethod.Get, "/forecast/london")
+        .RespondWith(HttpStatusCode.OK, new Forecast("London", 18))
+        .WithHeader("X-Source", "mock");
+
+    // Or replay a real response captured from the live endpoint and saved as a JSON document:
+    HttpMock<IWeatherClient>()
+        .On(HttpMethod.Get, "/forecast/paris")
+        .RespondWithJson(HttpStatusCode.OK, await File.ReadAllTextAsync("captured/paris.json"));
+
+    var result = await Client.GetAsync("/weather/london");
+
+    HttpMock<IWeatherClient>().ReceivedRequests
+        .ShouldContain(r => r.RequestUri!.AbsolutePath == "/forecast/london");
+}
+```
+
+Mock state is reset after each test (like the database), so stubs and captured requests never leak between tests. Under the hood the mock implements `IResettableResource`; database containers implement it too, and the test case resets every registered resettable resource in its teardown. A WireMock-based or other `IHttpMock` implementation can be substituted if you need richer matching, but the built-in mock has no external dependency.
+
 ## Messaging Test Harness
 
 Replace the real transport with the test harness to assert messaging behaviour without a broker:

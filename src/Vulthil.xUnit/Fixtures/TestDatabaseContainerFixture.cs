@@ -25,11 +25,6 @@ public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, T
     /// Gets the configuration key name where the connection string should be injected.
     /// </summary>
     public abstract string ConnectionStringKey { get; }
-
-    /// <inheritdoc />
-    protected override ValueTask InitializeAsync() => base.InitializeAsync();
-    /// <inheritdoc />
-    protected override ValueTask DisposeAsyncCore() => base.DisposeAsyncCore();
 }
 
 
@@ -42,8 +37,10 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer, IDatabaseContainer
 {
+    private const int MaxMigrationAttempts = 10;
+    private static readonly TimeSpan MigrationRetryDelay = TimeSpan.FromMilliseconds(250);
+
     private Respawner? _respawner;
-    private readonly SemaphoreSlim _migrationLock = new(1);
     private bool _hasBeenMigrated;
 
     /// <summary>
@@ -56,15 +53,6 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     public abstract string ConnectionStringKey { get; }
 
     /// <inheritdoc />
-    protected override ValueTask InitializeAsync() => base.InitializeAsync();
-    /// <inheritdoc />
-    protected override ValueTask DisposeAsyncCore()
-    {
-        _migrationLock.Dispose();
-        return base.DisposeAsyncCore();
-    }
-
-    /// <inheritdoc />
     public async ValueTask MigrateDatabase(IServiceProvider serviceProvider)
     {
         if (_hasBeenMigrated)
@@ -73,23 +61,46 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
         }
 
         var dbContext = serviceProvider.GetRequiredService<TDbContext>();
-        var aquiredLock = await _migrationLock.WaitAsync(TimeSpan.FromSeconds(5));
-        if (!aquiredLock)
+
+        for (var attempt = 1; attempt <= MaxMigrationAttempts; attempt++)
         {
-            throw new TimeoutException("Could not acquire migration lock in time.");
+            if (!(await dbContext.Database.GetPendingMigrationsAsync()).Any())
+            {
+                _hasBeenMigrated = true;
+                return;
+            }
+
+            try
+            {
+                await dbContext.Database.MigrateAsync();
+                _hasBeenMigrated = true;
+                return;
+            }
+            catch when (attempt < MaxMigrationAttempts)
+            {
+                await Task.Delay(MigrationRetryDelay);
+            }
         }
 
-        var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-        if (pendingMigrations.Any())
-        {
-            await dbContext.Database.MigrateAsync();
-        }
-        _hasBeenMigrated = true;
-        _migrationLock.Release();
+        throw new InvalidOperationException(
+            $"Pending migrations for '{typeof(TDbContext).Name}' did not complete after {MaxMigrationAttempts} attempts.");
     }
 
     /// <inheritdoc />
-    public async ValueTask InitializeRespawner()
+    public async ValueTask ResetDatabase()
+    {
+        if (!_hasBeenMigrated)
+        {
+            return;
+        }
+
+        await EnsureRespawnerInitialized();
+
+        var connection = await OpenConnectionAsync();
+        await _respawner!.ResetAsync(connection);
+    }
+
+    private async ValueTask EnsureRespawnerInitialized()
     {
         if (_respawner is not null)
         {
@@ -103,17 +114,5 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
             WithReseed = true,
             TablesToIgnore = ["__EFMigrationsHistory"],
         });
-    }
-
-    /// <inheritdoc />
-    public async ValueTask ResetDatabase()
-    {
-        if (_respawner is null)
-        {
-            return;
-        }
-
-        var connection = await OpenConnectionAsync();
-        await _respawner.ResetAsync(connection);
     }
 }

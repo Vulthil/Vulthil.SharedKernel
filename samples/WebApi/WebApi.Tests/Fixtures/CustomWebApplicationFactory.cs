@@ -1,8 +1,13 @@
 using Vulthil.xUnit;
+using Xunit.Sdk;
 
 namespace WebApi.Tests.Fixtures;
 
-/// <summary>
-/// Represents the CustomWebApplicationFactory.
-/// </summary>
-public sealed class CustomWebApplicationFactory : BaseWebApplicationFactory<Program>;
+public sealed class CustomWebApplicationFactory : BaseWebApplicationFactory<Program>
+{
+    public CustomWebApplicationFactory(IMessageSink messageSink)
+    {
+        AddContainer(new PostgreSqlTestContainer(messageSink));
+        AddContainer(new RabbitMqTestContainer(messageSink));
+    }
+}

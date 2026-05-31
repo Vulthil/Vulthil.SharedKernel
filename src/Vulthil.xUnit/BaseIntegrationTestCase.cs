@@ -3,15 +3,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Vulthil.xUnit.Fixtures;
 
 namespace Vulthil.xUnit;
 
 /// <summary>
-/// Base class for integration tests that use a <see cref="WebApplicationFactory{TEntryPoint}"/> with container-based infrastructure.
+/// Base class for integration tests that use a <see cref="BaseWebApplicationFactory{TEntryPoint}"/> with container-based infrastructure.
 /// </summary>
+/// <remarks>
+/// Supply <typeparamref name="TFactory"/> as an <see cref="IClassFixture{TFixture}"/> (or collection fixture) so its
+/// containers are started once and shared across the tests in that scope; database state is reset after each test.
+/// </remarks>
 public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLifetime
-    where TFactory : BaseWebApplicationFactory<TEntryPoint>, new()
+    where TFactory : BaseWebApplicationFactory<TEntryPoint>
     where TEntryPoint : class
 {
     /// <summary>
@@ -19,10 +22,9 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// </summary>
     protected static CancellationToken CancellationToken => TestContext.Current.CancellationToken;
 
-    private readonly TFactory _realFactory;
+    private readonly TFactory _factory;
     private readonly Lazy<WebApplicationFactory<TEntryPoint>> _lazyFactory;
 
-    private readonly TestFixture _testFixture;
     /// <summary>
     /// Gets the lazily-initialized web application factory configured with test containers.
     /// </summary>
@@ -56,21 +58,19 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     public HttpClient Client => _client ??= Factory.CreateClient();
 
     /// <summary>
-    /// Initializes a new instance with the specified test fixture and optional test output.
+    /// Initializes a new instance with the shared web application factory and optional test output.
     /// </summary>
-    /// <param name="testFixture">The fixture providing container infrastructure.</param>
+    /// <param name="factory">The factory fixture providing container infrastructure.</param>
     /// <param name="testOutputHelper">Optional output helper for capturing log output.</param>
-    protected BaseIntegrationTestCase(TestFixture testFixture, ITestOutputHelper? testOutputHelper = null)
+    protected BaseIntegrationTestCase(TFactory factory, ITestOutputHelper? testOutputHelper = null)
     {
-        _realFactory = new TFactory();
-        _realFactory.SetFixture(testFixture);
-        _testFixture = testFixture;
+        _factory = factory;
         TestOutputHelper = testOutputHelper;
         _lazyFactory = new(CreateFactory);
     }
 
     private WebApplicationFactory<TEntryPoint> CreateFactory() =>
-        _realFactory.WithWebHostBuilder(builder =>
+        _factory.WithWebHostBuilder(builder =>
         {
             if (TestOutputHelper is not null)
             {
@@ -89,10 +89,13 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// <inheritdoc />
     public virtual async ValueTask DisposeAsync()
     {
-        await _testFixture.ResetDatabase();
+        await _factory.ResetDatabase();
         await ResetScope();
         _client?.Dispose();
-        await _realFactory.DisposeAsync();
+        if (_lazyFactory.IsValueCreated)
+        {
+            await _lazyFactory.Value.DisposeAsync();
+        }
         GC.SuppressFinalize(this);
     }
 

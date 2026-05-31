@@ -73,11 +73,11 @@ Use<IOptions<AppSettings>>(Options.Create(new AppSettings { MaxRetries = 3 }));
 
 ### BaseIntegrationTestCase
 
-`BaseIntegrationTestCase<TFactory, TEntryPoint>` boots a real `WebApplicationFactory` backed by test containers:
+`BaseIntegrationTestCase<TFactory, TEntryPoint>` boots a real `WebApplicationFactory` backed by test containers. The factory is supplied as the xUnit fixture, so its containers start once for the scope and are shared across the tests in it:
 
 ```csharp
-public sealed class UsersEndpointTests(TestFixture fixture)
-    : BaseIntegrationTestCase<AppWebFactory, Program>(fixture)
+public sealed class UsersEndpointTests(AppWebFactory factory)
+    : BaseIntegrationTestCase<AppWebFactory, Program>(factory), IClassFixture<AppWebFactory>
 {
     [Fact]
     public async Task CreateUser_Returns201()
@@ -88,10 +88,12 @@ public sealed class UsersEndpointTests(TestFixture fixture)
 }
 ```
 
+Use `IClassFixture<AppWebFactory>` to give each test class its own containers, or a collection fixture (`[Collection]` + `ICollectionFixture<AppWebFactory>`) to share one set of containers across several classes. Different classes/collections run against different containers in parallel, while tests within a scope share containers and reset state between runs.
+
 Key features:
 
 - **Scoped services** – `ScopedServices` gives you a fresh DI scope per test.
-- **Automatic database reset** – the fixture calls `ResetDatabase()` after each test using Respawn.
+- **Automatic database reset** – the database is reset with Respawn after each test, so tests sharing a factory start from a clean state.
 - **Log capture** – pass `ITestOutputHelper` to route application logs to the test output.
 
 ### Test Containers
@@ -110,12 +112,19 @@ Container pools are shared across tests through xUnit fixtures, so the container
 
 ### WebApplicationFactory
 
-Derive from `BaseWebApplicationFactory<TEntryPoint>` to customise the test host:
+`BaseWebApplicationFactory<TEntryPoint>` owns the test containers and serves as the xUnit fixture, so a single derived class replaces the separate factory + fixture pair. Register containers with `AddContainer` (in the constructor or by overriding `ConfigureContainers`); their connection strings are injected into the host and EF Core migrations are ensured during host startup:
 
 ```csharp
 public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
 {
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    public AppWebFactory(IMessageSink messageSink)
+    {
+        AddContainer(new PostgresTestContainer(messageSink));
+        AddContainer(new RabbitMqTestContainer(messageSink));
+    }
+
+    // ConfigureWebHost is sealed; override ConfigureCustomWebHost for extra host setup.
+    protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
@@ -124,6 +133,8 @@ public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
     }
 }
 ```
+
+Migrations run from a startup initializer placed at the front of the host's hosted-service list, so the schema exists **before the application's own background services start** (e.g. an outbox processor that polls the database immediately). It applies only migrations that are still pending and tolerates a concurrent migrator, so an application that already migrates itself on startup (for example `app.MigrateAsync()` in `Program.cs`) keeps ownership — the factory sees the schema is up to date and does nothing. Apps that don't self-migrate get migrated by the factory automatically. No test-only environment or production-code changes are required.
 
 ## Messaging Test Harness
 

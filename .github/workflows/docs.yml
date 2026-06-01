@@ -1,25 +1,48 @@
-name: Deploy DocFX to GitHub Pages
+name: Documentation
 
+# Publishes versioned DocFX docs to the gh-pages branch:
+#   * push to main          -> "main" pre-release docs   (default: false)
+#   * called from release   -> the released version, made the site default
+#   * manual dispatch        -> rebuild an arbitrary slug
+# GitHub Pages must be configured to deploy from the gh-pages branch (root).
 on:
-  workflow_dispatch:
   push:
     branches: [ "main" ]
     paths:
       - 'src/**'
       - 'docs/**'
       - '.github/workflows/docs.yml'
+      - '.github/scripts/deploy-docs.sh'
+      - '.github/scripts/update_versions.py'
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Path segment to publish under (e.g. main)'
+        default: main
+        type: string
+      make_default:
+        description: 'Point the site root at this slug'
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      slug:
+        required: true
+        type: string
+      make_default:
+        required: false
+        default: false
+        type: boolean
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: docs-deploy
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -34,18 +57,8 @@ jobs:
       - name: Build documentation
         run: dotnet tool run docfx docs/docfx.json
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: docs/_site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+      - name: Publish to gh-pages
+        env:
+          SLUG: ${{ inputs.slug || 'main' }}
+          MAKE_DEFAULT: ${{ inputs.make_default || 'false' }}
+        run: bash .github/scripts/deploy-docs.sh

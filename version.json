@@ -4,10 +4,7 @@
   "release": {
     "firstUnstableTag": "preview"
   },
-  "publicReleaseRefSpec": [
-    "^refs/heads/main$",
-    "^refs/heads/master$"
-  ],
+  "publicReleaseRefSpec": [],
   "cloudBuild": {
     "buildNumber": {
       "enabled": true

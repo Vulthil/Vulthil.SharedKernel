@@ -3,6 +3,9 @@
 ###############################################################################
 * text=auto
 
+# Shell scripts must stay LF so they run under bash on Linux CI runners.
+*.sh text eol=lf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #

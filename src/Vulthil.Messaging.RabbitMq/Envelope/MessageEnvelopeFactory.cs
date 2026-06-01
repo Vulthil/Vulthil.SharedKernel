@@ -24,7 +24,8 @@ internal static class MessageEnvelopeFactory
         string messageId,
         string correlationId,
         Uri urn,
-        JsonSerializerOptions jsonOptions)
+        JsonSerializerOptions jsonOptions,
+        string? requestId = null)
         where TMessage : notnull
     {
         // Copy user headers, removing the keys that we promote to typed envelope fields.
@@ -42,6 +43,7 @@ internal static class MessageEnvelopeFactory
         return new MessageEnvelope
         {
             MessageId = messageId,
+            RequestId = requestId,
             CorrelationId = correlationId,
             ConversationId = publishContext.ConversationId,
             InitiatorId = publishContext.InitiatorId,

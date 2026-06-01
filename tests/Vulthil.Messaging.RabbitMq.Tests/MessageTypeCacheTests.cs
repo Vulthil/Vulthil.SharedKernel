@@ -4,6 +4,7 @@ using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.xUnit;
 
@@ -210,12 +211,12 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         publishedProperties.ShouldNotBeNull();
         publishedProperties.CorrelationId.ShouldBe("corr-1");
 
-        var messageResult = JsonSerializer.Deserialize<MessageResult>(publishedBody.Span);
-        messageResult.ShouldNotBeNull();
-        messageResult.IsSuccess.ShouldBeTrue();
-        messageResult.Value.ShouldNotBeNull();
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
+        envelope.ShouldNotBeNull();
+        envelope.MessageType.ShouldBe(new MessageConfiguration(typeof(TestResponse).FullName!).Urn);
+        envelope.RequestId.ShouldBe("corr-1");
 
-        var response = JsonSerializer.Deserialize<TestResponse>(messageResult.Value);
+        var response = envelope.Message.Deserialize<TestResponse>();
         response.ShouldNotBeNull();
         response.Result.ShouldBe("Processed: Find users");
     }
@@ -266,10 +267,13 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             CancellationToken.None);
 
         // Assert
-        var messageResult = JsonSerializer.Deserialize<MessageResult>(publishedBody.Span);
-        messageResult.ShouldNotBeNull();
-        messageResult.IsSuccess.ShouldBeFalse();
-        messageResult.ErrorMessage.ShouldContain("failed to process request");
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
+        envelope.ShouldNotBeNull();
+        envelope.MessageType.ShouldBe(RpcFault.UrnUri);
+
+        var fault = envelope.Message.Deserialize<RpcFault>();
+        fault.ShouldNotBeNull();
+        fault.Message.ShouldContain("failed to process request");
     }
 
     [Fact]

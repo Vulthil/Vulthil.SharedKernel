@@ -60,12 +60,13 @@ internal static class MessageHandlerFactory
                 var consumer = sp.GetRequiredService<TConsumer>();
                 var publisher = sp.GetRequiredService<IPublisher>();
                 var sendEndpointProvider = sp.GetRequiredService<ISendEndpointProvider>();
-                var jsonOptions = sp.GetRequiredService<IMessageConfigurationProvider>().JsonSerializerOptions;
+                var provider = sp.GetRequiredService<IMessageConfigurationProvider>();
+                var jsonOptions = provider.JsonSerializerOptions;
                 var context = envelope is null
                     ? MessageContext.CreateContext((TRequest)message, ea, publisher, sendEndpointProvider, ct)
                     : MessageContext.CreateContext((TRequest)message, ea, envelope, publisher, sendEndpointProvider, ct);
 
-                MessageResult messageResult;
+                MessageEnvelope reply;
                 try
                 {
                     // The terminal stage captures the consumer's response so any wrapping filters can
@@ -83,39 +84,69 @@ internal static class MessageHandlerFactory
 
                     await pipeline(context);
 
-                    if (!responseProduced)
-                    {
-                        messageResult = MessageResult.Failure("Consume pipeline did not produce a response (a filter likely short-circuited the chain).");
-                    }
-                    else
-                    {
-                        var responseBytes = JsonSerializer.SerializeToUtf8Bytes(response, jsonOptions);
-                        messageResult = MessageResult.Success(responseBytes);
-                    }
+                    reply = responseProduced
+                        ? BuildReply(provider.GetUrn(typeof(TResponse)), JsonSerializer.SerializeToElement(response, jsonOptions), ea, envelope)
+                        : BuildFaultReply(
+                            "Consume pipeline did not produce a response (a filter likely short-circuited the chain).",
+                            typeof(InvalidOperationException).FullName!,
+                            stackTrace: null,
+                            jsonOptions,
+                            ea,
+                            envelope);
                 }
                 catch (Exception exception)
                 {
-                    messageResult = MessageResult.Failure(exception.Message);
+                    reply = BuildFaultReply(exception.Message, exception.GetType().FullName ?? "Unknown", exception.StackTrace, jsonOptions, ea, envelope);
                 }
 
-                await SendResponseAsync(ea, messageResult, channel, jsonOptions);
+                await SendResponseAsync(ea, reply, channel, jsonOptions);
             }
         };
 
-    private static async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageResult response, IChannel channel, JsonSerializerOptions jsonOptions)
+    private static MessageEnvelope BuildReply(Uri messageType, JsonElement message, BasicDeliverEventArgs ea, MessageEnvelope? requestEnvelope)
+        => new()
+        {
+            MessageId = Guid.CreateVersion7().ToString(),
+            RequestId = ea.BasicProperties.CorrelationId,
+            CorrelationId = requestEnvelope?.CorrelationId,
+            MessageType = messageType,
+            Message = message,
+            SentTime = DateTimeOffset.UtcNow,
+        };
+
+    private static MessageEnvelope BuildFaultReply(
+        string message,
+        string exceptionType,
+        string? stackTrace,
+        JsonSerializerOptions jsonOptions,
+        BasicDeliverEventArgs ea,
+        MessageEnvelope? requestEnvelope)
+    {
+        var fault = new RpcFault
+        {
+            Message = message,
+            ExceptionType = exceptionType,
+            StackTrace = stackTrace,
+            FaultedAt = DateTimeOffset.UtcNow,
+        };
+        return BuildReply(RpcFault.UrnUri, JsonSerializer.SerializeToElement(fault, jsonOptions), ea, requestEnvelope);
+    }
+
+    private static async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageEnvelope reply, IChannel channel, JsonSerializerOptions jsonOptions)
     {
         if (string.IsNullOrEmpty(ea.BasicProperties.ReplyTo))
         {
             return;
         }
 
-        var responseBytes = JsonSerializer.SerializeToUtf8Bytes(response, jsonOptions);
+        var body = JsonSerializer.SerializeToUtf8Bytes(reply, jsonOptions);
         var replyProps = new BasicProperties
         {
             CorrelationId = ea.BasicProperties.CorrelationId,
-            Type = response.GetType().FullName
+            Type = reply.MessageType.AbsoluteUri,
+            ContentType = RabbitMqConstants.ContentType,
         };
 
-        await channel.BasicPublishAsync(string.Empty, ea.BasicProperties.ReplyTo, true, replyProps, responseBytes);
+        await channel.BasicPublishAsync(string.Empty, ea.BasicProperties.ReplyTo, true, replyProps, body);
     }
 }

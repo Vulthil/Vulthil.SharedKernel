@@ -90,6 +90,12 @@ public sealed class PlaceOrderHandler(IPublisher publisher)
 }
 ```
 
+> **Delivery guarantees.** Publishing uses RabbitMQ publisher confirms: the call awaits the
+> broker's acknowledgement and throws if the message is nacked, so a publish the broker never
+> accepted does not report success. `Publish` (pub/sub over a fanout/topic exchange) is *not*
+> mandatory — zero subscribers is normal — whereas `Send` (point-to-point) *is* mandatory, so a
+> missing destination queue surfaces as a failure rather than being silently dropped.
+
 ### Publishing from inside a consumer
 
 `IMessageContext` exposes `PublishAsync` directly, so consumers can emit follow-up
@@ -724,6 +730,21 @@ When no timeout is set on the context, the request falls back to
 [Configuration-driven Setup](#configuration-driven-setup)). A request that exceeds
 its timeout completes with a `Result<TResponse>` failure carrying the
 `Messaging.Request.Timeout` error code rather than throwing.
+
+### Reply wire format & correlation
+
+Each request carries a dedicated **request id** (a fresh GUID per call) in the AMQP
+`CorrelationId` property and the envelope's `requestId` field. The reply echoes it, and the
+requester correlates the reply to the awaiting call by this id — independently of the business
+`CorrelationId` (set via `UseCorrelationId` or `SetCorrelationId`), which is therefore free to
+repeat across concurrent requests without colliding.
+
+The reply is a normal `MessageEnvelope` (single-serialized, like every other message):
+
+- **Success** carries the `TResponse` payload at the response type's URN.
+- **Failure** carries an RPC fault at `urn:message:Vulthil:RpcFault` (the remote exception's
+  type and message); the requester maps it to a `Result<TResponse>` failure with the
+  `Messaging.Request.Failure` error code.
 
 ## Testing Messaging
 

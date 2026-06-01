@@ -45,10 +45,10 @@ internal sealed class ResponseListener : IAsyncDisposable
         return _replyToQueueName;
     }
 
-    public void RegisterWaiter<T>(string correlationId, TaskCompletionSource<Result<T>> tcs) where T : notnull
-        => _waiters[correlationId] = new ResponseWaiter<T>(tcs, JsonOptions);
+    public void RegisterWaiter<T>(string requestId, TaskCompletionSource<Result<T>> tcs, Uri responseUrn) where T : notnull
+        => _waiters[requestId] = new ResponseWaiter<T>(tcs, JsonOptions, responseUrn);
 
-    public void RemoveWaiter(string correlationId) => _waiters.TryRemove(correlationId, out _);
+    public void RemoveWaiter(string requestId) => _waiters.TryRemove(requestId, out _);
 
     private async Task EnsureStartedAsync(CancellationToken cancellationToken)
     {

@@ -234,10 +234,10 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         trace.ShouldBe(["log:before", "log:after"]);
         consumerInstance.Received.ShouldHaveSingleItem();
 
-        var envelope = JsonSerializer.Deserialize<MessageResult>(publishedBody.Span);
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
         envelope.ShouldNotBeNull();
-        envelope.IsSuccess.ShouldBeTrue();
-        var response = JsonSerializer.Deserialize<TestResponse>(envelope.Value);
+        envelope.MessageType.ShouldBe(new MessageConfiguration(typeof(TestResponse).FullName!).Urn);
+        var response = envelope.Message.Deserialize<TestResponse>();
         response!.Result.ShouldBe("Processed: query");
     }
 
@@ -293,9 +293,10 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         // Assert
         consumerInstance.Received.ShouldBeEmpty();
 
-        var envelope = JsonSerializer.Deserialize<MessageResult>(publishedBody.Span);
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
         envelope.ShouldNotBeNull();
-        envelope.IsSuccess.ShouldBeFalse();
-        envelope.ErrorMessage.ShouldContain("short-circuit");
+        envelope.MessageType.ShouldBe(RpcFault.UrnUri);
+        var fault = envelope.Message.Deserialize<RpcFault>();
+        fault!.Message.ShouldContain("short-circuit");
     }
 }

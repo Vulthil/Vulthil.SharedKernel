@@ -44,7 +44,9 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         await EnsureChannelAsync(cancellationToken);
         await EnsureExchangeTopologyAsync(exchange, messageConfiguration, cancellationToken);
 
-        await BasicPublishAsync(exchange, routingKey, props, body, cancellationToken);
+        // Publish is pub/sub over a fanout/topic exchange: zero bound subscribers is normal, so the message
+        // is not mandatory. Broker confirms still apply (a nack throws), guarding against broker-side loss.
+        await BasicPublishAsync(exchange, routingKey, props, body, mandatory: false, cancellationToken);
     }
 
     public async Task InternalSendAsync(
@@ -55,8 +57,10 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
     {
         // Sends route via the broker's default exchange (always exists, always routes by queue name).
         // The destination queue is owned by the receiving service, so we do not declare it here.
+        // A send is point-to-point, so a missing destination queue is a real error: publish mandatory so
+        // the broker returns an unroutable message and the awaited confirm throws PublishReturnException.
         await EnsureChannelAsync(cancellationToken);
-        await BasicPublishAsync(exchange: string.Empty, routingKey: queueName, props, body, cancellationToken);
+        await BasicPublishAsync(exchange: string.Empty, routingKey: queueName, props, body, mandatory: true, cancellationToken);
     }
 
     private async Task BasicPublishAsync(
@@ -64,6 +68,7 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         string routingKey,
         BasicProperties props,
         byte[] body,
+        bool mandatory,
         CancellationToken cancellationToken)
     {
         await _channelSemaphore.WaitAsync(cancellationToken);
@@ -73,7 +78,7 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
             await _channel!.BasicPublishAsync(
                 exchange: exchange,
                 routingKey: routingKey,
-                mandatory: true,
+                mandatory: mandatory,
                 basicProperties: props,
                 body: body,
                 cancellationToken: cancellationToken);
@@ -213,7 +218,16 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
             }
 #pragma warning restore CA1508
 
-            _channel = await _rabbitMqConnection.CreateChannelAsync(cancellationToken: cancellationToken);
+            // Publisher confirmations (with tracking) make the awaited BasicPublishAsync wait for the broker
+            // ack and throw on a nack or unroutable-mandatory return, so a publish that the broker never
+            // accepted no longer reports success. This serializes publishing through the single channel until
+            // a channel pool is introduced; tune throughput there.
+            _channel = await _rabbitMqConnection.CreateChannelAsync(
+                new CreateChannelOptions(
+                    publisherConfirmationsEnabled: true,
+                    publisherConfirmationTrackingEnabled: true,
+                    consumerDispatchConcurrency: 1),
+                cancellationToken);
         }
         finally
         {

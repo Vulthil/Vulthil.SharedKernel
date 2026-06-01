@@ -44,11 +44,11 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         // Act
         await Target.PublishAsync(message, cancellationToken: CancellationToken);
 
-        // Assert
+        // Assert — publish is pub/sub, so it is not mandatory (zero subscribers is normal).
         _channelMock.Verify(x => x.BasicPublishAsync(
             typeof(TestMessage).FullName!,
             string.Empty,
-            true,
+            false,
             It.IsAny<BasicProperties>(),
             It.IsAny<ReadOnlyMemory<byte>>(),
             CancellationToken), Times.Once);

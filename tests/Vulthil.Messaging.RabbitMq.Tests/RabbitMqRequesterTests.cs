@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.Text.Json;
 using RabbitMQ.Client;
+using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.xUnit;
@@ -64,6 +66,47 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
         stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task RequestAsyncCorrelatesOnAFreshRequestIdDistinctFromBusinessCorrelationId()
+    {
+        // Arrange
+        const string businessCorrelationId = "order-42";
+        BasicProperties? capturedProps = null;
+        byte[]? capturedBody = null;
+        GetMock<IInternalPublisher>()
+            .Setup(p => p.InternalPublishAsync<It.IsAnyType>(
+                It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
+            .Callback((byte[] body, BasicProperties props, string _, MessageConfiguration _, CancellationToken _) =>
+            {
+                capturedBody = body;
+                capturedProps = props;
+            })
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await Target.RequestAsync<TimeoutRequest, TimeoutResponse>(
+            new TimeoutRequest("ping"),
+            context =>
+            {
+                context.SetCorrelationId(businessCorrelationId);
+                context.SetTimeout(TimeSpan.FromMilliseconds(200));
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        capturedProps.ShouldNotBeNull();
+        capturedProps.CorrelationId.ShouldNotBe(businessCorrelationId);
+        Guid.TryParse(capturedProps.CorrelationId, out _).ShouldBeTrue();
+
+        capturedBody.ShouldNotBeNull();
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(capturedBody);
+        envelope.ShouldNotBeNull();
+        envelope.CorrelationId.ShouldBe(businessCorrelationId);
+        envelope.RequestId.ShouldBe(capturedProps.CorrelationId);
     }
 
     private sealed record TimeoutRequest(string Value);

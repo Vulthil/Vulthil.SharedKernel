@@ -107,6 +107,21 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
         capturedExchange.ShouldBe(typeof(TestMessage).FullName);
     }
 
+    [Fact]
+    public async Task InternalSendAsyncSurfacesFailureWhenTheBrokerRejectsTheMessage()
+    {
+        // Arrange — with publisher confirms enabled, an unroutable/nacked publish throws instead of
+        // silently succeeding; a send must surface that failure rather than report success.
+        _channelMock.Setup(x => x.BasicPublishAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<BasicProperties>(), It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("broker rejected the message"));
+
+        // Act & Assert
+        var ex = await Should.ThrowAsync<InvalidOperationException>(
+            () => Target.InternalSendAsync([1, 2, 3], new BasicProperties(), "missing-queue", CancellationToken));
+        ex.Message.ShouldContain("broker rejected");
+    }
+
     private sealed class TestMessage
     {
         public string Content { get; set; } = string.Empty;

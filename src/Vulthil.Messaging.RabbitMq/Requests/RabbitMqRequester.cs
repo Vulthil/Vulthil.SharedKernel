@@ -68,6 +68,12 @@ internal sealed class RabbitMqRequester : IRequester
                 ?? messageConfiguration.CorrelationIdFormatter?.Invoke(message)
                 ?? Guid.CreateVersion7().ToString();
 
+        // A dedicated per-request id correlates the reply back to this call. It is carried in the AMQP
+        // CorrelationId property (the RPC slot the reply echoes) and the envelope's RequestId, leaving the
+        // business CorrelationId free — two requests sharing a business key no longer collide on the waiter.
+        var requestId = Guid.CreateVersion7().ToString();
+        var responseUrn = _messageConfigurationProvider.GetUrn(typeof(TResponse));
+
         var messageId = requestContext.MessageId ?? Guid.CreateVersion7().ToString();
         var exchange = messageConfiguration.Exchange;
         var urn = messageConfiguration.Urn;
@@ -91,14 +97,14 @@ internal sealed class RabbitMqRequester : IRequester
             activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, correlationId);
         }
 
-        _listener.RegisterWaiter(correlationId, tcs);
+        _listener.RegisterWaiter(requestId, tcs, responseUrn);
         MessagingLog.RequestSending(_logger, urnString, correlationId, timeout.TotalSeconds);
 
         try
         {
             var props = new BasicProperties
             {
-                CorrelationId = correlationId,
+                CorrelationId = requestId,
                 ReplyTo = replyTo,
                 ContentType = RabbitMqConstants.ContentType,
                 Type = urnString,
@@ -108,7 +114,7 @@ internal sealed class RabbitMqRequester : IRequester
                 MessageId = messageId,
             };
 
-            var envelope = MessageEnvelopeFactory.Create(message, requestContext, messageId, correlationId, urn, JsonOptions);
+            var envelope = MessageEnvelopeFactory.Create(message, requestContext, messageId, correlationId, urn, JsonOptions, requestId);
             var body = JsonSerializer.SerializeToUtf8Bytes(envelope, JsonOptions);
 
             await _publisher.InternalPublishAsync<TRequest>(body, props, routingKey, messageConfiguration, cancellationToken);
@@ -139,7 +145,7 @@ internal sealed class RabbitMqRequester : IRequester
         }
         finally
         {
-            _listener.RemoveWaiter(correlationId);
+            _listener.RemoveWaiter(requestId);
         }
     }
 }

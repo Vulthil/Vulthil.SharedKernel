@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Messaging | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Messaging | Vulthil.SharedKernel ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/messaging.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="messaging">Messaging</h1>
+
+<p>The messaging packages provide a transport-agnostic abstraction for asynchronous communication between services, with first-class support for RabbitMQ.</p>
+<h2 id="package-responsibilities">Package Responsibilities</h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Vulthil.Messaging.Abstractions</code></td>
+<td>Consumer and publisher interfaces – reference this from domain/application projects</td>
+</tr>
+<tr>
+<td><code>Vulthil.Messaging</code></td>
+<td>Queue registration, consumer wiring, and hosted service orchestration</td>
+</tr>
+<tr>
+<td><code>Vulthil.Messaging.RabbitMq</code></td>
+<td>RabbitMQ transport implementation</td>
+</tr>
+<tr>
+<td><code>Vulthil.Messaging.TestHarness</code></td>
+<td>In-memory transport for integration tests</td>
+</tr>
+</tbody>
+</table>
+<h2 id="defining-consumers">Defining Consumers</h2>
+<h3 id="one-way-consumer">One-way consumer</h3>
+<pre><code class="lang-csharp">public sealed class OrderCreatedConsumer : IConsumer&lt;OrderCreatedEvent&gt;
+{
+    public Task ConsumeAsync(
+        IMessageContext&lt;OrderCreatedEvent&gt; messageContext,
+        CancellationToken cancellationToken)
+    {
+        var order = messageContext.Message;
+        // Process the event
+        return Task.CompletedTask;
+    }
+}
+</code></pre>
+<h3 id="requestreply-consumer">Request/reply consumer</h3>
+<pre><code class="lang-csharp">public sealed class GetOrderConsumer : IRequestConsumer&lt;GetOrderRequest, OrderDto&gt;
+{
+    public Task&lt;OrderDto&gt; ConsumeAsync(
+        IMessageContext&lt;GetOrderRequest&gt; messageContext,
+        CancellationToken cancellationToken)
+    {
+        return Task.FromResult(new OrderDto());
+    }
+}
+</code></pre>
+<h2 id="registering-queues-and-consumers">Registering Queues and Consumers</h2>
+<p>Registration happens in the composition root using the <code>AddMessaging</code> builder:</p>
+<pre><code class="lang-csharp">builder.AddMessaging(messaging =&gt;
+{
+    messaging.UseRabbitMq();
+
+    messaging.ConfigureQueue(&quot;order-events&quot;, queue =&gt;
+    {
+        queue.AddConsumer&lt;OrderCreatedConsumer&gt;();
+        queue.UseRetry(retry =&gt;
+        {
+            retry.Exponential(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30));
+            retry.UseJitter(0.2);
+        });
+        queue.UseDeadLetterQueue();
+    });
+
+    messaging.ConfigureQueue(&quot;order-requests&quot;, queue =&gt;
+    {
+        queue.AddRequestConsumer&lt;GetOrderConsumer&gt;();
+    });
+});
+</code></pre>
+<h2 id="publishing-messages">Publishing Messages</h2>
+<p>Inject <code>IPublisher</code> to send one-way messages, or <code>IRequester</code> for request/reply:</p>
+<pre><code class="lang-csharp">public sealed class PlaceOrderHandler(IPublisher publisher)
+{
+    public async Task HandleAsync(PlaceOrderCommand command, CancellationToken ct)
+    {
+        // ... create order ...
+        await publisher.PublishAsync(new OrderCreatedEvent(order.Id), ct);
+    }
+}
+</code></pre>
+<h2 id="routing-keys">Routing Keys</h2>
+<p>Routing keys control which consumers receive a message on topic exchanges.</p>
+<h3 id="attribute-based-routing">Attribute-based routing</h3>
+<pre><code class="lang-csharp">[RoutingKey(&quot;order.created&quot;)]
+public sealed class OrderCreatedConsumer : IConsumer&lt;OrderCreatedEvent&gt; { ... }
+</code></pre>
+<h3 id="dynamic-routing-keys">Dynamic routing keys</h3>
+<pre><code class="lang-csharp">messaging.ConfigureMessage&lt;OrderCreatedEvent&gt;(message =&gt;
+{
+    message.UseRoutingKey(e =&gt; $&quot;order.{e.Region}&quot;);
+    message.UseCorrelationId(e =&gt; e.OrderId.ToString());
+});
+</code></pre>
+<h2 id="queue-configuration">Queue Configuration</h2>
+<p>Queue settings can be tuned in code or bound from <code>appsettings.json</code>:</p>
+<pre><code class="lang-json">{
+  &quot;Messaging&quot;: {
+    &quot;Queues&quot;: {
+      &quot;order-events&quot;: {
+        &quot;PrefetchCount&quot;: 64,
+        &quot;ChannelCount&quot;: 2,
+        &quot;ConcurrencyLimit&quot;: 4
+      }
+    }
+  }
+}
+</code></pre>
+<pre><code class="lang-csharp">queue.ConfigureQueue(q =&gt;
+{
+    q.PrefetchCount = 32;
+    q.ExchangeType = MessagingExchangeType.Topic;
+});
+</code></pre>
+<h2 id="testing-messaging">Testing Messaging</h2>
+<p><code>Vulthil.Messaging.TestHarness</code> provides an in-memory transport that captures published messages for assertion:</p>
+<pre><code class="lang-csharp">var published = testHarness.Published&lt;OrderCreatedEvent&gt;();
+Assert.Single(published);
+Assert.Equal(expectedOrderId, published.First().Message.OrderId);
+</code></pre>
+<p>See <a href="testing.html">Testing</a> for more details on integration test setup.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/messaging.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

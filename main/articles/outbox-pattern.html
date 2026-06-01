@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Outbox Pattern | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Outbox Pattern | Vulthil.SharedKernel ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/outbox-pattern.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="outbox-pattern">Outbox Pattern</h1>
+
+<p><code>Vulthil.SharedKernel.Infrastructure</code> implements the transactional outbox pattern so that domain events raised by aggregate roots are guaranteed to be published even if the process crashes after the database commit.</p>
+<h2 id="how-it-works">How It Works</h2>
+<ol>
+<li>During <code>SaveChangesAsync</code>, a <code>SaveChangesInterceptor</code> serialises every pending domain event into an <code>OutboxMessage</code> row in the same database transaction.</li>
+<li>The aggregate root's event collection is cleared.</li>
+<li>A background service (<code>OutboxBackgroundService</code>) periodically polls for unprocessed outbox messages.</li>
+<li>Each message is deserialised and dispatched through <code>IDomainEventPublisher</code>.</li>
+<li>Successfully published messages are marked as processed; failures are retried up to the configured maximum.</li>
+</ol>
+<p>This guarantees <strong>at-least-once delivery</strong> because the event and the business data are committed atomically.</p>
+<h2 id="configuration">Configuration</h2>
+<h3 id="enable-outbox-processing-during-dbcontext-registration">Enable outbox processing during DbContext registration</h3>
+<p><code>AddDbContext</code> is an extension on <code>IHostApplicationBuilder</code> (not <code>IServiceCollection</code>). Provider extensions such as <code>UseNpgsql</code> are called directly on the configurator — they register the EF Core context for you, so no separate <code>AddDbContext</code>/options callback is needed.</p>
+<pre><code class="lang-csharp">builder.AddDbContext&lt;AppDbContext&gt;(config =&gt;
+{
+    config
+        .UseNpgsql(connectionStringKey)
+        .EnableOutboxProcessing(o =&gt;
+        {
+            o.BatchSize = 10;   // Messages fetched per poll cycle
+            o.MaxRetries = 3;   // Retry limit before a message is abandoned
+        });
+});
+</code></pre>
+<h3 id="dbcontext-requirements">DbContext requirements</h3>
+<p>Your context must derive from <code>BaseDbContext</code>, which already implements <code>ISaveOutboxMessages</code> and includes the <code>OutboxMessages</code> <code>DbSet</code>:</p>
+<pre><code class="lang-csharp">public sealed class AppDbContext(DbContextOptions&lt;AppDbContext&gt; options)
+    : BaseDbContext(options)
+{
+    protected override Assembly? ConfigurationAssembly =&gt;
+        typeof(AppDbContext).Assembly;
+
+    public DbSet&lt;User&gt; Users =&gt; Set&lt;User&gt;();
+}
+</code></pre>
+<p>The <code>OutboxMessage</code> entity configuration is applied automatically by <code>BaseDbContext.OnModelCreating</code>.</p>
+<h2 id="outbox-processing-options">Outbox Processing Options</h2>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BatchSize</code></td>
+<td>10</td>
+<td>Number of messages fetched per poll cycle</td>
+</tr>
+<tr>
+<td><code>MaxRetries</code></td>
+<td>3</td>
+<td>Maximum publish attempts before a message is abandoned</td>
+</tr>
+<tr>
+<td><code>EnableParallelPublishing</code></td>
+<td><code>false</code></td>
+<td>Publish messages in parallel within a batch</td>
+</tr>
+<tr>
+<td><code>OutboxProcessingDelayInSeconds</code></td>
+<td>2</td>
+<td>Base polling delay between processing cycles</td>
+</tr>
+<tr>
+<td><code>MaxDelaySeconds</code></td>
+<td>60</td>
+<td>Maximum back-off delay when no messages are found</td>
+</tr>
+<tr>
+<td><code>EnableTracing</code></td>
+<td><code>true</code></td>
+<td>Carry the originating trace identifier when publishing</td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom-outbox-strategy">Custom Outbox Strategy</h2>
+<p>The default strategy is provided by <code>Vulthil.SharedKernel.Infrastructure.Relational</code> (<code>RelationalOutboxStrategy</code>) and runs a relational query with row locking. You can replace it by implementing <code>IOutboxStrategy</code> and registering your implementation with <code>UseOutboxStrategy&lt;T&gt;()</code>:</p>
+<pre><code class="lang-csharp">config
+    .UseNpgsql(connectionStringKey)
+    .UseOutboxStrategy&lt;CustomOutboxStrategy&gt;()
+    .EnableOutboxProcessing(o =&gt;
+    {
+        o.BatchSize = 50;
+    });
+</code></pre>
+<h2 id="typical-flow">Typical Flow</h2>
+<pre><code>Aggregate.Raise(event)
+    ↓
+SaveChangesAsync  →  OutboxMessage row inserted (same transaction)
+    ↓
+OutboxBackgroundService polls
+    ↓
+OutboxProcessor deserialises &amp; publishes via IDomainEventPublisher
+    ↓
+Message marked as processed (or retried on failure)
+</code></pre>
+<h2 id="when-to-use">When to Use</h2>
+<ul>
+<li>You need reliable event delivery across service boundaries.</li>
+<li>You want to avoid dual-write problems (writing to the database and a message broker in separate transactions).</li>
+<li>Your domain events trigger side-effects in other bounded contexts or external systems.</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/outbox-pattern.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

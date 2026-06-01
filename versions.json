@@ -1,0 +1,9 @@
+{
+  "default": null,
+  "versions": [
+    {
+      "slug": "main",
+      "prerelease": true
+    }
+  ]
+}

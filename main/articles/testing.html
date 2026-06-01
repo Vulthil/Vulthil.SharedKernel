@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Testing | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Testing | Vulthil.SharedKernel ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/testing.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="testing">Testing</h1>
+
+<p><code>Vulthil.xUnit</code> and the companion testing packages provide reusable base classes and infrastructure for unit and integration tests.</p>
+<h2 id="packages">Packages</h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Vulthil.xUnit</code></td>
+<td>Base test classes, auto-mocking, <code>WebApplicationFactory</code> support, and Testcontainers integration</td>
+</tr>
+<tr>
+<td><code>Vulthil.Messaging.TestHarness</code></td>
+<td>In-memory messaging transport for asserting published/consumed messages</td>
+</tr>
+<tr>
+<td><code>Vulthil.Extensions.Testing</code></td>
+<td>Shared assertion helpers and test composition utilities</td>
+</tr>
+</tbody>
+</table>
+<h2 id="unit-tests">Unit Tests</h2>
+<h3 id="baseunittestcase">BaseUnitTestCase</h3>
+<p><code>BaseUnitTestCase</code> provides an <code>AutoMocker</code> instance and a <code>CancellationToken</code> scoped to the test:</p>
+<pre><code class="lang-csharp">public sealed class CreateUserCommandHandlerTests : BaseUnitTestCase
+{
+    private readonly Lazy&lt;CreateUserCommandHandler&gt; Target;
+
+    public CreateUserCommandHandlerTests()
+    {
+        Target = new(() =&gt; CreateInstance&lt;CreateUserCommandHandler&gt;());
+    }
+
+    [Fact]
+    public async Task HandleAsync_CreatesUser()
+    {
+        // Arrange
+        var command = new CreateUserCommand(&quot;user@example.com&quot;);
+
+        // Act
+        var result = await Target.Value.HandleAsync(command, CancellationToken);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+    }
+}
+</code></pre>
+<h3 id="baseunittestcasettarget">BaseUnitTestCase&lt;TTarget&gt;</h3>
+<p>When the system-under-test type is accessible, use the generic variant which lazily creates the target for you. The <code>Target</code> property unwraps the underlying <code>Lazy&lt;TTarget&gt;</code> so you access it directly:</p>
+<pre><code class="lang-csharp">public sealed class OrderServiceTests : BaseUnitTestCase&lt;OrderService&gt;
+{
+    [Fact]
+    public async Task PlaceOrder_ReturnsSuccess()
+    {
+        var result = await Target.PlaceOrderAsync(new PlaceOrderRequest(), CancellationToken);
+        Assert.True(result.IsSuccess);
+    }
+}
+</code></pre>
+<h3 id="mocking-dependencies">Mocking Dependencies</h3>
+<pre><code class="lang-csharp">// Retrieve a mock
+var repoMock = GetMock&lt;IUserRepository&gt;();
+repoMock.Setup(r =&gt; r.GetByIdAsync(It.IsAny&lt;UserId&gt;(), It.IsAny&lt;CancellationToken&gt;()))
+    .ReturnsAsync(user);
+
+// Provide an explicit instance
+Use&lt;IOptions&lt;AppSettings&gt;&gt;(Options.Create(new AppSettings { MaxRetries = 3 }));
+</code></pre>
+<h2 id="integration-tests">Integration Tests</h2>
+<h3 id="baseintegrationtestcase">BaseIntegrationTestCase</h3>
+<p><code>BaseIntegrationTestCase&lt;TFactory, TEntryPoint&gt;</code> boots a real <code>WebApplicationFactory</code> backed by test containers. The factory is supplied as the xUnit fixture, so its containers start once for the scope and are shared across the tests in it:</p>
+<pre><code class="lang-csharp">public sealed class UsersEndpointTests(AppWebFactory factory)
+    : BaseIntegrationTestCase&lt;AppWebFactory, Program&gt;(factory), IClassFixture&lt;AppWebFactory&gt;
+{
+    [Fact]
+    public async Task CreateUser_Returns201()
+    {
+        var response = await Client.PostAsJsonAsync(&quot;/users&quot;, new { Email = &quot;a@b.com&quot; });
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+}
+</code></pre>
+<p>Use <code>IClassFixture&lt;AppWebFactory&gt;</code> to give each test class its own containers, or a collection fixture (<code>[Collection]</code> + <code>ICollectionFixture&lt;AppWebFactory&gt;</code>) to share one set of containers across several classes. Different classes/collections run against different containers in parallel, while tests within a scope share containers and reset state between runs.</p>
+<p>Key features:</p>
+<ul>
+<li><strong>Scoped services</strong> – <code>ScopedServices</code> gives you a fresh DI scope per test.</li>
+<li><strong>Automatic database reset</strong> – the database is reset with Respawn after each test, so tests sharing a factory start from a clean state.</li>
+<li><strong>Log capture</strong> – pass <code>ITestOutputHelper</code> to route application logs to the test output.</li>
+</ul>
+<h3 id="test-containers">Test Containers</h3>
+<p><code>Vulthil.xUnit</code> ships container abstractions so you can spin up databases (PostgreSQL, SQL Server, etc.) as Docker containers:</p>
+<pre><code class="lang-csharp">public sealed class PostgresContainerPool
+    : IDatabaseContainerPool&lt;PostgreSqlContainer&gt;
+{
+    // Configure container image, ports, credentials, etc.
+}
+</code></pre>
+<p>Container pools are shared across tests through xUnit fixtures, so the container is started once and reused.</p>
+<h3 id="webapplicationfactory">WebApplicationFactory</h3>
+<p><code>BaseWebApplicationFactory&lt;TEntryPoint&gt;</code> owns the test containers and serves as the xUnit fixture, so a single derived class replaces the separate factory + fixture pair. Register containers with <code>AddContainer</code> (in the constructor or by overriding <code>ConfigureContainers</code>); their connection strings are injected into the host and EF Core migrations are ensured during host startup:</p>
+<pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
+{
+    public AppWebFactory(IMessageSink messageSink)
+    {
+        AddContainer(new PostgresTestContainer(messageSink));
+        AddContainer(new RabbitMqTestContainer(messageSink));
+    }
+
+    // ConfigureWebHost is sealed; override ConfigureCustomWebHost for extra host setup.
+    protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =&gt;
+        {
+            // Replace real services with test doubles
+        });
+    }
+}
+</code></pre>
+<p>Migrations run from a startup initializer placed at the front of the host's hosted-service list, so the schema exists <strong>before the application's own background services start</strong> (e.g. an outbox processor that polls the database immediately). It applies only migrations that are still pending and tolerates a concurrent migrator, so an application that already migrates itself on startup (for example <code>app.MigrateAsync()</code> in <code>Program.cs</code>) keeps ownership — the factory sees the schema is up to date and does nothing. Apps that don't self-migrate get migrated by the factory automatically. No test-only environment or production-code changes are required.</p>
+<h3 id="mocking-outbound-http-dependencies">Mocking outbound HTTP dependencies</h3>
+<p>For a service that calls an external API through an <code>HttpClient</code> from <code>IHttpClientFactory</code>, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both <strong>typed</strong> clients (<code>AddHttpClient&lt;TClient, ...&gt;()</code>) and <strong>named</strong> clients (<code>AddHttpClient(&quot;name&quot;)</code>) are supported; for typed clients the implementation type does not need to be accessible:</p>
+<pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
+{
+    public AppWebFactory(IMessageSink messageSink)
+    {
+        AddContainer(new PostgresTestContainer(messageSink));
+        AddHttpMock&lt;IWeatherClient&gt;();   // typed:  AddHttpClient&lt;IWeatherClient, WeatherClient&gt;()
+        AddHttpMock(&quot;inventory&quot;);        // named:  AddHttpClient(&quot;inventory&quot;)
+    }
+}
+</code></pre>
+<p>Retrieve the named mock the same way — <code>HttpMock(&quot;inventory&quot;)</code> (or <code>GetHttpMock(&quot;inventory&quot;)</code> on the factory) — and configure it exactly like the typed one.</p>
+<p>Configure responses per test via <code>HttpMock&lt;TClient&gt;()</code> and inspect what was sent via <code>ReceivedRequests</code>:</p>
+<pre><code class="lang-csharp">[Fact]
+public async Task Uses_external_forecast()
+{
+    // Strongly-typed body, serialized to JSON, plus a response header:
+    HttpMock&lt;IWeatherClient&gt;()
+        .On(HttpMethod.Get, &quot;/forecast/london&quot;)
+        .RespondWith(HttpStatusCode.OK, new Forecast(&quot;London&quot;, 18))
+        .WithHeader(&quot;X-Source&quot;, &quot;mock&quot;);
+
+    // Or replay a real response captured from the live endpoint and saved as a JSON document:
+    HttpMock&lt;IWeatherClient&gt;()
+        .On(HttpMethod.Get, &quot;/forecast/paris&quot;)
+        .RespondWithJson(HttpStatusCode.OK, await File.ReadAllTextAsync(&quot;captured/paris.json&quot;));
+
+    var result = await Client.GetAsync(&quot;/weather/london&quot;);
+
+    HttpMock&lt;IWeatherClient&gt;().ReceivedRequests
+        .ShouldContain(r =&gt; r.RequestUri!.AbsolutePath == &quot;/forecast/london&quot;);
+}
+</code></pre>
+<p>Mock state is reset after each test (like the database), so stubs and captured requests never leak between tests. Under the hood the mock implements <code>IResettableResource</code>; database containers implement it too, and the test case resets every registered resettable resource in its teardown. A WireMock-based or other <code>IHttpMock</code> implementation can be substituted if you need richer matching, but the built-in mock has no external dependency.</p>
+<h2 id="messaging-test-harness">Messaging Test Harness</h2>
+<p>Replace the real transport with the test harness to assert messaging behaviour without a broker:</p>
+<pre><code class="lang-csharp">var published = testHarness.Published&lt;OrderCreatedEvent&gt;();
+Assert.Single(published);
+Assert.Equal(expectedOrderId, published.First().Message.OrderId);
+</code></pre>
+<p>See <a href="messaging.html">Messaging</a> for more on the messaging architecture.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/testing.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

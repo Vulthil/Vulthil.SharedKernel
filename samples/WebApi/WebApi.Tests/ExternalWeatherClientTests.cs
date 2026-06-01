@@ -9,7 +9,7 @@ namespace WebApi.Tests;
 public sealed class ExternalWeatherClientTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase(factory, testOutputHelper)
 {
-    private IExternalWeatherClient Client => ScopedServices.GetRequiredService<IExternalWeatherClient>();
+    private IExternalWeatherClient WeatherClient => ScopedServices.GetRequiredService<IExternalWeatherClient>();
 
     [Fact]
     public async Task GetForecast_returns_strongly_typed_mocked_response()
@@ -21,7 +21,7 @@ public sealed class ExternalWeatherClientTests(CustomWebApplicationFactory facto
             .WithHeader("X-Source", "mock");
 
         // Act
-        var forecast = await Client.GetForecastAsync("london", CancellationToken);
+        var forecast = await WeatherClient.GetForecastAsync("london", CancellationToken);
 
         // Assert
         forecast.ShouldNotBeNull();
@@ -39,7 +39,7 @@ public sealed class ExternalWeatherClientTests(CustomWebApplicationFactory facto
             .RespondWithJson(HttpStatusCode.OK, capturedJson);
 
         // Act
-        var forecast = await Client.GetForecastAsync("paris", CancellationToken);
+        var forecast = await WeatherClient.GetForecastAsync("paris", CancellationToken);
 
         // Assert
         forecast.ShouldNotBeNull();

@@ -1,14 +1,30 @@
+<div align="center">
+
 # Vulthil.SharedKernel
 
-<p align="center">
-  <img src="Vulthil.SharedKernel.png" alt="Vulthil.SharedKernel" style="max-width:200px; height:auto;" />
-</p>
+<img src="Vulthil.SharedKernel.png" alt="Vulthil.SharedKernel" width="200" />
+
+**Opinionated .NET building blocks for domain-driven design, CQRS, messaging, and testing.**
 
 [![Build and Test](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/ci.yml/badge.svg)](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/ci.yml)
 [![Release](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/release.yml/badge.svg)](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/release.yml)
 [![Coverage](https://gist.githubusercontent.com/Vulthil/2852f1400e27493b185559c76b38e9b7/raw/badge_combined.svg)](https://github.com/Vulthil/Vulthil.SharedKernel/actions/workflows/ci.yml)
 
-A collection of opinionated .NET building blocks for domain-driven design, CQRS, messaging, and testing.
+[Documentation](https://vulthil.github.io/Vulthil.SharedKernel/) ·
+[Articles](docs/articles) ·
+[Report a Bug](https://github.com/Vulthil/Vulthil.SharedKernel/issues/new?template=bug_report.yml) ·
+[Request a Feature](https://github.com/Vulthil/Vulthil.SharedKernel/issues/new?template=feature_request.yml)
+
+</div>
+
+---
+
+## Overview
+
+Vulthil.SharedKernel is a modular collection of NuGet packages that provide reusable
+foundations for building maintainable .NET applications. Each package is focused on a
+single concern — from result primitives and domain abstractions to messaging and test
+infrastructure — so you can adopt only what you need.
 
 ## Packages
 
@@ -26,23 +42,20 @@ A collection of opinionated .NET building blocks for domain-driven design, CQRS,
 | **Vulthil.Extensions.Testing** | Testing-oriented extensions for asserting and composing application behaviors. |
 | **Vulthil.xUnit** | Reusable xUnit base infrastructure for integration and unit test composition. |
 
-## Quick Start
-
-```bash
-dotnet add package Vulthil.Results
-dotnet add package Vulthil.SharedKernel
-dotnet add package Vulthil.SharedKernel.Application
-```
-
 ## Documentation
 
-Full documentation is available at the [docs site](https://vulthil.github.io/Vulthil.SharedKernel/) and in the [docs/articles](docs/articles) folder.
+Full documentation is available on the [documentation site](https://vulthil.github.io/Vulthil.SharedKernel/),
+with conceptual guides and usage patterns in the [docs/articles](docs/articles) folder and
+a complete [API reference](docs/api).
 
-## Testing
+## Contributing
 
-```bash
-dotnet test
-```
+Contributions are welcome. Please read the [Contributing Guide](.github/CONTRIBUTING.md)
+to get started before opening an issue or pull request.
+
+- 🐛 [Report a bug](https://github.com/Vulthil/Vulthil.SharedKernel/issues/new?template=bug_report.yml)
+- 💡 [Request a feature](https://github.com/Vulthil/Vulthil.SharedKernel/issues/new?template=feature_request.yml)
+- 🔒 [Report a security vulnerability](.github/SECURITY.md)
 
 ## License
 

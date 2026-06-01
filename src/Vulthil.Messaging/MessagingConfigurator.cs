@@ -157,6 +157,10 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         where TMessage : notnull
         => UsePartitioner(new Partitioner(partitionCount), keySelector);
 
+    public IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount)
+        where TMessage : notnull
+        => UsePartitioner<TMessage>(partitionCount, static context => context.CorrelationId);
+
     public IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner, Func<IMessageContext<TMessage>, string?> keySelector)
         where TMessage : notnull
     {
@@ -168,4 +172,8 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         _messagingOptions.RegisterPartition(typeof(TMessage), new PartitionSpec(partitioner, keySelector));
         return this;
     }
+
+    public IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner)
+        where TMessage : notnull
+        => UsePartitioner<TMessage>(partitioner, static context => context.CorrelationId);
 }

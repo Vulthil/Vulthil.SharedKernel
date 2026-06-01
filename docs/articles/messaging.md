@@ -301,20 +301,22 @@ builder.AddMessaging(m =>
     // Order OrderUpdated deliveries per OrderId across 16 lanes.
     m.UsePartitioner<OrderUpdated>(partitionCount: 16, ctx => ctx.Message.OrderId.ToString());
 
-    // The CorrelationId is the natural key when it carries the aggregate id.
-    m.UsePartitioner<OrderUpdated>(16, ctx => ctx.CorrelationId);
+    // Shorthand: omit the selector to key on CorrelationId (the natural key when it
+    // carries the aggregate id). Equivalent to passing ctx => ctx.CorrelationId.
+    m.UsePartitioner<OrderUpdated>(16);
 
     m.ConfigureQueue("orders", q => q.AddConsumer<OrderUpdatedConsumer>());
 });
 ```
 
 Share one `Partitioner` across several message types to serialize messages correlated
-to the same key regardless of their type (e.g. a saga):
+to the same key regardless of their type (e.g. a saga). The selector is optional here too
+and defaults to `CorrelationId`:
 
 ```csharp
 var orders = new Partitioner(16);
-m.UsePartitioner<OrderUpdated>(orders, ctx => ctx.CorrelationId);
-m.UsePartitioner<OrderShipped>(orders, ctx => ctx.CorrelationId);
+m.UsePartitioner<OrderUpdated>(orders);
+m.UsePartitioner<OrderShipped>(orders);
 ```
 
 ### How it works

@@ -72,6 +72,17 @@ public interface IMessagingConfigurator
         where TMessage : notnull;
 
     /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries by their <c>CorrelationId</c> —
+    /// shorthand for the overload taking an explicit key selector with <c>ctx =&gt; ctx.CorrelationId</c>.
+    /// Deliveries with no correlation id bypass the partitioner.
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitionCount">The number of partitions (lanes) to distribute keys across.</param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount)
+        where TMessage : notnull;
+
+    /// <summary>
     /// Serializes processing of <typeparamref name="TMessage"/> deliveries that share a partition key using a
     /// caller-supplied <see cref="Partitioner"/>. Share one <see cref="Partitioner"/> across several message
     /// types to serialize messages correlated to the same key regardless of their type (e.g. a saga).
@@ -84,5 +95,18 @@ public interface IMessagingConfigurator
     /// </param>
     /// <returns>The current configurator instance for chaining.</returns>
     IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner, Func<IMessageContext<TMessage>, string?> keySelector)
+        where TMessage : notnull;
+
+    /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries by their <c>CorrelationId</c> using a
+    /// caller-supplied <see cref="Partitioner"/> — shorthand for the overload taking an explicit key selector
+    /// with <c>ctx =&gt; ctx.CorrelationId</c>. Share one <see cref="Partitioner"/> across several message types
+    /// to serialize messages correlated to the same id regardless of their type (e.g. a saga). Deliveries with
+    /// no correlation id bypass the partitioner.
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitioner">The partitioner whose lanes serialize same-key processing.</param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner)
         where TMessage : notnull;
 }

@@ -183,4 +183,6 @@ Vulthil.Messaging.Partitioner
 Vulthil.Messaging.Partitioner.Partitioner(int partitionCount) -> void
 Vulthil.Messaging.Partitioner.PartitionCount.get -> int
 Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(int partitionCount, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>! keySelector) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(int partitionCount) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(Vulthil.Messaging.Partitioner! partitioner, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>! keySelector) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(Vulthil.Messaging.Partitioner! partitioner) -> Vulthil.Messaging.IMessagingConfigurator!

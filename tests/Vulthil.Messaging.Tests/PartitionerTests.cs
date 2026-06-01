@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Hosting;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests;
@@ -103,6 +104,46 @@ public sealed class PartitionerTests : BaseUnitTestCase
         options.GetPartition(typeof(PartitionTestMessage)).ShouldNotBeNull();
     }
 
+    [Fact]
+    public void UsePartitionerWithCountDefaultsTheKeyToCorrelationId()
+    {
+        // Arrange
+        var options = new MessagingOptions();
+        var configurator = new MessagingConfigurator(Host.CreateApplicationBuilder(), options);
+        var context = new Mock<IMessageContext<PartitionTestMessage>>();
+        context.SetupGet(c => c.CorrelationId).Returns("corr-1");
+
+        // Act
+        configurator.UsePartitioner<PartitionTestMessage>(8);
+
+        // Assert
+        var spec = options.GetPartition(typeof(PartitionTestMessage));
+        spec.ShouldNotBeNull();
+        var selector = spec.KeySelector.ShouldBeAssignableTo<Func<IMessageContext<PartitionTestMessage>, string?>>();
+        selector(context.Object).ShouldBe("corr-1");
+    }
+
+    [Fact]
+    public void UsePartitionerWithSharedPartitionerDefaultsTheKeyToCorrelationId()
+    {
+        // Arrange
+        var options = new MessagingOptions();
+        var configurator = new MessagingConfigurator(Host.CreateApplicationBuilder(), options);
+        var partitioner = new Partitioner(4);
+        var context = new Mock<IMessageContext<PartitionTestMessage>>();
+        context.SetupGet(c => c.CorrelationId).Returns("corr-2");
+
+        // Act
+        configurator.UsePartitioner<PartitionTestMessage>(partitioner);
+
+        // Assert
+        var spec = options.GetPartition(typeof(PartitionTestMessage));
+        spec.ShouldNotBeNull();
+        spec.Partitioner.ShouldBeSameAs(partitioner);
+        var selector = spec.KeySelector.ShouldBeAssignableTo<Func<IMessageContext<PartitionTestMessage>, string?>>();
+        selector(context.Object).ShouldBe("corr-2");
+    }
+
     private static (string KeyA, string KeyB) FindKeysOnDifferentLanes(Partitioner partitioner)
     {
         const string first = "key-0";
@@ -119,5 +160,5 @@ public sealed class PartitionerTests : BaseUnitTestCase
         throw new InvalidOperationException("Could not find two keys mapping to different lanes.");
     }
 
-    private sealed record PartitionTestMessage(string Value);
+    internal sealed record PartitionTestMessage(string Value);
 }

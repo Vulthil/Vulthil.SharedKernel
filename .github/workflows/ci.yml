@@ -65,9 +65,12 @@ jobs:
           file_path: ./CoverageReport/badge_combined.svg
           file_type: binary
 
-      # Preview packages — only on PRs from the same repo
+      # Preview (prerelease) packages. main is not a public release ref
+      # (version.json), so every CI build carries a prerelease suffix. PRs pack
+      # and upload a downloadable artifact for testing; only merges to main are
+      # published to the shared feed, so transient PR commits don't pollute it.
       - name: Pack preview
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
         run: dotnet pack -c Release -o ./artifacts
 
       - name: Upload artifacts
@@ -78,7 +81,7 @@ jobs:
           path: ./artifacts/*
 
       - name: Publish preview to GitHub Packages
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           dotnet nuget push "./artifacts/*.nupkg" \
             --api-key ${{ secrets.GITHUB_TOKEN }} \

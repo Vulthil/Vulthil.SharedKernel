@@ -13,6 +13,8 @@ jobs:
     permissions:
       contents: write
       packages: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -26,47 +28,33 @@ jobs:
           key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-
 
+      # PublicRelease=true forces nbgv to emit a stable version (no prerelease
+      # suffix) regardless of branch, so a release can be cut from any branch.
       - name: Build
-        run: dotnet build -c Release
+        run: dotnet build -c Release -p:PublicRelease=true
 
       - name: Test
         run: dotnet test -c Release --no-build
 
       - name: Pack
-        run: dotnet pack -c Release -o ./artifacts
+        run: dotnet pack -c Release -p:PublicRelease=true -o ./artifacts
 
       - name: Resolve version
         id: version
         run: |
-          dotnet tool install -g nbgv
-          VERSION=$(nbgv get-version -v NuGetPackageVersion)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          PKG=$(ls ./artifacts/*.nupkg | head -n1)
+          VERSION=$(unzip -p "$PKG" '*.nuspec' | sed -n 's:.*<version>\(.*\)</version>.*:\1:p' | head -n1)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "::notice::Publishing version $VERSION"
 
-      - name: Generate release changelog
+      - name: Generate release notes
         id: changelog
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --latest --strip header
+          args: --unreleased --tag v${{ steps.version.outputs.version }} --strip header
         env:
           OUTPUT: CHANGES.md
-
-      - name: Update full CHANGELOG.md
-        uses: orhun/git-cliff-action@v4
-        with:
-          config: cliff.toml
-          args: --tag v${{ steps.version.outputs.version }}
-        env:
-          OUTPUT: CHANGELOG.md
-
-      - name: Commit CHANGELOG.md
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md
-          git diff --cached --quiet || git commit -m "chore: update CHANGELOG for v${{ steps.version.outputs.version }}"
-          git push
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
@@ -94,3 +82,14 @@ jobs:
       #     -k ${{ secrets.NUGET_API_KEY }}
       #     -s https://api.nuget.org/v3/index.json
       #     --skip-duplicate
+
+  # Publish the released version as the default (stable) documentation. Reuses
+  # docs.yml so the gh-pages layout and version manifest stay in one place.
+  docs:
+    needs: release
+    permissions:
+      contents: write
+    uses: ./.github/workflows/docs.yml
+    with:
+      slug: ${{ needs.release.outputs.version }}
+      make_default: true

@@ -16,32 +16,33 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed to push the commit back to the repo
-    
+      contents: write      # create the bump branch
+      pull-requests: write # open the PR
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install NBGV
-        run: dotnet tool install -g nbgv
+      - name: Compute next version
+        id: bump
+        run: python3 .github/scripts/bump_version.py "${{ github.event.inputs.bump_type }}"
 
-      - name: Perform Bump
-        run: |
-          # nbgv prepare-release calculates the next version and updates version.json
-          # Using --nextVersion allows us to specify Major or Minor logic
-          if [ "${{ github.event.inputs.bump_type }}" == "major" ]; then
-             nbgv prepare-release --nextVersion increment-major
-          else
-             nbgv prepare-release --nextVersion increment-minor
-          fi
+      - name: Open version bump PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # A PAT or GitHub App token (AUTOMATION_TOKEN) lets the required `build`
+          # check run on the PR. With the default GITHUB_TOKEN, pushes from this
+          # workflow do not trigger CI, so an admin must bypass the ruleset to merge.
+          token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+          add-paths: version.json
+          branch: chore/version-bump
+          delete-branch: true
+          commit-message: "chore: bump version to ${{ steps.bump.outputs.version }}"
+          title: "chore: bump version to ${{ steps.bump.outputs.version }}"
+          labels: automated
+          body: |
+            Automated `${{ github.event.inputs.bump_type }}` bump of `version.json` to **${{ steps.bump.outputs.version }}**.
 
-      - name: Commit and Push
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add version.json
-          git commit -m "chore: bump version to $(nbgv get-version -v SimpleVersion)"
-          git push origin main
+            Merge this PR before running the **Release** workflow so the next release picks up the new version.

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentation
+    url: https://vulthil.github.io/Vulthil.SharedKernel/
+    about: Browse the API reference and conceptual guides before opening an issue.
+  - name: 💬 Questions & Discussions
+    url: https://github.com/Vulthil/Vulthil.SharedKernel/discussions
+    about: Ask questions, share ideas, and discuss usage with the community.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/Vulthil/Vulthil.SharedKernel/security/advisories/new
+    about: Please report security issues privately rather than as a public issue.

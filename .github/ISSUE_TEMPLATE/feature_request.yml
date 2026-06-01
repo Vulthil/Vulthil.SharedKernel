@@ -1,0 +1,65 @@
+name: 💡 Feature Request
+description: Suggest a new capability or an improvement to an existing one.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing an idea! Please search
+        [existing issues](https://github.com/Vulthil/Vulthil.SharedKernel/issues) first to
+        see if it has already been proposed.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Target package
+      description: Which package would this feature affect?
+      options:
+        - Vulthil.Results
+        - Vulthil.SharedKernel
+        - Vulthil.SharedKernel.Application
+        - Vulthil.SharedKernel.Infrastructure
+        - Vulthil.SharedKernel.Api
+        - Vulthil.Messaging.Abstractions
+        - Vulthil.Messaging
+        - Vulthil.Messaging.RabbitMq
+        - Vulthil.Messaging.TestHarness
+        - Vulthil.Extensions.Testing
+        - Vulthil.xUnit
+        - New package / cross-cutting
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are you trying to solve? Is your request related to a limitation or pain point?
+      placeholder: "I'm always frustrated when ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior or API you would like to see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any alternative solutions or workarounds you have considered.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context, code sketches, or references about the request here.
+    validations:
+      required: false

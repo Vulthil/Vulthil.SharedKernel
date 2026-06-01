@@ -4,7 +4,7 @@ using Vulthil.xUnit;
 
 namespace WebApi.Tests.Fixtures;
 
-public abstract class BaseIntegrationTestCase(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper) : BaseIntegrationTestCase<CustomWebApplicationFactory, Program>(testFixture, testOutputHelper), IClassFixture<FixtureWrapper>
+public abstract class BaseIntegrationTestCase(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper) : BaseIntegrationTestCase<CustomWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<CustomWebApplicationFactory>
 {
     protected ISender Sender => ScopedServices.GetRequiredService<ISender>();
 }

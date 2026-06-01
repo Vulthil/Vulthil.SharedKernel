@@ -1,5 +1,3 @@
-
-
 namespace Vulthil.xUnit.Fixtures;
 
 /// <summary>
@@ -21,21 +19,18 @@ public interface ITestContainerWithConnectionString : ITestContainer
     string ConnectionStringKey { get; }
 }
 /// <summary>
-/// Extends <see cref="ITestContainerWithConnectionString"/> with database migration and reset capabilities.
+/// Extends <see cref="ITestContainerWithConnectionString"/> with database migration capabilities. Data is reset
+/// between tests through <see cref="IResettableResource.ResetAsync"/> (Respawn).
 /// </summary>
-public interface ITestDatabaseContainer : ITestContainerWithConnectionString
+public interface ITestDatabaseContainer : ITestContainerWithConnectionString, IResettableResource
 {
     /// <summary>
-    /// Initializes the database respawner for resetting data between tests.
-    /// </summary>
-    ValueTask InitializeRespawner();
-    /// <summary>
-    /// Applies pending EF Core migrations to the containerized database.
+    /// Ensures pending EF Core migrations are applied to the containerized database. Invoked during host startup,
+    /// before the application's own background services run, so the schema exists in time; only migrations that remain
+    /// pending are applied, and a concurrent migrator (such as an application that migrates itself) is tolerated rather
+    /// than fought.
     /// </summary>
     /// <param name="serviceProvider">The scoped service provider to resolve the DbContext from.</param>
+    /// <returns>A task representing the asynchronous migration work.</returns>
     ValueTask MigrateDatabase(IServiceProvider serviceProvider);
-    /// <summary>
-    /// Resets the database to a clean state by removing all data.
-    /// </summary>
-    ValueTask ResetDatabase();
 }

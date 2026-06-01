@@ -9,8 +9,8 @@ using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
-public sealed class SideEffectIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase(testFixture, testOutputHelper)
+public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+    : BaseIntegrationTestCase(factory, testOutputHelper)
 {
     [Fact]
     public async Task TestCreate()

@@ -21,13 +21,11 @@ internal sealed class PostgreSqlTestContainer(IMessageSink messageSink) : TestDa
     public override string ConnectionStringKey => ServiceNames.PostgresSqlServerServiceName;
 }
 
-
 public sealed class RabbitMqTestContainer(IMessageSink messageSink) : TestContainerFixtureWithConnectionString<RabbitMqBuilder, RabbitMqContainer>(messageSink)
 {
     private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4-management")
         .WithUsername("guest")
         .WithPassword("guest");
-
     protected override RabbitMqBuilder Configure() => _builder;
 
     public override string ConnectionStringKey => ServiceNames.RabbitMqServiceName;

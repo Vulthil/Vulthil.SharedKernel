@@ -67,7 +67,7 @@ public static class DependencyInjection
         return hostApplicationBuilder;
     }
 
-    private static IServiceCollection AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator<TDbContext> configurator)
+    private static void AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator<TDbContext> configurator)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
         var optionsAction = configurator.OutboxOptionsAction ?? (static o => { });
@@ -92,8 +92,6 @@ public static class DependencyInjection
             typeof(OutboxProcessor),
             dbContextLifetime));
         services.AddHostedService<OutboxBackgroundService>();
-
-        return services;
     }
 
     /// <summary>

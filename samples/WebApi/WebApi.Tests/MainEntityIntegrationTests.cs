@@ -15,8 +15,8 @@ using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
-public sealed class MainEntityIntegrationTests(FixtureWrapper testFixture, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase(testFixture, testOutputHelper)
+public sealed class MainEntityIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+    : BaseIntegrationTestCase(factory, testOutputHelper)
 {
     [Fact]
     public async Task Test_Create_Endpoint()

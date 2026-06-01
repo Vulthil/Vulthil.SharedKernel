@@ -141,6 +141,13 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         return this;
     }
 
+    /// <inheritdoc />
+    public IQueueConfigurator UseSingleActiveConsumer()
+    {
+        _queueDefinition.SingleActiveConsumer = true;
+        return this;
+    }
+
     /// <summary>
     /// Final resolution pass — runs once after the user's configurator action completes. Auto-subscribes
     /// any concrete TMessage from consumer registrations that wasn't explicitly subscribed, and validates

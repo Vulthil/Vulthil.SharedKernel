@@ -41,14 +41,14 @@ internal sealed class RabbitMqRequester : IRequester
 
     public async Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(
         TRequest message,
-        Func<IRequestContext, Task>? configureContext = null,
+        Func<IRequestContext, ValueTask>? configureContext = null,
         CancellationToken cancellationToken = default)
         where TRequest : notnull
         where TResponse : notnull
     {
         ArgumentNullException.ThrowIfNull(message);
         var requestContext = new RequestContext();
-        configureContext ??= (_ => Task.CompletedTask);
+        configureContext ??= (_ => ValueTask.CompletedTask);
         await configureContext(requestContext);
 
         var tcs = new TaskCompletionSource<Result<TResponse>>(TaskCreationOptions.RunContinuationsAsynchronously);

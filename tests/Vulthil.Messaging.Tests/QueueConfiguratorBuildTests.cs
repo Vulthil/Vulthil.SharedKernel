@@ -114,6 +114,34 @@ public sealed class QueueConfiguratorBuildTests : BaseUnitTestCase<HostApplicati
 
         ex.Message.ShouldContain("polymorphic request type");
     }
+
+    [Fact]
+    public void UseSingleActiveConsumerEnablesTheFlagOnTheQueue()
+    {
+        // Act
+        Target.AddMessaging(m => m.ConfigureQueue("orders", q =>
+        {
+            q.UseSingleActiveConsumer();
+            q.AddConsumer<OrderPlacedConsumer>();
+        }));
+
+        // Assert
+        var queue = GetQueue(Target, "orders");
+        queue.ShouldNotBeNull();
+        queue.SingleActiveConsumer.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void QueueDoesNotEnableSingleActiveConsumerByDefault()
+    {
+        // Act
+        Target.AddMessaging(m => m.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>()));
+
+        // Assert
+        var queue = GetQueue(Target, "orders");
+        queue.ShouldNotBeNull();
+        queue.SingleActiveConsumer.ShouldBeFalse();
+    }
 }
 
 internal interface IOrderEvent { }

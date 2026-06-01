@@ -118,7 +118,7 @@ api.MapPost("request-timeout", async (UnansweredRequest message, IRequester requ
         context =>
         {
             context.SetTimeout(TimeSpan.FromSeconds(2));
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         },
         cancellationToken);
 

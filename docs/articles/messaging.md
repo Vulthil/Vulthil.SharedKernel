@@ -339,12 +339,44 @@ Notes:
 - The partition count affects only fan-out (how many distinct keys progress at once),
   never correctness. The lane hash is in-process, so a key's lane need not be stable
   across processes.
-- This preserves order on a **single instance**. Ordering across load-balanced consumers
-  additionally requires a single active consumer per partition (a later enhancement),
-  mirroring MassTransit's model.
+- The partitioner orders deliveries **within one process**. Ordering across load-balanced
+  consumer instances additionally requires a single active consumer (see *Ordering across
+  instances* below), which partitioned queues enable automatically.
 - **Failure path:** a partitioned queue retries **in-memory** automatically — the consumer
   is re-invoked in-process while the delivery (and its lane) is held — so a failing message
   cannot be overtaken by a later same-key message. See *Retries* below.
+
+### Ordering across instances (single active consumer)
+
+The partitioner serializes same-key deliveries inside a single process. When the same queue is
+consumed by several load-balanced instances, the broker round-robins deliveries between them and
+same-key messages can again be processed concurrently. RabbitMQ's **single active consumer**
+closes that gap: the broker keeps exactly one consumer active and promotes a standby consumer only
+if the active one disconnects, so ordering is preserved and the queue fails over without manual
+intervention.
+
+Partitioned queues turn this on automatically. Any queue can opt in explicitly:
+
+```csharp
+m.ConfigureQueue("orders", q =>
+{
+    q.UseSingleActiveConsumer();
+    q.AddConsumer<OrderUpdatedConsumer>();
+});
+```
+
+Notes and trade-offs:
+
+- **No scale-out for that queue.** Only one consumer works at a time, so adding instances buys
+  failover, not throughput. To scale a partitioned workload across instances, shard into multiple
+  queues (one per partition) and bind each instance to its own — a larger change that is out of
+  scope here. This mirrors MassTransit, whose in-process partitioner is likewise single-instance.
+- **Existing queues.** The single-active-consumer flag is a queue argument fixed at declaration.
+  Enabling it on a queue that already exists fails declaration with `406 PRECONDITION_FAILED`;
+  delete and recreate the queue to change it.
+- **At-least-once on failover.** When the active consumer dies mid-delivery, unacknowledged
+  messages are redelivered to the promoted consumer, so a handler may observe a message more than
+  once. Make handlers idempotent; broker-level exactly-once delivery is not provided.
 
 ## Retries
 

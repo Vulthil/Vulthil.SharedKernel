@@ -63,7 +63,7 @@ Vulthil.Messaging.Abstractions.Publishers.IPublisher.PublishAsync<TMessage>(TMes
 Vulthil.Messaging.Abstractions.Publishers.IRequestContext
 Vulthil.Messaging.Abstractions.Publishers.IRequestContext.SetTimeout(System.TimeSpan timeout) -> Vulthil.Messaging.Abstractions.Publishers.IRequestContext!
 Vulthil.Messaging.Abstractions.Publishers.IRequester
-Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IRequestContext!, System.Threading.Tasks.Task!>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!
+Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IRequestContext!, System.Threading.Tasks.ValueTask>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!
 Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!
 Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint
 Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.Address.get -> System.Uri!

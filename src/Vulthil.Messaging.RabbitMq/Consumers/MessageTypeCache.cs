@@ -102,31 +102,17 @@ internal sealed class MessageTypeCache
     }
 
     /// <summary>
-    /// Indicates whether any concrete message type consumed by <paramref name="queue"/> is partitioned.
-    /// Call after <see cref="RegisterQueue"/> so the plans exist. Drives ordered single dispatch on the queue.
+    /// Indicates whether any concrete message type subscribed or consumed by <paramref name="queue"/> is
+    /// partitioned, read directly from <see cref="IMessageConfigurationProvider.GetPartition"/>. Because it
+    /// does not depend on built plans it is valid both during topology setup (which precedes
+    /// <see cref="RegisterQueue"/>) and afterwards. Drives ordered single dispatch and the single-active-consumer
+    /// queue argument.
     /// </summary>
     public bool IsQueuePartitioned(QueueDefinition queue)
-    {
-        foreach (var subscription in queue.Subscriptions)
-        {
-            if (GetPlanByUrn(_provider.GetUrn(subscription.MessageType.Type))?.IsPartitioned == true)
-            {
-                return true;
-            }
-        }
-
-        foreach (var registration in queue.Registrations)
-        {
-            var type = registration.MessageType.Type;
-            if (type is { IsAbstract: false, IsInterface: false }
-                && GetPlanByUrn(_provider.GetUrn(type))?.IsPartitioned == true)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+        => queue.Subscriptions.Any(s => _provider.GetPartition(s.MessageType.Type) is not null)
+            || queue.Registrations.Any(r =>
+                r.MessageType.Type is { IsAbstract: false, IsInterface: false }
+                && _provider.GetPartition(r.MessageType.Type) is not null);
 
     /// <summary>
     /// Resolves a plan from the wire URN (envelope path). Returns <see langword="null"/> when no plan matches.

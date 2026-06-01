@@ -55,7 +55,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
             context =>
             {
                 context.SetTimeout(TimeSpan.FromMilliseconds(200));
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             },
             CancellationToken);
         stopwatch.Stop();

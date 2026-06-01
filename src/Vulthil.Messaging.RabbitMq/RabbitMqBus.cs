@@ -125,6 +125,14 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             args.Add("x-queue-type", "quorum");
         }
 
+        // A partitioned queue's per-key order only holds within one process; a single active consumer keeps a
+        // single instance active (others stand by for failover) so ordering survives across load-balanced
+        // consumers. Partitioned queues opt in automatically; any queue can request it explicitly.
+        if (queue.SingleActiveConsumer || _typeCache.IsQueuePartitioned(queue))
+        {
+            args.Add("x-single-active-consumer", true);
+        }
+
         if (queue.DeadLetter is { Enabled: true })
         {
             var dlx = queue.DeadLetter.ExchangeName ?? $"{queue.Name}.Error";

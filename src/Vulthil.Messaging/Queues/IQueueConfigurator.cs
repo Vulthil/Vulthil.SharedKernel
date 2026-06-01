@@ -63,6 +63,15 @@ public interface IQueueConfigurator
     /// <param name="queueName">Optional dead letter queue name.</param>
     /// <param name="exchangeName">Optional dead letter exchange name.</param>
     IQueueConfigurator UseDeadLetterQueue(string? queueName = null, string? exchangeName = null);
+
+    /// <summary>
+    /// Declares the queue with RabbitMQ's single active consumer feature: only one consumer is active at a
+    /// time while additional consumers stand by and take over on failure. This preserves per-queue order
+    /// across load-balanced consumer instances — extending the in-process partitioner's ordering guarantee
+    /// to multiple instances — at the cost of throughput scale-out for the queue. Partitioned queues enable
+    /// this automatically.
+    /// </summary>
+    IQueueConfigurator UseSingleActiveConsumer();
 }
 
 /// <summary>

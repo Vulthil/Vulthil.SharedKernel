@@ -125,6 +125,14 @@ public sealed record QueueDefinition(string Name)
     /// Gets or sets a value indicating whether this queue is exclusive to the declaring connection.
     /// </summary>
     public bool Exclusive { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the queue is declared with RabbitMQ's single active consumer
+    /// feature, so that only one consumer processes deliveries at a time (additional consumers stand by and
+    /// take over on failure). This preserves per-queue order across load-balanced consumer instances at the
+    /// cost of throughput scale-out for the queue. Partitioned queues enable this automatically.
+    /// Default is <see langword="false"/>.
+    /// </summary>
+    public bool SingleActiveConsumer { get; set; }
 
     /// <summary>
     /// Gets or sets the exchange type for the queue's exchange binding. Default is <see cref="MessagingExchangeType.Fanout"/>.

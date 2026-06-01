@@ -5,8 +5,8 @@ namespace Vulthil.Messaging.RabbitMq.Requests;
 internal class PublishContext : IPublishContext
 {
     internal Dictionary<string, object?> Headers { get; } = [];
-    internal string? RoutingKey { get; private set; }
-    internal string? CorrelationId { get; private set; }
+    public string? RoutingKey { get; private set; }
+    public string? CorrelationId { get; private set; }
     public string? MessageId { get; set; }
     public string? ConversationId { get => Headers.TryGetValue("ConversationId", out var value) && value is string conversationId ? conversationId : null; set => Headers["ConversationId"] = value; }
     public string? InitiatorId { get => Headers.TryGetValue("InitiatorId", out var value) && value is string initiatorId ? initiatorId : null; set => Headers["InitiatorId"] = value; }

@@ -15,6 +15,7 @@
 - Prefer using the Vulthil.xUnit testing framework for tests.
 - When writing tests, follow the Arrange-Act-Assert pattern for better readability and maintainability.
 - Prefer using the BaseUnitTestCase or BaseUnitTestCase<T> classes for test cases to leverage common setup and utilities.
+- Prefer using the `CancellationToken` property on the base test classes, instead of getting the `TestContext.Current.CancellationToken` directly.
 - Prefer using the AutoMocker instance for dependency injection in tests to simplify test setup and improve readability.
 - Use the methods on the BaseUnitTestCase class for modifying the AutoMocker instance, such as `Use<T>(T instance)` or `Use<T>()` for registering dependencies, and `GetMock<T>()` for retrieving mocks from the AutoMocker.
 - Override the CreateInstance or CreateInstance<T> methods and use the Target property to lazily create the instance under test.

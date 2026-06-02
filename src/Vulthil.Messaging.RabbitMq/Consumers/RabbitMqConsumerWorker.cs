@@ -26,6 +26,12 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private readonly bool _partitioned;
     private readonly ConcurrentDictionary<ulong, Task> _inFlight = new();
 
+    // RabbitMQ channels must not be used concurrently. On a partitioned queue the lanes complete in parallel
+    // and each settles its delivery (ack/nack/retry-republish/fault) on this shared channel, so every channel
+    // write is serialized through this gate to avoid interleaved frames. Message processing stays parallel;
+    // only the brief settle/publish frames are serialized.
+    private readonly SemaphoreSlim _channelGate = new(1, 1);
+
     private JsonSerializerOptions _jsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
 
     private string? _consumerTag;
@@ -49,6 +55,27 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         _channelIndex = channelIndex;
         _partitioned = partitioned;
     }
+
+    /// <summary>
+    /// Serializes a single channel write. RabbitMQ channels must not be used concurrently, and a partitioned
+    /// queue's lanes settle in parallel on the shared channel, so every ack/nack/publish goes through here.
+    /// </summary>
+    private async Task OnChannelAsync(Func<ValueTask> channelOperation)
+    {
+        await _channelGate.WaitAsync();
+        try
+        {
+            await channelOperation();
+        }
+        finally
+        {
+            _channelGate.Release();
+        }
+    }
+
+    private Task AckAsync(BasicDeliverEventArgs ea) => OnChannelAsync(() => _channel.BasicAckAsync(ea.DeliveryTag, false));
+
+    private Task NackAsync(BasicDeliverEventArgs ea) => OnChannelAsync(() => _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false));
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -131,7 +158,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         try
         {
             await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            await AckAsync(ea);
             activity?.SetStatus(ActivityStatusCode.Ok);
         }
         catch (Exception ex)
@@ -154,7 +181,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             try
             {
                 await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
-                await _channel.BasicAckAsync(ea.DeliveryTag, false);
+                await AckAsync(ea);
                 activity?.SetStatus(ActivityStatusCode.Ok);
                 return;
             }
@@ -173,7 +200,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                     activity?.AddException(ex);
                     MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey);
                     await PublishFaultIfRequestedAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>());
-                    await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
+                    await NackAsync(ea);
                     return;
                 }
 
@@ -229,7 +256,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         {
             MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
             await PublishFaultIfRequestedAsync(ex, ea, headers);
-            await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
+            await NackAsync(ea);
             return;
         }
 
@@ -246,14 +273,14 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
             props.Expiration = delay.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
 
-            await _channel.BasicPublishAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            await OnChannelAsync(() => _channel.BasicPublishAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body));
+            await AckAsync(ea);
             return;
         }
 
         MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
         await PublishFaultIfRequestedAsync(ex, ea, headers);
-        await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
+        await NackAsync(ea);
     }
 
     private async Task PublishFaultIfRequestedAsync(Exception ex, BasicDeliverEventArgs ea, IDictionary<string, object?> headers)
@@ -286,7 +313,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             };
 
-            await _channel.BasicPublishAsync(_messageConfigurationProvider.FaultExchangeName, faultAddressKey, false, faultProps, faultBody);
+            await OnChannelAsync(() => _channel.BasicPublishAsync(_messageConfigurationProvider.FaultExchangeName, faultAddressKey, false, faultProps, faultBody));
         }
         catch (Exception faultEx)
         {
@@ -327,7 +354,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         if (plan is null)
         {
             MessagingLog.NoExecutionPlan(_logger, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            await AckAsync(ea);
             return null;
         }
 
@@ -341,14 +368,14 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         catch (JsonException jsonEx)
         {
             MessagingLog.PoisonMessage(_logger, jsonEx, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+            await NackAsync(ea);
             return null;
         }
 
         if (message is null)
         {
             MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+            await NackAsync(ea);
             return null;
         }
 
@@ -393,7 +420,17 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         {
             if (!string.IsNullOrEmpty(_consumerTag))
             {
-                await _channel.BasicCancelAsync(_consumerTag);
+                // Cancelling stops new deliveries while in-flight lanes may still be settling, so it runs
+                // through the same gate as the settle operations.
+                await _channelGate.WaitAsync();
+                try
+                {
+                    await _channel.BasicCancelAsync(_consumerTag);
+                }
+                finally
+                {
+                    _channelGate.Release();
+                }
             }
 
             // Drain in-flight partitioned work so deferred acks complete before the channel closes; anything
@@ -413,6 +450,10 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         catch (TimeoutException)
         {
             // Draining took too long; unacked deliveries are requeued when the channel closes.
+        }
+        finally
+        {
+            _channelGate.Dispose();
         }
     }
 

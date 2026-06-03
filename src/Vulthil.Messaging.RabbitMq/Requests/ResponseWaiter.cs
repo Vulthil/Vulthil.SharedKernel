@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Vulthil.Messaging.RabbitMq.Envelope;
+using Vulthil.Messaging.Transport;
 using Vulthil.Results;
 
 namespace Vulthil.Messaging.RabbitMq.Requests;

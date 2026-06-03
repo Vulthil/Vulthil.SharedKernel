@@ -1,7 +1,7 @@
 using System.Reflection;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
-using Vulthil.Messaging.RabbitMq.Envelope;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 

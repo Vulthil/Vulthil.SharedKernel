@@ -1,11 +1,11 @@
 using Vulthil.Messaging.Abstractions.Consumers;
 
-namespace Vulthil.Messaging.RabbitMq.Consumers;
+namespace Vulthil.Messaging.Transport;
 
 /// <summary>
 /// Classifies a dispatch handler by its consumer contract.
 /// </summary>
-internal enum HandlerKind
+public enum HandlerKind
 {
     /// <summary>A one-way <see cref="IConsumer{TMessage}"/>.</summary>
     Consumer,

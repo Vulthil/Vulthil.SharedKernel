@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 

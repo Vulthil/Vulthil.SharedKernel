@@ -6,8 +6,7 @@ using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
-using Vulthil.Messaging.RabbitMq.Envelope;
-using Vulthil.Messaging.RabbitMq.Requests;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;

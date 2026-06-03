@@ -8,9 +8,9 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
-using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Telemetry;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 

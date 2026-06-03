@@ -1,19 +1,18 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Vulthil.Messaging.RabbitMq.Envelope;
+namespace Vulthil.Messaging.Transport;
 
 /// <summary>
-/// On-the-wire wrapper for messages carried by the RabbitMQ transport. The body of every produced
-/// message is a serialized <see cref="MessageEnvelope"/>; the receiver falls back to bare JSON only
-/// for compatibility with non-Vulthil producers.
+/// On-the-wire wrapper for messages carried by a Vulthil transport. The body of every produced
+/// message is a serialized <see cref="MessageEnvelope"/>; receivers fall back to bare JSON only for
+/// compatibility with non-Vulthil producers.
 /// </summary>
 /// <remarks>
-/// All metadata that used to live in AMQP <c>BasicProperties</c> + ad-hoc headers is promoted to
-/// first-class envelope fields. AMQP properties are still mirrored for broker tooling
-/// (CorrelationId, MessageId, Type) and trace propagation, but the envelope is the source of truth.
+/// All metadata that would otherwise live in transport-specific headers is promoted to first-class
+/// envelope fields, so the envelope is the source of truth and the wire format is transport-independent.
 /// </remarks>
-internal sealed record MessageEnvelope
+public sealed record MessageEnvelope
 {
     /// <summary>The unique identifier for this message.</summary>
     [JsonPropertyName("messageId")]

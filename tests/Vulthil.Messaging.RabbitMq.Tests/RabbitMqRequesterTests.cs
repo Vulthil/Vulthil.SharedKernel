@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Text.Json;
 using RabbitMQ.Client;
-using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;

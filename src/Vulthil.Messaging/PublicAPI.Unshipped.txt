@@ -178,3 +178,48 @@ Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(int partitionC
 Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(int partitionCount) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(Vulthil.Messaging.Partitioner! partitioner, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>! keySelector) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(Vulthil.Messaging.Partitioner! partitioner) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.Transport.ConsumePipelineFactory
+static Vulthil.Messaging.Transport.ConsumePipelineFactory.Build<TMessage>(System.IServiceProvider! sp, Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate<TMessage>! terminal) -> Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate<TMessage>!
+Vulthil.Messaging.Transport.HandlerKind
+Vulthil.Messaging.Transport.HandlerKind.Consumer = 0 -> Vulthil.Messaging.Transport.HandlerKind
+Vulthil.Messaging.Transport.HandlerKind.RequestConsumer = 1 -> Vulthil.Messaging.Transport.HandlerKind
+Vulthil.Messaging.Transport.MessageEnvelope
+Vulthil.Messaging.Transport.MessageEnvelope.ConversationId.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.ConversationId.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.CorrelationId.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.CorrelationId.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.DestinationAddress.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.DestinationAddress.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.ExpirationTime.get -> System.DateTimeOffset?
+Vulthil.Messaging.Transport.MessageEnvelope.ExpirationTime.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.FaultAddress.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.FaultAddress.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.Headers.get -> System.Collections.Generic.Dictionary<string!, object?>?
+Vulthil.Messaging.Transport.MessageEnvelope.Headers.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.InitiatorId.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.InitiatorId.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.Message.get -> System.Text.Json.JsonElement
+Vulthil.Messaging.Transport.MessageEnvelope.Message.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.MessageId.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.MessageId.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.MessageType.get -> System.Uri!
+Vulthil.Messaging.Transport.MessageEnvelope.MessageType.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.RequestId.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.RequestId.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.ResponseAddress.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.ResponseAddress.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.SentTime.get -> System.DateTimeOffset?
+Vulthil.Messaging.Transport.MessageEnvelope.SentTime.init -> void
+Vulthil.Messaging.Transport.MessageEnvelope.SourceAddress.get -> string?
+Vulthil.Messaging.Transport.MessageEnvelope.SourceAddress.init -> void
+Vulthil.Messaging.Transport.RpcFault
+const Vulthil.Messaging.Transport.RpcFault.Urn = "urn:message:Vulthil:RpcFault" -> string!
+Vulthil.Messaging.Transport.RpcFault.ExceptionType.get -> string!
+Vulthil.Messaging.Transport.RpcFault.ExceptionType.init -> void
+Vulthil.Messaging.Transport.RpcFault.FaultedAt.get -> System.DateTimeOffset
+Vulthil.Messaging.Transport.RpcFault.FaultedAt.init -> void
+Vulthil.Messaging.Transport.RpcFault.Message.get -> string!
+Vulthil.Messaging.Transport.RpcFault.Message.init -> void
+Vulthil.Messaging.Transport.RpcFault.StackTrace.get -> string?
+Vulthil.Messaging.Transport.RpcFault.StackTrace.init -> void
+static Vulthil.Messaging.Transport.RpcFault.UrnUri.get -> System.Uri!

@@ -26,7 +26,7 @@ internal record MessageContext : IMessageContext
     /// <inheritdoc />
     public required string RoutingKey { get; init; }
     /// <inheritdoc />
-    public required IDictionary<string, object?> Headers { get; init; }
+    public required IReadOnlyDictionary<string, object?> Headers { get; init; }
     /// <inheritdoc />
     public int RetryCount { get; init; }
     /// <inheritdoc />
@@ -153,7 +153,7 @@ internal record MessageContext : IMessageContext
             CorrelationId = props.CorrelationId ?? string.Empty,
             RequestId = props.CorrelationId,
             RoutingKey = ea.RoutingKey,
-            Headers = headers,
+            Headers = headers.ToDictionary(),
             Redelivered = ea.Redelivered,
             RetryCount = RabbitMqConstants.GetRetryCount(headers),
             ConversationId = RabbitMqConstants.GetHeaderString(headers, "ConversationId"),
@@ -187,7 +187,7 @@ internal record MessageContext : IMessageContext
             CorrelationId = props.CorrelationId ?? string.Empty,
             RequestId = props.CorrelationId,
             RoutingKey = ea.RoutingKey,
-            Headers = headers,
+            Headers = headers.ToDictionary(),
             Redelivered = ea.Redelivered,
             RetryCount = RabbitMqConstants.GetRetryCount(headers),
             ConversationId = RabbitMqConstants.GetHeaderString(headers, "ConversationId"),

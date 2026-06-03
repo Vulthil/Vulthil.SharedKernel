@@ -23,7 +23,7 @@ public sealed class LoggingConsumeFilterTests : BaseUnitTestCase
         public Uri? ResponseAddress { get; init; }
         public Uri? FaultAddress { get; init; }
         public string RoutingKey { get; init; } = string.Empty;
-        public IDictionary<string, object?> Headers { get; init; } = new Dictionary<string, object?>();
+        public IReadOnlyDictionary<string, object?> Headers { get; init; } = new Dictionary<string, object?>();
         public DateTimeOffset? SentTime { get; init; }
         public DateTimeOffset? ExpirationTime { get; init; }
         public int RetryCount { get; init; }

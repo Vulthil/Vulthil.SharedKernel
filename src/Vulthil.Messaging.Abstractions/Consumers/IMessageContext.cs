@@ -55,7 +55,7 @@ public interface IMessageContext
     /// <summary>
     /// Gets the transport headers associated with the message, containing custom metadata.
     /// </summary>
-    IDictionary<string, object?> Headers { get; }
+    IReadOnlyDictionary<string, object?> Headers { get; }
 
     // --- Timing & Lifecycle ---
     /// <summary>

@@ -176,11 +176,13 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// </summary>
     private async Task ExecuteWithInMemoryRetryAsync(RetryPolicyDefinition policy, PreparedDelivery prepared, BasicDeliverEventArgs ea, Activity? activity)
     {
+        var baseRetryCount = RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers);
         for (var attempt = 0; attempt <= policy.MaxRetryCount; attempt++)
         {
+            var attemptDelivery = attempt == 0 ? ea : WithRetryCount(ea, baseRetryCount + attempt);
             try
             {
-                await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
+                await DispatchHandlersAsync(prepared.Plan, prepared.Message, attemptDelivery, prepared.Envelope);
                 await AckAsync(ea);
                 activity?.SetStatus(ActivityStatusCode.Ok);
                 return;
@@ -333,6 +335,20 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             }
         }
         return queue.DefaultRetryPolicy;
+    }
+
+    /// <summary>
+    /// Returns a copy of <paramref name="ea"/> whose <c>x-retry-count</c> header is set to
+    /// <paramref name="retryCount"/>, so a consumer reading <see cref="IMessageContext.RetryCount"/> sees the
+    /// current in-memory attempt. The delivery's AMQP properties are read-only on the receive side, hence the copy.
+    /// </summary>
+    internal static BasicDeliverEventArgs WithRetryCount(BasicDeliverEventArgs ea, int retryCount)
+    {
+        var properties = new BasicProperties(ea.BasicProperties);
+        properties.Headers ??= new Dictionary<string, object?>();
+        properties.Headers["x-retry-count"] = retryCount;
+        return new BasicDeliverEventArgs(
+            ea.ConsumerTag, ea.DeliveryTag, ea.Redelivered, ea.Exchange, ea.RoutingKey, properties, ea.Body, ea.CancellationToken);
     }
 
     /// <summary>

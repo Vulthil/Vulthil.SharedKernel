@@ -25,7 +25,7 @@ Vulthil.Messaging.Abstractions.Consumers.IMessageContext.CorrelationId.get -> st
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.DestinationAddress.get -> System.Uri?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ExpirationTime.get -> System.DateTimeOffset?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.FaultAddress.get -> System.Uri?
-Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Headers.get -> System.Collections.Generic.IDictionary<string!, object?>!
+Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object?>!
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.InitiatorId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.MessageId.get -> string?
 Vulthil.Messaging.Abstractions.Consumers.IMessageContext.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configure = null) -> System.Threading.Tasks.Task!

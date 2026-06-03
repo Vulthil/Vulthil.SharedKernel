@@ -7,6 +7,6 @@ namespace Vulthil.Messaging.Queues;
 /// returning <see cref="IConsumerConfigurator{TConsumer}"/> — no body needed.
 /// </summary>
 /// <typeparam name="TConsumer">The consumer type.</typeparam>
-public sealed class ConsumerConfigurator<TConsumer>
+internal sealed class ConsumerConfigurator<TConsumer>
     : BaseConfigurator<IConsumerConfigurator<TConsumer>>, IConsumerConfigurator<TConsumer>
     where TConsumer : IConsumer;

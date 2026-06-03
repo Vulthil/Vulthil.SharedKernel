@@ -6,7 +6,7 @@ namespace Vulthil.Messaging.Queues;
 /// concrete configurator classes can inherit and remain empty.
 /// </summary>
 /// <typeparam name="TConfigurator">The derived configurator interface (e.g. <see cref="IConsumerConfigurator{TConsumer}"/>).</typeparam>
-public abstract class BaseConfigurator<TConfigurator> : IBaseConfigurator<TConfigurator>
+internal abstract class BaseConfigurator<TConfigurator> : IBaseConfigurator<TConfigurator>
     where TConfigurator : class, IBaseConfigurator<TConfigurator>
 {
     internal RetryPolicyDefinition? RetryPolicy { get; private set; }

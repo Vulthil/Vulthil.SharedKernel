@@ -7,7 +7,7 @@ namespace Vulthil.Messaging.Queues;
 /// <see cref="BaseConfigurator{TConfigurator}"/> without needing their own explicit interface implementations.
 /// </summary>
 public interface IBaseConfigurator<TConfigurator>
-    where TConfigurator : IBaseConfigurator<TConfigurator>
+    where TConfigurator : class, IBaseConfigurator<TConfigurator>
 {
     /// <summary>Configures a retry policy and returns the typed configurator for chaining.</summary>
     TConfigurator UseRetry(Action<RetryPolicyConfigurator> value);

@@ -6,6 +6,6 @@ namespace Vulthil.Messaging.Queues;
 /// Concrete request-consumer configurator. Inherits <see cref="BaseConfigurator{TConfigurator}.UseRetry"/>
 /// returning <see cref="IRequestConfigurator{TConsumer}"/> — no body needed.
 /// </summary>
-public sealed class RequestConsumerConfigurator<TConsumer>
+internal sealed class RequestConsumerConfigurator<TConsumer>
     : BaseConfigurator<IRequestConfigurator<TConsumer>>, IRequestConfigurator<TConsumer>
     where TConsumer : IRequestConsumer;

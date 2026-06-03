@@ -27,7 +27,7 @@ public record Fault<TMessage> where TMessage : notnull
     /// </summary>
     public required DateTimeOffset FaultedAt { get; init; }
     /// <summary>
-    /// Gets the original message context at the time of the fault.
+    /// Gets a serializable snapshot of the original message context at the time of the fault.
     /// </summary>
-    public required IMessageContext OriginalContext { get; init; }
+    public required MessageContextSnapshot OriginalContext { get; init; }
 }

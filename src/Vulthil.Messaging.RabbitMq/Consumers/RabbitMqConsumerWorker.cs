@@ -304,7 +304,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 StackTrace = ex.StackTrace,
                 ExceptionType = ex.GetType().FullName ?? "Unknown",
                 FaultedAt = DateTimeOffset.UtcNow,
-                OriginalContext = MessageContext.CreateContext(ea)
+                OriginalContext = MessageContext.CreateSnapshot(ea)
             };
 
             var faultBody = JsonSerializer.SerializeToUtf8Bytes(fault, _jsonOptions);

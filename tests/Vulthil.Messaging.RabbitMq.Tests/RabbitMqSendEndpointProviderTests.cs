@@ -76,18 +76,4 @@ public sealed class RabbitMqSendEndpointProviderTests : BaseUnitTestCase
         await Assert.ThrowsAsync<ArgumentException>(
             async () => await Target.GetSendEndpointAsync(uri, CancellationToken));
     }
-
-    /// <summary>
-    /// Verifies that NullSendEndpointProvider throws when asked for an endpoint.
-    /// </summary>
-    [Fact]
-    public async Task NullSendEndpointProviderShouldThrow()
-    {
-        // Arrange
-        var provider = NullSendEndpointProvider.Instance;
-
-        // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            async () => await provider.GetSendEndpointAsync(new Uri("queue:any"), CancellationToken));
-    }
 }

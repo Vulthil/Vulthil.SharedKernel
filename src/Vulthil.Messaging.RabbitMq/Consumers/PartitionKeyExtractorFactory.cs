@@ -2,7 +2,6 @@ using System.Reflection;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.RabbitMq.Envelope;
-using Vulthil.Messaging.RabbitMq.Sending;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
@@ -31,7 +30,7 @@ internal static class PartitionKeyExtractorFactory
             // metadata and the typed message, they do not publish.
             var context = envelope is null
                 ? MessageContext.CreateContext((TMessage)message, ea)
-                : MessageContext.CreateContext((TMessage)message, ea, envelope, NullPublisher.Instance, NullSendEndpointProvider.Instance, CancellationToken.None);
+                : MessageContext.CreateContext((TMessage)message, ea, envelope, publisher: null, sendEndpointProvider: null, CancellationToken.None);
             return selector(context);
         };
 }

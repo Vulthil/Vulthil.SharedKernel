@@ -2,17 +2,16 @@ using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Envelope;
-using Vulthil.Messaging.RabbitMq.Sending;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
 internal record MessageContext : IMessageContext
 {
-    /// <summary>The publisher backing <see cref="PublishAsync"/>. Defaults to <see cref="NullPublisher.Instance"/> for snapshots.</summary>
-    public required IPublisher Publisher { get; init; }
+    /// <summary>The publisher backing <see cref="PublishAsync"/>, or <see langword="null"/> for a snapshot context not bound to a live transport.</summary>
+    public IPublisher? Publisher { get; init; }
 
-    /// <summary>The send endpoint provider backing <see cref="SendAsync"/>. Defaults to <see cref="NullSendEndpointProvider.Instance"/> for snapshots.</summary>
-    public required ISendEndpointProvider SendEndpointProvider { get; init; }
+    /// <summary>The send endpoint provider backing <see cref="SendAsync"/>, or <see langword="null"/> for a snapshot context not bound to a live transport.</summary>
+    public ISendEndpointProvider? SendEndpointProvider { get; init; }
 
     /// <inheritdoc />
     public CancellationToken CancellationToken { get; init; }
@@ -51,7 +50,7 @@ internal record MessageContext : IMessageContext
     /// <inheritdoc />
     public Task PublishAsync<TMessage>(TMessage message, Func<IPublishContext, ValueTask>? configure = null)
         where TMessage : notnull
-        => Publisher.PublishAsync(
+        => (Publisher ?? throw SnapshotContextError()).PublishAsync(
             message,
             ctx => PropagateAndConfigureAsync(ctx, configure),
             CancellationToken);
@@ -64,7 +63,8 @@ internal record MessageContext : IMessageContext
         where TMessage : notnull
     {
         ArgumentNullException.ThrowIfNull(destinationAddress);
-        var endpoint = await SendEndpointProvider.GetSendEndpointAsync(destinationAddress, CancellationToken);
+        var provider = SendEndpointProvider ?? throw SnapshotContextError();
+        var endpoint = await provider.GetSendEndpointAsync(destinationAddress, CancellationToken);
         await endpoint.SendAsync(
             message,
             ctx => PropagateAndConfigureAsync(ctx, configure),
@@ -88,28 +88,14 @@ internal record MessageContext : IMessageContext
         }
     }
 
-    /// <summary>
-    /// Creates a snapshot <see cref="MessageContext"/> with no live transport binding.
-    /// Used by fault publishing to capture the original context for serialization.
-    /// </summary>
-    public static MessageContext CreateContext(BasicDeliverEventArgs ea) =>
-        BuildMetadata(ea, NullPublisher.Instance, NullSendEndpointProvider.Instance, cancellationToken: default);
-
-    /// <summary>
-    /// Creates a live <see cref="MessageContext"/> bound to the specified transport services and cancellation token.
-    /// </summary>
-    public static MessageContext CreateContext(
-        BasicDeliverEventArgs ea,
-        IPublisher publisher,
-        ISendEndpointProvider sendEndpointProvider,
-        CancellationToken cancellationToken) =>
-        BuildMetadata(ea, publisher, sendEndpointProvider, cancellationToken);
+    private static InvalidOperationException SnapshotContextError() =>
+        new("This message context is a snapshot (e.g. a fault envelope) and is not bound to a live transport.");
 
     /// <summary>
     /// Creates a snapshot typed <see cref="MessageContext{TMessage}"/> with no live transport binding.
     /// </summary>
     public static MessageContext<TMessage> CreateContext<TMessage>(TMessage message, BasicDeliverEventArgs ea) =>
-        BuildTypedMetadata(message, ea, NullPublisher.Instance, NullSendEndpointProvider.Instance, cancellationToken: default);
+        BuildTypedMetadata(message, ea, publisher: null, sendEndpointProvider: null, cancellationToken: default);
 
     /// <summary>
     /// Creates a live typed <see cref="MessageContext{TMessage}"/> bound to the specified transport services and cancellation token.
@@ -118,8 +104,8 @@ internal record MessageContext : IMessageContext
     public static MessageContext<TMessage> CreateContext<TMessage>(
         TMessage message,
         BasicDeliverEventArgs ea,
-        IPublisher publisher,
-        ISendEndpointProvider sendEndpointProvider,
+        IPublisher? publisher,
+        ISendEndpointProvider? sendEndpointProvider,
         CancellationToken cancellationToken) =>
         BuildTypedMetadata(message, ea, publisher, sendEndpointProvider, cancellationToken);
 
@@ -131,15 +117,38 @@ internal record MessageContext : IMessageContext
         TMessage message,
         BasicDeliverEventArgs ea,
         MessageEnvelope envelope,
-        IPublisher publisher,
-        ISendEndpointProvider sendEndpointProvider,
+        IPublisher? publisher,
+        ISendEndpointProvider? sendEndpointProvider,
         CancellationToken cancellationToken) =>
         BuildTypedMetadataFromEnvelope(message, ea, envelope, publisher, sendEndpointProvider, cancellationToken);
 
+    /// <summary>
+    /// Builds a serializable <see cref="MessageContextSnapshot"/> of the delivery's transport metadata,
+    /// used to capture the original context when producing a fault.
+    /// </summary>
+    public static MessageContextSnapshot CreateSnapshot(BasicDeliverEventArgs ea)
+    {
+        var context = BuildMetadata(ea, publisher: null, sendEndpointProvider: null, cancellationToken: default);
+        return new MessageContextSnapshot
+        {
+            MessageId = context.MessageId,
+            RequestId = context.RequestId,
+            CorrelationId = context.CorrelationId,
+            ConversationId = context.ConversationId,
+            InitiatorId = context.InitiatorId,
+            SourceAddress = context.SourceAddress,
+            DestinationAddress = context.DestinationAddress,
+            ResponseAddress = context.ResponseAddress,
+            FaultAddress = context.FaultAddress,
+            RoutingKey = context.RoutingKey,
+            RetryCount = context.RetryCount,
+        };
+    }
+
     private static MessageContext BuildMetadata(
         BasicDeliverEventArgs ea,
-        IPublisher publisher,
-        ISendEndpointProvider sendEndpointProvider,
+        IPublisher? publisher,
+        ISendEndpointProvider? sendEndpointProvider,
         CancellationToken cancellationToken)
     {
         var props = ea.BasicProperties;
@@ -171,8 +180,8 @@ internal record MessageContext : IMessageContext
     private static MessageContext<TMessage> BuildTypedMetadata<TMessage>(
         TMessage message,
         BasicDeliverEventArgs ea,
-        IPublisher publisher,
-        ISendEndpointProvider sendEndpointProvider,
+        IPublisher? publisher,
+        ISendEndpointProvider? sendEndpointProvider,
         CancellationToken cancellationToken)
     {
         var props = ea.BasicProperties;
@@ -206,8 +215,8 @@ internal record MessageContext : IMessageContext
         TMessage message,
         BasicDeliverEventArgs ea,
         MessageEnvelope envelope,
-        IPublisher publisher,
-        ISendEndpointProvider sendEndpointProvider,
+        IPublisher? publisher,
+        ISendEndpointProvider? sendEndpointProvider,
         CancellationToken cancellationToken)
     {
         var props = ea.BasicProperties;

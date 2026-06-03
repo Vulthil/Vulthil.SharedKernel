@@ -116,6 +116,25 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
             () => context.SendAsync<TestMessage>(null!, new TestMessage("x")));
     }
 
+    /// <summary>
+    /// Verifies that a snapshot context (no live transport binding) throws when Send or Publish is attempted.
+    /// </summary>
+    [Fact]
+    public async Task SendOrPublishOnASnapshotContextThrows()
+    {
+        // Arrange
+        var props = new BasicProperties { CorrelationId = "c", Headers = new Dictionary<string, object?>() };
+        var ea = new BasicDeliverEventArgs(
+            "consumer-tag", 1, false, "exchange", "routing.key", props, ReadOnlyMemory<byte>.Empty);
+        var snapshot = MessageContext.CreateContext(new TestMessage("payload"), ea);
+
+        // Act & Assert
+        await Should.ThrowAsync<InvalidOperationException>(
+            () => snapshot.SendAsync(new Uri("queue:dest"), new TestMessage("x")));
+        await Should.ThrowAsync<InvalidOperationException>(
+            () => snapshot.PublishAsync(new TestMessage("x")));
+    }
+
     private static MessageContext<TestMessage> CreateTypedContext(
         ISendEndpointProvider sendEndpointProvider,
         string correlationId = "corr-1",
@@ -143,6 +162,6 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
             props,
             ReadOnlyMemory<byte>.Empty);
 
-        return MessageContext.CreateContext(new TestMessage("payload"), ea, NullPublisher.Instance, sendEndpointProvider, CancellationToken.None);
+        return MessageContext.CreateContext(new TestMessage("payload"), ea, null, sendEndpointProvider, CancellationToken.None);
     }
 }

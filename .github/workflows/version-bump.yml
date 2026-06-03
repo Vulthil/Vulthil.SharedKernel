@@ -27,7 +27,7 @@ jobs:
 
       - name: Compute next version
         id: bump
-        run: python3 .github/scripts/bump_version.py "${{ github.event.inputs.bump_type }}"
+        run: python3 eng/bump_version.py "${{ github.event.inputs.bump_type }}"
 
       - name: Open version bump PR
         uses: peter-evans/create-pull-request@v8

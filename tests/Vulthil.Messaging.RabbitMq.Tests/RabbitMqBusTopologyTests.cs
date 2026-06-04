@@ -39,35 +39,35 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
         Use<ILogger<RabbitMqBus>>(NullLogger<RabbitMqBus>.Instance);
     }
 
-    private async Task DeclareTopologyAsync(MessagingOptions options)
+    private async Task DeclareTopologyAsync(IMessageConfigurationProvider provider)
     {
-        Use<IMessageConfigurationProvider>(options);
+        Use<IMessageConfigurationProvider>(provider);
         await using var bus = CreateInstance<RabbitMqBus>();
         await bus.StartAsync(CancellationToken);
     }
 
-    private static MessagingOptions OptionsConsumingOrderedEvents(string queueName)
-    {
-        var queue = new QueueDefinition(queueName);
-        queue.AddConsumer(new ConsumerRegistration
+    private static IMessageConfigurationProvider ProviderConsumingOrderedEvents(
+        string queueName,
+        Action<IQueueConfigurator>? configureQueue = null,
+        Action<IMessagingConfigurator>? configure = null)
+        => TestProviders.Build(cfg =>
         {
-            ConsumerType = new ConsumerType(typeof(OrderedConsumer)),
-            MessageType = new MessageType(typeof(OrderedMessage)),
+            cfg.ConfigureQueue(queueName, queue =>
+            {
+                queue.AddConsumer<OrderedConsumer>();
+                configureQueue?.Invoke(queue);
+            });
+            configure?.Invoke(cfg);
         });
-
-        var options = new MessagingOptions();
-        options.QueueDefinitions[queue.Name] = queue;
-        return options;
-    }
 
     [Fact]
     public async Task PlainQueueIsDeclaredWithoutSingleActiveConsumerArgument()
     {
         // Arrange
-        var options = OptionsConsumingOrderedEvents("plain");
+        var provider = ProviderConsumingOrderedEvents("plain");
 
         // Act
-        await DeclareTopologyAsync(options);
+        await DeclareTopologyAsync(provider);
 
         // Assert
         _declaredQueues.ShouldContainKey("plain");
@@ -78,11 +78,10 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
     public async Task ExplicitlyConfiguredQueueIsDeclaredWithSingleActiveConsumerArgument()
     {
         // Arrange
-        var options = OptionsConsumingOrderedEvents("sole");
-        options.QueueDefinitions["sole"].SingleActiveConsumer = true;
+        var provider = ProviderConsumingOrderedEvents("sole", configureQueue: queue => queue.UseSingleActiveConsumer());
 
         // Act
-        await DeclareTopologyAsync(options);
+        await DeclareTopologyAsync(provider);
 
         // Assert
         _declaredQueues["sole"][SingleActiveConsumerArgument].ShouldBe(true);
@@ -92,13 +91,12 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
     public async Task PartitionedQueueAutomaticallyEnablesSingleActiveConsumer()
     {
         // Arrange
-        var options = OptionsConsumingOrderedEvents("ordered");
-        options.RegisterPartition(
-            typeof(OrderedMessage),
-            new PartitionSpec(new Partitioner(4), (Func<IMessageContext<OrderedMessage>, string?>)(context => context.CorrelationId)));
+        var provider = ProviderConsumingOrderedEvents(
+            "ordered",
+            configure: cfg => cfg.UsePartitioner<OrderedMessage>(new Partitioner(4), context => context.CorrelationId));
 
         // Act
-        await DeclareTopologyAsync(options);
+        await DeclareTopologyAsync(provider);
 
         // Assert
         _declaredQueues["ordered"][SingleActiveConsumerArgument].ShouldBe(true);

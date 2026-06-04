@@ -19,7 +19,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     public MessageTypeCacheTests()
     {
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
-        UseRealFor<IMessageConfigurationProvider, MessagingOptions>();
+        Use<IMessageConfigurationProvider>(TestProviders.Build());
 
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);

@@ -16,7 +16,7 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
 
     public PolymorphicDispatchTests()
     {
-        UseRealFor<IMessageConfigurationProvider, MessagingOptions>();
+        Use<IMessageConfigurationProvider>(TestProviders.Build());
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
     }
 

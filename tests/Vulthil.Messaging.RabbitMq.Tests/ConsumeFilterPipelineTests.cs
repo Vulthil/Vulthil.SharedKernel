@@ -18,7 +18,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
     public ConsumeFilterPipelineTests()
     {
-        UseRealFor<IMessageConfigurationProvider, MessagingOptions>();
+        Use<IMessageConfigurationProvider>(TestProviders.Build());
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
     }
 
@@ -190,7 +190,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         services.AddScoped(_ => consumerInstance);
         services.AddSingleton(Mock.Of<IPublisher>());
         services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        services.AddSingleton<IMessageConfigurationProvider>(new MessagingOptions());
+        services.AddSingleton<IMessageConfigurationProvider>(TestProviders.Build());
         services.AddScoped<IConsumeFilter<TestRequest>>(_ => new RecordingFilter<TestRequest>(trace, "log"));
         var serviceProvider = services.BuildServiceProvider();
 
@@ -249,7 +249,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         services.AddScoped(_ => consumerInstance);
         services.AddSingleton(Mock.Of<IPublisher>());
         services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        services.AddSingleton<IMessageConfigurationProvider>(new MessagingOptions());
+        services.AddSingleton<IMessageConfigurationProvider>(TestProviders.Build());
         services.AddScoped<IConsumeFilter<TestRequest>>(_ =>
             new RecordingFilter<TestRequest>([], "gate") { ShortCircuit = true });
         var serviceProvider = services.BuildServiceProvider();

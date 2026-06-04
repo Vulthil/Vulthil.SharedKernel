@@ -16,8 +16,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
 
     public RabbitMqRequesterTests()
     {
-        var options = new MessagingOptions();
-        Use<IMessageConfigurationProvider>(options);
+        Use<IMessageConfigurationProvider>(TestProviders.Build());
 
         var channelMock = GetMock<IChannel>();
         channelMock

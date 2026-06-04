@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.xUnit;
@@ -31,7 +32,8 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
             .Returns<Type>(t => new MessageConfiguration(t.FullName!));
 
         Use(logger);
-        Use(connectionMock.Object);
+        Use(Options.Create(new RabbitMqTransportOptions { PublishChannelPoolSize = 1 }));
+        UseReal<RabbitMqChannelPool>();
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 

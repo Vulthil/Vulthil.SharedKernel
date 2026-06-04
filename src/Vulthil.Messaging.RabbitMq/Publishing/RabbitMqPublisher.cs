@@ -10,24 +10,21 @@ using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Publishing;
 
-internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsyncDisposable
+internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher
 {
-    private readonly IConnection _rabbitMqConnection;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<RabbitMqPublisher> _logger;
-
-    private readonly SemaphoreSlim _channelSemaphore = new(1, 1);
-    private IChannel? _channel;
+    private readonly RabbitMqChannelPool _channelPool;
 
     private readonly ConcurrentDictionary<string, bool> _knownExchanges = new();
 
     public RabbitMqPublisher(
-        IConnection rabbitMqConnection,
         IMessageConfigurationProvider messageConfigurationProvider,
+        RabbitMqChannelPool channelPool,
         ILogger<RabbitMqPublisher> logger)
     {
-        _rabbitMqConnection = rabbitMqConnection;
         _messageConfigurationProvider = messageConfigurationProvider;
+        _channelPool = channelPool;
         _logger = logger;
     }
 
@@ -40,12 +37,24 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
     {
         var exchange = messageConfiguration.Exchange;
 
-        await EnsureChannelAsync(cancellationToken);
-        await EnsureExchangeTopologyAsync(exchange, messageConfiguration, cancellationToken);
+        // Publisher confirmations (with tracking) make the awaited BasicPublishAsync wait for the broker ack and
+        // throw on a nack or unroutable-mandatory return. The channel pool bounds concurrent publishes; each
+        // leased channel is used non-concurrently and reused on return, replacing the single-channel bottleneck.
+        var channel = await _channelPool.LeaseAsync(cancellationToken);
+        try
+        {
+            await EnsureExchangeTopologyAsync(channel, exchange, messageConfiguration, cancellationToken);
 
-        // Publish is pub/sub over a fanout/topic exchange: zero bound subscribers is normal, so the message
-        // is not mandatory. Broker confirms still apply (a nack throws), guarding against broker-side loss.
-        await BasicPublishAsync(exchange, routingKey, props, body, mandatory: false, cancellationToken);
+            // Publish is pub/sub over a fanout/topic exchange: zero bound subscribers is normal, so the message
+            // is not mandatory. Broker confirms still apply (a nack throws), guarding against broker-side loss.
+            await channel.BasicPublishAsync(exchange, routingKey, mandatory: false, props, body, cancellationToken);
+            _channelPool.Return(channel);
+        }
+        catch
+        {
+            await _channelPool.DiscardAsync(channel);
+            throw;
+        }
     }
 
     public async Task InternalSendAsync(
@@ -58,33 +67,16 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         // The destination queue is owned by the receiving service, so we do not declare it here.
         // A send is point-to-point, so a missing destination queue is a real error: publish mandatory so
         // the broker returns an unroutable message and the awaited confirm throws PublishReturnException.
-        await EnsureChannelAsync(cancellationToken);
-        await BasicPublishAsync(exchange: string.Empty, routingKey: queueName, props, body, mandatory: true, cancellationToken);
-    }
-
-    private async Task BasicPublishAsync(
-        string exchange,
-        string routingKey,
-        BasicProperties props,
-        byte[] body,
-        bool mandatory,
-        CancellationToken cancellationToken)
-    {
-        await _channelSemaphore.WaitAsync(cancellationToken);
-
+        var channel = await _channelPool.LeaseAsync(cancellationToken);
         try
         {
-            await _channel!.BasicPublishAsync(
-                exchange: exchange,
-                routingKey: routingKey,
-                mandatory: mandatory,
-                basicProperties: props,
-                body: body,
-                cancellationToken: cancellationToken);
+            await channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, mandatory: true, props, body, cancellationToken);
+            _channelPool.Return(channel);
         }
-        finally
+        catch
         {
-            _channelSemaphore.Release();
+            await _channelPool.DiscardAsync(channel);
+            throw;
         }
     }
 
@@ -167,82 +159,24 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher, IAsync
         }
     }
 
-    private async ValueTask EnsureExchangeTopologyAsync(string exchange, MessageConfiguration messageConfiguration, CancellationToken cancellationToken)
+    private async ValueTask EnsureExchangeTopologyAsync(IChannel channel, string exchange, MessageConfiguration messageConfiguration, CancellationToken cancellationToken)
     {
         if (_knownExchanges.ContainsKey(exchange))
         {
             return;
         }
 
-        await _channelSemaphore.WaitAsync(cancellationToken);
-        try
-        {
-            if (_knownExchanges.ContainsKey(exchange))
-            {
-                return;
-            }
+        // ExchangeDeclare is idempotent, so a concurrent first-publish burst that declares the same exchange on
+        // several pooled channels is harmless; the cache then short-circuits subsequent publishes.
+        await channel.ExchangeDeclareAsync(
+            exchange: exchange,
+            type: messageConfiguration.ExchangeType.ToRabbitExchangeType(),
+            durable: messageConfiguration.Durable,
+            autoDelete: messageConfiguration.AutoDelete,
+            arguments: messageConfiguration.Arguments,
+            cancellationToken: cancellationToken);
 
-            await _channel!.ExchangeDeclareAsync(
-                exchange: exchange,
-                type: messageConfiguration.ExchangeType.ToRabbitExchangeType(),
-                durable: messageConfiguration.Durable,
-                autoDelete: messageConfiguration.AutoDelete,
-                arguments: messageConfiguration.Arguments,
-                cancellationToken: cancellationToken);
-
-            _knownExchanges.TryAdd(exchange, true);
-            MessagingLog.ExchangeDeclared(_logger, exchange, messageConfiguration.ExchangeType);
-        }
-        finally
-        {
-            _channelSemaphore.Release();
-        }
-    }
-
-    private async ValueTask EnsureChannelAsync(CancellationToken cancellationToken)
-    {
-        if (_channel is not null)
-        {
-            return;
-        }
-
-        await _channelSemaphore.WaitAsync(cancellationToken);
-
-        try
-        {
-#pragma warning disable CA1508 // Avoid dead conditional code
-            if (_channel is not null)
-            {
-                return;
-            }
-#pragma warning restore CA1508
-
-            // Publisher confirmations (with tracking) make the awaited BasicPublishAsync wait for the broker
-            // ack and throw on a nack or unroutable-mandatory return, so a publish that the broker never
-            // accepted no longer reports success. This serializes publishing through the single channel until
-            // a channel pool is introduced; tune throughput there.
-            _channel = await _rabbitMqConnection.CreateChannelAsync(
-                new CreateChannelOptions(
-                    publisherConfirmationsEnabled: true,
-                    publisherConfirmationTrackingEnabled: true,
-                    consumerDispatchConcurrency: 1),
-                cancellationToken);
-        }
-        finally
-        {
-            _channelSemaphore.Release();
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_channel is not null)
-        {
-            await _channel.DisposeAsync();
-        }
-
-        _channelSemaphore.Dispose();
-
-        GC.SuppressFinalize(this);
+        _knownExchanges.TryAdd(exchange, true);
+        MessagingLog.ExchangeDeclared(_logger, exchange, messageConfiguration.ExchangeType);
     }
 }

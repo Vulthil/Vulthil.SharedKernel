@@ -2,7 +2,7 @@ using System.Text.Json;
 using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
-namespace Vulthil.Messaging.RabbitMq.Tests;
+namespace Vulthil.Messaging.Tests.Transport;
 
 public sealed class MessageEnvelopeTests : BaseUnitTestCase
 {

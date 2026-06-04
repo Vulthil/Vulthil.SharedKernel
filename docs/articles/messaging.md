@@ -7,9 +7,12 @@ The messaging packages provide a transport-agnostic abstraction for asynchronous
 | Package | Role |
 |---|---|
 | `Vulthil.Messaging.Abstractions` | Consumer and publisher interfaces – reference this from domain/application projects |
-| `Vulthil.Messaging` | Queue registration, consumer wiring, and hosted service orchestration |
+| `Vulthil.Messaging` | Queue registration, consumer wiring, hosted orchestration, and the transport-author SDK (`Vulthil.Messaging.Transport`) |
 | `Vulthil.Messaging.RabbitMq` | RabbitMQ transport implementation |
 | `Vulthil.Messaging.TestHarness` | In-memory transport for integration tests |
+
+The `Vulthil.Messaging.Transport` namespace is a *build-your-own-transport* SDK — see
+[Writing a Custom Transport](#writing-a-custom-transport).
 
 ## Defining Consumers
 
@@ -471,8 +474,8 @@ messaging.ConfigureMessage<OrderCreatedEvent>(m =>
 ```
 
 The URN is the dispatch key on the receive side — it appears in the message
-envelope's `messageType` field, and `MessageTypeCache` keys its execution plans
-by URN.
+envelope's `messageType` field, and `MessageExecutionRegistry<THandler>` keys its
+execution plans by URN.
 
 ### Message envelope (wire format)
 
@@ -745,6 +748,132 @@ The reply is a normal `MessageEnvelope` (single-serialized, like every other mes
 - **Failure** carries an RPC fault at `urn:message:Vulthil:RpcFault` (the remote exception's
   type and message); the requester maps it to a `Result<TResponse>` failure with the
   `Messaging.Request.Failure` error code.
+
+## Writing a Custom Transport
+
+`Vulthil.Messaging` is also a *build-your-own-transport* SDK. The transport-agnostic
+primitives live in the **`Vulthil.Messaging.Transport`** namespace, so a transport for a
+broker other than RabbitMQ can be written in a separate package against the public surface
+alone — the RabbitMQ transport uses nothing more.
+
+A transport is the glue between the broker and these primitives:
+
+| Concern | Primitive |
+|---|---|
+| Lifetime | `ITransport.StartAsync` — declare topology, then start consuming |
+| Execution plans | `MessageExecutionRegistry<THandler>` + your `IMessageHandlerFactory<THandler>` |
+| Wire format | `MessageEnvelope` + `MessageEnvelopeFactory.Create` |
+| Receive context | `MessageContext.CreateFromEnvelope` |
+| Filter pipeline | `ConsumePipelineFactory.Build` |
+| RPC failures | `RpcFault` |
+
+### 1. Build execution plans
+
+Choose a `THandler` type for your transport's dispatch closure, then implement
+`IMessageHandlerFactory<THandler>` to turn each registration into one. The factory is where the
+message type is statically known, so it is also where you compose the filter pipeline and build
+the receive context:
+
+```csharp
+public delegate Task Dispatch(IServiceProvider scope, object message, MessageEnvelope envelope, CancellationToken ct);
+
+internal sealed class MyHandlerFactory : IMessageHandlerFactory<Dispatch>
+{
+    public HandlerEntry<Dispatch> ForConsumer(Type consumer, Type message, RetryPolicyDefinition? retry)
+        => new(BuildConsumer(consumer, message), HandlerKind.Consumer);
+
+    public HandlerEntry<Dispatch> ForRequestConsumer(Type consumer, Type request, Type response, RetryPolicyDefinition? retry)
+        => new(BuildRequestConsumer(consumer, request, response), HandlerKind.RequestConsumer);
+
+    // Bound generically (e.g. via reflection) so TMessage is known here:
+    private static Dispatch Consumer<TConsumer, TMessage>() where TConsumer : class, IConsumer<TMessage> where TMessage : notnull
+        => async (scope, message, envelope, ct) =>
+        {
+            var consumer = scope.GetRequiredService<TConsumer>();
+            var context = MessageContext.CreateFromEnvelope(
+                (TMessage)message, envelope, routingKey: "", redelivered: false,
+                retryCount: 0, replyToFallback: null,
+                scope.GetRequiredService<IPublisher>(), scope.GetRequiredService<ISendEndpointProvider>(), ct);
+
+            var pipeline = ConsumePipelineFactory.Build<TMessage>(scope, c => consumer.ConsumeAsync(c, c.CancellationToken));
+            await pipeline(context);
+        };
+}
+```
+
+Let `MessageExecutionRegistry<THandler>` assemble the per-message-type plans from the configured
+queues — it handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness,
+and partition attachment:
+
+```csharp
+var registry = new MessageExecutionRegistry<Dispatch>(provider, new MyHandlerFactory());
+foreach (var queue in provider.QueueDefinitions)
+{
+    registry.RegisterQueue(queue);
+}
+```
+
+### 2. Produce
+
+Wrap each outgoing message in a `MessageEnvelope`. `MessageEnvelopeFactory.Create` promotes the
+publish context's metadata to typed envelope fields and serializes the payload:
+
+```csharp
+var envelope = MessageEnvelopeFactory.Create(
+    message, publishContext, messageId, correlationId, urn, provider.JsonSerializerOptions);
+var body = JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializerOptions);
+```
+
+`PublishContext`/`RequestContext` implement the `IPublishContext`/`IRequestContext` the caller's
+`configure` callback writes to; read their resolved properties (`RoutingKey`, `CorrelationId`,
+`Headers`, …) when building the broker message.
+
+### 3. Consume
+
+In the receive loop, parse the envelope, resolve the plan by URN, deserialize the payload, then
+run the plan's handlers:
+
+```csharp
+var envelope = JsonSerializer.Deserialize<MessageEnvelope>(body, provider.JsonSerializerOptions)!;
+var plan = registry.GetPlanByUrn(envelope.MessageType);
+if (plan is null) { return; } // unknown type — drop or dead-letter
+
+var message = envelope.Message.Deserialize(plan.MessageType.Type, provider.JsonSerializerOptions)!;
+
+await using var scope = scopeFactory.CreateAsyncScope();
+foreach (var dispatch in plan.Handlers)
+{
+    await dispatch(scope.ServiceProvider, message, envelope, ct);
+}
+```
+
+When `plan.IsPartitioned`, serialize same-key deliveries through `plan.Partition` so per-key order
+is preserved (the RabbitMQ transport lanes deliveries through a `Partitioner`). The
+`MessageEnvelope` also carries metadata for the bare-JSON fallback — resolve unknown types via
+`provider.GetMessageType(urn)` / `registry.GetPlan(typeName)`.
+
+### 4. RPC replies
+
+A request consumer replies with a `MessageEnvelope`: the `TResponse` payload at the response
+type's URN on success, or an `RpcFault` at `RpcFault.UrnUri` on failure. Keeping the envelope and
+`RpcFault` shapes identical across transports means Vulthil clients interoperate without a
+transport-specific reply contract:
+
+```csharp
+var fault = new RpcFault
+{
+    Message = ex.Message,
+    ExceptionType = ex.GetType().FullName!,
+    StackTrace = ex.StackTrace,
+    FaultedAt = DateTimeOffset.UtcNow,
+};
+var reply = new MessageEnvelope
+{
+    MessageType = RpcFault.UrnUri,
+    Message = JsonSerializer.SerializeToElement(fault, provider.JsonSerializerOptions),
+    RequestId = request.RequestId,
+};
+```
 
 ## Testing Messaging
 

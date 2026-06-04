@@ -27,10 +27,10 @@ jobs:
 
       - name: Compute next version
         id: bump
-        run: python3 .github/scripts/bump_version.py "${{ github.event.inputs.bump_type }}"
+        run: python3 eng/bump_version.py "${{ github.event.inputs.bump_type }}"
 
       - name: Open version bump PR
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           # A PAT or GitHub App token (AUTOMATION_TOKEN) lets the required `build`
           # check run on the PR. With the default GITHUB_TOKEN, pushes from this

@@ -36,7 +36,7 @@ cp -a "$SITE_DIR/." "$WORKTREE/$SLUG/"
 
 touch "$WORKTREE/.nojekyll"
 
-python3 .github/scripts/update_versions.py \
+python3 eng/update_versions.py \
   --root "$WORKTREE" \
   --slug "$SLUG" \
   --make-default "$MAKE_DEFAULT"

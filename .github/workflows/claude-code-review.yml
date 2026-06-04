@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
@@ -38,6 +38,9 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
+          # Allow Dependabot-authored PRs to be reviewed. The action blocks bot
+          # actors by default; the "[bot]" suffix is stripped before matching.
+          allowed_bots: 'dependabot[bot]'
           prompt: '/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
           # Optional: pick the model (aliases opus/sonnet/haiku, or a full model id).
           # Limited to what your subscription plan allows when using the OAuth token.

@@ -12,8 +12,8 @@ on:
       - 'src/**'
       - 'docs/**'
       - '.github/workflows/docs.yml'
-      - '.github/scripts/deploy-docs.sh'
-      - '.github/scripts/update_versions.py'
+      - 'eng/deploy-docs.sh'
+      - 'eng/update_versions.py'
   workflow_dispatch:
     inputs:
       slug:
@@ -61,4 +61,4 @@ jobs:
         env:
           SLUG: ${{ inputs.slug || 'main' }}
           MAKE_DEFAULT: ${{ inputs.make_default || 'false' }}
-        run: bash .github/scripts/deploy-docs.sh
+        run: bash eng/deploy-docs.sh

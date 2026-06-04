@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Publishing;
-using Vulthil.Messaging.RabbitMq.Requests;
 
 namespace Vulthil.Messaging.RabbitMq.Sending;
 
@@ -33,7 +32,7 @@ internal sealed class RabbitMqSendEndpointProvider : ISendEndpointProvider
 
     private ISendEndpoint CreateEndpoint(Uri address)
     {
-        var queueName = PublishContext.ResolveRoutingKeyFromUri(address);
+        var queueName = RabbitMqAddress.ResolveRoutingKey(address);
         if (string.IsNullOrEmpty(queueName))
         {
             throw new ArgumentException(

@@ -221,6 +221,8 @@ Vulthil.Messaging.Transport.MessageEnvelope.SentTime.get -> System.DateTimeOffse
 Vulthil.Messaging.Transport.MessageEnvelope.SentTime.init -> void
 Vulthil.Messaging.Transport.MessageEnvelope.SourceAddress.get -> string?
 Vulthil.Messaging.Transport.MessageEnvelope.SourceAddress.init -> void
+Vulthil.Messaging.Transport.MessageEnvelopeFactory
+static Vulthil.Messaging.Transport.MessageEnvelopeFactory.Create<TMessage>(TMessage message, Vulthil.Messaging.Transport.PublishContext! publishContext, string! messageId, string! correlationId, System.Uri! urn, System.Text.Json.JsonSerializerOptions! jsonOptions, string? requestId = null) -> Vulthil.Messaging.Transport.MessageEnvelope!
 Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>
 Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.Handlers.get -> System.Collections.ObjectModel.Collection<THandler>!
 Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.IsPartitioned.get -> bool
@@ -239,6 +241,33 @@ Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.IsQueuePartitione
 Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.MessageExecutionRegistry(Vulthil.Messaging.IMessageConfigurationProvider! provider, Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>! handlerFactory) -> void
 Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.Plans.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>!>!
 Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.RegisterQueue(Vulthil.Messaging.Queues.QueueDefinition! queue) -> void
+Vulthil.Messaging.Transport.PublishContext
+Vulthil.Messaging.Transport.PublishContext.AddHeader(string! key, object? value) -> void
+Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IDictionary<string!, object?>! headers) -> void
+Vulthil.Messaging.Transport.PublishContext.ConversationId.get -> string?
+Vulthil.Messaging.Transport.PublishContext.CorrelationId.get -> string?
+Vulthil.Messaging.Transport.PublishContext.DestinationAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.PublishContext.DestinationAddress.set -> void
+Vulthil.Messaging.Transport.PublishContext.FaultAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.PublishContext.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object?>!
+Vulthil.Messaging.Transport.PublishContext.InitiatorId.get -> string?
+Vulthil.Messaging.Transport.PublishContext.MessageId.get -> string?
+Vulthil.Messaging.Transport.PublishContext.PublishContext() -> void
+Vulthil.Messaging.Transport.PublishContext.ResponseAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.PublishContext.RoutingKey.get -> string?
+Vulthil.Messaging.Transport.PublishContext.SetConversationId(string! conversationId) -> void
+Vulthil.Messaging.Transport.PublishContext.SetCorrelationId(string! correlationId) -> void
+Vulthil.Messaging.Transport.PublishContext.SetFaultAddress(System.Uri! faultAddress) -> void
+Vulthil.Messaging.Transport.PublishContext.SetInitiatorId(string! initiatorId) -> void
+Vulthil.Messaging.Transport.PublishContext.SetMessageId(string! messageId) -> void
+Vulthil.Messaging.Transport.PublishContext.SetResponseAddress(System.Uri! responseAddress) -> void
+Vulthil.Messaging.Transport.PublishContext.SetRoutingKey(string! routingKey) -> void
+Vulthil.Messaging.Transport.PublishContext.SourceAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.PublishContext.SourceAddress.set -> void
+Vulthil.Messaging.Transport.RequestContext
+Vulthil.Messaging.Transport.RequestContext.RequestContext() -> void
+Vulthil.Messaging.Transport.RequestContext.SetTimeout(System.TimeSpan timeout) -> void
+Vulthil.Messaging.Transport.RequestContext.Timeout.get -> System.TimeSpan?
 Vulthil.Messaging.Transport.RpcFault
 const Vulthil.Messaging.Transport.RpcFault.Urn = "urn:message:Vulthil:RpcFault" -> string!
 Vulthil.Messaging.Transport.RpcFault.ExceptionType.get -> string!

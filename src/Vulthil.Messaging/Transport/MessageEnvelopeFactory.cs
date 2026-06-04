@@ -1,10 +1,13 @@
 using System.Text.Json;
-using Vulthil.Messaging.RabbitMq.Requests;
-using Vulthil.Messaging.Transport;
 
-namespace Vulthil.Messaging.RabbitMq.Envelope;
+namespace Vulthil.Messaging.Transport;
 
-internal static class MessageEnvelopeFactory
+/// <summary>
+/// Builds <see cref="MessageEnvelope"/> instances from the resolved publish state for a single outgoing message.
+/// Promotes the reserved metadata headers carried by a <see cref="PublishContext"/> to typed envelope fields and
+/// copies the remaining custom headers verbatim.
+/// </summary>
+public static class MessageEnvelopeFactory
 {
     private static readonly HashSet<string> PromotedHeaderKeys = new(StringComparer.Ordinal)
     {
@@ -19,6 +22,15 @@ internal static class MessageEnvelopeFactory
     /// <summary>
     /// Builds a <see cref="MessageEnvelope"/> from the resolved publish state for a single outgoing message.
     /// </summary>
+    /// <typeparam name="TMessage">The message type being published.</typeparam>
+    /// <param name="message">The message payload to serialize into the envelope.</param>
+    /// <param name="publishContext">The resolved publish configuration (addresses, headers, conversation metadata).</param>
+    /// <param name="messageId">The unique identifier assigned to the message.</param>
+    /// <param name="correlationId">The business correlation identifier.</param>
+    /// <param name="urn">The stable wire URN identifying the message type.</param>
+    /// <param name="jsonOptions">The serializer options used to serialize the payload.</param>
+    /// <param name="requestId">For request/reply, the request identifier the reply echoes; otherwise <see langword="null"/>.</param>
+    /// <returns>The constructed envelope.</returns>
     public static MessageEnvelope Create<TMessage>(
         TMessage message,
         PublishContext publishContext,

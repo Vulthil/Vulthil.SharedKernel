@@ -3,11 +3,10 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
-using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
-using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.Messaging.RabbitMq.Telemetry;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Sending;
 
@@ -81,10 +80,10 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
         {
             Type = urnString,
             MessageId = messageId,
-            ReplyTo = PublishContext.ResolveRoutingKeyFromUri(publishContext.ResponseAddress),
+            ReplyTo = RabbitMqAddress.ResolveRoutingKey(publishContext.ResponseAddress),
             CorrelationId = correlationId,
             ContentType = RabbitMqConstants.ContentType,
-            Headers = publishContext.Headers,
+            Headers = new Dictionary<string, object?>(publishContext.Headers),
             Persistent = true,
             Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
         };

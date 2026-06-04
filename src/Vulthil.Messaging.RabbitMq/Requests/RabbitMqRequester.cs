@@ -4,10 +4,10 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
-using Vulthil.Messaging.RabbitMq.Envelope;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Telemetry;
+using Vulthil.Messaging.Transport;
 using Vulthil.Results;
 
 namespace Vulthil.Messaging.RabbitMq.Requests;
@@ -80,7 +80,7 @@ internal sealed class RabbitMqRequester : IRequester
         var urnString = urn.AbsoluteUri;
 
         var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken);
-        var replyTo = PublishContext.ResolveRoutingKeyFromUri(requestContext.ResponseAddress) ?? replyQueue;
+        var replyTo = RabbitMqAddress.ResolveRoutingKey(requestContext.ResponseAddress) ?? replyQueue;
 
         using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
             $"{exchange} request",
@@ -110,7 +110,7 @@ internal sealed class RabbitMqRequester : IRequester
                 Type = urnString,
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
                 Expiration = timeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture),
-                Headers = requestContext.Headers,
+                Headers = new Dictionary<string, object?>(requestContext.Headers),
                 MessageId = messageId,
             };
 

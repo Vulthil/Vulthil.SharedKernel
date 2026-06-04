@@ -2,7 +2,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Consumers;
-using Vulthil.Messaging.RabbitMq.Requests;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;

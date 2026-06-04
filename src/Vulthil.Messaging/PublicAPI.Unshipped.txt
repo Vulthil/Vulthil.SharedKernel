@@ -99,6 +99,8 @@ Vulthil.Messaging.Queues.MessageType.Name.get -> string!
 Vulthil.Messaging.Queues.MessageType.Type.get -> System.Type!
 Vulthil.Messaging.Queues.MessageType.Type.init -> void
 Vulthil.Messaging.Queues.QueueDefinition
+Vulthil.Messaging.Queues.QueueDefinition.AddConsumer(Vulthil.Messaging.Queues.Registration! registration) -> void
+Vulthil.Messaging.Queues.QueueDefinition.AddSubscription(Vulthil.Messaging.Queues.Subscription! subscription) -> void
 Vulthil.Messaging.Queues.QueueDefinition.AutoDelete.get -> bool
 Vulthil.Messaging.Queues.QueueDefinition.AutoDelete.set -> void
 Vulthil.Messaging.Queues.QueueDefinition.ChannelCount.get -> ushort

@@ -182,9 +182,17 @@ public sealed record QueueDefinition(string Name)
     public bool RetryEnabled => DefaultRetryPolicy is not null ||
                     Registrations.Any(r => r.RetryPolicy is not null);
 
-    internal void AddConsumer(Registration registration)
+    /// <summary>
+    /// Adds a consumer registration to this queue. Duplicate registrations (by value) are ignored.
+    /// </summary>
+    /// <param name="registration">The consumer-to-message binding to add.</param>
+    public void AddConsumer(Registration registration)
         => _registrations.Add(registration);
 
-    internal void AddSubscription(Subscription subscription)
+    /// <summary>
+    /// Adds an exchange→queue binding to this queue. Duplicate subscriptions (by value) are ignored.
+    /// </summary>
+    /// <param name="subscription">The subscription describing the binding to add.</param>
+    public void AddSubscription(Subscription subscription)
         => _subscriptions.Add(subscription);
 }

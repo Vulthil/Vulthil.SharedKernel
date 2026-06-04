@@ -13,6 +13,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 {
     private readonly Lazy<MessageTypeCache> _lazyTarget;
     private readonly IServiceProvider _serviceProvider;
+    private readonly Mock<IChannel> _channelMock;
 
     private MessageTypeCache Target => _lazyTarget.Value;
 
@@ -23,6 +24,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
+        _channelMock = GetMock<IChannel>();
         _serviceProvider = AutoMocker;
     }
 
@@ -152,7 +154,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var testMessage = new TestMessage("Hello, World!");
 
         // Act
-        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), null, Mock.Of<IChannel>(), CancellationToken.None);
+        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), null, _channelMock.Object, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedMessages.ShouldHaveSingleItem();
@@ -183,11 +185,10 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var testRequest = new TestRequest("Find users");
         var deliveryArgs = CreateDeliverEventArgs(replyTo: "reply.queue", correlationId: "corr-1");
 
-        var channel = GetMock<IChannel>();
         ReadOnlyMemory<byte> publishedBody = default;
         BasicProperties? publishedProperties = null;
 
-        channel.Setup(x => x.BasicPublishAsync(
+        _channelMock.Setup(x => x.BasicPublishAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
@@ -202,7 +203,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, null, channel.Object, CancellationToken.None);
+        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, null, _channelMock.Object, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedRequests.ShouldHaveSingleItem();
@@ -240,10 +241,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
         var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
-        var channel = GetMock<IChannel>();
         ReadOnlyMemory<byte> publishedBody = default;
 
-        channel.Setup(x => x.BasicPublishAsync(
+        _channelMock.Setup(x => x.BasicPublishAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
@@ -262,7 +262,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             new TestRequest("throw"),
             CreateDeliverEventArgs(replyTo: "reply.queue"),
             null,
-            channel.Object,
+            _channelMock.Object,
             CancellationToken.None);
 
         // Assert

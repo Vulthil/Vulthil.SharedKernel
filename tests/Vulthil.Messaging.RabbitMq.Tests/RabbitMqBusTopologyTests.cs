@@ -14,6 +14,9 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
 
     private readonly Dictionary<string, IDictionary<string, object?>> _declaredQueues = new(StringComparer.Ordinal);
 
+    private readonly Lazy<RabbitMqBus> _lazyTarget;
+    private RabbitMqBus Target => _lazyTarget.Value;
+
     public RabbitMqBusTopologyTests()
     {
         var channel = GetMock<IChannel>();
@@ -37,13 +40,16 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
         Use(new RabbitMqBusStartupStatus());
         Use<ILoggerFactory>(NullLoggerFactory.Instance);
         Use<ILogger<RabbitMqBus>>(NullLogger<RabbitMqBus>.Instance);
+
+        _lazyTarget = new(CreateInstance<RabbitMqBus>);
     }
 
-    private async Task DeclareTopologyAsync(IMessageConfigurationProvider provider)
+    protected override ValueTask Dispose() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.Dispose();
+
+    private Task DeclareTopologyAsync(IMessageConfigurationProvider provider)
     {
-        Use<IMessageConfigurationProvider>(provider);
-        await using var bus = CreateInstance<RabbitMqBus>();
-        await bus.StartAsync(CancellationToken);
+        Use(provider);
+        return Target.StartAsync(CancellationToken);
     }
 
     private static IMessageConfigurationProvider ProviderConsumingOrderedEvents(

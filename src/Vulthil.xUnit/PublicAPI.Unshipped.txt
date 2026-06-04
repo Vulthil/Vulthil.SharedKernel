@@ -10,6 +10,7 @@ static Vulthil.xUnit.BaseUnitTestCase.CancellationToken.get -> System.Threading.
 virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
 virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize() -> System.Threading.Tasks.ValueTask
 virtual Vulthil.xUnit.BaseUnitTestCase.CreateInstance<TTarget>() -> TTarget!
+virtual Vulthil.xUnit.BaseUnitTestCase.Dispose() -> System.Threading.Tasks.ValueTask
 virtual Vulthil.xUnit.BaseUnitTestCase.GetMock<TMock>() -> Moq.Mock<TMock!>!
 virtual Vulthil.xUnit.BaseUnitTestCase.Initialize() -> System.Threading.Tasks.ValueTask
 virtual Vulthil.xUnit.BaseUnitTestCase.Use<TService>(TService service) -> void

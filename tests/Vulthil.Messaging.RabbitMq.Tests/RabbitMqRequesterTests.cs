@@ -11,6 +11,7 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 public sealed class RabbitMqRequesterTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqRequester> _lazyTarget;
+    private readonly Mock<IInternalPublisher> _publisherMock;
 
     private RabbitMqRequester Target => _lazyTarget.Value;
 
@@ -36,7 +37,8 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
 
         Use(CreateInstance<ResponseListener>());
 
-        GetMock<IInternalPublisher>()
+        _publisherMock = GetMock<IInternalPublisher>();
+        _publisherMock
             .Setup(p => p.InternalPublishAsync<It.IsAnyType>(
                 It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
@@ -74,7 +76,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         const string businessCorrelationId = "order-42";
         BasicProperties? capturedProps = null;
         byte[]? capturedBody = null;
-        GetMock<IInternalPublisher>()
+        _publisherMock
             .Setup(p => p.InternalPublishAsync<It.IsAnyType>(
                 It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
             .Callback((byte[] body, BasicProperties props, string _, MessageConfiguration _, CancellationToken _) =>

@@ -14,6 +14,18 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
 {
     private sealed record TestMessage(string Content);
 
+    private readonly Mock<ISendEndpoint> _endpointMock;
+    private readonly Mock<ISendEndpointProvider> _providerMock;
+
+    public MessageContextSendTests()
+    {
+        _endpointMock = new Mock<ISendEndpoint>();
+        _providerMock = new Mock<ISendEndpointProvider>();
+        _providerMock
+            .Setup(p => p.GetSendEndpointAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+            .Returns<Uri, CancellationToken>((_, _) => ValueTask.FromResult<ISendEndpoint>(_endpointMock.Object));
+    }
+
     /// <summary>
     /// Verifies that CorrelationId, ConversationId, and InitiatorId from the incoming context are propagated to the outgoing send.
     /// </summary>
@@ -21,9 +33,8 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
     public async Task SendAsyncShouldPropagateCorrelationMetadata()
     {
         // Arrange
-        var endpointMock = new Mock<ISendEndpoint>();
         var capturedPublishContext = new PublishContext();
-        endpointMock
+        _endpointMock
             .Setup(e => e.SendAsync(
                 It.IsAny<TestMessage>(),
                 It.IsAny<Func<IPublishContext, ValueTask>?>(),
@@ -37,13 +48,8 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
                     }
                 });
 
-        var providerMock = new Mock<ISendEndpointProvider>();
-        providerMock
-            .Setup(p => p.GetSendEndpointAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-            .Returns<Uri, CancellationToken>((uri, _) => ValueTask.FromResult<ISendEndpoint>(endpointMock.Object));
-
         var context = CreateTypedContext(
-            providerMock.Object,
+            _providerMock.Object,
             correlationId: "corr-1",
             conversationId: "conv-1",
             messageId: "msg-1");
@@ -64,9 +70,8 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
     public async Task SendAsyncShouldLetExplicitConfigureOverrideAutoPropagation()
     {
         // Arrange
-        var endpointMock = new Mock<ISendEndpoint>();
         var capturedPublishContext = new PublishContext();
-        endpointMock
+        _endpointMock
             .Setup(e => e.SendAsync(
                 It.IsAny<TestMessage>(),
                 It.IsAny<Func<IPublishContext, ValueTask>?>(),
@@ -80,12 +85,7 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
                     }
                 });
 
-        var providerMock = new Mock<ISendEndpointProvider>();
-        providerMock
-            .Setup(p => p.GetSendEndpointAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-            .Returns<Uri, CancellationToken>((_, _) => ValueTask.FromResult<ISendEndpoint>(endpointMock.Object));
-
-        var context = CreateTypedContext(providerMock.Object, correlationId: "auto-corr");
+        var context = CreateTypedContext(_providerMock.Object, correlationId: "auto-corr");
 
         // Act
         await context.SendAsync(
@@ -108,8 +108,7 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
     public async Task SendAsyncWithNullDestinationThrows()
     {
         // Arrange
-        var providerMock = new Mock<ISendEndpointProvider>();
-        var context = CreateTypedContext(providerMock.Object);
+        var context = CreateTypedContext(_providerMock.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(

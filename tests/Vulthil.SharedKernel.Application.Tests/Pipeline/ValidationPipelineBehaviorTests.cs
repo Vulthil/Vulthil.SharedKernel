@@ -10,17 +10,25 @@ namespace Vulthil.SharedKernel.Application.Tests.Pipeline;
 
 public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
 {
+    private readonly Lazy<ValidationPipelineBehavior<TestCommand, Result>> _lazyTarget;
+    private readonly Mock<IValidator<TestCommand>> _validatorMock;
+    private ValidationPipelineBehavior<TestCommand, Result> Target => _lazyTarget.Value;
+
+    public ValidationPipelineBehaviorTests()
+    {
+        _validatorMock = GetMock<IValidator<TestCommand>>();
+        Use<IEnumerable<IValidator>>([_validatorMock.Object]);
+        _lazyTarget = new(CreateInstance<ValidationPipelineBehavior<TestCommand, Result>>);
+    }
+
     [Fact]
     public async Task WithValidRequestCallsNextDelegate()
     {
         // Arrange
         var request = new TestCommand { Name = "Test" };
         var expectedResult = Result.Success();
-        var mockValidator = GetMock<IValidator<TestCommand>>();
-        Use<IEnumerable<IValidator>>([mockValidator.Object]);
-        mockValidator.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<TestCommand>>(), It.IsAny<CancellationToken>()))
+        _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<TestCommand>>(), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new ValidationResult(new List<ValidationFailure>()));
-        var target = CreateInstance<ValidationPipelineBehavior<TestCommand, Result>>();
         var called = false;
         PipelineDelegate<Result> next = _ =>
         {
@@ -29,7 +37,7 @@ public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
         };
 
         // Act
-        var result = await target.HandleAsync(request, next, CancellationToken);
+        var result = await Target.HandleAsync(request, next, CancellationToken);
 
         // Assert
         Assert.True(called);
@@ -41,9 +49,7 @@ public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
     {
         // Arrange
         var request = new TestCommand { Name = string.Empty };
-        var mockValidator = GetMock<IValidator<TestCommand>>();
-        Use<IEnumerable<IValidator>>([mockValidator.Object]);
-        mockValidator.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<TestCommand>>(), It.IsAny<CancellationToken>()))
+        _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<TestCommand>>(), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new ValidationResult(new List<ValidationFailure>
                     {
                         new ValidationFailure("Name", "Name is required")
@@ -51,11 +57,10 @@ public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
                             ErrorCode = "Name"
                         }
                     }));
-        var target = CreateInstance<ValidationPipelineBehavior<TestCommand, Result>>();
         PipelineDelegate<Result> next = _ => Task.FromResult(Result.Success());
 
         // Act
-        var result = await target.HandleAsync(request, next, CancellationToken);
+        var result = await Target.HandleAsync(request, next, CancellationToken);
 
         // Assert
         Assert.True(result.IsFailure);

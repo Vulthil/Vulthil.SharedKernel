@@ -20,9 +20,12 @@ public sealed class FakeHandlerFactory : IMessageHandlerFactory<FakeHandler>
 
 public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExecutionRegistry<FakeHandler>>
 {
+    private readonly Mock<IMessageConfigurationProvider> _providerMock;
+
     public MessageExecutionRegistryTests()
     {
-        GetMock<IMessageConfigurationProvider>()
+        _providerMock = GetMock<IMessageConfigurationProvider>();
+        _providerMock
             .Setup(p => p.GetUrn(It.IsAny<Type>()))
             .Returns<Type>(t => new Uri($"urn:test:{t.FullName}"));
         Use<IMessageHandlerFactory<FakeHandler>>(new FakeHandlerFactory());
@@ -176,7 +179,7 @@ public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExec
     {
         // Arrange
         var spec = new PartitionSpec(new Partitioner(4), (Func<OrderPlaced, string>)(o => o.Id));
-        GetMock<IMessageConfigurationProvider>()
+        _providerMock
             .Setup(p => p.GetPartition(typeof(OrderPlaced)))
             .Returns(spec);
 

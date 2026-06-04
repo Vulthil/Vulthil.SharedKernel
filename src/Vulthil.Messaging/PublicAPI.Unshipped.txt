@@ -180,9 +180,18 @@ Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(Vulthil.Messag
 Vulthil.Messaging.IMessagingConfigurator.UsePartitioner<TMessage>(Vulthil.Messaging.Partitioner! partitioner) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.Transport.ConsumePipelineFactory
 static Vulthil.Messaging.Transport.ConsumePipelineFactory.Build<TMessage>(System.IServiceProvider! sp, Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate<TMessage>! terminal) -> Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate<TMessage>!
+Vulthil.Messaging.Transport.HandlerEntry<THandler>
+Vulthil.Messaging.Transport.HandlerEntry<THandler>.Handler.get -> THandler
+Vulthil.Messaging.Transport.HandlerEntry<THandler>.Handler.init -> void
+Vulthil.Messaging.Transport.HandlerEntry<THandler>.HandlerEntry(THandler Handler, Vulthil.Messaging.Transport.HandlerKind Kind) -> void
+Vulthil.Messaging.Transport.HandlerEntry<THandler>.Kind.get -> Vulthil.Messaging.Transport.HandlerKind
+Vulthil.Messaging.Transport.HandlerEntry<THandler>.Kind.init -> void
 Vulthil.Messaging.Transport.HandlerKind
 Vulthil.Messaging.Transport.HandlerKind.Consumer = 0 -> Vulthil.Messaging.Transport.HandlerKind
 Vulthil.Messaging.Transport.HandlerKind.RequestConsumer = 1 -> Vulthil.Messaging.Transport.HandlerKind
+Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>
+Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
+Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
 Vulthil.Messaging.Transport.MessageEnvelope
 Vulthil.Messaging.Transport.MessageEnvelope.ConversationId.get -> string?
 Vulthil.Messaging.Transport.MessageEnvelope.ConversationId.init -> void
@@ -212,6 +221,24 @@ Vulthil.Messaging.Transport.MessageEnvelope.SentTime.get -> System.DateTimeOffse
 Vulthil.Messaging.Transport.MessageEnvelope.SentTime.init -> void
 Vulthil.Messaging.Transport.MessageEnvelope.SourceAddress.get -> string?
 Vulthil.Messaging.Transport.MessageEnvelope.SourceAddress.init -> void
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.Handlers.get -> System.Collections.ObjectModel.Collection<THandler>!
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.IsPartitioned.get -> bool
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.MessageExecutionPlan(Vulthil.Messaging.Queues.MessageType! MessageType, System.Uri! Urn) -> void
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.MessageType.get -> Vulthil.Messaging.Queues.MessageType!
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.MessageType.init -> void
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.Partition.get -> Vulthil.Messaging.PartitionSpec?
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.Partition.init -> void
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.Urn.get -> System.Uri!
+Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>.Urn.init -> void
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.GetPlan(string! key) -> Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>?
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.GetPlanByFullName(string! fullName) -> Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>?
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.GetPlanByUrn(System.Uri! urn) -> Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>?
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.IsQueuePartitioned(Vulthil.Messaging.Queues.QueueDefinition! queue) -> bool
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.MessageExecutionRegistry(Vulthil.Messaging.IMessageConfigurationProvider! provider, Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>! handlerFactory) -> void
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.Plans.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>!>!
+Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>.RegisterQueue(Vulthil.Messaging.Queues.QueueDefinition! queue) -> void
 Vulthil.Messaging.Transport.RpcFault
 const Vulthil.Messaging.Transport.RpcFault.Urn = "urn:message:Vulthil:RpcFault" -> string!
 Vulthil.Messaging.Transport.RpcFault.ExceptionType.get -> string!

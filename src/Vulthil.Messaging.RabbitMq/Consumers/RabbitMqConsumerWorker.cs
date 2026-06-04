@@ -323,7 +323,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
     }
 
-    private static RetryPolicyDefinition? GetPolicy(MessageExecutionPlan? plan, QueueDefinition queue)
+    private static RetryPolicyDefinition? GetPolicy(RabbitMqPlan? plan, QueueDefinition queue)
     {
         if (plan is not null)
         {
@@ -398,7 +398,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         return new PreparedDelivery(plan, message, envelope, diagnosticTypeName);
     }
 
-    private async Task DispatchHandlersAsync(MessageExecutionPlan plan, object message, BasicDeliverEventArgs ea, MessageEnvelope? envelope)
+    private async Task DispatchHandlersAsync(RabbitMqPlan plan, object message, BasicDeliverEventArgs ea, MessageEnvelope? envelope)
     {
         await using var scope = _serviceScopeFactory.CreateAsyncScope();
 
@@ -473,5 +473,5 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
     }
 
-    private sealed record PreparedDelivery(MessageExecutionPlan Plan, object Message, MessageEnvelope? Envelope, string DiagnosticTypeName);
+    private sealed record PreparedDelivery(RabbitMqPlan Plan, object Message, MessageEnvelope? Envelope, string DiagnosticTypeName);
 }

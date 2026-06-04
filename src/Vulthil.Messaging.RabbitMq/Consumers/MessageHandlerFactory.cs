@@ -12,7 +12,7 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 /// <summary>
 /// Builds <see cref="MessageHandler"/> instances from open-generic consumer/message type pairs.
 /// The factory methods are the single source of truth for the dispatch closure shape; reflection-driven
-/// callers in <see cref="MessageTypeCache"/> bind to these via typed delegates so signature drift fails at startup.
+/// callers in <see cref="RabbitMqHandlerFactory"/> bind to these via typed delegates so signature drift fails at startup.
 /// </summary>
 internal static class MessageHandlerFactory
 {

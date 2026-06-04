@@ -32,8 +32,8 @@ internal static class MessageHandlerFactory
                 var publisher = sp.GetRequiredService<IPublisher>();
                 var sendEndpointProvider = sp.GetRequiredService<ISendEndpointProvider>();
                 var context = envelope is null
-                    ? MessageContext.CreateContext((TMessage)message, ea, publisher, sendEndpointProvider, ct)
-                    : MessageContext.CreateContext((TMessage)message, ea, envelope, publisher, sendEndpointProvider, ct);
+                    ? MessageContextFactory.CreateContext((TMessage)message, ea, publisher, sendEndpointProvider, ct)
+                    : MessageContextFactory.CreateContext((TMessage)message, ea, envelope, publisher, sendEndpointProvider, ct);
 
                 var pipeline = ConsumePipelineFactory.Build<TMessage>(
                     sp,
@@ -62,8 +62,8 @@ internal static class MessageHandlerFactory
                 var provider = sp.GetRequiredService<IMessageConfigurationProvider>();
                 var jsonOptions = provider.JsonSerializerOptions;
                 var context = envelope is null
-                    ? MessageContext.CreateContext((TRequest)message, ea, publisher, sendEndpointProvider, ct)
-                    : MessageContext.CreateContext((TRequest)message, ea, envelope, publisher, sendEndpointProvider, ct);
+                    ? MessageContextFactory.CreateContext((TRequest)message, ea, publisher, sendEndpointProvider, ct)
+                    : MessageContextFactory.CreateContext((TRequest)message, ea, envelope, publisher, sendEndpointProvider, ct);
 
                 MessageEnvelope reply;
                 try

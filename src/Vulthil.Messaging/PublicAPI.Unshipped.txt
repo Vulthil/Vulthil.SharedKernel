@@ -192,6 +192,49 @@ Vulthil.Messaging.Transport.HandlerKind.RequestConsumer = 1 -> Vulthil.Messaging
 Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>
 Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
 Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
+Vulthil.Messaging.Transport.MessageContext
+Vulthil.Messaging.Transport.MessageContext.CancellationToken.get -> System.Threading.CancellationToken
+Vulthil.Messaging.Transport.MessageContext.CancellationToken.init -> void
+Vulthil.Messaging.Transport.MessageContext.ConversationId.get -> string?
+Vulthil.Messaging.Transport.MessageContext.ConversationId.init -> void
+Vulthil.Messaging.Transport.MessageContext.CorrelationId.get -> string!
+Vulthil.Messaging.Transport.MessageContext.CorrelationId.init -> void
+Vulthil.Messaging.Transport.MessageContext.DestinationAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.MessageContext.DestinationAddress.init -> void
+Vulthil.Messaging.Transport.MessageContext.ExpirationTime.get -> System.DateTimeOffset?
+Vulthil.Messaging.Transport.MessageContext.ExpirationTime.init -> void
+Vulthil.Messaging.Transport.MessageContext.FaultAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.MessageContext.FaultAddress.init -> void
+Vulthil.Messaging.Transport.MessageContext.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object?>!
+Vulthil.Messaging.Transport.MessageContext.Headers.init -> void
+Vulthil.Messaging.Transport.MessageContext.InitiatorId.get -> string?
+Vulthil.Messaging.Transport.MessageContext.InitiatorId.init -> void
+Vulthil.Messaging.Transport.MessageContext.MessageId.get -> string?
+Vulthil.Messaging.Transport.MessageContext.MessageId.init -> void
+Vulthil.Messaging.Transport.MessageContext.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configure = null) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.MessageContext.Publisher.get -> Vulthil.Messaging.Abstractions.Publishers.IPublisher?
+Vulthil.Messaging.Transport.MessageContext.Publisher.init -> void
+Vulthil.Messaging.Transport.MessageContext.RequestId.get -> string?
+Vulthil.Messaging.Transport.MessageContext.RequestId.init -> void
+Vulthil.Messaging.Transport.MessageContext.Redelivered.get -> bool
+Vulthil.Messaging.Transport.MessageContext.Redelivered.init -> void
+Vulthil.Messaging.Transport.MessageContext.ResponseAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.MessageContext.ResponseAddress.init -> void
+Vulthil.Messaging.Transport.MessageContext.RetryCount.get -> int
+Vulthil.Messaging.Transport.MessageContext.RetryCount.init -> void
+Vulthil.Messaging.Transport.MessageContext.RoutingKey.get -> string!
+Vulthil.Messaging.Transport.MessageContext.RoutingKey.init -> void
+Vulthil.Messaging.Transport.MessageContext.SendAsync<TMessage>(System.Uri! destinationAddress, TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configure = null) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.MessageContext.SendEndpointProvider.get -> Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider?
+Vulthil.Messaging.Transport.MessageContext.SendEndpointProvider.init -> void
+Vulthil.Messaging.Transport.MessageContext.SentTime.get -> System.DateTimeOffset?
+Vulthil.Messaging.Transport.MessageContext.SentTime.init -> void
+Vulthil.Messaging.Transport.MessageContext.SourceAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.MessageContext.SourceAddress.init -> void
+static Vulthil.Messaging.Transport.MessageContext.CreateFromEnvelope<TMessage>(TMessage message, Vulthil.Messaging.Transport.MessageEnvelope! envelope, string! routingKey, bool redelivered, int retryCount, string? replyToFallback, Vulthil.Messaging.Abstractions.Publishers.IPublisher? publisher, Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider? sendEndpointProvider, System.Threading.CancellationToken cancellationToken) -> Vulthil.Messaging.Transport.MessageContext<TMessage>!
+Vulthil.Messaging.Transport.MessageContext<TMessage>
+Vulthil.Messaging.Transport.MessageContext<TMessage>.Message.get -> TMessage
+Vulthil.Messaging.Transport.MessageContext<TMessage>.Message.init -> void
 Vulthil.Messaging.Transport.MessageEnvelope
 Vulthil.Messaging.Transport.MessageEnvelope.ConversationId.get -> string?
 Vulthil.Messaging.Transport.MessageEnvelope.ConversationId.init -> void

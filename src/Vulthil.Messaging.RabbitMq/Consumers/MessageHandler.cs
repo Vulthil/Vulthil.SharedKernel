@@ -23,7 +23,7 @@ internal sealed record MessageHandler
     /// Dispatches a deserialized message through the consume pipeline and (for RPC) publishes the response on the supplied channel.
     /// Consumer-kind handlers ignore the channel parameter. The envelope is non-null on the standard receive path
     /// (Vulthil-produced messages) and null on the bare-JSON compat path (external producers); the closure picks the
-    /// appropriate <c>MessageContext.CreateContext</c> overload.
+    /// appropriate <c>MessageContextFactory.CreateContext</c> overload.
     /// </summary>
     public required Func<IServiceProvider, object, BasicDeliverEventArgs, MessageEnvelope?, IChannel, CancellationToken, Task> DispatchAsync { get; init; }
 }

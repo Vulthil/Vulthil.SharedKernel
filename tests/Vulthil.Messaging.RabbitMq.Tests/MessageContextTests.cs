@@ -32,7 +32,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
             });
 
         // Act
-        var context = MessageContext.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
 
         // Assert
         context.MessageId.ShouldBe("msg-1");
@@ -60,7 +60,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         var eventArgs = CreateDeliverEventArgs(replyTo: "reply-queue");
 
         // Act
-        var context = MessageContext.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
 
         // Assert
         context.ResponseAddress.ShouldBe(new Uri("queue:reply-queue"));
@@ -78,7 +78,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
             timestamp: 0);
 
         // Act
-        var context = MessageContext.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
 
         // Assert
         context.CorrelationId.ShouldBe(string.Empty);
@@ -99,7 +99,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         var eventArgs = CreateDeliverEventArgs(routingKey: "typed.route");
 
         // Act
-        var context = MessageContext.CreateContext(message, eventArgs);
+        var context = MessageContextFactory.CreateContext(message, eventArgs);
 
         // Assert
         context.Message.ShouldBe(message);
@@ -121,7 +121,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
             });
 
         // Act
-        var snapshot = MessageContext.CreateSnapshot(eventArgs);
+        var snapshot = MessageContextFactory.CreateSnapshot(eventArgs);
 
         // Assert
         snapshot.MessageId.ShouldBe("msg-1");

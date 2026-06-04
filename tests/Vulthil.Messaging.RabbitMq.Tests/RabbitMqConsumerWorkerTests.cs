@@ -22,7 +22,7 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
 
         // Act — the worker rewrites the delivery for the third in-memory attempt.
         var retried = RabbitMqConsumerWorker.WithRetryCount(delivery, 3);
-        var context = MessageContext.CreateContext(new TestMessage("payload"), retried);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), retried);
 
         // Assert
         context.RetryCount.ShouldBe(3);

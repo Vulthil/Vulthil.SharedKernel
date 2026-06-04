@@ -126,7 +126,7 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
         var props = new BasicProperties { CorrelationId = "c", Headers = new Dictionary<string, object?>() };
         var ea = new BasicDeliverEventArgs(
             "consumer-tag", 1, false, "exchange", "routing.key", props, ReadOnlyMemory<byte>.Empty);
-        var snapshot = MessageContext.CreateContext(new TestMessage("payload"), ea);
+        var snapshot = MessageContextFactory.CreateContext(new TestMessage("payload"), ea);
 
         // Act & Assert
         await Should.ThrowAsync<InvalidOperationException>(
@@ -162,6 +162,6 @@ public sealed class MessageContextSendTests : BaseUnitTestCase
             props,
             ReadOnlyMemory<byte>.Empty);
 
-        return MessageContext.CreateContext(new TestMessage("payload"), ea, null, sendEndpointProvider, CancellationToken.None);
+        return MessageContextFactory.CreateContext(new TestMessage("payload"), ea, null, sendEndpointProvider, CancellationToken.None);
     }
 }

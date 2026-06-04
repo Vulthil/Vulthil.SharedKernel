@@ -29,8 +29,8 @@ internal static class PartitionKeyExtractorFactory
             // A snapshot context (no live publisher/send provider) is sufficient: key selectors read
             // metadata and the typed message, they do not publish.
             var context = envelope is null
-                ? MessageContext.CreateContext((TMessage)message, ea)
-                : MessageContext.CreateContext((TMessage)message, ea, envelope, publisher: null, sendEndpointProvider: null, CancellationToken.None);
+                ? MessageContextFactory.CreateContext((TMessage)message, ea)
+                : MessageContextFactory.CreateContext((TMessage)message, ea, envelope, publisher: null, sendEndpointProvider: null, CancellationToken.None);
             return selector(context);
         };
 }

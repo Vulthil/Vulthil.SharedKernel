@@ -68,23 +68,18 @@ Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer<TRequest, TResponse>.C
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeader(string! key, object? value) -> void
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary<string!, object?>! headers) -> void
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ConversationId.get -> string?
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ConversationId.set -> void
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.FaultAddress.get -> System.Uri?
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.FaultAddress.set -> void
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.InitiatorId.get -> string?
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.InitiatorId.set -> void
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.MessageId.get -> string?
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.MessageId.set -> void
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ResponseAddress.get -> System.Uri?
-Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ResponseAddress.set -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetConversationId(string! conversationId) -> void
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetCorrelationId(string! correlationId) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetFaultAddress(System.Uri! faultAddress) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetInitiatorId(string! initiatorId) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetMessageId(string! messageId) -> void
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetResponseAddress(System.Uri! responseAddress) -> void
 Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetRoutingKey(string! routingKey) -> void
 Vulthil.Messaging.Abstractions.Publishers.IPublisher
 Vulthil.Messaging.Abstractions.Publishers.IPublisher.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Abstractions.Publishers.IPublisher.PublishAsync<TMessage>(TMessage message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Abstractions.Publishers.IRequestContext
-Vulthil.Messaging.Abstractions.Publishers.IRequestContext.SetTimeout(System.TimeSpan timeout) -> Vulthil.Messaging.Abstractions.Publishers.IRequestContext!
+Vulthil.Messaging.Abstractions.Publishers.IRequestContext.SetTimeout(System.TimeSpan timeout) -> void
 Vulthil.Messaging.Abstractions.Publishers.IRequester
 Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IRequestContext!, System.Threading.Tasks.ValueTask>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!
 Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync<TRequest, TResponse>(TRequest message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TResponse>!>!

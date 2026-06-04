@@ -78,8 +78,17 @@ internal record MessageContext : IMessageContext
         {
             ctx.SetCorrelationId(CorrelationId);
         }
-        ctx.ConversationId = ConversationId ?? (string.IsNullOrEmpty(CorrelationId) ? null : CorrelationId);
-        ctx.InitiatorId = MessageId;
+
+        var conversationId = ConversationId ?? (string.IsNullOrEmpty(CorrelationId) ? null : CorrelationId);
+        if (!string.IsNullOrEmpty(conversationId))
+        {
+            ctx.SetConversationId(conversationId);
+        }
+
+        if (!string.IsNullOrEmpty(MessageId))
+        {
+            ctx.SetInitiatorId(MessageId);
+        }
 
         // 2. Caller's configure callback runs last so it can override any auto-set value.
         if (configure is not null)

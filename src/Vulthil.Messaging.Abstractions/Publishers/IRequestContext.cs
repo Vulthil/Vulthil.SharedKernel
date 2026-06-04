@@ -8,6 +8,6 @@ public interface IRequestContext : IPublishContext
     /// <summary>
     /// Sets the timeout for the request, after which it should be considered failed if no response is received.
     /// </summary>
-    IRequestContext SetTimeout(TimeSpan timeout);
-
+    /// <param name="timeout">The maximum time to wait for a response.</param>
+    void SetTimeout(TimeSpan timeout);
 }

@@ -7,13 +7,13 @@ internal class PublishContext : IPublishContext
     internal Dictionary<string, object?> Headers { get; } = [];
     public string? RoutingKey { get; private set; }
     public string? CorrelationId { get; private set; }
-    public string? MessageId { get; set; }
-    public string? ConversationId { get => Headers.TryGetValue("ConversationId", out var value) && value is string conversationId ? conversationId : null; set => Headers["ConversationId"] = value; }
-    public string? InitiatorId { get => Headers.TryGetValue("InitiatorId", out var value) && value is string initiatorId ? initiatorId : null; set => Headers["InitiatorId"] = value; }
+    public string? MessageId { get; private set; }
+    public string? ConversationId { get => Headers.TryGetValue("ConversationId", out var value) && value is string conversationId ? conversationId : null; private set => Headers["ConversationId"] = value; }
+    public string? InitiatorId { get => Headers.TryGetValue("InitiatorId", out var value) && value is string initiatorId ? initiatorId : null; private set => Headers["InitiatorId"] = value; }
     public Uri? SourceAddress { get => Headers.TryGetValue("SourceAddress", out var value) && value is string sourceAddress ? new Uri(sourceAddress) : null; set => Headers["SourceAddress"] = MapUriToString(value); }
     public Uri? DestinationAddress { get => Headers.TryGetValue("DestinationAddress", out var value) && value is string destinationAddress ? new Uri(destinationAddress) : null; set => Headers["DestinationAddress"] = MapUriToString(value); }
-    public Uri? ResponseAddress { get => Headers.TryGetValue("ResponseAddress", out var value) && value is string responseAddress ? new Uri(responseAddress) : null; set => Headers["ResponseAddress"] = MapUriToString(value); }
-    public Uri? FaultAddress { get => Headers.TryGetValue("FaultAddress", out var value) && value is string faultAddress ? new Uri(faultAddress) : null; set => Headers["FaultAddress"] = MapUriToString(value); }
+    public Uri? ResponseAddress { get => Headers.TryGetValue("ResponseAddress", out var value) && value is string responseAddress ? new Uri(responseAddress) : null; private set => Headers["ResponseAddress"] = MapUriToString(value); }
+    public Uri? FaultAddress { get => Headers.TryGetValue("FaultAddress", out var value) && value is string faultAddress ? new Uri(faultAddress) : null; private set => Headers["FaultAddress"] = MapUriToString(value); }
 
     public void AddHeader(string key, object? value) => Headers[key] = value;
     public void AddHeaders(IDictionary<string, object?> headers)
@@ -25,6 +25,11 @@ internal class PublishContext : IPublishContext
     }
     public void SetRoutingKey(string routingKey) => RoutingKey = routingKey;
     public void SetCorrelationId(string correlationId) => CorrelationId = correlationId;
+    public void SetMessageId(string messageId) => MessageId = messageId;
+    public void SetConversationId(string conversationId) => ConversationId = conversationId;
+    public void SetInitiatorId(string initiatorId) => InitiatorId = initiatorId;
+    public void SetResponseAddress(Uri responseAddress) => ResponseAddress = responseAddress;
+    public void SetFaultAddress(Uri faultAddress) => FaultAddress = faultAddress;
     private static string? MapUriToString(Uri? uri)
     {
         if (uri is null)

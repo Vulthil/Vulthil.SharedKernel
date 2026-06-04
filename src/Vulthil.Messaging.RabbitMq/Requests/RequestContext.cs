@@ -6,9 +6,5 @@ internal sealed class RequestContext : PublishContext, IRequestContext
 {
     internal TimeSpan? Timeout { get; private set; }
 
-    public IRequestContext SetTimeout(TimeSpan timeout)
-    {
-        Timeout = timeout;
-        return this;
-    }
+    public void SetTimeout(TimeSpan timeout) => Timeout = timeout;
 }

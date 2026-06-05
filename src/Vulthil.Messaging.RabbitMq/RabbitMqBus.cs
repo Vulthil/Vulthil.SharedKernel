@@ -102,6 +102,16 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     {
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
+        // The fault exchange is a shared topic exchange: every terminal consume failure publishes a Fault<T>
+        // here by convention with the faulted message's URN as the routing key, so a subscriber binds its queue
+        // with "#" to observe all faults or with a specific URN to filter by faulted message type.
+        await channel.ExchangeDeclareAsync(
+            exchange: _messageConfigurationProvider.FaultExchangeName,
+            type: ExchangeType.Topic,
+            durable: true,
+            autoDelete: false,
+            cancellationToken: cancellationToken);
+
         foreach (var queue in queues)
         {
             await SetupQueueTopology(queue, channel, cancellationToken);

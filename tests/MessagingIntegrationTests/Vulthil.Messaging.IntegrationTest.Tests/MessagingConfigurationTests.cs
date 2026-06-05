@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using RabbitMQ.Client;
 using Vulthil.Extensions.Testing;
 using Vulthil.Messaging.IntegrationTest.Contracts;
@@ -205,6 +206,50 @@ public sealed class MessagingConfigurationTests(AppHostFixture fixture)
 
         var attempts = await fixture.ConsumerClient.GetFromJsonAsync<int>($"/api/attempts/{command.Id}", cancellationToken);
         attempts.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task PoisonConsumerPublishesAFaultToTheFaultExchangeByConvention()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        var connectionString = await fixture.GetRabbitMqConnectionStringAsync(cancellationToken);
+        connectionString.ShouldNotBeNull();
+
+        var factory = new ConnectionFactory { Uri = new Uri(connectionString) };
+        await using var connection = await factory.CreateConnectionAsync(cancellationToken);
+        await using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
+
+        // Bind an observer queue to the fault exchange BEFORE sending, so the by-convention broadcast is captured.
+        var observer = await channel.QueueDeclareAsync(cancellationToken: cancellationToken);
+        await channel.QueueBindAsync(observer.QueueName, "Fault.Exchange", "#", cancellationToken: cancellationToken);
+
+        var command = new PoisonCommand(Guid.NewGuid());
+        using var sendResponse = await fixture.ProducerClient.PostAsJsonAsync(
+            "/api/send-poison",
+            command,
+            cancellationToken);
+        sendResponse.IsSuccessStatusCode.ShouldBeTrue();
+
+        var faultResult = await Polling.WaitAsync(
+            PollTimeout,
+            async ct =>
+            {
+                var message = await channel.BasicGetAsync(observer.QueueName, autoAck: true, ct);
+                if (message is null)
+                {
+                    return Result.Failure<bool>(Error.NotFound("Fault.Empty", "No fault published yet."));
+                }
+
+                var body = Encoding.UTF8.GetString(message.Body.Span);
+                return body.Contains(command.Id.ToString(), StringComparison.OrdinalIgnoreCase)
+                    ? Result.Success(true)
+                    : Result.Failure<bool>(Error.NotFound("Fault.Mismatch", "Fault for another message."));
+            },
+            PollInterval,
+            cancellationToken);
+
+        faultResult.IsSuccess.ShouldBeTrue();
     }
 
     [Fact]

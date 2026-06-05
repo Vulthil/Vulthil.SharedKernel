@@ -172,7 +172,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// <summary>
     /// Re-invokes the consumer in-process up to the policy's retry count, holding the delivery (and, on a
     /// partitioned queue, its lane) so a later message cannot overtake the one being retried. Each attempt
-    /// runs in a fresh scope. On exhaustion the message is faulted (if requested) and nacked for dead-lettering.
+    /// runs in a fresh scope. On exhaustion a fault is published and the message is nacked for dead-lettering.
     /// </summary>
     private async Task ExecuteWithInMemoryRetryAsync(RetryPolicyDefinition policy, PreparedDelivery prepared, BasicDeliverEventArgs ea, Activity? activity)
     {
@@ -201,7 +201,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                     activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
                     activity?.AddException(ex);
                     MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey);
-                    await PublishFaultIfRequestedAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>());
+                    await PublishFaultAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>(), prepared.DiagnosticTypeName);
                     await NackAsync(ea);
                     return;
                 }
@@ -257,7 +257,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         if (policy is null)
         {
             MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-            await PublishFaultIfRequestedAsync(ex, ea, headers);
+            await PublishFaultAsync(ex, ea, headers, messageTypeName);
             await NackAsync(ea);
             return;
         }
@@ -281,17 +281,20 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
 
         MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-        await PublishFaultIfRequestedAsync(ex, ea, headers);
+        await PublishFaultAsync(ex, ea, headers, messageTypeName);
         await NackAsync(ea);
     }
 
-    private async Task PublishFaultIfRequestedAsync(Exception ex, BasicDeliverEventArgs ea, IDictionary<string, object?> headers)
+    /// <summary>
+    /// Publishes a <see cref="Fault{TMessage}"/> for a terminally-failed delivery. When the delivery carries an
+    /// explicit <c>FaultAddress</c> the fault is routed point-to-point to that address (via the broker's default
+    /// exchange); otherwise it is published by convention to the shared fault exchange with the faulted message's
+    /// URN as the routing key. Exactly one fault is emitted per failure. Publishing is best-effort: a failure to
+    /// publish the fault is logged and never disrupts settling the original delivery.
+    /// </summary>
+    private async Task PublishFaultAsync(Exception ex, BasicDeliverEventArgs ea, IDictionary<string, object?> headers, string messageTypeName)
     {
-        var faultAddressKey = RabbitMqConstants.GetHeaderString(headers, "FaultAddress");
-        if (string.IsNullOrEmpty(faultAddressKey))
-        {
-            return;
-        }
+        var (exchange, routingKey) = ResolveFaultRoute(headers, _messageConfigurationProvider.FaultExchangeName, messageTypeName);
 
         try
         {
@@ -315,12 +318,29 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             };
 
-            await OnChannelAsync(() => _channel.BasicPublishAsync(_messageConfigurationProvider.FaultExchangeName, faultAddressKey, false, faultProps, faultBody));
+            await OnChannelAsync(() => _channel.BasicPublishAsync(exchange, routingKey, false, faultProps, faultBody));
         }
         catch (Exception faultEx)
         {
-            MessagingLog.FaultPublishFailed(_logger, faultEx, _messageConfigurationProvider.FaultExchangeName, faultAddressKey);
+            MessagingLog.FaultPublishFailed(_logger, faultEx, exchange, routingKey);
         }
+    }
+
+    /// <summary>
+    /// Resolves the broker route for a fault. A delivery carrying an explicit <c>FaultAddress</c> routes
+    /// point-to-point through the broker's default exchange (empty exchange, the address's queue name as the
+    /// routing key); otherwise the fault is published by convention to <paramref name="faultExchangeName"/> with
+    /// the faulted message's URN (<paramref name="messageTypeName"/>) as the routing key.
+    /// </summary>
+    internal static (string Exchange, string RoutingKey) ResolveFaultRoute(
+        IDictionary<string, object?> headers,
+        string faultExchangeName,
+        string messageTypeName)
+    {
+        var faultAddress = RabbitMqConstants.GetHeaderUri(headers, "FaultAddress");
+        return faultAddress is null
+            ? (faultExchangeName, messageTypeName)
+            : (string.Empty, RabbitMqAddress.ResolveRoutingKey(faultAddress) ?? string.Empty);
     }
 
     private static RetryPolicyDefinition? GetPolicy(RabbitMqPlan? plan, QueueDefinition queue)

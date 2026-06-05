@@ -404,6 +404,46 @@ execution modes:
 On exhaustion the message is dead-lettered (when a dead-letter queue is configured) in both
 modes.
 
+## Faults
+
+When a consumed message fails terminally — every retry exhausted — a `Fault<T>` is published
+**by convention** to a shared topic exchange (default `Fault.Exchange`, configurable via
+`Messaging:Options:FaultExchangeName`). No per-message opt-in by the producer is required, so faults
+are observable broker-side without changing any producer. The faulted message's URN is the routing
+key, so an operator binds a queue to the fault exchange — `#` for every fault, or a specific URN to
+filter by faulted message type — and reads the payload. The fault body is a `Fault<T>` JSON document
+(the AMQP `type` is `Fault<{original-urn}>`):
+
+```csharp
+public record Fault<TMessage> where TMessage : notnull
+{
+    public required TMessage Message { get; init; }            // the original message body
+    public required string ExceptionMessage { get; init; }
+    public required string? StackTrace { get; init; }
+    public required string ExceptionType { get; init; }
+    public required DateTimeOffset FaultedAt { get; init; }
+    public required MessageContextSnapshot OriginalContext { get; init; } // original transport metadata
+}
+```
+
+The fault exchange is a diagnostics/observability broadcast — drain it with a monitoring service or
+any AMQP consumer bound to the exchange — rather than a typed `IConsumer<Fault<T>>` endpoint.
+
+A message can override the routing per-message: if it carries an explicit `FaultAddress`, the fault is
+routed **point-to-point** to that address (through the broker's default exchange) instead of being
+broadcast to the fault exchange — exactly one fault is emitted either way. Set it on publish:
+
+```csharp
+await publisher.PublishAsync(new OrderCreatedEvent(orderId), ctx =>
+{
+    ctx.SetFaultAddress(new Uri("queue:order-faults"));
+    return ValueTask.CompletedTask;
+});
+```
+
+Fault publishing is best-effort: a failure to publish the fault is logged and never prevents the
+original delivery from being settled (nacked for dead-lettering).
+
 ## Routing Keys
 
 Routing keys flow through two distinct configuration sites, one on each side of the wire:

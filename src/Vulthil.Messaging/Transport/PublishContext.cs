@@ -25,13 +25,13 @@ public class PublishContext : IPublishContext
     /// <summary>Gets the identifier of the message that initiated this chain, or <see langword="null"/> if none was set.</summary>
     public string? InitiatorId { get => _headers.TryGetValue("InitiatorId", out var value) && value is string initiatorId ? initiatorId : null; private set => _headers["InitiatorId"] = value; }
     /// <summary>Gets or sets the address of the endpoint that produced the message; stamped by the transport.</summary>
-    public Uri? SourceAddress { get => _headers.TryGetValue("SourceAddress", out var value) && value is string sourceAddress ? new Uri(sourceAddress) : null; set => _headers["SourceAddress"] = MapUriToString(value); }
+    public Uri? SourceAddress { get => MapStringToUri("SourceAddress"); set => _headers["SourceAddress"] = MapUriToString(value); }
     /// <summary>Gets or sets the address of the endpoint the message is sent to; stamped by the transport.</summary>
-    public Uri? DestinationAddress { get => _headers.TryGetValue("DestinationAddress", out var value) && value is string destinationAddress ? new Uri(destinationAddress) : null; set => _headers["DestinationAddress"] = MapUriToString(value); }
+    public Uri? DestinationAddress { get => MapStringToUri("DestinationAddress"); set => _headers["DestinationAddress"] = MapUriToString(value); }
     /// <summary>Gets the address where replies should be sent, or <see langword="null"/> if none was set.</summary>
-    public Uri? ResponseAddress { get => _headers.TryGetValue("ResponseAddress", out var value) && value is string responseAddress ? new Uri(responseAddress) : null; private set => _headers["ResponseAddress"] = MapUriToString(value); }
+    public Uri? ResponseAddress { get => MapStringToUri("ResponseAddress"); private set => _headers["ResponseAddress"] = MapUriToString(value); }
     /// <summary>Gets the address where fault notifications should be sent, or <see langword="null"/> if none was set.</summary>
-    public Uri? FaultAddress { get => _headers.TryGetValue("FaultAddress", out var value) && value is string faultAddress ? new Uri(faultAddress) : null; private set => _headers["FaultAddress"] = MapUriToString(value); }
+    public Uri? FaultAddress { get => MapStringToUri("FaultAddress"); private set => _headers["FaultAddress"] = MapUriToString(value); }
 
     /// <inheritdoc />
     public void AddHeader(string key, object? value) => _headers[key] = value;
@@ -66,5 +66,15 @@ public class PublishContext : IPublishContext
         }
 
         return uri.Scheme == "queue" ? uri.LocalPath.TrimStart('/') : uri.ToString();
+    }
+
+    private Uri? MapStringToUri(string key)
+    {
+        if (!_headers.TryGetValue(key, out var value) || value is not string stored || string.IsNullOrWhiteSpace(stored))
+        {
+            return null;
+        }
+
+        return Uri.TryCreate(stored, UriKind.Absolute, out var uri) ? uri : new Uri($"queue:{stored}");
     }
 }

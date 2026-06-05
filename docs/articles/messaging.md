@@ -917,13 +917,23 @@ var reply = new MessageEnvelope
 
 ## Testing Messaging
 
-`Vulthil.Messaging.TestHarness` provides an in-memory transport that captures
-published messages for assertion:
+`Vulthil.Messaging.TestHarness` provides an in-memory transport that runs your consumers with no broker and
+captures produced and consumed messages for assertion. Compose it with `UseTestHarness()` (in place of a broker
+transport) or swap an existing transport in an integration test with `ReplaceTransportWithTestHarness()`:
 
 ```csharp
-var published = testHarness.Published<OrderCreatedEvent>();
-Assert.Single(published);
-Assert.Equal(expectedOrderId, published.First().Message.OrderId);
+builder.AddMessaging(messaging =>
+{
+    messaging.ConfigureQueue("orders", q => q.AddConsumer<OrderCreatedConsumer>());
+    messaging.UseTestHarness();
+});
+
+// ...after building the host and publishing:
+var harness = host.Services.GetRequiredService<ITestHarness>();
+harness.Published<OrderCreatedEvent>().ShouldHaveSingleItem().Message.OrderId.ShouldBe(expectedOrderId);
+harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 ```
 
-See [Testing](testing.md) for more details on integration test setup.
+The harness is built entirely on the `Vulthil.Messaging.Transport` SDK above, so it is also a worked example of a
+custom transport. See [Testing](testing.md#messaging-test-harness) for the full API (`Published`/`Sent`/
+`Consumed`/`Requested`, the `Respond`/`Handle` response stubs, and the integration-test swap).

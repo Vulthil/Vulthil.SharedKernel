@@ -182,12 +182,71 @@ Mock state is reset after each test (like the database), so stubs and captured r
 
 ## Messaging Test Harness
 
-Replace the real transport with the test harness to assert messaging behaviour without a broker:
+`Vulthil.Messaging.TestHarness` provides an in-memory transport that runs your consumers with no broker and
+captures every produced and consumed message for assertion. It is built entirely on the public
+`Vulthil.Messaging.Transport` SDK, so it mirrors the real consumer topology assembled from your queue
+configuration. Dispatch is synchronous — by the time a publish/send/request call returns, every consumer (and
+stub) it triggered has run, so assertions need no polling.
+
+### Composing a harness (unit/component tests)
+
+Call `UseTestHarness()` in place of a broker transport, then resolve `ITestHarness` alongside the usual
+`IPublisher`/`ISendEndpoint`/`IRequester`:
 
 ```csharp
-var published = testHarness.Published<OrderCreatedEvent>();
-Assert.Single(published);
-Assert.Equal(expectedOrderId, published.First().Message.OrderId);
+var builder = Host.CreateApplicationBuilder();
+builder.AddMessaging(messaging =>
+{
+    messaging.ConfigureQueue("orders", q => q.AddConsumer<OrderCreatedConsumer>());
+    messaging.UseTestHarness();
+});
+using var host = builder.Build();
+
+var publisher = host.Services.GetRequiredService<IPublisher>();
+var harness = host.Services.GetRequiredService<ITestHarness>();
+
+await publisher.PublishAsync(new OrderCreatedEvent(orderId));
+
+harness.Published<OrderCreatedEvent>().ShouldHaveSingleItem().Message.OrderId.ShouldBe(orderId);
+harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 ```
+
+`ITestHarness` exposes `Published<T>()`, `Sent<T>()`, `Consumed<T>()`, and `Requested<T>()` (each returns the
+matching `CapturedMessage<T>` items — `.Message` is the payload, `.Envelope` the wire metadata), plus `Clear()`.
+
+### Mocking responses
+
+A test can stand in for an external service. `Respond<TRequest, TResponse>` answers a request (taking precedence
+over a real request consumer), and `Handle<TMessage>` reacts to a published or sent message — useful to fake a
+downstream service that publishes a follow-up:
+
+```csharp
+harness.Respond<GetWeatherRequest, WeatherForecast>(ctx => new WeatherForecast(ctx.Message.City, 20));
+harness.Handle<OrderShippedEvent>(ctx => { observed.Add(ctx.Message.OrderId); return Task.CompletedTask; });
+
+var result = await requester.RequestAsync<GetWeatherRequest, WeatherForecast>(new GetWeatherRequest("Oslo"));
+result.Value.TemperatureC.ShouldBe(20);
+```
+
+A request with neither a responder nor a registered request consumer completes with a
+`Messaging.Request.NoConsumer` failure; a request consumer that throws surfaces as a `Messaging.Request.Failure`.
+
+### Swapping the transport in integration tests
+
+To exercise the production composition root without a broker, call `ReplaceTransportWithTestHarness()` from the
+test host's service hook (for example a `WebApplicationFactory`). It swaps the registered transport for the
+harness and leaves the rest of the application untouched — production code is not modified for tests:
+
+```csharp
+public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
+{
+    protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
+        => builder.ConfigureServices(services => services.ReplaceTransportWithTestHarness());
+}
+```
+
+The orphaned broker registrations remain but are never resolved, so no connection is attempted. Disable the
+broker's own health check via configuration (for example `Aspire:RabbitMQ:Client:DisableHealthChecks`) if a
+readiness probe would otherwise wait on it.
 
 See [Messaging](messaging.md) for more on the messaging architecture.

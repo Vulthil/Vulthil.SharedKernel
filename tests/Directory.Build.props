@@ -3,7 +3,7 @@
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
-		<NoWarn>$(NoWarn);CS1591;S125</NoWarn>
+		<NoWarn>$(NoWarn);CS1591;S125;CA1034</NoWarn>
 	</PropertyGroup>
 
 </Project>

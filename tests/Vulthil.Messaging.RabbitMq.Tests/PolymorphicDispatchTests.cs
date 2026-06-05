@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
@@ -16,7 +15,10 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
 
     public PolymorphicDispatchTests()
     {
-        Use<IMessageConfigurationProvider>(TestProviders.Build());
+        Use(TestProviders.Build());
+        Use<IEnumerable<IConsumeFilter<OrderPlaced>>>([]);
+        Use<IEnumerable<IConsumeFilter<IOrder>>>([]);
+        Use<IEnumerable<IConsumeFilter<IOrderEvent>>>([]);
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
     }
 
@@ -28,13 +30,9 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
         var orderInterfaceHits = 0;
         var orderEventInterfaceHits = 0;
 
-        var services = new ServiceCollection();
-        services.AddScoped(_ => new ConcreteConsumer(() => concreteHits++));
-        services.AddScoped(_ => new OrderInterfaceConsumer(() => orderInterfaceHits++));
-        services.AddScoped(_ => new OrderEventInterfaceConsumer(() => orderEventInterfaceHits++));
-        services.AddSingleton(Mock.Of<IPublisher>());
-        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        var serviceProvider = services.BuildServiceProvider();
+        Use(new ConcreteConsumer(() => concreteHits++));
+        Use(new OrderInterfaceConsumer(() => orderInterfaceHits++));
+        Use(new OrderEventInterfaceConsumer(() => orderEventInterfaceHits++));
 
         var queue = new QueueDefinition("orders");
         queue.AddSubscription(new Subscription(new MessageType(typeof(OrderPlaced))));
@@ -65,7 +63,7 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
         // Act
         foreach (var handler in plan.Handlers)
         {
-            await handler.DispatchAsync(serviceProvider, message, ea, (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
+            await handler.DispatchAsync(AutoMocker, message, ea, (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
         }
 
         // Assert

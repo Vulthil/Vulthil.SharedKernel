@@ -1,9 +1,7 @@
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
 using Vulthil.Messaging.Transport;
@@ -14,11 +12,15 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 {
     private readonly Lazy<MessageTypeCache> _lazyTarget;
+    private readonly Mock<IChannel> _channelMock;
     private MessageTypeCache Target => _lazyTarget.Value;
 
     public ConsumeFilterPipelineTests()
     {
-        Use<IMessageConfigurationProvider>(TestProviders.Build());
+        Use(TestProviders.Build());
+        Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
+        Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
+        _channelMock = GetMock<IChannel>();
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
     }
 
@@ -92,11 +94,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
     {
         // Arrange
         var consumerInstance = new RecordingConsumer();
-        var services = new ServiceCollection();
-        services.AddScoped(_ => consumerInstance);
-        services.AddSingleton(Mock.Of<IPublisher>());
-        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        var serviceProvider = services.BuildServiceProvider();
+        Use(consumerInstance);
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(new ConsumerRegistration
@@ -109,7 +107,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
         // Act
-        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
+        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _channelMock.Object, CancellationToken.None);
 
         // Assert
         consumerInstance.Received.ShouldHaveSingleItem().Content.ShouldBe("payload");
@@ -121,14 +119,12 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         // Arrange
         var trace = new List<string>();
         var consumerInstance = new RecordingConsumer();
-        var services = new ServiceCollection();
-        services.AddScoped(_ => consumerInstance);
-        services.AddSingleton(Mock.Of<IPublisher>());
-        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        // Order matters: First registered should be outermost.
-        services.AddScoped<IConsumeFilter<TestMessage>>(_ => new RecordingFilter<TestMessage>(trace, "outer"));
-        services.AddScoped<IConsumeFilter<TestMessage>>(_ => new RecordingFilter<TestMessage>(trace, "inner"));
-        var serviceProvider = services.BuildServiceProvider();
+        Use(consumerInstance);
+        // Order matters: the first filter in the list is the outermost.
+        Use<IEnumerable<IConsumeFilter<TestMessage>>>([
+            new RecordingFilter<TestMessage>(trace, "outer"),
+            new RecordingFilter<TestMessage>(trace, "inner"),
+        ]);
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(new ConsumerRegistration
@@ -141,7 +137,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
         // Act
-        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
+        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _channelMock.Object, CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["outer:before", "inner:before", "inner:after", "outer:after"]);
@@ -154,13 +150,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         // Arrange
         var trace = new List<string>();
         var consumerInstance = new RecordingConsumer();
-        var services = new ServiceCollection();
-        services.AddScoped(_ => consumerInstance);
-        services.AddSingleton(Mock.Of<IPublisher>());
-        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        services.AddScoped<IConsumeFilter<TestMessage>>(_ =>
-            new RecordingFilter<TestMessage>(trace, "gate") { ShortCircuit = true });
-        var serviceProvider = services.BuildServiceProvider();
+        Use(consumerInstance);
+        Use<IEnumerable<IConsumeFilter<TestMessage>>>([new RecordingFilter<TestMessage>(trace, "gate") { ShortCircuit = true }]);
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(new ConsumerRegistration
@@ -173,7 +164,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
         // Act
-        await handler.DispatchAsync(serviceProvider, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
+        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _channelMock.Object, CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["gate:before", "gate:short-circuit"]);
@@ -186,13 +177,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         // Arrange
         var trace = new List<string>();
         var consumerInstance = new RecordingRequestConsumer();
-        var services = new ServiceCollection();
-        services.AddScoped(_ => consumerInstance);
-        services.AddSingleton(Mock.Of<IPublisher>());
-        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        services.AddSingleton<IMessageConfigurationProvider>(TestProviders.Build());
-        services.AddScoped<IConsumeFilter<TestRequest>>(_ => new RecordingFilter<TestRequest>(trace, "log"));
-        var serviceProvider = services.BuildServiceProvider();
+        Use(consumerInstance);
+        Use<IEnumerable<IConsumeFilter<TestRequest>>>([new RecordingFilter<TestRequest>(trace, "log")]);
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(new RequestConsumerRegistration
@@ -205,9 +191,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
-        var channel = GetMock<IChannel>();
         ReadOnlyMemory<byte> publishedBody = default;
-        channel.Setup(x => x.BasicPublishAsync(
+        _channelMock.Setup(x => x.BasicPublishAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
@@ -222,11 +207,11 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         // Act
         await handler.DispatchAsync(
-            serviceProvider,
+            AutoMocker,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply", correlationId: "corr-1"),
             (MessageEnvelope?)null,
-            channel.Object,
+            _channelMock.Object,
             CancellationToken.None);
 
         // Assert
@@ -245,14 +230,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
     {
         // Arrange
         var consumerInstance = new RecordingRequestConsumer();
-        var services = new ServiceCollection();
-        services.AddScoped(_ => consumerInstance);
-        services.AddSingleton(Mock.Of<IPublisher>());
-        services.AddSingleton(Mock.Of<ISendEndpointProvider>());
-        services.AddSingleton<IMessageConfigurationProvider>(TestProviders.Build());
-        services.AddScoped<IConsumeFilter<TestRequest>>(_ =>
-            new RecordingFilter<TestRequest>([], "gate") { ShortCircuit = true });
-        var serviceProvider = services.BuildServiceProvider();
+        Use(consumerInstance);
+        Use<IEnumerable<IConsumeFilter<TestRequest>>>([new RecordingFilter<TestRequest>([], "gate") { ShortCircuit = true }]);
 
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(new RequestConsumerRegistration
@@ -265,9 +244,8 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
-        var channel = GetMock<IChannel>();
         ReadOnlyMemory<byte> publishedBody = default;
-        channel.Setup(x => x.BasicPublishAsync(
+        _channelMock.Setup(x => x.BasicPublishAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<bool>(),
@@ -282,11 +260,11 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         // Act
         await handler.DispatchAsync(
-            serviceProvider,
+            AutoMocker,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply"),
             (MessageEnvelope?)null,
-            channel.Object,
+            _channelMock.Object,
             CancellationToken.None);
 
         // Assert

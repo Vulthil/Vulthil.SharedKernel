@@ -24,8 +24,10 @@ public interface IMessagingOptionsConfigurator
     TimeSpan DefaultTimeout { get; set; }
 
     /// <summary>
-    /// Gets or sets the name of the exchange to which faults are published when a consumed message
-    /// carries a <c>FaultAddress</c> header. Default is <c>"Fault.Exchange"</c>.
+    /// Gets or sets the name of the shared topic exchange to which a <c>Fault&lt;T&gt;</c> is published by
+    /// convention whenever a consumed message fails terminally (after retries are exhausted), using the faulted
+    /// message's URN as the routing key. A delivery that carries an explicit <c>FaultAddress</c> is routed
+    /// point-to-point to that address instead. Default is <c>"Fault.Exchange"</c>.
     /// </summary>
     string FaultExchangeName { get; set; }
 

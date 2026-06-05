@@ -124,6 +124,8 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             builder.UseSetting($"ConnectionStrings:{container.ConnectionStringKey}", connectionString);
         }
 
+        ConfigureCustomWebHost(builder);
+
         builder.ConfigureServices(services =>
         {
             services.Insert(0, ServiceDescriptor.Singleton<IHostedService>(
@@ -134,8 +136,6 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
                 configureHttpClient(services);
             }
         });
-
-        ConfigureCustomWebHost(builder);
     }
 
     /// <summary>

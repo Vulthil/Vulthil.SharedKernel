@@ -404,6 +404,46 @@ execution modes:
 On exhaustion the message is dead-lettered (when a dead-letter queue is configured) in both
 modes.
 
+## Faults
+
+When a consumed message fails terminally — every retry exhausted — a `Fault<T>` is published
+**by convention** to a shared topic exchange (default `Fault.Exchange`, configurable via
+`Messaging:Options:FaultExchangeName`). No per-message opt-in by the producer is required, so faults
+are observable broker-side without changing any producer. The faulted message's URN is the routing
+key, so an operator binds a queue to the fault exchange — `#` for every fault, or a specific URN to
+filter by faulted message type — and reads the payload. The fault body is a `Fault<T>` JSON document
+(the AMQP `type` is `Fault<{original-urn}>`):
+
+```csharp
+public record Fault<TMessage> where TMessage : notnull
+{
+    public required TMessage Message { get; init; }            // the original message body
+    public required string ExceptionMessage { get; init; }
+    public required string? StackTrace { get; init; }
+    public required string ExceptionType { get; init; }
+    public required DateTimeOffset FaultedAt { get; init; }
+    public required MessageContextSnapshot OriginalContext { get; init; } // original transport metadata
+}
+```
+
+The fault exchange is a diagnostics/observability broadcast — drain it with a monitoring service or
+any AMQP consumer bound to the exchange — rather than a typed `IConsumer<Fault<T>>` endpoint.
+
+A message can override the routing per-message: if it carries an explicit `FaultAddress`, the fault is
+routed **point-to-point** to that address (through the broker's default exchange) instead of being
+broadcast to the fault exchange — exactly one fault is emitted either way. Set it on publish:
+
+```csharp
+await publisher.PublishAsync(new OrderCreatedEvent(orderId), ctx =>
+{
+    ctx.SetFaultAddress(new Uri("queue:order-faults"));
+    return ValueTask.CompletedTask;
+});
+```
+
+Fault publishing is best-effort: a failure to publish the fault is logged and never prevents the
+original delivery from being settled (nacked for dead-lettering).
+
 ## Routing Keys
 
 Routing keys flow through two distinct configuration sites, one on each side of the wire:
@@ -877,13 +917,23 @@ var reply = new MessageEnvelope
 
 ## Testing Messaging
 
-`Vulthil.Messaging.TestHarness` provides an in-memory transport that captures
-published messages for assertion:
+`Vulthil.Messaging.TestHarness` provides an in-memory transport that runs your consumers with no broker and
+captures produced and consumed messages for assertion. Compose it with `UseTestHarness()` (in place of a broker
+transport) or swap an existing transport in an integration test with `ReplaceTransportWithTestHarness()`:
 
 ```csharp
-var published = testHarness.Published<OrderCreatedEvent>();
-Assert.Single(published);
-Assert.Equal(expectedOrderId, published.First().Message.OrderId);
+builder.AddMessaging(messaging =>
+{
+    messaging.ConfigureQueue("orders", q => q.AddConsumer<OrderCreatedConsumer>());
+    messaging.UseTestHarness();
+});
+
+// ...after building the host and publishing:
+var harness = host.Services.GetRequiredService<ITestHarness>();
+harness.Published<OrderCreatedEvent>().ShouldHaveSingleItem().Message.OrderId.ShouldBe(expectedOrderId);
+harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 ```
 
-See [Testing](testing.md) for more details on integration test setup.
+The harness is built entirely on the `Vulthil.Messaging.Transport` SDK above, so it is also a worked example of a
+custom transport. See [Testing](testing.md#messaging-test-harness) for the full API (`Published`/`Sent`/
+`Consumed`/`Requested`, the `Respond`/`Handle` response stubs, and the integration-test swap).

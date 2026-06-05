@@ -85,6 +85,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Vulthil.Messaging.Abstractions.Tests/Vulthil.Messaging.Abstractions.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.TestHarness.Tests/Vulthil.Messaging.TestHarness.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Tests/Vulthil.Messaging.Tests.csproj" />
     <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />

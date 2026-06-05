@@ -13,6 +13,7 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
     private const string SingleActiveConsumerArgument = "x-single-active-consumer";
 
     private readonly Dictionary<string, IDictionary<string, object?>> _declaredQueues = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _declaredExchanges = new(StringComparer.Ordinal);
 
     private readonly Lazy<RabbitMqBus> _lazyTarget;
     private RabbitMqBus Target => _lazyTarget.Value;
@@ -27,6 +28,13 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
             .Callback((string queue, bool _, bool _, bool _, IDictionary<string, object?> arguments, bool _, bool _, CancellationToken _) =>
                 _declaredQueues[queue] = arguments)
             .ReturnsAsync(new QueueDeclareOk("queue", 0, 0));
+        channel
+            .Setup(c => c.ExchangeDeclareAsync(
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.IsAny<IDictionary<string, object?>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .Callback((string exchange, string type, bool _, bool _, IDictionary<string, object?> _, bool _, bool _, CancellationToken _) =>
+                _declaredExchanges[exchange] = type)
+            .Returns(Task.CompletedTask);
         channel
             .Setup(c => c.BasicConsumeAsync(
                 It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(),
@@ -91,6 +99,19 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
 
         // Assert
         _declaredQueues["sole"][SingleActiveConsumerArgument].ShouldBe(true);
+    }
+
+    [Fact]
+    public async Task FaultExchangeIsDeclaredAsADurableTopicExchange()
+    {
+        // Arrange
+        var provider = ProviderConsumingOrderedEvents("plain");
+
+        // Act
+        await DeclareTopologyAsync(provider);
+
+        // Assert
+        _declaredExchanges.ShouldContainKeyAndValue("Fault.Exchange", ExchangeType.Topic);
     }
 
     [Fact]

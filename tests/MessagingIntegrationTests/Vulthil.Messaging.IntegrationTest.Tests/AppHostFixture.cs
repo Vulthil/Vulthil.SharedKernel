@@ -27,8 +27,8 @@ public sealed class AppHostFixture : IAsyncLifetime
         await _app.ResourceNotifications.WaitForResourceHealthyAsync("producer", startupCts.Token);
         await _app.ResourceNotifications.WaitForResourceHealthyAsync("consumer", startupCts.Token);
 
-        _producerClient = _app.CreateHttpClient("producer");
-        _consumerClient = _app.CreateHttpClient("consumer");
+        _producerClient = _app.CreateHttpClient("producer", "http");
+        _consumerClient = _app.CreateHttpClient("consumer", "http");
     }
 
     public async ValueTask DisposeAsync()

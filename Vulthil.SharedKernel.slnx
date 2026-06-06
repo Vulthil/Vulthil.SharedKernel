@@ -103,5 +103,6 @@
   </Folder>
   <Folder Name="/tests/Test Items/">
     <File Path="tests/Directory.Build.props" />
+    <File Path="tests/Vulthil.TestRunner.props" />
   </Folder>
 </Solution>

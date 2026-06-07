@@ -12,7 +12,7 @@ using WebApi.Infrastructure.Data;
 namespace WebApi.Infrastructure.Migrations
 {
     [DbContext(typeof(WebApiDbContext))]
-    [Migration("20260607180915_AddInboxMessages")]
+    [Migration("20260607184438_AddInboxMessages")]
     partial class AddInboxMessages
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace WebApi.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Vulthil.Messaging.Inbox.Relational.InboxMessage", b =>
+            modelBuilder.Entity("Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage", b =>
                 {
                     b.Property<string>("MessageId")
                         .HasMaxLength(256)

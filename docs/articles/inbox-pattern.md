@@ -23,7 +23,10 @@ The guarantee depends on the store implementation:
 | Store | Guarantee |
 |---|---|
 | Relational (`Vulthil.Messaging.Inbox.Relational`) | **Transactional exactly-once** — the marker and the consumer's writes commit in one transaction. |
-| Non-transactional (e.g. Cosmos across partitions) | **Effectively-once** — best-effort deduplication layered over idempotent-by-design writes. There is no cross-partition atomicity to rely on. |
+| Cosmos (`Vulthil.Messaging.Inbox.Cosmos`) | **Effectively-once** — best-effort deduplication layered over idempotent-by-design writes. Cosmos has no cross-partition atomicity to rely on. |
+
+Both EF Core stores share their entity (`InboxMessage`) and context interface (`ISaveInboxMessages`) via the base
+package `Vulthil.Messaging.Inbox.EntityFrameworkCore`, so you implement `ISaveInboxMessages` once regardless of provider.
 
 ## The Idempotency Key Contract
 
@@ -85,6 +88,21 @@ builder.Services.AddRelationalInbox<AppDbContext>();
 ```
 
 The consumer and the store must share the same scoped `DbContext` instance (the default with `AddDbContext`), so the consumer's writes and the marker enlist in the same transaction. The consumer keeps calling `SaveChanges` as usual — the store owns the transaction, not `SaveChanges`. Add an EF Core migration for the `InboxMessage` table as you would for any entity.
+
+### Cosmos store
+
+The Cosmos store is wired the same way — apply `CosmosInboxMessageEntityConfiguration` and call `AddCosmosInbox<AppDbContext>()`:
+
+```csharp
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+    => modelBuilder.ApplyConfiguration(new CosmosInboxMessageEntityConfiguration());
+```
+
+```csharp
+builder.Services.AddCosmosInbox<AppDbContext>();
+```
+
+The marker is a self-contained document keyed and partitioned by `MessageId` in its own container, so a duplicate insert conflicts and is treated as already-processed. Because Cosmos cannot commit the marker and the business write atomically, the store writes the marker **after** the consumer's own commit and the guarantee is **effectively-once** — keep your consumer's writes idempotent (deterministic ids / upserts) so a redelivery that races ahead of the marker is harmless.
 
 ## Typical Flow
 

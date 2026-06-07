@@ -6,6 +6,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Vulthil.Messaging.Inbox\Vulthil.Messaging.Inbox.csproj" />
+	  <ProjectReference Include="..\Vulthil.Messaging.Inbox.EntityFrameworkCore\Vulthil.Messaging.Inbox.EntityFrameworkCore.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

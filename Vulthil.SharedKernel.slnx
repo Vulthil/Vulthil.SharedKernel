@@ -74,6 +74,8 @@
   </Folder>
   <Folder Name="/src/Messaging/">
     <Project Path="src/Vulthil.Messaging.Abstractions/Vulthil.Messaging.Abstractions.csproj" />
+    <Project Path="src/Vulthil.Messaging.Inbox.Cosmos/Vulthil.Messaging.Inbox.Cosmos.csproj" />
+    <Project Path="src/Vulthil.Messaging.Inbox.EntityFrameworkCore/Vulthil.Messaging.Inbox.EntityFrameworkCore.csproj" />
     <Project Path="src/Vulthil.Messaging.Inbox.Relational/Vulthil.Messaging.Inbox.Relational.csproj" />
     <Project Path="src/Vulthil.Messaging.Inbox/Vulthil.Messaging.Inbox.csproj" />
     <Project Path="src/Vulthil.Messaging.RabbitMq/Vulthil.Messaging.RabbitMq.csproj" />

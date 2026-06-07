@@ -8,4 +8,6 @@ public static class ServiceNames
     public const string WebApiServiceName = "webapi";
 
     public const string WebAppServiceName = "webapp";
+
+    public const string CosmosDbServiceName = "cosmosdb";
 }

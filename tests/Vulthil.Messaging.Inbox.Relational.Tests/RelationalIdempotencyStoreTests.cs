@@ -1,6 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Inbox.Relational.Tests;

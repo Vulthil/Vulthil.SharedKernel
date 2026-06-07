@@ -22,7 +22,7 @@ namespace WebApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Vulthil.Messaging.Inbox.Relational.InboxMessage", b =>
+            modelBuilder.Entity("Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage", b =>
                 {
                     b.Property<string>("MessageId")
                         .HasMaxLength(256)

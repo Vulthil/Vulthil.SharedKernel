@@ -9,24 +9,6 @@ using Xunit.Sdk;
 
 namespace Vulthil.xUnit.Fixtures;
 
-/// <summary>
-/// Fixture that wraps a Testcontainers container and exposes a connection string for integration test configuration.
-/// </summary>
-public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
-    : TestContainerFixture<TBuilderEntity, TContainerEntity>(messageSink), ITestContainerWithConnectionString
-    where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
-    where TContainerEntity : IContainer
-{
-    /// <summary>
-    /// Gets the connection string used to communicate with the containerized service.
-    /// </summary>
-    public abstract string ConnectionString { get; }
-    /// <summary>
-    /// Gets the configuration key name where the connection string should be injected.
-    /// </summary>
-    public abstract string ConnectionStringKey { get; }
-}
-
 
 /// <summary>
 /// Fixture that wraps a database container, applies EF Core migrations, and supports Respawn-based data resets between tests.
@@ -38,7 +20,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     where TContainerEntity : IContainer, IDatabaseContainer
 {
     private const int MaxMigrationAttempts = 10;
-    private static readonly TimeSpan MigrationRetryDelay = TimeSpan.FromMilliseconds(250);
+    private static readonly TimeSpan _migrationRetryDelay = TimeSpan.FromMilliseconds(250);
 
     private Respawner? _respawner;
     private bool _hasBeenMigrated;
@@ -78,7 +60,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
             }
             catch when (attempt < MaxMigrationAttempts)
             {
-                await Task.Delay(MigrationRetryDelay);
+                await Task.Delay(_migrationRetryDelay);
             }
         }
 

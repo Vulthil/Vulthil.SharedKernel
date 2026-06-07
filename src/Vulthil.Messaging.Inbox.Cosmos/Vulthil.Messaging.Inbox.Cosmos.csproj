@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Azure Cosmos DB idempotency store for Vulthil.Messaging.Inbox — effectively-once message processing (best-effort deduplication layered over idempotent-by-design writes). Cosmos has no cross-partition transaction, so it cannot offer the transactional exactly-once the relational store does.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Vulthil.Messaging.Inbox\Vulthil.Messaging.Inbox.csproj" />
+	  <ProjectReference Include="..\Vulthil.Messaging.Inbox.EntityFrameworkCore\Vulthil.Messaging.Inbox.EntityFrameworkCore.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
+	</ItemGroup>
+
+</Project>

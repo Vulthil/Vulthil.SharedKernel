@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 
 namespace Vulthil.Messaging.Inbox.Relational;
 

@@ -98,17 +98,47 @@ Key features:
 
 ### Test Containers
 
-`Vulthil.xUnit` ships container abstractions so you can spin up databases (PostgreSQL, SQL Server, etc.) as Docker containers:
+`Vulthil.xUnit` ships fixture base classes (in the `Vulthil.xUnit.Fixtures` namespace) that wrap [Testcontainers](https://testcontainers.com/) containers so you can spin up databases, message brokers, and other dependencies as Docker containers. There are three levels, depending on what the container needs to expose:
+
+- `TestContainerFixture<TBuilderEntity, TContainerEntity>` – a plain container with a managed lifecycle (`ITestContainer`).
+- `TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>` – adds a connection string that is injected into the host's configuration under `ConnectionStrings:{ConnectionStringKey}` (`ITestContainerWithConnectionString`). Give `ConnectionStringKey` the bare name (e.g. `"AppDb"`); the factory adds the `ConnectionStrings:` prefix.
+- `TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>` – adds EF Core migrations and Respawn-based data reset between tests (`ITestDatabaseContainer`).
+
+A database fixture overrides `Configure()` to build the container and supplies the Respawn `DbAdapter`, the ADO.NET `DbProviderFactory`, and the configuration key its connection string is bound to:
 
 ```csharp
-public sealed class PostgresContainerPool
-    : IDatabaseContainerPool<PostgreSqlContainer>
+internal sealed class PostgresTestContainer(IMessageSink messageSink)
+    : TestDatabaseContainerFixture<AppDbContext, PostgreSqlBuilder, PostgreSqlContainer>(messageSink)
 {
-    // Configure container image, ports, credentials, etc.
+    private readonly PostgreSqlBuilder _builder = new PostgreSqlBuilder("postgres:18.1")
+        .WithPassword("app");
+
+    protected override PostgreSqlBuilder Configure() => _builder;
+
+    protected override IDbAdapter DbAdapter => Respawn.DbAdapter.Postgres;
+    public override DbProviderFactory DbProviderFactory => NpgsqlFactory.Instance;
+    public override string ConnectionStringKey => "AppDb";
 }
 ```
 
-Container pools are shared across tests through xUnit fixtures, so the container is started once and reused.
+A non-database dependency (for example a message broker) uses `TestContainerFixtureWithConnectionString` and provides its own connection string:
+
+```csharp
+public sealed class RabbitMqTestContainer(IMessageSink messageSink)
+    : TestContainerFixtureWithConnectionString<RabbitMqBuilder, RabbitMqContainer>(messageSink)
+{
+    private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4-management")
+        .WithUsername("guest")
+        .WithPassword("guest");
+
+    protected override RabbitMqBuilder Configure() => _builder;
+
+    public override string ConnectionStringKey => "RabbitMq";
+    public override string ConnectionString => Container.GetConnectionString();
+}
+```
+
+Containers are registered on the factory with `AddContainer` (see below), which starts each one once per factory and shares it across the tests in that fixture's scope. Database containers are migrated during host startup and reset with Respawn between tests.
 
 ### WebApplicationFactory
 

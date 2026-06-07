@@ -47,40 +47,6 @@ Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.DatabaseContainers.get -> S
 Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.GetHttpMock(string! name) -> Vulthil.xUnit.Http.IHttpMock!
 Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.GetHttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
 Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
-Vulthil.xUnit.Containers.ContainerWrapper
-Vulthil.xUnit.Containers.ContainerWrapper.Container.get -> DotNet.Testcontainers.Containers.IContainer!
-Vulthil.xUnit.Containers.ContainerWrapper.ContainerWrapper(DotNet.Testcontainers.Containers.IContainer! container) -> void
-Vulthil.xUnit.Containers.ContainerWrapper.DisposeAsync() -> System.Threading.Tasks.ValueTask
-Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>
-Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.ConnectionString.get -> string!
-Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.DatabaseContainer(DotNet.Testcontainers.Containers.IDatabaseContainer! container) -> void
-Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.DbContextType.get -> System.Type!
-Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.HasBeenMigrated.get -> bool
-Vulthil.xUnit.Containers.DatabaseContainer<TDbContext>.MarkMigrated() -> void
-Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>
-Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>.DatabaseContainerWithRespawner(DotNet.Testcontainers.Containers.IDatabaseContainer! container, Respawn.RespawnerOptions! respawnerOptions, System.Func<string!, System.Threading.Tasks.Task<System.Data.Common.DbConnection!>!>! connectionFactory) -> void
-Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>.InitializeRespawner() -> System.Threading.Tasks.Task!
-Vulthil.xUnit.Containers.DatabaseContainerWithRespawner<TDbContext>.ResetAsync() -> System.Threading.Tasks.Task!
-Vulthil.xUnit.Containers.IContainerPool
-Vulthil.xUnit.Containers.IContainerPool.GetContainerAsync() -> System.Threading.Tasks.Task<Vulthil.xUnit.Containers.ICustomContainer!>!
-Vulthil.xUnit.Containers.IContainerPool.ReleaseContainer(Vulthil.xUnit.Containers.ICustomContainer! container) -> void
-Vulthil.xUnit.Containers.IContainerWithConnectionStringPool
-Vulthil.xUnit.Containers.IContainerWithConnectionStringPool.GetConnectionString(DotNet.Testcontainers.Containers.IContainer! container) -> string!
-Vulthil.xUnit.Containers.IContainerWithConnectionStringPool.KeyName.get -> string!
-Vulthil.xUnit.Containers.IContainerWithConnectionStringPool<TContainerEntity>
-Vulthil.xUnit.Containers.IContainerWithConnectionStringPool<TContainerEntity>.GetConnectionString(TContainerEntity container) -> string!
-Vulthil.xUnit.Containers.ICustomContainer
-Vulthil.xUnit.Containers.ICustomContainer.Container.get -> DotNet.Testcontainers.Containers.IContainer!
-Vulthil.xUnit.Containers.ICustomDatabaseContainer
-Vulthil.xUnit.Containers.ICustomDatabaseContainer.DbContextType.get -> System.Type!
-Vulthil.xUnit.Containers.ICustomDatabaseContainer.HasBeenMigrated.get -> bool
-Vulthil.xUnit.Containers.ICustomDatabaseContainer.MarkMigrated() -> void
-Vulthil.xUnit.Containers.ICustomDatabaseContainerWithRespawner
-Vulthil.xUnit.Containers.ICustomDatabaseContainerWithRespawner.InitializeRespawner() -> System.Threading.Tasks.Task!
-Vulthil.xUnit.Containers.ICustomDatabaseContainerWithRespawner.ResetAsync() -> System.Threading.Tasks.Task!
-Vulthil.xUnit.Containers.IDatabaseContainerPool
-Vulthil.xUnit.Containers.IDatabaseContainerPool.ApplyMigrations(System.IServiceProvider! services, Vulthil.xUnit.Containers.ICustomDatabaseContainer! container) -> System.Threading.Tasks.Task!
-Vulthil.xUnit.Containers.IDatabaseContainerPool<TContainerEntity>
 Vulthil.xUnit.Fixtures.ITestContainer
 Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString
 Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.ConnectionString.get -> string!

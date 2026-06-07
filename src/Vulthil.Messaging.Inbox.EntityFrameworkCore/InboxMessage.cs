@@ -1,7 +1,8 @@
-namespace Vulthil.Messaging.Inbox.Relational;
+namespace Vulthil.Messaging.Inbox.EntityFrameworkCore;
 
 /// <summary>
-/// A persisted idempotency marker recording that a message with a given key has been processed.
+/// A persisted idempotency marker recording that a message with a given key has been processed. Shared by the
+/// relational and Cosmos idempotency stores.
 /// </summary>
 public sealed record InboxMessage
 {

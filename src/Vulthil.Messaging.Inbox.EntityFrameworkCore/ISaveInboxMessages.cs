@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Vulthil.Messaging.Inbox.Relational;
+namespace Vulthil.Messaging.Inbox.EntityFrameworkCore;
 
 /// <summary>
 /// Exposes the <see cref="InboxMessage"/> set for persistence contexts that support inbox-based idempotency.
-/// Implement this on the application's <see cref="DbContext"/> so the idempotency store can read and write markers.
+/// Implement this on the application's <see cref="DbContext"/> so an idempotency store can read and write markers,
+/// regardless of the underlying provider (relational or Cosmos).
 /// </summary>
 public interface ISaveInboxMessages
 {

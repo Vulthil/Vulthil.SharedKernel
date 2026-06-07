@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
+using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 using Vulthil.Messaging.Inbox.Relational;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;

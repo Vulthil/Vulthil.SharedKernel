@@ -13,7 +13,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Testcontainers.PostgreSql" />
-		<PackageReference Include="Testcontainers.XunitV3" />
 		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 		<PackageReference Include="Moq.AutoMock" />
 		<PackageReference Include="Shouldly" />

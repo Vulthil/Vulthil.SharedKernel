@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 
 namespace Vulthil.Messaging.Inbox.Relational;
 

@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging;
+using Vulthil.Messaging.Inbox;
+using Vulthil.Messaging.Inbox.Relational;
 using Vulthil.Messaging.RabbitMq;
 using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
@@ -21,6 +24,8 @@ public static class DependencyInjection
                     databaseInfrastructureConfigurator
                         .UseNpgsql(connectionStringKey)
                         .EnableOutboxProcessing());
+
+        builder.Services.AddRelationalInbox<WebApiDbContext>();
 
         return builder;
     }
@@ -48,6 +53,8 @@ public static class DependencyInjection
                     c.UseRetry(r => r.Immediate(5));
                 });
             });
+
+            x.AddIdempotentInbox<MainEntityCreatedIntegrationEvent>(context => context.Message.Id.ToString());
 
             x.UseRabbitMq(rabbitMqConnectionStringKey);
         });

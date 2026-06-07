@@ -24,6 +24,10 @@
   href: vulthil-messaging.md
 - name: Vulthil.Messaging.RabbitMq
   href: vulthil-messaging-rabbitmq.md
+- name: Vulthil.Messaging.Inbox
+  href: vulthil-messaging-inbox.md
+- name: Vulthil.Messaging.Inbox.Relational
+  href: vulthil-messaging-inbox-relational.md
 - name: Vulthil.Messaging.TestHarness
   href: vulthil-messaging-testharness.md
 - name: Vulthil.Extensions.Testing

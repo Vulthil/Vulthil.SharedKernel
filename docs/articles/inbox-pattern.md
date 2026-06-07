@@ -1,0 +1,118 @@
+# Inbox Pattern (Idempotent Receiver)
+
+Message delivery is **at-least-once**: a broker can redeliver a message (after a crash between processing and acknowledgement, a network partition, or a producer republish). Without protection, a redelivered message is processed twice, duplicating its side effects.
+
+The inbox pattern makes consumers **idempotent**: it records which messages have already been processed and skips duplicates. `Vulthil.Messaging.Inbox` provides this as a consume filter, with the processed-marker written in the **same transaction** as the consumer's business changes — so on a relational store, processing is exactly-once.
+
+This is an *idempotent receiver*, not a store-and-forward inbox: it rides on top of the transport's existing retry, fault, and dead-letter machinery rather than re-implementing them.
+
+## How It Works
+
+1. A consume filter resolves the delivery's **idempotency key** (the message id by default).
+2. It opens an `IIdempotencyStore` transaction and checks whether the key was already processed.
+3. If it was, the consumer is **skipped** and the delivery is acknowledged.
+4. Otherwise the consumer runs. Its own `SaveChanges` calls flush into the ambient transaction without committing.
+5. The filter records the marker and commits — persisting the marker and the consumer's writes **atomically**.
+
+If the consumer throws, the transaction is rolled back (marker included) and the message is reprocessed cleanly on redelivery. The marker is written **on commit, not on receipt**, so an interrupted delivery never leaves a marker that would suppress reprocessing.
+
+## Guarantees
+
+The guarantee depends on the store implementation:
+
+| Store | Guarantee |
+|---|---|
+| Relational (`Vulthil.Messaging.Inbox.Relational`) | **Transactional exactly-once** — the marker and the consumer's writes commit in one transaction. |
+| Non-transactional (e.g. Cosmos across partitions) | **Effectively-once** — best-effort deduplication layered over idempotent-by-design writes. There is no cross-partition atomicity to rely on. |
+
+## The Idempotency Key Contract
+
+Deduplication is only as good as the key. The key must be **stable across redeliveries of the same logical message**.
+
+The default key is `IMessageContext.MessageId`. The Vulthil publisher assigns a fresh message id on every `PublishAsync`/`SendAsync` call, so a message-id key deduplicates **broker redelivery** of the same message — but **not** a producer that *republishes* the same logical message (which gets a new id each time). To deduplicate across republishes, supply a key selector that returns a stable business identifier:
+
+```csharp
+messaging.AddIdempotentInbox<OrderPlaced>(context => context.Message.OrderId.ToString());
+```
+
+(Producer-side republishing becomes relevant with a transactional bus outbox, which assigns a deterministic id derived from the outbox row — closing the loop end-to-end.)
+
+## Configuration
+
+### Opt a message type in
+
+Idempotency is opt-in per message type — only guard messages that carry a stable key:
+
+```csharp
+builder.AddMessaging(messaging =>
+{
+    messaging.UseRabbitMq(connectionStringKey);
+
+    messaging.ConfigureQueue("orders", queue => queue.AddConsumer<OrderPlacedConsumer>());
+
+    messaging.AddIdempotentInbox<OrderPlaced>();                              // key on MessageId
+    messaging.AddIdempotentInbox<OrderShipped>(c => c.Message.OrderId.ToString()); // key on a business field
+});
+```
+
+A registered `IIdempotencyStore` is required at consume time. Reference `Vulthil.Messaging.Inbox.Relational` for the relational implementation, or implement `IIdempotencyStore` yourself.
+
+### Messages without a key
+
+By default a delivery with no resolvable key is rejected with `MissingIdempotencyKeyException`, so it cannot silently bypass the guard. To process such messages without deduplication instead:
+
+```csharp
+messaging.ConfigureInbox(options => options.RejectMessagesWithoutKey = false);
+```
+
+### Relational store
+
+Expose the inbox set on your `DbContext`, apply the entity configuration, and register the store:
+
+```csharp
+public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
+    : DbContext(options), ISaveInboxMessages
+{
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        => modelBuilder.ApplyConfiguration(new InboxMessageEntityConfiguration());
+}
+```
+
+```csharp
+builder.Services.AddRelationalInbox<AppDbContext>();
+```
+
+The consumer and the store must share the same scoped `DbContext` instance (the default with `AddDbContext`), so the consumer's writes and the marker enlist in the same transaction. The consumer keeps calling `SaveChanges` as usual — the store owns the transaction, not `SaveChanges`. Add an EF Core migration for the `InboxMessage` table as you would for any entity.
+
+## Typical Flow
+
+```
+Broker delivers message (possibly a duplicate)
+    ↓
+IdempotentConsumeFilter resolves the key
+    ↓
+IIdempotencyStore.BeginAsync  →  ambient transaction
+    ↓
+already processed? ── yes ──► skip consumer, ack
+    │ no
+    ↓
+consumer runs (writes flush into the transaction)
+    ↓
+marker recorded + transaction committed  (atomic)
+```
+
+## Relationship to the Outbox
+
+The [outbox](outbox-pattern.md) protects the **producer** side (write-atomicity of an event with the business change); the inbox protects the **consumer** side (duplicate-delivery). They are complementary: a producer-side outbox publishing at-least-once with a stable message id, plus a consumer-side inbox keyed on that id, gives end-to-end effectively-once delivery.
+
+## When to Use
+
+- Consumers whose side effects are not naturally idempotent (creating records, sending notifications, charging payments).
+- Any consumer where reprocessing a redelivered message would be incorrect.
+
+## Limitations
+
+- The marker is keyed by message key alone. Two *distinct* consumers of the same message type share one marker; if each must process independently, use distinct keys (a future enhancement may scope markers per consumer).
+- Cosmos and other stores without cross-partition transactions provide effectively-once, not transactional exactly-once.

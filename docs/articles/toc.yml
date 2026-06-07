@@ -12,6 +12,8 @@
   href: messaging.md
 - name: Outbox Pattern
   href: outbox-pattern.md
+- name: Inbox Pattern
+  href: inbox-pattern.md
 - name: Testing
   href: testing.md
 - name: Packages

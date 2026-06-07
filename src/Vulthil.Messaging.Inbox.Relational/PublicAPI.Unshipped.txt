@@ -1,0 +1,14 @@
+#nullable enable
+Vulthil.Messaging.Inbox.Relational.InboxMessage
+Vulthil.Messaging.Inbox.Relational.InboxMessage.MessageId.get -> string!
+Vulthil.Messaging.Inbox.Relational.InboxMessage.MessageId.init -> void
+Vulthil.Messaging.Inbox.Relational.InboxMessage.ProcessedOnUtc.get -> System.DateTimeOffset
+Vulthil.Messaging.Inbox.Relational.InboxMessage.ProcessedOnUtc.set -> void
+Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration
+Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.Messaging.Inbox.Relational.InboxMessage!>! builder) -> void
+Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.InboxMessageEntityConfiguration() -> void
+Vulthil.Messaging.Inbox.Relational.ISaveInboxMessages
+Vulthil.Messaging.Inbox.Relational.ISaveInboxMessages.InboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.Messaging.Inbox.Relational.InboxMessage!>!
+Vulthil.Messaging.Inbox.Relational.ISaveInboxMessages.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions
+static Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

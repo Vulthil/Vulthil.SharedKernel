@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
+using Vulthil.Messaging.Inbox.Relational;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
@@ -16,10 +17,11 @@ namespace WebApi.Infrastructure.Data;
 /// Functionally equivalent with <see cref="WebApiDbContextNoBase"/>, by inheriting from <see cref="BaseDbContext"/>.
 /// </summary>
 /// <param name="options"></param>
-public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext
+public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext, ISaveInboxMessages
 {
     public DbSet<MainEntity> MainEntities => Set<MainEntity>();
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
     protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
 }
 
@@ -27,11 +29,12 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
 /// Functionally equivalent with <see cref="WebApiDbContext"/>, without inheriting from <see cref="BaseDbContext"/>.
 /// </summary>
 /// <param name="options"></param>
-public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), ISaveOutboxMessages, IWebApiDbContext
+public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), ISaveOutboxMessages, ISaveInboxMessages, IWebApiDbContext
 {
     public DbSet<MainEntity> MainEntities => Set<MainEntity>();
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +58,12 @@ internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguratio
         builder.Property(o => o.Content)
             .HasColumnType("jsonb");
     }
+}
+
+internal sealed class WebApiInboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
+{
+    public void Configure(EntityTypeBuilder<InboxMessage> builder) =>
+        new InboxMessageEntityConfiguration().Configure(builder);
 }
 
 public class WebApiDbContextFactory : IDesignTimeDbContextFactory<WebApiDbContext>

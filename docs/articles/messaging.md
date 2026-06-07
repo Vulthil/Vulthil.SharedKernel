@@ -297,6 +297,15 @@ m.ConfigureMessagingOptions(opts => opts.ConsumeFilters.EnableLogging = false);
 The filter stays registered in DI; only its behavior is skipped, so it's still
 resolvable in unit tests if you want to assert against it.
 
+### Idempotent receivers (inbox)
+
+`Vulthil.Messaging.Inbox` ships a consume filter that deduplicates redelivered
+messages, giving exactly-once processing on top of at-least-once delivery. It is a
+transaction-owning filter: the consumer runs inside an `IIdempotencyStore`
+transaction so the processed-marker and the consumer's writes commit atomically.
+Opt a message type in with `AddIdempotentInbox<TMessage>()`. See the
+[Inbox Pattern](inbox-pattern.md) article for the full design.
+
 ## Ordered Processing (per-aggregate)
 
 Without ordering controls a queue processing messages concurrently does not preserve

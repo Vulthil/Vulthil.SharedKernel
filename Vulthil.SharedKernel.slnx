@@ -74,6 +74,8 @@
   </Folder>
   <Folder Name="/src/Messaging/">
     <Project Path="src/Vulthil.Messaging.Abstractions/Vulthil.Messaging.Abstractions.csproj" />
+    <Project Path="src/Vulthil.Messaging.Inbox.Relational/Vulthil.Messaging.Inbox.Relational.csproj" />
+    <Project Path="src/Vulthil.Messaging.Inbox/Vulthil.Messaging.Inbox.csproj" />
     <Project Path="src/Vulthil.Messaging.RabbitMq/Vulthil.Messaging.RabbitMq.csproj" />
     <Project Path="src/Vulthil.Messaging/Vulthil.Messaging.csproj" />
   </Folder>
@@ -84,6 +86,8 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Vulthil.Messaging.Abstractions.Tests/Vulthil.Messaging.Abstractions.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.Inbox.Relational.Tests/Vulthil.Messaging.Inbox.Relational.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.Inbox.Tests/Vulthil.Messaging.Inbox.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.TestHarness.Tests/Vulthil.Messaging.TestHarness.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Tests/Vulthil.Messaging.Tests.csproj" />

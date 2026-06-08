@@ -6,7 +6,7 @@
   <PropertyGroup>
     <FrameworkVersion>10.0.8</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.16</FrameworkVersion>
-    <AspireVersion>13.3.5</AspireVersion>
+    <AspireVersion>13.4.2</AspireVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
@@ -37,7 +37,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.6.0" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.7.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.8.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" PrivateAssets="all" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />

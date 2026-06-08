@@ -19,6 +19,10 @@ virtual Vulthil.xUnit.BaseUnitTestCase.UseRealFor<TService, TImplementation>() -
 virtual Vulthil.xUnit.BaseUnitTestCase<TTarget>.CreateInstance() -> TTarget!
 virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers() -> System.Threading.Tasks.Task!
 virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureCustomWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+virtual Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+virtual Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
 Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>
 Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase(TFactory! factory, Xunit.ITestOutputHelper? testOutputHelper = null) -> void
 Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Client.get -> System.Net.Http.HttpClient!
@@ -48,6 +52,8 @@ Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.GetHttpMock(string! name) -
 Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.GetHttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
 Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
 Vulthil.xUnit.Fixtures.ITestContainer
+Vulthil.xUnit.Fixtures.ITestContainer.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+Vulthil.xUnit.Fixtures.ITestContainer.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
 Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString
 Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.ConnectionString.get -> string!
 Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.ConnectionStringKey.get -> string!

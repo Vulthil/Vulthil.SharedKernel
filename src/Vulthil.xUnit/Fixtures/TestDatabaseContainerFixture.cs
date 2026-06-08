@@ -1,6 +1,7 @@
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
@@ -33,6 +34,16 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     /// Gets the configuration key name where the connection string should be injected.
     /// </summary>
     public abstract string ConnectionStringKey { get; }
+
+    /// <inheritdoc />
+    public virtual void ConfigureWebHost(IWebHostBuilder builder)
+    {
+    }
+
+    /// <inheritdoc />
+    public virtual void ConfigureServices(IServiceCollection services)
+    {
+    }
 
     /// <inheritdoc />
     public async ValueTask MigrateDatabase(IServiceProvider serviceProvider)

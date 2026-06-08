@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http;
@@ -123,6 +124,19 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             var connectionString = container.ConnectionString;
             builder.UseSetting($"ConnectionStrings:{container.ConnectionStringKey}", connectionString);
         }
+
+        foreach (var container in _containers)
+        {
+            container.ConfigureWebHost(builder);
+        }
+
+        builder.ConfigureTestServices(services =>
+        {
+            foreach (var container in _containers)
+            {
+                container.ConfigureServices(services);
+            }
+        });
 
         ConfigureCustomWebHost(builder);
 

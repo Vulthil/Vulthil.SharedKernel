@@ -1,9 +1,30 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Vulthil.xUnit.Fixtures;
 
 /// <summary>
-/// Represents a test container that can be started and stopped as part of the test lifecycle.
+/// Represents a test container that can be started and stopped as part of the test lifecycle, and that may
+/// participate in configuring the test host.
 /// </summary>
-public interface ITestContainer : IAsyncLifetime;
+public interface ITestContainer : IAsyncLifetime
+{
+    /// <summary>
+    /// Configures the test host for this container. Invoked by <see cref="BaseWebApplicationFactory{TEntryPoint}"/>
+    /// during host build, after connection strings are injected and before the factory's own
+    /// <c>ConfigureCustomWebHost</c>. Use it to apply host settings the container needs.
+    /// </summary>
+    /// <param name="builder">The web host builder to configure.</param>
+    void ConfigureWebHost(IWebHostBuilder builder);
+
+    /// <summary>
+    /// Registers or replaces services for this container in the test host. Invoked through
+    /// <c>ConfigureTestServices</c>, so it runs after the application's own registrations and can decorate or
+    /// replace them (for example, repointing a <c>DbContext</c> at the containerized service).
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    void ConfigureServices(IServiceCollection services);
+}
 /// <summary>
 /// Extends <see cref="ITestContainer"/> with a connection string for use in integration tests.
 /// </summary>
@@ -14,7 +35,7 @@ public interface ITestContainerWithConnectionString : ITestContainer
     /// </summary>
     string ConnectionString { get; }
     /// <summary>
-    /// Gets the configuration key name where the connection string should be injected (e.g., "ConnectionStrings:MyDb").
+    /// Gets the bare configuration key name where the connection string should be injected (e.g., "MyDb"); the factory binds it under <c>ConnectionStrings:{ConnectionStringKey}</c>.
     /// </summary>
     string ConnectionStringKey { get; }
 }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging;
 using Vulthil.Messaging.Inbox;
 using Vulthil.Messaging.Inbox.Relational;
+using Vulthil.Messaging.Outbox;
 using Vulthil.Messaging.RabbitMq;
 using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
@@ -55,6 +56,8 @@ public static class DependencyInjection
             });
 
             x.AddIdempotentInbox<MainEntityCreatedIntegrationEvent>(context => context.Message.Id.ToString());
+
+            x.AddTransactionalOutbox();
 
             x.UseRabbitMq(rabbitMqConnectionStringKey);
         });

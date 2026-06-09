@@ -38,7 +38,7 @@ The default key is `IMessageContext.MessageId`. The Vulthil publisher assigns a 
 messaging.AddIdempotentInbox<OrderPlaced>(context => context.Message.OrderId.ToString());
 ```
 
-(Producer-side republishing becomes relevant with a transactional bus outbox, which assigns a deterministic id derived from the outbox row — closing the loop end-to-end.)
+(The transactional bus outbox in `Vulthil.Messaging.Outbox` carries a **stable** message id from capture through relay, so a relay retry of the same logical message is deduplicated here — closing the loop end-to-end. See the [outbox pattern](outbox-pattern.md).)
 
 ## Configuration
 

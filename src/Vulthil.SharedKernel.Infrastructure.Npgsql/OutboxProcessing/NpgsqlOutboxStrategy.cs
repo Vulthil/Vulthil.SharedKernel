@@ -14,7 +14,7 @@ public class NpgsqlOutboxStrategy : RelationalOutboxStrategy
     {
         // Use SELECT ... FOR UPDATE SKIP LOCKED to allow multiple processors to fetch distinct rows concurrently.
         var query = outboxMessages.FromSqlInterpolated($@"
-            SELECT ""Id"", ""Type"", ""Content"", ""TraceParent"", ""TraceState""
+            SELECT ""Id"", ""Type"", ""Content"", ""TraceParent"", ""TraceState"", ""Destination"", ""Metadata""
             FROM ""OutboxMessages""
             WHERE ""ProcessedOnUtc"" IS NULL AND ""RetryCount"" < {maxRetries}
             ORDER BY ""OccurredOnUtc""
@@ -22,7 +22,7 @@ public class NpgsqlOutboxStrategy : RelationalOutboxStrategy
             LIMIT {batchSize}");
 
         return await query
-            .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState))
+            .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState, x.Destination, x.Metadata))
             .ToListAsync(cancellationToken);
     }
 }

@@ -2,6 +2,7 @@ using Aspire.Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
+using Vulthil.SharedKernel.Infrastructure.Relational;
 
 namespace Vulthil.SharedKernel.Infrastructure.Npgsql;
 
@@ -40,6 +41,11 @@ public static class DependencyInjectionExtensions
         configurator.OnConfigured(c =>
         {
             c.HostApplicationBuilder.AddNpgsqlDbContext<TDbContext>(connectionStringKey, configureSettings);
+
+            if (c.OutboxProcessingEnabled)
+            {
+                c.HostApplicationBuilder.Services.AddRelationalOutboxCommitTrigger();
+            }
         });
 
         return configurator;

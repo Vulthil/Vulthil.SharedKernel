@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing;
+using Vulthil.SharedKernel.Infrastructure.Relational;
 
 namespace Vulthil.SharedKernel.Infrastructure.MySql;
 

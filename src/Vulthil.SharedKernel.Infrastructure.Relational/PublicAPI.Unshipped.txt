@@ -6,3 +6,5 @@ static Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection.Migrat
 Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection
 Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStrategy
 Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStrategy.RelationalOutboxStrategy() -> void
+Vulthil.SharedKernel.Infrastructure.Relational.RelationalOutboxServiceCollectionExtensions
+static Vulthil.SharedKernel.Infrastructure.Relational.RelationalOutboxServiceCollectionExtensions.AddRelationalOutboxCommitTrigger(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

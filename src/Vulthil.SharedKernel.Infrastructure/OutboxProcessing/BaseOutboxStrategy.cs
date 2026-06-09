@@ -31,7 +31,7 @@ public class BaseOutboxStrategy : IOutboxStrategy
             .Where(o => o.ProcessedOnUtc == null && o.RetryCount < maxRetries)
             .OrderBy(o => o.OccurredOnUtc)
             .Take(batchSize)
-            .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState))
+            .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState, x.Destination, x.Metadata))
             .ToListAsync(cancellationToken);
     }
 

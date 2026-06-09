@@ -10,7 +10,7 @@ namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 /// EF Core save-changes interceptor that captures domain events from tracked aggregate roots
 /// and persists them as <see cref="OutboxMessage"/> entries before the main save completes.
 /// </summary>
-public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider timeProvider, IOptions<OutboxProcessingOptions> outboxProcessingOptions) : SaveChangesInterceptor
+public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider timeProvider, IOptions<OutboxProcessingOptions> outboxProcessingOptions) : SaveChangesInterceptor, IOutboxInterceptor
 {
     private readonly TimeProvider _timeProvider = timeProvider;
 
@@ -56,7 +56,8 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
                 Type = d.GetType().FullName!,
                 Content = JsonSerializer.Serialize(d, d.GetType()),
                 TraceParent = activity?.Id,
-                TraceState = activity?.TraceStateString
+                TraceState = activity?.TraceStateString,
+                Destination = OutboxDestination.DomainEvent
             }).ToList();
 
         dbContextWithOutboxMessages.OutboxMessages.AddRange(outboxMessages);

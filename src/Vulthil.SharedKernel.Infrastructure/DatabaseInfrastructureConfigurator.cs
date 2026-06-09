@@ -113,7 +113,8 @@ internal sealed class OutboxInterceptorDbContextOptionsConfiguration<TContext> :
 {
     public void Configure(IServiceProvider serviceProvider, DbContextOptionsBuilder optionsBuilder)
     {
-        var interceptor = serviceProvider.GetRequiredService<DomainEventsToOutboxMessageSaveChangesInterceptor>();
-        optionsBuilder.AddInterceptors(interceptor);
+        // Attaches every registered outbox interceptor (the domain-event capture interceptor, plus a relational
+        // transaction-commit interceptor when a relational provider contributes one).
+        optionsBuilder.AddInterceptors(serviceProvider.GetServices<IOutboxInterceptor>());
     }
 }

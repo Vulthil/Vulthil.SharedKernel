@@ -1,23 +1,18 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 
 namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
 internal sealed class OutboxProcessor(
     TimeProvider timeProvider,
     ISaveOutboxMessages outboxMessagesDbContext,
-    IDomainEventPublisher domainEventPublisher,
+    IEnumerable<IOutboxDispatcher> dispatchers,
     IOutboxStrategy outboxStrategy,
     IOptions<OutboxProcessingOptions> options,
     ILogger<OutboxProcessor> logger)
 {
-    private static readonly ConcurrentDictionary<string, Type> _typeCache = [];
-
     private OutboxProcessingOptions Options => options.Value;
 
     internal Task<int> ExecuteAsync(CancellationToken cancellationToken)
@@ -110,10 +105,8 @@ internal sealed class OutboxProcessor(
                 var parent = ActivityContext.Parse(outboxMessage.TraceParent, outboxMessage.TraceState);
                 activity = Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
             }
-            var messageType = GetOrAddMessageType(outboxMessage.Type);
-            var message = JsonSerializer.Deserialize(outboxMessage.Content, messageType)!;
-
-            await domainEventPublisher.PublishAsync(message, cancellationToken);
+            var dispatcher = ResolveDispatcher(outboxMessage.Destination);
+            await dispatcher.DispatchAsync(outboxMessage, cancellationToken);
 
             return new PublishResult(outboxMessage.Id, Success: true);
         }
@@ -128,15 +121,9 @@ internal sealed class OutboxProcessor(
         }
     }
 
-    private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, t =>
-    {
-        var type = Type.GetType(t);
-        type ??= AppDomain.CurrentDomain.GetAssemblies()
-                .Select(a => a.GetType(t))
-                .FirstOrDefault(t => t is not null);
-
-        return type!;
-    });
+    private IOutboxDispatcher ResolveDispatcher(OutboxDestination destination) =>
+        dispatchers.FirstOrDefault(dispatcher => dispatcher.Handles(destination))
+            ?? throw new InvalidOperationException($"No {nameof(IOutboxDispatcher)} is registered for outbox destination '{destination}'.");
 
     private readonly record struct PublishResult(Guid Id, bool Success, string? Error = null);
 }

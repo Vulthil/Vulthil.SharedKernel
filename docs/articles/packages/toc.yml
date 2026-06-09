@@ -32,6 +32,8 @@
   href: vulthil-messaging-inbox-relational.md
 - name: Vulthil.Messaging.Inbox.Cosmos
   href: vulthil-messaging-inbox-cosmos.md
+- name: Vulthil.Messaging.Outbox
+  href: vulthil-messaging-outbox.md
 - name: Vulthil.Messaging.TestHarness
   href: vulthil-messaging-testharness.md
 - name: Vulthil.Extensions.Testing

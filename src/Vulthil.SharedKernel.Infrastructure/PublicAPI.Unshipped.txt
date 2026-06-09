@@ -78,13 +78,32 @@ Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Content.i
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Id.get -> System.Guid
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Id.init -> void
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.OutboxMessageData() -> void
-Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.OutboxMessageData(System.Guid Id, string! Type, string! Content, string? TraceParent, string? TraceState) -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.OutboxMessageData(System.Guid Id, string! Type, string! Content, string? TraceParent, string? TraceState, Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination Destination, string? Metadata) -> void
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceParent.get -> string?
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceParent.init -> void
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceState.get -> string?
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.TraceState.init -> void
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Type.get -> string!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Type.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Destination.get -> Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Destination.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Metadata.get -> string?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData.Metadata.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Destination.get -> Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Destination.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Metadata.get -> string?
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage.Metadata.init -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination.DomainEvent = 0 -> Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination.Publish = 1 -> Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination.Send = 2 -> Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxDispatcher
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination destination) -> bool
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxDispatcher.DispatchAsync(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxInterceptor
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxSignal
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxSignal.Notify() -> void
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxSignal.WaitAsync(System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageEntityConfiguration
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure

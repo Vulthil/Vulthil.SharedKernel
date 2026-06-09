@@ -49,4 +49,14 @@ public sealed class OutboxMessage
     /// Activity TraceState, for distributed tracing correlation.
     /// </summary>
     public string? TraceState { get; set; }
+    /// <summary>
+    /// Gets the sink this message is relayed to (in-process domain event, broker publish, or broker send). Defaults
+    /// to <see cref="OutboxDestination.DomainEvent"/>.
+    /// </summary>
+    public OutboxDestination Destination { get; init; }
+    /// <summary>
+    /// Gets optional destination-specific metadata serialized as JSON (e.g. the broker message id, correlation,
+    /// headers, and destination address for bus-publish rows). <see langword="null"/> for domain-event rows.
+    /// </summary>
+    public string? Metadata { get; init; }
 }

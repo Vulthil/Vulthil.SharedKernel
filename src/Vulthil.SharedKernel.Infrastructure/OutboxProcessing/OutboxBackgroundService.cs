@@ -8,6 +8,7 @@ namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 internal sealed class OutboxBackgroundService(
     ILogger<OutboxBackgroundService> logger,
     IServiceScopeFactory serviceScopeFactory,
+    IOutboxSignal signal,
     IOptions<OutboxProcessingOptions> options) : BackgroundService
 {
     /// <inheritdoc />
@@ -23,7 +24,8 @@ internal sealed class OutboxBackgroundService(
             {
                 if (currentDelayMs > 0)
                 {
-                    await Task.Delay(currentDelayMs, stoppingToken);
+                    // Wake early when a transaction commits (low latency); the timeout keeps the poll as a backstop.
+                    await signal.WaitAsync(TimeSpan.FromMilliseconds(currentDelayMs), stoppingToken);
                 }
 
                 await using var scope = serviceScopeFactory.CreateAsyncScope();

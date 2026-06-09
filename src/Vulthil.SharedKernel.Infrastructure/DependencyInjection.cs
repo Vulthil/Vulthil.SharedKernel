@@ -76,7 +76,8 @@ public static class DependencyInjection
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.TryAddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxInterceptor, DomainEventsToOutboxMessageSaveChangesInterceptor>());
+        services.TryAddSingleton<IOutboxSignal, OutboxSignal>();
 
         var dbContextLifetime = configurator.DbContextLifetime;
         services.Add(new ServiceDescriptor(
@@ -91,6 +92,14 @@ public static class DependencyInjection
             typeof(OutboxProcessor),
             typeof(OutboxProcessor),
             dbContextLifetime));
+
+        // The in-process domain-event sink is registered by default; additional sinks (e.g. the broker
+        // bus-publish dispatcher) are added by their own bridge and coexist, routed by OutboxDestination.
+        services.TryAddEnumerable(new ServiceDescriptor(
+            typeof(IOutboxDispatcher),
+            typeof(DomainEventOutboxDispatcher),
+            dbContextLifetime));
+
         services.AddHostedService<OutboxBackgroundService>();
     }
 

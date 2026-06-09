@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.TestHarness;
 
@@ -42,6 +43,8 @@ public static class TestHarnessExtensions
     private static void RegisterTestHarness(IServiceCollection services)
     {
         services.RemoveAll<ITransport>();
+        services.RemoveAll<ITransportPublisher>();
+        services.RemoveAll<ITransportSendEndpointProvider>();
         services.RemoveAll<IPublisher>();
         services.RemoveAll<ISendEndpointProvider>();
         services.RemoveAll<IRequester>();
@@ -50,8 +53,12 @@ public static class TestHarnessExtensions
         services.AddSingleton<ITestHarness>(sp => sp.GetRequiredService<TestHarness>());
         services.AddSingleton<InMemoryTransport>();
         services.AddSingleton<ITransport>(sp => sp.GetRequiredService<InMemoryTransport>());
-        services.AddSingleton<IPublisher, InMemoryPublisher>();
-        services.AddSingleton<ISendEndpointProvider, InMemorySendEndpointProvider>();
+        services.AddSingleton<ITransportPublisher, InMemoryPublisher>();
+        services.AddSingleton<ITransportSendEndpointProvider, InMemorySendEndpointProvider>();
         services.AddSingleton<IRequester, InMemoryRequester>();
+
+        // Public IPublisher / ISendEndpointProvider are the scoped filtering facades over the in-memory terminals,
+        // so publish/send filters run in tests exactly as they do over a real transport.
+        services.AddPublishFiltering();
     }
 }

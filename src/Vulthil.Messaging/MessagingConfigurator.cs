@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging;
 
@@ -150,6 +151,12 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         }
 
         Services.TryAddEnumerable(new ServiceDescriptor(typeof(IConsumeFilter<>), openFilterType, ServiceLifetime.Scoped));
+        return this;
+    }
+
+    public IMessagingConfigurator AddPublishFilter<TFilter>() where TFilter : class, IPublishFilter
+    {
+        Services.TryAddEnumerable(ServiceDescriptor.Scoped<IPublishFilter, TFilter>());
         return this;
     }
 

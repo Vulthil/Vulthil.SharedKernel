@@ -4,8 +4,8 @@ using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.TestHarness;
 
-/// <summary>In-memory <see cref="ISendEndpointProvider"/>: hands out in-memory endpoints cached per address.</summary>
-internal sealed class InMemorySendEndpointProvider : ISendEndpointProvider
+/// <summary>In-memory transport send-endpoint provider: hands out in-memory endpoints cached per address.</summary>
+internal sealed class InMemorySendEndpointProvider : ITransportSendEndpointProvider
 {
     private readonly IMessageConfigurationProvider _provider;
     private readonly InMemoryTransport _transport;

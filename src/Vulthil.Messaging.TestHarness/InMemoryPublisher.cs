@@ -3,8 +3,8 @@ using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.TestHarness;
 
-/// <summary>In-memory <see cref="IPublisher"/>: captures every published message, then dispatches it to consumers in-process.</summary>
-internal sealed class InMemoryPublisher : IPublisher
+/// <summary>In-memory transport publisher: captures every published message, then dispatches it to consumers in-process.</summary>
+internal sealed class InMemoryPublisher : ITransportPublisher
 {
     private readonly IMessageConfigurationProvider _provider;
     private readonly InMemoryTransport _transport;
@@ -16,10 +16,6 @@ internal sealed class InMemoryPublisher : IPublisher
         _transport = transport;
         _harness = harness;
     }
-
-    public Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken)
-        where TMessage : notnull
-        => PublishAsync(message, null, cancellationToken);
 
     public async Task PublishAsync<TMessage>(
         TMessage message,

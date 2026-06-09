@@ -14,7 +14,7 @@ public sealed class TestHarnessIntegrationTests(TestHarnessWebApplicationFactory
     : BaseIntegrationTestCase<TestHarnessWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<TestHarnessWebApplicationFactory>
 {
     private ITestHarness Harness => Factory.Services.GetRequiredService<ITestHarness>();
-    private IPublisher Publisher => Factory.Services.GetRequiredService<IPublisher>();
+    private IPublisher Publisher => ScopedServices.GetRequiredService<IPublisher>();
     private IRequester Requester => Factory.Services.GetRequiredService<IRequester>();
 
     [Fact]

@@ -2,10 +2,11 @@ using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Publishing;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Sending;
 
-internal sealed class RabbitMqSendEndpointProvider : ISendEndpointProvider
+internal sealed class RabbitMqSendEndpointProvider : ITransportSendEndpointProvider
 {
     private readonly IInternalPublisher _publisher;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;

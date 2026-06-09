@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging;
 
@@ -54,6 +55,16 @@ public interface IMessagingConfigurator
     /// <param name="openFilterType">An open generic type (e.g. <c>typeof(LoggingFilter&lt;&gt;)</c>) implementing <c>IConsumeFilter&lt;&gt;</c>.</param>
     /// <returns>The current configurator instance for chaining.</returns>
     IMessagingConfigurator AddOpenConsumeFilter(Type openFilterType);
+
+    /// <summary>
+    /// Registers a publish/send filter applied to every outgoing publish and send. Multiple filters are composed in
+    /// registration order (first registered is outermost). A filter may short-circuit the pipeline by not invoking
+    /// <c>next</c> — for example a transactional outbox that captures the message into the database instead of
+    /// sending it immediately. The filter is resolved from the caller's scope, so it may depend on scoped services.
+    /// </summary>
+    /// <typeparam name="TFilter">The filter implementation, which must implement <see cref="IPublishFilter"/>.</typeparam>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator AddPublishFilter<TFilter>() where TFilter : class, IPublishFilter;
 
     /// <summary>
     /// Serializes processing of <typeparamref name="TMessage"/> deliveries that share a partition key, so

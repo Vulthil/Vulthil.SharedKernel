@@ -9,6 +9,7 @@ using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.Messaging.RabbitMq.Sending;
 using Vulthil.Messaging.RabbitMq.Telemetry;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq;
 
@@ -70,10 +71,13 @@ public static class MessagingConfiguratorExtensions
         services.AddSingleton<RabbitMqChannelPool>();
 
         services.AddSingleton<RabbitMqPublisher>();
-        services.AddSingleton<IPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
+        services.AddSingleton<ITransportPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
         services.AddSingleton<IInternalPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
 
-        services.AddSingleton<ISendEndpointProvider, RabbitMqSendEndpointProvider>();
+        services.AddSingleton<ITransportSendEndpointProvider, RabbitMqSendEndpointProvider>();
+
+        // Public IPublisher / ISendEndpointProvider are the scoped filtering facades over the transport terminals.
+        services.AddPublishFiltering();
 
         // ResponseListener is lazily initialized on the first IRequester.RequestAsync call.
         // Services that never make request/reply calls do not pay the cost of declaring a reply queue.

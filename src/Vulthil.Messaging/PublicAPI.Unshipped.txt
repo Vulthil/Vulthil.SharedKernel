@@ -324,3 +324,32 @@ Vulthil.Messaging.Transport.RpcFault.Message.init -> void
 Vulthil.Messaging.Transport.RpcFault.StackTrace.get -> string?
 Vulthil.Messaging.Transport.RpcFault.StackTrace.init -> void
 static Vulthil.Messaging.Transport.RpcFault.UrnUri.get -> System.Uri!
+Vulthil.Messaging.IMessagingConfigurator.AddPublishFilter<TFilter>() -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.Transport.IPublishFilter
+Vulthil.Messaging.Transport.IPublishFilter.PublishAsync(Vulthil.Messaging.Transport.PublishFilterContext! context, Vulthil.Messaging.Transport.PublishFilterDelegate! next) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.ITransportPublisher
+Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.ITransportSendEndpointProvider
+Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri! address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint!>
+Vulthil.Messaging.Transport.PublishFilterContext
+Vulthil.Messaging.Transport.PublishFilterContext.PublishFilterContext() -> void
+Vulthil.Messaging.Transport.PublishFilterContext.CancellationToken.get -> System.Threading.CancellationToken
+Vulthil.Messaging.Transport.PublishFilterContext.CancellationToken.init -> void
+Vulthil.Messaging.Transport.PublishFilterContext.Context.get -> Vulthil.Messaging.Transport.PublishContext!
+Vulthil.Messaging.Transport.PublishFilterContext.Context.init -> void
+Vulthil.Messaging.Transport.PublishFilterContext.DestinationAddress.get -> System.Uri?
+Vulthil.Messaging.Transport.PublishFilterContext.DestinationAddress.init -> void
+Vulthil.Messaging.Transport.PublishFilterContext.Kind.get -> Vulthil.Messaging.Transport.PublishKind
+Vulthil.Messaging.Transport.PublishFilterContext.Kind.init -> void
+Vulthil.Messaging.Transport.PublishFilterContext.Message.get -> object!
+Vulthil.Messaging.Transport.PublishFilterContext.Message.init -> void
+Vulthil.Messaging.Transport.PublishFilterContext.MessageType.get -> System.Type!
+Vulthil.Messaging.Transport.PublishFilterContext.MessageType.init -> void
+Vulthil.Messaging.Transport.PublishFilterDelegate
+Vulthil.Messaging.Transport.PublishFilteringServiceCollectionExtensions
+static Vulthil.Messaging.Transport.PublishFilteringServiceCollectionExtensions.AddPublishFiltering(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Vulthil.Messaging.Transport.PublishKind
+Vulthil.Messaging.Transport.PublishKind.Publish = 0 -> Vulthil.Messaging.Transport.PublishKind
+Vulthil.Messaging.Transport.PublishKind.Send = 1 -> Vulthil.Messaging.Transport.PublishKind
+Vulthil.Messaging.Transport.PublishPipelineFactory
+static Vulthil.Messaging.Transport.PublishPipelineFactory.Build(System.IServiceProvider! serviceProvider, Vulthil.Messaging.Transport.PublishFilterDelegate! terminal) -> Vulthil.Messaging.Transport.PublishFilterDelegate!

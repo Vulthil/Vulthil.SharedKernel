@@ -10,7 +10,7 @@ using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Publishing;
 
-internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher
+internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublisher
 {
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<RabbitMqPublisher> _logger;
@@ -79,11 +79,6 @@ internal sealed class RabbitMqPublisher : IPublisher, IInternalPublisher
             throw;
         }
     }
-
-    public Task PublishAsync<TMessage>(
-       TMessage message,
-       CancellationToken cancellationToken)
-       where TMessage : notnull => PublishAsync(message, null, cancellationToken);
 
     public async Task PublishAsync<TMessage>(
         TMessage message,

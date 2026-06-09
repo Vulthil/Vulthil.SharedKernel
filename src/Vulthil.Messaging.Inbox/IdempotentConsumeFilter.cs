@@ -5,10 +5,10 @@ using Vulthil.Messaging.Abstractions.Consumers;
 namespace Vulthil.Messaging.Inbox;
 
 /// <summary>
-/// Consume filter that enforces idempotent processing: it resolves the delivery's idempotency key, skips the
-/// consumer if the key was already processed, and otherwise runs the consumer inside an
-/// <see cref="IIdempotencyStore"/> transaction so the idempotency marker and the consumer's business writes commit
-/// together. Registered per message type by <see cref="InboxConfiguratorExtensions.AddIdempotentInbox{TMessage}"/>.
+/// Consume filter that enforces idempotent processing: it resolves the delivery's idempotency key and hands the
+/// consumer invocation to an <see cref="IIdempotencyStore"/>, which skips it if the key was already processed and
+/// otherwise runs it and records the idempotency marker — atomically with the consumer's business writes on a
+/// relational provider. Registered per message type by <see cref="InboxConfiguratorExtensions.AddIdempotentInbox{TMessage}"/>.
 /// </summary>
 /// <typeparam name="TMessage">The consumed message type.</typeparam>
 internal sealed class IdempotentConsumeFilter<TMessage>(
@@ -40,16 +40,12 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
             return;
         }
 
-        await using var transaction = await _store.BeginAsync(context, context.CancellationToken);
+        var processed = await _store.ProcessAsync(key, context, _ => next(context), context.CancellationToken);
 
-        if (await transaction.HasProcessedAsync(key, context.CancellationToken))
+        if (!processed)
         {
             InboxLog.DuplicateSkipped(_logger, messageType, key);
-            return;
         }
-
-        await next(context);
-        await transaction.CommitAsync(key, context.CancellationToken);
     }
 }
 

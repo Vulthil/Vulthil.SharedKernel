@@ -26,6 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.Inbox.Cosmos\Vulthil.Messaging.Inbox.Cosmos.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.TestHarness\Vulthil.Messaging.TestHarness.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.xUnit\Vulthil.xUnit.csproj" />

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
@@ -19,7 +20,24 @@ internal sealed class OutboxProcessor(
 
     private OutboxProcessingOptions Options => options.Value;
 
-    internal async Task<int> ExecuteAsync(CancellationToken cancellationToken)
+    internal Task<int> ExecuteAsync(CancellationToken cancellationToken)
+    {
+        if (outboxMessagesDbContext is not DbContext dbContext)
+        {
+            return ProcessBatchAsync(cancellationToken);
+        }
+
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+        return strategy.ExecuteAsync(
+            async token =>
+            {
+                dbContext.ChangeTracker.Clear();
+                return await ProcessBatchAsync(token);
+            },
+            cancellationToken);
+    }
+
+    private async Task<int> ProcessBatchAsync(CancellationToken cancellationToken)
     {
         var transaction = await outboxStrategy.BeginTransactionAsync(outboxMessagesDbContext, cancellationToken);
 

@@ -1,9 +1,6 @@
 #nullable enable
 Vulthil.Messaging.Inbox.IIdempotencyStore
-Vulthil.Messaging.Inbox.IIdempotencyStore.BeginAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Messaging.Inbox.IIdempotencyTransaction!>!
-Vulthil.Messaging.Inbox.IIdempotencyTransaction
-Vulthil.Messaging.Inbox.IIdempotencyTransaction.CommitAsync(string! messageId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-Vulthil.Messaging.Inbox.IIdempotencyTransaction.HasProcessedAsync(string! messageId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(string! idempotencyKey, Vulthil.Messaging.Abstractions.Consumers.IMessageContext! context, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! process, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
 Vulthil.Messaging.Inbox.IInboxKeySelector<TMessage>
 Vulthil.Messaging.Inbox.IInboxKeySelector<TMessage>.GetKey(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>! context) -> string?
 Vulthil.Messaging.Inbox.InboxConfiguratorExtensions

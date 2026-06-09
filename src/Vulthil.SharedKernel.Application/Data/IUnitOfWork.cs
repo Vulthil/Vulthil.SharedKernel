@@ -17,6 +17,22 @@ public interface IUnitOfWork
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>A transaction that can be committed or rolled back.</returns>
     Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Runs <paramref name="operation"/> inside a database transaction, committing on success and rolling back on
+    /// failure, using the store's execution strategy so it is compatible with a retrying execution strategy.
+    /// </summary>
+    /// <remarks>
+    /// Prefer this over manually pairing <see cref="BeginTransactionAsync"/> with a commit when a retrying execution
+    /// strategy may be configured (e.g. the EF Core default): a bare user-initiated transaction is rejected under a
+    /// retrying strategy, whereas this wraps the whole begin/operation/commit as one retriable unit. A transient-fault
+    /// retry re-runs <paramref name="operation"/> from a clean change-tracker state, so it must be idempotent.
+    /// </remarks>
+    /// <typeparam name="TResult">The type produced by <paramref name="operation"/>.</typeparam>
+    /// <param name="operation">The work to run inside the transaction.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>The result produced by <paramref name="operation"/>.</returns>
+    Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default);
 }
 
 /// <summary>

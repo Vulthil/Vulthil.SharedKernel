@@ -45,6 +45,23 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
     }
 
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
+
+    public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(operation);
+
+        var strategy = Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(
+            async token =>
+            {
+                ChangeTracker.Clear();
+                await using var transaction = await Database.BeginTransactionAsync(token);
+                var result = await operation(token);
+                await transaction.CommitAsync(token);
+                return result;
+            },
+            cancellationToken);
+    }
 }
 
 internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>

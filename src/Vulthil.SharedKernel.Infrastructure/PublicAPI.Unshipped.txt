@@ -17,6 +17,7 @@ virtual Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbCont
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.BaseDbContext(Microsoft.EntityFrameworkCore.DbContextOptions! options) -> void
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.BeginTransactionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction!>!
+Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync<TResult>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>!>! operation, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResult>!
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>!
 Vulthil.SharedKernel.Infrastructure.Data.DbContextExtensions
 Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper

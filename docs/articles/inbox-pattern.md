@@ -111,7 +111,7 @@ Broker delivers message (possibly a duplicate)
     ↓
 IdempotentConsumeFilter resolves the key
     ↓
-IIdempotencyStore.BeginAsync  →  ambient transaction
+IIdempotencyStore.ProcessAsync  →  owns the unit (inside the context's execution strategy)
     ↓
 already processed? ── yes ──► skip consumer, ack
     │ no
@@ -120,6 +120,8 @@ consumer runs (writes flush into the transaction)
     ↓
 marker recorded + transaction committed  (atomic)
 ```
+
+The filter hands the consumer invocation to `IIdempotencyStore.ProcessAsync`, which owns the whole unit. The relational store runs it inside `Database.CreateExecutionStrategy().ExecuteAsync`, so it works **whether or not EF Core retries are enabled** — there is no need to disable retries (e.g. `DisableRetry`). Under a retrying execution strategy a transient fault re-runs the unit — consumer included — on a cleared change tracker, which is consistent with at-least-once redelivery and the requirement that consumers be idempotent.
 
 ## Relationship to the Outbox
 

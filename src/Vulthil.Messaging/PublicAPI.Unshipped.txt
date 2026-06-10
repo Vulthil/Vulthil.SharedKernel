@@ -33,6 +33,7 @@ Vulthil.Messaging.IMessagingOptionsConfigurator.JsonSerializerOptions.get -> Sys
 Vulthil.Messaging.IMessagingOptionsConfigurator.JsonSerializerOptions.set -> void
 Vulthil.Messaging.ITransport
 Vulthil.Messaging.ITransport.StartAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.ITransport.WaitUntilReadyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.MessageConfiguration
 Vulthil.Messaging.MessageConfiguration.Arguments.get -> System.Collections.Generic.IDictionary<string!, object?>!
 Vulthil.Messaging.MessageConfiguration.AutoDelete.get -> bool

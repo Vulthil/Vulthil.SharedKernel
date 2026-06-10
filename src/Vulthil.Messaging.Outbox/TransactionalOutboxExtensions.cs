@@ -26,6 +26,7 @@ public static class TransactionalOutboxExtensions
         var services = configurator.HostApplicationBuilder.Services;
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxDispatcher, BrokerOutboxDispatcher>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxRelayGate, TransportReadinessOutboxGate>());
 
         return configurator;
     }

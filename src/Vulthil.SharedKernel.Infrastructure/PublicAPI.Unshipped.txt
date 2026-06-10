@@ -101,6 +101,8 @@ Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxDispatcher
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxDestination destination) -> bool
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxDispatcher.DispatchAsync(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxInterceptor
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxRelayGate
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxRelayGate.WaitUntilReadyAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxSignal
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxSignal.Notify() -> void
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxSignal.WaitAsync(System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!

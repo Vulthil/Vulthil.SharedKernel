@@ -56,6 +56,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         }
     }
 
+    public Task WaitUntilReadyAsync(CancellationToken cancellationToken = default) =>
+        _startupStatus.Ready.WaitAsync(cancellationToken);
+
     private async Task StartConsumersAsync(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
     {
         var workerLogger = _loggerFactory.CreateLogger<RabbitMqConsumerWorker>();

@@ -102,6 +102,12 @@ Capture is relational-only (it enlists in the ambient transaction); the relay wo
 the general publish/send **filter pipeline** (`IPublishFilter`, registered via `AddPublishFilter<T>()`), which is the
 publish-side counterpart to consume filters and can host other cross-cutting concerns.
 
+On startup the relay waits for the broker transport to finish declaring its subscriber topology (exchanges, queues,
+and bindings) before its first publish — otherwise the commit-time trigger could relay a message before the
+subscriber queues exist, and a pub/sub message with no bound queue is silently dropped. This is wired automatically
+by `AddTransactionalOutbox` via an `IOutboxRelayGate` that awaits `ITransport.WaitUntilReadyAsync`; the relay starts
+immediately when no gate is registered.
+
 ## Typical Flow
 
 ```

@@ -9,11 +9,14 @@ internal sealed class OutboxBackgroundService(
     ILogger<OutboxBackgroundService> logger,
     IServiceScopeFactory serviceScopeFactory,
     IOutboxSignal signal,
+    IEnumerable<IOutboxRelayGate> relayGates,
     IOptions<OutboxProcessingOptions> options) : BackgroundService
 {
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await WaitForRelayGatesAsync(stoppingToken);
+
         int baseDelayMs = options.Value.OutboxProcessingDelayInSeconds * 1000;
         int maxDelayMs = options.Value.MaxDelaySeconds * 1000;
         int currentDelayMs = 0;
@@ -49,6 +52,25 @@ internal sealed class OutboxBackgroundService(
             {
                 logger.LogError(ex, "Error processing outbox messages");
                 currentDelayMs = baseDelayMs;
+            }
+        }
+    }
+
+    private async Task WaitForRelayGatesAsync(CancellationToken stoppingToken)
+    {
+        foreach (var gate in relayGates)
+        {
+            try
+            {
+                await gate.WaitUntilReadyAsync(stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Outbox relay readiness gate {Gate} failed; starting the relay anyway", gate.GetType().Name);
             }
         }
     }

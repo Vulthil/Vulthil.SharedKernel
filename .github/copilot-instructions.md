@@ -3,6 +3,7 @@
 ## Git Guidelines
 - Do not commit without an explicit permission. Allow the developers a change to review the code to provide feedback before commiting.
 - Do not create commit descriptions. Only suggest the one line commit message that describes the change.
+- Do not add Co-Authored-By trailers.
 
 ## Project Guidelines
 - Use a lazy `Target` pattern from `CreateInstance<T>` when inheriting from `BaseUnitTestCase` (or `BaseUnitTestCase<T>` when accessibility allows) for test classes in this repository.

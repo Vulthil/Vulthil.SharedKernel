@@ -59,6 +59,10 @@ public static class DependencyInjection
 
             x.AddTransactionalOutbox();
 
+            // Run the consumer in a transaction so any messages it publishes are captured by the outbox. Here it
+            // composes with the inbox (which opens the transaction first) — the filter joins rather than nesting.
+            x.AddTransactionalConsumer<MainEntityCreatedIntegrationEvent>();
+
             x.UseRabbitMq(rabbitMqConnectionStringKey);
         });
 

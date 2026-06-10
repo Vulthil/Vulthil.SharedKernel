@@ -108,6 +108,18 @@ subscriber queues exist, and a pub/sub message with no bound queue is silently d
 by `AddTransactionalOutbox` via an `IOutboxRelayGate` that awaits `ITransport.WaitUntilReadyAsync`; the relay starts
 immediately when no gate is registered.
 
+### Establishing the transaction
+
+Capture only happens when a database transaction is open around the publish — otherwise the message is sent
+directly. The transaction is established by one of:
+
+- **Commands** — mark them `ITransactionalCommand<T>` and register `AddTransactionalPipelineBehavior()`; the
+  behavior runs the command in a transaction.
+- **Consumers** — the [inbox](inbox-pattern.md) opens one, or call `messaging.AddTransactionalConsumer<TMessage>()`
+  to run a consumer in a transaction without the inbox. The two compose: if the inbox is also enabled it opens the
+  transaction and the consume filter joins it rather than nesting.
+- **Anything else** — wrap the work in `IUnitOfWork.ExecuteInTransactionAsync(...)`.
+
 ## Typical Flow
 
 ```

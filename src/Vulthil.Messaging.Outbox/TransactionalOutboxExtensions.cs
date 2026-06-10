@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
 namespace Vulthil.Messaging.Outbox;
@@ -27,6 +28,26 @@ public static class TransactionalOutboxExtensions
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxDispatcher, BrokerOutboxDispatcher>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxRelayGate, TransportReadinessOutboxGate>());
+
+        return configurator;
+    }
+
+    /// <summary>
+    /// Runs the consumer of <typeparamref name="TMessage"/> inside a database transaction, so its database writes and
+    /// any messages it publishes commit atomically and are captured by the transactional outbox — forcing the
+    /// transaction around a consumer that does not otherwise open one (e.g. one without the inbox). If the inbox is
+    /// also enabled for the type it opens the transaction first and this joins it. Requires a relational provider.
+    /// </summary>
+    /// <typeparam name="TMessage">The consumed message type.</typeparam>
+    /// <param name="configurator">The messaging configurator.</param>
+    /// <returns>The same configurator, for chaining.</returns>
+    public static IMessagingConfigurator AddTransactionalConsumer<TMessage>(this IMessagingConfigurator configurator)
+        where TMessage : notnull
+    {
+        ArgumentNullException.ThrowIfNull(configurator);
+
+        configurator.HostApplicationBuilder.Services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<IConsumeFilter<TMessage>, TransactionalConsumeFilter<TMessage>>());
 
         return configurator;
     }

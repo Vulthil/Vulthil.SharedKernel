@@ -37,6 +37,8 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
+    public bool IsInTransaction => Database.CurrentTransaction is not null;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -49,6 +51,11 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
     public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(operation);
+
+        if (Database.CurrentTransaction is not null)
+        {
+            return await operation(cancellationToken);
+        }
 
         var strategy = Database.CreateExecutionStrategy();
         return await strategy.ExecuteAsync(

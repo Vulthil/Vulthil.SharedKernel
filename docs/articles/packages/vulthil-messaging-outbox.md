@@ -14,7 +14,9 @@ redelivered relay is deduplicated by the receiving inbox (end-to-end effectively
 
 - Reuses the shared outbox engine — one `OutboxMessages` table and one relay serve both in-process domain events
   and broker messages, routed by an `OutboxDestination` discriminator.
-- Capture is gated on an ambient transaction: a publish/send with no active transaction is sent directly.
+- Capture is gated on an ambient transaction: a publish/send with no active transaction is sent directly. The
+  transaction comes from `ITransactionalCommand`, the inbox, `AddTransactionalConsumer<T>()`, or a manual
+  `ExecuteInTransactionAsync`.
 - A commit-time trigger relays freshly-committed messages promptly; the periodic poll is the backstop.
 - Built on the general publish/send filter pipeline (`IPublishFilter` / `AddPublishFilter<T>()`).
 

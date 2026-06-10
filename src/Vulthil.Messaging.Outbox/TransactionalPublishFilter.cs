@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using Vulthil.Messaging.Transport;
 using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
 
@@ -17,7 +16,7 @@ internal sealed class TransactionalPublishFilter(
 {
     public async Task PublishAsync(PublishFilterContext context, PublishFilterDelegate next)
     {
-        if (outboxMessages is not DbContext dbContext || dbContext.Database.CurrentTransaction is null)
+        if (!outboxMessages.IsInTransaction)
         {
             await next(context);
             return;
@@ -27,7 +26,7 @@ internal sealed class TransactionalPublishFilter(
 
         // Flush into the open transaction (order-independent), without committing. The transaction's commit makes
         // the row durable; the commit-time trigger then wakes the relay. The message is not sent here.
-        await dbContext.SaveChangesAsync(context.CancellationToken);
+        await outboxMessages.SaveChangesAsync(context.CancellationToken);
     }
 
     private OutboxMessage CreateRow(PublishFilterContext context)

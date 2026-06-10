@@ -18,6 +18,7 @@ Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.BaseDbContext(Microsoft.EntityFrameworkCore.DbContextOptions! options) -> void
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.BeginTransactionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction!>!
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync<TResult>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>!>! operation, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResult>!
+Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.IsInTransaction.get -> bool
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>!
 Vulthil.SharedKernel.Infrastructure.Data.DbContextExtensions
 Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper
@@ -48,6 +49,7 @@ Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxStrategy.BeginTransa
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData>!>!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.IOutboxStrategy.UpdateMessagesAsync(Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages! context, System.Collections.Generic.IReadOnlyList<System.Guid>! successIds, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageFailure>! failures, int maxRetries, System.DateTimeOffset processedOnUtc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages
+Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages.IsInTransaction.get -> bool
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.ISaveOutboxMessages.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
 Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage

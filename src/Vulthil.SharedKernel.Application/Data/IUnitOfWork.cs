@@ -26,7 +26,9 @@ public interface IUnitOfWork
     /// Prefer this over manually pairing <see cref="BeginTransactionAsync"/> with a commit when a retrying execution
     /// strategy may be configured (e.g. the EF Core default): a bare user-initiated transaction is rejected under a
     /// retrying strategy, whereas this wraps the whole begin/operation/commit as one retriable unit. A transient-fault
-    /// retry re-runs <paramref name="operation"/> from a clean change-tracker state, so it must be idempotent.
+    /// retry re-runs <paramref name="operation"/> from a clean change-tracker state, so it must be idempotent. If a
+    /// transaction is already active, <paramref name="operation"/> simply joins it (the outer scope owns the commit),
+    /// so this composes with an outer caller that already opened a transaction.
     /// </remarks>
     /// <typeparam name="TResult">The type produced by <paramref name="operation"/>.</typeparam>
     /// <param name="operation">The work to run inside the transaction.</param>

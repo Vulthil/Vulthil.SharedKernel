@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.TestHarness;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
 using Vulthil.xUnit;
 using WebApi.Application;
 using WebApi.Application.MainEntities.Create;

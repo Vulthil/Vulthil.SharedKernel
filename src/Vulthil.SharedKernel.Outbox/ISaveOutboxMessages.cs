@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// Exposes the <see cref="OutboxMessage"/> entity set for persistence contexts that support outbox integration.

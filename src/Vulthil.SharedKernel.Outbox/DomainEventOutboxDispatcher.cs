@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// Relays <see cref="OutboxDestination.DomainEvent"/> rows to in-process domain-event handlers via

@@ -7,7 +7,7 @@ using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 using Vulthil.Messaging.Inbox.Relational;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
 using WebApi.Application;
 using WebApi.Domain.MainEntities;
 using WebApi.Domain.SideEffects;

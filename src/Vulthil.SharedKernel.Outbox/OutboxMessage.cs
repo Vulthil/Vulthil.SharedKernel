@@ -1,4 +1,4 @@
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// Represents a serialized domain event stored for reliable outbox-based delivery.

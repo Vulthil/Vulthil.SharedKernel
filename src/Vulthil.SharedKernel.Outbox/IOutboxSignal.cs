@@ -1,4 +1,4 @@
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// Wakes the outbox background service when a transaction commits, so freshly-written outbox messages are relayed

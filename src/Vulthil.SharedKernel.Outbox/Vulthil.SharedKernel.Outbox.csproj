@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Transactional outbox engine for Vulthil.SharedKernel — the message-capture model, relay processor and background service, pluggable dispatchers, and provider-agnostic strategy contracts. Persistence-light so a messaging bridge can depend on the outbox engine without the full infrastructure package.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj" />
+	</ItemGroup>
+
+	<!-- Vulthil.SharedKernel.Infrastructure is the canonical DI host for the engine; it wires the internal
+	     processor, background service, dispatcher, and signal during EnableOutboxProcessing. -->
+	<ItemGroup>
+		<InternalsVisibleTo Include="Vulthil.SharedKernel.Infrastructure" />
+	</ItemGroup>
+
+</Project>

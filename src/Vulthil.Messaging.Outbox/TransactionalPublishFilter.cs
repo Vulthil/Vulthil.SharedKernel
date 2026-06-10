@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Vulthil.Messaging.Transport;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
 
 namespace Vulthil.Messaging.Outbox;
 

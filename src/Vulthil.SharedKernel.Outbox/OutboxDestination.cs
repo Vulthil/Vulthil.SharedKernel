@@ -1,4 +1,4 @@
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// Identifies the sink an outbox message is relayed to, so the <see cref="OutboxProcessor"/> can route each row to

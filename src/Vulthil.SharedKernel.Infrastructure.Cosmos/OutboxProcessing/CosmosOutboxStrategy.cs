@@ -1,5 +1,5 @@
 using Vulthil.SharedKernel.Application.Data;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
 
 namespace Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing;
 

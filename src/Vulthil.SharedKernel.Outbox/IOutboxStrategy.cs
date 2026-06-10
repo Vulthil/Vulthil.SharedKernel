@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Vulthil.SharedKernel.Application.Data;
 
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// Abstraction for provider-specific outbox lock acquisition, message fetching, updating, and transactional boundary.

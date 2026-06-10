@@ -25,7 +25,7 @@ namespace WebApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage", b =>
+            modelBuilder.Entity("Vulthil.SharedKernel.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

@@ -1,4 +1,4 @@
-namespace Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// A readiness gate the outbox relay awaits once before its first processing pass. It lets a downstream sink defer

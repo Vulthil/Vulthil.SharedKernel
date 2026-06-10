@@ -1,6 +1,6 @@
 # Outbox Pattern
 
-`Vulthil.SharedKernel.Infrastructure` implements the transactional outbox pattern so that domain events raised by aggregate roots are guaranteed to be published even if the process crashes after the database commit.
+The transactional outbox pattern guarantees that domain events raised by aggregate roots are published even if the process crashes after the database commit. The engine lives in `Vulthil.SharedKernel.Outbox`; `Vulthil.SharedKernel.Infrastructure` references it and adds the `DbContext` base and the `EnableOutboxProcessing` wiring.
 
 ## How It Works
 

@@ -8,6 +8,8 @@
   href: vulthil-sharedkernel-application.md
 - name: Vulthil.SharedKernel.Infrastructure
   href: vulthil-sharedkernel-infrastructure.md
+- name: Vulthil.SharedKernel.Outbox
+  href: vulthil-sharedkernel-outbox.md
 - name: Vulthil.SharedKernel.Infrastructure.Relational
   href: vulthil-sharedkernel-infrastructure-relational.md
 - name: Vulthil.SharedKernel.Infrastructure.Npgsql

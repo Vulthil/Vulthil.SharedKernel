@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Vulthil.SharedKernel.Infrastructure\Vulthil.SharedKernel.Infrastructure.csproj" />
+		<ProjectReference Include="..\Vulthil.SharedKernel.Outbox\Vulthil.SharedKernel.Outbox.csproj" />
 		<ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
 	</ItemGroup>
 

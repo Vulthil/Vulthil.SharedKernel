@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
 using WebApi.Application.MainEntities.Create;
 using WebApi.Application.MainEntities.GetById;
 using WebApi.Application.MainEntities.Update;

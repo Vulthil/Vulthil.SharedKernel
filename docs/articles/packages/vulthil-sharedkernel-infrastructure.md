@@ -1,6 +1,8 @@
 # Vulthil.SharedKernel.Infrastructure
 
-Use `Vulthil.SharedKernel.Infrastructure` for persistence and outbox integration.
+Use `Vulthil.SharedKernel.Infrastructure` for persistence and outbox integration. It hosts the outbox engine
+(factored into [`Vulthil.SharedKernel.Outbox`](vulthil-sharedkernel-outbox.md)) and adds the `DbContext` base and
+the DI wiring (`EnableOutboxProcessing`).
 
 ## When to use
 

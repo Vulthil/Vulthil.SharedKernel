@@ -1,9 +1,9 @@
 #nullable enable
-override Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessageData>!>!
+override Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Outbox.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!
 static Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql<TContext>(this Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TContext!>! configurator) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TContext!>!
 Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions
 Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStrategy
 Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStrategy.MySqlOutboxStrategy() -> void
 Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration
 Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
-Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage!>! builder) -> void
+Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage!>! builder) -> void

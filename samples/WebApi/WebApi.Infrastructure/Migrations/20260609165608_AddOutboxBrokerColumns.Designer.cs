@@ -39,7 +39,7 @@ namespace WebApi.Infrastructure.Migrations
                     b.ToTable("InboxMessages");
                 });
 
-            modelBuilder.Entity("Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage", b =>
+            modelBuilder.Entity("Vulthil.SharedKernel.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

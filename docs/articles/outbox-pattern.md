@@ -6,7 +6,7 @@ The transactional outbox pattern guarantees that domain events raised by aggrega
 
 1. During `SaveChangesAsync`, a `SaveChangesInterceptor` serialises every pending domain event into an `OutboxMessage` row in the same database transaction.
 2. The aggregate root's event collection is cleared.
-3. A background service (`OutboxBackgroundService`) relays unprocessed outbox messages — woken immediately when a transaction commits (low latency) and polling on an interval as the backstop.
+3. A background service (`OutboxBackgroundService`) relays unprocessed outbox messages — woken immediately once the captured rows are durable (on transaction commit, or right after a non-transactional `SaveChanges` that captured domain events) for low latency, and polling on an interval as the backstop.
 4. Each message is routed by its `OutboxDestination` to the registered `IOutboxDispatcher` that handles it (in-process domain events by default, or the broker — see below).
 5. Successfully relayed messages are marked as processed; failures are retried up to the configured maximum.
 

@@ -1,9 +1,9 @@
-using ServiceDefaults;
 using Testcontainers.CosmosDb;
+using Vulthil.TestHost;
 using Vulthil.xUnit.Cosmos;
 using Xunit.Sdk;
 
-namespace WebApi.Tests.Fixtures;
+namespace Vulthil.IntegrationTests.Fixtures;
 
 internal sealed class CosmosTestContainer(IMessageSink messageSink) : CosmosTestContainerFixture<CosmosProbeDbContext>(messageSink)
 {
@@ -11,5 +11,5 @@ internal sealed class CosmosTestContainer(IMessageSink messageSink) : CosmosTest
 
     protected override CosmosDbBuilder Configure() => new(CosmosDbImage);
 
-    public override string ConnectionStringKey => ServiceNames.CosmosDbServiceName;
+    public override string ConnectionStringKey => TestHostConnectionStrings.CosmosDb;
 }

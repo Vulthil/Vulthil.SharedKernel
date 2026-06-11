@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
+using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Inbox;
 using Vulthil.xUnit;
-using WebApi.Tests.Fixtures;
 
-namespace WebApi.Tests;
+namespace Vulthil.IntegrationTests;
 
 /// <summary>
 /// Exercises the Cosmos idempotency store against the real Cosmos emulator (through the

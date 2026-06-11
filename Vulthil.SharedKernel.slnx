@@ -90,6 +90,7 @@
     <Project Path="src/Vulthil.xUnit/Vulthil.xUnit.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Vulthil.IntegrationTests/Vulthil.IntegrationTests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Abstractions.Tests/Vulthil.Messaging.Abstractions.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Inbox.Relational.Tests/Vulthil.Messaging.Inbox.Relational.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Inbox.Tests/Vulthil.Messaging.Inbox.Tests.csproj" />
@@ -99,6 +100,7 @@
     <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
+    <Project Path="tests/Vulthil.TestHost/Vulthil.TestHost.csproj" />
   </Folder>
   <Folder Name="/tests/MessagingIntegrationTests/">
     <File Path="tests/MessagingIntegrationTests/aspire.config.json" />

@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Vulthil.Messaging.Inbox.Cosmos;
 using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 
-namespace WebApi.Tests.Fixtures;
+namespace Vulthil.IntegrationTests.Fixtures;
 
 /// <summary>
-/// A minimal Cosmos-mapped context used to verify the <see cref="CosmosTestContainer{TDbContext}"/> end to end.
-/// It also implements <see cref="ISaveInboxMessages"/> and maps a side-effect set so the same emulator backs the
-/// Cosmos idempotency-store integration test.
+/// A minimal Cosmos-mapped context used to verify the Cosmos test container fixture end to end. It also implements
+/// <see cref="ISaveInboxMessages"/> and maps a side-effect set so the same emulator backs the Cosmos
+/// idempotency-store integration test.
 /// </summary>
 internal sealed class CosmosProbeDbContext(DbContextOptions<CosmosProbeDbContext> options) : DbContext(options), ISaveInboxMessages
 {

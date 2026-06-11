@@ -196,7 +196,7 @@ Every container on the host is consumed automatically, so containers are managed
 - `CosmosTestContainerFixture` (in the `Vulthil.xUnit.Cosmos` package) starts one Cosmos emulator and gives each scope its own **emulator database**, recreated between tests.
 - Any other `TestContainerFixtureWithConnectionString` returns a pass-through scope by default — consumers share the container's namespace; override `CreateScope` only when the service offers some other isolation unit.
 - Containers start **lazily** on first use: a filtered run only pays for the containers its factories actually consume, and concurrent factories share one startup task per container.
-- A factory that should not consume every host container overrides `ShouldUseContainer` (e.g. the sample's harness-based factory consumes only PostgreSQL). Factory-owned `AddContainer` registrations work alongside host scopes.
+- A factory that should not consume every host container overrides `ShouldUseContainer` (e.g. a factory that swaps the broker for the in-memory test harness consumes only the database container). Factory-owned `AddContainer` registrations work alongside host scopes.
 
 The scope identifier defaults to the factory type name plus a random suffix (override `CreateScopeId()` to change it), so two classes using the same factory type still get distinct databases and virtual hosts.
 

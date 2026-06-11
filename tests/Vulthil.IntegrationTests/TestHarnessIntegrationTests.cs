@@ -1,14 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
+using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.TestHarness;
+using Vulthil.TestHost.Probes;
 using Vulthil.xUnit;
-using WebApi.Application.MainEntities.Create;
-using WebApi.Application.SideEffects;
-using WebApi.Application.SideEffects.Create;
-using WebApi.Tests.Fixtures;
 
-namespace WebApi.Tests;
+namespace Vulthil.IntegrationTests;
 
 public sealed class TestHarnessIntegrationTests(TestHarnessWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase<TestHarnessWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<TestHarnessWebApplicationFactory>
@@ -21,21 +18,21 @@ public sealed class TestHarnessIntegrationTests(TestHarnessWebApplicationFactory
     public async Task PublishingAnIntegrationEventRunsTheRealConsumerThroughTheInMemoryHarness()
     {
         // Arrange
-        var mainEntityId = Guid.NewGuid();
+        var probeId = Guid.NewGuid();
 
         // Act — the harness dispatches synchronously, with no broker.
-        await Publisher.PublishAsync(new MainEntityCreatedIntegrationEvent(mainEntityId), CancellationToken);
+        await Publisher.PublishAsync(new ProbeCreatedIntegrationEvent(probeId), CancellationToken);
 
         // Assert — the event was captured and the real consumer ran (no polling needed).
-        Harness.Published<MainEntityCreatedIntegrationEvent>().ShouldHaveSingleItem().Message.Id.ShouldBe(mainEntityId);
-        Harness.Consumed<MainEntityCreatedIntegrationEvent>().ShouldHaveSingleItem().Message.Id.ShouldBe(mainEntityId);
+        Harness.Published<ProbeCreatedIntegrationEvent>().ShouldHaveSingleItem().Message.Id.ShouldBe(probeId);
+        Harness.Consumed<ProbeCreatedIntegrationEvent>().ShouldHaveSingleItem().Message.Id.ShouldBe(probeId);
 
         // The consumer wrote a side effect to the real database; read it back through the request consumer.
-        var sideEffects = await Requester.RequestAsync<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>(
-            new GetSideEffectsBelongingToMainEntity(mainEntityId),
+        var sideEffects = await Requester.RequestAsync<GetProbeSideEffects, List<ProbeSideEffectDto>>(
+            new GetProbeSideEffects(probeId),
             CancellationToken);
 
         sideEffects.IsSuccess.ShouldBeTrue();
-        sideEffects.Value.ShouldContain(sideEffect => sideEffect.MainEntityId == mainEntityId);
+        sideEffects.Value.ShouldContain(sideEffect => sideEffect.ProbeId == probeId);
     }
 }

@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
+using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.xUnit;
-using WebApi.Tests.Fixtures;
 
-namespace WebApi.Tests;
+namespace Vulthil.IntegrationTests;
 
 public sealed class CosmosTestContainerTests(CosmosWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>

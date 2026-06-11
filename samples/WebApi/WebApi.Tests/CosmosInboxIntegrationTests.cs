@@ -13,9 +13,8 @@ namespace WebApi.Tests;
 /// <see cref="CosmosWebApplicationFactory"/> pipeline): a first delivery runs the consumer and records the marker,
 /// and a duplicate delivery for the same key is skipped — giving effectively-once processing.
 /// </summary>
-[Collection(CosmosCollection.Name)]
 public sealed class CosmosInboxIntegrationTests(CosmosWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper)
+    : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
 {
     private static readonly IMessageContext _messageContext = Mock.Of<IMessageContext>();
 

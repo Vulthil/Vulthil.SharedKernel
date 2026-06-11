@@ -86,6 +86,7 @@
   <Folder Name="/src/Testing/">
     <Project Path="src/Vulthil.Extensions.Testing/Vulthil.Extensions.Testing.csproj" />
     <Project Path="src/Vulthil.Messaging.TestHarness/Vulthil.Messaging.TestHarness.csproj" />
+    <Project Path="src/Vulthil.xUnit.Cosmos/Vulthil.xUnit.Cosmos.csproj" />
     <Project Path="src/Vulthil.xUnit/Vulthil.xUnit.csproj" />
   </Folder>
   <Folder Name="/tests/">

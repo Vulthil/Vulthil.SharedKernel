@@ -42,3 +42,5 @@
   href: vulthil-extensions-testing.md
 - name: Vulthil.xUnit
   href: vulthil-xunit.md
+- name: Vulthil.xUnit.Cosmos
+  href: vulthil-xunit-cosmos.md

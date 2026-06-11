@@ -6,23 +6,20 @@ using Vulthil.Messaging.Inbox;
 using Vulthil.Messaging.Inbox.Cosmos;
 using Vulthil.Messaging.TestHarness;
 using Vulthil.xUnit;
-using Xunit.Sdk;
+using Vulthil.xUnit.Fixtures;
 
 namespace WebApi.Tests.Fixtures;
 
 /// <summary>
-/// Boots the WebApi host with a PostgreSQL container (its primary store) and a Cosmos emulator container. The
-/// Cosmos container registers <see cref="CosmosProbeDbContext"/> into the host through the container
+/// Boots the WebApi host against the shared <see cref="AppContainerHost"/> containers: a PostgreSQL database (its
+/// primary store) and a Cosmos emulator database, both scoped per test class so classes run in parallel. The Cosmos
+/// container registers <see cref="CosmosProbeDbContext"/> into the host through the container
 /// <c>ConfigureServices</c> extension point, so the Cosmos approach is exercised through the real
 /// <see cref="BaseWebApplicationFactory{TEntryPoint}"/> pipeline. The broker is swapped for the in-memory harness.
 /// </summary>
-public sealed class CosmosWebApplicationFactory : BaseWebApplicationFactory<Program>
+public sealed class CosmosWebApplicationFactory(AppContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost)
 {
-    public CosmosWebApplicationFactory(IMessageSink messageSink)
-    {
-        AddContainer(new PostgreSqlTestContainer(messageSink));
-        AddContainer(new CosmosTestContainer<CosmosProbeDbContext>(messageSink));
-    }
+    protected override bool ShouldUseContainer(ITestContainer container) => container is not RabbitMqTestContainer;
 
     protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
     {

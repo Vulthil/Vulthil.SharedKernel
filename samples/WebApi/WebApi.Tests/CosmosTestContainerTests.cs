@@ -6,9 +6,8 @@ using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
 
-[Collection(CosmosCollection.Name)]
 public sealed class CosmosTestContainerTests(CosmosWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper)
+    : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
 {
     [Fact]
     public async Task ContainerStartsWithAnEmptyDatabase()

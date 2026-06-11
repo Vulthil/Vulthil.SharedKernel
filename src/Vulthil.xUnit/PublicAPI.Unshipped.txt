@@ -1,5 +1,34 @@
 #nullable enable
 abstract Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.ConnectionString.get -> string!
+override Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+override Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+static Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.SanitizeDatabaseName(string! scopeId) -> string!
+virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CreateFactory() -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.CreateScopeId() -> string!
+virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ShouldUseContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> bool
+virtual Vulthil.xUnit.Fixtures.ContainerHost.ConfigureContainers() -> System.Threading.Tasks.Task!
+virtual Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.BuildScopedConnectionString(string! virtualHost) -> string!
+virtual Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.VirtualHostUsername.get -> string!
+virtual Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.BuildScopedConnectionString(string! databaseName) -> string!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.CreateDatabaseAsync(string! databaseName) -> System.Threading.Tasks.Task!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.DropDatabaseAsync(string! databaseName) -> System.Threading.Tasks.Task!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.FactoryFixture.get -> TFactory!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory(Vulthil.xUnit.Fixtures.ContainerHost! containerHost) -> void
+Vulthil.xUnit.Fixtures.ContainerHost
+Vulthil.xUnit.Fixtures.ContainerHost.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> void
+Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Fixtures.ContainerHost.Containers.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.xUnit.Fixtures.ITestContainer!>!
+Vulthil.xUnit.Fixtures.ContainerHost.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ContainerHost.EnsureStartedAsync(Vulthil.xUnit.Fixtures.ITestContainer! container) -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Fixtures.ContainerHost.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ContainerHost.MessageSink.get -> Xunit.Sdk.IMessageSink!
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ExecuteServerCommandAsync(string! commandText) -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Fixtures.ITestContainerScopeProvider
+Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
 abstract Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.ConnectionStringKey.get -> string!
 abstract Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ConnectionStringKey.get -> string!
 abstract Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.DbAdapter.get -> Respawn.IDbAdapter!

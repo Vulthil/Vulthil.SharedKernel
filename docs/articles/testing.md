@@ -95,7 +95,7 @@ Key features:
 
 - **Scoped services** – `ScopedServices` gives you a fresh DI scope per test.
 - **Automatic database reset** – the database is reset with Respawn after each test, so tests sharing a factory start from a clean state.
-- **Log capture** – application logs are routed to the currently running test automatically (via `TestContext`), with no per-test host rebuild. The `ITestOutputHelper` constructor parameter remains available for writing test output directly.
+- **Log capture** – application logs are routed to the currently running test automatically (via `TestContext`). The `ITestOutputHelper` constructor parameter is for writing test output directly.
 - **One host per class** – all tests in a class run against the fixture's test host. Override `CreateFactory()` (e.g. `FactoryFixture.WithWebHostBuilder(...)`) when a class needs per-test host configuration; derived factories are disposed after each test.
 
 ### Test Containers
@@ -144,7 +144,7 @@ Containers are registered on the factory with `AddContainer` (see below), which 
 
 ### WebApplicationFactory
 
-`BaseWebApplicationFactory<TEntryPoint>` owns the test containers and serves as the xUnit fixture, so a single derived class replaces the separate factory + fixture pair. Register containers with `AddContainer` (in the constructor or by overriding `ConfigureContainers`); their connection strings are injected into the host and EF Core migrations are ensured during host startup:
+`BaseWebApplicationFactory<TEntryPoint>` owns the test containers and serves as the xUnit fixture, so a single derived class acts as both the factory and the fixture. Register containers with `AddContainer` (in the constructor or by overriding `ConfigureContainers`); their connection strings are injected into the host and EF Core migrations are ensured during host startup:
 
 ```csharp
 public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
@@ -185,18 +185,18 @@ public sealed class AppContainerHost(IMessageSink messageSink) : ContainerHost(m
 
 [assembly: AssemblyFixture(typeof(AppContainerHost))]
 
-// The factory takes the host instead of registering containers itself — nothing else changes.
+// The factory consumes every container registered on the host.
 public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost);
 ```
 
-Every container on the host is consumed automatically, so containers are managed in one place. Each factory instance (one per test class with `IClassFixture`) gets its own **scope** inside the shared containers, so parallel test classes never see each other's state. Scoping is built into the fixture base classes — a consumer derives the same thin container wrappers as ever and never implements scope plumbing:
+Every container on the host is consumed automatically, so containers are managed in one place. Each factory instance (one per test class with `IClassFixture`) gets its own **scope** inside the shared containers, so parallel test classes never see each other's state. Scoping is built into the fixture base classes; a consumer only derives thin container wrappers:
 
-- `TestDatabaseContainerFixture` creates a uniquely named database per scope on the shared server, migrates it during host startup, resets it with Respawn between tests, and drops it (best-effort) when the class finishes. Database DDL is engine-aware through the fixture's `DbAdapter` (PostgreSQL drops use `WITH (FORCE)`, SQL Server switches to single-user); `BuildScopedConnectionString`, `CreateDatabaseAsync`, and `DropDatabaseAsync` remain overridable for exotic engines.
+- `TestDatabaseContainerFixture` creates a uniquely named database per scope on the shared server, migrates it during host startup, resets it with Respawn between tests, and drops it (best-effort) when the class finishes. Database DDL is engine-aware through the fixture's `DbAdapter` (PostgreSQL drops use `WITH (FORCE)`, SQL Server switches to single-user); `BuildScopedConnectionString`, `CreateDatabaseAsync`, and `DropDatabaseAsync` are overridable for exotic engines.
 - `RabbitMqTestContainerFixture` creates a **virtual host** per scope on the shared broker (via `rabbitmqctl` inside the container), so parallel classes never see each other's exchanges, queues, or messages.
 - `CosmosTestContainerFixture` (in the `Vulthil.xUnit.Cosmos` package) starts one Cosmos emulator and gives each scope its own **emulator database**, recreated between tests.
 - Any other `TestContainerFixtureWithConnectionString` returns a pass-through scope by default — consumers share the container's namespace; override `CreateScope` only when the service offers some other isolation unit.
 - Containers start **lazily** on first use: a filtered run only pays for the containers its factories actually consume, and concurrent factories share one startup task per container.
-- A factory that should not consume every host container overrides `ShouldUseContainer` (e.g. the sample's harness-based factory consumes only PostgreSQL). Factory-owned `AddContainer` registrations keep working alongside host scopes.
+- A factory that should not consume every host container overrides `ShouldUseContainer` (e.g. the sample's harness-based factory consumes only PostgreSQL). Factory-owned `AddContainer` registrations work alongside host scopes.
 
 The scope identifier defaults to the factory type name plus a random suffix (override `CreateScopeId()` to change it), so two classes using the same factory type still get distinct databases and virtual hosts.
 

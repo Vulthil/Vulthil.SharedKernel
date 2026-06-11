@@ -74,7 +74,7 @@ internal sealed class RabbitMqRequester : IRequester
 
         // A dedicated per-request id correlates the reply back to this call. It is carried in the AMQP
         // CorrelationId property (the RPC slot the reply echoes) and the envelope's RequestId, leaving the
-        // business CorrelationId free — two requests sharing a business key no longer collide on the waiter.
+        // business CorrelationId free — two requests sharing a business key cannot collide on the waiter.
         var requestId = Guid.CreateVersion7().ToString();
         var responseUrn = _messageConfigurationProvider.GetUrn(typeof(TResponse));
 

@@ -351,7 +351,7 @@ consumes a partitioned message type, its worker:
 
 Notes:
 
-- For a partitioned queue, `ConcurrencyLimit` no longer drives dispatch (it is forced to
+- For a partitioned queue, `ConcurrencyLimit` does not drive dispatch (it is forced to
   ordered single dispatch); tune throughput with `PrefetchCount` instead.
 - A delivery whose selected key is `null` or empty is processed without lane
   serialization (it still runs off the receive loop, so it does not block ordering of

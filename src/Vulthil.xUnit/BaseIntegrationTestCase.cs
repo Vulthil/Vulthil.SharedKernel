@@ -10,8 +10,8 @@ namespace Vulthil.xUnit;
 /// <remarks>
 /// Supply <typeparamref name="TFactory"/> as an <see cref="IClassFixture{TFixture}"/> (or collection fixture) so its
 /// containers are started once and shared across the tests in that scope; database state is reset after each test.
-/// All tests in the scope also share the fixture's test host — application logs reach the currently running test
-/// through the factory's TestContext-routed logger, so no per-test host is built.
+/// All tests in the scope also share the fixture's test host, and application logs reach the currently running test
+/// through the factory's TestContext-routed logger.
 /// </remarks>
 public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLifetime
     where TFactory : BaseWebApplicationFactory<TEntryPoint>
@@ -36,8 +36,7 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
 
     /// <summary>
     /// Gets the test output helper passed to the constructor, or <see langword="null"/> if not provided. Application
-    /// log capture does not require it — logs are routed to the running test automatically — but it remains available
-    /// for writing test output directly.
+    /// logs are routed to the running test automatically; the helper is for writing test output directly.
     /// </summary>
     protected ITestOutputHelper? TestOutputHelper { get; }
 

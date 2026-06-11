@@ -1,8 +1,5 @@
-using Meziantou.Extensions.Logging.Xunit.v3;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Vulthil.xUnit.Http;
 
 namespace Vulthil.xUnit;
@@ -13,6 +10,8 @@ namespace Vulthil.xUnit;
 /// <remarks>
 /// Supply <typeparamref name="TFactory"/> as an <see cref="IClassFixture{TFixture}"/> (or collection fixture) so its
 /// containers are started once and shared across the tests in that scope; database state is reset after each test.
+/// All tests in the scope also share the fixture's test host, and application logs reach the currently running test
+/// through the factory's TestContext-routed logger.
 /// </remarks>
 public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLifetime
     where TFactory : BaseWebApplicationFactory<TEntryPoint>
@@ -23,16 +22,21 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// </summary>
     protected static CancellationToken CancellationToken => TestContext.Current.CancellationToken;
 
-    private readonly TFactory _factory;
     private readonly Lazy<WebApplicationFactory<TEntryPoint>> _lazyFactory;
 
     /// <summary>
-    /// Gets the lazily-initialized web application factory configured with test containers.
+    /// Gets the shared factory fixture providing the container infrastructure and the test host.
+    /// </summary>
+    protected TFactory FactoryFixture { get; }
+
+    /// <summary>
+    /// Gets the web application factory this test runs against, created on first access via <see cref="CreateFactory"/>.
     /// </summary>
     protected WebApplicationFactory<TEntryPoint> Factory => _lazyFactory.Value;
 
     /// <summary>
-    /// Gets the test output helper used to capture log output, or <see langword="null"/> if not provided.
+    /// Gets the test output helper passed to the constructor, or <see langword="null"/> if not provided. Application
+    /// logs are routed to the running test automatically; the helper is for writing test output directly.
     /// </summary>
     protected ITestOutputHelper? TestOutputHelper { get; }
 
@@ -62,30 +66,22 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// Initializes a new instance with the shared web application factory and optional test output.
     /// </summary>
     /// <param name="factory">The factory fixture providing container infrastructure.</param>
-    /// <param name="testOutputHelper">Optional output helper for capturing log output.</param>
+    /// <param name="testOutputHelper">Optional output helper for writing test output directly.</param>
     protected BaseIntegrationTestCase(TFactory factory, ITestOutputHelper? testOutputHelper = null)
     {
-        _factory = factory;
+        FactoryFixture = factory;
         TestOutputHelper = testOutputHelper;
         _lazyFactory = new(CreateFactory);
     }
 
-    private WebApplicationFactory<TEntryPoint> CreateFactory() =>
-        _factory.WithWebHostBuilder(builder =>
-        {
-            if (TestOutputHelper is not null)
-            {
-                builder.ConfigureLogging(loggingBuilder =>
-                {
-                    loggingBuilder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new XUnitLoggerProvider(TestOutputHelper, new XUnitLoggerOptions()
-                    {
-                        IncludeCategory = true,
-                        IncludeLogLevel = true,
-                        IncludeScopes = true,
-                    }));
-                });
-            }
-        });
+    /// <summary>
+    /// Creates the <see cref="WebApplicationFactory{TEntryPoint}"/> this test runs against. Returns the shared
+    /// <see cref="FactoryFixture"/> by default, so every test in the class reuses one test host. Override to derive a
+    /// per-test factory (for example <c>FactoryFixture.WithWebHostBuilder(...)</c>) when the tests need per-test host
+    /// configuration; a derived factory is disposed automatically after each test.
+    /// </summary>
+    /// <returns>The factory the current test should run against.</returns>
+    protected virtual WebApplicationFactory<TEntryPoint> CreateFactory() => FactoryFixture;
 
     /// <summary>
     /// Gets the HTTP mock registered for the named HTTP client <paramref name="name"/>, for configuring stubbed
@@ -93,7 +89,7 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// </summary>
     /// <param name="name">The logical name of the HTTP client registered via <c>AddHttpMock</c> on the factory.</param>
     /// <returns>The registered HTTP mock.</returns>
-    protected IHttpMock HttpMock(string name) => _factory.GetHttpMock(name);
+    protected IHttpMock HttpMock(string name) => FactoryFixture.GetHttpMock(name);
 
     /// <summary>
     /// Gets the HTTP mock registered for the typed client <typeparamref name="TClient"/>, for configuring stubbed
@@ -103,15 +99,15 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// <returns>The registered HTTP mock.</returns>
     protected IHttpMock HttpMock<TClient>()
         where TClient : class
-        => _factory.GetHttpMock<TClient>();
+        => FactoryFixture.GetHttpMock<TClient>();
 
     /// <inheritdoc />
     public virtual async ValueTask DisposeAsync()
     {
-        await _factory.ResetAsync();
+        await FactoryFixture.ResetAsync();
         await ResetScope();
         _client?.Dispose();
-        if (_lazyFactory.IsValueCreated)
+        if (_lazyFactory.IsValueCreated && !ReferenceEquals(_lazyFactory.Value, FactoryFixture))
         {
             await _lazyFactory.Value.DisposeAsync();
         }

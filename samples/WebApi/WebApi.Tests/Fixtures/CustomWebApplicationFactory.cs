@@ -1,15 +1,17 @@
 using Vulthil.xUnit;
 using WebApi.ExternalServices;
-using Xunit.Sdk;
 
 namespace WebApi.Tests.Fixtures;
 
+/// <summary>
+/// Boots the WebApi sample against the shared <see cref="AppContainerHost"/> containers: each test class gets its
+/// own PostgreSQL database and RabbitMQ virtual host, so classes using this factory run in parallel without
+/// interfering.
+/// </summary>
 public sealed class CustomWebApplicationFactory : BaseWebApplicationFactory<Program>
 {
-    public CustomWebApplicationFactory(IMessageSink messageSink)
+    public CustomWebApplicationFactory(AppContainerHost containerHost) : base(containerHost)
     {
-        AddContainer(new PostgreSqlTestContainer(messageSink));
-        AddContainer(new RabbitMqTestContainer(messageSink));
         AddHttpMock<IExternalWeatherClient>();
         AddHttpMock("inventory");
     }

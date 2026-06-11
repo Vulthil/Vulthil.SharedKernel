@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Vulthil.TestRunner.props', '$(MSBuildThisFileDirectory)'))" />
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
+		<PackageReference Include="Testcontainers.CosmosDb" />
+		<PackageReference Include="Testcontainers.PostgreSql" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Vulthil.Messaging.Inbox.Cosmos\Vulthil.Messaging.Inbox.Cosmos.csproj" />
+		<ProjectReference Include="..\..\src\Vulthil.Messaging.TestHarness\Vulthil.Messaging.TestHarness.csproj" />
+		<ProjectReference Include="..\..\src\Vulthil.xUnit.Cosmos\Vulthil.xUnit.Cosmos.csproj" />
+		<ProjectReference Include="..\Vulthil.TestHost\Vulthil.TestHost.csproj" />
+	</ItemGroup>
+
+</Project>

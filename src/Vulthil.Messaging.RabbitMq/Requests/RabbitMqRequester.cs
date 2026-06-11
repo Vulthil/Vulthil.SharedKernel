@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.RabbitMq.HealthChecks;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Telemetry;
@@ -17,17 +18,20 @@ internal sealed class RabbitMqRequester : IRequester
     private readonly IInternalPublisher _publisher;
     private readonly ResponseListener _listener;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
+    private readonly RabbitMqBusStartupStatus _startupStatus;
     private readonly ILogger<RabbitMqRequester> _logger;
 
     public RabbitMqRequester(
         IInternalPublisher publisher,
         ResponseListener listener,
         IMessageConfigurationProvider messageConfigurationProvider,
+        RabbitMqBusStartupStatus startupStatus,
         ILogger<RabbitMqRequester> logger)
     {
         _publisher = publisher;
         _listener = listener;
         _messageConfigurationProvider = messageConfigurationProvider;
+        _startupStatus = startupStatus;
         _logger = logger;
     }
 
@@ -70,7 +74,7 @@ internal sealed class RabbitMqRequester : IRequester
 
         // A dedicated per-request id correlates the reply back to this call. It is carried in the AMQP
         // CorrelationId property (the RPC slot the reply echoes) and the envelope's RequestId, leaving the
-        // business CorrelationId free — two requests sharing a business key no longer collide on the waiter.
+        // business CorrelationId free — two requests sharing a business key cannot collide on the waiter.
         var requestId = Guid.CreateVersion7().ToString();
         var responseUrn = _messageConfigurationProvider.GetUrn(typeof(TResponse));
 
@@ -78,6 +82,29 @@ internal sealed class RabbitMqRequester : IRequester
         var exchange = messageConfiguration.Exchange;
         var urn = messageConfiguration.Urn;
         var urnString = urn.AbsoluteUri;
+
+        // The bus starts in the background, so a request issued while the host is still warming up would be
+        // published before the responder's queue and bindings exist and expire unanswered. Hold the request until
+        // the bus has declared its topology and started its consumers (mirroring the outbox relay), bounded by the
+        // request timeout.
+        try
+        {
+            await _startupStatus.Ready.WaitAsync(linkedCts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            if (timeoutCts.IsCancellationRequested)
+            {
+                MessagingLog.RequestTimedOut(_logger, urnString, correlationId, timeout.TotalSeconds);
+                return Result.Failure<TResponse>(Error.Failure("Messaging.Request.Timeout", $"Request timed out after {timeout.TotalSeconds}s waiting for the transport to start"));
+            }
+
+            return Result.Failure<TResponse>(Error.Failure("Messaging.Request.Cancelled", "Request was cancelled by user."));
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<TResponse>(Error.Failure("Messaging.Request.TransportUnavailable", $"The transport failed to start: {ex.Message}"));
+        }
 
         var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken);
         var replyTo = RabbitMqAddress.ResolveRoutingKey(requestContext.ResponseAddress) ?? replyQueue;

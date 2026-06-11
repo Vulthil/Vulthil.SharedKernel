@@ -24,8 +24,8 @@ public sealed record ConsumerType(Type Type)
 }
 
 /// <summary>
-/// Base record for a consumer registration on a queue. Routing-key patterns no longer live here —
-/// they belong on <see cref="Subscription"/> (queue→exchange binding) or
+/// Base record for a consumer registration on a queue, binding a consumer to the message type it handles.
+/// Routing-key patterns belong on <see cref="Subscription"/> (queue→exchange binding) or
 /// <see cref="MessageConfiguration{TMessage}"/> (producer-side routing key).
 /// </summary>
 public abstract record Registration

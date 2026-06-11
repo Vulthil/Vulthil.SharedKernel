@@ -5,7 +5,7 @@ using Xunit.Sdk;
 
 namespace WebApi.Tests.Fixtures;
 
-internal sealed class RabbitMqTestContainer(IMessageSink messageSink) : TestContainerFixtureWithConnectionString<RabbitMqBuilder, RabbitMqContainer>(messageSink)
+internal sealed class RabbitMqTestContainer(IMessageSink messageSink) : RabbitMqTestContainerFixture<RabbitMqBuilder, RabbitMqContainer>(messageSink)
 {
     private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4-management")
         .WithUsername("guest")

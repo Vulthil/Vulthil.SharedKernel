@@ -12,7 +12,7 @@ Use `Vulthil.SharedKernel.Infrastructure.Npgsql` to wire a PostgreSQL-backed `Db
 
 - Call `UseNpgsql("ConnectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Npgsql outbox strategy
 - Order between `UseNpgsql` and `EnableOutboxProcessing` does not matter; the configurator defers the underlying call until the full chain has executed
-- EF Core retries are left enabled – the outbox processor runs its transactional unit inside the context's execution strategy (`Database.CreateExecutionStrategy().ExecuteAsync`), which is compatible with a retrying execution strategy, so there is no need to force `DisableRetry`
+- Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (`Database.CreateExecutionStrategy().ExecuteAsync`), so there is no need to force `DisableRetry`
 
 ## Usage
 
@@ -31,7 +31,7 @@ builder.AddDbContext<AppDbContext>(config => config
     .UseNpgsql("Default", settings =>
     {
         settings.CommandTimeout = 30;
-        // EF Core retries are left enabled; the outbox runs inside the execution strategy.
+        // A retrying execution strategy is fine; the outbox runs inside the execution strategy.
     })
     .EnableOutboxProcessing(o =>
     {

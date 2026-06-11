@@ -20,9 +20,9 @@ public static class DependencyInjectionExtensions
     /// The actual call to <c>AddNpgsqlDbContext</c> is deferred until the full configurator chain
     /// has executed, so the order of <see cref="UseNpgsql{TContext}"/> and
     /// <see cref="IDatabaseInfrastructureConfigurator{TDbContext}.EnableOutboxProcessing"/> is irrelevant.
-    /// EF Core retries are left enabled: the outbox processor runs its transactional unit inside the context's
-    /// execution strategy (<c>Database.CreateExecutionStrategy().ExecuteAsync</c>), which is compatible with the
-    /// retrying execution strategy, so there is no need to force <c>DisableRetry</c>. All settings — including
+    /// The outbox processor runs its transactional unit inside the context's execution strategy
+    /// (<c>Database.CreateExecutionStrategy().ExecuteAsync</c>), so a retrying execution strategy is fully
+    /// supported and there is no need to force <c>DisableRetry</c>. All settings — including
     /// <c>CommandTimeout</c> — are left to the caller.
     /// </remarks>
     /// <param name="configurator">The database infrastructure configurator.</param>

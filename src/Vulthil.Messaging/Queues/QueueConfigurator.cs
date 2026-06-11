@@ -161,7 +161,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
     internal void Build()
     {
         // 1. Auto-subscribe any concrete TMessage from consumer registrations not yet subscribed.
-        // Registrations no longer carry a routing key — that's a Subscription-level concern — so auto-subscribed
+        // Routing keys are a Subscription-level concern, so auto-subscribed
         // subscriptions get a null routing key (broker uses an empty pattern). For direct/topic exchanges that
         // require a specific pattern, the caller must explicitly q.Subscribe<TConcrete>("pattern") first.
         var concreteConsumerMessageTypes = _queueDefinition.Registrations

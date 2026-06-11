@@ -1,5 +1,13 @@
 #nullable enable
+override Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.Equals(object? obj) -> bool
+override Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.GetHashCode() -> int
+override Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.ToString() -> string!
+static Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.operator !=(Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage? left, Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage? right) -> bool
+static Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.operator ==(Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage? left, Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage? right) -> bool
 Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage
+Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.<Clone>$() -> Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage!
+Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.Equals(Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage? other) -> bool
+Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.InboxMessage() -> void
 Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.MessageId.get -> string!
 Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.MessageId.init -> void
 Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.ProcessedOnUtc.get -> System.DateTimeOffset

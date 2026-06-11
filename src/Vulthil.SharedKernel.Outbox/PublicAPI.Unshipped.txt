@@ -1,5 +1,12 @@
 #nullable enable
+override Vulthil.SharedKernel.Outbox.OutboxMessageData.GetHashCode() -> int
+override Vulthil.SharedKernel.Outbox.OutboxMessageFailure.GetHashCode() -> int
 static readonly Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName -> string!
+static Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.AddOutboxEngine(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>? configureOptions = null, Microsoft.Extensions.DependencyInjection.ServiceLifetime processorLifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Vulthil.SharedKernel.Outbox.OutboxMessageData.operator !=(Vulthil.SharedKernel.Outbox.OutboxMessageData left, Vulthil.SharedKernel.Outbox.OutboxMessageData right) -> bool
+static Vulthil.SharedKernel.Outbox.OutboxMessageData.operator ==(Vulthil.SharedKernel.Outbox.OutboxMessageData left, Vulthil.SharedKernel.Outbox.OutboxMessageData right) -> bool
+static Vulthil.SharedKernel.Outbox.OutboxMessageFailure.operator !=(Vulthil.SharedKernel.Outbox.OutboxMessageFailure left, Vulthil.SharedKernel.Outbox.OutboxMessageFailure right) -> bool
+static Vulthil.SharedKernel.Outbox.OutboxMessageFailure.operator ==(Vulthil.SharedKernel.Outbox.OutboxMessageFailure left, Vulthil.SharedKernel.Outbox.OutboxMessageFailure right) -> bool
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher.DispatchAsync(Vulthil.SharedKernel.Outbox.OutboxMessageData message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Outbox.OutboxDestination destination) -> bool
@@ -14,11 +21,10 @@ Vulthil.SharedKernel.Outbox.IOutboxStore.IsInTransaction.get -> bool
 Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func<Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>! dispatch, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 Vulthil.SharedKernel.Outbox.IOutboxStore.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
 Vulthil.SharedKernel.Outbox.OutboxDestination
-Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions
-static Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.AddOutboxEngine(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>? configureOptions = null, Microsoft.Extensions.DependencyInjection.ServiceLifetime processorLifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 Vulthil.SharedKernel.Outbox.OutboxDestination.DomainEvent = 0 -> Vulthil.SharedKernel.Outbox.OutboxDestination
 Vulthil.SharedKernel.Outbox.OutboxDestination.Publish = 1 -> Vulthil.SharedKernel.Outbox.OutboxDestination
 Vulthil.SharedKernel.Outbox.OutboxDestination.Send = 2 -> Vulthil.SharedKernel.Outbox.OutboxDestination
+Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions
 Vulthil.SharedKernel.Outbox.OutboxMessage
 Vulthil.SharedKernel.Outbox.OutboxMessage.Content.get -> string!
 Vulthil.SharedKernel.Outbox.OutboxMessage.Content.init -> void
@@ -48,8 +54,10 @@ Vulthil.SharedKernel.Outbox.OutboxMessage.Type.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageData
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Content.get -> string!
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Content.init -> void
+Vulthil.SharedKernel.Outbox.OutboxMessageData.Deconstruct(out System.Guid Id, out string! Type, out string! Content, out string? TraceParent, out string? TraceState, out Vulthil.SharedKernel.Outbox.OutboxDestination Destination, out string? Metadata) -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Destination.get -> Vulthil.SharedKernel.Outbox.OutboxDestination
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Destination.init -> void
+Vulthil.SharedKernel.Outbox.OutboxMessageData.Equals(Vulthil.SharedKernel.Outbox.OutboxMessageData other) -> bool
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Id.get -> System.Guid
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Id.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Metadata.get -> string?
@@ -63,6 +71,8 @@ Vulthil.SharedKernel.Outbox.OutboxMessageData.TraceState.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Type.get -> string!
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Type.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure
+Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Deconstruct(out System.Guid Id, out string! Error) -> void
+Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Equals(Vulthil.SharedKernel.Outbox.OutboxMessageFailure other) -> bool
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Error.get -> string!
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Error.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Id.get -> System.Guid
@@ -84,3 +94,7 @@ Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSecon
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingOptions() -> void
 Vulthil.SharedKernel.Outbox.Telemetry
+~override Vulthil.SharedKernel.Outbox.OutboxMessageData.Equals(object obj) -> bool
+~override Vulthil.SharedKernel.Outbox.OutboxMessageData.ToString() -> string
+~override Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Equals(object obj) -> bool
+~override Vulthil.SharedKernel.Outbox.OutboxMessageFailure.ToString() -> string

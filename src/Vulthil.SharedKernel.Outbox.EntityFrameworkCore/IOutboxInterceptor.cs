@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Vulthil.SharedKernel.Outbox;
+namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 /// <summary>
 /// Marker for EF Core interceptors that the outbox attaches to an outbox-enabled <see cref="Microsoft.EntityFrameworkCore.DbContext"/>.

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure;
 
@@ -70,37 +71,24 @@ public static class DependencyInjection
     private static void AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator<TDbContext> configurator)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
-        var optionsAction = configurator.OutboxOptionsAction ?? (static o => { });
-        services.AddOptions<OutboxProcessingOptions>()
-            .Configure(optionsAction)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
+        var dbContextLifetime = configurator.DbContextLifetime;
+
+        // The engine (options, signal, processor, background service, in-process domain-event sink) registers its own
+        // internals; the EF-specific store, capture interceptor, and context marker are wired here.
+        services.AddOutboxEngine(configurator.OutboxOptionsAction, dbContextLifetime);
 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxInterceptor, DomainEventsToOutboxMessageSaveChangesInterceptor>());
-        services.TryAddSingleton<IOutboxSignal, OutboxSignal>();
 
-        var dbContextLifetime = configurator.DbContextLifetime;
         services.Add(new ServiceDescriptor(
             typeof(ISaveOutboxMessages),
             sp => sp.GetRequiredService<TDbContext>(),
             dbContextLifetime));
-        services.Add(new ServiceDescriptor(
-            typeof(IOutboxStrategy),
-            configurator.OutboxStrategyType,
-            dbContextLifetime));
-        services.Add(new ServiceDescriptor(
-            typeof(OutboxProcessor),
-            typeof(OutboxProcessor),
-            dbContextLifetime));
 
-        // The in-process domain-event sink is registered by default; additional sinks (e.g. the broker
-        // bus-publish dispatcher) are added by their own bridge and coexist, routed by OutboxDestination.
-        services.TryAddEnumerable(new ServiceDescriptor(
-            typeof(IOutboxDispatcher),
-            typeof(DomainEventOutboxDispatcher),
-            dbContextLifetime));
+        var storeType = configurator.OutboxStoreType.IsGenericTypeDefinition
+            ? configurator.OutboxStoreType.MakeGenericType(typeof(TDbContext))
+            : configurator.OutboxStoreType;
 
-        services.AddHostedService<OutboxBackgroundService>();
+        services.Add(new ServiceDescriptor(typeof(IOutboxStore), storeType, dbContextLifetime));
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Vulthil.SharedKernel.Outbox;
+namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 /// <summary>
 /// Provider-agnostic base configuration for <see cref="OutboxMessage"/>.

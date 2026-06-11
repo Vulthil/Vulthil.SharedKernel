@@ -12,6 +12,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj" />
 		<ProjectReference Include="..\Vulthil.SharedKernel.Outbox\Vulthil.SharedKernel.Outbox.csproj" />
+		<ProjectReference Include="..\Vulthil.SharedKernel.Outbox.EntityFrameworkCore\Vulthil.SharedKernel.Outbox.EntityFrameworkCore.csproj" />
 	</ItemGroup>
 
 </Project>

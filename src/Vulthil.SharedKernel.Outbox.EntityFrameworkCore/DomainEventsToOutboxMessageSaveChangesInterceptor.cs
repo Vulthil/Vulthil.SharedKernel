@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Primitives;
 
-namespace Vulthil.SharedKernel.Outbox;
+namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 /// <summary>
 /// EF Core save-changes interceptor that captures domain events from tracked aggregate roots

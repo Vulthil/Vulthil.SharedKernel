@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 
 namespace Vulthil.SharedKernel.Infrastructure.Relational;

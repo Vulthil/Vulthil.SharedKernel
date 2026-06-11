@@ -13,8 +13,8 @@ public static class TransactionalOutboxExtensions
     /// <summary>
     /// Captures publishes and sends issued while a database transaction is active into the shared outbox table and
     /// relays them to the broker after the transaction commits. Requires the shared outbox engine to be enabled on
-    /// the application's <c>DbContext</c> (<c>EnableOutboxProcessing</c>), whose context must implement
-    /// <see cref="ISaveOutboxMessages"/>.
+    /// the application's <c>DbContext</c> (<c>EnableOutboxProcessing</c>), which registers the
+    /// <see cref="IOutboxStore"/> the capture uses.
     /// </summary>
     /// <param name="configurator">The messaging configurator.</param>
     /// <returns>The same configurator, for chaining.</returns>

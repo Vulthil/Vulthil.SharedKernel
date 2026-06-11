@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing;
 using Vulthil.SharedKernel.Infrastructure.Relational;
 
@@ -16,9 +17,9 @@ public static class DependencyInjectionExtensions
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TContext> UseMySql<TContext>(
         this IDatabaseInfrastructureConfigurator<TContext> configurator)
-        where TContext : DbContext
+        where TContext : DbContext, ISaveOutboxMessages
     {
-        configurator.UseOutboxStrategy<MySqlOutboxStrategy>();
+        configurator.UseOutboxStore<MySqlOutboxStore<TContext>>();
         return configurator;
     }
 }

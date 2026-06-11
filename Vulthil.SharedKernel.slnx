@@ -71,6 +71,7 @@
     <Project Path="src/Vulthil.SharedKernel.Infrastructure.Relational/Vulthil.SharedKernel.Infrastructure.Relational.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Infrastructure/Vulthil.SharedKernel.Infrastructure.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Outbox/Vulthil.SharedKernel.Outbox.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.csproj" />
     <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/src/Messaging/">

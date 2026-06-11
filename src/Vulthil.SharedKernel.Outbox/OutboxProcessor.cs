@@ -1,101 +1,17 @@
-﻿using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Vulthil.SharedKernel.Outbox;
 
 internal sealed class OutboxProcessor(
-    TimeProvider timeProvider,
-    ISaveOutboxMessages outboxMessagesDbContext,
+    IOutboxStore store,
     IEnumerable<IOutboxDispatcher> dispatchers,
-    IOutboxStrategy outboxStrategy,
-    IOptions<OutboxProcessingOptions> options,
     ILogger<OutboxProcessor> logger)
 {
-    private OutboxProcessingOptions Options => options.Value;
+    internal Task<int> ExecuteAsync(CancellationToken cancellationToken) =>
+        store.ProcessBatchAsync(DispatchAsync, cancellationToken);
 
-    internal Task<int> ExecuteAsync(CancellationToken cancellationToken)
-    {
-        if (outboxMessagesDbContext is not DbContext dbContext)
-        {
-            return ProcessBatchAsync(cancellationToken);
-        }
-
-        var strategy = dbContext.Database.CreateExecutionStrategy();
-        return strategy.ExecuteAsync(
-            async token =>
-            {
-                dbContext.ChangeTracker.Clear();
-                return await ProcessBatchAsync(token);
-            },
-            cancellationToken);
-    }
-
-    private async Task<int> ProcessBatchAsync(CancellationToken cancellationToken)
-    {
-        var transaction = await outboxStrategy.BeginTransactionAsync(outboxMessagesDbContext, cancellationToken);
-
-        try
-        {
-            var outboxMessages = await outboxStrategy.FetchMessagesAsync(
-                outboxMessagesDbContext.OutboxMessages,
-                Options.BatchSize,
-                Options.MaxRetries,
-                cancellationToken);
-
-            if (outboxMessages.Count == 0)
-            {
-                return 0;
-            }
-
-            List<PublishResult> results;
-
-            if (Options.EnableParallelPublishing)
-            {
-                var tasks = outboxMessages.Select(m => TryPublishAsync(m, cancellationToken));
-                results = [.. await Task.WhenAll(tasks)];
-            }
-            else
-            {
-                results = new(outboxMessages.Count);
-                foreach (var message in outboxMessages)
-                {
-                    results.Add(await TryPublishAsync(message, cancellationToken));
-                }
-            }
-
-            var now = timeProvider.GetUtcNow();
-            var successIds = results.Where(r => r.Success).Select(r => r.Id).ToList();
-            var failures = results.Where(r => !r.Success)
-                .Select(r => new OutboxMessageFailure(r.Id, r.Error!))
-                .ToList();
-
-            await outboxStrategy.UpdateMessagesAsync(
-                outboxMessagesDbContext,
-                successIds,
-                failures,
-                Options.MaxRetries,
-                now,
-                cancellationToken);
-
-            if (transaction is not null)
-            {
-                await transaction.CommitAsync(cancellationToken);
-            }
-
-            return outboxMessages.Count;
-        }
-        finally
-        {
-            if (transaction is not null)
-            {
-                await transaction.DisposeAsync();
-            }
-        }
-    }
-
-    private async Task<PublishResult> TryPublishAsync(OutboxMessageData outboxMessage, CancellationToken cancellationToken)
+    private async Task<string?> DispatchAsync(OutboxMessageData outboxMessage, CancellationToken cancellationToken)
     {
         Activity? activity = null;
         try
@@ -105,15 +21,16 @@ internal sealed class OutboxProcessor(
                 var parent = ActivityContext.Parse(outboxMessage.TraceParent, outboxMessage.TraceState);
                 activity = Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
             }
+
             var dispatcher = ResolveDispatcher(outboxMessage.Destination);
             await dispatcher.DispatchAsync(outboxMessage, cancellationToken);
 
-            return new PublishResult(outboxMessage.Id, Success: true);
+            return null;
         }
         catch (Exception exception)
         {
             logger.LogError(exception, "Failed to publish outbox message {MessageId}", outboxMessage.Id);
-            return new PublishResult(outboxMessage.Id, Success: false, Error: exception.ToString());
+            return exception.ToString();
         }
         finally
         {
@@ -124,8 +41,6 @@ internal sealed class OutboxProcessor(
     private IOutboxDispatcher ResolveDispatcher(OutboxDestination destination) =>
         dispatchers.FirstOrDefault(dispatcher => dispatcher.Handles(destination))
             ?? throw new InvalidOperationException($"No {nameof(IOutboxDispatcher)} is registered for outbox destination '{destination}'.");
-
-    private readonly record struct PublishResult(Guid Id, bool Success, string? Error = null);
 }
 
 /// <summary>

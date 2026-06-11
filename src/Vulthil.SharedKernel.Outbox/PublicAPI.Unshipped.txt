@@ -1,32 +1,21 @@
 #nullable enable
-override Vulthil.SharedKernel.Outbox.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChangesAsync(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData! eventData, Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int> result, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int>>
 static readonly Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName -> string!
-virtual Vulthil.SharedKernel.Outbox.BaseOutboxStrategy.BeginTransactionAsync(Vulthil.SharedKernel.Outbox.ISaveOutboxMessages! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction?>!
-virtual Vulthil.SharedKernel.Outbox.BaseOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Outbox.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!
-virtual Vulthil.SharedKernel.Outbox.BaseOutboxStrategy.UpdateMessagesAsync(Vulthil.SharedKernel.Outbox.ISaveOutboxMessages! context, System.Collections.Generic.IReadOnlyList<System.Guid>! successIds, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageFailure>! failures, int maxRetries, System.DateTimeOffset processedOnUtc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-virtual Vulthil.SharedKernel.Outbox.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage!>! builder) -> void
-Vulthil.SharedKernel.Outbox.BaseOutboxStrategy
-Vulthil.SharedKernel.Outbox.BaseOutboxStrategy.BaseOutboxStrategy() -> void
-Vulthil.SharedKernel.Outbox.DomainEventsToOutboxMessageSaveChangesInterceptor
-Vulthil.SharedKernel.Outbox.DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! outboxProcessingOptions) -> void
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher.DispatchAsync(Vulthil.SharedKernel.Outbox.OutboxMessageData message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Outbox.OutboxDestination destination) -> bool
-Vulthil.SharedKernel.Outbox.IOutboxInterceptor
 Vulthil.SharedKernel.Outbox.IOutboxRelayGate
 Vulthil.SharedKernel.Outbox.IOutboxRelayGate.WaitUntilReadyAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Outbox.IOutboxSignal
 Vulthil.SharedKernel.Outbox.IOutboxSignal.Notify() -> void
 Vulthil.SharedKernel.Outbox.IOutboxSignal.WaitAsync(System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-Vulthil.SharedKernel.Outbox.IOutboxStrategy
-Vulthil.SharedKernel.Outbox.IOutboxStrategy.BeginTransactionAsync(Vulthil.SharedKernel.Outbox.ISaveOutboxMessages! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction?>!
-Vulthil.SharedKernel.Outbox.IOutboxStrategy.FetchMessagesAsync(Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Outbox.OutboxMessage!>! outboxMessages, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!
-Vulthil.SharedKernel.Outbox.IOutboxStrategy.UpdateMessagesAsync(Vulthil.SharedKernel.Outbox.ISaveOutboxMessages! context, System.Collections.Generic.IReadOnlyList<System.Guid>! successIds, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageFailure>! failures, int maxRetries, System.DateTimeOffset processedOnUtc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-Vulthil.SharedKernel.Outbox.ISaveOutboxMessages
-Vulthil.SharedKernel.Outbox.ISaveOutboxMessages.IsInTransaction.get -> bool
-Vulthil.SharedKernel.Outbox.ISaveOutboxMessages.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Outbox.OutboxMessage!>!
-Vulthil.SharedKernel.Outbox.ISaveOutboxMessages.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+Vulthil.SharedKernel.Outbox.IOutboxStore
+Vulthil.SharedKernel.Outbox.IOutboxStore.AddOutboxMessage(Vulthil.SharedKernel.Outbox.OutboxMessage! message) -> void
+Vulthil.SharedKernel.Outbox.IOutboxStore.IsInTransaction.get -> bool
+Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func<Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>! dispatch, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+Vulthil.SharedKernel.Outbox.IOutboxStore.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
 Vulthil.SharedKernel.Outbox.OutboxDestination
+Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions
+static Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.AddOutboxEngine(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>? configureOptions = null, Microsoft.Extensions.DependencyInjection.ServiceLifetime processorLifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 Vulthil.SharedKernel.Outbox.OutboxDestination.DomainEvent = 0 -> Vulthil.SharedKernel.Outbox.OutboxDestination
 Vulthil.SharedKernel.Outbox.OutboxDestination.Publish = 1 -> Vulthil.SharedKernel.Outbox.OutboxDestination
 Vulthil.SharedKernel.Outbox.OutboxDestination.Send = 2 -> Vulthil.SharedKernel.Outbox.OutboxDestination
@@ -73,8 +62,6 @@ Vulthil.SharedKernel.Outbox.OutboxMessageData.TraceState.get -> string?
 Vulthil.SharedKernel.Outbox.OutboxMessageData.TraceState.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Type.get -> string!
 Vulthil.SharedKernel.Outbox.OutboxMessageData.Type.init -> void
-Vulthil.SharedKernel.Outbox.OutboxMessageEntityConfiguration
-Vulthil.SharedKernel.Outbox.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Error.get -> string!
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Error.init -> void

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure;
 
@@ -21,9 +22,11 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     /// </summary>
     public Action<OutboxProcessingOptions>? OutboxOptionsAction { get; private set; }
     /// <summary>
-    /// Gets the outbox strategy type used by outbox processing.
+    /// Gets the outbox store type used by outbox processing. Defaults to the open generic
+    /// <see cref="EntityFrameworkOutboxStore{TContext}"/> (closed over the context type at registration); a provider
+    /// supplies a closed store type via <see cref="UseOutboxStore{TStore}"/>.
     /// </summary>
-    internal Type OutboxStrategyType { get; private set; } = typeof(BaseOutboxStrategy);
+    internal Type OutboxStoreType { get; private set; } = typeof(EntityFrameworkOutboxStore<>);
 
     private readonly List<Action<IDatabaseInfrastructureConfigurator<TDbContext>>> _configuredCallbacks = [];
 
@@ -69,10 +72,10 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     }
 
     /// <inheritdoc/>
-    public IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStrategy<TStrategy>()
-        where TStrategy : class, IOutboxStrategy
+    public IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStore<TStore>()
+        where TStore : class, IOutboxStore
     {
-        OutboxStrategyType = typeof(TStrategy);
+        OutboxStoreType = typeof(TStore);
         return this;
     }
 

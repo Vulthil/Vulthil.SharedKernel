@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure.Data;
 

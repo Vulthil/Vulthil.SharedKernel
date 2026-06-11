@@ -26,14 +26,14 @@ Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContex
 Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OnConfigured(System.Action<Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!>! action) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
 Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxOptionsAction.get -> System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>?
 Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled.get -> bool
-Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStrategy<TStrategy>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
+Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore<TStore>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
 Vulthil.SharedKernel.Infrastructure.DependencyInjection
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.EnableOutboxProcessing(System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>? optionsAction = null) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.HostApplicationBuilder.get -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.OnConfigured(System.Action<Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!>! action) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled.get -> bool
-Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStrategy<T>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
+Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore<T>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
 Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>
 Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.DbContext.get -> TDbContext!
 Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GenericRepository(TDbContext! dbContext) -> void

@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 

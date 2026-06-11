@@ -1,6 +1,7 @@
 using Aspire.Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
 using Vulthil.SharedKernel.Infrastructure.Relational;
 
@@ -32,11 +33,11 @@ public static class DependencyInjectionExtensions
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionStringKey,
         Action<NpgsqlEntityFrameworkCorePostgreSQLSettings>? configureSettings = null)
-        where TDbContext : DbContext
+        where TDbContext : DbContext, ISaveOutboxMessages
     {
         ArgumentNullException.ThrowIfNull(configurator);
 
-        configurator.UseOutboxStrategy<NpgsqlOutboxStrategy>();
+        configurator.UseOutboxStore<NpgsqlOutboxStore<TDbContext>>();
 
         configurator.OnConfigured(c =>
         {

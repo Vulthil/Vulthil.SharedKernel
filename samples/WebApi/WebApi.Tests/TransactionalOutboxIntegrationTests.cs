@@ -4,6 +4,7 @@ using Shouldly;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.TestHarness;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.xUnit;
 using WebApi.Application;
 using WebApi.Application.MainEntities.Create;

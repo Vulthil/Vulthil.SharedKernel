@@ -10,23 +10,23 @@ namespace Vulthil.Messaging.Outbox;
 /// transaction commits. When no transaction is active the publish proceeds directly.
 /// </summary>
 internal sealed class TransactionalPublishFilter(
-    ISaveOutboxMessages outboxMessages,
+    IOutboxStore outboxStore,
     IMessageConfigurationProvider messageConfigurationProvider,
     TimeProvider timeProvider) : IPublishFilter
 {
     public async Task PublishAsync(PublishFilterContext context, PublishFilterDelegate next)
     {
-        if (!outboxMessages.IsInTransaction)
+        if (!outboxStore.IsInTransaction)
         {
             await next(context);
             return;
         }
 
-        outboxMessages.OutboxMessages.Add(CreateRow(context));
+        outboxStore.AddOutboxMessage(CreateRow(context));
 
         // Flush into the open transaction (order-independent), without committing. The transaction's commit makes
         // the row durable; the commit-time trigger then wakes the relay. The message is not sent here.
-        await outboxMessages.SaveChangesAsync(context.CancellationToken);
+        await outboxStore.SaveChangesAsync(context.CancellationToken);
     }
 
     private OutboxMessage CreateRow(PublishFilterContext context)

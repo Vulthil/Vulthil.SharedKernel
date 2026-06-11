@@ -59,14 +59,20 @@ The `OutboxMessage` entity configuration is applied automatically by `BaseDbCont
 | `MaxDelaySeconds` | 60 | Maximum back-off delay when no messages are found |
 | `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 
-## Custom Outbox Strategy
+## Custom Outbox Store
 
-The default strategy is provided by `Vulthil.SharedKernel.Infrastructure.Relational` (`RelationalOutboxStrategy`) and runs a relational query with row locking. You can replace it by implementing `IOutboxStrategy` and registering your implementation with `UseOutboxStrategy<T>()`:
+The relay engine talks to the database through an EF-free `IOutboxStore` (in `Vulthil.SharedKernel.Outbox`). The EF
+implementation lives in `Vulthil.SharedKernel.Outbox.EntityFrameworkCore` (`EntityFrameworkOutboxStore<TContext>`),
+and each provider supplies a subclass with its row-locking fetch — `RelationalOutboxStore<TContext>` (the
+`ExecuteUpdate` base), `NpgsqlOutboxStore<TContext>` / `MySqlOutboxStore<TContext>` (`FOR UPDATE SKIP LOCKED`), and
+`CosmosOutboxStore<TContext>` (best-effort, no transaction). A provider's `UseNpgsql`/`UseMySql`/`UseCosmosDb`
+selects the store; you can supply your own by implementing `IOutboxStore` (or deriving from the EF base) and
+registering it with `UseOutboxStore<T>()`:
 
 ```csharp
 config
     .UseNpgsql(connectionStringKey)
-    .UseOutboxStrategy<CustomOutboxStrategy>()
+    .UseOutboxStore<CustomOutboxStore<AppDbContext>>()
     .EnableOutboxProcessing(o =>
     {
         o.BatchSize = 50;

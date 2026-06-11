@@ -63,16 +63,22 @@
   <Folder Name="/src/">
     <File Path="src/Directory.Build.props" />
     <Project Path="src/Vulthil.Results/Vulthil.Results.csproj" />
-    <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/SharedKernel/">
+    <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Application/Vulthil.SharedKernel.Application.csproj" />
-    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Cosmos/Vulthil.SharedKernel.Infrastructure.Cosmos.csproj" />
-    <Project Path="src/Vulthil.SharedKernel.Infrastructure.MySql/Vulthil.SharedKernel.Infrastructure.MySql.csproj" />
-    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Npgsql/Vulthil.SharedKernel.Infrastructure.Npgsql.csproj" />
-    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Relational/Vulthil.SharedKernel.Infrastructure.Relational.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Api/Vulthil.SharedKernel.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
     <Project Path="src/Vulthil.SharedKernel.Infrastructure/Vulthil.SharedKernel.Infrastructure.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Relational/Vulthil.SharedKernel.Infrastructure.Relational.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Npgsql/Vulthil.SharedKernel.Infrastructure.Npgsql.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.MySql/Vulthil.SharedKernel.Infrastructure.MySql.csproj" />
+    <Project Path="src/Vulthil.SharedKernel.Infrastructure.Cosmos/Vulthil.SharedKernel.Infrastructure.Cosmos.csproj" />
+  </Folder>
+  <Folder Name="/src/Outbox/">
     <Project Path="src/Vulthil.SharedKernel.Outbox/Vulthil.SharedKernel.Outbox.csproj" />
     <Project Path="src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.csproj" />
-    <Project Path="src/Vulthil.SharedKernel/Vulthil.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/src/Messaging/">
     <Project Path="src/Vulthil.Messaging.Abstractions/Vulthil.Messaging.Abstractions.csproj" />
@@ -91,16 +97,22 @@
     <Project Path="src/Vulthil.xUnit/Vulthil.xUnit.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Vulthil.IntegrationTests/Vulthil.IntegrationTests.csproj" />
-    <Project Path="tests/Vulthil.Messaging.Abstractions.Tests/Vulthil.Messaging.Abstractions.Tests.csproj" />
-    <Project Path="tests/Vulthil.Messaging.Inbox.Relational.Tests/Vulthil.Messaging.Inbox.Relational.Tests.csproj" />
-    <Project Path="tests/Vulthil.Messaging.Inbox.Tests/Vulthil.Messaging.Inbox.Tests.csproj" />
-    <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" />
-    <Project Path="tests/Vulthil.Messaging.TestHarness.Tests/Vulthil.Messaging.TestHarness.Tests.csproj" />
-    <Project Path="tests/Vulthil.Messaging.Tests/Vulthil.Messaging.Tests.csproj" />
     <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" />
-    <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/SharedKernel/">
     <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
+    <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Messaging/">
+    <Project Path="tests/Vulthil.Messaging.Tests/Vulthil.Messaging.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.Abstractions.Tests/Vulthil.Messaging.Abstractions.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.Inbox.Tests/Vulthil.Messaging.Inbox.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.Inbox.Relational.Tests/Vulthil.Messaging.Inbox.Relational.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.TestHarness.Tests/Vulthil.Messaging.TestHarness.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Integration/">
+    <Project Path="tests/Vulthil.IntegrationTests/Vulthil.IntegrationTests.csproj" />
     <Project Path="tests/Vulthil.TestHost/Vulthil.TestHost.csproj" />
   </Folder>
   <Folder Name="/tests/MessagingIntegrationTests/">

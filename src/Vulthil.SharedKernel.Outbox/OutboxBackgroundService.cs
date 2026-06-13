@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Vulthil.Extensions.Hosting;
 
 namespace Vulthil.SharedKernel.Outbox;
 
@@ -10,7 +11,7 @@ internal sealed class OutboxBackgroundService(
     IServiceScopeFactory serviceScopeFactory,
     IOutboxSignal signal,
     IEnumerable<IOutboxRelayGate> relayGates,
-    IOptions<OutboxProcessingOptions> options) : BackgroundService
+    IOptions<OutboxProcessingOptions> options) : BackgroundService, IRestartableHostedService
 {
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

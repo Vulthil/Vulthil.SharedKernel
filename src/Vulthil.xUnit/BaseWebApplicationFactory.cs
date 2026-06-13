@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Vulthil.Extensions.Hosting;
 using Vulthil.xUnit.Fixtures;
 using Vulthil.xUnit.Http;
 
@@ -281,8 +282,27 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     Task ITestHostMigrator.MigrateDatabases(IServiceProvider serviceProvider) =>
         Parallel.ForEachAsync(DatabaseContainers, (x, ct) => x.MigrateDatabase(serviceProvider));
 
-    internal Task ResetAsync() =>
-        Parallel.ForEachAsync(ResettableResources, (resource, ct) => resource.ResetAsync());
+    internal async Task ResetAsync()
+    {
+        var restartableServices = Services.GetServices<IHostedService>().OfType<IRestartableHostedService>().ToList();
+
+        foreach (var service in restartableServices)
+        {
+            await service.StopAsync(CancellationToken.None);
+        }
+
+        try
+        {
+            await Parallel.ForEachAsync(ResettableResources, (resource, ct) => resource.ResetAsync());
+        }
+        finally
+        {
+            foreach (var service in restartableServices)
+            {
+                await service.StartAsync(CancellationToken.None);
+            }
+        }
+    }
 }
 
 internal interface ITestHostMigrator

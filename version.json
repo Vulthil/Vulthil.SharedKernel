@@ -1,6 +1,5 @@
 {
-  "version": "0.0",
-  "versionHeightOffset": 7,
+  "version": "1.0.0",
   "release": {
     "firstUnstableTag": "preview"
   },

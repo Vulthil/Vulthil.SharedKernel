@@ -7,12 +7,18 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
 
+# Serialize releases so two manual dispatches can't publish the same version twice.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
+      id-token: write   # required for NuGet.org trusted publishing (OIDC)
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -75,13 +81,23 @@ jobs:
             --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
             --skip-duplicate
 
-      # Uncomment when ready to publish to NuGet.org (requires NUGET_API_KEY secret)
-      # - name: Publish to NuGet.org
-      #   run: >
-      #     dotnet nuget push "./artifacts/*.nupkg"
-      #     -k ${{ secrets.NUGET_API_KEY }}
-      #     -s https://api.nuget.org/v3/index.json
-      #     --skip-duplicate
+      # Publish to NuGet.org via Trusted Publishing (OIDC) -- no long-lived API
+      # key is stored in GitHub. One-time setup on NuGet.org: create a trusted
+      # publisher policy for this repo + the Release workflow, then set the
+      # NUGET_USER secret to the owning NuGet.org account/organization name.
+      # https://learn.microsoft.com/nuget/nuget-org/trusted-publishing
+      - name: NuGet login (trusted publishing)
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to NuGet.org
+        run: >
+          dotnet nuget push "./artifacts/*.nupkg"
+          --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
 
   # Publish the released version as the default (stable) documentation. Reuses
   # docs.yml so the gh-pages layout and version manifest stay in one place.

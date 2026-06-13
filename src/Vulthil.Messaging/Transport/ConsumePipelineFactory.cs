@@ -31,7 +31,6 @@ public static class ConsumePipelineFactory
         }
 
         var pipeline = terminal;
-        // Iterate in reverse so the first-registered filter ends up outermost.
         for (var i = filters.Length - 1; i >= 0; i--)
         {
             var filter = filters[i];

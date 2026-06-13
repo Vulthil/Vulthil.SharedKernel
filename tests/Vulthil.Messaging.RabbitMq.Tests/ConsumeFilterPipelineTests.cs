@@ -120,7 +120,6 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var trace = new List<string>();
         var consumerInstance = new RecordingConsumer();
         Use(consumerInstance);
-        // Order matters: the first filter in the list is the outermost.
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([
             new RecordingFilter<TestMessage>(trace, "outer"),
             new RecordingFilter<TestMessage>(trace, "inner"),

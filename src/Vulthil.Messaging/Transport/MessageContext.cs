@@ -129,9 +129,13 @@ public record MessageContext : IMessageContext
         };
     }
 
+    /// <summary>
+    /// Auto-propagates correlation metadata (correlation, conversation, initiator) from this incoming context onto
+    /// the outgoing <paramref name="ctx"/> first, then runs the caller's <paramref name="configure"/> callback last so
+    /// it can override any auto-set value.
+    /// </summary>
     private async ValueTask PropagateAndConfigureAsync(IPublishContext ctx, Func<IPublishContext, ValueTask>? configure)
     {
-        // 1. Auto-propagate correlation metadata from the incoming context first.
         if (!string.IsNullOrEmpty(CorrelationId))
         {
             ctx.SetCorrelationId(CorrelationId);
@@ -148,7 +152,6 @@ public record MessageContext : IMessageContext
             ctx.SetInitiatorId(MessageId);
         }
 
-        // 2. Caller's configure callback runs last so it can override any auto-set value.
         if (configure is not null)
         {
             await configure(ctx);

@@ -6,12 +6,16 @@ namespace Vulthil.Messaging.Inbox.Tests;
 
 public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
 {
+    private readonly Lazy<IdempotentConsumeFilter<TestMessage>> _lazyTarget;
     private readonly Mock<IIdempotencyStore> _store;
     private readonly Mock<IMessageContext<TestMessage>> _context;
     private bool _consumerInvoked;
 
+    private IdempotentConsumeFilter<TestMessage> Target => _lazyTarget.Value;
+
     public IdempotentConsumeFilterTests()
     {
+        _lazyTarget = new(CreateInstance<IdempotentConsumeFilter<TestMessage>>);
         _store = GetMock<IIdempotencyStore>();
         _context = GetMock<IMessageContext<TestMessage>>();
         _context.SetupGet(context => context.CancellationToken).Returns(CancellationToken);
@@ -27,7 +31,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
         SetupStore("message-1", runConsumer: true, processed: true);
 
         // Act
-        await CreateFilter().ConsumeAsync(_context.Object, Next);
+        await Target.ConsumeAsync(_context.Object, Next);
 
         // Assert
         _consumerInvoked.ShouldBeTrue();
@@ -42,7 +46,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
         SetupStore("message-1", runConsumer: false, processed: false);
 
         // Act
-        await CreateFilter().ConsumeAsync(_context.Object, Next);
+        await Target.ConsumeAsync(_context.Object, Next);
 
         // Assert
         _consumerInvoked.ShouldBeFalse();
@@ -55,7 +59,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
         _context.SetupGet(context => context.MessageId).Returns((string?)null);
 
         // Act & Assert
-        await Should.ThrowAsync<MissingIdempotencyKeyException>(() => CreateFilter().ConsumeAsync(_context.Object, Next));
+        await Should.ThrowAsync<MissingIdempotencyKeyException>(() => Target.ConsumeAsync(_context.Object, Next));
         _consumerInvoked.ShouldBeFalse();
         _store.Verify(store => store.ProcessAsync(It.IsAny<string>(), It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -68,7 +72,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
         _context.SetupGet(context => context.MessageId).Returns((string?)null);
 
         // Act
-        await CreateFilter().ConsumeAsync(_context.Object, Next);
+        await Target.ConsumeAsync(_context.Object, Next);
 
         // Assert
         _consumerInvoked.ShouldBeTrue();
@@ -86,7 +90,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
         SetupStore("business-key", runConsumer: true, processed: true);
 
         // Act
-        await CreateFilter().ConsumeAsync(_context.Object, Next);
+        await Target.ConsumeAsync(_context.Object, Next);
 
         // Assert
         _store.Verify(store => store.ProcessAsync("business-key", It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -104,9 +108,6 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
 
                 return processed;
             });
-
-    private IdempotentConsumeFilter<TestMessage> CreateFilter() =>
-        AutoMocker.CreateInstance<IdempotentConsumeFilter<TestMessage>>();
 
     private Task Next(IMessageContext<TestMessage> context)
     {

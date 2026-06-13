@@ -39,16 +39,17 @@ public static class DependencyInjection
         var messagingConfigurator = new MessagingConfigurator(builder, messagingOptions);
         messagingConfiguratorAction(messagingConfigurator);
 
-        // Default consume filters register AFTER the configurator action so users can toggle
-        // them via ConfigureMessagingOptions. A disabled filter is not added to DI at all —
-        // there is no runtime IsEnabled check. We insert at index 0 so the default open-generic
-        // descriptor comes first in IEnumerable<IConsumeFilter<T>> resolution, keeping it
-        // outermost in the composed pipeline even though chronologically it registers last.
         RegisterDefaultConsumeFilters(builder.Services, messagingOptions);
 
         return builder.Services;
     }
 
+    /// <remarks>
+    /// Runs after the configurator action so a default filter can be toggled via <c>ConfigureMessagingOptions</c>; a
+    /// disabled filter is never added to DI (there is no runtime <c>IsEnabled</c> check). Each default is inserted at
+    /// index 0 so its open-generic descriptor resolves first in <c>IEnumerable&lt;IConsumeFilter&lt;T&gt;&gt;</c>,
+    /// keeping it outermost in the composed pipeline even though it registers last.
+    /// </remarks>
     private static void RegisterDefaultConsumeFilters(IServiceCollection services, MessagingOptions options)
     {
         if (options.ConsumeFilters.EnableLogging)

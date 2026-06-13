@@ -27,7 +27,6 @@ public sealed class TestHarnessIntegrationTests(TestHarnessWebApplicationFactory
         Harness.Published<ProbeCreatedIntegrationEvent>().ShouldHaveSingleItem().Message.Id.ShouldBe(probeId);
         Harness.Consumed<ProbeCreatedIntegrationEvent>().ShouldHaveSingleItem().Message.Id.ShouldBe(probeId);
 
-        // The consumer wrote a side effect to the real database; read it back through the request consumer.
         var sideEffects = await Requester.RequestAsync<GetProbeSideEffects, List<ProbeSideEffectDto>>(
             new GetProbeSideEffects(probeId),
             CancellationToken);

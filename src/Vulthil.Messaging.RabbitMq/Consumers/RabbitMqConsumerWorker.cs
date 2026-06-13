@@ -92,6 +92,13 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         MessagingLog.WorkerStarted(_logger, _queueDefinition.Name, _channelIndex, _queueDefinition.PrefetchCount, _queueDefinition.ConcurrencyLimit);
     }
 
+    /// <remarks>
+    /// On a partitioned queue dispatch is ordered (single channel, dispatch concurrency 1): each delivery is assigned
+    /// to its partition lane in arrival order and the handler returns so the next delivery is laned in order, while
+    /// processing/retry/ack run on the lane with a deferred ack — giving cross-key parallelism bounded by
+    /// <c>PrefetchCount</c> while preserving per-key order. A non-partitioned type sharing a partitioned queue still
+    /// runs off the receive loop so it does not block ordered dispatch.
+    /// </remarks>
     private async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs ea)
     {
         var prepared = await TryPrepareAsync(ea);
@@ -106,10 +113,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             return;
         }
 
-        // Partitioned queue: dispatch is ordered (single channel, dispatch concurrency 1). Assign the
-        // delivery to its partition lane in arrival order, then return so the next delivery is laned in
-        // order; processing, retry, and ack happen on the lane (deferred ack), giving cross-key parallelism
-        // bounded by PrefetchCount while preserving per-key order.
         Task work;
         if (prepared.Plan.IsPartitioned)
         {
@@ -120,8 +123,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
         else
         {
-            // A non-partitioned type sharing a partitioned queue still runs off the receive loop so it does
-            // not block ordered dispatch of subsequent deliveries.
             work = ProcessAsync(prepared, ea);
         }
 
@@ -191,7 +192,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             {
                 if (ex is OperationCanceledException && ea.CancellationToken.IsCancellationRequested)
                 {
-                    // Worker is stopping; leave the delivery unacked so the broker re-delivers it later.
                     return;
                 }
 
@@ -450,14 +450,19 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
     }
 
+    /// <remarks>
+    /// Cancels the consumer through the channel gate (in-flight lanes may still be settling on the shared channel),
+    /// then drains in-flight partitioned work so deferred acks complete before the channel closes. An
+    /// <see cref="ObjectDisposedException"/> (the channel was already disposed by AutoRecovery) and a
+    /// <see cref="TimeoutException"/> (draining ran long) are both ignored on shutdown — any still-unacked deliveries
+    /// are requeued by the broker when the channel closes.
+    /// </remarks>
     public async ValueTask DisposeAsync()
     {
         try
         {
             if (!string.IsNullOrEmpty(_consumerTag))
             {
-                // Cancelling stops new deliveries while in-flight lanes may still be settling, so it runs
-                // through the same gate as the settle operations.
                 await _channelGate.WaitAsync();
                 try
                 {
@@ -469,8 +474,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 }
             }
 
-            // Drain in-flight partitioned work so deferred acks complete before the channel closes; anything
-            // still unacked after the timeout is requeued by the broker on channel close.
             var pending = _inFlight.Values.ToArray();
             if (pending.Length > 0)
             {
@@ -481,11 +484,11 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
         catch (ObjectDisposedException)
         {
-            // Channel was already disposed by AutoRecovery; safe to ignore on shutdown.
+            // Already disposed by AutoRecovery; ignored on shutdown (see remarks).
         }
         catch (TimeoutException)
         {
-            // Draining took too long; unacked deliveries are requeued when the channel closes.
+            // Drain timed out; unacked deliveries are requeued on channel close (see remarks).
         }
         finally
         {

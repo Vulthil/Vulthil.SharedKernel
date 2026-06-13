@@ -59,6 +59,11 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     public Task WaitUntilReadyAsync(CancellationToken cancellationToken = default) =>
         _startupStatus.Ready.WaitAsync(cancellationToken);
 
+    /// <remarks>
+    /// A partitioned queue dispatches in FIFO order from a single channel so the worker can assign deliveries to
+    /// partition lanes in arrival order; parallelism comes from the lanes (bounded by <c>PrefetchCount</c>) rather
+    /// than concurrent dispatch.
+    /// </remarks>
     private async Task StartConsumersAsync(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
     {
         var workerLogger = _loggerFactory.CreateLogger<RabbitMqConsumerWorker>();
@@ -67,9 +72,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         {
             _typeCache.RegisterQueue(queue);
 
-            // A partitioned queue must dispatch in FIFO order from a single channel so the worker can assign
-            // deliveries to partition lanes in arrival order; parallelism comes from the lanes (bounded by
-            // PrefetchCount) rather than concurrent dispatch.
             var partitioned = _typeCache.IsQueuePartitioned(queue);
             var channelCount = partitioned ? 1 : queue.ChannelCount;
             var dispatchConcurrency = partitioned ? (ushort)1 : queue.ConcurrencyLimit;
@@ -101,13 +103,15 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         await Task.WhenAll(_workers.Select(worker => worker.StartAsync(cancellationToken)));
     }
 
+    /// <remarks>
+    /// The fault exchange is a shared topic exchange: every terminal consume failure publishes a <c>Fault&lt;T&gt;</c>
+    /// here by convention with the faulted message's URN as the routing key, so a subscriber binds its queue with
+    /// <c>"#"</c> to observe all faults or with a specific URN to filter by faulted message type.
+    /// </remarks>
     private async Task SetupTopology(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
     {
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
-        // The fault exchange is a shared topic exchange: every terminal consume failure publishes a Fault<T>
-        // here by convention with the faulted message's URN as the routing key, so a subscriber binds its queue
-        // with "#" to observe all faults or with a specific URN to filter by faulted message type.
         await channel.ExchangeDeclareAsync(
             exchange: _messageConfigurationProvider.FaultExchangeName,
             type: ExchangeType.Topic,
@@ -122,6 +126,11 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         }
     }
 
+    /// <remarks>
+    /// A partitioned queue's per-key order only holds within one process; a single active consumer keeps one instance
+    /// active (others stand by for failover) so ordering survives across load-balanced consumers. Partitioned queues
+    /// opt in automatically; any queue can request it explicitly.
+    /// </remarks>
     private async Task SetupQueueTopology(QueueDefinition queue, IChannel channel, CancellationToken cancellationToken)
     {
         await channel.ExchangeDeclareAsync(
@@ -138,9 +147,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             args.Add("x-queue-type", "quorum");
         }
 
-        // A partitioned queue's per-key order only holds within one process; a single active consumer keeps a
-        // single instance active (others stand by for failover) so ordering survives across load-balanced
-        // consumers. Partitioned queues opt in automatically; any queue can request it explicitly.
         if (queue.SingleActiveConsumer || _typeCache.IsQueuePartitioned(queue))
         {
             args.Add("x-single-active-consumer", true);

@@ -33,8 +33,6 @@ public sealed class TransactionalOutboxIntegrationTests(TestHarnessWebApplicatio
         {
             await publisher.PublishAsync(new ProbeCreatedIntegrationEvent(id), cancellationToken);
 
-            // Still inside the open transaction: the message was captured (flushed) into the outbox, and the broker
-            // has not seen it. Asserting here is deterministic — the prompt relay cannot observe uncommitted rows.
             capturedDuringTransaction = await outbox.OutboxMessages
                 .CountAsync(message => message.Destination == OutboxDestination.Publish, cancellationToken);
             sentDuringTransaction = Harness.Published<ProbeCreatedIntegrationEvent>().Any(message => message.Message.Id == id);

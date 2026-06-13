@@ -28,6 +28,13 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         _logger = logger;
     }
 
+    /// <remarks>
+    /// Publishes pub/sub over the message's fanout/topic exchange. Publisher confirmations (with tracking) make the
+    /// awaited <c>BasicPublishAsync</c> wait for the broker ack and throw on a nack. The publish is not mandatory
+    /// because zero bound subscribers is normal for pub/sub; broker confirms still guard against broker-side loss.
+    /// Channels come from a bounded pool — each leased channel is used non-concurrently and returned for reuse, or
+    /// discarded if it faults.
+    /// </remarks>
     public async Task InternalPublishAsync<TMessage>(
         byte[] body,
         BasicProperties props,
@@ -37,16 +44,11 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
     {
         var exchange = messageConfiguration.Exchange;
 
-        // Publisher confirmations (with tracking) make the awaited BasicPublishAsync wait for the broker ack and
-        // throw on a nack or unroutable-mandatory return. The channel pool bounds concurrent publishes; each
-        // leased channel is used non-concurrently and reused on return, replacing the single-channel bottleneck.
         var channel = await _channelPool.LeaseAsync(cancellationToken);
         try
         {
             await EnsureExchangeTopologyAsync(channel, exchange, messageConfiguration, cancellationToken);
 
-            // Publish is pub/sub over a fanout/topic exchange: zero bound subscribers is normal, so the message
-            // is not mandatory. Broker confirms still apply (a nack throws), guarding against broker-side loss.
             await channel.BasicPublishAsync(exchange, routingKey, mandatory: false, props, body, cancellationToken);
             _channelPool.Return(channel);
         }
@@ -57,16 +59,17 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         }
     }
 
+    /// <remarks>
+    /// Sends point-to-point via the broker's default exchange, which always routes by queue name; the destination
+    /// queue is owned by the receiving service and is not declared here. The publish is mandatory, so a missing
+    /// destination queue makes the broker return the message and the awaited confirm throw a <c>PublishReturnException</c>.
+    /// </remarks>
     public async Task InternalSendAsync(
         byte[] body,
         BasicProperties props,
         string queueName,
         CancellationToken cancellationToken)
     {
-        // Sends route via the broker's default exchange (always exists, always routes by queue name).
-        // The destination queue is owned by the receiving service, so we do not declare it here.
-        // A send is point-to-point, so a missing destination queue is a real error: publish mandatory so
-        // the broker returns an unroutable message and the awaited confirm throws PublishReturnException.
         var channel = await _channelPool.LeaseAsync(cancellationToken);
         try
         {

@@ -24,8 +24,6 @@ internal sealed class TransactionalPublishFilter(
 
         outboxStore.AddOutboxMessage(CreateRow(context));
 
-        // Flush into the open transaction (order-independent), without committing. The transaction's commit makes
-        // the row durable; the commit-time trigger then wakes the relay. The message is not sent here.
         await outboxStore.SaveChangesAsync(context.CancellationToken);
     }
 

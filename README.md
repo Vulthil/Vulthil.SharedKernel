@@ -28,19 +28,56 @@ infrastructure — so you can adopt only what you need.
 
 ## Packages
 
+Adopt only what you need — every package is independently versioned and focused on a single concern.
+
+**Core**
+
 | Package | Description |
 |---|---|
-| **Vulthil.Results** | Small result primitives for explicit success/failure flows without exceptions. |
-| **Vulthil.SharedKernel** | Core domain primitives and base abstractions for shared domain logic. |
-| **Vulthil.SharedKernel.Application** | Application-layer building blocks such as handlers, pipelines, and validation helpers. |
-| **Vulthil.SharedKernel.Infrastructure** | Infrastructure helpers for persistence, transactions, outbox, and EF Core integration. |
-| **Vulthil.SharedKernel.Api** | API-layer helpers for endpoints, controllers, and cross-cutting HTTP concerns. |
-| **Vulthil.Messaging.Abstractions** | Messaging contracts for producers/consumers and request/reply boundaries. |
-| **Vulthil.Messaging** | Messaging composition APIs for configuring consumers, queues, and hosted processing. |
-| **Vulthil.Messaging.RabbitMq** | RabbitMQ implementation for the Vulthil messaging abstractions. |
-| **Vulthil.Messaging.TestHarness** | Test utilities for validating messaging flows in integration and component tests. |
-| **Vulthil.Extensions.Testing** | Testing-oriented extensions for asserting and composing application behaviors. |
-| **Vulthil.xUnit** | Reusable xUnit base infrastructure for integration and unit test composition. |
+| **Vulthil.Results** | Result primitives for explicit success/failure flows without exceptions. |
+| **Vulthil.SharedKernel** | Domain primitives — aggregate roots, entities, domain events, and domain exceptions. |
+
+**Application & API**
+
+| Package | Description |
+|---|---|
+| **Vulthil.SharedKernel.Application** | CQRS handlers, pipeline behaviors, and FluentValidation integration. |
+| **Vulthil.SharedKernel.Api** | Minimal-API endpoint helpers and `Result`-to-HTTP conversion. |
+
+**Persistence & Outbox**
+
+| Package | Description |
+|---|---|
+| **Vulthil.SharedKernel.Outbox** | Transactional domain-event outbox engine; persistence-agnostic. |
+| **Vulthil.SharedKernel.Outbox.EntityFrameworkCore** | EF Core implementation of the domain-event outbox. |
+| **Vulthil.SharedKernel.Infrastructure** | EF Core persistence, transactions, and outbox wiring. |
+| **Vulthil.SharedKernel.Infrastructure.Relational** | Shared relational helpers for the provider packages. |
+| **Vulthil.SharedKernel.Infrastructure.Npgsql** | PostgreSQL/Npgsql EF Core mappings and optimizations. |
+| **Vulthil.SharedKernel.Infrastructure.MySql** | MySQL EF Core mappings and optimizations. |
+| **Vulthil.SharedKernel.Infrastructure.Cosmos** | Azure Cosmos DB EF Core mappings and optimizations. |
+
+**Messaging**
+
+| Package | Description |
+|---|---|
+| **Vulthil.Messaging.Abstractions** | Contracts for producers, consumers, and request/reply boundaries. |
+| **Vulthil.Messaging** | Composition APIs for consumers, queues, and hosted processing. |
+| **Vulthil.Messaging.RabbitMq** | RabbitMQ transport for the messaging abstractions. |
+| **Vulthil.Messaging.Outbox** | Transactional bus-publish outbox that eliminates the dual-write problem. |
+| **Vulthil.Messaging.Inbox** | Idempotent-receiver (inbox) consume filter for exactly-once processing. |
+| **Vulthil.Messaging.Inbox.EntityFrameworkCore** | Shared EF Core primitives for the inbox idempotency store. |
+| **Vulthil.Messaging.Inbox.Relational** | Relational EF Core idempotency store (transactional exactly-once). |
+| **Vulthil.Messaging.Inbox.Cosmos** | Azure Cosmos DB idempotency store (effectively-once). |
+| **Vulthil.Messaging.TestHarness** | In-memory harness for asserting messaging flows in tests. |
+
+**Hosting & Testing**
+
+| Package | Description |
+|---|---|
+| **Vulthil.Extensions.Hosting** | Hosting abstractions, including `IRestartableHostedService`. |
+| **Vulthil.Extensions.Testing** | Testing helpers such as polling utilities for eventual consistency. |
+| **Vulthil.xUnit** | xUnit base classes with Testcontainers, Respawn, and AutoMocker. |
+| **Vulthil.xUnit.Cosmos** | Cosmos DB emulator fixture for xUnit integration tests. |
 
 ## Documentation
 

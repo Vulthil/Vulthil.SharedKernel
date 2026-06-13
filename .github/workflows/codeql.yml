@@ -1,0 +1,46 @@
+name: CodeQL
+
+on:
+  workflow_dispatch:  
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '32 4 * * 1' # weekly, Monday 04:32 UTC
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # build-mode: none uses CodeQL's buildless C# analysis, so the Aspire
+          # workload and a full restore/build aren't needed just to scan.
+          - language: csharp
+            build-mode: none
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

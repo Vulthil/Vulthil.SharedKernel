@@ -17,12 +17,26 @@ namespace WebApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.3")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxMessage", b =>
+            modelBuilder.Entity("Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage", b =>
+                {
+                    b.Property<string>("MessageId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTimeOffset>("ProcessedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("MessageId");
+
+                    b.ToTable("InboxMessages");
+                });
+
+            modelBuilder.Entity("Vulthil.SharedKernel.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,11 +46,17 @@ namespace WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("jsonb");
 
+                    b.Property<int>("Destination")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Error")
                         .HasColumnType("text");
 
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Metadata")
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("OccurredOnUtc")
                         .HasColumnType("timestamp with time zone");

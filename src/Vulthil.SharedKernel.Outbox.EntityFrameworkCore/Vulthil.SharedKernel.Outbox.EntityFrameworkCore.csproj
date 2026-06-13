@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Entity Framework Core implementation of the Vulthil.SharedKernel.Outbox engine — the IOutboxStore (capture + the transactional relay batch unit), the ISaveOutboxMessages context marker, the domain-event capture interceptor, and the OutboxMessage mapping. Referenced by the relational/provider store packages and the infrastructure host; keeps the outbox engine itself free of any EF Core dependency.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.SharedKernel.Outbox\Vulthil.SharedKernel.Outbox.csproj" />
+		<ProjectReference Include="..\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Transactional bus-publish outbox for Vulthil.Messaging. A publish/send filter captures messages published inside a database transaction into the shared outbox table; the outbox relay sends them to the broker after the transaction commits, with a stable message id, eliminating the dual-write problem.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.SharedKernel.Outbox\Vulthil.SharedKernel.Outbox.csproj" />
+		<ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
+	</ItemGroup>
+
+</Project>

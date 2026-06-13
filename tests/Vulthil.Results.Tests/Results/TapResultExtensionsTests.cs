@@ -1,13 +1,7 @@
 namespace Vulthil.Results.Tests.Results;
 
-/// <summary>
-/// Represents the TapResultExtensionsTests.
-/// </summary>
 public sealed class TapResultExtensionsTests : TapResultBaseTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void TapResultSuccess()
     {
@@ -21,9 +15,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertSuccess(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void TapResultSuccessT1()
     {
@@ -38,9 +29,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         result.ShouldBe(result);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void TapResultSuccessT1T1()
     {
@@ -56,9 +44,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         Param.ShouldBe(result.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void TapResultFailure()
     {
@@ -72,9 +57,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void TapResultFailureT1()
     {
@@ -88,9 +70,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(result2);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void TapResultFailureT1T1()
     {
@@ -105,9 +84,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResult()
     {
@@ -122,9 +98,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
 
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultLeft()
     {
@@ -138,9 +111,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultRight()
     {
@@ -154,9 +124,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailure()
     {
@@ -170,9 +137,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureLeft()
     {
@@ -186,9 +150,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureRight()
     {
@@ -202,9 +163,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultSuccessT1()
     {
@@ -218,9 +176,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultSuccessT1Left()
     {
@@ -234,9 +189,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultSuccessT1Right()
     {
@@ -250,9 +202,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertSuccess(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultSuccessT1T1()
     {
@@ -267,9 +216,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultSuccessT1T1Left()
     {
@@ -284,9 +230,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultSuccessT1T1Right()
     {
@@ -301,9 +244,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         Param.ShouldBe(T1.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureT1()
     {
@@ -317,9 +257,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureT1Left()
     {
@@ -333,9 +270,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureT1Right()
     {
@@ -349,9 +283,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         AssertFailure(await task);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureT1T1()
     {
@@ -366,9 +297,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureT1T1Left()
     {
@@ -383,9 +311,6 @@ public sealed class TapResultExtensionsTests : TapResultBaseTestCase
         Param.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task TapAsyncResultFailureT1T1Right()
     {

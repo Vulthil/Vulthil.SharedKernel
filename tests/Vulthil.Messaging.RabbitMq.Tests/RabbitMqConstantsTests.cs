@@ -3,14 +3,8 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the RabbitMqConstantsTests.
-/// </summary>
 public sealed class RabbitMqConstantsTests : BaseUnitTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ContentTypeShouldBeApplicationJson()
     {
@@ -18,9 +12,6 @@ public sealed class RabbitMqConstantsTests : BaseUnitTestCase
         RabbitMqConstants.ContentType.ShouldBe("application/json");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void GetMetadataShouldReturnPickerResultWhenTypeExists()
     {
@@ -38,9 +29,6 @@ public sealed class RabbitMqConstantsTests : BaseUnitTestCase
         result.ShouldBe("test-value");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void GetMetadataShouldReturnNullWhenTypeNotFound()
     {
@@ -55,9 +43,6 @@ public sealed class RabbitMqConstantsTests : BaseUnitTestCase
         result.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void GetMetadataShouldWalkInheritanceTree()
     {
@@ -75,9 +60,6 @@ public sealed class RabbitMqConstantsTests : BaseUnitTestCase
         result.ShouldBe("base-value");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void GetMetadataShouldPreferDerivedTypeOverBase()
     {
@@ -96,9 +78,6 @@ public sealed class RabbitMqConstantsTests : BaseUnitTestCase
         result.ShouldBe("derived-value");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void GetMetadataShouldReturnNullForObjectType()
     {
@@ -112,9 +91,6 @@ public sealed class RabbitMqConstantsTests : BaseUnitTestCase
         result.ShouldBeNull();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void GetMetadataShouldHandleMultipleLevelsOfInheritance()
     {

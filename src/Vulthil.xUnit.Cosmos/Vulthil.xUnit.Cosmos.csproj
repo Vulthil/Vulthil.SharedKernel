@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Azure Cosmos DB emulator fixture for Vulthil.xUnit — wraps the Cosmos emulator Testcontainer, registers the DbContext against it, and gives every consuming factory its own emulator database for parallel-safe integration tests.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.xUnit\Vulthil.xUnit.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
+		<PackageReference Include="Testcontainers.CosmosDb" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+#nullable enable
+Vulthil.Messaging.Inbox.IIdempotencyStore
+Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(string! idempotencyKey, Vulthil.Messaging.Abstractions.Consumers.IMessageContext! context, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! process, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Vulthil.Messaging.Inbox.IInboxKeySelector<TMessage>
+Vulthil.Messaging.Inbox.IInboxKeySelector<TMessage>.GetKey(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>! context) -> string?
+Vulthil.Messaging.Inbox.InboxConfiguratorExtensions
+Vulthil.Messaging.Inbox.InboxOptions
+Vulthil.Messaging.Inbox.InboxOptions.InboxOptions() -> void
+Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey.get -> bool
+Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey.set -> void
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MessageType.get -> System.Type?
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException() -> void
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(string! message) -> void
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(string! message, System.Exception! innerException) -> void
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(System.Type! messageType) -> void
+static Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.AddIdempotentInbox<TMessage>(this Vulthil.Messaging.IMessagingConfigurator! configurator, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>? keySelector = null) -> Vulthil.Messaging.IMessagingConfigurator!
+static Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox(this Vulthil.Messaging.IMessagingConfigurator! configurator, System.Action<Vulthil.Messaging.Inbox.InboxOptions!>! configure) -> Vulthil.Messaging.IMessagingConfigurator!

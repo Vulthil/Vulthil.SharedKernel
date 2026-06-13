@@ -1,13 +1,11 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the RabbitMqPublisherTests.
-/// </summary>
 public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqPublisher> _lazyTarget;
@@ -16,9 +14,6 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 
     private RabbitMqPublisher Target => _lazyTarget.Value;
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public RabbitMqPublisherTests()
     {
         var logger = GetMock<ILogger<RabbitMqPublisher>>().Object;
@@ -37,13 +32,11 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
             .Returns<Type>(t => new MessageConfiguration(t.FullName!));
 
         Use(logger);
-        Use(connectionMock.Object);
+        Use(Options.Create(new RabbitMqTransportOptions { PublishChannelPoolSize = 1 }));
+        UseReal<RabbitMqChannelPool>();
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task PublishAsyncWithValidMessagePublishesSuccessfully()
     {
@@ -53,19 +46,16 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         // Act
         await Target.PublishAsync(message, cancellationToken: CancellationToken);
 
-        // Assert
+        // Assert — publish is pub/sub, so it is not mandatory (zero subscribers is normal).
         _channelMock.Verify(x => x.BasicPublishAsync(
             typeof(TestMessage).FullName!,
             string.Empty,
-            true,
+            false,
             It.IsAny<BasicProperties>(),
             It.IsAny<ReadOnlyMemory<byte>>(),
             CancellationToken), Times.Once);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task PublishAsyncWithNullMessageThrowsArgumentNullException()
     {
@@ -75,9 +65,6 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 
     private sealed class TestMessage
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public string Content { get; set; } = string.Empty;
     }
 }

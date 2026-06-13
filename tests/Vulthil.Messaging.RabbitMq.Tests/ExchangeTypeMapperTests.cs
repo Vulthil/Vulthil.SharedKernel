@@ -3,14 +3,8 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the ExchangeTypeMapperTests.
-/// </summary>
 public sealed class ExchangeTypeMapperTests : BaseUnitTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void TopicExchangeShouldMapToTopicType()
     {
@@ -21,9 +15,6 @@ public sealed class ExchangeTypeMapperTests : BaseUnitTestCase
         result.ShouldBe("topic");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void DirectExchangeShouldMapToDirectType()
     {
@@ -34,9 +25,6 @@ public sealed class ExchangeTypeMapperTests : BaseUnitTestCase
         result.ShouldBe("direct");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void FanoutExchangeShouldMapToFanoutType()
     {
@@ -47,9 +35,6 @@ public sealed class ExchangeTypeMapperTests : BaseUnitTestCase
         result.ShouldBe("fanout");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void HeadersExchangeShouldMapToHeadersType()
     {
@@ -60,9 +45,6 @@ public sealed class ExchangeTypeMapperTests : BaseUnitTestCase
         result.ShouldBe("headers");
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void InvalidExchangeShouldDefaultToTopic()
     {

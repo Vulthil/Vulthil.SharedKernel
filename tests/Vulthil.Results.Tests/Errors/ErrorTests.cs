@@ -1,14 +1,8 @@
 using Vulthil.xUnit;
 
 namespace Vulthil.Results.Tests.Errors;
-/// <summary>
-/// Represents the ErrorTests.
-/// </summary>
 public sealed class ErrorTests : BaseUnitTestCase
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ErrorNoneShouldBeEmptyFailure()
     {
@@ -23,9 +17,6 @@ public sealed class ErrorTests : BaseUnitTestCase
         error.Type.ShouldBe(ErrorType.Failure);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ErrorNullValueShouldBeFailure()
     {
@@ -40,9 +31,6 @@ public sealed class ErrorTests : BaseUnitTestCase
         error.Type.ShouldBe(ErrorType.Failure);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public static TheoryData<Error, (string Code, string Description), ErrorType> ErrorTestData => new()
     {
         { Error.NotFound("C", "D"), ("C", "D"), ErrorType.NotFound },
@@ -52,18 +40,12 @@ public sealed class ErrorTests : BaseUnitTestCase
         { new ValidationError([Error.NullValue]), ("Validation.General", "One or more validation errors occurred"), ErrorType.Validation },
     };
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Theory]
     [MemberData(nameof(ErrorTestData))]
     public void ErrorStaticFactoryMethodsShouldCreateErrors(Error error, (string Code, string Description) errorProperties, ErrorType expectedErrorType) =>
         // Assert
         error.ShouldSatisfyAllConditions(e => e.Type.ShouldBe(expectedErrorType), e => e.Code.ShouldBe(errorProperties.Code), e => e.Description.ShouldBe(errorProperties.Description));
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void ValidationErrorFromResults()
     {

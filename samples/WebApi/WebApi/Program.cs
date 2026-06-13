@@ -34,7 +34,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapEndpoints();
+var apiGroup = app.MapGroup("api").WithTags("API Endpoints");
+app.MapEndpoints(apiGroup);
 
 if (app.Environment.IsDevelopment())
 {
@@ -43,10 +44,3 @@ if (app.Environment.IsDevelopment())
 }
 
 await app.RunAsync();
-
-#pragma warning disable S1118 // Utility classes should not have public constructors
-/// <summary>
-/// Represents the Program.
-/// </summary>
-public partial class Program;
-#pragma warning restore S1118 // Utility classes should not have public constructors

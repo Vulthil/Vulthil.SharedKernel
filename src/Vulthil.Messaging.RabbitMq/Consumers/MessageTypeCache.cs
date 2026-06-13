@@ -1,65 +1,56 @@
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
-internal sealed record MessageExecutionPlan(MessageType MessageType)
-{
-    /// <summary>
-    /// Gets or sets this member value.
-    /// </summary>
-    public List<IConsumerInvoker> StandardHandlers { get; } = [];
-    /// <summary>
-    /// Gets or sets this member value.
-    /// </summary>
-    public IRpcInvoker? RpcHandler { get; set; }
-}
-
+/// <summary>
+/// RabbitMQ adapter over <see cref="MessageExecutionRegistry{THandler}"/>. Delegates plan assembly to the core
+/// registry and decorates each resolved plan with a <see cref="RabbitMqPlan"/> carrying the AMQP partition key
+/// extractor. Wrappers are built once per plan (keyed by URN) during registration, so delivery-time lookups stay
+/// read-only.
+/// </summary>
 internal sealed class MessageTypeCache
 {
-    private readonly Dictionary<string, MessageExecutionPlan> _plans = [];
+    private readonly MessageExecutionRegistry<MessageHandler> _registry;
+    private readonly Dictionary<Uri, RabbitMqPlan> _wrappers = [];
+
+    public MessageTypeCache(IMessageConfigurationProvider provider)
+        => _registry = new MessageExecutionRegistry<MessageHandler>(provider, new RabbitMqHandlerFactory());
 
     public void RegisterQueue(QueueDefinition queue)
     {
-        foreach (var consumer in queue.Registrations.OfType<ConsumerRegistration>())
+        _registry.RegisterQueue(queue);
+        foreach (var plan in _registry.Plans.Where(plan => !_wrappers.ContainsKey(plan.Urn)))
         {
-            var msgType = consumer.MessageType;
-            var plan = GetOrAddPlan(msgType.Name, msgType);
-
-            var invokerType = typeof(ConsumerInvoker<,>)
-                .MakeGenericType(consumer.ConsumerType.Type, msgType.Type);
-
-            var invoker = (IConsumerInvoker)Activator.CreateInstance(
-                invokerType,
-                args: [RabbitMqConstants.GetRoutingKey(consumer), consumer.RetryPolicy]
-                )!;
-            plan.StandardHandlers.Add(invoker);
-        }
-
-        foreach (var rpc in queue.Registrations.OfType<RequestConsumerRegistration>())
-        {
-            var msgType = rpc.MessageType;
-            var plan = GetOrAddPlan(msgType.Name, msgType);
-
-            var invokerType = typeof(RpcInvoker<,,>)
-                .MakeGenericType(rpc.ConsumerType.Type, msgType.Type, rpc.ResponseType);
-
-            var invoker = (IRpcInvoker)Activator.CreateInstance(
-                     invokerType,
-                     args: [RabbitMqConstants.GetRoutingKey(rpc), rpc.RetryPolicy]
-            )!;
-            plan.RpcHandler = invoker;
+            _wrappers[plan.Urn] = BuildWrapper(plan);
         }
     }
 
-    private MessageExecutionPlan GetOrAddPlan(string name, MessageType type)
+    /// <inheritdoc cref="MessageExecutionRegistry{THandler}.IsQueuePartitioned"/>
+    public bool IsQueuePartitioned(QueueDefinition queue) => _registry.IsQueuePartitioned(queue);
+
+    /// <summary>Resolves a wrapped plan from the wire URN (envelope path). Returns <see langword="null"/> when no plan matches.</summary>
+    public RabbitMqPlan? GetPlanByUrn(Uri urn) => _wrappers.GetValueOrDefault(urn);
+
+    /// <summary>Resolves a wrapped plan from the CLR full type name (bare-JSON compat path). Returns <see langword="null"/> when no plan matches.</summary>
+    public RabbitMqPlan? GetPlanByFullName(string fullName)
     {
-        if (!_plans.TryGetValue(name, out var plan))
-        {
-            plan = new MessageExecutionPlan(type);
-            _plans[name] = plan;
-        }
-        return plan;
+        var core = _registry.GetPlanByFullName(fullName);
+        return core is null ? null : _wrappers.GetValueOrDefault(core.Urn);
     }
 
-    public MessageExecutionPlan? GetPlan(string key) => _plans.GetValueOrDefault(key);
+    /// <summary>Convenience lookup used by the bare-JSON receive path and tests: tries URN parsing first, falls back to CLR full name.</summary>
+    public RabbitMqPlan? GetPlan(string key)
+    {
+        var core = _registry.GetPlan(key);
+        return core is null ? null : _wrappers.GetValueOrDefault(core.Urn);
+    }
+
+    private static RabbitMqPlan BuildWrapper(MessageExecutionPlan<MessageHandler> plan)
+    {
+        var extractor = plan.Partition is null
+            ? null
+            : PartitionKeyExtractorFactory.Build(plan.MessageType.Type, plan.Partition.KeySelector);
+        return new RabbitMqPlan(plan, extractor);
+    }
 }

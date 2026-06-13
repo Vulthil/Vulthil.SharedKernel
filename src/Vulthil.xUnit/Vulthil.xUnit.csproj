@@ -22,6 +22,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Vulthil.Extensions.Hosting\Vulthil.Extensions.Hosting.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Using Include="Shouldly" />
 		<Using Include="Xunit" />
 		<Using Include="Moq" />

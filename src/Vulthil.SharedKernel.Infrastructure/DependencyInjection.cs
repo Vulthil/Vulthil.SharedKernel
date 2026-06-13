@@ -4,7 +4,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure;
 
@@ -70,28 +71,24 @@ public static class DependencyInjection
     private static void AddOutboxProcessing<TDbContext>(this IServiceCollection services, DatabaseInfrastructureConfigurator<TDbContext> configurator)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
-        var optionsAction = configurator.OutboxOptionsAction ?? (static o => { });
-        services.AddOptions<OutboxProcessingOptions>()
-            .Configure(optionsAction)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        services.TryAddSingleton<DomainEventsToOutboxMessageSaveChangesInterceptor>();
-
         var dbContextLifetime = configurator.DbContextLifetime;
+
+        // The engine (options, signal, processor, background service, in-process domain-event sink) registers its own
+        // internals; the EF-specific store, capture interceptor, and context marker are wired here.
+        services.AddOutboxEngine(configurator.OutboxOptionsAction, dbContextLifetime);
+
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxInterceptor, DomainEventsToOutboxMessageSaveChangesInterceptor>());
+
         services.Add(new ServiceDescriptor(
             typeof(ISaveOutboxMessages),
             sp => sp.GetRequiredService<TDbContext>(),
             dbContextLifetime));
-        services.Add(new ServiceDescriptor(
-            typeof(IOutboxStrategy),
-            configurator.OutboxStrategyType,
-            dbContextLifetime));
-        services.Add(new ServiceDescriptor(
-            typeof(OutboxProcessor),
-            typeof(OutboxProcessor),
-            dbContextLifetime));
-        services.AddHostedService<OutboxBackgroundService>();
+
+        var storeType = configurator.OutboxStoreType.IsGenericTypeDefinition
+            ? configurator.OutboxStoreType.MakeGenericType(typeof(TDbContext))
+            : configurator.OutboxStoreType;
+
+        services.Add(new ServiceDescriptor(typeof(IOutboxStore), storeType, dbContextLifetime));
     }
 
     /// <summary>

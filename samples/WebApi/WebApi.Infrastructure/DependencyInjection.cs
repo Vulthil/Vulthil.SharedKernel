@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging;
+using Vulthil.Messaging.Inbox;
+using Vulthil.Messaging.Inbox.Relational;
+using Vulthil.Messaging.Outbox;
 using Vulthil.Messaging.RabbitMq;
 using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
@@ -22,6 +26,8 @@ public static class DependencyInjection
                         .UseNpgsql(connectionStringKey)
                         .EnableOutboxProcessing());
 
+        builder.Services.AddRelationalInbox<WebApiDbContext>();
+
         return builder;
     }
 
@@ -41,16 +47,21 @@ public static class DependencyInjection
 
                 queue.AddRequestConsumer<SideEffectRequestConsumer>();
 
+                queue.Subscribe<MainEntityCreatedIntegrationEvent>("main-entity.created");
+                queue.Subscribe<MainEntityCreatedIntegrationEvent>("main-entity.created2");
                 queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
                 {
-                    c.Bind<MainEntityCreatedIntegrationEvent>("main-entity.created");
                     c.UseRetry(r => r.Immediate(5));
                 });
-                queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
-                {
-                    c.Bind<MainEntityCreatedIntegrationEvent>("main-entity.created2");
-                });
             });
+
+            x.AddIdempotentInbox<MainEntityCreatedIntegrationEvent>(context => context.Message.Id.ToString());
+
+            x.AddTransactionalOutbox();
+
+            // Run the consumer in a transaction so any messages it publishes are captured by the outbox. Here it
+            // composes with the inbox (which opens the transaction first) — the filter joins rather than nesting.
+            x.AddTransactionalConsumer<MainEntityCreatedIntegrationEvent>();
 
             x.UseRabbitMq(rabbitMqConnectionStringKey);
         });

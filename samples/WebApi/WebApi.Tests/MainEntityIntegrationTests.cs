@@ -1,14 +1,16 @@
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
 using WebApi.Application.MainEntities.Create;
 using WebApi.Application.MainEntities.GetById;
 using WebApi.Application.MainEntities.Update;
 using WebApi.Domain.MainEntities.Events;
 using WebApi.Infrastructure.Data;
+using WebApi.MainEntity;
 using WebApi.Tests.Fixtures;
 
 namespace WebApi.Tests;
@@ -16,6 +18,20 @@ namespace WebApi.Tests;
 public sealed class MainEntityIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
     : BaseIntegrationTestCase(factory, testOutputHelper)
 {
+    [Fact]
+    public async Task Test_Create_Endpoint()
+    {
+        // Arrange
+        var client = Client;
+        var response = await client.PostAsJsonAsync("api/main-entities", new Create.Request("Test Name"), CancellationToken);
+
+        // Act
+        var result = await response.GetResponseAsync<Create.Response>(CancellationToken);
+
+        // Assert
+        result.Id.ShouldNotBe(Guid.Empty);
+    }
+
     [Fact]
     public async Task Test_Create()
     {

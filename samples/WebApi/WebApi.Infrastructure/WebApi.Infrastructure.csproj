@@ -7,6 +7,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.Inbox.Relational\Vulthil.Messaging.Inbox.Relational.csproj" />
+		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.Outbox\Vulthil.Messaging.Outbox.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.RabbitMq\Vulthil.Messaging.RabbitMq.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure.Npgsql\Vulthil.SharedKernel.Infrastructure.Npgsql.csproj" />
 		<ProjectReference Include="..\WebApi.Application\WebApi.Application.csproj" />

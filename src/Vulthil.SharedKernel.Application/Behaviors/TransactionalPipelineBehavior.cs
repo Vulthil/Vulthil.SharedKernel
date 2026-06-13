@@ -15,16 +15,11 @@ public sealed class TransactionalPipelineBehavior<TCommand, TResponse>(
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     /// <inheritdoc />
-    public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+    public Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
-        await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        ArgumentNullException.ThrowIfNull(next);
 
-        var response = await next(cancellationToken);
-
-        await transaction.CommitAsync(cancellationToken);
-
-        return response;
+        return _unitOfWork.ExecuteInTransactionAsync(token => next(token), cancellationToken);
     }
-
 }
 

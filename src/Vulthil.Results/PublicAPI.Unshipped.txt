@@ -1,9 +1,19 @@
 #nullable enable
+override sealed Vulthil.Results.ValidationError.Equals(Vulthil.Results.Error? other) -> bool
+override Vulthil.Results.Error.Equals(object? obj) -> bool
+override Vulthil.Results.Error.GetHashCode() -> int
+override Vulthil.Results.Error.ToString() -> string!
+override Vulthil.Results.ValidationError.<Clone>$() -> Vulthil.Results.ValidationError!
+override Vulthil.Results.ValidationError.Equals(object? obj) -> bool
+override Vulthil.Results.ValidationError.GetHashCode() -> int
+override Vulthil.Results.ValidationError.ToString() -> string!
 static readonly Vulthil.Results.Error.None -> Vulthil.Results.Error!
 static readonly Vulthil.Results.Error.NullValue -> Vulthil.Results.Error!
 static Vulthil.Results.Error.Conflict(string! code, string! description) -> Vulthil.Results.Error!
 static Vulthil.Results.Error.Failure(string! code, string! description) -> Vulthil.Results.Error!
 static Vulthil.Results.Error.NotFound(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Error.operator !=(Vulthil.Results.Error? left, Vulthil.Results.Error? right) -> bool
+static Vulthil.Results.Error.operator ==(Vulthil.Results.Error? left, Vulthil.Results.Error? right) -> bool
 static Vulthil.Results.Error.Problem(string! code, string! description) -> Vulthil.Results.Error!
 static Vulthil.Results.Result.Failure(Vulthil.Results.Error! error) -> Vulthil.Results.Result!
 static Vulthil.Results.Result.Failure<TValue>(Vulthil.Results.Error! error) -> Vulthil.Results.Result<TValue>!
@@ -84,10 +94,17 @@ static Vulthil.Results.ResultExtensions.ToResult<T>(this T? obj, Vulthil.Results
 static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! errors) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T!>!>!
 static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! errors) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!
 static Vulthil.Results.ValidationError.FromResults(System.Collections.Generic.IEnumerable<Vulthil.Results.Result!>! results) -> Vulthil.Results.ValidationError!
+static Vulthil.Results.ValidationError.operator !=(Vulthil.Results.ValidationError? left, Vulthil.Results.ValidationError? right) -> bool
+static Vulthil.Results.ValidationError.operator ==(Vulthil.Results.ValidationError? left, Vulthil.Results.ValidationError? right) -> bool
+virtual Vulthil.Results.Error.<Clone>$() -> Vulthil.Results.Error!
+virtual Vulthil.Results.Error.EqualityContract.get -> System.Type!
+virtual Vulthil.Results.Error.Equals(Vulthil.Results.Error? other) -> bool
+virtual Vulthil.Results.Error.PrintMembers(System.Text.StringBuilder! builder) -> bool
 Vulthil.Results.Error
 Vulthil.Results.Error.Code.get -> string!
 Vulthil.Results.Error.Description.get -> string!
 Vulthil.Results.Error.Error(string! code, string! description, Vulthil.Results.ErrorType type) -> void
+Vulthil.Results.Error.Error(Vulthil.Results.Error! original) -> void
 Vulthil.Results.Error.Type.get -> Vulthil.Results.ErrorType
 Vulthil.Results.ErrorType
 Vulthil.Results.ErrorType.Conflict = 4 -> Vulthil.Results.ErrorType
@@ -105,5 +122,6 @@ Vulthil.Results.Result<TValue>.Result(TValue? value, bool isSuccess, Vulthil.Res
 Vulthil.Results.Result<TValue>.Value.get -> TValue
 Vulthil.Results.ResultExtensions
 Vulthil.Results.ValidationError
+Vulthil.Results.ValidationError.Equals(Vulthil.Results.ValidationError? other) -> bool
 Vulthil.Results.ValidationError.Errors.get -> Vulthil.Results.Error![]!
 Vulthil.Results.ValidationError.ValidationError(Vulthil.Results.Error![]! errors) -> void

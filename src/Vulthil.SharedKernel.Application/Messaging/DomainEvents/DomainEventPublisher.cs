@@ -48,7 +48,7 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
             }
             catch (Exception ex)
             {
-                (exceptions ??= new()).Add(ex);
+                (exceptions ??= []).Add(ex);
             }
         }
 

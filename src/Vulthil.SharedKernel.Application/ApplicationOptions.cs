@@ -207,4 +207,26 @@ public sealed class ApplicationOptions
         HandlerOptions.AddOpenPipelineHandler(typeof(TransactionalPipelineBehavior<,>));
         return this;
     }
+
+    /// <summary>
+    /// Registers an open-generic request pipeline handler type.
+    /// </summary>
+    /// <param name="pipelineHandler">The open-generic type implementing <see cref="Pipeline.IPipelineHandler{TRequest, TResponse}"/>.</param>
+    /// <returns>The current options instance for chaining.</returns>
+    public ApplicationOptions AddOpenPipelineHandler(Type pipelineHandler)
+    {
+        HandlerOptions.AddOpenPipelineHandler(pipelineHandler);
+        return this;
+    }
+
+    /// <summary>
+    /// Registers an open-generic domain event pipeline handler type.
+    /// </summary>
+    /// <param name="pipelineHandler">The open-generic type implementing <see cref="Pipeline.IDomainEventPipelineHandler{TDomainEvent}"/>.</param>
+    /// <returns>The current options instance for chaining.</returns>
+    public ApplicationOptions AddOpenDomainEventPipelineHandler(Type pipelineHandler)
+    {
+        HandlerOptions.AddOpenDomainEventPipelineHandler(pipelineHandler);
+        return this;
+    }
 }

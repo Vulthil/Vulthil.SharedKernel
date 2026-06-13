@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
 
 namespace Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing;
 

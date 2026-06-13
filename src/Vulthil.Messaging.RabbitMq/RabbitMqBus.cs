@@ -12,18 +12,16 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IConnection _connection;
-    private readonly IEnumerable<QueueDefinition> _queueDefinitions;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly RabbitMqBusStartupStatus _startupStatus;
     private readonly ILogger<RabbitMqBus> _logger;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly MessageTypeCache _typeCache = new();
+    private readonly MessageTypeCache _typeCache;
     private readonly List<RabbitMqConsumerWorker> _workers = [];
 
     public RabbitMqBus(
         IServiceScopeFactory serviceScopeFactory,
         IConnection connection,
-        IEnumerable<QueueDefinition> queueDefinitions,
         IMessageConfigurationProvider messageConfigurationProvider,
         RabbitMqBusStartupStatus startupStatus,
         ILogger<RabbitMqBus> logger,
@@ -31,18 +29,18 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     {
         _serviceScopeFactory = serviceScopeFactory;
         _connection = connection;
-        _queueDefinitions = queueDefinitions;
         _messageConfigurationProvider = messageConfigurationProvider;
         _startupStatus = startupStatus;
         _logger = logger;
         _loggerFactory = loggerFactory;
+        _typeCache = new MessageTypeCache(messageConfigurationProvider);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            var queues = _queueDefinitions.ToList();
+            var queues = _messageConfigurationProvider.QueueDefinitions;
             MessagingLog.BusStarting(_logger, queues.Count);
 
             await SetupTopology(queues, cancellationToken);
@@ -58,6 +56,14 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         }
     }
 
+    public Task WaitUntilReadyAsync(CancellationToken cancellationToken = default) =>
+        _startupStatus.Ready.WaitAsync(cancellationToken);
+
+    /// <remarks>
+    /// A partitioned queue dispatches in FIFO order from a single channel so the worker can assign deliveries to
+    /// partition lanes in arrival order; parallelism comes from the lanes (bounded by <c>PrefetchCount</c>) rather
+    /// than concurrent dispatch.
+    /// </remarks>
     private async Task StartConsumersAsync(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
     {
         var workerLogger = _loggerFactory.CreateLogger<RabbitMqConsumerWorker>();
@@ -66,12 +72,16 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         {
             _typeCache.RegisterQueue(queue);
 
-            for (int i = 0; i < queue.ChannelCount; i++)
+            var partitioned = _typeCache.IsQueuePartitioned(queue);
+            var channelCount = partitioned ? 1 : queue.ChannelCount;
+            var dispatchConcurrency = partitioned ? (ushort)1 : queue.ConcurrencyLimit;
+
+            for (int i = 0; i < channelCount; i++)
             {
                 var options = new CreateChannelOptions(
                     publisherConfirmationsEnabled: false,
                     publisherConfirmationTrackingEnabled: false,
-                    consumerDispatchConcurrency: queue.ConcurrencyLimit
+                    consumerDispatchConcurrency: dispatchConcurrency
                 );
 
                 var channel = await _connection.CreateChannelAsync(options, cancellationToken);
@@ -84,7 +94,8 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                     _typeCache,
                     _messageConfigurationProvider,
                     workerLogger,
-                    i);
+                    i,
+                    partitioned);
 
                 _workers.Add(worker);
             }
@@ -92,9 +103,21 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         await Task.WhenAll(_workers.Select(worker => worker.StartAsync(cancellationToken)));
     }
 
+    /// <remarks>
+    /// The fault exchange is a shared topic exchange: every terminal consume failure publishes a <c>Fault&lt;T&gt;</c>
+    /// here by convention with the faulted message's URN as the routing key, so a subscriber binds its queue with
+    /// <c>"#"</c> to observe all faults or with a specific URN to filter by faulted message type.
+    /// </remarks>
     private async Task SetupTopology(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
     {
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+
+        await channel.ExchangeDeclareAsync(
+            exchange: _messageConfigurationProvider.FaultExchangeName,
+            type: ExchangeType.Topic,
+            durable: true,
+            autoDelete: false,
+            cancellationToken: cancellationToken);
 
         foreach (var queue in queues)
         {
@@ -103,6 +126,11 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         }
     }
 
+    /// <remarks>
+    /// A partitioned queue's per-key order only holds within one process; a single active consumer keeps one instance
+    /// active (others stand by for failover) so ordering survives across load-balanced consumers. Partitioned queues
+    /// opt in automatically; any queue can request it explicitly.
+    /// </remarks>
     private async Task SetupQueueTopology(QueueDefinition queue, IChannel channel, CancellationToken cancellationToken)
     {
         await channel.ExchangeDeclareAsync(
@@ -117,6 +145,11 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         if (queue.IsQuorum)
         {
             args.Add("x-queue-type", "quorum");
+        }
+
+        if (queue.SingleActiveConsumer || _typeCache.IsQueuePartitioned(queue))
+        {
+            args.Add("x-single-active-consumer", true);
         }
 
         if (queue.DeadLetter is { Enabled: true })
@@ -158,14 +191,13 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         await channel.QueueBindAsync(
             queue: queue.Name,
             exchange: queue.Name,
-            routingKey: "#",
+            routingKey: string.Empty,
             cancellationToken: cancellationToken);
 
-        foreach (var registration in queue.Registrations)
+        foreach (var subscription in queue.Subscriptions)
         {
-            var messageConfig = _messageConfigurationProvider.GetMessageConfiguration(registration.MessageType.Type);
+            var messageConfig = _messageConfigurationProvider.GetMessageConfiguration(subscription.MessageType.Type);
             var exchangeName = messageConfig.Exchange;
-            var bindingPattern = RabbitMqConstants.GetRoutingKey(registration);
 
             await channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
@@ -178,7 +210,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             await channel.ExchangeBindAsync(
                 destination: queue.Name,
                 source: exchangeName,
-                routingKey: bindingPattern,
+                routingKey: subscription.RoutingKey ?? string.Empty,
                 cancellationToken: cancellationToken);
         }
     }

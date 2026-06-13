@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
-using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application.Messaging;
+
 /// <summary>
 /// Dispatches requests to their registered handlers through the pipeline.
 /// </summary>
@@ -24,7 +24,6 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private static readonly ConcurrentDictionary<Type, IRequestHandlerBase> _requestHandlers = new();
 
-    /// <inheritdoc />
     public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -42,26 +41,14 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
 internal class RequestHandlerWrapperResult<TRequest, TResponse> : IRequestHandlerWrapper<TResponse>
     where TRequest : IRequest<TResponse>
 {
-    /// <inheritdoc />
     public async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default) =>
-        await HandleAsync((ICommand<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
+        await HandleAsync((IRequest<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
 
-    /// <inheritdoc />
     public Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
-        CancellationToken cancellationToken = default)
-    {
-        Task<TResponse> Handler(CancellationToken t) => serviceProvider.GetRequiredService<IHandler<TRequest, TResponse>>()
-            .HandleAsync((TRequest)request, t);
-
-        var pipeline = serviceProvider
-            .GetServices<IPipelineHandler<TRequest, TResponse>>()
-            .Reverse()
-            .Aggregate((PipelineDelegate<TResponse>)Handler,
-                (next, pipeline) => (t) => pipeline.HandleAsync((TRequest)request, next, t));
-
-        return pipeline(cancellationToken);
-    }
+        CancellationToken cancellationToken = default) =>
+        serviceProvider.GetRequiredService<IHandler<TRequest, TResponse>>()
+            .HandleAsync((TRequest)request, cancellationToken);
 }
 
 internal interface IRequestHandlerBase

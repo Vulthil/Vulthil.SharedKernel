@@ -24,7 +24,9 @@ public sealed record ConsumerType(Type Type)
 }
 
 /// <summary>
-/// Base record for a consumer-to-message binding within a queue.
+/// Base record for a consumer registration on a queue, binding a consumer to the message type it handles.
+/// Routing-key patterns belong on <see cref="Subscription"/> (queue→exchange binding) or
+/// <see cref="MessageConfiguration{TMessage}"/> (producer-side routing key).
 /// </summary>
 public abstract record Registration
 {
@@ -36,10 +38,6 @@ public abstract record Registration
     /// Gets the message type that this consumer is registered to handle.
     /// </summary>
     public required MessageType MessageType { get; init; }
-    /// <summary>
-    /// Gets the routing key pattern used to filter messages for this binding. Default is "#" (match all).
-    /// </summary>
-    public string RoutingKey { get; init; } = "#";
 
     /// <summary>
     /// Gets the per-consumer retry policy, or <see langword="null"/> to inherit the queue-level default.
@@ -51,6 +49,19 @@ public abstract record Registration
 /// A consumer registration for one-way message consumption.
 /// </summary>
 public sealed record ConsumerRegistration : Registration;
+
+/// <summary>
+/// Binds the queue to a concrete message type's exchange. One <see cref="Subscription"/> = one
+/// <c>exchange→queue</c> binding declared at topology setup time.
+/// </summary>
+/// <param name="MessageType">The concrete message type whose exchange will be bound.</param>
+/// <param name="RoutingKey">
+/// The binding pattern used by the broker to filter deliveries. <see langword="null"/> = the broker
+/// receives an empty pattern: fanout/headers exchanges ignore it, direct/topic exchanges only match
+/// messages published with an empty (direct) or unmatchable (topic) routing key. Supply a specific
+/// pattern (e.g. <c>"order.created"</c> for direct, <c>"order.*"</c> for topic) when needed.
+/// </param>
+public sealed record Subscription(MessageType MessageType, string? RoutingKey = null);
 
 /// <summary>
 /// A consumer registration for request/reply message consumption.
@@ -70,6 +81,7 @@ public sealed record RequestConsumerRegistration : Registration
 public sealed record QueueDefinition(string Name)
 {
     private readonly HashSet<Registration> _registrations = [];
+    private readonly HashSet<Subscription> _subscriptions = [];
 
     /// <summary>
     /// Gets or sets the default retry policy applied to all consumers on this queue.
@@ -113,6 +125,14 @@ public sealed record QueueDefinition(string Name)
     /// Gets or sets a value indicating whether this queue is exclusive to the declaring connection.
     /// </summary>
     public bool Exclusive { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the queue is declared with RabbitMQ's single active consumer
+    /// feature, so that only one consumer processes deliveries at a time (additional consumers stand by and
+    /// take over on failure). This preserves per-queue order across load-balanced consumer instances at the
+    /// cost of throughput scale-out for the queue. Partitioned queues enable this automatically.
+    /// Default is <see langword="false"/>.
+    /// </summary>
+    public bool SingleActiveConsumer { get; set; }
 
     /// <summary>
     /// Gets or sets the exchange type for the queue's exchange binding. Default is <see cref="MessagingExchangeType.Fanout"/>.
@@ -143,11 +163,36 @@ public sealed record QueueDefinition(string Name)
 #endif
 
     /// <summary>
+    /// Gets the exchange bindings configured for this queue — each <see cref="Subscription"/> becomes one
+    /// <c>exchange→queue</c> binding declared at topology setup time. Populated by
+    /// <see cref="IQueueConfigurator.Subscribe{TMessage}"/> and <see cref="IQueueConfigurator.SubscribeAll{TInterface}"/>,
+    /// and auto-populated by <c>Build</c> for any consumer whose concrete <c>TMessage</c> isn't explicitly subscribed
+    /// (the consumer's routing-key pattern is carried into the subscription).
+    /// </summary>
+    public IReadOnlyCollection<Subscription> Subscriptions =>
+#if NET10_0_OR_GREATER
+        _subscriptions.AsReadOnly();
+#else
+        _subscriptions.ToList().AsReadOnly();
+#endif
+
+    /// <summary>
     /// Gets a value indicating whether any retry policy is configured, either at the queue or consumer level.
     /// </summary>
     public bool RetryEnabled => DefaultRetryPolicy is not null ||
                     Registrations.Any(r => r.RetryPolicy is not null);
 
-    internal void AddConsumer(Registration registration)
+    /// <summary>
+    /// Adds a consumer registration to this queue. Duplicate registrations (by value) are ignored.
+    /// </summary>
+    /// <param name="registration">The consumer-to-message binding to add.</param>
+    public void AddConsumer(Registration registration)
         => _registrations.Add(registration);
+
+    /// <summary>
+    /// Adds an exchange→queue binding to this queue. Duplicate subscriptions (by value) are ignored.
+    /// </summary>
+    /// <param name="subscription">The subscription describing the binding to add.</param>
+    public void AddSubscription(Subscription subscription)
+        => _subscriptions.Add(subscription);
 }

@@ -20,7 +20,7 @@ the approach before you invest significant effort.
 
 ## Prerequisites
 
-- [.NET SDK 10.0.300](https://dotnet.microsoft.com/download) or later (see [`global.json`](../global.json)).
+- [.NET SDK 10.0.301](https://dotnet.microsoft.com/download) or later (see [`global.json`](../global.json)).
 - A RabbitMQ instance (or Docker) is only required for the messaging integration tests.
 
 ## Getting Started

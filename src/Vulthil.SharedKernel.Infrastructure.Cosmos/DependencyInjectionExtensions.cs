@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing;
 
 namespace Vulthil.SharedKernel.Infrastructure.Cosmos;
@@ -20,9 +21,9 @@ public static class DependencyInjectionExtensions
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionName,
         Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>? configureSettings)
-        where TDbContext : DbContext
+        where TDbContext : DbContext, ISaveOutboxMessages
     {
-        configurator.UseOutboxStrategy<CosmosOutboxStrategy>();
+        configurator.UseOutboxStore<CosmosOutboxStore<TDbContext>>();
         configurator.OnConfigured(c =>
         {
             c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionName, configureSettings);

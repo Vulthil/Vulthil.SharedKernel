@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vulthil.SharedKernel.Application.Messaging;
 using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
-using Vulthil.SharedKernel.Events;
+using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application;
 
@@ -18,10 +18,7 @@ public static class DependencyInjection
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddApplication(this IServiceCollection services)
-    {
-        return services.AddApplication(new ApplicationOptions());
-    }
+    public static IServiceCollection AddApplication(this IServiceCollection services) => services.AddApplication(new ApplicationOptions());
 
     /// <summary>
     /// Registers application-layer services including handlers and FluentValidation validators.
@@ -55,10 +52,7 @@ public static class DependencyInjection
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddFluentValidation(this IServiceCollection services)
-    {
-        return services.AddFluentValidation(new FluentValidationOptions());
-    }
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services) => services.AddFluentValidation(new FluentValidationOptions());
 
 
     /// <summary>
@@ -95,10 +89,7 @@ public static class DependencyInjection
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddHandlers(this IServiceCollection services)
-    {
-        return services.AddHandlers(new HandlerOptions());
-    }
+    public static IServiceCollection AddHandlers(this IServiceCollection services) => services.AddHandlers(new HandlerOptions());
 
     /// <summary>
     /// Registers request handlers, domain event handlers, and pipeline handlers from the configured assemblies.
@@ -131,15 +122,89 @@ public static class DependencyInjection
         services.TryAddScoped<IDomainEventPublisher, DomainEventPublisher>();
         services.TryAddScoped<ISender, Sender>();
 
-        services.Scan(s => s.FromAssemblies(handlerOptions.HandlerAssemblies)
-            .AddClasses(c => c.AssignableTo(typeof(IHandler<,>)), false).AsImplementedInterfaces(t => t.GetGenericTypeDefinition() == typeof(IHandler<,>)).WithScopedLifetime()
-            .AddClasses(c => c.AssignableTo(typeof(IDomainEventHandler<>)), false).AsImplementedInterfaces().WithScopedLifetime());
+        HandlerRegistrar.RegisterHandlersFromAssemblies(services, handlerOptions.HandlerAssemblies);
 
         foreach (var item in handlerOptions.PipelineHandlers)
         {
             services.TryAddEnumerable(item);
         }
 
+        return services;
+    }
+
+    /// <summary>
+    /// Registers an open-generic request pipeline behavior. Behaviors registered through this method
+    /// apply to every handler resolved after <see cref="IServiceProvider"/> construction — order of
+    /// registration relative to <see cref="AddHandlers(IServiceCollection)"/> is irrelevant because
+    /// behaviors are composed lazily at handler-resolution time.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="pipelineHandler">The open-generic type implementing <see cref="IPipelineHandler{TRequest, TResponse}"/>.</param>
+    /// <returns>The service collection for chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the type is not a valid open-generic <see cref="IPipelineHandler{TRequest, TResponse}"/>.</exception>
+    public static IServiceCollection AddOpenPipelineHandler(this IServiceCollection services, Type pipelineHandler)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(pipelineHandler);
+
+        if (!pipelineHandler.IsGenericTypeDefinition)
+        {
+            throw new InvalidOperationException($"{pipelineHandler.Name} must be an open generic type.");
+        }
+
+        var implementsPipelineHandler = false;
+        foreach (var iface in pipelineHandler.GetInterfaces())
+        {
+            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IPipelineHandler<,>))
+            {
+                implementsPipelineHandler = true;
+                break;
+            }
+        }
+
+        if (!implementsPipelineHandler)
+        {
+            throw new InvalidOperationException($"{pipelineHandler.Name} must implement {typeof(IPipelineHandler<,>).FullName}.");
+        }
+
+        services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineHandler<,>), pipelineHandler, ServiceLifetime.Scoped));
+        return services;
+    }
+
+    /// <summary>
+    /// Registers an open-generic domain event pipeline behavior. Behaviors registered through this
+    /// method apply lazily and are independent of when handlers were registered.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="pipelineHandler">The open-generic type implementing <see cref="IDomainEventPipelineHandler{TDomainEvent}"/>.</param>
+    /// <returns>The service collection for chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the type is not a valid open-generic <see cref="IDomainEventPipelineHandler{TDomainEvent}"/>.</exception>
+    public static IServiceCollection AddOpenDomainEventPipelineHandler(this IServiceCollection services, Type pipelineHandler)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(pipelineHandler);
+
+        if (!pipelineHandler.IsGenericTypeDefinition)
+        {
+            throw new InvalidOperationException($"{pipelineHandler.Name} must be an open generic type.");
+        }
+
+        var implementsDomainPipelineHandler = false;
+        foreach (var iface in pipelineHandler.GetInterfaces())
+        {
+            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IDomainEventPipelineHandler<>))
+            {
+                implementsDomainPipelineHandler = true;
+                break;
+            }
+        }
+
+        if (!implementsDomainPipelineHandler)
+        {
+            throw new InvalidOperationException($"{pipelineHandler.Name} must implement {typeof(IDomainEventPipelineHandler<>).FullName}.");
+        }
+
+        services.TryAddEnumerable(new ServiceDescriptor(typeof(IDomainEventPipelineHandler<>), pipelineHandler, ServiceLifetime.Scoped));
         return services;
     }
 }

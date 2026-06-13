@@ -4,9 +4,6 @@ using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Tests.Core;
 
-/// <summary>
-/// Represents the AggregateRootTests.
-/// </summary>
 public sealed class AggregateRootTests : BaseUnitTestCase
 {
     private sealed record TestEntityId(Guid Value);
@@ -18,19 +15,10 @@ public sealed class AggregateRootTests : BaseUnitTestCase
         }
 
 
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public static TestEntity Create() => new(new(Guid.NewGuid()));
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public void RaiseEvent() => Raise(new TestEntityEvent(Id.Value));
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void EntityShouldBeConstructable()
     {
@@ -42,9 +30,6 @@ public sealed class AggregateRootTests : BaseUnitTestCase
         testEntity.DomainEvents.ShouldBeEmpty();
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void EntityShouldBeAbleToRaiseEvents()
     {
@@ -60,9 +45,6 @@ public sealed class AggregateRootTests : BaseUnitTestCase
                 .Id.ShouldBe(testEntity.Id.Value);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public void EntityShouldBeAbleToClearEvents()
     {

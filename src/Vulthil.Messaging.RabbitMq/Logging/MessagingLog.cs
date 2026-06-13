@@ -52,6 +52,10 @@ internal static partial class MessagingLog
         Message = "Declared exchange '{Exchange}' of type {ExchangeType}")]
     public static partial void ExchangeDeclared(ILogger logger, string exchange, MessagingExchangeType exchangeType);
 
+    [LoggerMessage(EventId = 1202, Level = LogLevel.Debug,
+        Message = "Sending {MessageType} to queue '{Queue}' (messageId='{MessageId}', correlationId='{CorrelationId}')")]
+    public static partial void Sending(ILogger logger, string messageType, string queue, string messageId, string correlationId);
+
     [LoggerMessage(EventId = 1300, Level = LogLevel.Debug,
         Message = "Sending request {RequestType} (correlationId='{CorrelationId}', timeout={TimeoutSeconds}s)")]
     public static partial void RequestSending(ILogger logger, string requestType, string correlationId, double timeoutSeconds);

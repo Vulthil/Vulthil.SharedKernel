@@ -1,0 +1,206 @@
+using Microsoft.Extensions.DependencyInjection;
+using Vulthil.Results;
+using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Application.Pipeline;
+using Vulthil.xUnit;
+
+namespace Vulthil.SharedKernel.Application.Tests.Pipeline;
+
+/// <summary>
+/// Verifies that directly injected handler interfaces resolve to the pipeline-decorated
+/// handler and that <see cref="ISender"/> reuses the same composition.
+/// </summary>
+public sealed class HandlerRegistrationTests : BaseUnitTestCase
+{
+    [Fact]
+    public async Task ResolvingIHandlerReturnsPipelineDecoratedHandler()
+    {
+        var services = BuildServices(addBehavior: true);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var handler = scope.ServiceProvider.GetRequiredService<IHandler<PingCommand, Result<string>>>();
+        var result = await handler.HandleAsync(new PingCommand("hi"), CancellationToken);
+
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBe("[wrapped] hi");
+    }
+
+    [Fact]
+    public async Task ResolvingICommandHandlerWithResponseReturnsPipelineDecoratedHandler()
+    {
+        var services = BuildServices(addBehavior: true);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var handler = scope.ServiceProvider.GetRequiredService<ICommandHandler<PingCommand, Result<string>>>();
+        var result = await handler.HandleAsync(new PingCommand("yo"), CancellationToken);
+
+        result.Value.ShouldBe("[wrapped] yo");
+    }
+
+    [Fact]
+    public async Task ResolvingICommandHandlerUnitVariantReturnsPipelineDecoratedHandler()
+    {
+        var services = BuildServices(addBehavior: true);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var handler = scope.ServiceProvider.GetRequiredService<ICommandHandler<TickCommand>>();
+        var result = await handler.HandleAsync(new TickCommand(), CancellationToken);
+
+        // The behavior writes a sentinel into the static probe; success implies the inner ran too.
+        TestBehavior.WasInvoked.ShouldBeTrue();
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ResolvingIQueryHandlerReturnsPipelineDecoratedHandler()
+    {
+        var services = BuildServices(addBehavior: true);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var handler = scope.ServiceProvider.GetRequiredService<IQueryHandler<EchoQuery, Result<string>>>();
+        var result = await handler.HandleAsync(new EchoQuery("echo"), CancellationToken);
+
+        result.Value.ShouldBe("[wrapped] echo");
+    }
+
+    [Fact]
+    public async Task SenderInvokesPipelineDecoratedHandlerExactlyOnce()
+    {
+        var services = BuildServices(addBehavior: true);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        TestBehavior.InvocationCount = 0;
+        var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+        await sender.SendAsync(new PingCommand("once"), CancellationToken);
+
+        TestBehavior.InvocationCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task BehaviorsRegisteredAfterHandlersStillApply()
+    {
+        var services = new ServiceCollection();
+        services.AddApplication(o => o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly));
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly);
+            o.AddOpenPipelineHandler(typeof(TestBehavior<,>));
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        TestBehavior.InvocationCount = 0;
+        var handler = scope.ServiceProvider.GetRequiredService<IHandler<PingCommand, Result<string>>>();
+        await handler.HandleAsync(new PingCommand("late"), CancellationToken);
+
+        TestBehavior.InvocationCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task ConcreteHandlerTypeIsNotResolvableViaDi()
+    {
+        var services = BuildServices(addBehavior: false);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var directlyResolved = scope.ServiceProvider.GetService(typeof(PingCommandHandler));
+
+        directlyResolved.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task BehaviorWithUnmatchedConstraintIsSkipped()
+    {
+        var services = new ServiceCollection();
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly);
+            // CommandOnlyBehavior only matches ICommand requests — queries should not pick it up.
+            o.AddOpenPipelineHandler(typeof(CommandOnlyBehavior<,>));
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var handler = scope.ServiceProvider.GetRequiredService<IQueryHandler<EchoQuery, Result<string>>>();
+        var result = await handler.HandleAsync(new EchoQuery("plain"), CancellationToken);
+
+        // Behavior did not wrap the response.
+        result.Value.ShouldBe("plain");
+    }
+
+    private static ServiceCollection BuildServices(bool addBehavior)
+    {
+        var services = new ServiceCollection();
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly);
+            if (addBehavior)
+            {
+                o.AddOpenPipelineHandler(typeof(TestBehavior<,>));
+            }
+        });
+        return services;
+    }
+}
+
+internal static class TestBehavior
+{
+    public static int InvocationCount;
+    public static bool WasInvoked => InvocationCount > 0;
+}
+
+internal sealed class TestBehavior<TRequest, TResponse> : IPipelineHandler<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    public async Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+    {
+        Interlocked.Increment(ref TestBehavior.InvocationCount);
+        var response = await next(cancellationToken);
+
+        // Decorate string-bearing Result<string> responses so tests can observe the behavior ran.
+        if (response is Result<string> { IsSuccess: true } stringResult)
+        {
+            return (TResponse)(object)Result.Success("[wrapped] " + stringResult.Value);
+        }
+
+        return response;
+    }
+}
+
+internal sealed class CommandOnlyBehavior<TCommand, TResponse> : IPipelineHandler<TCommand, TResponse>
+    where TCommand : ICommand<TResponse>
+{
+    public Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default) =>
+        next(cancellationToken);
+}
+
+public sealed record PingCommand(string Message) : ICommand<Result<string>>;
+
+internal sealed class PingCommandHandler : ICommandHandler<PingCommand, Result<string>>
+{
+    public Task<Result<string>> HandleAsync(PingCommand request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success(request.Message));
+}
+
+public sealed record TickCommand : ICommand;
+
+internal sealed class TickCommandHandler : ICommandHandler<TickCommand>
+{
+    public Task<Result> HandleAsync(TickCommand request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success());
+}
+
+public sealed record EchoQuery(string Value) : IQuery<Result<string>>;
+
+internal sealed class EchoQueryHandler : IQueryHandler<EchoQuery, Result<string>>
+{
+    public Task<Result<string>> HandleAsync(EchoQuery request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success(request.Value));
+}

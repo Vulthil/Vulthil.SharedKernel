@@ -13,6 +13,9 @@ public sealed class AppHostFixture : IAsyncLifetime
     public HttpClient ProducerClient => _producerClient ?? throw new InvalidOperationException("AppHost has not been started.");
     public HttpClient ConsumerClient => _consumerClient ?? throw new InvalidOperationException("AppHost has not been started.");
 
+    public ValueTask<string?> GetRabbitMqConnectionStringAsync(CancellationToken cancellationToken = default)
+        => App.GetConnectionStringAsync("rabbitmq", cancellationToken);
+
     public async ValueTask InitializeAsync()
     {
         var builder = await DistributedApplicationTestingBuilder.CreateAsync<Projects.Vulthil_Messaging_IntegrationTest_AppHost>();
@@ -24,8 +27,8 @@ public sealed class AppHostFixture : IAsyncLifetime
         await _app.ResourceNotifications.WaitForResourceHealthyAsync("producer", startupCts.Token);
         await _app.ResourceNotifications.WaitForResourceHealthyAsync("consumer", startupCts.Token);
 
-        _producerClient = _app.CreateHttpClient("producer");
-        _consumerClient = _app.CreateHttpClient("consumer");
+        _producerClient = _app.CreateHttpClient("producer", "http");
+        _consumerClient = _app.CreateHttpClient("consumer", "http");
     }
 
     public async ValueTask DisposeAsync()

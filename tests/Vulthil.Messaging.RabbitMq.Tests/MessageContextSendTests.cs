@@ -1,0 +1,166 @@
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using Vulthil.Messaging.Abstractions.Publishers;
+using Vulthil.Messaging.RabbitMq.Consumers;
+using Vulthil.Messaging.Transport;
+using Vulthil.xUnit;
+
+namespace Vulthil.Messaging.RabbitMq.Tests;
+
+/// <summary>
+/// Verifies that IMessageContext.SendAsync auto-propagates correlation metadata in the same way as PublishAsync.
+/// </summary>
+public sealed class MessageContextSendTests : BaseUnitTestCase
+{
+    private sealed record TestMessage(string Content);
+
+    private readonly Mock<ISendEndpoint> _endpointMock;
+    private readonly Mock<ISendEndpointProvider> _providerMock;
+
+    public MessageContextSendTests()
+    {
+        _endpointMock = new Mock<ISendEndpoint>();
+        _providerMock = new Mock<ISendEndpointProvider>();
+        _providerMock
+            .Setup(p => p.GetSendEndpointAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+            .Returns<Uri, CancellationToken>((_, _) => ValueTask.FromResult<ISendEndpoint>(_endpointMock.Object));
+    }
+
+    /// <summary>
+    /// Verifies that CorrelationId, ConversationId, and InitiatorId from the incoming context are propagated to the outgoing send.
+    /// </summary>
+    [Fact]
+    public async Task SendAsyncShouldPropagateCorrelationMetadata()
+    {
+        // Arrange
+        var capturedPublishContext = new PublishContext();
+        _endpointMock
+            .Setup(e => e.SendAsync(
+                It.IsAny<TestMessage>(),
+                It.IsAny<Func<IPublishContext, ValueTask>?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns<TestMessage, Func<IPublishContext, ValueTask>?, CancellationToken>(
+                async (_, configure, _) =>
+                {
+                    if (configure is not null)
+                    {
+                        await configure(capturedPublishContext);
+                    }
+                });
+
+        var context = CreateTypedContext(
+            _providerMock.Object,
+            correlationId: "corr-1",
+            conversationId: "conv-1",
+            messageId: "msg-1");
+
+        // Act
+        await context.SendAsync(new Uri("queue:dest"), new TestMessage("payload"));
+
+        // Assert
+        capturedPublishContext.CorrelationId.ShouldBe("corr-1");
+        capturedPublishContext.ConversationId.ShouldBe("conv-1");
+        capturedPublishContext.InitiatorId.ShouldBe("msg-1");
+    }
+
+    /// <summary>
+    /// Verifies that an explicit configure callback overrides auto-propagated values.
+    /// </summary>
+    [Fact]
+    public async Task SendAsyncShouldLetExplicitConfigureOverrideAutoPropagation()
+    {
+        // Arrange
+        var capturedPublishContext = new PublishContext();
+        _endpointMock
+            .Setup(e => e.SendAsync(
+                It.IsAny<TestMessage>(),
+                It.IsAny<Func<IPublishContext, ValueTask>?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns<TestMessage, Func<IPublishContext, ValueTask>?, CancellationToken>(
+                async (_, configure, _) =>
+                {
+                    if (configure is not null)
+                    {
+                        await configure(capturedPublishContext);
+                    }
+                });
+
+        var context = CreateTypedContext(_providerMock.Object, correlationId: "auto-corr");
+
+        // Act
+        await context.SendAsync(
+            new Uri("queue:dest"),
+            new TestMessage("payload"),
+            ctx =>
+            {
+                ctx.SetCorrelationId("explicit-corr");
+                return ValueTask.CompletedTask;
+            });
+
+        // Assert
+        capturedPublishContext.CorrelationId.ShouldBe("explicit-corr");
+    }
+
+    /// <summary>
+    /// Verifies that a null destination address throws ArgumentNullException.
+    /// </summary>
+    [Fact]
+    public async Task SendAsyncWithNullDestinationThrows()
+    {
+        // Arrange
+        var context = CreateTypedContext(_providerMock.Object);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            () => context.SendAsync<TestMessage>(null!, new TestMessage("x")));
+    }
+
+    /// <summary>
+    /// Verifies that a snapshot context (no live transport binding) throws when Send or Publish is attempted.
+    /// </summary>
+    [Fact]
+    public async Task SendOrPublishOnASnapshotContextThrows()
+    {
+        // Arrange
+        var props = new BasicProperties { CorrelationId = "c", Headers = new Dictionary<string, object?>() };
+        var ea = new BasicDeliverEventArgs(
+            "consumer-tag", 1, false, "exchange", "routing.key", props, ReadOnlyMemory<byte>.Empty);
+        var snapshot = MessageContextFactory.CreateContext(new TestMessage("payload"), ea);
+
+        // Act & Assert
+        await Should.ThrowAsync<InvalidOperationException>(
+            () => snapshot.SendAsync(new Uri("queue:dest"), new TestMessage("x")));
+        await Should.ThrowAsync<InvalidOperationException>(
+            () => snapshot.PublishAsync(new TestMessage("x")));
+    }
+
+    private static MessageContext<TestMessage> CreateTypedContext(
+        ISendEndpointProvider sendEndpointProvider,
+        string correlationId = "corr-1",
+        string? conversationId = null,
+        string? messageId = null)
+    {
+        var headers = new Dictionary<string, object?>();
+        if (!string.IsNullOrEmpty(conversationId))
+        {
+            headers["ConversationId"] = System.Text.Encoding.UTF8.GetBytes(conversationId);
+        }
+
+        var props = new BasicProperties
+        {
+            CorrelationId = correlationId,
+            MessageId = messageId ?? "msg-id",
+            Headers = headers,
+        };
+        var ea = new BasicDeliverEventArgs(
+            "consumer-tag",
+            1,
+            false,
+            "exchange",
+            "routing.key",
+            props,
+            ReadOnlyMemory<byte>.Empty);
+
+        return MessageContextFactory.CreateContext(new TestMessage("payload"), ea, null, sendEndpointProvider, CancellationToken.None);
+    }
+}

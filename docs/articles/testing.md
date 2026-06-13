@@ -7,6 +7,7 @@
 | Package | Purpose |
 |---|---|
 | `Vulthil.xUnit` | Base test classes, auto-mocking, `WebApplicationFactory` support, and Testcontainers integration |
+| `Vulthil.xUnit.Cosmos` | Azure Cosmos DB emulator fixture with a database per test class |
 | `Vulthil.Messaging.TestHarness` | In-memory messaging transport for asserting published/consumed messages |
 | `Vulthil.Extensions.Testing` | Shared assertion helpers and test composition utilities |
 
@@ -88,31 +89,62 @@ public sealed class UsersEndpointTests(AppWebFactory factory)
 }
 ```
 
-Use `IClassFixture<AppWebFactory>` to give each test class its own containers, or a collection fixture (`[Collection]` + `ICollectionFixture<AppWebFactory>`) to share one set of containers across several classes. Different classes/collections run against different containers in parallel, while tests within a scope share containers and reset state between runs.
+Use `IClassFixture<AppWebFactory>` so each test class gets its own factory. By default that also means its own containers; back the factory with a [`ContainerHost`](#sharing-containers-across-the-assembly-containerhost) to start each container only once for the whole assembly while keeping per-class isolation. Tests within a class share the factory's single test host and reset state between runs.
 
 Key features:
 
 - **Scoped services** – `ScopedServices` gives you a fresh DI scope per test.
 - **Automatic database reset** – the database is reset with Respawn after each test, so tests sharing a factory start from a clean state.
-- **Log capture** – pass `ITestOutputHelper` to route application logs to the test output.
+- **Log capture** – application logs are routed to the currently running test automatically (via `TestContext`). The `ITestOutputHelper` constructor parameter is for writing test output directly.
+- **One host per class** – all tests in a class run against the fixture's test host. Override `CreateFactory()` (e.g. `FactoryFixture.WithWebHostBuilder(...)`) when a class needs per-test host configuration; derived factories are disposed after each test.
 
 ### Test Containers
 
-`Vulthil.xUnit` ships container abstractions so you can spin up databases (PostgreSQL, SQL Server, etc.) as Docker containers:
+`Vulthil.xUnit` ships fixture base classes (in the `Vulthil.xUnit.Fixtures` namespace) that wrap [Testcontainers](https://testcontainers.com/) containers so you can spin up databases, message brokers, and other dependencies as Docker containers. There are three levels, depending on what the container needs to expose:
+
+- `TestContainerFixture<TBuilderEntity, TContainerEntity>` – a plain container with a managed lifecycle (`ITestContainer`).
+- `TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>` – adds a connection string that is injected into the host's configuration under `ConnectionStrings:{ConnectionStringKey}` (`ITestContainerWithConnectionString`). Give `ConnectionStringKey` the bare name (e.g. `"AppDb"`); the factory adds the `ConnectionStrings:` prefix.
+- `TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>` – adds EF Core migrations and Respawn-based data reset between tests (`ITestDatabaseContainer`).
+
+A database fixture overrides `Configure()` to build the container and supplies the Respawn `DbAdapter`, the ADO.NET `DbProviderFactory`, and the configuration key its connection string is bound to:
 
 ```csharp
-public sealed class PostgresContainerPool
-    : IDatabaseContainerPool<PostgreSqlContainer>
+internal sealed class PostgresTestContainer(IMessageSink messageSink)
+    : TestDatabaseContainerFixture<AppDbContext, PostgreSqlBuilder, PostgreSqlContainer>(messageSink)
 {
-    // Configure container image, ports, credentials, etc.
+    private readonly PostgreSqlBuilder _builder = new PostgreSqlBuilder("postgres:18.1")
+        .WithPassword("app");
+
+    protected override PostgreSqlBuilder Configure() => _builder;
+
+    protected override IDbAdapter DbAdapter => Respawn.DbAdapter.Postgres;
+    public override DbProviderFactory DbProviderFactory => NpgsqlFactory.Instance;
+    public override string ConnectionStringKey => "AppDb";
 }
 ```
 
-Container pools are shared across tests through xUnit fixtures, so the container is started once and reused.
+A message broker uses `RabbitMqTestContainerFixture` (which adds virtual-host-per-scope isolation when shared through a `ContainerHost`); any other non-database dependency uses `TestContainerFixtureWithConnectionString` directly. Both just provide the container configuration and connection string:
+
+```csharp
+public sealed class RabbitMqTestContainer(IMessageSink messageSink)
+    : RabbitMqTestContainerFixture<RabbitMqBuilder, RabbitMqContainer>(messageSink)
+{
+    private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4-management")
+        .WithUsername("guest")
+        .WithPassword("guest");
+
+    protected override RabbitMqBuilder Configure() => _builder;
+
+    public override string ConnectionStringKey => "RabbitMq";
+    public override string ConnectionString => Container.GetConnectionString();
+}
+```
+
+Containers are registered on the factory with `AddContainer` (see below), which starts each one once per factory and shares it across the tests in that fixture's scope — or registered once on a [`ContainerHost`](#sharing-containers-across-the-assembly-containerhost) and shared by every factory in the assembly. Database containers are migrated during host startup and reset with Respawn between tests.
 
 ### WebApplicationFactory
 
-`BaseWebApplicationFactory<TEntryPoint>` owns the test containers and serves as the xUnit fixture, so a single derived class replaces the separate factory + fixture pair. Register containers with `AddContainer` (in the constructor or by overriding `ConfigureContainers`); their connection strings are injected into the host and EF Core migrations are ensured during host startup:
+`BaseWebApplicationFactory<TEntryPoint>` owns the test containers and serves as the xUnit fixture, so a single derived class acts as both the factory and the fixture. Register containers with `AddContainer` (in the constructor or by overriding `ConfigureContainers`); their connection strings are injected into the host and EF Core migrations are ensured during host startup:
 
 ```csharp
 public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
@@ -135,6 +167,38 @@ public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
 ```
 
 Migrations run from a startup initializer placed at the front of the host's hosted-service list, so the schema exists **before the application's own background services start** (e.g. an outbox processor that polls the database immediately). It applies only migrations that are still pending and tolerates a concurrent migrator, so an application that already migrates itself on startup (for example `app.MigrateAsync()` in `Program.cs`) keeps ownership — the factory sees the schema is up to date and does nothing. Apps that don't self-migrate get migrated by the factory automatically. No test-only environment or production-code changes are required.
+
+### Sharing containers across the assembly (ContainerHost)
+
+With factory-owned containers, the cost model is *containers × test classes*: twenty test classes with seven containers each means 140 container starts. A `ContainerHost` inverts that — the containers are registered **once**, on an assembly-level fixture, and every factory consumes them through a per-factory **scope**:
+
+```csharp
+public sealed class AppContainerHost(IMessageSink messageSink) : ContainerHost(messageSink)
+{
+    protected override Task ConfigureContainers()
+    {
+        AddContainer(new PostgresTestContainer(MessageSink));
+        AddContainer(new RabbitMqTestContainer(MessageSink));
+        return Task.CompletedTask;
+    }
+}
+
+[assembly: AssemblyFixture(typeof(AppContainerHost))]
+
+// The factory consumes every container registered on the host.
+public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost);
+```
+
+Every container on the host is consumed automatically, so containers are managed in one place. Each factory instance (one per test class with `IClassFixture`) gets its own **scope** inside the shared containers, so parallel test classes never see each other's state. Scoping is built into the fixture base classes; a consumer only derives thin container wrappers:
+
+- `TestDatabaseContainerFixture` creates a uniquely named database per scope on the shared server, migrates it during host startup, resets it with Respawn between tests, and drops it (best-effort) when the class finishes. Database DDL is engine-aware through the fixture's `DbAdapter` (PostgreSQL drops use `WITH (FORCE)`, SQL Server switches to single-user); `BuildScopedConnectionString`, `CreateDatabaseAsync`, and `DropDatabaseAsync` are overridable for exotic engines.
+- `RabbitMqTestContainerFixture` creates a **virtual host** per scope on the shared broker (via `rabbitmqctl` inside the container), so parallel classes never see each other's exchanges, queues, or messages.
+- `CosmosTestContainerFixture` (in the `Vulthil.xUnit.Cosmos` package) starts one Cosmos emulator and gives each scope its own **emulator database**, recreated between tests.
+- Any other `TestContainerFixtureWithConnectionString` returns a pass-through scope by default — consumers share the container's namespace; override `CreateScope` only when the service offers some other isolation unit.
+- Containers start **lazily** on first use: a filtered run only pays for the containers its factories actually consume, and concurrent factories share one startup task per container.
+- A factory that should not consume every host container overrides `ShouldUseContainer` (e.g. a factory that swaps the broker for the in-memory test harness consumes only the database container). Factory-owned `AddContainer` registrations work alongside host scopes.
+
+The scope identifier defaults to the factory type name plus a random suffix (override `CreateScopeId()` to change it), so two classes using the same factory type still get distinct databases and virtual hosts.
 
 ### Mocking outbound HTTP dependencies
 
@@ -182,12 +246,71 @@ Mock state is reset after each test (like the database), so stubs and captured r
 
 ## Messaging Test Harness
 
-Replace the real transport with the test harness to assert messaging behaviour without a broker:
+`Vulthil.Messaging.TestHarness` provides an in-memory transport that runs your consumers with no broker and
+captures every produced and consumed message for assertion. It is built entirely on the public
+`Vulthil.Messaging.Transport` SDK, so it mirrors the real consumer topology assembled from your queue
+configuration. Dispatch is synchronous — by the time a publish/send/request call returns, every consumer (and
+stub) it triggered has run, so assertions need no polling.
+
+### Composing a harness (unit/component tests)
+
+Call `UseTestHarness()` in place of a broker transport, then resolve `ITestHarness` alongside the usual
+`IPublisher`/`ISendEndpoint`/`IRequester`:
 
 ```csharp
-var published = testHarness.Published<OrderCreatedEvent>();
-Assert.Single(published);
-Assert.Equal(expectedOrderId, published.First().Message.OrderId);
+var builder = Host.CreateApplicationBuilder();
+builder.AddMessaging(messaging =>
+{
+    messaging.ConfigureQueue("orders", q => q.AddConsumer<OrderCreatedConsumer>());
+    messaging.UseTestHarness();
+});
+using var host = builder.Build();
+
+var publisher = host.Services.GetRequiredService<IPublisher>();
+var harness = host.Services.GetRequiredService<ITestHarness>();
+
+await publisher.PublishAsync(new OrderCreatedEvent(orderId));
+
+harness.Published<OrderCreatedEvent>().ShouldHaveSingleItem().Message.OrderId.ShouldBe(orderId);
+harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 ```
+
+`ITestHarness` exposes `Published<T>()`, `Sent<T>()`, `Consumed<T>()`, and `Requested<T>()` (each returns the
+matching `CapturedMessage<T>` items — `.Message` is the payload, `.Envelope` the wire metadata), plus `Clear()`.
+
+### Mocking responses
+
+A test can stand in for an external service. `Respond<TRequest, TResponse>` answers a request (taking precedence
+over a real request consumer), and `Handle<TMessage>` reacts to a published or sent message — useful to fake a
+downstream service that publishes a follow-up:
+
+```csharp
+harness.Respond<GetWeatherRequest, WeatherForecast>(ctx => new WeatherForecast(ctx.Message.City, 20));
+harness.Handle<OrderShippedEvent>(ctx => { observed.Add(ctx.Message.OrderId); return Task.CompletedTask; });
+
+var result = await requester.RequestAsync<GetWeatherRequest, WeatherForecast>(new GetWeatherRequest("Oslo"));
+result.Value.TemperatureC.ShouldBe(20);
+```
+
+A request with neither a responder nor a registered request consumer completes with a
+`Messaging.Request.NoConsumer` failure; a request consumer that throws surfaces as a `Messaging.Request.Failure`.
+
+### Swapping the transport in integration tests
+
+To exercise the production composition root without a broker, call `ReplaceTransportWithTestHarness()` from the
+test host's service hook (for example a `WebApplicationFactory`). It swaps the registered transport for the
+harness and leaves the rest of the application untouched — production code is not modified for tests:
+
+```csharp
+public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
+{
+    protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
+        => builder.ConfigureServices(services => services.ReplaceTransportWithTestHarness());
+}
+```
+
+The orphaned broker registrations remain but are never resolved, so no connection is attempted. Disable the
+broker's own health check via configuration (for example `Aspire:RabbitMQ:Client:DisableHealthChecks`) if a
+readiness probe would otherwise wait on it.
 
 See [Messaging](messaging.md) for more on the messaging architecture.

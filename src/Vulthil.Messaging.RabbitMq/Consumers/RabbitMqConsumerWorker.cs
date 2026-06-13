@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -9,6 +10,7 @@ using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Telemetry;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
 
@@ -21,6 +23,14 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<RabbitMqConsumerWorker> _logger;
     private readonly int _channelIndex;
+    private readonly bool _partitioned;
+    private readonly ConcurrentDictionary<ulong, Task> _inFlight = new();
+
+    // RabbitMQ channels must not be used concurrently. On a partitioned queue the lanes complete in parallel
+    // and each settles its delivery (ack/nack/retry-republish/fault) on this shared channel, so every channel
+    // write is serialized through this gate to avoid interleaved frames. Message processing stays parallel;
+    // only the brief settle/publish frames are serialized.
+    private readonly SemaphoreSlim _channelGate = new(1, 1);
 
     private JsonSerializerOptions _jsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
 
@@ -33,7 +43,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         MessageTypeCache messageTypeCache,
         IMessageConfigurationProvider messageConfigurationProvider,
         ILogger<RabbitMqConsumerWorker> logger,
-        int channelIndex)
+        int channelIndex,
+        bool partitioned)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _queueDefinition = queue;
@@ -42,7 +53,29 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         _messageConfigurationProvider = messageConfigurationProvider;
         _logger = logger;
         _channelIndex = channelIndex;
+        _partitioned = partitioned;
     }
+
+    /// <summary>
+    /// Serializes a single channel write. RabbitMQ channels must not be used concurrently, and a partitioned
+    /// queue's lanes settle in parallel on the shared channel, so every ack/nack/publish goes through here.
+    /// </summary>
+    private async Task OnChannelAsync(Func<ValueTask> channelOperation)
+    {
+        await _channelGate.WaitAsync();
+        try
+        {
+            await channelOperation();
+        }
+        finally
+        {
+            _channelGate.Release();
+        }
+    }
+
+    private Task AckAsync(BasicDeliverEventArgs ea) => OnChannelAsync(() => _channel.BasicAckAsync(ea.DeliveryTag, false));
+
+    private Task NackAsync(BasicDeliverEventArgs ea) => OnChannelAsync(() => _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false));
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -59,11 +92,142 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         MessagingLog.WorkerStarted(_logger, _queueDefinition.Name, _channelIndex, _queueDefinition.PrefetchCount, _queueDefinition.ConcurrencyLimit);
     }
 
+    /// <remarks>
+    /// On a partitioned queue dispatch is ordered (single channel, dispatch concurrency 1): each delivery is assigned
+    /// to its partition lane in arrival order and the handler returns so the next delivery is laned in order, while
+    /// processing/retry/ack run on the lane with a deferred ack — giving cross-key parallelism bounded by
+    /// <c>PrefetchCount</c> while preserving per-key order. A non-partitioned type sharing a partitioned queue still
+    /// runs off the receive loop so it does not block ordered dispatch.
+    /// </remarks>
     private async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs ea)
     {
-        var messageTypeName = ea.BasicProperties.Type ?? ea.Exchange;
+        var prepared = await TryPrepareAsync(ea);
+        if (prepared is null)
+        {
+            return;
+        }
 
-        using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
+        if (!_partitioned)
+        {
+            await ProcessAsync(prepared, ea);
+            return;
+        }
+
+        Task work;
+        if (prepared.Plan.IsPartitioned)
+        {
+            var key = prepared.Plan.PartitionKeyExtractor!(prepared.Message, ea, prepared.Envelope);
+            work = string.IsNullOrEmpty(key)
+                ? ProcessAsync(prepared, ea)
+                : prepared.Plan.Partitioner!.RunSequentialAsync(key, () => ProcessAsync(prepared, ea));
+        }
+        else
+        {
+            work = ProcessAsync(prepared, ea);
+        }
+
+        TrackInFlight(ea.DeliveryTag, work);
+    }
+
+    private void TrackInFlight(ulong deliveryTag, Task work)
+    {
+        _inFlight[deliveryTag] = work;
+        _ = work.ContinueWith(
+            _ => _inFlight.TryRemove(deliveryTag, out Task? _),
+            CancellationToken.None,
+            TaskContinuationOptions.DenyChildAttach,
+            TaskScheduler.Default);
+    }
+
+    /// <summary>
+    /// Dispatches a prepared delivery and settles it. When the effective retry policy is in-memory — set
+    /// explicitly via <c>UseRetry(r =&gt; r.InMemory())</c> or implied by a partitioned queue — the consumer
+    /// is retried in-process while the delivery is held (preserving order); otherwise a failure goes through
+    /// the delay-queue re-delivery path.
+    /// </summary>
+    private async Task ProcessAsync(PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    {
+        using var activity = StartReceiveActivity(ea, prepared.DiagnosticTypeName);
+        var policy = GetPolicy(prepared.Plan, _queueDefinition);
+
+        if (policy is not null && (policy.InMemory || _partitioned))
+        {
+            await ExecuteWithInMemoryRetryAsync(policy, prepared, ea, activity);
+            return;
+        }
+
+        try
+        {
+            await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
+            await AckAsync(ea);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            await HandleFailureAsync(ex, ea, prepared.DiagnosticTypeName);
+        }
+    }
+
+    /// <summary>
+    /// Re-invokes the consumer in-process up to the policy's retry count, holding the delivery (and, on a
+    /// partitioned queue, its lane) so a later message cannot overtake the one being retried. Each attempt
+    /// runs in a fresh scope. On exhaustion a fault is published and the message is nacked for dead-lettering.
+    /// </summary>
+    private async Task ExecuteWithInMemoryRetryAsync(RetryPolicyDefinition policy, PreparedDelivery prepared, BasicDeliverEventArgs ea, Activity? activity)
+    {
+        var baseRetryCount = RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers);
+        for (var attempt = 0; attempt <= policy.MaxRetryCount; attempt++)
+        {
+            var attemptDelivery = attempt == 0 ? ea : WithRetryCount(ea, baseRetryCount + attempt);
+            try
+            {
+                await DispatchHandlersAsync(prepared.Plan, prepared.Message, attemptDelivery, prepared.Envelope);
+                await AckAsync(ea);
+                activity?.SetStatus(ActivityStatusCode.Ok);
+                return;
+            }
+            catch (Exception ex)
+            {
+                if (ex is OperationCanceledException && ea.CancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                var canRetry = attempt < policy.MaxRetryCount && !policy.GetIgnoredExceptionTypes().Contains(ex.GetType());
+                if (!canRetry)
+                {
+                    activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                    activity?.AddException(ex);
+                    MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey);
+                    await PublishFaultAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>(), prepared.DiagnosticTypeName);
+                    await NackAsync(ea);
+                    return;
+                }
+
+                var delay = policy.GetDelay(attempt);
+                MessagingLog.ConsumerThrew(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey, attempt, policy.MaxRetryCount);
+                MessagingLog.SchedulingRetry(_logger, _queueDefinition.Name, attempt + 1, policy.MaxRetryCount, delay);
+
+                if (delay > TimeSpan.Zero)
+                {
+                    try
+                    {
+                        await Task.Delay(delay, ea.CancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private Activity? StartReceiveActivity(BasicDeliverEventArgs ea, string messageTypeName)
+    {
+        var activity = MessagingInstrumentation.ActivitySource.StartActivity(
             $"{_queueDefinition.Name} receive",
             ActivityKind.Consumer);
 
@@ -80,31 +244,21 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             activity.SetTag(MessagingInstrumentation.Tags.RetryCount, RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers));
         }
 
-        try
-        {
-            await HandleMessageAsync(ea);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
-            activity?.SetStatus(ActivityStatusCode.Ok);
-        }
-        catch (Exception ex)
-        {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.AddException(ex);
-            await HandleFailureAsync(ex, ea, messageTypeName);
-        }
+        return activity;
     }
 
     private async Task HandleFailureAsync(Exception ex, BasicDeliverEventArgs ea, string messageTypeName)
     {
-        var policy = GetPolicy(ea.RoutingKey, _queueDefinition);
+        var plan = _typeCache.GetPlan(messageTypeName);
+        var policy = GetPolicy(plan, _queueDefinition);
         var headers = ea.BasicProperties.Headers ?? new Dictionary<string, object?>();
         int currentRetry = RabbitMqConstants.GetRetryCount(headers);
 
         if (policy is null)
         {
             MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-            await PublishFaultIfRequestedAsync(ex, ea, headers);
-            await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
+            await PublishFaultAsync(ex, ea, headers, messageTypeName);
+            await NackAsync(ea);
             return;
         }
 
@@ -121,23 +275,26 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
             props.Expiration = delay.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
 
-            await _channel.BasicPublishAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            await OnChannelAsync(() => _channel.BasicPublishAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body));
+            await AckAsync(ea);
             return;
         }
 
         MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-        await PublishFaultIfRequestedAsync(ex, ea, headers);
-        await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
+        await PublishFaultAsync(ex, ea, headers, messageTypeName);
+        await NackAsync(ea);
     }
 
-    private async Task PublishFaultIfRequestedAsync(Exception ex, BasicDeliverEventArgs ea, IDictionary<string, object?> headers)
+    /// <summary>
+    /// Publishes a <see cref="Fault{TMessage}"/> for a terminally-failed delivery. When the delivery carries an
+    /// explicit <c>FaultAddress</c> the fault is routed point-to-point to that address (via the broker's default
+    /// exchange); otherwise it is published by convention to the shared fault exchange with the faulted message's
+    /// URN as the routing key. Exactly one fault is emitted per failure. Publishing is best-effort: a failure to
+    /// publish the fault is logged and never disrupts settling the original delivery.
+    /// </summary>
+    private async Task PublishFaultAsync(Exception ex, BasicDeliverEventArgs ea, IDictionary<string, object?> headers, string messageTypeName)
     {
-        var faultAddressKey = RabbitMqConstants.GetHeaderString(headers, "FaultAddress");
-        if (string.IsNullOrEmpty(faultAddressKey))
-        {
-            return;
-        }
+        var (exchange, routingKey) = ResolveFaultRoute(headers, _messageConfigurationProvider.FaultExchangeName, messageTypeName);
 
         try
         {
@@ -150,7 +307,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 StackTrace = ex.StackTrace,
                 ExceptionType = ex.GetType().FullName ?? "Unknown",
                 FaultedAt = DateTimeOffset.UtcNow,
-                OriginalContext = MessageContext.CreateContext(ea)
+                OriginalContext = MessageContextFactory.CreateSnapshot(ea)
             };
 
             var faultBody = JsonSerializer.SerializeToUtf8Bytes(fault, _jsonOptions);
@@ -161,84 +318,183 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             };
 
-            await _channel.BasicPublishAsync(_messageConfigurationProvider.FaultExchangeName, faultAddressKey, false, faultProps, faultBody);
+            await OnChannelAsync(() => _channel.BasicPublishAsync(exchange, routingKey, false, faultProps, faultBody));
         }
         catch (Exception faultEx)
         {
-            MessagingLog.FaultPublishFailed(_logger, faultEx, _messageConfigurationProvider.FaultExchangeName, faultAddressKey);
+            MessagingLog.FaultPublishFailed(_logger, faultEx, exchange, routingKey);
         }
     }
 
-    private static RetryPolicyDefinition? GetPolicy(string routingKey, QueueDefinition queue)
+    /// <summary>
+    /// Resolves the broker route for a fault. A delivery carrying an explicit <c>FaultAddress</c> routes
+    /// point-to-point through the broker's default exchange (empty exchange, the address's queue name as the
+    /// routing key); otherwise the fault is published by convention to <paramref name="faultExchangeName"/> with
+    /// the faulted message's URN (<paramref name="messageTypeName"/>) as the routing key.
+    /// </summary>
+    internal static (string Exchange, string RoutingKey) ResolveFaultRoute(
+        IDictionary<string, object?> headers,
+        string faultExchangeName,
+        string messageTypeName)
     {
-        var registration = queue.Registrations
-            .FirstOrDefault(r => RabbitMqConstants.GetRoutingKey(r) == routingKey);
-
-        return registration?.RetryPolicy
-               ?? queue.DefaultRetryPolicy;
+        var faultAddress = RabbitMqConstants.GetHeaderUri(headers, "FaultAddress");
+        return faultAddress is null
+            ? (faultExchangeName, messageTypeName)
+            : (string.Empty, RabbitMqAddress.ResolveRoutingKey(faultAddress) ?? string.Empty);
     }
 
-    private async Task HandleMessageAsync(BasicDeliverEventArgs ea)
+    private static RetryPolicyDefinition? GetPolicy(RabbitMqPlan? plan, QueueDefinition queue)
     {
-        var messageTypeName = ea.BasicProperties.Type ?? ea.Exchange;
-        var plan = _typeCache.GetPlan(messageTypeName);
-
-        if (plan == null)
+        if (plan is not null)
         {
-            MessagingLog.NoExecutionPlan(_logger, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-            return;
+            var registration = queue.Registrations
+                .FirstOrDefault(r => r.MessageType.Type == plan.MessageType.Type && r.RetryPolicy is not null);
+            if (registration?.RetryPolicy is { } policy)
+            {
+                return policy;
+            }
+        }
+        return queue.DefaultRetryPolicy;
+    }
+
+    /// <summary>
+    /// Returns a copy of <paramref name="ea"/> whose <c>x-retry-count</c> header is set to
+    /// <paramref name="retryCount"/>, so a consumer reading <see cref="IMessageContext.RetryCount"/> sees the
+    /// current in-memory attempt. The delivery's AMQP properties are read-only on the receive side, hence the copy.
+    /// </summary>
+    internal static BasicDeliverEventArgs WithRetryCount(BasicDeliverEventArgs ea, int retryCount)
+    {
+        var properties = new BasicProperties(ea.BasicProperties);
+        properties.Headers ??= new Dictionary<string, object?>();
+        properties.Headers["x-retry-count"] = retryCount;
+        return new BasicDeliverEventArgs(
+            ea.ConsumerTag, ea.DeliveryTag, ea.Redelivered, ea.Exchange, ea.RoutingKey, properties, ea.Body, ea.CancellationToken);
+    }
+
+    /// <summary>
+    /// Parses the envelope, resolves the execution plan, and deserializes the message. Settles the delivery
+    /// itself for terminal cases — acks (drops) when no plan matches, nacks on a poison/undeserializable body —
+    /// and returns <see langword="null"/> in those cases. Otherwise returns the prepared delivery for dispatch.
+    /// </summary>
+    private async Task<PreparedDelivery?> TryPrepareAsync(BasicDeliverEventArgs ea)
+    {
+        var bareTypeName = ea.BasicProperties.Type ?? ea.Exchange;
+        var envelope = TryParseEnvelope(ea.Body, _jsonOptions);
+
+        var plan = envelope is not null
+            ? _typeCache.GetPlanByUrn(envelope.MessageType)
+            : _typeCache.GetPlan(bareTypeName);
+
+        var diagnosticTypeName = envelope?.MessageType.AbsoluteUri ?? bareTypeName;
+
+        if (plan is null)
+        {
+            MessagingLog.NoExecutionPlan(_logger, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
+            await AckAsync(ea);
+            return null;
         }
 
         object? message;
         try
         {
-            message = JsonSerializer.Deserialize(ea.Body.Span, plan.MessageType.Type, _jsonOptions);
+            message = envelope is not null
+                ? envelope.Message.Deserialize(plan.MessageType.Type, _jsonOptions)
+                : JsonSerializer.Deserialize(ea.Body.Span, plan.MessageType.Type, _jsonOptions);
         }
         catch (JsonException jsonEx)
         {
-            MessagingLog.PoisonMessage(_logger, jsonEx, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-            await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-            return;
+            MessagingLog.PoisonMessage(_logger, jsonEx, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
+            await NackAsync(ea);
+            return null;
         }
 
         if (message is null)
         {
-            MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-            await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-            return;
+            MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
+            await NackAsync(ea);
+            return null;
         }
 
-        var routingKey = ea.RoutingKey;
+        return new PreparedDelivery(plan, message, envelope, diagnosticTypeName);
+    }
+
+    private async Task DispatchHandlersAsync(RabbitMqPlan plan, object message, BasicDeliverEventArgs ea, MessageEnvelope? envelope)
+    {
         await using var scope = _serviceScopeFactory.CreateAsyncScope();
 
-        foreach (var handlerEntry in plan.StandardHandlers)
+        foreach (var handler in plan.Handlers)
         {
-            if (handlerEntry.RoutingKey == "#" || handlerEntry.RoutingKey == routingKey)
-            {
-                await handlerEntry.InvokeAsync(scope.ServiceProvider, message, ea, ea.CancellationToken);
-            }
-        }
-
-        if (plan.RpcHandler is not null && (plan.RpcHandler.RoutingKey == "#" || plan.RpcHandler.RoutingKey == routingKey))
-        {
-            await plan.RpcHandler.InvokeAsync(scope.ServiceProvider, message, ea, _channel, ea.CancellationToken);
+            await handler.DispatchAsync(scope.ServiceProvider, message, ea, envelope, _channel, ea.CancellationToken);
         }
     }
 
+    /// <summary>
+    /// Attempts to deserialize the body as a <see cref="MessageEnvelope"/>. Returns <see langword="null"/>
+    /// on any parse error or when the body is not envelope-shaped — the caller then takes the bare-JSON path.
+    /// </summary>
+    private static MessageEnvelope? TryParseEnvelope(ReadOnlyMemory<byte> body, JsonSerializerOptions options)
+    {
+        try
+        {
+            var envelope = JsonSerializer.Deserialize<MessageEnvelope>(body.Span, options);
+
+            if (envelope is null || envelope.MessageType is null || envelope.Message.ValueKind == JsonValueKind.Undefined)
+            {
+                return null;
+            }
+            return envelope;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    /// <remarks>
+    /// Cancels the consumer through the channel gate (in-flight lanes may still be settling on the shared channel),
+    /// then drains in-flight partitioned work so deferred acks complete before the channel closes. An
+    /// <see cref="ObjectDisposedException"/> (the channel was already disposed by AutoRecovery) and a
+    /// <see cref="TimeoutException"/> (draining ran long) are both ignored on shutdown — any still-unacked deliveries
+    /// are requeued by the broker when the channel closes.
+    /// </remarks>
     public async ValueTask DisposeAsync()
     {
         try
         {
             if (!string.IsNullOrEmpty(_consumerTag))
             {
-                await _channel.BasicCancelAsync(_consumerTag);
+                await _channelGate.WaitAsync();
+                try
+                {
+                    await _channel.BasicCancelAsync(_consumerTag);
+                }
+                finally
+                {
+                    _channelGate.Release();
+                }
+            }
+
+            var pending = _inFlight.Values.ToArray();
+            if (pending.Length > 0)
+            {
+                await Task.WhenAll(pending).WaitAsync(TimeSpan.FromSeconds(30));
             }
 
             await _channel.DisposeAsync();
         }
         catch (ObjectDisposedException)
         {
-            // Channel was already disposed by AutoRecovery; safe to ignore on shutdown.
+            // Already disposed by AutoRecovery; ignored on shutdown (see remarks).
+        }
+        catch (TimeoutException)
+        {
+            // Drain timed out; unacked deliveries are requeued on channel close (see remarks).
+        }
+        finally
+        {
+            _channelGate.Dispose();
         }
     }
+
+    private sealed record PreparedDelivery(RabbitMqPlan Plan, object Message, MessageEnvelope? Envelope, string DiagnosticTypeName);
 }

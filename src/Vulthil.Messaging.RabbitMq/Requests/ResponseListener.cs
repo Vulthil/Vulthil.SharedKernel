@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.RabbitMq.Logging;
@@ -12,22 +11,23 @@ namespace Vulthil.Messaging.RabbitMq.Requests;
 internal sealed class ResponseListener : IAsyncDisposable
 {
     private readonly IConnection _connection;
+    private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<ResponseListener> _logger;
     private readonly ConcurrentDictionary<string, IResponseWaiter> _waiters = new();
-    private readonly JsonSerializerOptions _jsonOptions;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
+    private JsonSerializerOptions JsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
     private IChannel? _channel;
     private string _replyToQueueName = string.Empty;
 
     public ResponseListener(
         IConnection connection,
-        IOptions<MessagingOptions> messagingOptions,
+        IMessageConfigurationProvider messageConfigurationProvider,
         ILogger<ResponseListener> logger)
     {
         _connection = connection;
+        _messageConfigurationProvider = messageConfigurationProvider;
         _logger = logger;
-        _jsonOptions = messagingOptions.Value.JsonSerializerOptions;
     }
 
     /// <summary>
@@ -45,10 +45,10 @@ internal sealed class ResponseListener : IAsyncDisposable
         return _replyToQueueName;
     }
 
-    public void RegisterWaiter<T>(string correlationId, TaskCompletionSource<Result<T>> tcs) where T : notnull
-        => _waiters[correlationId] = new ResponseWaiter<T>(tcs, _jsonOptions);
+    public void RegisterWaiter<T>(string requestId, TaskCompletionSource<Result<T>> tcs, Uri responseUrn) where T : notnull
+        => _waiters[requestId] = new ResponseWaiter<T>(tcs, JsonOptions, responseUrn);
 
-    public void RemoveWaiter(string correlationId) => _waiters.TryRemove(correlationId, out _);
+    public void RemoveWaiter(string requestId) => _waiters.TryRemove(requestId, out _);
 
     private async Task EnsureStartedAsync(CancellationToken cancellationToken)
     {

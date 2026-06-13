@@ -4,52 +4,97 @@ using Vulthil.Messaging.Queues;
 namespace Vulthil.Messaging;
 
 /// <summary>
-/// Global messaging configuration options including serialization, timeouts, and fault handling.
+/// Backing store for the messaging configuration. Implements <see cref="IMessagingOptionsConfigurator"/>
+/// for the write-side surface exposed during composition and <see cref="IMessageConfigurationProvider"/>
+/// for the read-side surface consumed at runtime by transports, consumers, and filters.
 /// </summary>
-public sealed class MessagingOptions
+internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessageConfigurationProvider
 {
-    /// <summary>
-    /// The configuration section name used for binding messaging options.
-    /// </summary>
     public const string SectionName = "Messaging:Options";
-    /// <summary>
-    /// Gets or sets the JSON serializer options used for message serialization and deserialization.
-    /// </summary>
-    public JsonSerializerOptions JsonSerializerOptions { get; set; } = new();
 
+
+    private readonly Dictionary<Type, MessageConfiguration> _typeConfigurations = [];
+    private readonly Dictionary<Uri, Type> _urnToType = [];
     private readonly HashSet<MessageType> _registeredRequestTypes = [];
+    private readonly Dictionary<Type, PartitionSpec> _partitions = [];
+    internal Dictionary<string, MessageConfiguration> MessageConfigurations { get; } = new(StringComparer.Ordinal);
+    internal Dictionary<string, QueueDefinition> QueueDefinitions { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Gets or sets the default timeout for request/reply operations. Default is 30 seconds.
-    /// </summary>
+    public JsonSerializerOptions JsonSerializerOptions { get; set; } = new();
     public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
-    /// <summary>
-    /// Gets or sets the name of the exchange to which faults are published when a consumed message carries a <c>FaultAddress</c> header.
-    /// Default is <c>"Fault.Exchange"</c>.
-    /// </summary>
     public string FaultExchangeName { get; set; } = "Fault.Exchange";
+    public ConsumeFilterOptions ConsumeFilters { get; } = new();
 
-    internal Dictionary<Type, MessageConfiguration> MessageConfigurations { get; } = [];
-
-    internal MessageConfiguration GetMessageConfiguration(Type messageType)
+    /// <inheritdoc />
+    public MessageConfiguration GetMessageConfiguration(Type messageType)
     {
+        if (_typeConfigurations.TryGetValue(messageType, out var cached))
+        {
+            return cached;
+        }
+
         var current = messageType;
         while (current != null && current != typeof(object))
         {
-            if (MessageConfigurations.TryGetValue(current, out var def))
+            if (current.FullName is { } fullName && MessageConfigurations.TryGetValue(fullName, out var def))
             {
+                RegisterMessageType(messageType, def);
                 return def;
             }
 
             current = current.BaseType;
         }
 
-        return new MessageConfiguration(messageType.FullName!);
+        var fresh = new MessageConfiguration(messageType.FullName!);
+        RegisterMessageType(messageType, fresh);
+        return fresh;
     }
 
-    internal MessageConfiguration GetMessageConfiguration<TMessage>() =>
-        GetMessageConfiguration(typeof(TMessage));
+    /// <inheritdoc />
+    public MessageConfiguration GetMessageConfiguration<TMessage>() where TMessage : class
+        => GetMessageConfiguration(typeof(TMessage));
+
+    /// <inheritdoc />
+    public Uri GetUrn(Type messageType) => GetMessageConfiguration(messageType).Urn;
+
+    /// <inheritdoc />
+    public Type? GetMessageType(Uri urn) => _urnToType.GetValueOrDefault(urn);
+
+    /// <inheritdoc />
+    IReadOnlyCollection<QueueDefinition> IMessageConfigurationProvider.QueueDefinitions => QueueDefinitions.Values;
 
     internal bool RegisterRequestType(MessageType messageType) => _registeredRequestTypes.Add(messageType);
 
+    /// <summary>Records the partition configuration for a message type (overwrites any prior registration).</summary>
+    internal void RegisterPartition(Type messageType, PartitionSpec spec) => _partitions[messageType] = spec;
+
+    /// <inheritdoc />
+    public PartitionSpec? GetPartition(Type messageType) => _partitions.GetValueOrDefault(messageType);
+
+    /// <summary>
+    /// Records a CLR type ↔ <see cref="MessageConfiguration"/> mapping and updates the URN reverse index.
+    /// Idempotent on repeated calls for the same type; throws if two distinct types claim the same URN.
+    /// </summary>
+    internal void RegisterMessageType(Type type, MessageConfiguration configuration)
+    {
+        if (_typeConfigurations.TryGetValue(type, out var existing) && ReferenceEquals(existing, configuration))
+        {
+            return;
+        }
+
+        _typeConfigurations[type] = configuration;
+
+        if (_urnToType.TryGetValue(configuration.Urn, out var owner))
+        {
+            if (owner != type)
+            {
+                throw new InvalidOperationException(
+                    $"URN '{configuration.Urn}' is already registered to type '{owner.FullName}'; cannot also register '{type.FullName}'. " +
+                    "URNs must be unique across message types — override one via MessageConfiguration<T>.Urn.");
+            }
+            return;
+        }
+
+        _urnToType[configuration.Urn] = type;
+    }
 }

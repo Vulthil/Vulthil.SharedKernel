@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.3.5">
+<Project Sdk="Aspire.AppHost.Sdk">
 
 	<PropertyGroup>
 		<UserSecretsId>f7b7f8ec-0e80-44c4-bf3f-6bbdcf5d7b64</UserSecretsId>
@@ -7,6 +7,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
+		<!-- Pin the transitive MessagePack above GHSA-hv8m-jj95-wg3x (CVE-2026-48109); remove once the Aspire packages pull a patched version. -->
+		<PackageReference Include="MessagePack" VersionOverride="2.5.301" />
 	</ItemGroup>
 
 	<ItemGroup>

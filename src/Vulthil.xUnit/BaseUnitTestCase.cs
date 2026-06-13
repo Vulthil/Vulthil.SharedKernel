@@ -15,11 +15,17 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     protected AutoMocker AutoMocker { get; } = new();
 
     /// <inheritdoc />
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
+        await Dispose();
         GC.SuppressFinalize(this);
-        return ValueTask.CompletedTask;
     }
+
+    /// <summary>
+    /// Override to perform custom async cleanup after each test.
+    /// </summary>
+    /// <returns>A task representing the cleanup work.</returns>
+    protected virtual ValueTask Dispose() => ValueTask.CompletedTask;
 
     /// <inheritdoc />
     public ValueTask InitializeAsync() => Initialize();

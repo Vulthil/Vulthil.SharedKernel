@@ -7,7 +7,9 @@ using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
+using Vulthil.Messaging.RabbitMq.Sending;
 using Vulthil.Messaging.RabbitMq.Telemetry;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq;
 
@@ -27,12 +29,17 @@ public static class MessagingConfiguratorExtensions
     /// activity source, so the entire RabbitMQ tracing pipeline (Aspire client + Vulthil transport) can be toggled with a single flag.
     /// </param>
     /// <param name="configureConnectionFactory">Optional callback for tuning the underlying <see cref="ConnectionFactory"/>.</param>
+    /// <param name="configureTransport">
+    /// Optional callback for tuning the Vulthil RabbitMQ transport (e.g. the publish channel pool size). Options are
+    /// first bound from the <c>Messaging:RabbitMq</c> configuration section; this callback then runs and takes precedence.
+    /// </param>
     /// <returns>The same configurator, for chaining.</returns>
     public static IMessagingConfigurator UseRabbitMq(
         this IMessagingConfigurator configurator,
         string connectionStringKey = "rabbitMq",
         Action<RabbitMQClientSettings>? configureSettings = null,
-        Action<ConnectionFactory>? configureConnectionFactory = null)
+        Action<ConnectionFactory>? configureConnectionFactory = null,
+        Action<RabbitMqTransportOptions>? configureTransport = null)
     {
         var tracingEnabled = true;
         var healthChecksEnabled = true;
@@ -49,13 +56,28 @@ public static class MessagingConfiguratorExtensions
 
         var services = configurator.HostApplicationBuilder.Services;
 
+        var transportOptionsBuilder = services.AddOptions<RabbitMqTransportOptions>()
+            .Bind(configurator.HostApplicationBuilder.Configuration.GetSection(RabbitMqTransportOptions.SectionName));
+        if (configureTransport is not null)
+        {
+            transportOptionsBuilder.Configure(configureTransport);
+        }
+        transportOptionsBuilder.ValidateDataAnnotations().ValidateOnStart();
+
         services.AddSingleton<RabbitMqBusStartupStatus>();
         services.AddSingleton<RabbitMqBus>();
         services.AddSingleton<ITransport>(sp => sp.GetRequiredService<RabbitMqBus>());
 
+        services.AddSingleton<RabbitMqChannelPool>();
+
         services.AddSingleton<RabbitMqPublisher>();
-        services.AddSingleton<IPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
+        services.AddSingleton<ITransportPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
         services.AddSingleton<IInternalPublisher>(sp => sp.GetRequiredService<RabbitMqPublisher>());
+
+        services.AddSingleton<ITransportSendEndpointProvider, RabbitMqSendEndpointProvider>();
+
+        // Public IPublisher / ISendEndpointProvider are the scoped filtering facades over the transport terminals.
+        services.AddPublishFiltering();
 
         // ResponseListener is lazily initialized on the first IRequester.RequestAsync call.
         // Services that never make request/reply calls do not pay the cost of declaring a reply queue.

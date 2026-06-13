@@ -3,9 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
+using Vulthil.Messaging.Inbox.EntityFrameworkCore;
+using Vulthil.Messaging.Inbox.Relational;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using WebApi.Application;
 using WebApi.Domain.MainEntities;
 using WebApi.Domain.SideEffects;
@@ -16,19 +19,11 @@ namespace WebApi.Infrastructure.Data;
 /// Functionally equivalent with <see cref="WebApiDbContextNoBase"/>, by inheriting from <see cref="BaseDbContext"/>.
 /// </summary>
 /// <param name="options"></param>
-public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext
+public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext, ISaveInboxMessages
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<MainEntity> MainEntities => Set<MainEntity>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
     protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
 }
 
@@ -36,24 +31,15 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
 /// Functionally equivalent with <see cref="WebApiDbContext"/>, without inheriting from <see cref="BaseDbContext"/>.
 /// </summary>
 /// <param name="options"></param>
-public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), IUnitOfWork, ISaveOutboxMessages, IWebApiDbContext
+public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), ISaveOutboxMessages, ISaveInboxMessages, IWebApiDbContext
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<MainEntity> MainEntities => Set<MainEntity>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
+    public bool IsInTransaction => Database.CurrentTransaction is not null;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -61,17 +47,33 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WebApiDbContextNoBase).Assembly);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
+
+    public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(operation);
+
+        if (Database.CurrentTransaction is not null)
+        {
+            return await operation(cancellationToken);
+        }
+
+        var strategy = Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(
+            async token =>
+            {
+                ChangeTracker.Clear();
+                await using var transaction = await Database.BeginTransactionAsync(token);
+                var result = await operation(token);
+                await transaction.CommitAsync(token);
+                return result;
+            },
+            cancellationToken);
+    }
 }
 
 internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
         builder.HasKey(o => o.Id);
@@ -84,14 +86,14 @@ internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguratio
     }
 }
 
-/// <summary>
-/// Represents the WebApiDbContextFactory.
-/// </summary>
+internal sealed class WebApiInboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
+{
+    public void Configure(EntityTypeBuilder<InboxMessage> builder) =>
+        new InboxMessageEntityConfiguration().Configure(builder);
+}
+
 public class WebApiDbContextFactory : IDesignTimeDbContextFactory<WebApiDbContext>
 {
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public WebApiDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<WebApiDbContext>();

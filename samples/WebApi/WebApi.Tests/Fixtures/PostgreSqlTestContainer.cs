@@ -3,7 +3,6 @@ using Npgsql;
 using Respawn;
 using ServiceDefaults;
 using Testcontainers.PostgreSql;
-using Testcontainers.RabbitMq;
 using Vulthil.xUnit.Fixtures;
 using WebApi.Infrastructure.Data;
 using Xunit.Sdk;
@@ -19,15 +18,4 @@ internal sealed class PostgreSqlTestContainer(IMessageSink messageSink) : TestDa
     protected override IDbAdapter DbAdapter => Respawn.DbAdapter.Postgres;
     public override DbProviderFactory DbProviderFactory => NpgsqlFactory.Instance;
     public override string ConnectionStringKey => ServiceNames.PostgresSqlServerServiceName;
-}
-
-public sealed class RabbitMqTestContainer(IMessageSink messageSink) : TestContainerFixtureWithConnectionString<RabbitMqBuilder, RabbitMqContainer>(messageSink)
-{
-    private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4-management")
-        .WithUsername("guest")
-        .WithPassword("guest");
-    protected override RabbitMqBuilder Configure() => _builder;
-
-    public override string ConnectionStringKey => ServiceNames.RabbitMqServiceName;
-    public override string ConnectionString => Container.GetConnectionString();
 }

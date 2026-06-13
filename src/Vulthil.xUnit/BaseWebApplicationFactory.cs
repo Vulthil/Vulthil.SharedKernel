@@ -1,8 +1,12 @@
+using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
+using Vulthil.Extensions.Hosting;
 using Vulthil.xUnit.Fixtures;
 using Vulthil.xUnit.Http;
 
@@ -20,15 +24,41 @@ namespace Vulthil.xUnit;
 /// Use a derived factory as an <see cref="IClassFixture{TFixture}"/> (or collection fixture) so its containers
 /// are started once and shared across the tests in that scope, while
 /// <see cref="BaseIntegrationTestCase{TFactory, TEntryPoint}"/> resets database state between tests.
+/// To share containers across many parallel test classes, register them on a <see cref="ContainerHost"/> assembly
+/// fixture instead and pass it to the <see cref="BaseWebApplicationFactory{TEntryPoint}(ContainerHost)"/> constructor;
+/// the factory then consumes every host container through a per-factory scope view (an isolated database, virtual
+/// host, ...) so test classes run in parallel against shared containers without interfering.
 /// </remarks>
 public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>, IAsyncLifetime, ITestHostMigrator
     where TEntryPoint : class
 {
     private bool _initialized;
 
+    private readonly ContainerHost? _containerHost;
     private readonly HashSet<ITestContainer> _containers = [];
     private readonly Dictionary<string, HttpMock> _httpMocks = [];
     private readonly List<Action<IServiceCollection>> _httpClientConfigurations = [];
+
+    /// <summary>
+    /// Initializes a factory that owns its containers exclusively; register them with <see cref="AddContainer"/> in
+    /// the constructor or in <see cref="ConfigureContainers"/>.
+    /// </summary>
+    protected BaseWebApplicationFactory()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a factory that consumes the shared containers of <paramref name="containerHost"/>. Every container
+    /// registered on the host is consumed through a per-factory scope view (filter with
+    /// <see cref="ShouldUseContainer"/>), so no per-factory container registration is needed and parallel test
+    /// classes share the running containers without sharing state.
+    /// </summary>
+    /// <param name="containerHost">The assembly-level host whose containers this factory consumes.</param>
+    protected BaseWebApplicationFactory(ContainerHost containerHost)
+    {
+        ArgumentNullException.ThrowIfNull(containerHost);
+        _containerHost = containerHost;
+    }
     /// <summary>
     /// Gets the registered containers that expose a connection string, used for injecting settings into the test host.
     /// </summary>
@@ -111,6 +141,34 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     protected virtual Task ConfigureContainers() => Task.CompletedTask;
 
     /// <summary>
+    /// Decides whether a container registered on the <see cref="ContainerHost"/> is consumed by this factory. All
+    /// host containers are consumed by default; override to exclude containers a factory's scenario does not use
+    /// (excluded containers are not started by this factory either, thanks to lazy host startup).
+    /// </summary>
+    /// <param name="container">A container registered on the host.</param>
+    /// <returns><see langword="true"/> to consume the container; otherwise <see langword="false"/>.</returns>
+    protected virtual bool ShouldUseContainer(ITestContainer container) => true;
+
+    /// <summary>
+    /// Creates the identifier under which this factory's scopes are isolated inside shared containers (database
+    /// names, virtual hosts, ...). The default combines the factory type name with a random suffix, yielding a new
+    /// unique scope per factory instance — that is, per test class when the factory is used as a class fixture.
+    /// </summary>
+    /// <returns>A short, unique, lowercase identifier that is safe to embed in names.</returns>
+    protected virtual string CreateScopeId()
+    {
+        var name = new string([.. GetType().Name.Where(char.IsAsciiLetterOrDigit).Select(char.ToLowerInvariant)]);
+        name = name.Length switch
+        {
+            0 => "scope",
+            > 24 => name[..24],
+            _ => name,
+        };
+
+        return $"{name}_{Guid.NewGuid().ToString("N")[..8]}";
+    }
+
+    /// <summary>
     /// Override to apply additional <see cref="IWebHostBuilder"/> configuration for tests.
     /// </summary>
     /// <param name="builder">The web host builder to configure.</param>
@@ -118,11 +176,36 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     /// <inheritdoc />
     protected override sealed void ConfigureWebHost(IWebHostBuilder builder)
     {
+        // Route application logs to the test that is currently running; TestContext.Current resolves the right
+        // output helper dynamically, so one shared host serves every test in the class without rebuilding it.
+        builder.ConfigureLogging(logging => logging.Services.AddSingleton<ILoggerProvider>(
+            new XUnitLoggerProvider(new XUnitLoggerOptions
+            {
+                IncludeCategory = true,
+                IncludeLogLevel = true,
+                IncludeScopes = true,
+            })));
+
         foreach (var container in ContainersWithConnectionStrings)
         {
             var connectionString = container.ConnectionString;
             builder.UseSetting($"ConnectionStrings:{container.ConnectionStringKey}", connectionString);
         }
+
+        foreach (var container in _containers)
+        {
+            container.ConfigureWebHost(builder);
+        }
+
+        builder.ConfigureTestServices(services =>
+        {
+            foreach (var container in _containers)
+            {
+                container.ConfigureServices(services);
+            }
+        });
+
+        ConfigureCustomWebHost(builder);
 
         builder.ConfigureServices(services =>
         {
@@ -134,12 +217,12 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
                 configureHttpClient(services);
             }
         });
-
-        ConfigureCustomWebHost(builder);
     }
 
     /// <summary>
-    /// Registers and starts every configured test container in parallel. Invoked once by xUnit before the tests in scope run.
+    /// Registers and initializes every consumed test container in parallel. Invoked once by xUnit before the tests in
+    /// scope run. Factory-owned containers are started here; containers consumed from a <see cref="ContainerHost"/>
+    /// are started on the host (once per test run) and only their per-factory scopes are provisioned here.
     /// </summary>
     /// <returns>A task representing the asynchronous startup work.</returns>
     public async ValueTask InitializeAsync()
@@ -149,29 +232,77 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             return;
         }
         await ConfigureContainers();
+        await AcquireHostContainers();
 
         await Parallel.ForEachAsync(_containers, (container, ct) => container.InitializeAsync());
         _initialized = true;
     }
+
+    private async Task AcquireHostContainers()
+    {
+        if (_containerHost is null)
+        {
+            return;
+        }
+
+        var consumedContainers = _containerHost.Containers.Where(ShouldUseContainer).ToList();
+        await Parallel.ForEachAsync(consumedContainers, async (container, ct) => await _containerHost.EnsureStartedAsync(container));
+
+        var scopeId = CreateScopeId();
+        foreach (var container in consumedContainers)
+        {
+#pragma warning disable CA2000 // Ownership transfers to _containers; scope views are disposed in DisposeAsync.
+            AddContainer(CreateScopeView(container, scopeId));
+#pragma warning restore CA2000
+        }
+    }
+
+    private static ITestContainer CreateScopeView(ITestContainer container, string scopeId) => container switch
+    {
+        ITestContainerScopeProvider scopeProvider => scopeProvider.CreateScope(scopeId),
+        ITestContainerWithConnectionString withConnectionString => new TestContainerWithConnectionStringScope(withConnectionString),
+        _ => new TestContainerScope(container),
+    };
 
     /// <inheritdoc />
     public override async ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
 
+        // Stop the application host(s) first so graceful shutdown still has its infrastructure, then tear down
+        // factory-owned containers and per-factory scopes. Containers owned by a ContainerHost outlive the factory.
+        await base.DisposeAsync();
+
         if (_initialized)
         {
             await Parallel.ForEachAsync(_containers, (container, ct) => container.DisposeAsync());
         }
-
-        await base.DisposeAsync();
     }
 
     Task ITestHostMigrator.MigrateDatabases(IServiceProvider serviceProvider) =>
         Parallel.ForEachAsync(DatabaseContainers, (x, ct) => x.MigrateDatabase(serviceProvider));
 
-    internal Task ResetAsync() =>
-        Parallel.ForEachAsync(ResettableResources, (resource, ct) => resource.ResetAsync());
+    internal async Task ResetAsync()
+    {
+        var restartableServices = Services.GetServices<IHostedService>().OfType<IRestartableHostedService>().ToList();
+
+        foreach (var service in restartableServices)
+        {
+            await service.StopAsync(CancellationToken.None);
+        }
+
+        try
+        {
+            await Parallel.ForEachAsync(ResettableResources, (resource, ct) => resource.ResetAsync());
+        }
+        finally
+        {
+            foreach (var service in restartableServices)
+            {
+                await service.StartAsync(CancellationToken.None);
+            }
+        }
+    }
 }
 
 internal interface ITestHostMigrator

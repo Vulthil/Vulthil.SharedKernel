@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using Vulthil.SharedKernel.Infrastructure.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure;
 
@@ -31,11 +32,11 @@ public interface IDatabaseInfrastructureConfigurator<TDbContext>
     IDatabaseInfrastructureConfigurator<TDbContext> EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null);
 
     /// <summary>
-    /// Configures the database infrastructure to use the specified outbox strategy.
+    /// Configures the database infrastructure to use the specified outbox store.
     /// </summary>
-    /// <typeparam name="T">The type of outbox strategy to use.</typeparam>
+    /// <typeparam name="T">The type of outbox store to use.</typeparam>
     /// <returns>The database infrastructure configurator instance.</returns>
-    IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStrategy<T>() where T : class, IOutboxStrategy;
+    IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStore<T>() where T : class, IOutboxStore;
 
     /// <summary>
     /// Registers a callback that runs once the configurator action has finished executing

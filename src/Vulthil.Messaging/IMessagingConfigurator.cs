@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Hosting;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging;
 
@@ -30,9 +32,92 @@ public interface IMessagingConfigurator
         where TMessage : class;
 
     /// <summary>
-    /// Configures global messaging options such as serialization and timeouts.
+    /// Configures global messaging options such as serialization, timeouts, and built-in filters.
     /// </summary>
-    /// <param name="action">An action to configure the messaging options.</param>
+    /// <param name="action">An action that receives the writable options surface.</param>
     /// <returns>The current configurator instance for chaining.</returns>
-    IMessagingConfigurator ConfigureMessagingOptions(Action<MessagingOptions> action);
+    IMessagingConfigurator ConfigureMessagingOptions(Action<IMessagingOptionsConfigurator> action);
+
+    /// <summary>
+    /// Registers a closed-generic consume filter. The filter is applied to every delivery whose
+    /// message type matches the filter's <c>IConsumeFilter&lt;TMessage&gt;</c> interface.
+    /// Multiple filters for the same message type are composed in registration order
+    /// (first registered is outermost).
+    /// </summary>
+    /// <typeparam name="TFilter">The filter implementation. Must implement at least one <c>IConsumeFilter&lt;TMessage&gt;</c>.</typeparam>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator AddConsumeFilter<TFilter>() where TFilter : class;
+
+    /// <summary>
+    /// Registers an open-generic consume filter that applies to every message type. Use this for
+    /// cross-cutting filters that do not depend on the typed payload (logging, telemetry, etc.).
+    /// </summary>
+    /// <param name="openFilterType">An open generic type (e.g. <c>typeof(LoggingFilter&lt;&gt;)</c>) implementing <c>IConsumeFilter&lt;&gt;</c>.</param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator AddOpenConsumeFilter(Type openFilterType);
+
+    /// <summary>
+    /// Registers a publish/send filter applied to every outgoing publish and send. Multiple filters are composed in
+    /// registration order (first registered is outermost). A filter may short-circuit the pipeline by not invoking
+    /// <c>next</c> — for example a transactional outbox that captures the message into the database instead of
+    /// sending it immediately. The filter is resolved from the caller's scope, so it may depend on scoped services.
+    /// </summary>
+    /// <typeparam name="TFilter">The filter implementation, which must implement <see cref="IPublishFilter"/>.</typeparam>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator AddPublishFilter<TFilter>() where TFilter : class, IPublishFilter;
+
+    /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries that share a partition key, so
+    /// messages correlated to the same aggregate are handled one at a time and in order, while messages with
+    /// different keys process concurrently. Effective only when the consuming queue allows concurrency
+    /// (<c>ConcurrencyLimit &gt; 1</c>); at a concurrency of one, processing is already serial.
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitionCount">The number of partitions (lanes) to distribute keys across.</param>
+    /// <param name="keySelector">
+    /// Selects the partition key from a delivery (e.g. <c>ctx =&gt; ctx.CorrelationId</c>). A delivery whose
+    /// key is <see langword="null"/> or empty bypasses the partitioner.
+    /// </param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount, Func<IMessageContext<TMessage>, string?> keySelector)
+        where TMessage : notnull;
+
+    /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries by their <c>CorrelationId</c> —
+    /// shorthand for the overload taking an explicit key selector with <c>ctx =&gt; ctx.CorrelationId</c>.
+    /// Deliveries with no correlation id bypass the partitioner.
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitionCount">The number of partitions (lanes) to distribute keys across.</param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount)
+        where TMessage : notnull;
+
+    /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries that share a partition key using a
+    /// caller-supplied <see cref="Partitioner"/>. Share one <see cref="Partitioner"/> across several message
+    /// types to serialize messages correlated to the same key regardless of their type (e.g. a saga).
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitioner">The partitioner whose lanes serialize same-key processing.</param>
+    /// <param name="keySelector">
+    /// Selects the partition key from a delivery (e.g. <c>ctx =&gt; ctx.CorrelationId</c>). A delivery whose
+    /// key is <see langword="null"/> or empty bypasses the partitioner.
+    /// </param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner, Func<IMessageContext<TMessage>, string?> keySelector)
+        where TMessage : notnull;
+
+    /// <summary>
+    /// Serializes processing of <typeparamref name="TMessage"/> deliveries by their <c>CorrelationId</c> using a
+    /// caller-supplied <see cref="Partitioner"/> — shorthand for the overload taking an explicit key selector
+    /// with <c>ctx =&gt; ctx.CorrelationId</c>. Share one <see cref="Partitioner"/> across several message types
+    /// to serialize messages correlated to the same id regardless of their type (e.g. a saga). Deliveries with
+    /// no correlation id bypass the partitioner.
+    /// </summary>
+    /// <typeparam name="TMessage">The message type to partition.</typeparam>
+    /// <param name="partitioner">The partitioner whose lanes serialize same-key processing.</param>
+    /// <returns>The current configurator instance for chaining.</returns>
+    IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner)
+        where TMessage : notnull;
 }

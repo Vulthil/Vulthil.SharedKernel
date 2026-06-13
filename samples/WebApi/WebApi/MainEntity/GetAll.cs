@@ -5,25 +5,16 @@ using WebApi.Application.MainEntities.GetById;
 
 namespace WebApi.MainEntity;
 
-/// <summary>
-/// Represents the GetAll.
-/// </summary>
 public static class GetAll
 {
 
     public sealed record Response(IReadOnlyList<MainEntityDto> MainEntities);
 
-    /// <summary>
-    /// Represents the Endpoint.
-    /// </summary>
     public class Endpoint : IEndpoint
     {
-        /// <summary>
-        /// Executes this member.
-        /// </summary>
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapGet("mainentity", async (ISender sender) =>
+            app.MapGet("main-entities", async (ISender sender) =>
             {
                 var query = new GetMainEntities();
                 var result = await sender.SendAsync(query);

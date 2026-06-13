@@ -1,5 +1,9 @@
 using Vulthil.Messaging;
-using Vulthil.Messaging.IntegrationTest.ConsumerService;
+using Vulthil.Messaging.IntegrationTest.ConsumerService.Commands;
+using Vulthil.Messaging.IntegrationTest.ConsumerService.Events;
+using Vulthil.Messaging.IntegrationTest.ConsumerService.Failures;
+using Vulthil.Messaging.IntegrationTest.ConsumerService.Infrastructure;
+using Vulthil.Messaging.IntegrationTest.ConsumerService.Requests;
 using Vulthil.Messaging.IntegrationTest.Contracts;
 using Vulthil.Messaging.RabbitMq;
 
@@ -32,6 +36,18 @@ builder.AddMessaging(messaging =>
         message.UseRoutingKey("weather.get");
     });
 
+    messaging.ConfigureMessage<FailingRequest>(message =>
+    {
+        message.ExchangeType = MessagingExchangeType.Direct;
+        message.UseRoutingKey("weather.fail");
+    });
+
+    // Cross-cutting consume filter: records the message type of every delivery it wraps.
+    messaging.AddOpenConsumeFilter(typeof(AuditConsumeFilter<>));
+
+    // Per-aggregate ordering: serialize OrderedEvent deliveries by their Key across lanes.
+    messaging.UsePartitioner<OrderedEvent>(8, context => context.Message.Key);
+
     messaging.ConfigureQueue("weather-events", queue =>
     {
         queue.AddConsumer<WeatherUpdatedEventConsumer>();
@@ -39,12 +55,61 @@ builder.AddMessaging(messaging =>
 
     messaging.ConfigureQueue("weather-commands", queue =>
     {
-        queue.AddConsumer<RecordWeatherCommandConsumer>(c => c.Bind<RecordWeatherCommand>("weather.record"));
+        queue.Subscribe<RecordWeatherCommand>("weather.record");
+        queue.AddConsumer<RecordWeatherCommandConsumer>();
+    });
+
+    // Point-to-point target: RecordWeatherCommandConsumer forwards an audit entry here via ctx.SendAsync.
+    messaging.ConfigureQueue("weather-audit", queue =>
+    {
+        queue.AddConsumer<WeatherAuditConsumer>();
     });
 
     messaging.ConfigureQueue("weather-requests", queue =>
     {
-        queue.AddRequestConsumer<GetWeatherRequestConsumer>(c => c.Bind<GetWeatherRequest, GetWeatherResponse>("weather.get"));
+        queue.Subscribe<GetWeatherRequest>("weather.get");
+        queue.AddRequestConsumer<GetWeatherRequestConsumer>();
+    });
+
+    messaging.ConfigureQueue("failing-requests", queue =>
+    {
+        queue.Subscribe<FailingRequest>("weather.fail");
+        queue.AddRequestConsumer<FailingRequestConsumer>();
+    });
+
+    // Polymorphic fan-out: a single StockChangedEvent delivery fires both the interface
+    // consumer (IInventoryEvent) and the concrete consumer (StockChangedEvent) on this queue.
+    messaging.ConfigureQueue("inventory-events", queue =>
+    {
+        queue.SubscribeAll<IInventoryEvent>(typeof(IInventoryEvent).Assembly);
+        queue.AddConsumer<InventoryEventConsumer>();
+        queue.AddConsumer<StockChangedEventConsumer>();
+    });
+
+    // Failure scenario: consumer fails the first attempts, then succeeds once retries kick in.
+    messaging.ConfigureQueue("flaky-commands", queue =>
+    {
+        queue.UseRetry(retry => retry.Immediate(5));
+        queue.AddConsumer<FlakyCommandConsumer>();
+    });
+
+    // Failure scenario: consumer always throws; after retries are exhausted the message is dead-lettered.
+    messaging.ConfigureQueue("poison-commands", queue =>
+    {
+        queue.UseRetry(retry => retry.Immediate(1));
+        queue.UseDeadLetterQueue(
+            queueName: "poison-commands.dead-letter",
+            exchangeName: "poison-commands.dead-letter-exchange");
+        queue.AddConsumer<PoisonCommandConsumer>();
+    });
+
+    // Ordered processing: queue runs with concurrency, partitioner keeps per-key order. Retries run
+    // in-memory automatically (partitioned queue), so a failing message keeps its lane and order holds.
+    messaging.ConfigureQueue("ordered-events", queue =>
+    {
+        queue.ConfigureQueue(definition => definition.ConcurrencyLimit = 8);
+        queue.UseRetry(retry => retry.Immediate(5));
+        queue.AddConsumer<OrderedEventConsumer>();
     });
 
     messaging.UseRabbitMq("rabbitmq");
@@ -61,14 +126,11 @@ if (app.Environment.IsDevelopment())
 
 var api = app.MapGroup("/api");
 
-api.MapGet("received/events", (ReceivedMessageTracker tracker) => Results.Ok(tracker.Events))
-    .WithName("GetReceivedEvents");
+api.MapGet("received/{key}", (string key, ReceivedMessageTracker tracker) => Results.Ok(tracker.Get(key)))
+    .WithName("GetReceivedMessages");
 
-api.MapGet("received/commands", (ReceivedMessageTracker tracker) => Results.Ok(tracker.Commands))
-    .WithName("GetReceivedCommands");
-
-api.MapGet("received/requests", (ReceivedMessageTracker tracker) => Results.Ok(tracker.Requests))
-    .WithName("GetReceivedRequests");
+api.MapGet("attempts/{id:guid}", (Guid id, ReceivedMessageTracker tracker) => Results.Ok(tracker.GetAttempts(id)))
+    .WithName("GetConsumeAttempts");
 
 app.MapDefaultEndpoints();
 

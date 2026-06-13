@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Idempotent-receiver (inbox) consume filter for Vulthil.Messaging. Provides exactly-once message processing on top of at-least-once delivery via a pluggable, persistence-agnostic idempotency store.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
+	</ItemGroup>
+
+</Project>

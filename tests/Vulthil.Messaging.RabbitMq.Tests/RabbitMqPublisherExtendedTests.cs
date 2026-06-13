@@ -1,13 +1,11 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-/// <summary>
-/// Represents the RabbitMqPublisherExtendedTests.
-/// </summary>
 public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
 {
     private readonly Lazy<RabbitMqPublisher> _lazyTarget;
@@ -16,9 +14,6 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
 
     private RabbitMqPublisher Target => _lazyTarget.Value;
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     public RabbitMqPublisherExtendedTests()
     {
         var logger = GetMock<ILogger<RabbitMqPublisher>>().Object;
@@ -38,13 +33,11 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
             .Returns<Type>(t => new MessageConfiguration(t.FullName!));
 
         Use(logger);
-        Use(connectionMock.Object);
+        Use(Options.Create(new RabbitMqTransportOptions { PublishChannelPoolSize = 1 }));
+        UseReal<RabbitMqChannelPool>();
         _lazyTarget = new(CreateInstance<RabbitMqPublisher>);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task PublishAsyncShouldSetMessageTypeInBasicProperties()
     {
@@ -64,13 +57,11 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
         await Target.PublishAsync(message, cancellationToken: CancellationToken);
 
         // Assert
+        var expectedUrn = new MessageConfiguration(typeof(TestMessage).FullName!).Urn.AbsoluteUri;
         capturedProperties.ShouldNotBeNull();
-        capturedProperties.Type.ShouldBe(typeof(TestMessage).FullName);
+        capturedProperties.Type.ShouldBe(expectedUrn);
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task PublishAsyncWithMultipleMessagesPublishesEach()
     {
@@ -96,9 +87,6 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
             Times.Exactly(3));
     }
 
-    /// <summary>
-    /// Executes this member.
-    /// </summary>
     [Fact]
     public async Task PublishAsyncShouldPublishToCorrectExchange()
     {
@@ -121,11 +109,23 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
         capturedExchange.ShouldBe(typeof(TestMessage).FullName);
     }
 
+    [Fact]
+    public async Task InternalSendAsyncSurfacesFailureWhenTheBrokerRejectsTheMessage()
+    {
+        // Arrange — with publisher confirms enabled, an unroutable/nacked publish throws instead of
+        // silently succeeding; a send must surface that failure rather than report success.
+        _channelMock.Setup(x => x.BasicPublishAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<BasicProperties>(), It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("broker rejected the message"));
+
+        // Act & Assert
+        var ex = await Should.ThrowAsync<InvalidOperationException>(
+            () => Target.InternalSendAsync([1, 2, 3], new BasicProperties(), "missing-queue", CancellationToken));
+        ex.Message.ShouldContain("broker rejected");
+    }
+
     private sealed class TestMessage
     {
-        /// <summary>
-        /// Gets or sets this member value.
-        /// </summary>
         public string Content { get; set; } = string.Empty;
     }
 }

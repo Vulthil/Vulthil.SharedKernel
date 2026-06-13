@@ -8,6 +8,10 @@
   href: vulthil-sharedkernel-application.md
 - name: Vulthil.SharedKernel.Infrastructure
   href: vulthil-sharedkernel-infrastructure.md
+- name: Vulthil.SharedKernel.Outbox
+  href: vulthil-sharedkernel-outbox.md
+- name: Vulthil.SharedKernel.Outbox.EntityFrameworkCore
+  href: vulthil-sharedkernel-outbox-entityframeworkcore.md
 - name: Vulthil.SharedKernel.Infrastructure.Relational
   href: vulthil-sharedkernel-infrastructure-relational.md
 - name: Vulthil.SharedKernel.Infrastructure.Npgsql
@@ -24,9 +28,21 @@
   href: vulthil-messaging.md
 - name: Vulthil.Messaging.RabbitMq
   href: vulthil-messaging-rabbitmq.md
+- name: Vulthil.Messaging.Inbox
+  href: vulthil-messaging-inbox.md
+- name: Vulthil.Messaging.Inbox.EntityFrameworkCore
+  href: vulthil-messaging-inbox-entityframeworkcore.md
+- name: Vulthil.Messaging.Inbox.Relational
+  href: vulthil-messaging-inbox-relational.md
+- name: Vulthil.Messaging.Inbox.Cosmos
+  href: vulthil-messaging-inbox-cosmos.md
+- name: Vulthil.Messaging.Outbox
+  href: vulthil-messaging-outbox.md
 - name: Vulthil.Messaging.TestHarness
   href: vulthil-messaging-testharness.md
 - name: Vulthil.Extensions.Testing
   href: vulthil-extensions-testing.md
 - name: Vulthil.xUnit
   href: vulthil-xunit.md
+- name: Vulthil.xUnit.Cosmos
+  href: vulthil-xunit-cosmos.md

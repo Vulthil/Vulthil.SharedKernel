@@ -40,8 +40,9 @@ jobs:
           additional_permissions: |
             actions: read
 
-          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
-          prompt: 'Update the pull request description to include a summary of changes.'
+          # No prompt is set on purpose: Claude follows the instructions in the
+          # comment, review, or issue that tagged it (e.g. "@claude fix the build").
+          # Set `prompt:` only if you want every trigger to run one fixed instruction.
 
           # Optional: Add claude_args to customize behavior and configuration
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md

@@ -95,6 +95,20 @@
 Classes
 </h3>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a></dt>
+      <dd><p>Assembly-level fixture that owns a set of shared test containers, so heavyweight infrastructure (database servers,
+message brokers, emulators) starts at most once per test run instead of once per test class.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.html">RabbitMqTestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;</a></dt>
+      <dd><p>Fixture that wraps a RabbitMQ broker container. When owned by a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a>, every consuming
+factory gets its own virtual host on the shared broker (created via <code>rabbitmqctl</code> inside the container and
+appended to the AMQP connection string), so parallel test classes never see each other's exchanges, queues or
+messages. Derived classes only configure the container and supply the connection string and key.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html">TestContainerFixtureWithConnectionString&lt;TBuilderEntity, TContainerEntity&gt;</a></dt>
       <dd><p>Fixture that wraps a Testcontainers container and exposes a connection string for integration test configuration.</p>
 </dd>
@@ -106,7 +120,9 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html">TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;</a></dt>
-      <dd><p>Fixture that wraps a database container, applies EF Core migrations, and supports Respawn-based data resets between tests.</p>
+      <dd><p>Fixture that wraps a database container, applies EF Core migrations, and supports Respawn-based data resets between
+tests. When owned by a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a>, <a class="xref" href="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_CreateScope_System_String_">CreateScope(string)</a> gives every consuming factory its own
+uniquely named database on the shared server, so parallel test classes never see each other's data.</p>
 </dd>
     </dl>
     <h3 id="interfaces">
@@ -114,7 +130,16 @@ Interfaces
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainer.html">ITestContainer</a></dt>
-      <dd><p>Represents a test container that can be started and stopped as part of the test lifecycle.</p>
+      <dd><p>Represents a test container that can be started and stopped as part of the test lifecycle, and that may
+participate in configuring the test host.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.html">ITestContainerScopeProvider</a></dt>
+      <dd><p>Implemented by test containers that can mint per-scope views of themselves, so a single running container
+(typically owned by a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a> assembly fixture) can serve many test classes in parallel
+without sharing state. A scope usually maps to an isolated namespace inside the shared container — a uniquely
+named database on a database server, a virtual host on a message broker, or a key prefix in a cache.</p>
 </dd>
     </dl>
     <dl class="jumplist">

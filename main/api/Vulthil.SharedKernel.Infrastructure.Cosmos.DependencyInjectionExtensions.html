@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions" class="text-break">
-Class DependencyInjectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Class DependencyInjectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,7 +157,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Microsoft_EntityFrameworkCore_Cosmos_EntityFrameworkCoreCosmosSettings__" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings})">
   UseCosmosDb&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;EntityFrameworkCoreCosmosSettings&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the database infrastructure to use the Cosmos-specific outbox strategy.</p>
@@ -165,7 +165,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseCosmosDb&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionName, Action&lt;EntityFrameworkCoreCosmosSettings&gt;? configureSettings) where TDbContext : DbContext</code></pre>
+    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseCosmosDb&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionName, Action&lt;EntityFrameworkCoreCosmosSettings&gt;? configureSettings) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -207,7 +207,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

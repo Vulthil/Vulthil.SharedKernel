@@ -98,7 +98,7 @@
 <ul>
 <li>Call <code>UseNpgsql(&quot;ConnectionStringKey&quot;)</code> on the database infrastructure configurator – it both registers the EF Core context and selects the Npgsql outbox strategy</li>
 <li>Order between <code>UseNpgsql</code> and <code>EnableOutboxProcessing</code> does not matter; the configurator defers the underlying call until the full chain has executed</li>
-<li>Leave EF Core retry settings alone – when outbox processing is enabled, <code>DisableRetry = true</code> is forced after the caller-supplied <code>configureSettings</code> runs because the retry execution strategy is incompatible with the manual transactions the outbox uses</li>
+<li>Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (<code>Database.CreateExecutionStrategy().ExecuteAsync</code>), so there is no need to force <code>DisableRetry</code></li>
 </ul>
 <h2 id="usage">Usage</h2>
 <h3 id="minimal-registration">Minimal registration</h3>
@@ -111,7 +111,7 @@
     .UseNpgsql(&quot;Default&quot;, settings =&gt;
     {
         settings.CommandTimeout = 30;
-        // settings.DisableRetry is forced to true when EnableOutboxProcessing is used.
+        // A retrying execution strategy is fine; the outbox runs inside the execution strategy.
     })
     .EnableOutboxProcessing(o =&gt;
     {

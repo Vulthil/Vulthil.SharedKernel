@@ -156,6 +156,15 @@ public sealed class GetUserQueryHandler(IUserRepository users)
 <h3 id="sending-requests">Sending requests</h3>
 <pre><code class="lang-csharp">var result = await sender.SendAsync(new CreateUserCommand(&quot;user@example.com&quot;), cancellationToken);
 </code></pre>
+<h3 id="direct-handler-injection">Direct handler injection</h3>
+<p><code>ICommandHandler&lt;TCommand, TResponse&gt;</code>, <code>ICommandHandler&lt;TCommand&gt;</code>, <code>IQueryHandler&lt;TQuery, TResponse&gt;</code> and <code>IHandler&lt;TRequest, TResponse&gt;</code> can also be injected directly. The resolved instance shares the same pipeline as <code>ISender</code>, so any registered behavior (validation, logging, transactions, custom) still applies.</p>
+<pre><code class="lang-csharp">public sealed class CreateUserEndpoint(ICommandHandler&lt;CreateUserCommand, Result&lt;Guid&gt;&gt; handler)
+{
+    public Task&lt;Result&lt;Guid&gt;&gt; ExecuteAsync(CreateUserCommand command, CancellationToken ct)
+        =&gt; handler.HandleAsync(command, ct);
+}
+</code></pre>
+<p>Custom behaviors registered from any assembly with <code>services.AddOpenPipelineHandler(typeof(MyBehavior&lt;,&gt;))</code> apply to every handler resolved afterwards — order of registration relative to <code>AddApplication</code> does not matter.</p>
 
 </article>
 

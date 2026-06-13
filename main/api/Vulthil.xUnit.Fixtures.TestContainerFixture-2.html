@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Fixtures_TestContainerFixture_2" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2" class="text-break">
-Class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -102,7 +102,7 @@ Class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;  <a class="he
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt; : ContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;, ITestContainer, IAsyncLifetime, IAsyncDisposable where TBuilderEntity : IContainerBuilder&lt;TBuilderEntity, TContainerEntity, IContainerConfiguration&gt;, new() where TContainerEntity : IContainer</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt; : ContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;, ITestContainer, IAsyncLifetime, IAsyncDisposable, ITestContainerScopeProvider where TBuilderEntity : IContainerBuilder&lt;TBuilderEntity, TContainerEntity, IContainerConfiguration&gt;, new() where TContainerEntity : IContainer</code></pre>
   </div>
 
 
@@ -131,6 +131,7 @@ Class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;  <a class="he
       <div><a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainer.html">ITestContainer</a></div>
       <div><span class="xref">IAsyncLifetime</span></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a></div>
+      <div><a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.html">ITestContainerScopeProvider</a></div>
     </dd>
   </dl>
 
@@ -202,7 +203,7 @@ Class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;  <a class="he
 
   <h3 id="Vulthil_xUnit_Fixtures_TestContainerFixture_2__ctor_Xunit_Sdk_IMessageSink_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)">
   TestContainerFixture(IMessageSink)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Base fixture that wraps a Testcontainers container as an <a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainer.html">ITestContainer</a> for use in <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a>.</p>
@@ -230,11 +231,126 @@ Class TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;  <a class="he
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_ConfigureServices_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.ConfigureServices*"></a>
+
+  <h3 id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_ConfigureServices_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+  ConfigureServices(IServiceCollection)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers or replaces services for this container in the test host. Invoked through
+<code>ConfigureTestServices</code>, so it runs after the application's own registrations and can decorate or
+replace them (for example, repointing a <code>DbContext</code> at the containerized service).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ConfigureServices(IServiceCollection services)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>services</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a></dt>
+    <dd><p>The service collection to configure.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_ConfigureWebHost_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.ConfigureWebHost*"></a>
+
+  <h3 id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_ConfigureWebHost_Microsoft_AspNetCore_Hosting_IWebHostBuilder_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)">
+  ConfigureWebHost(IWebHostBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Configures the test host for this container. Invoked by <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a>
+during host build, after connection strings are injected and before the factory's own
+<code>ConfigureCustomWebHost</code>. Use it to apply host settings the container needs.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ConfigureWebHost(IWebHostBuilder builder)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>builder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.hosting.iwebhostbuilder">IWebHostBuilder</a></dt>
+    <dd><p>The web host builder to configure.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_CreateScope_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.CreateScope*"></a>
+
+  <h3 id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_CreateScope_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.CreateScope(System.String)">
+  CreateScope(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a pass-through scope view over this container, sharing its state with every consumer. Override to
+return a view that is isolated under <code class="paramref">scopeId</code> when the containerized service supports
+namespacing (databases, virtual hosts, key prefixes, ...).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ITestContainer CreateScope(string scopeId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>scopeId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A short, unique, lowercase identifier for the scope, safe to embed in names.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainer.html">ITestContainer</a></dt>
+    <dd><p>The scoped container view.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

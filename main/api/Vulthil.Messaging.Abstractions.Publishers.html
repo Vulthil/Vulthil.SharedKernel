@@ -96,7 +96,8 @@ Interfaces
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html">IPublishContext</a></dt>
-      <dd><p>Provides a mutable context for configuring outgoing message properties.</p>
+      <dd><p>Provides a write-only context for configuring outgoing message properties. Every member sets a value on the
+message being published; nothing is read back through this interface.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -105,8 +106,23 @@ Interfaces
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IRequestContext.html">IRequestContext</a></dt>
+      <dd><p>Extends <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html">IPublishContext</a> with request-specific configuration options, such as timeouts.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IRequester.html">IRequester</a></dt>
       <dd><p>Sends a request message and awaits a response from a remote consumer.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html">ISendEndpoint</a></dt>
+      <dd><p>Sends messages to a single, addressable destination (point-to-point delivery).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html">ISendEndpointProvider</a></dt>
+      <dd><p>Resolves <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html">ISendEndpoint</a> instances for point-to-point message delivery.</p>
 </dd>
     </dl>
 

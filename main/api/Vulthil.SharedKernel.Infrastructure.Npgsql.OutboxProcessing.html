@@ -95,8 +95,9 @@
 Classes
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStrategy.html">NpgsqlOutboxStrategy</a></dt>
-      <dd><p>PostgreSQL-optimized outbox strategy that uses SELECT ... FOR UPDATE SKIP LOCKED to fetch messages concurrently.</p>
+      <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.html">NpgsqlOutboxStore&lt;TContext&gt;</a></dt>
+      <dd><p>PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple
+processors can drain distinct rows concurrently.</p>
 </dd>
     </dl>
     <dl class="jumplist">

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Registration | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Base record for a consumer-to-message binding within a queue.">
+      <meta name="description" content="Base record for a consumer registration on a queue, binding a consumer to the message type it handles. Routing-key patterns belong on  (queue→exchange binding) or  (producer-side routing key).">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Queues_Registration" data-uid="Vulthil.Messaging.Queues.Registration" class="text-break">
-Class Registration  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L29"><i class="bi bi-code-slash"></i></a>
+Class Registration  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class Registration  <a class="header-action link-secondary" title="View source" 
   <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Base record for a consumer-to-message binding within a queue.</p>
+  <div class="markdown summary"><p>Base record for a consumer registration on a queue, binding a consumer to the message type it handles.
+Routing-key patterns belong on <a class="xref" href="Vulthil.Messaging.Queues.Subscription.html">Subscription</a> (queue→exchange binding) or
+<a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">MessageConfiguration&lt;TMessage&gt;</a> (producer-side routing key).</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -177,7 +179,7 @@ Class Registration  <a class="header-action link-secondary" title="View source" 
 
   <h3 id="Vulthil_Messaging_Queues_Registration_ConsumerType" data-uid="Vulthil.Messaging.Queues.Registration.ConsumerType">
   ConsumerType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the consumer type responsible for processing the bound message.</p>
@@ -209,7 +211,7 @@ Class Registration  <a class="header-action link-secondary" title="View source" 
 
   <h3 id="Vulthil_Messaging_Queues_Registration_MessageType" data-uid="Vulthil.Messaging.Queues.Registration.MessageType">
   MessageType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the message type that this consumer is registered to handle.</p>
@@ -241,7 +243,7 @@ Class Registration  <a class="header-action link-secondary" title="View source" 
 
   <h3 id="Vulthil_Messaging_Queues_Registration_RetryPolicy" data-uid="Vulthil.Messaging.Queues.Registration.RetryPolicy">
   RetryPolicy
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the per-consumer retry policy, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to inherit the queue-level default.</p>
@@ -269,43 +271,11 @@ Class Registration  <a class="header-action link-secondary" title="View source" 
 
 
 
-  <a id="Vulthil_Messaging_Queues_Registration_RoutingKey_" data-uid="Vulthil.Messaging.Queues.Registration.RoutingKey*"></a>
-
-  <h3 id="Vulthil_Messaging_Queues_Registration_RoutingKey" data-uid="Vulthil.Messaging.Queues.Registration.RoutingKey">
-  RoutingKey
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L42"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets the routing key pattern used to filter messages for this binding. Default is &quot;#&quot; (match all).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string RoutingKey { get; init; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L29" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L31" class="edit-link">Edit this page</a>
         </div>
 
 

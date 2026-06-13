@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Queues_RetryPolicyDefinition" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition" class="text-break">
-Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L39"><i class="bi bi-code-slash"></i></a>
+Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -167,7 +167,7 @@ Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View
 
   <h3 id="Vulthil_Messaging_Queues_RetryPolicyDefinition_IgnoreExceptions" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.IgnoreExceptions">
   IgnoreExceptions
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the fully-qualified type names of exceptions that should be excluded from retry attempts.</p>
@@ -195,11 +195,46 @@ Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View
 
 
 
+  <a id="Vulthil_Messaging_Queues_RetryPolicyDefinition_InMemory_" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.InMemory*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_RetryPolicyDefinition_InMemory" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.InMemory">
+  InMemory
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether retries run in-memory — the consumer is re-invoked in-process
+while the delivery is held — rather than via delayed re-delivery through the retry queue. In-memory
+retries preserve message order (a later message cannot overtake the one being retried), so they are
+used automatically for partitioned queues. Defaults to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> (delayed re-delivery).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool InMemory { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Vulthil_Messaging_Queues_RetryPolicyDefinition_Intervals_" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.Intervals*"></a>
 
   <h3 id="Vulthil_Messaging_Queues_RetryPolicyDefinition_Intervals" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.Intervals">
   Intervals
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L100"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the delay intervals between successive retry attempts.</p>
@@ -231,7 +266,7 @@ Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View
 
   <h3 id="Vulthil_Messaging_Queues_RetryPolicyDefinition_JitterFactor" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.JitterFactor">
   JitterFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the jitter factor (0.0–1.0) applied to retry intervals.</p>
@@ -263,7 +298,7 @@ Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View
 
   <h3 id="Vulthil_Messaging_Queues_RetryPolicyDefinition_MaxRetryCount" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.MaxRetryCount">
   MaxRetryCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the maximum number of retry attempts.</p>
@@ -299,7 +334,7 @@ Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View
 
   <h3 id="Vulthil_Messaging_Queues_RetryPolicyDefinition_GetDelay_System_Int32_" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.GetDelay(System.Int32)">
   GetDelay(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L133"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calculates the delay for the specified retry attempt, applying jitter when configured.</p>
@@ -338,7 +373,7 @@ Class RetryPolicyDefinition  <a class="header-action link-secondary" title="View
 
   <h3 id="Vulthil_Messaging_Queues_RetryPolicyDefinition_GetIgnoredExceptionTypes" data-uid="Vulthil.Messaging.Queues.RetryPolicyDefinition.GetIgnoredExceptionTypes">
   GetIgnoredExceptionTypes()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the resolved CLR exception types that should be excluded from retry attempts.
@@ -371,7 +406,7 @@ Lazily resolves from <a class="xref" href="Vulthil.Messaging.Queues.RetryPolicyD
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L39" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L80" class="edit-link">Edit this page</a>
         </div>
 
 

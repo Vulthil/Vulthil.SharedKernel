@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_BaseWebApplicationFactory_1" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1" class="text-break">
-Class BaseWebApplicationFactory&lt;TEntryPoint&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L24"><i class="bi bi-code-slash"></i></a>
+Class BaseWebApplicationFactory&lt;TEntryPoint&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -227,8 +227,80 @@ are still pending and tolerates a concurrent migrator, so an application that mi
 ownership and the factory never interferes with the application's own migration logic.
 Use a derived factory as an <span class="xref">Xunit.IClassFixture&lt;TFixture&gt;</span> (or collection fixture) so its containers
 are started once and shared across the tests in that scope, while
-<a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-2.html">BaseIntegrationTestCase&lt;TFactory, TEntryPoint&gt;</a> resets database state between tests.</p>
+<a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-2.html">BaseIntegrationTestCase&lt;TFactory, TEntryPoint&gt;</a> resets database state between tests.
+To share containers across many parallel test classes, register them on a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a> assembly
+fixture instead and pass it to the <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1__ctor_Vulthil_xUnit_Fixtures_ContainerHost_">BaseWebApplicationFactory(ContainerHost)</a> constructor;
+the factory then consumes every host container through a per-factory scope view (an isolated database, virtual
+host, ...) so test classes run in parallel against shared containers without interfering.</p>
 </div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Vulthil_xUnit_BaseWebApplicationFactory_1__ctor_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor*"></a>
+
+  <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1__ctor" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor">
+  BaseWebApplicationFactory()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a factory that owns its containers exclusively; register them with <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_AddContainer_Vulthil_xUnit_Fixtures_ITestContainer_">AddContainer(ITestContainer)</a> in
+the constructor or in <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_ConfigureContainers">ConfigureContainers()</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected BaseWebApplicationFactory()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_xUnit_BaseWebApplicationFactory_1__ctor_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor*"></a>
+
+  <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1__ctor_Vulthil_xUnit_Fixtures_ContainerHost_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor(Vulthil.xUnit.Fixtures.ContainerHost)">
+  BaseWebApplicationFactory(ContainerHost)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a factory that consumes the shared containers of <code class="paramref">containerHost</code>. Every container
+registered on the host is consumed through a per-factory scope view (filter with
+<a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_ShouldUseContainer_Vulthil_xUnit_Fixtures_ITestContainer_">ShouldUseContainer(ITestContainer)</a>), so no per-factory container registration is needed and parallel test
+classes share the running containers without sharing state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected BaseWebApplicationFactory(ContainerHost containerHost)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>containerHost</code> <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a></dt>
+    <dd><p>The assembly-level host whose containers this factory consumes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <h2 class="section" id="properties">Properties
@@ -239,7 +311,7 @@ are started once and shared across the tests in that scope, while
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_ContainersWithConnectionStrings" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.ContainersWithConnectionStrings">
   ContainersWithConnectionStrings
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the registered containers that expose a connection string, used for injecting settings into the test host.</p>
@@ -271,7 +343,7 @@ are started once and shared across the tests in that scope, while
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_DatabaseContainers" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.DatabaseContainers">
   DatabaseContainers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the registered database containers that support migrations and data resets.</p>
@@ -307,7 +379,7 @@ are started once and shared across the tests in that scope, while
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_AddContainer_Vulthil_xUnit_Fixtures_ITestContainer_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer)">
   AddContainer(ITestContainer)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a test container to be managed by this factory.</p>
@@ -340,7 +412,7 @@ are started once and shared across the tests in that scope, while
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_AddHttpMock_System_String_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.AddHttpMock(System.String)">
   AddHttpMock(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an in-process HTTP mock for the named <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a> registered with
@@ -382,7 +454,7 @@ its primary message handler. Configure responses per test via <a class="xref" hr
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_AddHttpMock__1" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.AddHttpMock``1">
   AddHttpMock&lt;TClient&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an in-process HTTP mock for the typed client <code class="typeparamref">TClient</code> (as registered with
@@ -423,7 +495,7 @@ need to be accessible. See <a class="xref" href="Vulthil.xUnit.BaseWebApplicatio
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_ConfigureContainers" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureContainers">
   ConfigureContainers()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L141"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Override to register test containers by calling <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_AddContainer_Vulthil_xUnit_Fixtures_ITestContainer_">AddContainer(ITestContainer)</a>.</p>
@@ -456,7 +528,7 @@ need to be accessible. See <a class="xref" href="Vulthil.xUnit.BaseWebApplicatio
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_ConfigureCustomWebHost_Microsoft_AspNetCore_Hosting_IWebHostBuilder_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureCustomWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)">
   ConfigureCustomWebHost(IWebHostBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L175"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Override to apply additional <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.hosting.iwebhostbuilder">IWebHostBuilder</a> configuration for tests.</p>
@@ -489,7 +561,7 @@ need to be accessible. See <a class="xref" href="Vulthil.xUnit.BaseWebApplicatio
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_ConfigureWebHost_Microsoft_AspNetCore_Hosting_IWebHostBuilder_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)">
   ConfigureWebHost(IWebHostBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L177"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gives a fixture an opportunity to configure the application before it gets built.</p>
@@ -518,11 +590,46 @@ need to be accessible. See <a class="xref" href="Vulthil.xUnit.BaseWebApplicatio
 
 
 
+  <a id="Vulthil_xUnit_BaseWebApplicationFactory_1_CreateScopeId_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.CreateScopeId*"></a>
+
+  <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_CreateScopeId" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.CreateScopeId">
+  CreateScopeId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates the identifier under which this factory's scopes are isolated inside shared containers (database
+names, virtual hosts, ...). The default combines the factory type name with a random suffix, yielding a new
+unique scope per factory instance — that is, per test class when the factory is used as a class fixture.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual string CreateScopeId()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A short, unique, lowercase identifier that is safe to embed in names.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Vulthil_xUnit_BaseWebApplicationFactory_1_DisposeAsync_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.DisposeAsync*"></a>
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_DisposeAsync" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.DisposeAsync">
   DisposeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L268"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or
@@ -556,7 +663,7 @@ resetting unmanaged resources asynchronously.</p>
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_GetHttpMock_System_String_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.GetHttpMock(System.String)">
   GetHttpMock(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the HTTP mock registered for the named HTTP client <code class="paramref">name</code>.</p>
@@ -601,7 +708,7 @@ resetting unmanaged resources asynchronously.</p>
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_GetHttpMock__1" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.GetHttpMock``1">
   GetHttpMock&lt;TClient&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L134"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the HTTP mock registered for the typed client <code class="typeparamref">TClient</code>.</p>
@@ -646,10 +753,12 @@ resetting unmanaged resources asynchronously.</p>
 
   <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_InitializeAsync" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.InitializeAsync">
   InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L228"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Registers and starts every configured test container in parallel. Invoked once by xUnit before the tests in scope run.</p>
+  <div class="markdown level1 summary"><p>Registers and initializes every consumed test container in parallel. Invoked once by xUnit before the tests in
+scope run. Factory-owned containers are started here; containers consumed from a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a>
+are started on the host (once per test run) and only their per-factory scopes are provisioned here.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -675,11 +784,52 @@ resetting unmanaged resources asynchronously.</p>
 
 
 
+  <a id="Vulthil_xUnit_BaseWebApplicationFactory_1_ShouldUseContainer_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.ShouldUseContainer*"></a>
+
+  <h3 id="Vulthil_xUnit_BaseWebApplicationFactory_1_ShouldUseContainer_Vulthil_xUnit_Fixtures_ITestContainer_" data-uid="Vulthil.xUnit.BaseWebApplicationFactory`1.ShouldUseContainer(Vulthil.xUnit.Fixtures.ITestContainer)">
+  ShouldUseContainer(ITestContainer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Decides whether a container registered on the <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a> is consumed by this factory. All
+host containers are consumed by default; override to exclude containers a factory's scenario does not use
+(excluded containers are not started by this factory either, thanks to lazy host startup).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual bool ShouldUseContainer(ITestContainer container)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>container</code> <a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainer.html">ITestContainer</a></dt>
+    <dd><p>A container registered on the host.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> to consume the container; otherwise <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L24" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseWebApplicationFactory.cs/#L32" class="edit-link">Edit this page</a>
         </div>
 
 

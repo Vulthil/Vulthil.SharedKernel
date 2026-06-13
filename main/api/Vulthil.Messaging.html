@@ -95,6 +95,13 @@
 Classes
 </h3>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.ConsumeFilterOptions.html">ConsumeFilterOptions</a></dt>
+      <dd><p>Configures the built-in consume filters that <code>AddMessaging</code> registers by default.
+Each flag toggles a specific filter on or off; setting a flag to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>
+causes the filter to pass deliveries straight through without performing its work.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.DependencyInjection.html">DependencyInjection</a></dt>
       <dd><p>Provides extension methods for registering messaging services.</p>
 </dd>
@@ -102,7 +109,7 @@ Classes
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.MessageConfiguration.html">MessageConfiguration</a></dt>
       <dd><p>Configuration used when publishing or binding a message type.
-Contains exchange declaration settings and optional formatters for routing keys and correlation ids.</p>
+Contains exchange declaration settings, the stable wire URN, and optional formatters for routing keys and correlation ids.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -111,8 +118,18 @@ Contains exchange declaration settings and optional formatters for routing keys 
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.Messaging.MessagingOptions.html">MessagingOptions</a></dt>
-      <dd><p>Global messaging configuration options including serialization, timeouts, and fault handling.</p>
+      <dt><a class="xref" href="Vulthil.Messaging.PartitionSpec.html">PartitionSpec</a></dt>
+      <dd><p>Records how a message type is partitioned for ordered consumption: the <a class="xref" href="Vulthil.Messaging.PartitionSpec.html#Vulthil_Messaging_PartitionSpec_Partitioner">Partitioner</a>
+whose lanes serialize same-key processing, and the typed key selector (held as a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.delegate">Delegate</a>
+because the message type is only known generically at registration). The transport resolves the
+concrete selector via the registered message type.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Partitioner.html">Partitioner</a></dt>
+      <dd><p>Distributes work across a fixed number of ordered partitions (&quot;lanes&quot;), selected by a hash of a
+partition key. Work submitted for the same key runs strictly sequentially and in submission order;
+work for keys that hash to different lanes runs concurrently.</p>
 </dd>
     </dl>
     <h3 id="interfaces">
@@ -120,13 +137,19 @@ Interfaces
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.IMessageConfigurationProvider.html">IMessageConfigurationProvider</a></dt>
-      <dd><p>Provides access to message configuration and a few transport-friendly helpers.
-Implementations live in the messaging assembly and may call internal APIs.</p>
+      <dd><p>Read-only view of the messaging options resolved at runtime by transports, consumers, and filters.
+Backed by the same instance that <a class="xref" href="Vulthil.Messaging.IMessagingOptionsConfigurator.html">IMessagingOptionsConfigurator</a> writes to during composition.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
       <dd><p>Fluent configurator for registering messaging queues, consumers, and options.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.IMessagingOptionsConfigurator.html">IMessagingOptionsConfigurator</a></dt>
+      <dd><p>Mutable view of the messaging options used during composition. Passed to the action
+of <a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html#Vulthil_Messaging_IMessagingConfigurator_ConfigureMessagingOptions_System_Action_Vulthil_Messaging_IMessagingOptionsConfigurator__">ConfigureMessagingOptions(Action&lt;IMessagingOptionsConfigurator&gt;)</a>.</p>
 </dd>
     </dl>
     <dl class="jumplist">

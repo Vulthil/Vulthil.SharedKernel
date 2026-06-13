@@ -132,6 +132,21 @@
 <pre><code class="lang-csharp">Result&lt;OrderDto&gt; result = await requester.RequestAsync&lt;GetOrderRequest, OrderDto&gt;(
     new GetOrderRequest(orderId), cancellationToken: ct);
 </code></pre>
+<p>Pass an optional <code>Func&lt;IRequestContext, Task&gt;</code> to configure the request. The
+context exposes the <code>IPublishContext</code> members (routing key, correlation id,
+headers) plus <code>SetTimeout</code> for overriding the default response timeout per request:</p>
+<pre><code class="lang-csharp">Result&lt;OrderDto&gt; result = await requester.RequestAsync&lt;GetOrderRequest, OrderDto&gt;(
+    new GetOrderRequest(orderId),
+    ctx =&gt; { ctx.SetTimeout(TimeSpan.FromSeconds(5)); return Task.CompletedTask; },
+    cancellationToken: ct);
+</code></pre>
+<p>See <a href="../messaging.html#configuring-the-request">Messaging — Request/Reply</a> for details.</p>
+<h3 id="publishing-from-a-consumer">Publishing from a consumer</h3>
+<p><code>IMessageContext</code> exposes <code>PublishAsync</code> with automatic correlation propagation
+(<code>CorrelationId</code>, <code>ConversationId</code>, <code>InitiatorId</code> flow from the incoming context):</p>
+<pre><code class="lang-csharp">await ctx.PublishAsync(new InventoryReserveRequested(ctx.Message.OrderId));
+</code></pre>
+<p>See <a href="../messaging.html#publishing-from-inside-a-consumer">Messaging</a> for details.</p>
 
 </article>
 

@@ -87,7 +87,9 @@
         <article data-uid="">
 <h1 id="vulthilsharedkernelinfrastructure">Vulthil.SharedKernel.Infrastructure</h1>
 
-<p>Use <code>Vulthil.SharedKernel.Infrastructure</code> for persistence and outbox integration.</p>
+<p>Use <code>Vulthil.SharedKernel.Infrastructure</code> for persistence and outbox integration. It hosts the outbox engine
+(factored into <a href="vulthil-sharedkernel-outbox.html"><code>Vulthil.SharedKernel.Outbox</code></a>) and adds the <code>DbContext</code> base and
+the DI wiring (<code>EnableOutboxProcessing</code>).</p>
 <h2 id="when-to-use">When to use</h2>
 <ul>
 <li>EF Core <code>DbContext</code> setup and migrations/ensure-created helpers</li>

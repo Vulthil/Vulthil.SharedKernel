@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_RabbitMq_MessagingConfiguratorExtensions" data-uid="Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions" class="text-break">
-Class MessagingConfiguratorExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L17"><i class="bi bi-code-slash"></i></a>
+Class MessagingConfiguratorExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -155,9 +155,9 @@ Class MessagingConfiguratorExtensions  <a class="header-action link-secondary" t
 
   <a id="Vulthil_Messaging_RabbitMq_MessagingConfiguratorExtensions_UseRabbitMq_" data-uid="Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq*"></a>
 
-  <h3 id="Vulthil_Messaging_RabbitMq_MessagingConfiguratorExtensions_UseRabbitMq_Vulthil_Messaging_IMessagingConfigurator_System_String_System_Action_Aspire_RabbitMQ_Client_RabbitMQClientSettings__System_Action_RabbitMQ_Client_ConnectionFactory__" data-uid="Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq(Vulthil.Messaging.IMessagingConfigurator,System.String,System.Action{Aspire.RabbitMQ.Client.RabbitMQClientSettings},System.Action{RabbitMQ.Client.ConnectionFactory})">
-  UseRabbitMq(IMessagingConfigurator, string, Action&lt;RabbitMQClientSettings&gt;?, Action&lt;ConnectionFactory&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_Messaging_RabbitMq_MessagingConfiguratorExtensions_UseRabbitMq_Vulthil_Messaging_IMessagingConfigurator_System_String_System_Action_Aspire_RabbitMQ_Client_RabbitMQClientSettings__System_Action_RabbitMQ_Client_ConnectionFactory__System_Action_Vulthil_Messaging_RabbitMq_RabbitMqTransportOptions__" data-uid="Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq(Vulthil.Messaging.IMessagingConfigurator,System.String,System.Action{Aspire.RabbitMQ.Client.RabbitMQClientSettings},System.Action{RabbitMQ.Client.ConnectionFactory},System.Action{Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions})">
+  UseRabbitMq(IMessagingConfigurator, string, Action&lt;RabbitMQClientSettings&gt;?, Action&lt;ConnectionFactory&gt;?, Action&lt;RabbitMqTransportOptions&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the messaging infrastructure to use RabbitMQ as the transport.</p>
@@ -165,7 +165,7 @@ Class MessagingConfiguratorExtensions  <a class="header-action link-secondary" t
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IMessagingConfigurator UseRabbitMq(this IMessagingConfigurator configurator, string connectionStringKey = &quot;rabbitMq&quot;, Action&lt;RabbitMQClientSettings&gt;? configureSettings = null, Action&lt;ConnectionFactory&gt;? configureConnectionFactory = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static IMessagingConfigurator UseRabbitMq(this IMessagingConfigurator configurator, string connectionStringKey = &quot;rabbitMq&quot;, Action&lt;RabbitMQClientSettings&gt;? configureSettings = null, Action&lt;ConnectionFactory&gt;? configureConnectionFactory = null, Action&lt;RabbitMqTransportOptions&gt;? configureTransport = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -183,6 +183,10 @@ activity source, so the entire RabbitMQ tracing pipeline (Aspire client + Vulthi
 </dd>
     <dt><code>configureConnectionFactory</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">ConnectionFactory</span>&gt;</dt>
     <dd><p>Optional callback for tuning the underlying <span class="xref">RabbitMQ.Client.ConnectionFactory</span>.</p>
+</dd>
+    <dt><code>configureTransport</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions.html">RabbitMqTransportOptions</a>&gt;</dt>
+    <dd><p>Optional callback for tuning the Vulthil RabbitMQ transport (e.g. the publish channel pool size). Options are
+first bound from the <code>Messaging:RabbitMq</code> configuration section; this callback then runs and takes precedence.</p>
 </dd>
   </dl>
 
@@ -207,7 +211,7 @@ activity source, so the entire RabbitMQ tracing pipeline (Aspire client + Vulthi
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L17" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L19" class="edit-link">Edit this page</a>
         </div>
 
 

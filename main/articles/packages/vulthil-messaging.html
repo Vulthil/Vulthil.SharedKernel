@@ -133,6 +133,12 @@
     c.Bind&lt;OrderCreatedEvent&gt;(&quot;order.eu&quot;);
 });
 </code></pre>
+<h3 id="configuration-driven-setup">Configuration-driven setup</h3>
+<p>Queue and message settings under <code>Messaging:Queues:*</code> and <code>Messaging:Messages:*</code>
+are loaded from <code>IConfiguration</code> before the configurator action runs, so a service
+can be configured entirely via <code>appsettings.json</code>. Code calls merge on top of the
+loaded values, with code winning on conflict. See
+<a href="../messaging.html#configuration-driven-setup">Messaging — Configuration-driven Setup</a>.</p>
 
 </article>
 

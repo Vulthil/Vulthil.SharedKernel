@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IPublishContext | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Provides a mutable context for configuring outgoing message properties.">
+      <meta name="description" content="Provides a write-only context for configuring outgoing message properties. Every member sets a value on the message being published; nothing is read back through this interface.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext" class="text-break">
-Interface IPublishContext  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L25"><i class="bi bi-code-slash"></i></a>
+Interface IPublishContext  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L7"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Interface IPublishContext  <a class="header-action link-secondary" title="View s
   <dl><dt>Assembly</dt><dd>Vulthil.Messaging.Abstractions.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Provides a mutable context for configuring outgoing message properties.</p>
+  <div class="markdown summary"><p>Provides a write-only context for configuring outgoing message properties. Every member sets a value on the
+message being published; nothing is read back through this interface.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -124,170 +125,6 @@ Interface IPublishContext  <a class="header-action link-secondary" title="View s
 
 
 
-  <h2 class="section" id="properties">Properties
-</h2>
-
-
-  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_ConversationId_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ConversationId*"></a>
-
-  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_ConversationId" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ConversationId">
-  ConversationId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L55"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the conversation identifier that groups related messages across services.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">string? ConversationId { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_FaultAddress_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.FaultAddress*"></a>
-
-  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_FaultAddress" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.FaultAddress">
-  FaultAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L67"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the address where fault notifications for this message should be sent.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Uri? FaultAddress { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_InitiatorId_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.InitiatorId*"></a>
-
-  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_InitiatorId" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.InitiatorId">
-  InitiatorId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L59"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the identifier of the message that initiated this chain.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">string? InitiatorId { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_MessageId_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.MessageId*"></a>
-
-  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_MessageId" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.MessageId">
-  MessageId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L51"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the unique message identifier assigned to the outgoing message.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">string? MessageId { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_ResponseAddress_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ResponseAddress*"></a>
-
-  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_ResponseAddress" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.ResponseAddress">
-  ResponseAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L63"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the address where replies to this message should be sent.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Uri? ResponseAddress { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -296,7 +133,7 @@ Interface IPublishContext  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_AddHeader_System_String_System_Object_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeader(System.String,System.Object)">
   AddHeader(string, object?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a custom header to the published message.</p>
@@ -332,7 +169,7 @@ Interface IPublishContext  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_AddHeaders_System_Collections_Generic_IDictionary_System_String_System_Object__" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary{System.String,System.Object})">
   AddHeaders(IDictionary&lt;string, object?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds multiple custom headers to the published message.</p>
@@ -361,11 +198,44 @@ Interface IPublishContext  <a class="header-action link-secondary" title="View s
 
 
 
+  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetConversationId_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetConversationId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetConversationId_System_String_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetConversationId(System.String)">
+  SetConversationId(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the conversation identifier that groups related messages across services.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetConversationId(string conversationId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>conversationId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The conversation identifier.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
   <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetCorrelationId_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetCorrelationId*"></a>
 
   <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetCorrelationId_System_String_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetCorrelationId(System.String)">
   SetCorrelationId(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the correlation identifier for the published message.</p>
@@ -394,11 +264,143 @@ Interface IPublishContext  <a class="header-action link-secondary" title="View s
 
 
 
+  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetFaultAddress_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetFaultAddress*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetFaultAddress_System_Uri_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetFaultAddress(System.Uri)">
+  SetFaultAddress(Uri)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the address where fault notifications for this message should be sent.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetFaultAddress(Uri faultAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>faultAddress</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd><p>The fault address.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetInitiatorId_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetInitiatorId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetInitiatorId_System_String_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetInitiatorId(System.String)">
+  SetInitiatorId(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the identifier of the message that initiated this chain.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetInitiatorId(string initiatorId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>initiatorId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The initiator identifier.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetMessageId_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetMessageId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetMessageId_System_String_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetMessageId(System.String)">
+  SetMessageId(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the unique message identifier assigned to the outgoing message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetMessageId(string messageId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>messageId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The message identifier.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetResponseAddress_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetResponseAddress*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetResponseAddress_System_Uri_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetResponseAddress(System.Uri)">
+  SetResponseAddress(Uri)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the address where replies to this message should be sent.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetResponseAddress(Uri responseAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>responseAddress</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd><p>The response address.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
   <a id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetRoutingKey_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetRoutingKey*"></a>
 
   <h3 id="Vulthil_Messaging_Abstractions_Publishers_IPublishContext_SetRoutingKey_System_String_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.SetRoutingKey(System.String)">
   SetRoutingKey(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the routing key for the published message.</p>
@@ -431,7 +433,7 @@ Interface IPublishContext  <a class="header-action link-secondary" title="View s
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublisher.cs/#L25" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IPublishContext.cs/#L7" class="edit-link">Edit this page</a>
         </div>
 
 

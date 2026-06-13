@@ -95,8 +95,10 @@
 Classes
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStrategy.html">CosmosOutboxStrategy</a></dt>
-      <dd><p>Cosmos outbox strategy - uses a simple relational query as a fallback. Consumers targeting Cosmos should implement an SDK-backed strategy for best performance.</p>
+      <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.html">CosmosOutboxStore&lt;TContext&gt;</a></dt>
+      <dd><p>Cosmos outbox store. Cosmos DB has no cross-partition transaction, so the relay runs without an ambient
+transaction (best-effort): it uses the base LINQ fetch and materialized update. Consumers targeting Cosmos at
+scale should supply an SDK-backed store.</p>
 </dd>
     </dl>
     <dl class="jumplist">

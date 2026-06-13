@@ -130,6 +130,32 @@
   }
 }
 </code></pre>
+<h3 id="transport-options">Transport options</h3>
+<p>Transport tuning binds from the <code>Messaging:RabbitMq</code> section and can be overridden in
+code (code takes precedence). The publisher pools channels for concurrent publishing —
+each leased channel awaits its own publisher confirm — so <code>PublishChannelPoolSize</code>
+(default <code>10</code>) bounds how many publishes can be in flight at once.</p>
+<pre><code class="lang-json">{
+  &quot;Messaging&quot;: {
+    &quot;RabbitMq&quot;: {
+      &quot;PublishChannelPoolSize&quot;: 32
+    }
+  }
+}
+</code></pre>
+<pre><code class="lang-csharp">messaging.UseRabbitMq(configureTransport: options =&gt;
+{
+    options.PublishChannelPoolSize = 32;
+});
+</code></pre>
+<h3 id="tracing-and-health-checks">Tracing and health checks</h3>
+<p><code>UseRabbitMq</code> registers an OpenTelemetry <code>ActivitySource</code>
+(<code>&quot;Vulthil.Messaging.RabbitMq&quot;</code>) and a startup health check
+(<code>&quot;vulthil_messaging_rabbitmq_bus&quot;</code>). Both registrations are gated on the Aspire
+client's <code>DisableTracing</code> / <code>DisableHealthChecks</code> flags, so the toggles propagate
+through to the Vulthil instrumentation. See
+<a href="../messaging.html#observability">Messaging — Observability</a> and
+<a href="../messaging.html#health-checks">Messaging — Health Checks</a>.</p>
 
 </article>
 

@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1" class="text-break">
-Interface IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Interface IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -123,9 +123,6 @@ Interface IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;  <a class="heade
   <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
   </div>
-  <div>
-      <a class="xref" href="Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__">DependencyInjectionExtensions.UseMySql&lt;TContext&gt;(IDatabaseInfrastructureConfigurator&lt;TContext&gt;)</a>
-  </div>
   </dd></dl>
 
 
@@ -140,7 +137,7 @@ Interface IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;  <a class="heade
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_HostApplicationBuilder" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.HostApplicationBuilder">
   HostApplicationBuilder
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Provides access to the host application builder for configuring services and settings.</p>
@@ -172,7 +169,7 @@ Interface IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;  <a class="heade
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_OutboxProcessingEnabled" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.OutboxProcessingEnabled">
   OutboxProcessingEnabled
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether outbox processing has been enabled on this configurator.
@@ -209,9 +206,9 @@ settings that are required for the outbox transaction strategy to work).</p>
 
   <a id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_EnableOutboxProcessing_" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.EnableOutboxProcessing*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_EnableOutboxProcessing_System_Action_Vulthil_SharedKernel_Infrastructure_OutboxProcessing_OutboxProcessingOptions__" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.EnableOutboxProcessing(System.Action{Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions})">
+  <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_EnableOutboxProcessing_System_Action_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.EnableOutboxProcessing(System.Action{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})">
   EnableOutboxProcessing(Action&lt;OutboxProcessingOptions&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Enables outbox processing with optional configuration.</p>
@@ -224,7 +221,7 @@ settings that are required for the outbox transaction strategy to work).</p>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>optionsAction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Infrastructure.OutboxProcessing.OutboxProcessingOptions.html">OutboxProcessingOptions</a>&gt;</dt>
+    <dt><code>optionsAction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html">OutboxProcessingOptions</a>&gt;</dt>
     <dd><p>An optional action to configure outbox processing options.</p>
 </dd>
   </dl>
@@ -250,7 +247,7 @@ settings that are required for the outbox transaction strategy to work).</p>
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_OnConfigured_System_Action_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator__0___" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.OnConfigured(System.Action{Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{`0}})">
   OnConfigured(Action&lt;IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a callback that runs once the configurator action has finished executing
@@ -289,19 +286,19 @@ processing has been enabled — regardless of the order in which the user chaine
 
 
 
-  <a id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseOutboxStrategy_" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseOutboxStrategy*"></a>
+  <a id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseOutboxStore_" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseOutboxStore*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseOutboxStrategy__1" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseOutboxStrategy``1">
-  UseOutboxStrategy&lt;T&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseOutboxStore__1" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseOutboxStore``1">
+  UseOutboxStore&lt;T&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Configures the database infrastructure to use the specified outbox strategy.</p>
+  <div class="markdown level1 summary"><p>Configures the database infrastructure to use the specified outbox store.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseOutboxStrategy&lt;T&gt;() where T : class, IOutboxStrategy</code></pre>
+    <pre><code class="lang-csharp hljs">IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseOutboxStore&lt;T&gt;() where T : class, IOutboxStore</code></pre>
   </div>
 
 
@@ -315,7 +312,7 @@ processing has been enabled — regardless of the order in which the user chaine
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
     <dt><code>T</code></dt>
-    <dd><p>The type of outbox strategy to use.</p>
+    <dd><p>The type of outbox store to use.</p>
 </dd>
   </dl>
 
@@ -332,7 +329,7 @@ processing has been enabled — regardless of the order in which the user chaine
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

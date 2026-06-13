@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IRequestConfigurator&lt;TConsumer&gt; | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Configures per-consumer routing key overrides for request/reply consumers.">
+      <meta name="description" content="Configures per-request-consumer settings. Binding patterns live on ; routing-key formatters for the producer side live on .">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Queues_IRequestConfigurator_1" data-uid="Vulthil.Messaging.Queues.IRequestConfigurator`1" class="text-break">
-Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/ConsumerConfigurator.cs/#L73"><i class="bi bi-code-slash"></i></a>
+Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IRequestConfigurator.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,14 @@ Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-se
   <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Configures per-consumer routing key overrides for request/reply consumers.</p>
+  <div class="markdown summary"><p>Configures per-request-consumer settings. Binding patterns live on
+<a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_">Subscribe&lt;TMessage&gt;(string?)</a>; routing-key formatters for the producer side
+live on <a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">MessageConfiguration&lt;TMessage&gt;</a>.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IRequestConfigurator&lt;TConsumer&gt; where TConsumer : IRequestConsumer</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IRequestConfigurator&lt;TConsumer&gt; : IBaseConfigurator&lt;IRequestConfigurator&lt;TConsumer&gt;&gt; where TConsumer : IRequestConsumer</code></pre>
   </div>
 
 
@@ -110,13 +112,20 @@ Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-se
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
     <dt><code>TConsumer</code></dt>
-    <dd><p>The request consumer type.</p>
+    <dd><p>The request consumer type; reserved on the interface to keep parity with <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_AddRequestConsumer__1_System_Action_Vulthil_Messaging_Queues_IRequestConfigurator___0___">AddRequestConsumer&lt;TConsumer&gt;(Action&lt;IRequestConfigurator&lt;TConsumer&gt;&gt;?)</a> and future per-consumer-type knobs.</p>
 </dd>
   </dl>
 
 
 
 
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Vulthil.Messaging.Queues.IBaseConfigurator-1.html#Vulthil_Messaging_Queues_IBaseConfigurator_1_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__">IBaseConfigurator&lt;IRequestConfigurator&lt;TConsumer&gt;&gt;.UseRetry(Action&lt;RetryPolicyConfigurator&gt;)</a>
+    </div>
+  </dd></dl>
 
   <dl class="typelist extensionMethods">
     <dt>Extension Methods</dt>
@@ -130,96 +139,11 @@ Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-se
 
 
 
-  <h2 class="section" id="methods">Methods
-</h2>
-
-
-  <a id="Vulthil_Messaging_Queues_IRequestConfigurator_1_Bind_" data-uid="Vulthil.Messaging.Queues.IRequestConfigurator`1.Bind*"></a>
-
-  <h3 id="Vulthil_Messaging_Queues_IRequestConfigurator_1_Bind__2_System_String_" data-uid="Vulthil.Messaging.Queues.IRequestConfigurator`1.Bind``2(System.String)">
-  Bind&lt;TRequest, TResponse&gt;(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/ConsumerConfigurator.cs/#L82"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Binds a request/response message pair to a routing key for the configured request consumer.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IRequestConfigurator&lt;TConsumer&gt; Bind&lt;TRequest, TResponse&gt;(string routingKey) where TRequest : notnull where TResponse : notnull</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>routingKey</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd><p>The routing key to use for the request binding.</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.Messaging.Queues.IRequestConfigurator-1.html">IRequestConfigurator</a>&lt;TConsumer&gt;</dt>
-    <dd><p>The current request configurator instance.</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Type Parameters</h4>
-  <dl class="parameters">
-    <dt><code>TRequest</code></dt>
-    <dd><p>The request message type.</p>
-</dd>
-    <dt><code>TResponse</code></dt>
-    <dd><p>The response message type.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-  <a id="Vulthil_Messaging_Queues_IRequestConfigurator_1_UseRetry_" data-uid="Vulthil.Messaging.Queues.IRequestConfigurator`1.UseRetry*"></a>
-
-  <h3 id="Vulthil_Messaging_Queues_IRequestConfigurator_1_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__" data-uid="Vulthil.Messaging.Queues.IRequestConfigurator`1.UseRetry(System.Action{Vulthil.Messaging.Queues.RetryPolicyConfigurator})">
-  UseRetry(Action&lt;RetryPolicyConfigurator&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/ConsumerConfigurator.cs/#L89"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Configures a retry policy for this request consumer.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void UseRetry(Action&lt;RetryPolicyConfigurator&gt; value)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.RetryPolicyConfigurator.html">RetryPolicyConfigurator</a>&gt;</dt>
-    <dd><p>An action to configure the retry policy.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/ConsumerConfigurator.cs/#L73" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IRequestConfigurator.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

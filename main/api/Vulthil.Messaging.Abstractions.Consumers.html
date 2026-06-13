@@ -100,13 +100,22 @@ Classes
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.RoutingKeyAttribute.html">RoutingKeyAttribute</a></dt>
-      <dd><p>Specifies a routing key pattern to use when binding a consumer to an exchange.</p>
+      <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.html">MessageContextSnapshot</a></dt>
+      <dd><p>An immutable, serializable snapshot of an <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html">IMessageContext</a>'s transport metadata captured at a
+point in time (e.g. when a <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.Fault-1.html">Fault&lt;TMessage&gt;</a> is produced). Unlike <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html">IMessageContext</a>
+it carries no behavior and no live transport binding, so it round-trips cleanly through serialization.</p>
 </dd>
     </dl>
     <h3 id="interfaces">
 Interfaces
 </h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter-1.html">IConsumeFilter&lt;TMessage&gt;</a></dt>
+      <dd><p>A filter in the consume pipeline. Filters wrap the consumer invocation, allowing
+cross-cutting concerns (logging, validation, scoped resource management, telemetry, etc.)
+to be composed without modifying transport or consumer code.</p>
+</dd>
+    </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IConsumer.html">IConsumer</a></dt>
       <dd><p>Marker interface for message consumers.</p>
@@ -135,6 +144,14 @@ Interfaces
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer-2.html">IRequestConsumer&lt;TRequest, TResponse&gt;</a></dt>
       <dd><p>Defines a consumer that handles a request of type <code class="typeparamref">TRequest</code> and produces a response of type <code class="typeparamref">TResponse</code>.</p>
+</dd>
+    </dl>
+    <h3 id="delegates">
+Delegates
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate-1.html">ConsumeDelegate&lt;TMessage&gt;</a></dt>
+      <dd><p>Delegate that invokes the next stage in the consume pipeline.</p>
 </dd>
     </dl>
 

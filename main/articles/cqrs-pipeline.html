@@ -209,6 +209,22 @@ public sealed record TransferFundsCommand(Guid FromAccount, Guid ToAccount, deci
     return result.ToIResult();
 });
 </code></pre>
+<h3 id="direct-handler-injection">Direct handler injection</h3>
+<p>You can also inject the handler interface directly. The resolved instance is the same pipeline-wrapped handler that <code>ISender</code> would dispatch to, so behaviors (validation, logging, transactions, custom ones) apply uniformly either way.</p>
+<pre><code class="lang-csharp">app.MapPost(&quot;/users&quot;, async (
+    CreateUserCommand command,
+    ICommandHandler&lt;CreateUserCommand, Result&lt;Guid&gt;&gt; handler) =&gt;
+{
+    var result = await handler.HandleAsync(command);
+    return result.ToIResult();
+});
+</code></pre>
+<p>The interfaces you can inject are <code>IHandler&lt;TRequest, TResponse&gt;</code>, <code>ICommandHandler&lt;TCommand, TResponse&gt;</code>, <code>ICommandHandler&lt;TCommand&gt;</code> (for <code>Result</code>-returning commands) and <code>IQueryHandler&lt;TQuery, TResponse&gt;</code>. The concrete handler implementation is <em>not</em> registered as a DI service — there is no way to bypass the pipeline by injecting the concrete type.</p>
+<h2 id="behaviors-across-assemblies">Behaviors across assemblies</h2>
+<p>Pipeline behaviors are composed at handler-resolution time, not at registration time, so the order of registration is irrelevant. Different assemblies may register handlers and behaviors independently — all behaviors registered before <code>BuildServiceProvider</code> apply to all handlers resolved afterwards.</p>
+<pre><code class="lang-csharp">// In an Infrastructure assembly:
+services.AddOpenPipelineHandler(typeof(MyCustomBehavior&lt;,&gt;));
+</code></pre>
 
 </article>
 

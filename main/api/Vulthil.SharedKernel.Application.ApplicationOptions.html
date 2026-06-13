@@ -292,6 +292,84 @@ Delegates to the internal <span class="xref">Vulthil.SharedKernel.Application.Ap
 
 
 
+  <a id="Vulthil_SharedKernel_Application_ApplicationOptions_AddOpenDomainEventPipelineHandler_" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenDomainEventPipelineHandler*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Application_ApplicationOptions_AddOpenDomainEventPipelineHandler_System_Type_" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenDomainEventPipelineHandler(System.Type)">
+  AddOpenDomainEventPipelineHandler(Type)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L227"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers an open-generic domain event pipeline handler type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ApplicationOptions AddOpenDomainEventPipelineHandler(Type pipelineHandler)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipelineHandler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd><p>The open-generic type implementing <a class="xref" href="Vulthil.SharedKernel.Application.Pipeline.IDomainEventPipelineHandler-1.html">IDomainEventPipelineHandler&lt;TDomainEvent&gt;</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.SharedKernel.Application.ApplicationOptions.html">ApplicationOptions</a></dt>
+    <dd><p>The current options instance for chaining.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_SharedKernel_Application_ApplicationOptions_AddOpenPipelineHandler_" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenPipelineHandler*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Application_ApplicationOptions_AddOpenPipelineHandler_System_Type_" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenPipelineHandler(System.Type)">
+  AddOpenPipelineHandler(Type)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers an open-generic request pipeline handler type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ApplicationOptions AddOpenPipelineHandler(Type pipelineHandler)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pipelineHandler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd><p>The open-generic type implementing <a class="xref" href="Vulthil.SharedKernel.Application.Pipeline.IPipelineHandler-2.html">IPipelineHandler&lt;TRequest, TResponse&gt;</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.SharedKernel.Application.ApplicationOptions.html">ApplicationOptions</a></dt>
+    <dd><p>The current options instance for chaining.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Vulthil_SharedKernel_Application_ApplicationOptions_AddRequestLoggingBehavior_" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior*"></a>
 
   <h3 id="Vulthil_SharedKernel_Application_ApplicationOptions_AddRequestLoggingBehavior" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior">

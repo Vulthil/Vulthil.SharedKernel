@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_DependencyInjection" data-uid="Vulthil.Messaging.DependencyInjection" class="text-break">
-Class DependencyInjection  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/DependencyInjection.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Class DependencyInjection  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/DependencyInjection.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,7 +157,7 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_Messaging_DependencyInjection_AddMessaging_Microsoft_Extensions_Hosting_IHostApplicationBuilder_System_Action_Vulthil_Messaging_IMessagingConfigurator__" data-uid="Vulthil.Messaging.DependencyInjection.AddMessaging(Microsoft.Extensions.Hosting.IHostApplicationBuilder,System.Action{Vulthil.Messaging.IMessagingConfigurator})">
   AddMessaging(IHostApplicationBuilder, Action&lt;IMessagingConfigurator&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/DependencyInjection.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/DependencyInjection.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers messaging services, queues, and consumers with the host application builder.</p>
@@ -191,6 +191,13 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_DependencyInjection_AddMessaging_Microsoft_Extensions_Hosting_IHostApplicationBuilder_System_Action_Vulthil_Messaging_IMessagingConfigurator___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Queue definitions and message configurations under <code>Messaging:Queues:<em></em></code> and <code>Messaging:Messages:</code>
+are loaded from <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration.iconfiguration">IConfiguration</a> before <code class="paramref">messagingConfiguratorAction</code> runs.
+Code registrations performed inside the configurator action merge onto the loaded values and take precedence.
+Built-in consume filters (see <a class="xref" href="Vulthil.Messaging.ConsumeFilterOptions.html">ConsumeFilterOptions</a>) are registered before the configurator
+action runs, so user-registered filters compose INSIDE the defaults.</p>
+</div>
 
 
 
@@ -199,7 +206,7 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/DependencyInjection.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/DependencyInjection.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -95,11 +95,10 @@
 Classes
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStrategy.html">RelationalOutboxStrategy</a></dt>
-      <dd><p>Base outbox strategy for relational database providers.
-Uses EF Core relational APIs (<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.relationalqueryableextensions">RelationalQueryableExtensions</a>)
-for batch updates. Provider-specific strategies (e.g., Npgsql, SqlServer) should inherit
-from this class and override <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStrategy.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStrategy_FetchMessagesAsync_Microsoft_EntityFrameworkCore_DbSet_Vulthil_SharedKernel_Infrastructure_OutboxProcessing_OutboxMessage__System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesAsync(DbSet&lt;OutboxMessage&gt;, int, int, CancellationToken)</a> to add row-level locking.</p>
+      <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html">RelationalOutboxStore&lt;TContext&gt;</a></dt>
+      <dd><p>Outbox store for relational database providers. Records processed and failed messages with set-based
+<code>ExecuteUpdate</code> calls instead of materializing rows. Provider packages (e.g. Npgsql, MySQL) inherit from this
+class and override <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesAsync(int, int, CancellationToken)</a> to add row-level locking.</p>
 </dd>
     </dl>
 

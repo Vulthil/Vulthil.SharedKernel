@@ -87,14 +87,14 @@
         <article data-uid="">
 <h1 id="outbox-pattern">Outbox Pattern</h1>
 
-<p><code>Vulthil.SharedKernel.Infrastructure</code> implements the transactional outbox pattern so that domain events raised by aggregate roots are guaranteed to be published even if the process crashes after the database commit.</p>
+<p>The transactional outbox pattern guarantees that domain events raised by aggregate roots are published even if the process crashes after the database commit. The engine lives in <code>Vulthil.SharedKernel.Outbox</code>; <code>Vulthil.SharedKernel.Infrastructure</code> references it and adds the <code>DbContext</code> base and the <code>EnableOutboxProcessing</code> wiring.</p>
 <h2 id="how-it-works">How It Works</h2>
 <ol>
 <li>During <code>SaveChangesAsync</code>, a <code>SaveChangesInterceptor</code> serialises every pending domain event into an <code>OutboxMessage</code> row in the same database transaction.</li>
 <li>The aggregate root's event collection is cleared.</li>
-<li>A background service (<code>OutboxBackgroundService</code>) periodically polls for unprocessed outbox messages.</li>
-<li>Each message is deserialised and dispatched through <code>IDomainEventPublisher</code>.</li>
-<li>Successfully published messages are marked as processed; failures are retried up to the configured maximum.</li>
+<li>A background service (<code>OutboxBackgroundService</code>) relays unprocessed outbox messages — woken immediately once the captured rows are durable (on transaction commit, or right after a non-transactional <code>SaveChanges</code> that captured domain events) for low latency, and polling on an interval as the backstop.</li>
+<li>Each message is routed by its <code>OutboxDestination</code> to the registered <code>IOutboxDispatcher</code> that handles it (in-process domain events by default, or the broker — see below).</li>
+<li>Successfully relayed messages are marked as processed; failures are retried up to the configured maximum.</li>
 </ol>
 <p>This guarantees <strong>at-least-once delivery</strong> because the event and the business data are committed atomically.</p>
 <h2 id="configuration">Configuration</h2>
@@ -165,16 +165,60 @@
 </tr>
 </tbody>
 </table>
-<h2 id="custom-outbox-strategy">Custom Outbox Strategy</h2>
-<p>The default strategy is provided by <code>Vulthil.SharedKernel.Infrastructure.Relational</code> (<code>RelationalOutboxStrategy</code>) and runs a relational query with row locking. You can replace it by implementing <code>IOutboxStrategy</code> and registering your implementation with <code>UseOutboxStrategy&lt;T&gt;()</code>:</p>
+<h2 id="custom-outbox-store">Custom Outbox Store</h2>
+<p>The relay engine talks to the database through an EF-free <code>IOutboxStore</code> (in <code>Vulthil.SharedKernel.Outbox</code>). The EF
+implementation lives in <code>Vulthil.SharedKernel.Outbox.EntityFrameworkCore</code> (<code>EntityFrameworkOutboxStore&lt;TContext&gt;</code>),
+and each provider supplies a subclass with its row-locking fetch — <code>RelationalOutboxStore&lt;TContext&gt;</code> (the
+<code>ExecuteUpdate</code> base), <code>NpgsqlOutboxStore&lt;TContext&gt;</code> / <code>MySqlOutboxStore&lt;TContext&gt;</code> (<code>FOR UPDATE SKIP LOCKED</code>), and
+<code>CosmosOutboxStore&lt;TContext&gt;</code> (best-effort, no transaction). A provider's <code>UseNpgsql</code>/<code>UseMySql</code>/<code>UseCosmosDb</code>
+selects the store; you can supply your own by implementing <code>IOutboxStore</code> (or deriving from the EF base) and
+registering it with <code>UseOutboxStore&lt;T&gt;()</code>:</p>
 <pre><code class="lang-csharp">config
     .UseNpgsql(connectionStringKey)
-    .UseOutboxStrategy&lt;CustomOutboxStrategy&gt;()
+    .UseOutboxStore&lt;CustomOutboxStore&lt;AppDbContext&gt;&gt;()
     .EnableOutboxProcessing(o =&gt;
     {
         o.BatchSize = 50;
     });
 </code></pre>
+<h2 id="one-outbox-multiple-sinks">One outbox, multiple sinks</h2>
+<p>The relay engine is sink-agnostic: each <code>OutboxMessage</code> carries an <code>OutboxDestination</code> discriminator, and the
+<code>OutboxProcessor</code> routes it to the registered <code>IOutboxDispatcher</code> whose <code>Handles(destination)</code> is true. The
+in-process domain-event dispatcher is registered by default; other sinks plug in and coexist in the <strong>same</strong> outbox
+table and relay, so an application never carries more than one outbox table regardless of how many sinks it uses.</p>
+<h2 id="transactional-bus-publish-outbox">Transactional bus-publish outbox</h2>
+<p><code>Vulthil.Messaging.Outbox</code> adds a sink for the message broker. A publish/send filter captures any message published
+while a database transaction is open into the same outbox table (atomically with the business changes); the relay
+sends it to the broker after the transaction commits, carrying a <strong>stable message id</strong> so a redelivered relay is
+deduplicated by the receiving <a href="inbox-pattern.html">inbox</a> — end-to-end effectively-once. A publish issued with no
+active transaction is sent directly.</p>
+<pre><code class="lang-csharp">builder.AddDbContext&lt;AppDbContext&gt;(config =&gt; config.UseNpgsql(&quot;Default&quot;).EnableOutboxProcessing());
+
+builder.AddMessaging(messaging =&gt;
+{
+    messaging.UseRabbitMq();
+    messaging.AddTransactionalOutbox();
+});
+</code></pre>
+<p>Capture is relational-only (it enlists in the ambient transaction); the relay works on any provider. It is built on
+the general publish/send <strong>filter pipeline</strong> (<code>IPublishFilter</code>, registered via <code>AddPublishFilter&lt;T&gt;()</code>), which is the
+publish-side counterpart to consume filters and can host other cross-cutting concerns.</p>
+<p>On startup the relay waits for the broker transport to finish declaring its subscriber topology (exchanges, queues,
+and bindings) before its first publish — otherwise the commit-time trigger could relay a message before the
+subscriber queues exist, and a pub/sub message with no bound queue is silently dropped. This is wired automatically
+by <code>AddTransactionalOutbox</code> via an <code>IOutboxRelayGate</code> that awaits <code>ITransport.WaitUntilReadyAsync</code>; the relay starts
+immediately when no gate is registered.</p>
+<h3 id="establishing-the-transaction">Establishing the transaction</h3>
+<p>Capture only happens when a database transaction is open around the publish — otherwise the message is sent
+directly. The transaction is established by one of:</p>
+<ul>
+<li><strong>Commands</strong> — mark them <code>ITransactionalCommand&lt;T&gt;</code> and register <code>AddTransactionalPipelineBehavior()</code>; the
+behavior runs the command in a transaction.</li>
+<li><strong>Consumers</strong> — the <a href="inbox-pattern.html">inbox</a> opens one, or call <code>messaging.AddTransactionalConsumer&lt;TMessage&gt;()</code>
+to run a consumer in a transaction without the inbox. The two compose: if the inbox is also enabled it opens the
+transaction and the consume filter joins it rather than nesting.</li>
+<li><strong>Anything else</strong> — wrap the work in <code>IUnitOfWork.ExecuteInTransactionAsync(...)</code>.</li>
+</ul>
 <h2 id="typical-flow">Typical Flow</h2>
 <pre><code>Aggregate.Raise(event)
     ↓

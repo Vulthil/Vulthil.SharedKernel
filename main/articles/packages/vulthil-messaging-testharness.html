@@ -87,26 +87,53 @@
         <article data-uid="">
 <h1 id="vulthilmessagingtestharness">Vulthil.Messaging.TestHarness</h1>
 
-<p>Use <code>Vulthil.Messaging.TestHarness</code> to validate messaging behavior in tests.</p>
+<p>An in-memory messaging transport for tests. It runs your consumers with no broker and captures every produced
+and consumed message for assertion. Built entirely on the public <code>Vulthil.Messaging.Transport</code> SDK, so it
+mirrors the real consumer topology assembled from your queue configuration.</p>
 <h2 id="when-to-use">When to use</h2>
 <ul>
-<li>Integration tests that assert published/consumed messages</li>
-<li>End-to-end verification of messaging flows</li>
+<li>Component/unit tests that assert published, sent, consumed, or requested messages</li>
+<li>Integration tests that exercise the production composition without a broker</li>
+<li>Standing in for an external service (mock a request reply or a downstream event handler)</li>
 </ul>
 <h2 id="pattern">Pattern</h2>
 <ul>
-<li>Treat message assertions as behavior verification</li>
-<li>Keep test setup explicit and deterministic</li>
-<li>Isolate external broker dependencies when possible</li>
+<li>Dispatch is synchronous: when a publish/send/request call returns, every consumer it triggered has run — no polling</li>
+<li>A one-way consumer's exception propagates to the publisher/sender; a request consumer's exception becomes a failed result</li>
+<li>Keep assertions on <code>ITestHarness</code> deterministic and explicit; <code>Clear()</code> between phases</li>
 </ul>
 <h2 id="usage">Usage</h2>
-<h3 id="verifying-published-messages">Verifying published messages</h3>
-<pre><code class="lang-csharp">// Replace the real publisher with the test harness in your WebApplicationFactory,
-// then assert that expected messages were published after an action:
-var published = testHarness.Published&lt;OrderCreatedEvent&gt;();
-Assert.Single(published);
-Assert.Equal(expectedOrderId, published.First().Message.OrderId);
+<h3 id="compose-the-harness-unitcomponent-tests">Compose the harness (unit/component tests)</h3>
+<pre><code class="lang-csharp">var builder = Host.CreateApplicationBuilder();
+builder.AddMessaging(messaging =&gt;
+{
+    messaging.ConfigureQueue(&quot;orders&quot;, q =&gt; q.AddConsumer&lt;OrderCreatedConsumer&gt;());
+    messaging.UseTestHarness();
+});
+using var host = builder.Build();
+
+var publisher = host.Services.GetRequiredService&lt;IPublisher&gt;();
+var harness = host.Services.GetRequiredService&lt;ITestHarness&gt;();
+
+await publisher.PublishAsync(new OrderCreatedEvent(orderId));
+
+harness.Published&lt;OrderCreatedEvent&gt;().ShouldHaveSingleItem().Message.OrderId.ShouldBe(orderId);
+harness.Consumed&lt;OrderCreatedEvent&gt;().ShouldHaveSingleItem();
 </code></pre>
+<h3 id="mock-responses">Mock responses</h3>
+<pre><code class="lang-csharp">// Answer a request as an external service would (takes precedence over a real request consumer):
+harness.Respond&lt;GetWeatherRequest, WeatherForecast&gt;(ctx =&gt; new WeatherForecast(ctx.Message.City, 20));
+
+// React to a published/sent message as a fake downstream service:
+harness.Handle&lt;OrderShippedEvent&gt;(ctx =&gt; { observed.Add(ctx.Message.OrderId); return Task.CompletedTask; });
+</code></pre>
+<h3 id="swap-the-transport-in-integration-tests">Swap the transport in integration tests</h3>
+<p>Call <code>ReplaceTransportWithTestHarness()</code> from a test host's service hook to replace the registered broker
+transport with the harness, leaving production code untouched:</p>
+<pre><code class="lang-csharp">builder.ConfigureServices(services =&gt; services.ReplaceTransportWithTestHarness());
+</code></pre>
+<p>See the <a href="https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/testing.md">Testing guide</a> for
+the full API and details.</p>
 
 </article>
 

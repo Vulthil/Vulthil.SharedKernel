@@ -130,9 +130,9 @@ Interface IRequester  <a class="header-action link-secondary" title="View source
 
   <a id="Vulthil_Messaging_Abstractions_Publishers_IRequester_RequestAsync_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync*"></a>
 
-  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IRequester_RequestAsync__2___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_Task__System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync``2(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.Task},System.Threading.CancellationToken)">
-  RequestAsync&lt;TRequest, TResponse&gt;(TRequest, Func&lt;IPublishContext, Task&gt;?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IRequester.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IRequester_RequestAsync__2___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IRequestContext_System_Threading_Tasks_ValueTask__System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync``2(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IRequestContext,System.Threading.Tasks.ValueTask},System.Threading.CancellationToken)">
+  RequestAsync&lt;TRequest, TResponse&gt;(TRequest, Func&lt;IRequestContext, ValueTask&gt;?, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IRequester.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sends a request and awaits a response, returning the outcome as a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a>.</p>
@@ -140,7 +140,7 @@ Interface IRequester  <a class="header-action link-secondary" title="View source
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;Result&lt;TResponse&gt;&gt; RequestAsync&lt;TRequest, TResponse&gt;(TRequest message, Func&lt;IPublishContext, Task&gt;? configureContext = null, CancellationToken cancellationToken = default) where TRequest : notnull where TResponse : notnull</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;Result&lt;TResponse&gt;&gt; RequestAsync&lt;TRequest, TResponse&gt;(TRequest message, Func&lt;IRequestContext, ValueTask&gt;? configureContext = null, CancellationToken cancellationToken = default) where TRequest : notnull where TResponse : notnull</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -148,8 +148,59 @@ Interface IRequester  <a class="header-action link-secondary" title="View source
     <dt><code>message</code> <span class="xref">TRequest</span></dt>
     <dd><p>The request message to send.</p>
 </dd>
-    <dt><code>configureContext</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html">IPublishContext</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</dt>
+    <dt><code>configureContext</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IRequestContext.html">IRequestContext</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a>&gt;</dt>
     <dd><p>An optional action to configure the publish context.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Results.Result-1.html">Result</a>&lt;TResponse&gt;&gt;</dt>
+    <dd><p>A <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> containing the response on success or an error on failure.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TRequest</code></dt>
+    <dd><p>The request message type.</p>
+</dd>
+    <dt><code>TResponse</code></dt>
+    <dd><p>The expected response type.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Publishers_IRequester_RequestAsync_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_IRequester_RequestAsync__2___0_System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Abstractions.Publishers.IRequester.RequestAsync``2(``0,System.Threading.CancellationToken)">
+  RequestAsync&lt;TRequest, TResponse&gt;(TRequest, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Publishers/IRequester.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sends a request and awaits a response, returning the outcome as a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task&lt;Result&lt;TResponse&gt;&gt; RequestAsync&lt;TRequest, TResponse&gt;(TRequest message, CancellationToken cancellationToken) where TRequest : notnull where TResponse : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <span class="xref">TRequest</span></dt>
+    <dd><p>The request message to send.</p>
 </dd>
     <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
     <dd><p>A token to observe for cancellation.</p>

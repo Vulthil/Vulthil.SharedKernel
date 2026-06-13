@@ -64,8 +64,14 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
     /// <summary>Disposes a faulted leased channel instead of reusing it, freeing its capacity slot.</summary>
     public async ValueTask DiscardAsync(IChannel channel)
     {
-        await channel.DisposeAsync();
-        Capacity.Release();
+        try
+        {
+            await channel.DisposeAsync();
+        }
+        finally
+        {
+            Capacity.Release();
+        }
     }
 
     public async ValueTask DisposeAsync()

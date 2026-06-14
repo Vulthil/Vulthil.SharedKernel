@@ -45,7 +45,13 @@ public static class DependencyInjection
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddOpenApiServices(this IServiceCollection services, string documentName, Action<OpenApiOptions> configure)
     {
-        services.AddOpenApi(documentName, configure);
+        ArgumentNullException.ThrowIfNull(configure);
+
+        services.AddOpenApi(documentName, options =>
+        {
+            options.AddOperationTransformer(new ProblemDetailsOperationTransformer());
+            configure(options);
+        });
 
         return services;
     }

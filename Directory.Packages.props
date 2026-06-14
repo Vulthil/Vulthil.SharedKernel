@@ -20,7 +20,7 @@
     <PackageVersion Include="Aspire.RabbitMQ.Client" Version="$(AspireVersion)" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.1" />
+    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />
@@ -30,7 +30,7 @@
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(NpgsqlEfCoreVersion)" />
     <!-- MySQL: Aspire/Pomelo integration on net9; the Microting fork (a Pomelo fork) fills the EF Core 10 / net10 gap until the official Pomelo/Aspire packages ship it. -->
     <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="$(AspireVersion)" />
-    <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.8" />
+    <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.9" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.9" />

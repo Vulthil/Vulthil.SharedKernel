@@ -22,16 +22,16 @@ public interface ISender
 internal sealed class Sender(IServiceProvider serviceProvider) : ISender
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private static readonly ConcurrentDictionary<Type, IRequestHandlerBase> _requestHandlers = new();
+    private static readonly ConcurrentDictionary<(Type RequestType, Type ResponseType), IRequestHandlerBase> _requestHandlers = new();
 
     public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var handler = (IRequestHandlerWrapper<TResponse>)_requestHandlers.GetOrAdd(request.GetType(), static requestType =>
+        var handler = (IRequestHandlerWrapper<TResponse>)_requestHandlers.GetOrAdd((request.GetType(), typeof(TResponse)), static key =>
         {
-            var wrapperType = typeof(RequestHandlerWrapperResult<,>).MakeGenericType(requestType, typeof(TResponse));
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {requestType}");
+            var wrapperType = typeof(RequestHandlerWrapperResult<,>).MakeGenericType(key.RequestType, key.ResponseType);
+            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {key.RequestType}");
             return (IRequestHandlerBase)wrapper;
         });
 

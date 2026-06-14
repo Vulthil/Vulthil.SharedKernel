@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Application.Data;
 
@@ -32,10 +34,14 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore
         DbContext = dbContext;
         _timeProvider = timeProvider;
         _options = options.Value;
+        Logger = dbContext.GetService<ILoggerFactory>().CreateLogger(GetType());
     }
 
     /// <summary>Gets the application's persistence context.</summary>
     protected TContext DbContext { get; }
+
+    /// <summary>Gets a logger resolved from the persistence context's logging integration.</summary>
+    protected ILogger Logger { get; }
 
     /// <summary>Gets the tracked outbox message set.</summary>
     protected DbSet<OutboxMessage> OutboxMessages => DbContext.OutboxMessages;
@@ -82,7 +88,8 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore
 
             if (_options.EnableParallelPublishing)
             {
-                var outcomes = await Task.WhenAll(messages.Select(async message => (message.Id, Error: await dispatch(message, cancellationToken))));
+                using var throttle = new SemaphoreSlim(_options.MaxDegreeOfParallelism);
+                var outcomes = await Task.WhenAll(messages.Select(message => DispatchThrottledAsync(message, dispatch, throttle, cancellationToken)));
                 foreach (var (id, error) in outcomes)
                 {
                     Record(successIds, failures, id, error);
@@ -127,6 +134,23 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore
         }
     }
 
+    private static async Task<(Guid Id, string? Error)> DispatchThrottledAsync(
+        OutboxMessageData message,
+        Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch,
+        SemaphoreSlim throttle,
+        CancellationToken cancellationToken)
+    {
+        await throttle.WaitAsync(cancellationToken);
+        try
+        {
+            return (message.Id, await dispatch(message, cancellationToken));
+        }
+        finally
+        {
+            throttle.Release();
+        }
+    }
+
     /// <summary>
     /// Begins the transaction for the relay batch. The default enlists the context's <see cref="IUnitOfWork"/>;
     /// providers without ambient transactions (e.g. Cosmos) override this.
@@ -153,20 +177,21 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore
     /// <returns>The fetched message data.</returns>
     protected virtual Task<List<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
         OutboxMessages
-            .Where(o => o.ProcessedOnUtc == null && o.RetryCount < maxRetries)
+            .Where(o => o.ProcessedOnUtc == null && o.FailedOnUtc == null && o.RetryCount < maxRetries)
             .OrderBy(o => o.OccurredOnUtc)
+            .ThenBy(o => o.Id)
             .Take(batchSize)
             .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState, x.Destination, x.Metadata))
             .ToListAsync(cancellationToken);
 
     /// <summary>
-    /// Records processed and failed messages. The default materializes and updates the rows; relational providers
-    /// override this with set-based <c>ExecuteUpdate</c> calls.
+    /// Records processed and failed messages, dead-lettering any that reach <paramref name="maxRetries"/>. The default
+    /// materializes and updates the rows; relational providers override this with set-based <c>ExecuteUpdate</c> calls.
     /// </summary>
     /// <param name="successIds">Identifiers of successfully delivered messages.</param>
     /// <param name="failures">Failures to record with a retry increment.</param>
-    /// <param name="maxRetries">Failed messages reaching this retry count are also marked processed.</param>
-    /// <param name="processedOnUtc">The timestamp to record for processed messages.</param>
+    /// <param name="maxRetries">Failed messages reaching this retry count are dead-lettered (their <c>FailedOnUtc</c> is set).</param>
+    /// <param name="processedOnUtc">The timestamp to record for processed or dead-lettered messages.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     protected virtual async Task UpdateMessagesAsync(IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
     {
@@ -196,10 +221,11 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore
         if (failures.Count > 0)
         {
             var failedIds = failures.Select(f => f.Id).ToList();
-            var messages = await OutboxMessages.Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries).ToArrayAsync(cancellationToken);
-            foreach (var item in messages)
+            var deadLettered = await OutboxMessages.Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries).ToArrayAsync(cancellationToken);
+            foreach (var item in deadLettered)
             {
-                item.ProcessedOnUtc = processedOnUtc;
+                item.FailedOnUtc = processedOnUtc;
+                Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", item.Id, item.RetryCount, item.Error);
             }
 
             await DbContext.SaveChangesAsync(cancellationToken);

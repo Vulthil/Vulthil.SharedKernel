@@ -32,6 +32,8 @@ Vulthil.SharedKernel.Outbox.OutboxMessage.Destination.get -> Vulthil.SharedKerne
 Vulthil.SharedKernel.Outbox.OutboxMessage.Destination.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessage.Error.get -> string?
 Vulthil.SharedKernel.Outbox.OutboxMessage.Error.set -> void
+Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc.get -> System.DateTimeOffset?
+Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc.set -> void
 Vulthil.SharedKernel.Outbox.OutboxMessage.GroupId.get -> System.Guid
 Vulthil.SharedKernel.Outbox.OutboxMessage.GroupId.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessage.Id.get -> System.Guid
@@ -86,6 +88,8 @@ Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing.get
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing.get -> bool
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing.init -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism.get -> int
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds.get -> int
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries.get -> int

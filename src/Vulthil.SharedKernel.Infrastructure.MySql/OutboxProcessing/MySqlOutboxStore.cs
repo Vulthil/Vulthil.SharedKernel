@@ -20,8 +20,8 @@ public class MySqlOutboxStore<TContext>(TContext dbContext, TimeProvider timePro
         OutboxMessages.FromSqlInterpolated($@"
             SELECT Id, Type, Content, TraceParent, TraceState, Destination, Metadata
             FROM OutboxMessages
-            WHERE ProcessedOnUtc IS NULL AND RetryCount < {maxRetries}
-            ORDER BY OccurredOnUtc
+            WHERE ProcessedOnUtc IS NULL AND FailedOnUtc IS NULL AND RetryCount < {maxRetries}
+            ORDER BY OccurredOnUtc, Id
             LIMIT {batchSize} FOR UPDATE SKIP LOCKED")
             .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState, x.Destination, x.Metadata))
             .ToListAsync(cancellationToken);

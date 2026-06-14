@@ -20,8 +20,8 @@ public class NpgsqlOutboxStore<TContext>(TContext dbContext, TimeProvider timePr
         OutboxMessages.FromSqlInterpolated($@"
             SELECT ""Id"", ""Type"", ""Content"", ""TraceParent"", ""TraceState"", ""Destination"", ""Metadata""
             FROM ""OutboxMessages""
-            WHERE ""ProcessedOnUtc"" IS NULL AND ""RetryCount"" < {maxRetries}
-            ORDER BY ""OccurredOnUtc""
+            WHERE ""ProcessedOnUtc"" IS NULL AND ""FailedOnUtc"" IS NULL AND ""RetryCount"" < {maxRetries}
+            ORDER BY ""OccurredOnUtc"", ""Id""
             FOR UPDATE SKIP LOCKED
             LIMIT {batchSize}")
             .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState, x.Destination, x.Metadata))

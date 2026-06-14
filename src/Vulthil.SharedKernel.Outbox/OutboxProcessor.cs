@@ -1,11 +1,15 @@
 using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Vulthil.SharedKernel.Outbox;
 
 internal sealed class OutboxProcessor(
     IOutboxStore store,
-    IEnumerable<IOutboxDispatcher> dispatchers,
+    IServiceProvider serviceProvider,
+    IServiceScopeFactory scopeFactory,
+    IOptions<OutboxProcessingOptions> options,
     ILogger<OutboxProcessor> logger)
 {
     internal Task<int> ExecuteAsync(CancellationToken cancellationToken) =>
@@ -22,8 +26,15 @@ internal sealed class OutboxProcessor(
                 activity = Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
             }
 
-            var dispatcher = ResolveDispatcher(outboxMessage.Destination);
-            await dispatcher.DispatchAsync(outboxMessage, cancellationToken);
+            if (options.Value.EnableParallelPublishing)
+            {
+                await using var scope = scopeFactory.CreateAsyncScope();
+                await DispatchInScopeAsync(scope.ServiceProvider, outboxMessage, cancellationToken);
+            }
+            else
+            {
+                await DispatchInScopeAsync(serviceProvider, outboxMessage, cancellationToken);
+            }
 
             return null;
         }
@@ -38,8 +49,14 @@ internal sealed class OutboxProcessor(
         }
     }
 
-    private IOutboxDispatcher ResolveDispatcher(OutboxDestination destination) =>
-        dispatchers.FirstOrDefault(dispatcher => dispatcher.Handles(destination))
+    private static Task DispatchInScopeAsync(IServiceProvider services, OutboxMessageData outboxMessage, CancellationToken cancellationToken)
+    {
+        var dispatcher = ResolveDispatcher(services, outboxMessage.Destination);
+        return dispatcher.DispatchAsync(outboxMessage, cancellationToken);
+    }
+
+    private static IOutboxDispatcher ResolveDispatcher(IServiceProvider services, OutboxDestination destination) =>
+        services.GetServices<IOutboxDispatcher>().FirstOrDefault(dispatcher => dispatcher.Handles(destination))
             ?? throw new InvalidOperationException($"No {nameof(IOutboxDispatcher)} is registered for outbox destination '{destination}'.");
 }
 

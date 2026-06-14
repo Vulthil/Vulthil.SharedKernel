@@ -1,6 +1,5 @@
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Consumers;
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
 using Vulthil.Messaging.Transport;
@@ -53,7 +52,7 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
         });
         Target.RegisterQueue(queue);
 
-        var plan = Target.GetPlanByFullName(typeof(OrderPlaced).FullName!);
+        var plan = Target.GetPlan(typeof(OrderPlaced).FullName!);
         plan.ShouldNotBeNull();
         plan.Handlers.Count.ShouldBe(3);
 

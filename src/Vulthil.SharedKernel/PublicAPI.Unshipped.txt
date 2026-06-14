@@ -1,4 +1,6 @@
 #nullable enable
+override Vulthil.SharedKernel.Primitives.Entity<TId>.Equals(object? obj) -> bool
+override Vulthil.SharedKernel.Primitives.Entity<TId>.GetHashCode() -> int
 Vulthil.SharedKernel.Events.IDomainEvent
 Vulthil.SharedKernel.Events.IDomainEventHandler<TDomainEvent>
 Vulthil.SharedKernel.Events.IDomainEventHandler<TDomainEvent>.HandleAsync(TDomainEvent notification, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!

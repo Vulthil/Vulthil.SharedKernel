@@ -34,7 +34,27 @@ public interface IUnitOfWork
     /// <param name="operation">The work to run inside the transaction.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The result produced by <paramref name="operation"/>.</returns>
-    Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default);
+    Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Runs <paramref name="operation"/> inside a database transaction, committing only when
+    /// <paramref name="shouldCommit"/> returns <see langword="true"/> for the produced result and rolling back
+    /// otherwise (or when <paramref name="operation"/> throws), using the store's execution strategy.
+    /// </summary>
+    /// <remarks>
+    /// Use this overload to roll back on a <em>returned</em> failure — for example a failed
+    /// <see cref="Vulthil.Results.Result"/> from a command handler — rather than only on a thrown exception. The same
+    /// execution-strategy and ambient-transaction semantics as
+    /// <see cref="ExecuteInTransactionAsync{TResult}(System.Func{System.Threading.CancellationToken, System.Threading.Tasks.Task{TResult}}, System.Threading.CancellationToken)"/>
+    /// apply; when a transaction is already active the outer scope owns the commit and <paramref name="shouldCommit"/>
+    /// is not consulted.
+    /// </remarks>
+    /// <typeparam name="TResult">The type produced by <paramref name="operation"/>.</typeparam>
+    /// <param name="operation">The work to run inside the transaction.</param>
+    /// <param name="shouldCommit">A predicate that decides, from the produced result, whether to commit the transaction.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>The result produced by <paramref name="operation"/>.</returns>
+    Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, Func<TResult, bool> shouldCommit, CancellationToken cancellationToken = default);
 }
 
 /// <summary>

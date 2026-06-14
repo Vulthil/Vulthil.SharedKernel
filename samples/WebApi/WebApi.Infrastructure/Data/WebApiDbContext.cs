@@ -49,9 +49,13 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
 
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
 
-    public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default)
+    public Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) =>
+        ExecuteInTransactionAsync(operation, static _ => true, cancellationToken);
+
+    public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, Func<TResult, bool> shouldCommit, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(shouldCommit);
 
         if (Database.CurrentTransaction is not null)
         {
@@ -65,7 +69,15 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
                 ChangeTracker.Clear();
                 await using var transaction = await Database.BeginTransactionAsync(token);
                 var result = await operation(token);
-                await transaction.CommitAsync(token);
+                if (shouldCommit(result))
+                {
+                    await transaction.CommitAsync(token);
+                }
+                else
+                {
+                    await transaction.RollbackAsync(token);
+                }
+
                 return result;
             },
             cancellationToken);

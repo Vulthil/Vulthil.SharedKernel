@@ -102,7 +102,7 @@ No additional wiring is needed – the validator is picked up automatically from
 
 ### Transactional
 
-`TransactionalPipelineBehavior` wraps `ITransactionalCommand` handlers inside a database transaction. If the handler succeeds, the transaction commits; if it throws, the transaction rolls back.
+`TransactionalPipelineBehavior` wraps `ITransactionalCommand` handlers inside a database transaction. If the handler returns a successful `Result`, the transaction commits; if it returns a failed `Result` or throws, the transaction rolls back. (The non-generic `ITransactionalCommand` marker returns `Result` and is wrapped the same way as `ITransactionalCommand<Result>`.)
 
 ```csharp
 // Mark a command as transactional

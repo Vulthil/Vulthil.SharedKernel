@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.Results;
+using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Application.Messaging;
 using Vulthil.SharedKernel.Application.Pipeline;
 using Vulthil.xUnit;
@@ -135,6 +136,39 @@ public sealed class HandlerRegistrationTests : BaseUnitTestCase
         result.Value.ShouldBe("plain");
     }
 
+    [Fact]
+    public async Task BareTransactionalCommandIsWrappedByTheTransactionalBehavior()
+    {
+        var unitOfWork = new Mock<IUnitOfWork>();
+        unitOfWork
+            .Setup(u => u.ExecuteInTransactionAsync(
+                It.IsAny<Func<CancellationToken, Task<Result>>>(),
+                It.IsAny<Func<Result, bool>>(),
+                It.IsAny<CancellationToken>()))
+            .Returns<Func<CancellationToken, Task<Result>>, Func<Result, bool>, CancellationToken>((operation, _, token) => operation(token));
+
+        var services = new ServiceCollection();
+        services.AddSingleton(unitOfWork.Object);
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly);
+            o.AddTransactionalPipelineBehavior();
+        });
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+
+        var result = await sender.SendAsync(new BareTransactionalCommand(), CancellationToken);
+
+        result.IsSuccess.ShouldBeTrue();
+        unitOfWork.Verify(
+            u => u.ExecuteInTransactionAsync(
+                It.IsAny<Func<CancellationToken, Task<Result>>>(),
+                It.IsAny<Func<Result, bool>>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
     private static ServiceCollection BuildServices(bool addBehavior)
     {
         var services = new ServiceCollection();
@@ -179,6 +213,14 @@ internal sealed class CommandOnlyBehavior<TCommand, TResponse> : IPipelineHandle
 {
     public Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default) =>
         next(cancellationToken);
+}
+
+public sealed record BareTransactionalCommand : ITransactionalCommand;
+
+internal sealed class BareTransactionalCommandHandler : ICommandHandler<BareTransactionalCommand>
+{
+    public Task<Result> HandleAsync(BareTransactionalCommand request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success());
 }
 
 public sealed record PingCommand(string Message) : ICommand<Result<string>>;

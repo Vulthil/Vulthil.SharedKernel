@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure.Cosmos;
 
@@ -15,18 +15,20 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="configurator">The database infrastructure configurator.</param>
     /// <param name="connectionName">The name of the Cosmos DB connection.</param>
-    /// <param name="configureSettings">An action to configure the Cosmos DB settings.</param>
+    /// <param name="configureSettings">An optional action to configure the Cosmos DB settings.</param>
+    /// <param name="configureDbContextOptions">An optional action to configure the DbContext options.</param>
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TDbContext> UseCosmosDb<TDbContext>(
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionName,
-        Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>? configureSettings)
+        Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>? configureSettings = null,
+        Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
         configurator.UseOutboxStore<CosmosOutboxStore<TDbContext>>();
         configurator.OnConfigured(c =>
         {
-            c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionName, configureSettings);
+            c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionName, configureSettings, configureDbContextOptions);
         });
         return configurator;
     }

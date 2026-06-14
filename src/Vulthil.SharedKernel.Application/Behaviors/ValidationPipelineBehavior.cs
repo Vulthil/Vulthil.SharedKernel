@@ -15,7 +15,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
     /// <inheritdoc />
     public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
-        var validationFailures = await ValidateAsync(request);
+        var validationFailures = await ValidateAsync(request, cancellationToken);
 
         if (validationFailures.Length == 0)
         {
@@ -44,7 +44,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
         throw new ValidationException(validationFailures);
     }
 
-    private async Task<ValidationFailure[]> ValidateAsync(TCommand command)
+    private async Task<ValidationFailure[]> ValidateAsync(TCommand command, CancellationToken cancellationToken)
     {
         if (!_validators.Any())
         {
@@ -54,7 +54,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
         var context = new ValidationContext<TCommand>(command);
 
         var validationResults = await Task.WhenAll(_validators
-            .Select(v => v.ValidateAsync(context)));
+            .Select(v => v.ValidateAsync(context, cancellationToken)));
 
         var validationFailures = validationResults
             .Where(validationResult => !validationResult.IsValid)

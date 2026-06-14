@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace WebApi.Infrastructure.Migrations
+namespace WebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class AddInboxMessages : Migration
+    public partial class AddInbox : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -12,15 +12,15 @@ using WebApi.Infrastructure.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(WebApiDbContext))]
-    [Migration("20250603111838_OutboxMessages")]
-    partial class OutboxMessages
+    [Migration("20260614111930_AddOutboxAndSideEffects")]
+    partial class AddOutboxAndSideEffects
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -35,17 +35,35 @@ namespace WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("jsonb");
 
+                    b.Property<int>("Destination")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Error")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("FailedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Metadata")
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("OccurredOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("ProcessedOnUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TraceParent")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TraceState")
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -61,7 +79,7 @@ namespace WebApi.Migrations
                     b.ToTable("OutboxMessages");
                 });
 
-            modelBuilder.Entity("WebApi.MainEntityModel.MainEntity", b =>
+            modelBuilder.Entity("WebApi.Domain.MainEntities.MainEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -73,6 +91,23 @@ namespace WebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MainEntities");
+                });
+
+            modelBuilder.Entity("WebApi.Domain.SideEffects.SideEffect", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MainEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SideEffects");
                 });
 #pragma warning restore 612, 618
         }

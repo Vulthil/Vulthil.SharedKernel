@@ -161,7 +161,10 @@ public sealed class ApplicationOptions
     }
 
     /// <summary>
-    /// Adds the validation pipeline behavior that validates commands before execution.
+    /// Adds the validation pipeline behavior that validates commands with FluentValidation before execution. On a
+    /// validation failure, a command returning <see cref="Vulthil.Results.Result"/> or <c>Result&lt;T&gt;</c> receives a
+    /// failed result containing a <see cref="Vulthil.Results.ValidationError"/>; a command with any other response type
+    /// throws a <see cref="FluentValidation.ValidationException"/>.
     /// </summary>
     /// <returns>The current options instance for chaining.</returns>
     public ApplicationOptions AddValidationPipelineBehavior()

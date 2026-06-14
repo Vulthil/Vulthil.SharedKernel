@@ -6,6 +6,12 @@ using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application.Behaviors;
 
+/// <summary>
+/// Pipeline behavior that runs FluentValidation validators before the command handler. On a validation failure it
+/// short-circuits the pipeline: a command returning <see cref="Result"/> or <see cref="Result{T}"/> receives a failed
+/// result carrying a <see cref="ValidationError"/>, whereas a command with any other response type throws a
+/// <see cref="ValidationException"/> — there is no in-band way to represent failure for a non-result response.
+/// </summary>
 internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators) :
     IPipelineHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>

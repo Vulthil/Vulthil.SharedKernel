@@ -80,7 +80,7 @@ Pipeline behaviors wrap every handler invocation, allowing you to add cross-cutt
 
 ### Validation
 
-`ValidationPipelineBehavior` runs all registered `IValidator<TCommand>` instances before the handler executes. When validation fails, it short-circuits and returns a `Result` containing a `ValidationError`:
+`ValidationPipelineBehavior` runs all registered `IValidator<TCommand>` instances before the handler executes. When validation fails it short-circuits: a command returning `Result` or `Result<T>` receives a failed result containing a `ValidationError`, while a command with any other response type throws a `ValidationException` (there is no in-band way to represent failure for a non-result response):
 
 ```csharp
 public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>

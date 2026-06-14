@@ -24,8 +24,8 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     public void ClearDomainEvents() => _domainEvents.Clear();
 
     /// <summary>
-    /// Raises a domain event, adding it to the pending events collection.
+    /// Raises a domain event from within the aggregate, adding it to the pending events collection.
     /// </summary>
     /// <param name="domainEvent">The domain event to raise.</param>
-    public void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 }

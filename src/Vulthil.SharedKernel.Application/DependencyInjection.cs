@@ -145,27 +145,8 @@ public static class DependencyInjection
     public static IServiceCollection AddOpenPipelineHandler(this IServiceCollection services, Type pipelineHandler)
     {
         ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(pipelineHandler);
 
-        if (!pipelineHandler.IsGenericTypeDefinition)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must be an open generic type.");
-        }
-
-        var implementsPipelineHandler = false;
-        foreach (var iface in pipelineHandler.GetInterfaces())
-        {
-            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IPipelineHandler<,>))
-            {
-                implementsPipelineHandler = true;
-                break;
-            }
-        }
-
-        if (!implementsPipelineHandler)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must implement {typeof(IPipelineHandler<,>).FullName}.");
-        }
+        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IPipelineHandler<,>));
 
         services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineHandler<,>), pipelineHandler, ServiceLifetime.Scoped));
         return services;
@@ -182,27 +163,8 @@ public static class DependencyInjection
     public static IServiceCollection AddOpenDomainEventPipelineHandler(this IServiceCollection services, Type pipelineHandler)
     {
         ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(pipelineHandler);
 
-        if (!pipelineHandler.IsGenericTypeDefinition)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must be an open generic type.");
-        }
-
-        var implementsDomainPipelineHandler = false;
-        foreach (var iface in pipelineHandler.GetInterfaces())
-        {
-            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IDomainEventPipelineHandler<>))
-            {
-                implementsDomainPipelineHandler = true;
-                break;
-            }
-        }
-
-        if (!implementsDomainPipelineHandler)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must implement {typeof(IDomainEventPipelineHandler<>).FullName}.");
-        }
+        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IDomainEventPipelineHandler<>));
 
         services.TryAddEnumerable(new ServiceDescriptor(typeof(IDomainEventPipelineHandler<>), pipelineHandler, ServiceLifetime.Scoped));
         return services;

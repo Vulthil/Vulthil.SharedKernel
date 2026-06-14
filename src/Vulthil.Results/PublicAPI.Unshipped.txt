@@ -15,6 +15,7 @@ static Vulthil.Results.Error.NotFound(string! code, string! description) -> Vult
 static Vulthil.Results.Error.operator !=(Vulthil.Results.Error? left, Vulthil.Results.Error? right) -> bool
 static Vulthil.Results.Error.operator ==(Vulthil.Results.Error? left, Vulthil.Results.Error? right) -> bool
 static Vulthil.Results.Error.Problem(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Error.Validation(string! code, string! description) -> Vulthil.Results.Error!
 static Vulthil.Results.Result.Failure(Vulthil.Results.Error! error) -> Vulthil.Results.Result!
 static Vulthil.Results.Result.Failure<TValue>(Vulthil.Results.Error! error) -> Vulthil.Results.Result<TValue>!
 static Vulthil.Results.Result.Success() -> Vulthil.Results.Result!
@@ -123,5 +124,5 @@ Vulthil.Results.Result<TValue>.Value.get -> TValue
 Vulthil.Results.ResultExtensions
 Vulthil.Results.ValidationError
 Vulthil.Results.ValidationError.Equals(Vulthil.Results.ValidationError? other) -> bool
-Vulthil.Results.ValidationError.Errors.get -> Vulthil.Results.Error![]!
-Vulthil.Results.ValidationError.ValidationError(Vulthil.Results.Error![]! errors) -> void
+Vulthil.Results.ValidationError.Errors.get -> System.Collections.Generic.IReadOnlyList<Vulthil.Results.Error!>!
+Vulthil.Results.ValidationError.ValidationError(System.Collections.Generic.IEnumerable<Vulthil.Results.Error!>! errors) -> void

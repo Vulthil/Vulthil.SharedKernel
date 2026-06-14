@@ -19,11 +19,14 @@ internal sealed class GlobalExceptionHandler(
     {
         ArgumentNullException.ThrowIfNull(httpContext);
 
+        var sanitizedMethod = SanitizeForLog(httpContext.Request.Method);
+        var sanitizedPath = SanitizeForLog(httpContext.Request.Path.Value);
+
         logger.LogError(
             exception,
             "Unhandled exception while processing {Method} {Path}",
-            httpContext.Request.Method,
-            httpContext.Request.Path);
+            sanitizedMethod,
+            sanitizedPath);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
@@ -38,5 +41,19 @@ internal sealed class GlobalExceptionHandler(
                 Type = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.6.1"
             }
         }).ConfigureAwait(false);
+    }
+
+    private static string SanitizeForLog(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        return value
+            .Replace("\r", string.Empty, StringComparison.Ordinal)
+            .Replace("\n", string.Empty, StringComparison.Ordinal)
+            .Replace("\u2028", string.Empty, StringComparison.Ordinal)
+            .Replace("\u2029", string.Empty, StringComparison.Ordinal);
     }
 }

@@ -10,6 +10,12 @@ namespace Vulthil.Messaging.Inbox;
 /// otherwise runs it and records the idempotency marker — atomically with the consumer's business writes on a
 /// relational provider. Registered per message type by <see cref="InboxConfiguratorExtensions.AddIdempotentInbox{TMessage}"/>.
 /// </summary>
+/// <remarks>
+/// The guard only deduplicates. Bounding a consumer that keeps failing — retry count, fault emission, and
+/// dead-lettering — is delegated to the transport (on RabbitMQ: retry up to the queue's max retry count, then a
+/// fault is published and the delivery is nacked to the dead-letter exchange), so this filter deliberately
+/// ignores <see cref="IMessageContext.RetryCount"/>.
+/// </remarks>
 /// <typeparam name="TMessage">The consumed message type.</typeparam>
 internal sealed class IdempotentConsumeFilter<TMessage>(
     IIdempotencyStore store,

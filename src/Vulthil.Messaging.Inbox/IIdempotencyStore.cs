@@ -4,7 +4,8 @@ namespace Vulthil.Messaging.Inbox;
 
 /// <summary>
 /// A persistence-agnostic store that records which messages have already been processed, enabling
-/// exactly-once consumer processing on top of at-least-once delivery.
+/// exactly-once consumer processing on a transactional store (effectively-once otherwise) on top of
+/// at-least-once delivery.
 /// </summary>
 /// <remarks>
 /// The store owns the whole idempotent unit of work: it decides whether the delivery is a duplicate, runs the

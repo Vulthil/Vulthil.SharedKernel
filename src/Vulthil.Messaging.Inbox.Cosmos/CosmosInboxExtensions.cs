@@ -13,7 +13,7 @@ public static class CosmosInboxExtensions
     /// <summary>
     /// Registers an <see cref="IIdempotencyStore"/> backed by the application's Cosmos <typeparamref name="TContext"/>.
     /// The context must be registered, implement <see cref="ISaveInboxMessages"/>, and map <see cref="InboxMessage"/>
-    /// (see <see cref="CosmosInboxMessageEntityConfiguration"/>). Provides effectively-once processing — pair it with
+    /// (via <see cref="CosmosInboxModelBuilderExtensions.ApplyCosmosInbox"/>). Provides effectively-once processing — pair it with
     /// idempotent consumer writes.
     /// </summary>
     /// <typeparam name="TContext">The application's Cosmos <see cref="DbContext"/> type.</typeparam>

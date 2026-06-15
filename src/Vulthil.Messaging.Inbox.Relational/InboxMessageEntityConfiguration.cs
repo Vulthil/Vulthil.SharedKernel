@@ -9,7 +9,7 @@ namespace Vulthil.Messaging.Inbox.Relational;
 /// primary key, giving the uniqueness guarantee the idempotency store relies on. Consumers may override this
 /// mapping in their <see cref="DbContext"/>.
 /// </summary>
-public sealed class InboxMessageEntityConfiguration : IEntityTypeConfiguration<InboxMessage>
+internal sealed class InboxMessageEntityConfiguration : IEntityTypeConfiguration<InboxMessage>
 {
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<InboxMessage> builder)

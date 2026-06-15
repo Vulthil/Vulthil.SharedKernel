@@ -12,7 +12,7 @@ using Vulthil.TestHost.Data;
 namespace Vulthil.TestHost.Migrations
 {
     [DbContext(typeof(TestHostDbContext))]
-    [Migration("20260611183255_Initial")]
+    [Migration("20260615182307_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Vulthil.TestHost.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.8")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -55,6 +55,9 @@ namespace Vulthil.TestHost.Migrations
                     b.Property<string>("Error")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("FailedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uuid");
 
@@ -82,9 +85,9 @@ namespace Vulthil.TestHost.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OccurredOnUtc", "ProcessedOnUtc")
-                        .HasDatabaseName("IX_OutboxMessages_OccurredOnUtc_ProcessedOnUtc")
-                        .HasFilter("\"ProcessedOnUtc\" IS NULL");
+                    b.HasIndex("OccurredOnUtc", "Id")
+                        .HasDatabaseName("IX_OutboxMessages_OccurredOnUtc_Id")
+                        .HasFilter("\"ProcessedOnUtc\" IS NULL AND \"FailedOnUtc\" IS NULL");
 
                     b.ToTable("OutboxMessages");
                 });

@@ -64,6 +64,13 @@ public record Error
     /// <returns>A new <see cref="Error"/> with <see cref="ErrorType.Problem"/> classification.</returns>
     public static Error Problem(string code, string description) => new(code, description, ErrorType.Problem);
     /// <summary>
+    /// Creates a problem error.
+    /// </summary>
+    /// <param name="code">The error code.</param>
+    /// <param name="description">The error description.</param>
+    /// <returns>A new <see cref="Error"/> with <see cref="ErrorType.Validation"/> classification.</returns>
+    public static Error Validation(string code, string description) => new(code, description, ErrorType.Validation);
+    /// <summary>
     /// Creates a conflict error.
     /// </summary>
     /// <param name="code">The error code.</param>
@@ -79,27 +86,61 @@ public record Error
 public sealed record ValidationError : Error
 {
     /// <summary>
-    /// Gets the individual validation errors collected during validation.
-    /// Each element represents a single field or rule violation.
+    /// Gets the individual validation errors collected during validation. Always contains at least one error;
+    /// each element represents a single field or rule violation.
     /// </summary>
-    public Error[] Errors { get; }
+    public IReadOnlyList<Error> Errors { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ValidationError"/> record.
     /// </summary>
-    /// <param name="errors">The individual validation errors.</param>
-    public ValidationError(Error[] errors)
+    /// <param name="errors">The individual validation errors. Must contain at least one error.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="errors"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="errors"/> contains no errors.</exception>
+    public ValidationError(IEnumerable<Error> errors)
         : base("Validation.General",
         "One or more validation errors occurred",
-        ErrorType.Validation) => Errors = errors;
+        ErrorType.Validation)
+    {
+        ArgumentNullException.ThrowIfNull(errors);
+
+        Error[] copy = [.. errors];
+        if (copy.Length == 0)
+        {
+            throw new ArgumentException("A validation error must contain at least one error.", nameof(errors));
+        }
+
+        Errors = copy;
+    }
 
     /// <summary>
     /// Creates a <see cref="ValidationError"/> from a collection of failed results.
     /// </summary>
-    /// <param name="results">The results to extract errors from.</param>
-    /// <returns>A <see cref="ValidationError"/> containing only the errors from failed results.</returns>
+    /// <param name="results">The results to extract errors from. At least one must be a failure.</param>
+    /// <returns>A <see cref="ValidationError"/> containing the errors from the failed results.</returns>
+    /// <exception cref="ArgumentException">None of the <paramref name="results"/> is a failure.</exception>
     public static ValidationError FromResults(IEnumerable<Result> results) =>
-        new(results.Where(r => r.IsFailure).Select(r => r.Error).ToArray());
+        new(results.Where(r => r.IsFailure).Select(r => r.Error));
+
+    /// <summary>
+    /// Determines whether the specified validation error contains an equal, equally-ordered sequence of inner errors.
+    /// </summary>
+    /// <param name="other">The validation error to compare with the current one.</param>
+    /// <returns><see langword="true"/> if both contain an equal sequence of errors; otherwise <see langword="false"/>.</returns>
+    public bool Equals(ValidationError? other) =>
+        other is not null && base.Equals(other) && Errors.SequenceEqual(other.Errors);
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        foreach (var error in Errors)
+        {
+            hash.Add(error);
+        }
+
+        return hash.ToHashCode();
+    }
 }
 
 /// <summary>

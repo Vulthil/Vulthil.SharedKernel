@@ -11,10 +11,11 @@ namespace Vulthil.SharedKernel.Api;
 public static class Extensions
 {
     /// <summary>
-    /// Converts a <see cref="Result"/> to an <see cref="IActionResult"/>, returning 204 No Content on success.
+    /// Converts a <see cref="Task{Result}"/> to an <see cref="IActionResult"/>, returning 204 No Content on success.
     /// </summary>
-    public static IActionResult ToActionResult(this Result result, ControllerBase controller)
+    public static async Task<IActionResult> ToActionResultAsync(this Task<Result> resultTask, ControllerBase controller)
     {
+        var result = await resultTask;
         if (result.IsSuccess)
         {
             return controller.NoContent();
@@ -24,10 +25,11 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Converts a <see cref="Result{T}"/> to an <see cref="IActionResult"/>, returning 200 OK with the value on success.
+    /// Converts a <see cref="Task{Result}"/> to an <see cref="IActionResult"/>, returning 200 OK with the value on success.
     /// </summary>
-    public static IActionResult ToActionResult<T>(this Result<T> result, ControllerBase controller)
+    public static async Task<IActionResult> ToActionResultAsync<T>(this Task<Result<T>> resultTask, ControllerBase controller)
     {
+        var result = await resultTask;
         if (result.IsSuccess)
         {
             return controller.Ok(result.Value);
@@ -58,8 +60,35 @@ public static class Extensions
             ErrorType.Validation => controller.ValidationProblem(),
             ErrorType.NotFound => controller.NotFound(),
             ErrorType.Conflict => controller.Conflict(),
-            _ => controller.Problem()
+            _ => ProblemActionResult(error)
         };
+    }
+
+    /// <summary>
+    /// Converts a <see cref="Result{T}"/> to an <see cref="IActionResult"/>, returning 200 OK with the value on success.
+    /// </summary>
+    public static IActionResult ToActionResult<T>(this Result<T> result, ControllerBase controller)
+    {
+        if (result.IsSuccess)
+        {
+            return controller.Ok(result.Value);
+        }
+
+        return result.Error.ToActionResult(controller);
+    }
+
+
+    /// <summary>
+    /// Converts a <see cref="Result"/> to an <see cref="IActionResult"/>, returning 204 No Content on success.
+    /// </summary>
+    public static IActionResult ToActionResult(this Result result, ControllerBase controller)
+    {
+        if (result.IsSuccess)
+        {
+            return controller.NoContent();
+        }
+
+        return result.Error.ToActionResult(controller);
     }
 
     /// <summary>
@@ -108,6 +137,25 @@ public static class Extensions
     /// Converts an <see cref="Error"/> to a <see cref="ProblemHttpResult"/> problem response for minimal API endpoints.
     /// </summary>
     public static ProblemHttpResult ToIResult(this Error error) => CustomResults.Problem(error);
+
+    private static ObjectResult ProblemActionResult(Error error)
+    {
+        var problemDetails = new ProblemDetails
+        {
+            Detail = error.Description,
+            Status = StatusCodes.Status500InternalServerError
+        };
+
+        foreach (var entry in CustomResults.GetErrorsDictionary(error))
+        {
+            problemDetails.Extensions[entry.Key] = entry.Value;
+        }
+
+        return new ObjectResult(problemDetails)
+        {
+            StatusCode = StatusCodes.Status500InternalServerError
+        };
+    }
 
     private static Results<TSuccess, ValidationProblem, NotFound, Conflict, ProblemHttpResult> MapError<TSuccess>(Error error)
         where TSuccess : IResult

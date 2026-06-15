@@ -34,28 +34,6 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
     {
         base.OnModelCreating(modelBuilder);
 
-        // If the DbContext's ConfigurationAssembly contains a provider-specific IEntityTypeConfiguration<OutboxMessage>,
-        // prefer that configuration. Otherwise fall back to the built-in provider-agnostic configuration.
-        var outboxHasProviderConfig = false;
-
-        if (ConfigurationAssembly is not null)
-        {
-            outboxHasProviderConfig = ConfigurationAssembly
-                .GetTypes()
-                .Where(t => !t.IsAbstract && !t.IsInterface)
-                .SelectMany(t => t.GetInterfaces())
-                .Any(i =>
-                    i.IsGenericType &&
-                    i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>) &&
-                    i.GenericTypeArguments.Length == 1 &&
-                    i.GenericTypeArguments[0] == typeof(OutboxMessage));
-        }
-
-        if (!outboxHasProviderConfig)
-        {
-            modelBuilder.ApplyConfiguration(new OutboxMessageEntityConfiguration());
-        }
-
         if (ConfigurationAssembly is not null)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(ConfigurationAssembly, ConfigurationTypeConstraints);
@@ -66,9 +44,14 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
 
     /// <inheritdoc />
-    public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default)
+    public Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) =>
+        ExecuteInTransactionAsync(operation, static _ => true, cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, Func<TResult, bool> shouldCommit, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(shouldCommit);
 
         if (Database.CurrentTransaction is not null)
         {
@@ -83,7 +66,15 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
                 ChangeTracker.Clear();
                 await using var transaction = await Database.BeginTransactionAsync(token);
                 var result = await operation(token);
-                await transaction.CommitAsync(token);
+                if (shouldCommit(result))
+                {
+                    await transaction.CommitAsync(token);
+                }
+                else
+                {
+                    await transaction.RollbackAsync(token);
+                }
+
                 return result;
             },
             cancellationToken);

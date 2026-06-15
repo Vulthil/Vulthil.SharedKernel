@@ -118,7 +118,7 @@ public static class Polling
 
         try
         {
-            while (await timer.WaitForNextTickAsync(linkedCts.Token))
+            do
             {
                 Result<T> result = await func(linkedCts.Token);
 
@@ -129,6 +129,7 @@ public static class Polling
 
                 errors.Add(result.Error);
             }
+            while (await timer.WaitForNextTickAsync(linkedCts.Token));
         }
         catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
         {
@@ -231,7 +232,7 @@ public static class Polling
 
         try
         {
-            while (await timer.WaitForNextTickAsync(linkedCts.Token))
+            do
             {
                 Result result = await func(linkedCts.Token);
 
@@ -242,6 +243,7 @@ public static class Polling
 
                 errors.Add(result.Error);
             }
+            while (await timer.WaitForNextTickAsync(linkedCts.Token));
         }
         catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
         {

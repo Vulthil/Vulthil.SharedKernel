@@ -29,8 +29,16 @@ public sealed class OutboxProcessingOptions
     public int MaxRetries { get; init; } = 3;
     /// <summary>
     /// Gets a value indicating whether messages within a batch should be published in parallel.
+    /// When enabled, each message is dispatched in its own dependency-injection scope so handlers do not share the
+    /// relay's <c>DbContext</c>, and concurrency is bounded by <see cref="MaxDegreeOfParallelism"/>.
     /// </summary>
     public bool EnableParallelPublishing { get; init; }
+    /// <summary>
+    /// Gets the maximum number of messages dispatched concurrently when <see cref="EnableParallelPublishing"/> is
+    /// enabled. Default is 4. Ignored when parallel publishing is disabled.
+    /// </summary>
+    [Range(1, 100)]
+    public int MaxDegreeOfParallelism { get; init; } = 4;
 
     /// <summary>
     /// Gets a value indicating whether Trace Identifiers should be included when publishing outbox messages.

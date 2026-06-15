@@ -1,9 +1,9 @@
 using Aspire.Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
 using Vulthil.SharedKernel.Infrastructure.Relational;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 namespace Vulthil.SharedKernel.Infrastructure.Npgsql;
 
@@ -28,11 +28,13 @@ public static class DependencyInjectionExtensions
     /// <param name="configurator">The database infrastructure configurator.</param>
     /// <param name="connectionStringKey">The key for the connection string.</param>
     /// <param name="configureSettings">Optional action to configure PostgreSQL-specific settings.</param>
+    /// <param name="configureDbContextOptions">Optional action to configure the <see cref="DbContextOptionsBuilder"/>.</param>
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TDbContext> UseNpgsql<TDbContext>(
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionStringKey,
-        Action<NpgsqlEntityFrameworkCorePostgreSQLSettings>? configureSettings = null)
+        Action<NpgsqlEntityFrameworkCorePostgreSQLSettings>? configureSettings = null,
+        Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
         ArgumentNullException.ThrowIfNull(configurator);
@@ -41,7 +43,7 @@ public static class DependencyInjectionExtensions
 
         configurator.OnConfigured(c =>
         {
-            c.HostApplicationBuilder.AddNpgsqlDbContext<TDbContext>(connectionStringKey, configureSettings);
+            c.HostApplicationBuilder.AddNpgsqlDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
 
             if (c.OutboxProcessingEnabled)
             {

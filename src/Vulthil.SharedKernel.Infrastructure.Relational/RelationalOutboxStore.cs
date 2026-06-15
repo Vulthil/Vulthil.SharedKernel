@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
@@ -42,11 +43,24 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
         {
             var failedIds = failures.Select(f => f.Id).ToList();
 
-            await OutboxMessages
+            var deadLettered = await OutboxMessages
                 .Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries)
-                .ExecuteUpdateAsync(
-                    setter => setter.SetProperty(o => o.ProcessedOnUtc, processedOnUtc),
-                    cancellationToken);
+                .Select(x => new { x.Id, x.RetryCount, x.Error })
+                .ToListAsync(cancellationToken);
+
+            if (deadLettered.Count > 0)
+            {
+                await OutboxMessages
+                    .Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries)
+                    .ExecuteUpdateAsync(
+                        setter => setter.SetProperty(o => o.FailedOnUtc, processedOnUtc),
+                        cancellationToken);
+
+                foreach (var item in deadLettered)
+                {
+                    Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", item.Id, item.RetryCount, item.Error);
+                }
+            }
         }
     }
 }

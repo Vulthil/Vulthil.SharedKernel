@@ -6,6 +6,12 @@ using Vulthil.SharedKernel.Application.Pipeline;
 
 namespace Vulthil.SharedKernel.Application.Behaviors;
 
+/// <summary>
+/// Pipeline behavior that runs FluentValidation validators before the command handler. On a validation failure it
+/// short-circuits the pipeline: a command returning <see cref="Result"/> or <see cref="Result{T}"/> receives a failed
+/// result carrying a <see cref="ValidationError"/>, whereas a command with any other response type throws a
+/// <see cref="ValidationException"/> — there is no in-band way to represent failure for a non-result response.
+/// </summary>
 internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators) :
     IPipelineHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>
@@ -15,7 +21,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
     /// <inheritdoc />
     public async Task<TResponse> HandleAsync(TCommand request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
     {
-        var validationFailures = await ValidateAsync(request);
+        var validationFailures = await ValidateAsync(request, cancellationToken);
 
         if (validationFailures.Length == 0)
         {
@@ -44,7 +50,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
         throw new ValidationException(validationFailures);
     }
 
-    private async Task<ValidationFailure[]> ValidateAsync(TCommand command)
+    private async Task<ValidationFailure[]> ValidateAsync(TCommand command, CancellationToken cancellationToken)
     {
         if (!_validators.Any())
         {
@@ -54,7 +60,7 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
         var context = new ValidationContext<TCommand>(command);
 
         var validationResults = await Task.WhenAll(_validators
-            .Select(v => v.ValidateAsync(context)));
+            .Select(v => v.ValidateAsync(context, cancellationToken)));
 
         var validationFailures = validationResults
             .Where(validationResult => !validationResult.IsValid)
@@ -65,5 +71,5 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
     }
 
     private static ValidationError CreateValidationError(ValidationFailure[] validationFailures) =>
-        new(validationFailures.Select(f => Error.Problem(f.ErrorCode, f.ErrorMessage)).ToArray());
+        new(validationFailures.Select(f => Error.Problem(f.ErrorCode, f.ErrorMessage)));
 }

@@ -33,6 +33,7 @@ namespace Vulthil.TestHost.Migrations
                     Content = table.Column<string>(type: "jsonb", nullable: false),
                     OccurredOnUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ProcessedOnUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    FailedOnUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     RetryCount = table.Column<int>(type: "integer", nullable: false),
                     Error = table.Column<string>(type: "text", nullable: true),
                     TraceParent = table.Column<string>(type: "text", nullable: true),
@@ -58,10 +59,10 @@ namespace Vulthil.TestHost.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_OutboxMessages_OccurredOnUtc_ProcessedOnUtc",
+                name: "IX_OutboxMessages_OccurredOnUtc_Id",
                 table: "OutboxMessages",
-                columns: new[] { "OccurredOnUtc", "ProcessedOnUtc" },
-                filter: "\"ProcessedOnUtc\" IS NULL");
+                columns: new[] { "OccurredOnUtc", "Id" },
+                filter: "\"ProcessedOnUtc\" IS NULL AND \"FailedOnUtc\" IS NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProbeSideEffects_ProbeId",

@@ -79,7 +79,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfiguration(new InboxMessageEntityConfiguration());
+        => modelBuilder.ApplyRelationalInbox();
 }
 ```
 
@@ -91,11 +91,11 @@ The consumer and the store must share the same scoped `DbContext` instance (the 
 
 ### Cosmos store
 
-The Cosmos store is wired the same way — apply `CosmosInboxMessageEntityConfiguration` and call `AddCosmosInbox<AppDbContext>()`:
+The Cosmos store is wired the same way — apply the Cosmos mapping with `ApplyCosmosInbox()` and call `AddCosmosInbox<AppDbContext>()`:
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
-    => modelBuilder.ApplyConfiguration(new CosmosInboxMessageEntityConfiguration());
+    => modelBuilder.ApplyCosmosInbox();
 ```
 
 ```csharp

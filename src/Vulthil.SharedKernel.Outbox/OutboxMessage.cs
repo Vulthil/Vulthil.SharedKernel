@@ -6,13 +6,10 @@ namespace Vulthil.SharedKernel.Outbox;
 public sealed class OutboxMessage
 {
     /// <summary>
-    /// Gets the unique identifier for this outbox message, generated as a version-7 UUID for natural ordering.
+    /// Gets the unique identifier for this outbox message, generated as a version-7 UUID so the relay can use it as a
+    /// stable, time-ordered tie-breaker when ordering messages with the same <see cref="OccurredOnUtc"/>.
     /// </summary>
-#if NET10_0_OR_GREATER
     public Guid Id { get; init; } = Guid.CreateVersion7();
-#else
-    public Guid Id { get; init; } = Guid.NewGuid();
-#endif
     /// <summary>
     /// Gets the group identifier linking messages that were captured during the same <c>SaveChanges</c> call.
     /// </summary>
@@ -30,9 +27,17 @@ public sealed class OutboxMessage
     /// </summary>
     public DateTimeOffset OccurredOnUtc { get; init; }
     /// <summary>
-    /// Gets or sets the UTC timestamp when the message was successfully processed, or <see langword="null"/> if pending.
+    /// Gets or sets the UTC timestamp when the message was successfully processed, or <see langword="null"/> if pending
+    /// or dead-lettered.
     /// </summary>
     public DateTimeOffset? ProcessedOnUtc { get; set; }
+    /// <summary>
+    /// Gets or sets the UTC timestamp when the message was dead-lettered after exhausting its retries, or
+    /// <see langword="null"/> if it has not permanently failed. A dead-lettered message is never relayed again and is
+    /// distinct from a successfully processed one (<see cref="ProcessedOnUtc"/>); inspect <see cref="Error"/> for the
+    /// last failure.
+    /// </summary>
+    public DateTimeOffset? FailedOnUtc { get; set; }
     /// <summary>
     /// Gets or sets the number of delivery attempts made for this message.
     /// </summary>

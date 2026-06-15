@@ -71,23 +71,9 @@ public class HandlerOptions
     /// <exception cref="InvalidOperationException">Thrown when <paramref name="pipelineHandler"/> is not a valid open-generic type.</exception>
     public HandlerOptions AddOpenDomainEventPipelineHandler(Type pipelineHandler)
     {
-        if (!pipelineHandler.IsGenericType)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must be generic");
-        }
+        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IDomainEventPipelineHandler<>));
 
-        var implementedGenericInterfaces = pipelineHandler.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
-        var implementedOpenBehaviorInterfaces = new HashSet<Type>(implementedGenericInterfaces.Where(i => i == typeof(IDomainEventPipelineHandler<>)));
-
-        if (implementedOpenBehaviorInterfaces.Count == 0)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must implement {typeof(IDomainEventPipelineHandler<>).FullName}");
-        }
-
-        foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
-        {
-            _pipelineHandlers.Add(new ServiceDescriptor(openBehaviorInterface, pipelineHandler, ServiceLifetime.Scoped));
-        }
+        _pipelineHandlers.Add(new ServiceDescriptor(typeof(IDomainEventPipelineHandler<>), pipelineHandler, ServiceLifetime.Scoped));
 
         return this;
     }
@@ -100,23 +86,9 @@ public class HandlerOptions
     /// <exception cref="InvalidOperationException">Thrown when <paramref name="pipelineHandler"/> is not a valid open-generic type.</exception>
     public HandlerOptions AddOpenPipelineHandler(Type pipelineHandler)
     {
-        if (!pipelineHandler.IsGenericType)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must be generic");
-        }
+        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IPipelineHandler<,>));
 
-        var implementedGenericInterfaces = pipelineHandler.GetInterfaces().Where(i => i.IsGenericType).Select(i => i.GetGenericTypeDefinition());
-        var implementedOpenBehaviorInterfaces = new HashSet<Type>(implementedGenericInterfaces.Where(i => i == typeof(IPipelineHandler<,>)));
-
-        if (implementedOpenBehaviorInterfaces.Count == 0)
-        {
-            throw new InvalidOperationException($"{pipelineHandler.Name} must implement {typeof(IPipelineHandler<,>).FullName}");
-        }
-
-        foreach (var openBehaviorInterface in implementedOpenBehaviorInterfaces)
-        {
-            _pipelineHandlers.Add(new ServiceDescriptor(openBehaviorInterface, pipelineHandler, ServiceLifetime.Scoped));
-        }
+        _pipelineHandlers.Add(new ServiceDescriptor(typeof(IPipelineHandler<,>), pipelineHandler, ServiceLifetime.Scoped));
 
         return this;
     }
@@ -189,7 +161,10 @@ public sealed class ApplicationOptions
     }
 
     /// <summary>
-    /// Adds the validation pipeline behavior that validates commands before execution.
+    /// Adds the validation pipeline behavior that validates commands with FluentValidation before execution. On a
+    /// validation failure, a command returning <see cref="Vulthil.Results.Result"/> or <c>Result&lt;T&gt;</c> receives a
+    /// failed result containing a <see cref="Vulthil.Results.ValidationError"/>; a command with any other response type
+    /// throws a <see cref="FluentValidation.ValidationException"/>.
     /// </summary>
     /// <returns>The current options instance for chaining.</returns>
     public ApplicationOptions AddValidationPipelineBehavior()

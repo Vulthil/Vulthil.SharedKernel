@@ -11,6 +11,17 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+	</ItemGroup>
+
+	<!-- The MySQL EF Core integration: the Aspire/Pomelo client integration on net9; the Microting fork (a Pomelo fork with the same API) on net10 until the official Pomelo/Aspire packages ship EF Core 10 support. -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+		<PackageReference Include="Aspire.Pomelo.EntityFrameworkCore.MySql" />
+		<AdditionalFiles Include="PublicAPI\net9.0\PublicAPI.Unshipped.txt" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+		<PackageReference Include="Microting.EntityFrameworkCore.MySql" />
+		<AdditionalFiles Include="PublicAPI\net10.0\PublicAPI.Unshipped.txt" />
 	</ItemGroup>
 
 </Project>

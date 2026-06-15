@@ -80,7 +80,7 @@ Pipeline behaviors wrap every handler invocation, allowing you to add cross-cutt
 
 ### Validation
 
-`ValidationPipelineBehavior` runs all registered `IValidator<TCommand>` instances before the handler executes. When validation fails, it short-circuits and returns a `Result` containing a `ValidationError`:
+`ValidationPipelineBehavior` runs all registered `IValidator<TCommand>` instances before the handler executes. When validation fails it short-circuits: a command returning `Result` or `Result<T>` receives a failed result containing a `ValidationError`, while a command with any other response type throws a `ValidationException` (there is no in-band way to represent failure for a non-result response):
 
 ```csharp
 public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
@@ -102,7 +102,7 @@ No additional wiring is needed – the validator is picked up automatically from
 
 ### Transactional
 
-`TransactionalPipelineBehavior` wraps `ITransactionalCommand` handlers inside a database transaction. If the handler succeeds, the transaction commits; if it throws, the transaction rolls back.
+`TransactionalPipelineBehavior` wraps `ITransactionalCommand` handlers inside a database transaction. If the handler returns a successful `Result`, the transaction commits; if it returns a failed `Result` or throws, the transaction rolls back. (The non-generic `ITransactionalCommand` marker returns `Result` and is wrapped the same way as `ITransactionalCommand<Result>`.)
 
 ```csharp
 // Mark a command as transactional

@@ -7,7 +7,7 @@ namespace Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing;
 /// <summary>
 /// Cosmos-specific OutboxMessage mapping; provider-agnostic fallback mapping. Consumers may override in their DbContext.
 /// </summary>
-public sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
+internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)

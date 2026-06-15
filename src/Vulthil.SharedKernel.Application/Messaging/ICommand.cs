@@ -13,9 +13,9 @@ public interface ICommand : ICommand<Result>;
 public interface ICommand<out TResponse> : IRequest<TResponse>;
 
 /// <summary>
-/// Marker interface for a command that should be executed within a transaction.
+/// Marker interface for a command that returns a <see cref="Result"/> and should be executed within a transaction.
 /// </summary>
-public interface ITransactionalCommand : ICommand;
+public interface ITransactionalCommand : ICommand, ITransactionalCommand<Result>;
 /// <summary>
 /// Marker interface for a transactional command that returns a response of type <typeparamref name="TResponse"/>.
 /// </summary>

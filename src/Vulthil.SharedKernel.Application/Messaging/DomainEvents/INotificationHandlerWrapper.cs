@@ -12,7 +12,6 @@ internal interface INotificationHandlerWrapper
 }
 
 internal sealed record NotificationHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
-internal sealed record PipelineHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
 
 internal sealed class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper
     where TNotification : IDomainEvent

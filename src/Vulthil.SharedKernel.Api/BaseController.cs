@@ -1,18 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Vulthil.SharedKernel.Api;
 
 /// <summary>
-/// Abstract base API controller with preconfigured route conventions and logging.
+/// Abstract base API controller with preconfigured route conventions and a lazily-resolved logger.
 /// </summary>
-/// <param name="logger">The logger instance for the controller.</param>
 [ApiController]
 [Route("api/[controller]")]
-public abstract class BaseController(ILogger logger) : ControllerBase
+public abstract class BaseController : ControllerBase
 {
     /// <summary>
-    /// Gets the logger instance scoped to the derived controller type.
+    /// Gets a logger categorized for the concrete controller type, resolved from the request services.
     /// </summary>
-    protected ILogger Logger { get; } = logger;
+    protected ILogger Logger => HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(GetType());
 }

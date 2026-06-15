@@ -13,6 +13,7 @@ builder.AddServiceDefaults();
 builder.Services.AddControllers();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 builder.Services.AddOpenApiServices();
+builder.Services.AddProblemDetailsHandling();
 
 builder.Services.AddApplicationLayer();
 builder.AddDatabaseInfrastructure(ServiceNames.PostgresSqlServerServiceName)
@@ -24,6 +25,8 @@ builder.Services.AddHttpClient<IExternalWeatherClient, ExternalWeatherClient>(
 builder.Services.AddHttpClient("inventory", client => client.BaseAddress = new Uri("https://inventory.example.com"));
 
 var app = builder.Build();
+
+app.UseProblemDetailsHandling();
 
 app.MapDefaultEndpoints();
 

@@ -12,7 +12,7 @@ using WebApi.Infrastructure.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(WebApiDbContext))]
-    [Migration("20250113141251_InitialCreate")]
+    [Migration("20260614111907_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,12 +20,12 @@ namespace WebApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("WebApi.Models.MainEntity", b =>
+            modelBuilder.Entity("WebApi.Domain.MainEntities.MainEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");

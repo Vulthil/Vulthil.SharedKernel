@@ -14,13 +14,10 @@
 
 ## Defining an Entity
 
-Entities are compared by identity, not by attribute values:
+Entities are compared by identity, not by attribute values. Give the identifier value equality — a `record` or `readonly record struct` — so two entities with the same id compare as equal:
 
 ```csharp
-public sealed class UserId(Guid value)
-{
-    public Guid Value { get; } = value;
-}
+public sealed record UserId(Guid Value);
 
 public sealed class User : AggregateRoot<UserId>
 {

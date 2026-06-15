@@ -32,13 +32,6 @@ internal sealed class MessageTypeCache
     /// <summary>Resolves a wrapped plan from the wire URN (envelope path). Returns <see langword="null"/> when no plan matches.</summary>
     public RabbitMqPlan? GetPlanByUrn(Uri urn) => _wrappers.GetValueOrDefault(urn);
 
-    /// <summary>Resolves a wrapped plan from the CLR full type name (bare-JSON compat path). Returns <see langword="null"/> when no plan matches.</summary>
-    public RabbitMqPlan? GetPlanByFullName(string fullName)
-    {
-        var core = _registry.GetPlanByFullName(fullName);
-        return core is null ? null : _wrappers.GetValueOrDefault(core.Urn);
-    }
-
     /// <summary>Convenience lookup used by the bare-JSON receive path and tests: tries URN parsing first, falls back to CLR full name.</summary>
     public RabbitMqPlan? GetPlan(string key)
     {

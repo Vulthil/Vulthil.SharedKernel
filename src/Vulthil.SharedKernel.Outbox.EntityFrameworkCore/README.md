@@ -9,7 +9,7 @@ engine. It keeps all EF Core coupling out of the engine package:
   `SaveChangesAsync` / `IsInTransaction`). Provider packages override fetch/mark/transaction for row-level locking
   and best-effort (Cosmos) behaviour.
 - `DomainEventsToOutboxMessageSaveChangesInterceptor` / `IOutboxInterceptor` — capture of aggregate domain events.
-- `OutboxMessageEntityConfiguration` — the provider-agnostic `OutboxMessage` mapping.
+- `ApplyOutbox()` — a `ModelBuilder` extension applying the provider-agnostic `OutboxMessage` mapping. Provider packages offer optimized alternatives (`ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, `ApplyCosmosOutbox()`).
 
 Most applications consume this transitively via `Vulthil.SharedKernel.Infrastructure` (`EnableOutboxProcessing`) and
 a provider package (`UseNpgsql`, `UseMySql`, `UseCosmosDb`). See the

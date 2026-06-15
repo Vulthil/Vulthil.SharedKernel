@@ -17,7 +17,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfiguration(new CosmosInboxMessageEntityConfiguration());
+        => modelBuilder.ApplyCosmosInbox();
 }
 ```
 

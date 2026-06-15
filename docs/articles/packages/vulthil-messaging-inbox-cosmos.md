@@ -13,7 +13,7 @@ deduplication of redeliveries over **idempotent-by-design** consumer writes.
 
 ## Pattern
 
-- Your `DbContext` implements `ISaveInboxMessages` and applies `CosmosInboxMessageEntityConfiguration`
+- Your `DbContext` implements `ISaveInboxMessages` and applies the Cosmos inbox mapping via `ApplyCosmosInbox()`
 - The marker is a self-contained document keyed + partitioned by `MessageId` in its own container; a duplicate insert conflicts and is treated as already-processed
 - The marker is written after the consumer's own commit (no ambient transaction) — keep consumer writes idempotent
 
@@ -25,7 +25,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfiguration(new CosmosInboxMessageEntityConfiguration());
+        => modelBuilder.ApplyCosmosInbox();
 }
 ```
 

@@ -105,6 +105,7 @@
     <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Outbox/">
+    <Project Path="tests/Vulthil.SharedKernel.Outbox.Tests/Vulthil.SharedKernel.Outbox.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.Tests/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Messaging/">

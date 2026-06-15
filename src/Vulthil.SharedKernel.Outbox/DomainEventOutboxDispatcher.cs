@@ -23,13 +23,15 @@ internal sealed class DomainEventOutboxDispatcher(IDomainEventPublisher domainEv
         await domainEventPublisher.PublishAsync(domainEvent, cancellationToken);
     }
 
-    private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, t =>
+    private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, static t =>
     {
-        var type = Type.GetType(t);
-        type ??= AppDomain.CurrentDomain.GetAssemblies()
+        var type = Type.GetType(t)
+            ?? AppDomain.CurrentDomain.GetAssemblies()
                 .Select(a => a.GetType(t))
                 .FirstOrDefault(found => found is not null);
 
-        return type!;
+        return type ?? throw new InvalidOperationException(
+            $"Unable to resolve the domain-event type '{t}' for an outbox relay. " +
+            "Ensure the assembly that defines the type is loaded in the relay process.");
     });
 }

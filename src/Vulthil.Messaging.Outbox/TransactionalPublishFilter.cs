@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using Vulthil.Messaging.Transport;
 using Vulthil.SharedKernel.Outbox;
 
@@ -12,6 +14,7 @@ namespace Vulthil.Messaging.Outbox;
 internal sealed class TransactionalPublishFilter(
     IOutboxStore outboxStore,
     IMessageConfigurationProvider messageConfigurationProvider,
+    IOptions<OutboxProcessingOptions> outboxProcessingOptions,
     TimeProvider timeProvider) : IPublishFilter
 {
     public async Task PublishAsync(PublishFilterContext context, PublishFilterDelegate next)
@@ -29,6 +32,8 @@ internal sealed class TransactionalPublishFilter(
 
     private OutboxMessage CreateRow(PublishFilterContext context)
     {
+        var activity = outboxProcessingOptions.Value.EnableTracing ? Activity.Current : null;
+
         var metadata = new BrokerOutboxMetadata
         {
             MessageId = context.Context.MessageId,
@@ -46,6 +51,8 @@ internal sealed class TransactionalPublishFilter(
             Content = JsonSerializer.Serialize(context.Message, context.MessageType, messageConfigurationProvider.JsonSerializerOptions),
             OccurredOnUtc = timeProvider.GetUtcNow(),
             Destination = context.Kind == PublishKind.Send ? OutboxDestination.Send : OutboxDestination.Publish,
+            TraceParent = activity?.Id,
+            TraceState = activity?.TraceStateString,
             Metadata = JsonSerializer.Serialize(metadata, messageConfigurationProvider.JsonSerializerOptions),
         };
     }

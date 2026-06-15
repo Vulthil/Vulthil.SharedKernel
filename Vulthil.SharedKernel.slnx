@@ -109,6 +109,7 @@
   </Folder>
   <Folder Name="/tests/Messaging/">
     <Project Path="tests/Vulthil.Messaging.Tests/Vulthil.Messaging.Tests.csproj" />
+    <Project Path="tests/Vulthil.Messaging.Outbox.Tests/Vulthil.Messaging.Outbox.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Abstractions.Tests/Vulthil.Messaging.Abstractions.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.RabbitMq.Tests/Vulthil.Messaging.RabbitMq.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Inbox.Tests/Vulthil.Messaging.Inbox.Tests.csproj" />

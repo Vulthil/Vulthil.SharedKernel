@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Vulthil.Messaging.Outbox;
 
 /// <summary>
@@ -14,5 +16,6 @@ internal sealed record BrokerOutboxMetadata
 
     public string? DestinationAddress { get; init; }
 
+    [JsonConverter(typeof(BrokerOutboxMetadataHeadersConverter))]
     public Dictionary<string, object?>? Headers { get; init; }
 }

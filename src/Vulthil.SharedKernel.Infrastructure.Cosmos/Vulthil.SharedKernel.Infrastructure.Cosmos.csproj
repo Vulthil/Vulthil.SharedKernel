@@ -12,6 +12,8 @@
 		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+		<PackageReference Include="OpenTelemetry.Api" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
 	</ItemGroup>
 
 </Project>

@@ -125,9 +125,8 @@ app.MapEndpoints();
 app.MapOpenApiEndpoints();
 </code></pre>
 <h3 id="controller-based-endpoints">Controller-based endpoints</h3>
-<p>Controllers can return typed results directly for OpenAPI documentation:</p>
-<pre><code class="lang-csharp">public sealed class UsersController(ILogger&lt;UsersController&gt; logger, ISender sender)
-    : BaseController(logger)
+<p>Derive from <code>BaseController</code> for the standard <code>[ApiController]</code>/route conventions and a <code>Logger</code> property resolved for the concrete controller type (no constructor logger argument required). Controllers can return typed results directly for OpenAPI documentation:</p>
+<pre><code class="lang-csharp">public sealed class UsersController(ISender sender) : BaseController
 {
     [HttpGet(&quot;{id:guid}&quot;)]
     public async Task&lt;Results&lt;Ok&lt;UserDto&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;&gt; Get(Guid id)
@@ -138,8 +137,7 @@ app.MapOpenApiEndpoints();
 }
 </code></pre>
 <p>Or use <code>IActionResult</code> with model-state error translation:</p>
-<pre><code class="lang-csharp">public sealed class UsersController(ILogger&lt;UsersController&gt; logger, ISender sender)
-    : BaseController(logger)
+<pre><code class="lang-csharp">public sealed class UsersController(ISender sender) : BaseController
 {
     [HttpGet(&quot;{id:guid}&quot;)]
     public async Task&lt;IActionResult&gt; Get(Guid id)

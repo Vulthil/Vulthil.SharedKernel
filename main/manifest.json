@@ -474,17 +474,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.yml",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.html"
+          "relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.yml\" sourcestartlinenumber=\"1\">Default Cosmos mapping for <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage\" data-throw-if-not-resolved=\"false\"></xref>: a self-contained marker document keyed and partitioned\nby <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.MessageId\" data-throw-if-not-resolved=\"false\"></xref> in its own container, so duplicate inserts conflict and point lookups\nstay cheap. Consumers may override the container name or partitioning in their <xref href=\"Microsoft.EntityFrameworkCore.DbContext\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+      "Title": "Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the Cosmos <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -614,20 +614,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.yml\" sourcestartlinenumber=\"1\">Default relational mapping for <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage\" data-throw-if-not-resolved=\"false\"></xref>. The <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.MessageId\" data-throw-if-not-resolved=\"false\"></xref> is the\nprimary key, giving the uniqueness guarantee the idempotency store relies on. Consumers may override this\nmapping in their <xref href=\"Microsoft.EntityFrameworkCore.DbContext\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.yml",
       "output": {
         ".html": {
@@ -639,6 +625,20 @@
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions",
       "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extensions that register the relational Entity Framework Core idempotency store.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the relational <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1548,7 +1548,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Api.BaseController",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.BaseController.yml\" sourcestartlinenumber=\"1\">Abstract base API controller with preconfigured route conventions and logging.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.BaseController.yml\" sourcestartlinenumber=\"1\">Abstract base API controller with preconfigured route conventions and a lazily-resolved logger.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1622,6 +1622,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.ProblemDetailsExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods for wiring RFC 7807 ProblemDetails responses across the request pipeline,\ncovering handled failures, uncaught exceptions, and bare error status codes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Api.yml",
       "output": {
         ".html": {
@@ -1660,7 +1674,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior<TCommand, TResponse>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior-2.yml\" sourcestartlinenumber=\"1\">Pipeline behavior that wraps transactional commands in a database transaction, committing on success.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior-2.yml\" sourcestartlinenumber=\"1\">Pipeline behavior that wraps transactional commands in a database transaction, committing when the command\nsucceeds and rolling back when it returns a failed <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> or throws.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1968,7 +1982,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand.yml\" sourcestartlinenumber=\"1\">Marker interface for a command that should be executed within a transaction.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand.yml\" sourcestartlinenumber=\"1\">Marker interface for a command that returns a <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> and should be executed within a transaction.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2140,6 +2154,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the Cosmos DB <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.yml",
       "output": {
         ".html": {
@@ -2165,20 +2193,6 @@
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>",
       "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Cosmos outbox store. Cosmos DB has no cross-partition transaction, so the relay runs without an ambient\ntransaction (best-effort): it uses the base LINQ fetch and materialized update. Consumers targeting Cosmos at\nscale should supply an SDK-backed store.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.yml\" sourcestartlinenumber=\"1\">Cosmos-specific OutboxMessage mapping; provider-agnostic fallback mapping. Consumers may override in their DbContext.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2322,6 +2336,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the MySQL-optimized <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml",
       "output": {
         ".html": {
@@ -2333,20 +2361,6 @@
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>",
       "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.yml\" sourcestartlinenumber=\"1\">MySQL-specific OutboxMessage mapping.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2392,6 +2406,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the PostgreSQL-optimized <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml",
       "output": {
         ".html": {
@@ -2403,20 +2431,6 @@
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>",
       "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.yml\" sourcestartlinenumber=\"1\">PostgreSQL-specific OutboxMessage mapping. Stores Content as jsonb and adds helpful indexes.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2616,17 +2630,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.yml",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.html"
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.yml\" sourcestartlinenumber=\"1\">Provider-agnostic base configuration for <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref>.\nProvider packages should supply their own <xref href=\"Microsoft.EntityFrameworkCore.IEntityTypeConfiguration%601\" data-throw-if-not-resolved=\"false\"></xref>\nwith optimized indexes, column types, and filters (e.g., jsonb + filtered index for Postgres).</p>\n"
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the provider-agnostic <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2836,7 +2850,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Primitives.Entity<TId>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Primitives.Entity-1.yml\" sourcestartlinenumber=\"1\">Base class for domain entities identified by a strongly-typed identifier.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Primitives.Entity-1.yml\" sourcestartlinenumber=\"1\">Base class for domain entities identified by a strongly-typed identifier. Entities are compared by identity:\ntwo entities are equal when they have the same runtime type and equal, non-default <xref href=\"Vulthil.SharedKernel.Primitives.Entity%601.Id\" data-throw-if-not-resolved=\"false\"></xref> values.\nA transient entity — one whose <xref href=\"Vulthil.SharedKernel.Primitives.Entity%601.Id\" data-throw-if-not-resolved=\"false\"></xref> is still the default value — is only equal to itself.</p>\n"
     },
     {
       "type": "ManagedReference",

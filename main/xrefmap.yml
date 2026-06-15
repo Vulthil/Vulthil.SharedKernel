@@ -1641,28 +1641,25 @@ references:
   fullName.vb: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox(Of TContext)(Microsoft.Extensions.DependencyInjection.IServiceCollection)
   nameWithType: CosmosInboxExtensions.AddCosmosInbox<TContext>(IServiceCollection)
   nameWithType.vb: CosmosInboxExtensions.AddCosmosInbox(Of TContext)(IServiceCollection)
-- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration
-  name: CosmosInboxMessageEntityConfiguration
-  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.html
-  commentId: T:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration
-  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration
-  nameWithType: CosmosInboxMessageEntityConfiguration
-- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage})
-  name: Configure(EntityTypeBuilder<InboxMessage>)
-  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.html#Vulthil_Messaging_Inbox_Cosmos_CosmosInboxMessageEntityConfiguration_Configure_Microsoft_EntityFrameworkCore_Metadata_Builders_EntityTypeBuilder_Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage__
-  commentId: M:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage})
-  name.vb: Configure(EntityTypeBuilder(Of InboxMessage))
-  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage>)
-  fullName.vb: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder(Of Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage))
-  nameWithType: CosmosInboxMessageEntityConfiguration.Configure(EntityTypeBuilder<InboxMessage>)
-  nameWithType.vb: CosmosInboxMessageEntityConfiguration.Configure(EntityTypeBuilder(Of InboxMessage))
-- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.Configure*
-  name: Configure
-  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.html#Vulthil_Messaging_Inbox_Cosmos_CosmosInboxMessageEntityConfiguration_Configure_
-  commentId: Overload:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.Configure
+- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions
+  name: CosmosInboxModelBuilderExtensions
+  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.html
+  commentId: T:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions
+  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions
+  nameWithType: CosmosInboxModelBuilderExtensions
+- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.ApplyCosmosInbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  name: ApplyCosmosInbox(ModelBuilder)
+  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.html#Vulthil_Messaging_Inbox_Cosmos_CosmosInboxModelBuilderExtensions_ApplyCosmosInbox_Microsoft_EntityFrameworkCore_ModelBuilder_
+  commentId: M:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.ApplyCosmosInbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.ApplyCosmosInbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  nameWithType: CosmosInboxModelBuilderExtensions.ApplyCosmosInbox(ModelBuilder)
+- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.ApplyCosmosInbox*
+  name: ApplyCosmosInbox
+  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.html#Vulthil_Messaging_Inbox_Cosmos_CosmosInboxModelBuilderExtensions_ApplyCosmosInbox_
+  commentId: Overload:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.ApplyCosmosInbox
   isSpec: "True"
-  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.Configure
-  nameWithType: CosmosInboxMessageEntityConfiguration.Configure
+  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.ApplyCosmosInbox
+  nameWithType: CosmosInboxModelBuilderExtensions.ApplyCosmosInbox
 - uid: Vulthil.Messaging.Inbox.EntityFrameworkCore
   name: Vulthil.Messaging.Inbox.EntityFrameworkCore
   href: api/Vulthil.Messaging.Inbox.EntityFrameworkCore.html
@@ -1910,28 +1907,6 @@ references:
   commentId: N:Vulthil.Messaging.Inbox.Relational
   fullName: Vulthil.Messaging.Inbox.Relational
   nameWithType: Vulthil.Messaging.Inbox.Relational
-- uid: Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration
-  name: InboxMessageEntityConfiguration
-  href: api/Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.html
-  commentId: T:Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration
-  fullName: Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration
-  nameWithType: InboxMessageEntityConfiguration
-- uid: Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage})
-  name: Configure(EntityTypeBuilder<InboxMessage>)
-  href: api/Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.html#Vulthil_Messaging_Inbox_Relational_InboxMessageEntityConfiguration_Configure_Microsoft_EntityFrameworkCore_Metadata_Builders_EntityTypeBuilder_Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage__
-  commentId: M:Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage})
-  name.vb: Configure(EntityTypeBuilder(Of InboxMessage))
-  fullName: Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage>)
-  fullName.vb: Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder(Of Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage))
-  nameWithType: InboxMessageEntityConfiguration.Configure(EntityTypeBuilder<InboxMessage>)
-  nameWithType.vb: InboxMessageEntityConfiguration.Configure(EntityTypeBuilder(Of InboxMessage))
-- uid: Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure*
-  name: Configure
-  href: api/Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.html#Vulthil_Messaging_Inbox_Relational_InboxMessageEntityConfiguration_Configure_
-  commentId: Overload:Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure
-  isSpec: "True"
-  fullName: Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.Configure
-  nameWithType: InboxMessageEntityConfiguration.Configure
 - uid: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions
   name: RelationalInboxExtensions
   href: api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.html
@@ -1954,6 +1929,25 @@ references:
   fullName.vb: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox(Of TContext)(Microsoft.Extensions.DependencyInjection.IServiceCollection)
   nameWithType: RelationalInboxExtensions.AddRelationalInbox<TContext>(IServiceCollection)
   nameWithType.vb: RelationalInboxExtensions.AddRelationalInbox(Of TContext)(IServiceCollection)
+- uid: Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions
+  name: RelationalInboxModelBuilderExtensions
+  href: api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html
+  commentId: T:Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions
+  fullName: Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions
+  nameWithType: RelationalInboxModelBuilderExtensions
+- uid: Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.ApplyRelationalInbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  name: ApplyRelationalInbox(ModelBuilder)
+  href: api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html#Vulthil_Messaging_Inbox_Relational_RelationalInboxModelBuilderExtensions_ApplyRelationalInbox_Microsoft_EntityFrameworkCore_ModelBuilder_
+  commentId: M:Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.ApplyRelationalInbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  fullName: Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.ApplyRelationalInbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  nameWithType: RelationalInboxModelBuilderExtensions.ApplyRelationalInbox(ModelBuilder)
+- uid: Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.ApplyRelationalInbox*
+  name: ApplyRelationalInbox
+  href: api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html#Vulthil_Messaging_Inbox_Relational_RelationalInboxModelBuilderExtensions_ApplyRelationalInbox_
+  commentId: Overload:Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.ApplyRelationalInbox
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.ApplyRelationalInbox
+  nameWithType: RelationalInboxModelBuilderExtensions.ApplyRelationalInbox
 - uid: Vulthil.Messaging.MessageConfiguration
   name: MessageConfiguration
   href: api/Vulthil.Messaging.MessageConfiguration.html
@@ -5280,6 +5274,22 @@ references:
   isSpec: "True"
   fullName: Vulthil.Results.Error.Type
   nameWithType: Error.Type
+- uid: Vulthil.Results.Error.Validation(System.String,System.String)
+  name: Validation(string, string)
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Validation_System_String_System_String_
+  commentId: M:Vulthil.Results.Error.Validation(System.String,System.String)
+  name.vb: Validation(String, String)
+  fullName: Vulthil.Results.Error.Validation(string, string)
+  fullName.vb: Vulthil.Results.Error.Validation(String, String)
+  nameWithType: Error.Validation(string, string)
+  nameWithType.vb: Error.Validation(String, String)
+- uid: Vulthil.Results.Error.Validation*
+  name: Validation
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Validation_
+  commentId: Overload:Vulthil.Results.Error.Validation
+  isSpec: "True"
+  fullName: Vulthil.Results.Error.Validation
+  nameWithType: Error.Validation
 - uid: Vulthil.Results.ErrorType
   name: ErrorType
   href: api/Vulthil.Results.ErrorType.html
@@ -5604,6 +5614,147 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.Bind(Of T1, T2)(Vulthil.Results.Result(Of T1), System.Func(Of T1, Vulthil.Results.Result(Of T2)))
   nameWithType: ResultExtensions.Bind<T1, T2>(Result<T1>, Func<T1, Result<T2>>)
   nameWithType.vb: ResultExtensions.Bind(Of T1, T2)(Result(Of T1), Func(Of T1, Result(Of T2)))
+- uid: Vulthil.Results.ResultExtensions.Combine(System.Collections.Generic.IEnumerable{Vulthil.Results.Result})
+  name: Combine(IEnumerable<Result>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Combine_System_Collections_Generic_IEnumerable_Vulthil_Results_Result__
+  commentId: M:Vulthil.Results.ResultExtensions.Combine(System.Collections.Generic.IEnumerable{Vulthil.Results.Result})
+  name.vb: Combine(IEnumerable(Of Result))
+  fullName: Vulthil.Results.ResultExtensions.Combine(System.Collections.Generic.IEnumerable<Vulthil.Results.Result>)
+  fullName.vb: Vulthil.Results.ResultExtensions.Combine(System.Collections.Generic.IEnumerable(Of Vulthil.Results.Result))
+  nameWithType: ResultExtensions.Combine(IEnumerable<Result>)
+  nameWithType.vb: ResultExtensions.Combine(IEnumerable(Of Result))
+- uid: Vulthil.Results.ResultExtensions.Combine(Vulthil.Results.Result[])
+  name: Combine(params Result[])
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Combine_Vulthil_Results_Result___
+  commentId: M:Vulthil.Results.ResultExtensions.Combine(Vulthil.Results.Result[])
+  name.vb: Combine(ParamArray Result())
+  fullName: Vulthil.Results.ResultExtensions.Combine(params Vulthil.Results.Result[])
+  fullName.vb: Vulthil.Results.ResultExtensions.Combine(ParamArray Vulthil.Results.Result())
+  nameWithType: ResultExtensions.Combine(params Result[])
+  nameWithType.vb: ResultExtensions.Combine(ParamArray Result())
+- uid: Vulthil.Results.ResultExtensions.Combine*
+  name: Combine
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Combine_
+  commentId: Overload:Vulthil.Results.ResultExtensions.Combine
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.Combine
+  nameWithType: ResultExtensions.Combine
+- uid: Vulthil.Results.ResultExtensions.CombineAsync(System.Collections.Generic.IEnumerable{System.Threading.Tasks.Task{Vulthil.Results.Result}})
+  name: CombineAsync(IEnumerable<Task<Result>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_CombineAsync_System_Collections_Generic_IEnumerable_System_Threading_Tasks_Task_Vulthil_Results_Result___
+  commentId: M:Vulthil.Results.ResultExtensions.CombineAsync(System.Collections.Generic.IEnumerable{System.Threading.Tasks.Task{Vulthil.Results.Result}})
+  name.vb: CombineAsync(IEnumerable(Of Task(Of Result)))
+  fullName: Vulthil.Results.ResultExtensions.CombineAsync(System.Collections.Generic.IEnumerable<System.Threading.Tasks.Task<Vulthil.Results.Result>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.CombineAsync(System.Collections.Generic.IEnumerable(Of System.Threading.Tasks.Task(Of Vulthil.Results.Result)))
+  nameWithType: ResultExtensions.CombineAsync(IEnumerable<Task<Result>>)
+  nameWithType.vb: ResultExtensions.CombineAsync(IEnumerable(Of Task(Of Result)))
+- uid: Vulthil.Results.ResultExtensions.CombineAsync*
+  name: CombineAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_CombineAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.CombineAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.CombineAsync
+  nameWithType: ResultExtensions.CombineAsync
+- uid: Vulthil.Results.ResultExtensions.Ensure*
+  name: Ensure
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Ensure_
+  commentId: Overload:Vulthil.Results.ResultExtensions.Ensure
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.Ensure
+  nameWithType: ResultExtensions.Ensure
+- uid: Vulthil.Results.ResultExtensions.EnsureAsync*
+  name: EnsureAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_EnsureAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.EnsureAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.EnsureAsync
+  nameWithType: ResultExtensions.EnsureAsync
+- uid: Vulthil.Results.ResultExtensions.EnsureAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{``0,System.Boolean},Vulthil.Results.Error)
+  name: EnsureAsync<T1>(Task<Result<T1>>, Func<T1, bool>, Error)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_EnsureAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func___0_System_Boolean__Vulthil_Results_Error_
+  commentId: M:Vulthil.Results.ResultExtensions.EnsureAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{``0,System.Boolean},Vulthil.Results.Error)
+  name.vb: EnsureAsync(Of T1)(Task(Of Result(Of T1)), Func(Of T1, Boolean), Error)
+  fullName: Vulthil.Results.ResultExtensions.EnsureAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<T1, bool>, Vulthil.Results.Error)
+  fullName.vb: Vulthil.Results.ResultExtensions.EnsureAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of T1, Boolean), Vulthil.Results.Error)
+  nameWithType: ResultExtensions.EnsureAsync<T1>(Task<Result<T1>>, Func<T1, bool>, Error)
+  nameWithType.vb: ResultExtensions.EnsureAsync(Of T1)(Task(Of Result(Of T1)), Func(Of T1, Boolean), Error)
+- uid: Vulthil.Results.ResultExtensions.EnsureAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{``0,System.Threading.Tasks.Task{System.Boolean}},Vulthil.Results.Error)
+  name: EnsureAsync<T1>(Task<Result<T1>>, Func<T1, Task<bool>>, Error)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_EnsureAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func___0_System_Threading_Tasks_Task_System_Boolean___Vulthil_Results_Error_
+  commentId: M:Vulthil.Results.ResultExtensions.EnsureAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{``0,System.Threading.Tasks.Task{System.Boolean}},Vulthil.Results.Error)
+  name.vb: EnsureAsync(Of T1)(Task(Of Result(Of T1)), Func(Of T1, Task(Of Boolean)), Error)
+  fullName: Vulthil.Results.ResultExtensions.EnsureAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<T1, System.Threading.Tasks.Task<bool>>, Vulthil.Results.Error)
+  fullName.vb: Vulthil.Results.ResultExtensions.EnsureAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of T1, System.Threading.Tasks.Task(Of Boolean)), Vulthil.Results.Error)
+  nameWithType: ResultExtensions.EnsureAsync<T1>(Task<Result<T1>>, Func<T1, Task<bool>>, Error)
+  nameWithType.vb: ResultExtensions.EnsureAsync(Of T1)(Task(Of Result(Of T1)), Func(Of T1, Task(Of Boolean)), Error)
+- uid: Vulthil.Results.ResultExtensions.EnsureAsync``1(Vulthil.Results.Result{``0},System.Func{``0,System.Threading.Tasks.Task{System.Boolean}},Vulthil.Results.Error)
+  name: EnsureAsync<T1>(Result<T1>, Func<T1, Task<bool>>, Error)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_EnsureAsync__1_Vulthil_Results_Result___0__System_Func___0_System_Threading_Tasks_Task_System_Boolean___Vulthil_Results_Error_
+  commentId: M:Vulthil.Results.ResultExtensions.EnsureAsync``1(Vulthil.Results.Result{``0},System.Func{``0,System.Threading.Tasks.Task{System.Boolean}},Vulthil.Results.Error)
+  name.vb: EnsureAsync(Of T1)(Result(Of T1), Func(Of T1, Task(Of Boolean)), Error)
+  fullName: Vulthil.Results.ResultExtensions.EnsureAsync<T1>(Vulthil.Results.Result<T1>, System.Func<T1, System.Threading.Tasks.Task<bool>>, Vulthil.Results.Error)
+  fullName.vb: Vulthil.Results.ResultExtensions.EnsureAsync(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of T1, System.Threading.Tasks.Task(Of Boolean)), Vulthil.Results.Error)
+  nameWithType: ResultExtensions.EnsureAsync<T1>(Result<T1>, Func<T1, Task<bool>>, Error)
+  nameWithType.vb: ResultExtensions.EnsureAsync(Of T1)(Result(Of T1), Func(Of T1, Task(Of Boolean)), Error)
+- uid: Vulthil.Results.ResultExtensions.Ensure``1(Vulthil.Results.Result{``0},System.Func{``0,System.Boolean},Vulthil.Results.Error)
+  name: Ensure<T1>(Result<T1>, Func<T1, bool>, Error)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Ensure__1_Vulthil_Results_Result___0__System_Func___0_System_Boolean__Vulthil_Results_Error_
+  commentId: M:Vulthil.Results.ResultExtensions.Ensure``1(Vulthil.Results.Result{``0},System.Func{``0,System.Boolean},Vulthil.Results.Error)
+  name.vb: Ensure(Of T1)(Result(Of T1), Func(Of T1, Boolean), Error)
+  fullName: Vulthil.Results.ResultExtensions.Ensure<T1>(Vulthil.Results.Result<T1>, System.Func<T1, bool>, Vulthil.Results.Error)
+  fullName.vb: Vulthil.Results.ResultExtensions.Ensure(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of T1, Boolean), Vulthil.Results.Error)
+  nameWithType: ResultExtensions.Ensure<T1>(Result<T1>, Func<T1, bool>, Error)
+  nameWithType.vb: ResultExtensions.Ensure(Of T1)(Result(Of T1), Func(Of T1, Boolean), Error)
+- uid: Vulthil.Results.ResultExtensions.GetValueOrDefault*
+  name: GetValueOrDefault
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefault_
+  commentId: Overload:Vulthil.Results.ResultExtensions.GetValueOrDefault
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.GetValueOrDefault
+  nameWithType: ResultExtensions.GetValueOrDefault
+- uid: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync*
+  name: GetValueOrDefaultAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefaultAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync
+  nameWithType: ResultExtensions.GetValueOrDefaultAsync
+- uid: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}})
+  name: GetValueOrDefaultAsync<T1>(Task<Result<T1>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefaultAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___
+  commentId: M:Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}})
+  name.vb: GetValueOrDefaultAsync(Of T1)(Task(Of Result(Of T1)))
+  fullName: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)))
+  nameWithType: ResultExtensions.GetValueOrDefaultAsync<T1>(Task<Result<T1>>)
+  nameWithType.vb: ResultExtensions.GetValueOrDefaultAsync(Of T1)(Task(Of Result(Of T1)))
+- uid: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},``0)
+  name: GetValueOrDefaultAsync<T1>(Task<Result<T1>>, T1)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefaultAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0_____0_
+  commentId: M:Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},``0)
+  name.vb: GetValueOrDefaultAsync(Of T1)(Task(Of Result(Of T1)), T1)
+  fullName: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, T1)
+  fullName.vb: Vulthil.Results.ResultExtensions.GetValueOrDefaultAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), T1)
+  nameWithType: ResultExtensions.GetValueOrDefaultAsync<T1>(Task<Result<T1>>, T1)
+  nameWithType.vb: ResultExtensions.GetValueOrDefaultAsync(Of T1)(Task(Of Result(Of T1)), T1)
+- uid: Vulthil.Results.ResultExtensions.GetValueOrDefault``1(Vulthil.Results.Result{``0})
+  name: GetValueOrDefault<T1>(Result<T1>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefault__1_Vulthil_Results_Result___0__
+  commentId: M:Vulthil.Results.ResultExtensions.GetValueOrDefault``1(Vulthil.Results.Result{``0})
+  name.vb: GetValueOrDefault(Of T1)(Result(Of T1))
+  fullName: Vulthil.Results.ResultExtensions.GetValueOrDefault<T1>(Vulthil.Results.Result<T1>)
+  fullName.vb: Vulthil.Results.ResultExtensions.GetValueOrDefault(Of T1)(Vulthil.Results.Result(Of T1))
+  nameWithType: ResultExtensions.GetValueOrDefault<T1>(Result<T1>)
+  nameWithType.vb: ResultExtensions.GetValueOrDefault(Of T1)(Result(Of T1))
+- uid: Vulthil.Results.ResultExtensions.GetValueOrDefault``1(Vulthil.Results.Result{``0},``0)
+  name: GetValueOrDefault<T1>(Result<T1>, T1)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefault__1_Vulthil_Results_Result___0____0_
+  commentId: M:Vulthil.Results.ResultExtensions.GetValueOrDefault``1(Vulthil.Results.Result{``0},``0)
+  name.vb: GetValueOrDefault(Of T1)(Result(Of T1), T1)
+  fullName: Vulthil.Results.ResultExtensions.GetValueOrDefault<T1>(Vulthil.Results.Result<T1>, T1)
+  fullName.vb: Vulthil.Results.ResultExtensions.GetValueOrDefault(Of T1)(Vulthil.Results.Result(Of T1), T1)
+  nameWithType: ResultExtensions.GetValueOrDefault<T1>(Result<T1>, T1)
+  nameWithType.vb: ResultExtensions.GetValueOrDefault(Of T1)(Result(Of T1), T1)
 - uid: Vulthil.Results.ResultExtensions.Map*
   name: Map
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Map_
@@ -5672,6 +5823,92 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.MapAsync(Of T1, T2)(Vulthil.Results.Result(Of T1), System.Func(Of T1, System.Threading.Tasks.Task(Of T2)))
   nameWithType: ResultExtensions.MapAsync<T1, T2>(Result<T1>, Func<T1, Task<T2>>)
   nameWithType.vb: ResultExtensions.MapAsync(Of T1, T2)(Result(Of T1), Func(Of T1, Task(Of T2)))
+- uid: Vulthil.Results.ResultExtensions.MapError(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name: MapError(Result, Func<Error, Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapError_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.MapError(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name.vb: MapError(Result, Func(Of Error, Error))
+  fullName: Vulthil.Results.ResultExtensions.MapError(Vulthil.Results.Result, System.Func<Vulthil.Results.Error, Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapError(Vulthil.Results.Result, System.Func(Of Vulthil.Results.Error, Vulthil.Results.Error))
+  nameWithType: ResultExtensions.MapError(Result, Func<Error, Error>)
+  nameWithType.vb: ResultExtensions.MapError(Result, Func(Of Error, Error))
+- uid: Vulthil.Results.ResultExtensions.MapError*
+  name: MapError
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapError_
+  commentId: Overload:Vulthil.Results.ResultExtensions.MapError
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.MapError
+  nameWithType: ResultExtensions.MapError
+- uid: Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name: MapErrorAsync(Task<Result>, Func<Error, Task<Error>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Error___
+  commentId: M:Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name.vb: MapErrorAsync(Task(Of Result), Func(Of Error, Task(Of Error)))
+  fullName: Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Error>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Error)))
+  nameWithType: ResultExtensions.MapErrorAsync(Task<Result>, Func<Error, Task<Error>>)
+  nameWithType.vb: ResultExtensions.MapErrorAsync(Task(Of Result), Func(Of Error, Task(Of Error)))
+- uid: Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name: MapErrorAsync(Task<Result>, Func<Error, Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__System_Func_Vulthil_Results_Error_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name.vb: MapErrorAsync(Task(Of Result), Func(Of Error, Error))
+  fullName: Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, System.Func<Vulthil.Results.Error, Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapErrorAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), System.Func(Of Vulthil.Results.Error, Vulthil.Results.Error))
+  nameWithType: ResultExtensions.MapErrorAsync(Task<Result>, Func<Error, Error>)
+  nameWithType.vb: ResultExtensions.MapErrorAsync(Task(Of Result), Func(Of Error, Error))
+- uid: Vulthil.Results.ResultExtensions.MapErrorAsync(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name: MapErrorAsync(Result, Func<Error, Task<Error>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Error___
+  commentId: M:Vulthil.Results.ResultExtensions.MapErrorAsync(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name.vb: MapErrorAsync(Result, Func(Of Error, Task(Of Error)))
+  fullName: Vulthil.Results.ResultExtensions.MapErrorAsync(Vulthil.Results.Result, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Error>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapErrorAsync(Vulthil.Results.Result, System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Error)))
+  nameWithType: ResultExtensions.MapErrorAsync(Result, Func<Error, Task<Error>>)
+  nameWithType.vb: ResultExtensions.MapErrorAsync(Result, Func(Of Error, Task(Of Error)))
+- uid: Vulthil.Results.ResultExtensions.MapErrorAsync*
+  name: MapErrorAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.MapErrorAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.MapErrorAsync
+  nameWithType: ResultExtensions.MapErrorAsync
+- uid: Vulthil.Results.ResultExtensions.MapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name: MapErrorAsync<T1>(Task<Result<T1>>, Func<Error, Task<Error>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Error___
+  commentId: M:Vulthil.Results.ResultExtensions.MapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name.vb: MapErrorAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task(Of Error)))
+  fullName: Vulthil.Results.ResultExtensions.MapErrorAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Error>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapErrorAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Error)))
+  nameWithType: ResultExtensions.MapErrorAsync<T1>(Task<Result<T1>>, Func<Error, Task<Error>>)
+  nameWithType.vb: ResultExtensions.MapErrorAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task(Of Error)))
+- uid: Vulthil.Results.ResultExtensions.MapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name: MapErrorAsync<T1>(Task<Result<T1>>, Func<Error, Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func_Vulthil_Results_Error_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.MapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name.vb: MapErrorAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Error))
+  fullName: Vulthil.Results.ResultExtensions.MapErrorAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<Vulthil.Results.Error, Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapErrorAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of Vulthil.Results.Error, Vulthil.Results.Error))
+  nameWithType: ResultExtensions.MapErrorAsync<T1>(Task<Result<T1>>, Func<Error, Error>)
+  nameWithType.vb: ResultExtensions.MapErrorAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Error))
+- uid: Vulthil.Results.ResultExtensions.MapErrorAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name: MapErrorAsync<T1>(Result<T1>, Func<Error, Task<Error>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Error___
+  commentId: M:Vulthil.Results.ResultExtensions.MapErrorAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Error}})
+  name.vb: MapErrorAsync(Of T1)(Result(Of T1), Func(Of Error, Task(Of Error)))
+  fullName: Vulthil.Results.ResultExtensions.MapErrorAsync<T1>(Vulthil.Results.Result<T1>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Error>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapErrorAsync(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Error)))
+  nameWithType: ResultExtensions.MapErrorAsync<T1>(Result<T1>, Func<Error, Task<Error>>)
+  nameWithType.vb: ResultExtensions.MapErrorAsync(Of T1)(Result(Of T1), Func(Of Error, Task(Of Error)))
+- uid: Vulthil.Results.ResultExtensions.MapError``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name: MapError<T1>(Result<T1>, Func<Error, Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapError__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.MapError``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,Vulthil.Results.Error})
+  name.vb: MapError(Of T1)(Result(Of T1), Func(Of Error, Error))
+  fullName: Vulthil.Results.ResultExtensions.MapError<T1>(Vulthil.Results.Result<T1>, System.Func<Vulthil.Results.Error, Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.MapError(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of Vulthil.Results.Error, Vulthil.Results.Error))
+  nameWithType: ResultExtensions.MapError<T1>(Result<T1>, Func<Error, Error>)
+  nameWithType.vb: ResultExtensions.MapError(Of T1)(Result(Of T1), Func(Of Error, Error))
 - uid: Vulthil.Results.ResultExtensions.Map``1(Vulthil.Results.Result,System.Func{``0})
   name: Map<T2>(Result, Func<T2>)
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Map__1_Vulthil_Results_Result_System_Func___0__
@@ -5992,6 +6229,189 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.Match(Of TIn, TOut)(Vulthil.Results.Result(Of TIn), System.Func(Of TIn, TOut), System.Func(Of Vulthil.Results.Error, TOut))
   nameWithType: ResultExtensions.Match<TIn, TOut>(Result<TIn>, Func<TIn, TOut>, Func<Error, TOut>)
   nameWithType.vb: ResultExtensions.Match(Of TIn, TOut)(Result(Of TIn), Func(Of TIn, TOut), Func(Of Error, TOut))
+- uid: Vulthil.Results.ResultExtensions.Or(Vulthil.Results.Result,Vulthil.Results.Result)
+  name: Or(Result, Result)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Or_Vulthil_Results_Result_Vulthil_Results_Result_
+  commentId: M:Vulthil.Results.ResultExtensions.Or(Vulthil.Results.Result,Vulthil.Results.Result)
+  fullName: Vulthil.Results.ResultExtensions.Or(Vulthil.Results.Result, Vulthil.Results.Result)
+  nameWithType: ResultExtensions.Or(Result, Result)
+- uid: Vulthil.Results.ResultExtensions.Or*
+  name: Or
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Or_
+  commentId: Overload:Vulthil.Results.ResultExtensions.Or
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.Or
+  nameWithType: ResultExtensions.Or
+- uid: Vulthil.Results.ResultExtensions.OrAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},Vulthil.Results.Result)
+  name: OrAsync(Task<Result>, Result)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__Vulthil_Results_Result_
+  commentId: M:Vulthil.Results.ResultExtensions.OrAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},Vulthil.Results.Result)
+  name.vb: OrAsync(Task(Of Result), Result)
+  fullName: Vulthil.Results.ResultExtensions.OrAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, Vulthil.Results.Result)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), Vulthil.Results.Result)
+  nameWithType: ResultExtensions.OrAsync(Task<Result>, Result)
+  nameWithType.vb: ResultExtensions.OrAsync(Task(Of Result), Result)
+- uid: Vulthil.Results.ResultExtensions.OrAsync*
+  name: OrAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.OrAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.OrAsync
+  nameWithType: ResultExtensions.OrAsync
+- uid: Vulthil.Results.ResultExtensions.OrAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Vulthil.Results.Result{``0})
+  name: OrAsync<T1>(Task<Result<T1>>, Result<T1>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___Vulthil_Results_Result___0__
+  commentId: M:Vulthil.Results.ResultExtensions.OrAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Vulthil.Results.Result{``0})
+  name.vb: OrAsync(Of T1)(Task(Of Result(Of T1)), Result(Of T1))
+  fullName: Vulthil.Results.ResultExtensions.OrAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, Vulthil.Results.Result<T1>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), Vulthil.Results.Result(Of T1))
+  nameWithType: ResultExtensions.OrAsync<T1>(Task<Result<T1>>, Result<T1>)
+  nameWithType.vb: ResultExtensions.OrAsync(Of T1)(Task(Of Result(Of T1)), Result(Of T1))
+- uid: Vulthil.Results.ResultExtensions.OrElse(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,Vulthil.Results.Result})
+  name: OrElse(Result, Func<Error, Result>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElse_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_Vulthil_Results_Result__
+  commentId: M:Vulthil.Results.ResultExtensions.OrElse(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,Vulthil.Results.Result})
+  name.vb: OrElse(Result, Func(Of Error, Result))
+  fullName: Vulthil.Results.ResultExtensions.OrElse(Vulthil.Results.Result, System.Func<Vulthil.Results.Error, Vulthil.Results.Result>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElse(Vulthil.Results.Result, System.Func(Of Vulthil.Results.Error, Vulthil.Results.Result))
+  nameWithType: ResultExtensions.OrElse(Result, Func<Error, Result>)
+  nameWithType.vb: ResultExtensions.OrElse(Result, Func(Of Error, Result))
+- uid: Vulthil.Results.ResultExtensions.OrElse*
+  name: OrElse
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElse_
+  commentId: Overload:Vulthil.Results.ResultExtensions.OrElse
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.OrElse
+  nameWithType: ResultExtensions.OrElse
+- uid: Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result}})
+  name: OrElseAsync(Task<Result>, Func<Error, Task<Result>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Result___
+  commentId: M:Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result}})
+  name.vb: OrElseAsync(Task(Of Result), Func(Of Error, Task(Of Result)))
+  fullName: Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Result>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Result)))
+  nameWithType: ResultExtensions.OrElseAsync(Task<Result>, Func<Error, Task<Result>>)
+  nameWithType.vb: ResultExtensions.OrElseAsync(Task(Of Result), Func(Of Error, Task(Of Result)))
+- uid: Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,Vulthil.Results.Result})
+  name: OrElseAsync(Task<Result>, Func<Error, Result>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__System_Func_Vulthil_Results_Error_Vulthil_Results_Result__
+  commentId: M:Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,Vulthil.Results.Result})
+  name.vb: OrElseAsync(Task(Of Result), Func(Of Error, Result))
+  fullName: Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, System.Func<Vulthil.Results.Error, Vulthil.Results.Result>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElseAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), System.Func(Of Vulthil.Results.Error, Vulthil.Results.Result))
+  nameWithType: ResultExtensions.OrElseAsync(Task<Result>, Func<Error, Result>)
+  nameWithType.vb: ResultExtensions.OrElseAsync(Task(Of Result), Func(Of Error, Result))
+- uid: Vulthil.Results.ResultExtensions.OrElseAsync(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result}})
+  name: OrElseAsync(Result, Func<Error, Task<Result>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Result___
+  commentId: M:Vulthil.Results.ResultExtensions.OrElseAsync(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result}})
+  name.vb: OrElseAsync(Result, Func(Of Error, Task(Of Result)))
+  fullName: Vulthil.Results.ResultExtensions.OrElseAsync(Vulthil.Results.Result, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Result>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElseAsync(Vulthil.Results.Result, System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Result)))
+  nameWithType: ResultExtensions.OrElseAsync(Result, Func<Error, Task<Result>>)
+  nameWithType.vb: ResultExtensions.OrElseAsync(Result, Func(Of Error, Task(Of Result)))
+- uid: Vulthil.Results.ResultExtensions.OrElseAsync*
+  name: OrElseAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.OrElseAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.OrElseAsync
+  nameWithType: ResultExtensions.OrElseAsync
+- uid: Vulthil.Results.ResultExtensions.OrElseAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}})
+  name: OrElseAsync<T1>(Task<Result<T1>>, Func<Error, Task<Result<T1>>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Result___0____
+  commentId: M:Vulthil.Results.ResultExtensions.OrElseAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}})
+  name.vb: OrElseAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task(Of Result(Of T1))))
+  fullName: Vulthil.Results.ResultExtensions.OrElseAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElseAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1))))
+  nameWithType: ResultExtensions.OrElseAsync<T1>(Task<Result<T1>>, Func<Error, Task<Result<T1>>>)
+  nameWithType.vb: ResultExtensions.OrElseAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task(Of Result(Of T1))))
+- uid: Vulthil.Results.ResultExtensions.OrElseAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,Vulthil.Results.Result{``0}})
+  name: OrElseAsync<T1>(Task<Result<T1>>, Func<Error, Result<T1>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func_Vulthil_Results_Error_Vulthil_Results_Result___0___
+  commentId: M:Vulthil.Results.ResultExtensions.OrElseAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,Vulthil.Results.Result{``0}})
+  name.vb: OrElseAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Result(Of T1)))
+  fullName: Vulthil.Results.ResultExtensions.OrElseAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<Vulthil.Results.Error, Vulthil.Results.Result<T1>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElseAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of Vulthil.Results.Error, Vulthil.Results.Result(Of T1)))
+  nameWithType: ResultExtensions.OrElseAsync<T1>(Task<Result<T1>>, Func<Error, Result<T1>>)
+  nameWithType.vb: ResultExtensions.OrElseAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Result(Of T1)))
+- uid: Vulthil.Results.ResultExtensions.OrElseAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}})
+  name: OrElseAsync<T1>(Result<T1>, Func<Error, Task<Result<T1>>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Result___0____
+  commentId: M:Vulthil.Results.ResultExtensions.OrElseAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}})
+  name.vb: OrElseAsync(Of T1)(Result(Of T1), Func(Of Error, Task(Of Result(Of T1))))
+  fullName: Vulthil.Results.ResultExtensions.OrElseAsync<T1>(Vulthil.Results.Result<T1>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElseAsync(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1))))
+  nameWithType: ResultExtensions.OrElseAsync<T1>(Result<T1>, Func<Error, Task<Result<T1>>>)
+  nameWithType.vb: ResultExtensions.OrElseAsync(Of T1)(Result(Of T1), Func(Of Error, Task(Of Result(Of T1))))
+- uid: Vulthil.Results.ResultExtensions.OrElse``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,Vulthil.Results.Result{``0}})
+  name: OrElse<T1>(Result<T1>, Func<Error, Result<T1>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElse__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_Vulthil_Results_Result___0___
+  commentId: M:Vulthil.Results.ResultExtensions.OrElse``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,Vulthil.Results.Result{``0}})
+  name.vb: OrElse(Of T1)(Result(Of T1), Func(Of Error, Result(Of T1)))
+  fullName: Vulthil.Results.ResultExtensions.OrElse<T1>(Vulthil.Results.Result<T1>, System.Func<Vulthil.Results.Error, Vulthil.Results.Result<T1>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.OrElse(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of Vulthil.Results.Error, Vulthil.Results.Result(Of T1)))
+  nameWithType: ResultExtensions.OrElse<T1>(Result<T1>, Func<Error, Result<T1>>)
+  nameWithType.vb: ResultExtensions.OrElse(Of T1)(Result(Of T1), Func(Of Error, Result(Of T1)))
+- uid: Vulthil.Results.ResultExtensions.Or``1(Vulthil.Results.Result{``0},Vulthil.Results.Result{``0})
+  name: Or<T1>(Result<T1>, Result<T1>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Or__1_Vulthil_Results_Result___0__Vulthil_Results_Result___0__
+  commentId: M:Vulthil.Results.ResultExtensions.Or``1(Vulthil.Results.Result{``0},Vulthil.Results.Result{``0})
+  name.vb: Or(Of T1)(Result(Of T1), Result(Of T1))
+  fullName: Vulthil.Results.ResultExtensions.Or<T1>(Vulthil.Results.Result<T1>, Vulthil.Results.Result<T1>)
+  fullName.vb: Vulthil.Results.ResultExtensions.Or(Of T1)(Vulthil.Results.Result(Of T1), Vulthil.Results.Result(Of T1))
+  nameWithType: ResultExtensions.Or<T1>(Result<T1>, Result<T1>)
+  nameWithType.vb: ResultExtensions.Or(Of T1)(Result(Of T1), Result(Of T1))
+- uid: Vulthil.Results.ResultExtensions.Recover*
+  name: Recover
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Recover_
+  commentId: Overload:Vulthil.Results.ResultExtensions.Recover
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.Recover
+  nameWithType: ResultExtensions.Recover
+- uid: Vulthil.Results.ResultExtensions.RecoverAsync*
+  name: RecoverAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_RecoverAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.RecoverAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.RecoverAsync
+  nameWithType: ResultExtensions.RecoverAsync
+- uid: Vulthil.Results.ResultExtensions.RecoverAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{``0}})
+  name: RecoverAsync<T1>(Task<Result<T1>>, Func<Error, Task<T1>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_RecoverAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task___0___
+  commentId: M:Vulthil.Results.ResultExtensions.RecoverAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{``0}})
+  name.vb: RecoverAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task(Of T1)))
+  fullName: Vulthil.Results.ResultExtensions.RecoverAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<T1>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.RecoverAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of T1)))
+  nameWithType: ResultExtensions.RecoverAsync<T1>(Task<Result<T1>>, Func<Error, Task<T1>>)
+  nameWithType.vb: ResultExtensions.RecoverAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task(Of T1)))
+- uid: Vulthil.Results.ResultExtensions.RecoverAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,``0})
+  name: RecoverAsync<T1>(Task<Result<T1>>, Func<Error, T1>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_RecoverAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func_Vulthil_Results_Error___0__
+  commentId: M:Vulthil.Results.ResultExtensions.RecoverAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,``0})
+  name.vb: RecoverAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, T1))
+  fullName: Vulthil.Results.ResultExtensions.RecoverAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<Vulthil.Results.Error, T1>)
+  fullName.vb: Vulthil.Results.ResultExtensions.RecoverAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of Vulthil.Results.Error, T1))
+  nameWithType: ResultExtensions.RecoverAsync<T1>(Task<Result<T1>>, Func<Error, T1>)
+  nameWithType.vb: ResultExtensions.RecoverAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, T1))
+- uid: Vulthil.Results.ResultExtensions.RecoverAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{``0}})
+  name: RecoverAsync<T1>(Result<T1>, Func<Error, Task<T1>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_RecoverAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task___0___
+  commentId: M:Vulthil.Results.ResultExtensions.RecoverAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task{``0}})
+  name.vb: RecoverAsync(Of T1)(Result(Of T1), Func(Of Error, Task(Of T1)))
+  fullName: Vulthil.Results.ResultExtensions.RecoverAsync<T1>(Vulthil.Results.Result<T1>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task<T1>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.RecoverAsync(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task(Of T1)))
+  nameWithType: ResultExtensions.RecoverAsync<T1>(Result<T1>, Func<Error, Task<T1>>)
+  nameWithType.vb: ResultExtensions.RecoverAsync(Of T1)(Result(Of T1), Func(Of Error, Task(Of T1)))
+- uid: Vulthil.Results.ResultExtensions.Recover``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,``0})
+  name: Recover<T1>(Result<T1>, Func<Error, T1>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Recover__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error___0__
+  commentId: M:Vulthil.Results.ResultExtensions.Recover``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,``0})
+  name.vb: Recover(Of T1)(Result(Of T1), Func(Of Error, T1))
+  fullName: Vulthil.Results.ResultExtensions.Recover<T1>(Vulthil.Results.Result<T1>, System.Func<Vulthil.Results.Error, T1>)
+  fullName.vb: Vulthil.Results.ResultExtensions.Recover(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of Vulthil.Results.Error, T1))
+  nameWithType: ResultExtensions.Recover<T1>(Result<T1>, Func<Error, T1>)
+  nameWithType.vb: ResultExtensions.Recover(Of T1)(Result(Of T1), Func(Of Error, T1))
 - uid: Vulthil.Results.ResultExtensions.Tap(Vulthil.Results.Result,System.Action)
   name: Tap(Result, Action)
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Tap_Vulthil_Results_Result_System_Action_
@@ -6093,6 +6513,92 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.TapAsync(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of T1, System.Threading.Tasks.Task))
   nameWithType: ResultExtensions.TapAsync<T1>(Result<T1>, Func<T1, Task>)
   nameWithType.vb: ResultExtensions.TapAsync(Of T1)(Result(Of T1), Func(Of T1, Task))
+- uid: Vulthil.Results.ResultExtensions.TapError(Vulthil.Results.Result,System.Action{Vulthil.Results.Error})
+  name: TapError(Result, Action<Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapError_Vulthil_Results_Result_System_Action_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.TapError(Vulthil.Results.Result,System.Action{Vulthil.Results.Error})
+  name.vb: TapError(Result, Action(Of Error))
+  fullName: Vulthil.Results.ResultExtensions.TapError(Vulthil.Results.Result, System.Action<Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapError(Vulthil.Results.Result, System.Action(Of Vulthil.Results.Error))
+  nameWithType: ResultExtensions.TapError(Result, Action<Error>)
+  nameWithType.vb: ResultExtensions.TapError(Result, Action(Of Error))
+- uid: Vulthil.Results.ResultExtensions.TapError*
+  name: TapError
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapError_
+  commentId: Overload:Vulthil.Results.ResultExtensions.TapError
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.TapError
+  nameWithType: ResultExtensions.TapError
+- uid: Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Action{Vulthil.Results.Error})
+  name: TapErrorAsync(Task<Result>, Action<Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__System_Action_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Action{Vulthil.Results.Error})
+  name.vb: TapErrorAsync(Task(Of Result), Action(Of Error))
+  fullName: Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, System.Action<Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), System.Action(Of Vulthil.Results.Error))
+  nameWithType: ResultExtensions.TapErrorAsync(Task<Result>, Action<Error>)
+  nameWithType.vb: ResultExtensions.TapErrorAsync(Task(Of Result), Action(Of Error))
+- uid: Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name: TapErrorAsync(Task<Result>, Func<Error, Task>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task__
+  commentId: M:Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name.vb: TapErrorAsync(Task(Of Result), Func(Of Error, Task))
+  fullName: Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapErrorAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task))
+  nameWithType: ResultExtensions.TapErrorAsync(Task<Result>, Func<Error, Task>)
+  nameWithType.vb: ResultExtensions.TapErrorAsync(Task(Of Result), Func(Of Error, Task))
+- uid: Vulthil.Results.ResultExtensions.TapErrorAsync(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name: TapErrorAsync(Result, Func<Error, Task>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task__
+  commentId: M:Vulthil.Results.ResultExtensions.TapErrorAsync(Vulthil.Results.Result,System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name.vb: TapErrorAsync(Result, Func(Of Error, Task))
+  fullName: Vulthil.Results.ResultExtensions.TapErrorAsync(Vulthil.Results.Result, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapErrorAsync(Vulthil.Results.Result, System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task))
+  nameWithType: ResultExtensions.TapErrorAsync(Result, Func<Error, Task>)
+  nameWithType.vb: ResultExtensions.TapErrorAsync(Result, Func(Of Error, Task))
+- uid: Vulthil.Results.ResultExtensions.TapErrorAsync*
+  name: TapErrorAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.TapErrorAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.TapErrorAsync
+  nameWithType: ResultExtensions.TapErrorAsync
+- uid: Vulthil.Results.ResultExtensions.TapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Action{Vulthil.Results.Error})
+  name: TapErrorAsync<T1>(Task<Result<T1>>, Action<Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Action_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.TapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Action{Vulthil.Results.Error})
+  name.vb: TapErrorAsync(Of T1)(Task(Of Result(Of T1)), Action(Of Error))
+  fullName: Vulthil.Results.ResultExtensions.TapErrorAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Action<Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapErrorAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Action(Of Vulthil.Results.Error))
+  nameWithType: ResultExtensions.TapErrorAsync<T1>(Task<Result<T1>>, Action<Error>)
+  nameWithType.vb: ResultExtensions.TapErrorAsync(Of T1)(Task(Of Result(Of T1)), Action(Of Error))
+- uid: Vulthil.Results.ResultExtensions.TapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name: TapErrorAsync<T1>(Task<Result<T1>>, Func<Error, Task>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task__
+  commentId: M:Vulthil.Results.ResultExtensions.TapErrorAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name.vb: TapErrorAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task))
+  fullName: Vulthil.Results.ResultExtensions.TapErrorAsync<T1>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapErrorAsync(Of T1)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task))
+  nameWithType: ResultExtensions.TapErrorAsync<T1>(Task<Result<T1>>, Func<Error, Task>)
+  nameWithType.vb: ResultExtensions.TapErrorAsync(Of T1)(Task(Of Result(Of T1)), Func(Of Error, Task))
+- uid: Vulthil.Results.ResultExtensions.TapErrorAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name: TapErrorAsync<T1>(Result<T1>, Func<Error, Task>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task__
+  commentId: M:Vulthil.Results.ResultExtensions.TapErrorAsync``1(Vulthil.Results.Result{``0},System.Func{Vulthil.Results.Error,System.Threading.Tasks.Task})
+  name.vb: TapErrorAsync(Of T1)(Result(Of T1), Func(Of Error, Task))
+  fullName: Vulthil.Results.ResultExtensions.TapErrorAsync<T1>(Vulthil.Results.Result<T1>, System.Func<Vulthil.Results.Error, System.Threading.Tasks.Task>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapErrorAsync(Of T1)(Vulthil.Results.Result(Of T1), System.Func(Of Vulthil.Results.Error, System.Threading.Tasks.Task))
+  nameWithType: ResultExtensions.TapErrorAsync<T1>(Result<T1>, Func<Error, Task>)
+  nameWithType.vb: ResultExtensions.TapErrorAsync(Of T1)(Result(Of T1), Func(Of Error, Task))
+- uid: Vulthil.Results.ResultExtensions.TapError``1(Vulthil.Results.Result{``0},System.Action{Vulthil.Results.Error})
+  name: TapError<T1>(Result<T1>, Action<Error>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapError__1_Vulthil_Results_Result___0__System_Action_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ResultExtensions.TapError``1(Vulthil.Results.Result{``0},System.Action{Vulthil.Results.Error})
+  name.vb: TapError(Of T1)(Result(Of T1), Action(Of Error))
+  fullName: Vulthil.Results.ResultExtensions.TapError<T1>(Vulthil.Results.Result<T1>, System.Action<Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ResultExtensions.TapError(Of T1)(Vulthil.Results.Result(Of T1), System.Action(Of Vulthil.Results.Error))
+  nameWithType: ResultExtensions.TapError<T1>(Result<T1>, Action<Error>)
+  nameWithType.vb: ResultExtensions.TapError(Of T1)(Result(Of T1), Action(Of Error))
 - uid: Vulthil.Results.ResultExtensions.Tap``1(Vulthil.Results.Result{``0},System.Action)
   name: Tap<T1>(Result<T1>, Action)
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Tap__1_Vulthil_Results_Result___0__System_Action_
@@ -6161,6 +6667,74 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.ToResult(Of T)(T, Vulthil.Results.Error)
   nameWithType: ResultExtensions.ToResult<T>(T?, Error)
   nameWithType.vb: ResultExtensions.ToResult(Of T)(T, Error)
+- uid: Vulthil.Results.ResultExtensions.Zip*
+  name: Zip
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Zip_
+  commentId: Overload:Vulthil.Results.ResultExtensions.Zip
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.Zip
+  nameWithType: ResultExtensions.Zip
+- uid: Vulthil.Results.ResultExtensions.ZipAsync*
+  name: ZipAsync
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync_
+  commentId: Overload:Vulthil.Results.ResultExtensions.ZipAsync
+  isSpec: "True"
+  fullName: Vulthil.Results.ResultExtensions.ZipAsync
+  nameWithType: ResultExtensions.ZipAsync
+- uid: Vulthil.Results.ResultExtensions.ZipAsync``2(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}})
+  name: ZipAsync<T1, T2>(Task<Result<T1>>, Task<Result<T2>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync__2_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Threading_Tasks_Task_Vulthil_Results_Result___1___
+  commentId: M:Vulthil.Results.ResultExtensions.ZipAsync``2(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}})
+  name.vb: ZipAsync(Of T1, T2)(Task(Of Result(Of T1)), Task(Of Result(Of T2)))
+  fullName: Vulthil.Results.ResultExtensions.ZipAsync<T1, T2>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T2)))
+  nameWithType: ResultExtensions.ZipAsync<T1, T2>(Task<Result<T1>>, Task<Result<T2>>)
+  nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2)(Task(Of Result(Of T1)), Task(Of Result(Of T2)))
+- uid: Vulthil.Results.ResultExtensions.ZipAsync``2(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Vulthil.Results.Result{``1})
+  name: ZipAsync<T1, T2>(Task<Result<T1>>, Result<T2>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync__2_System_Threading_Tasks_Task_Vulthil_Results_Result___0___Vulthil_Results_Result___1__
+  commentId: M:Vulthil.Results.ResultExtensions.ZipAsync``2(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Vulthil.Results.Result{``1})
+  name.vb: ZipAsync(Of T1, T2)(Task(Of Result(Of T1)), Result(Of T2))
+  fullName: Vulthil.Results.ResultExtensions.ZipAsync<T1, T2>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, Vulthil.Results.Result<T2>)
+  fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), Vulthil.Results.Result(Of T2))
+  nameWithType: ResultExtensions.ZipAsync<T1, T2>(Task<Result<T1>>, Result<T2>)
+  nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2)(Task(Of Result(Of T1)), Result(Of T2))
+- uid: Vulthil.Results.ResultExtensions.ZipAsync``3(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}},System.Func{``0,``1,``2})
+  name: ZipAsync<T1, T2, TOut>(Task<Result<T1>>, Task<Result<T2>>, Func<T1, T2, TOut>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync__3_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Threading_Tasks_Task_Vulthil_Results_Result___1___System_Func___0___1___2__
+  commentId: M:Vulthil.Results.ResultExtensions.ZipAsync``3(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}},System.Func{``0,``1,``2})
+  name.vb: ZipAsync(Of T1, T2, TOut)(Task(Of Result(Of T1)), Task(Of Result(Of T2)), Func(Of T1, T2, TOut))
+  fullName: Vulthil.Results.ResultExtensions.ZipAsync<T1, T2, TOut>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>>, System.Func<T1, T2, TOut>)
+  fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2, TOut)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T2)), System.Func(Of T1, T2, TOut))
+  nameWithType: ResultExtensions.ZipAsync<T1, T2, TOut>(Task<Result<T1>>, Task<Result<T2>>, Func<T1, T2, TOut>)
+  nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2, TOut)(Task(Of Result(Of T1)), Task(Of Result(Of T2)), Func(Of T1, T2, TOut))
+- uid: Vulthil.Results.ResultExtensions.ZipAsync``3(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Vulthil.Results.Result{``1},System.Func{``0,``1,``2})
+  name: ZipAsync<T1, T2, TOut>(Task<Result<T1>>, Result<T2>, Func<T1, T2, TOut>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync__3_System_Threading_Tasks_Task_Vulthil_Results_Result___0___Vulthil_Results_Result___1__System_Func___0___1___2__
+  commentId: M:Vulthil.Results.ResultExtensions.ZipAsync``3(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Vulthil.Results.Result{``1},System.Func{``0,``1,``2})
+  name.vb: ZipAsync(Of T1, T2, TOut)(Task(Of Result(Of T1)), Result(Of T2), Func(Of T1, T2, TOut))
+  fullName: Vulthil.Results.ResultExtensions.ZipAsync<T1, T2, TOut>(System.Threading.Tasks.Task<Vulthil.Results.Result<T1>>, Vulthil.Results.Result<T2>, System.Func<T1, T2, TOut>)
+  fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2, TOut)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), Vulthil.Results.Result(Of T2), System.Func(Of T1, T2, TOut))
+  nameWithType: ResultExtensions.ZipAsync<T1, T2, TOut>(Task<Result<T1>>, Result<T2>, Func<T1, T2, TOut>)
+  nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2, TOut)(Task(Of Result(Of T1)), Result(Of T2), Func(Of T1, T2, TOut))
+- uid: Vulthil.Results.ResultExtensions.Zip``2(Vulthil.Results.Result{``0},Vulthil.Results.Result{``1})
+  name: Zip<T1, T2>(Result<T1>, Result<T2>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Zip__2_Vulthil_Results_Result___0__Vulthil_Results_Result___1__
+  commentId: M:Vulthil.Results.ResultExtensions.Zip``2(Vulthil.Results.Result{``0},Vulthil.Results.Result{``1})
+  name.vb: Zip(Of T1, T2)(Result(Of T1), Result(Of T2))
+  fullName: Vulthil.Results.ResultExtensions.Zip<T1, T2>(Vulthil.Results.Result<T1>, Vulthil.Results.Result<T2>)
+  fullName.vb: Vulthil.Results.ResultExtensions.Zip(Of T1, T2)(Vulthil.Results.Result(Of T1), Vulthil.Results.Result(Of T2))
+  nameWithType: ResultExtensions.Zip<T1, T2>(Result<T1>, Result<T2>)
+  nameWithType.vb: ResultExtensions.Zip(Of T1, T2)(Result(Of T1), Result(Of T2))
+- uid: Vulthil.Results.ResultExtensions.Zip``3(Vulthil.Results.Result{``0},Vulthil.Results.Result{``1},System.Func{``0,``1,``2})
+  name: Zip<T1, T2, TOut>(Result<T1>, Result<T2>, Func<T1, T2, TOut>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Zip__3_Vulthil_Results_Result___0__Vulthil_Results_Result___1__System_Func___0___1___2__
+  commentId: M:Vulthil.Results.ResultExtensions.Zip``3(Vulthil.Results.Result{``0},Vulthil.Results.Result{``1},System.Func{``0,``1,``2})
+  name.vb: Zip(Of T1, T2, TOut)(Result(Of T1), Result(Of T2), Func(Of T1, T2, TOut))
+  fullName: Vulthil.Results.ResultExtensions.Zip<T1, T2, TOut>(Vulthil.Results.Result<T1>, Vulthil.Results.Result<T2>, System.Func<T1, T2, TOut>)
+  fullName.vb: Vulthil.Results.ResultExtensions.Zip(Of T1, T2, TOut)(Vulthil.Results.Result(Of T1), Vulthil.Results.Result(Of T2), System.Func(Of T1, T2, TOut))
+  nameWithType: ResultExtensions.Zip<T1, T2, TOut>(Result<T1>, Result<T2>, Func<T1, T2, TOut>)
+  nameWithType.vb: ResultExtensions.Zip(Of T1, T2, TOut)(Result(Of T1), Result(Of T2), Func(Of T1, T2, TOut))
 - uid: Vulthil.Results.Result`1
   name: Result<TValue>
   href: api/Vulthil.Results.Result-1.html
@@ -6231,15 +6805,15 @@ references:
   commentId: T:Vulthil.Results.ValidationError
   fullName: Vulthil.Results.ValidationError
   nameWithType: ValidationError
-- uid: Vulthil.Results.ValidationError.#ctor(Vulthil.Results.Error[])
-  name: ValidationError(Error[])
-  href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError__ctor_Vulthil_Results_Error___
-  commentId: M:Vulthil.Results.ValidationError.#ctor(Vulthil.Results.Error[])
-  name.vb: New(Error())
-  fullName: Vulthil.Results.ValidationError.ValidationError(Vulthil.Results.Error[])
-  fullName.vb: Vulthil.Results.ValidationError.New(Vulthil.Results.Error())
-  nameWithType: ValidationError.ValidationError(Error[])
-  nameWithType.vb: ValidationError.New(Error())
+- uid: Vulthil.Results.ValidationError.#ctor(System.Collections.Generic.IEnumerable{Vulthil.Results.Error})
+  name: ValidationError(IEnumerable<Error>)
+  href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError__ctor_System_Collections_Generic_IEnumerable_Vulthil_Results_Error__
+  commentId: M:Vulthil.Results.ValidationError.#ctor(System.Collections.Generic.IEnumerable{Vulthil.Results.Error})
+  name.vb: New(IEnumerable(Of Error))
+  fullName: Vulthil.Results.ValidationError.ValidationError(System.Collections.Generic.IEnumerable<Vulthil.Results.Error>)
+  fullName.vb: Vulthil.Results.ValidationError.New(System.Collections.Generic.IEnumerable(Of Vulthil.Results.Error))
+  nameWithType: ValidationError.ValidationError(IEnumerable<Error>)
+  nameWithType.vb: ValidationError.New(IEnumerable(Of Error))
 - uid: Vulthil.Results.ValidationError.#ctor*
   name: ValidationError
   href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError__ctor_
@@ -6250,6 +6824,22 @@ references:
   fullName.vb: Vulthil.Results.ValidationError.New
   nameWithType: ValidationError.ValidationError
   nameWithType.vb: ValidationError.New
+- uid: Vulthil.Results.ValidationError.Equals(Vulthil.Results.ValidationError)
+  name: Equals(ValidationError?)
+  href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError_Equals_Vulthil_Results_ValidationError_
+  commentId: M:Vulthil.Results.ValidationError.Equals(Vulthil.Results.ValidationError)
+  name.vb: Equals(ValidationError)
+  fullName: Vulthil.Results.ValidationError.Equals(Vulthil.Results.ValidationError?)
+  fullName.vb: Vulthil.Results.ValidationError.Equals(Vulthil.Results.ValidationError)
+  nameWithType: ValidationError.Equals(ValidationError?)
+  nameWithType.vb: ValidationError.Equals(ValidationError)
+- uid: Vulthil.Results.ValidationError.Equals*
+  name: Equals
+  href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError_Equals_
+  commentId: Overload:Vulthil.Results.ValidationError.Equals
+  isSpec: "True"
+  fullName: Vulthil.Results.ValidationError.Equals
+  nameWithType: ValidationError.Equals
 - uid: Vulthil.Results.ValidationError.Errors
   name: Errors
   href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError_Errors
@@ -6279,6 +6869,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.Results.ValidationError.FromResults
   nameWithType: ValidationError.FromResults
+- uid: Vulthil.Results.ValidationError.GetHashCode
+  name: GetHashCode()
+  href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError_GetHashCode
+  commentId: M:Vulthil.Results.ValidationError.GetHashCode
+  fullName: Vulthil.Results.ValidationError.GetHashCode()
+  nameWithType: ValidationError.GetHashCode()
+- uid: Vulthil.Results.ValidationError.GetHashCode*
+  name: GetHashCode
+  href: api/Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError_GetHashCode_
+  commentId: Overload:Vulthil.Results.ValidationError.GetHashCode
+  isSpec: "True"
+  fullName: Vulthil.Results.ValidationError.GetHashCode
+  nameWithType: ValidationError.GetHashCode
 - uid: Vulthil.SharedKernel.Api
   name: Vulthil.SharedKernel.Api
   href: api/Vulthil.SharedKernel.Api.html
@@ -6291,25 +6894,6 @@ references:
   commentId: T:Vulthil.SharedKernel.Api.BaseController
   fullName: Vulthil.SharedKernel.Api.BaseController
   nameWithType: BaseController
-- uid: Vulthil.SharedKernel.Api.BaseController.#ctor(Microsoft.Extensions.Logging.ILogger)
-  name: BaseController(ILogger)
-  href: api/Vulthil.SharedKernel.Api.BaseController.html#Vulthil_SharedKernel_Api_BaseController__ctor_Microsoft_Extensions_Logging_ILogger_
-  commentId: M:Vulthil.SharedKernel.Api.BaseController.#ctor(Microsoft.Extensions.Logging.ILogger)
-  name.vb: New(ILogger)
-  fullName: Vulthil.SharedKernel.Api.BaseController.BaseController(Microsoft.Extensions.Logging.ILogger)
-  fullName.vb: Vulthil.SharedKernel.Api.BaseController.New(Microsoft.Extensions.Logging.ILogger)
-  nameWithType: BaseController.BaseController(ILogger)
-  nameWithType.vb: BaseController.New(ILogger)
-- uid: Vulthil.SharedKernel.Api.BaseController.#ctor*
-  name: BaseController
-  href: api/Vulthil.SharedKernel.Api.BaseController.html#Vulthil_SharedKernel_Api_BaseController__ctor_
-  commentId: Overload:Vulthil.SharedKernel.Api.BaseController.#ctor
-  isSpec: "True"
-  name.vb: New
-  fullName: Vulthil.SharedKernel.Api.BaseController.BaseController
-  fullName.vb: Vulthil.SharedKernel.Api.BaseController.New
-  nameWithType: BaseController.BaseController
-  nameWithType.vb: BaseController.New
 - uid: Vulthil.SharedKernel.Api.BaseController.Logger
   name: Logger
   href: api/Vulthil.SharedKernel.Api.BaseController.html#Vulthil_SharedKernel_Api_BaseController_Logger
@@ -6458,6 +7042,31 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Api.Extensions.ToActionResult
   nameWithType: Extensions.ToActionResult
+- uid: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},Microsoft.AspNetCore.Mvc.ControllerBase)
+  name: ToActionResultAsync(Task<Result>, ControllerBase)
+  href: api/Vulthil.SharedKernel.Api.Extensions.html#Vulthil_SharedKernel_Api_Extensions_ToActionResultAsync_System_Threading_Tasks_Task_Vulthil_Results_Result__Microsoft_AspNetCore_Mvc_ControllerBase_
+  commentId: M:Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync(System.Threading.Tasks.Task{Vulthil.Results.Result},Microsoft.AspNetCore.Mvc.ControllerBase)
+  name.vb: ToActionResultAsync(Task(Of Result), ControllerBase)
+  fullName: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync(System.Threading.Tasks.Task<Vulthil.Results.Result>, Microsoft.AspNetCore.Mvc.ControllerBase)
+  fullName.vb: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync(System.Threading.Tasks.Task(Of Vulthil.Results.Result), Microsoft.AspNetCore.Mvc.ControllerBase)
+  nameWithType: Extensions.ToActionResultAsync(Task<Result>, ControllerBase)
+  nameWithType.vb: Extensions.ToActionResultAsync(Task(Of Result), ControllerBase)
+- uid: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync*
+  name: ToActionResultAsync
+  href: api/Vulthil.SharedKernel.Api.Extensions.html#Vulthil_SharedKernel_Api_Extensions_ToActionResultAsync_
+  commentId: Overload:Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync
+  nameWithType: Extensions.ToActionResultAsync
+- uid: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Microsoft.AspNetCore.Mvc.ControllerBase)
+  name: ToActionResultAsync<T>(Task<Result<T>>, ControllerBase)
+  href: api/Vulthil.SharedKernel.Api.Extensions.html#Vulthil_SharedKernel_Api_Extensions_ToActionResultAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0___Microsoft_AspNetCore_Mvc_ControllerBase_
+  commentId: M:Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},Microsoft.AspNetCore.Mvc.ControllerBase)
+  name.vb: ToActionResultAsync(Of T)(Task(Of Result(Of T)), ControllerBase)
+  fullName: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync<T>(System.Threading.Tasks.Task<Vulthil.Results.Result<T>>, Microsoft.AspNetCore.Mvc.ControllerBase)
+  fullName.vb: Vulthil.SharedKernel.Api.Extensions.ToActionResultAsync(Of T)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T)), Microsoft.AspNetCore.Mvc.ControllerBase)
+  nameWithType: Extensions.ToActionResultAsync<T>(Task<Result<T>>, ControllerBase)
+  nameWithType.vb: Extensions.ToActionResultAsync(Of T)(Task(Of Result(Of T)), ControllerBase)
 - uid: Vulthil.SharedKernel.Api.Extensions.ToActionResult``1(Vulthil.Results.Result{``0},Microsoft.AspNetCore.Mvc.ControllerBase)
   name: ToActionResult<T>(Result<T>, ControllerBase)
   href: api/Vulthil.SharedKernel.Api.Extensions.html#Vulthil_SharedKernel_Api_Extensions_ToActionResult__1_Vulthil_Results_Result___0__Microsoft_AspNetCore_Mvc_ControllerBase_
@@ -6530,6 +7139,38 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Api.IEndpoint.MapEndpoint
   nameWithType: IEndpoint.MapEndpoint
+- uid: Vulthil.SharedKernel.Api.ProblemDetailsExtensions
+  name: ProblemDetailsExtensions
+  href: api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html
+  commentId: T:Vulthil.SharedKernel.Api.ProblemDetailsExtensions
+  fullName: Vulthil.SharedKernel.Api.ProblemDetailsExtensions
+  nameWithType: ProblemDetailsExtensions
+- uid: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  name: AddProblemDetailsHandling(IServiceCollection)
+  href: api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html#Vulthil_SharedKernel_Api_ProblemDetailsExtensions_AddProblemDetailsHandling_Microsoft_Extensions_DependencyInjection_IServiceCollection_
+  commentId: M:Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  nameWithType: ProblemDetailsExtensions.AddProblemDetailsHandling(IServiceCollection)
+- uid: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling*
+  name: AddProblemDetailsHandling
+  href: api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html#Vulthil_SharedKernel_Api_ProblemDetailsExtensions_AddProblemDetailsHandling_
+  commentId: Overload:Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling
+  nameWithType: ProblemDetailsExtensions.AddProblemDetailsHandling
+- uid: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling(Microsoft.AspNetCore.Builder.IApplicationBuilder)
+  name: UseProblemDetailsHandling(IApplicationBuilder)
+  href: api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html#Vulthil_SharedKernel_Api_ProblemDetailsExtensions_UseProblemDetailsHandling_Microsoft_AspNetCore_Builder_IApplicationBuilder_
+  commentId: M:Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling(Microsoft.AspNetCore.Builder.IApplicationBuilder)
+  fullName: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling(Microsoft.AspNetCore.Builder.IApplicationBuilder)
+  nameWithType: ProblemDetailsExtensions.UseProblemDetailsHandling(IApplicationBuilder)
+- uid: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling*
+  name: UseProblemDetailsHandling
+  href: api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html#Vulthil_SharedKernel_Api_ProblemDetailsExtensions_UseProblemDetailsHandling_
+  commentId: Overload:Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling
+  nameWithType: ProblemDetailsExtensions.UseProblemDetailsHandling
 - uid: Vulthil.SharedKernel.Application
   name: Vulthil.SharedKernel.Application
   href: api/Vulthil.SharedKernel.Application.html
@@ -6807,6 +7448,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync
   nameWithType: IUnitOfWork.ExecuteInTransactionAsync
+- uid: Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Func{``0,System.Boolean},System.Threading.CancellationToken)
+  name: ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>>, Func<TResult, bool>, CancellationToken)
+  href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWork.html#Vulthil_SharedKernel_Application_Data_IUnitOfWork_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Func___0_System_Boolean__System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Func{``0,System.Boolean},System.Threading.CancellationToken)
+  name.vb: ExecuteInTransactionAsync(Of TResult)(Func(Of CancellationToken, Task(Of TResult)), Func(Of TResult, Boolean), CancellationToken)
+  fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync<TResult>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>>, System.Func<TResult, bool>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync(Of TResult)(System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task(Of TResult)), System.Func(Of TResult, Boolean), System.Threading.CancellationToken)
+  nameWithType: IUnitOfWork.ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>>, Func<TResult, bool>, CancellationToken)
+  nameWithType.vb: IUnitOfWork.ExecuteInTransactionAsync(Of TResult)(Func(Of CancellationToken, Task(Of TResult)), Func(Of TResult, Boolean), CancellationToken)
 - uid: Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)
   name: ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>>, CancellationToken)
   href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWork.html#Vulthil_SharedKernel_Application_Data_IUnitOfWork_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_
@@ -7434,6 +8084,25 @@ references:
   commentId: N:Vulthil.SharedKernel.Infrastructure.Cosmos
   fullName: Vulthil.SharedKernel.Infrastructure.Cosmos
   nameWithType: Vulthil.SharedKernel.Infrastructure.Cosmos
+- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions
+  name: CosmosOutboxModelBuilderExtensions
+  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.html
+  commentId: T:Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions
+  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions
+  nameWithType: CosmosOutboxModelBuilderExtensions
+- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  name: ApplyCosmosOutbox(ModelBuilder)
+  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_CosmosOutboxModelBuilderExtensions_ApplyCosmosOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  nameWithType: CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox(ModelBuilder)
+- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox*
+  name: ApplyCosmosOutbox
+  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_CosmosOutboxModelBuilderExtensions_ApplyCosmosOutbox_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox
+  nameWithType: CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox
 - uid: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions
   name: DependencyInjectionExtensions
   href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html
@@ -7447,15 +8116,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb
   nameWithType: DependencyInjectionExtensions.UseCosmosDb
-- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings})
-  name: UseCosmosDb<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?)
-  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Microsoft_EntityFrameworkCore_Cosmos_EntityFrameworkCoreCosmosSettings__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings})
-  name.vb: UseCosmosDb(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings))
-  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>?)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings))
-  nameWithType: DependencyInjectionExtensions.UseCosmosDb<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?)
-  nameWithType.vb: DependencyInjectionExtensions.UseCosmosDb(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings))
+- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name: UseCosmosDb<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?, Action<DbContextOptionsBuilder>?)
+  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Microsoft_EntityFrameworkCore_Cosmos_EntityFrameworkCoreCosmosSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name.vb: UseCosmosDb(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings), Action(Of DbContextOptionsBuilder))
+  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>?, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder>?)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings), System.Action(Of Microsoft.EntityFrameworkCore.DbContextOptionsBuilder))
+  nameWithType: DependencyInjectionExtensions.UseCosmosDb<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?, Action<DbContextOptionsBuilder>?)
+  nameWithType.vb: DependencyInjectionExtensions.UseCosmosDb(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings), Action(Of DbContextOptionsBuilder))
 - uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing
   name: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing
   href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.html
@@ -7507,28 +8176,6 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore(Of TContext).BeginTransactionAsync
   nameWithType: CosmosOutboxStore<TContext>.BeginTransactionAsync
   nameWithType.vb: CosmosOutboxStore(Of TContext).BeginTransactionAsync
-- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration
-  name: OutboxMessageEntityConfiguration
-  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.html
-  commentId: T:Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration
-  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration
-  nameWithType: OutboxMessageEntityConfiguration
-- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name: Configure(EntityTypeBuilder<OutboxMessage>)
-  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_OutboxMessageEntityConfiguration_Configure_Microsoft_EntityFrameworkCore_Metadata_Builders_EntityTypeBuilder_Vulthil_SharedKernel_Outbox_OutboxMessage__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name.vb: Configure(EntityTypeBuilder(Of OutboxMessage))
-  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder(Of Vulthil.SharedKernel.Outbox.OutboxMessage))
-  nameWithType: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder<OutboxMessage>)
-  nameWithType.vb: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder(Of OutboxMessage))
-- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure*
-  name: Configure
-  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_OutboxMessageEntityConfiguration_Configure_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure
-  nameWithType: OutboxMessageEntityConfiguration.Configure
 - uid: Vulthil.SharedKernel.Infrastructure.Data
   name: Vulthil.SharedKernel.Infrastructure.Data
   href: api/Vulthil.SharedKernel.Infrastructure.Data.html
@@ -7606,6 +8253,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync
   nameWithType: BaseDbContext.ExecuteInTransactionAsync
+- uid: Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Func{``0,System.Boolean},System.Threading.CancellationToken)
+  name: ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>>, Func<TResult, bool>, CancellationToken)
+  href: api/Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.html#Vulthil_SharedKernel_Infrastructure_Data_BaseDbContext_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Func___0_System_Boolean__System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Func{``0,System.Boolean},System.Threading.CancellationToken)
+  name.vb: ExecuteInTransactionAsync(Of TResult)(Func(Of CancellationToken, Task(Of TResult)), Func(Of TResult, Boolean), CancellationToken)
+  fullName: Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync<TResult>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>>, System.Func<TResult, bool>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync(Of TResult)(System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task(Of TResult)), System.Func(Of TResult, Boolean), System.Threading.CancellationToken)
+  nameWithType: BaseDbContext.ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>>, Func<TResult, bool>, CancellationToken)
+  nameWithType.vb: BaseDbContext.ExecuteInTransactionAsync(Of TResult)(Func(Of CancellationToken, Task(Of TResult)), Func(Of TResult, Boolean), CancellationToken)
 - uid: Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)
   name: ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>>, CancellationToken)
   href: api/Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.html#Vulthil_SharedKernel_Infrastructure_Data_BaseDbContext_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_
@@ -8023,15 +8679,34 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql
   nameWithType: DependencyInjectionExtensions.UseMySql
-- uid: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0})
-  name: UseMySql<TContext>(IDatabaseInfrastructureConfigurator<TContext>)
-  href: api/Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0})
-  name.vb: UseMySql(Of TContext)(IDatabaseInfrastructureConfigurator(Of TContext))
-  fullName: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql<TContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TContext>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql(Of TContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TContext))
-  nameWithType: DependencyInjectionExtensions.UseMySql<TContext>(IDatabaseInfrastructureConfigurator<TContext>)
-  nameWithType.vb: DependencyInjectionExtensions.UseMySql(Of TContext)(IDatabaseInfrastructureConfigurator(Of TContext))
+- uid: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Pomelo.EntityFrameworkCore.MySql.PomeloEntityFrameworkCoreMySqlSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name: UseMySql<TContext>(IDatabaseInfrastructureConfigurator<TContext>, string, Action<PomeloEntityFrameworkCoreMySqlSettings>?, Action<DbContextOptionsBuilder>?)
+  href: api/Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Pomelo_EntityFrameworkCore_MySql_PomeloEntityFrameworkCoreMySqlSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__
+  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Pomelo.EntityFrameworkCore.MySql.PomeloEntityFrameworkCoreMySqlSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name.vb: UseMySql(Of TContext)(IDatabaseInfrastructureConfigurator(Of TContext), String, Action(Of PomeloEntityFrameworkCoreMySqlSettings), Action(Of DbContextOptionsBuilder))
+  fullName: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql<TContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TContext>, string, System.Action<Aspire.Pomelo.EntityFrameworkCore.MySql.PomeloEntityFrameworkCoreMySqlSettings>?, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder>?)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql(Of TContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TContext), String, System.Action(Of Aspire.Pomelo.EntityFrameworkCore.MySql.PomeloEntityFrameworkCoreMySqlSettings), System.Action(Of Microsoft.EntityFrameworkCore.DbContextOptionsBuilder))
+  nameWithType: DependencyInjectionExtensions.UseMySql<TContext>(IDatabaseInfrastructureConfigurator<TContext>, string, Action<PomeloEntityFrameworkCoreMySqlSettings>?, Action<DbContextOptionsBuilder>?)
+  nameWithType.vb: DependencyInjectionExtensions.UseMySql(Of TContext)(IDatabaseInfrastructureConfigurator(Of TContext), String, Action(Of PomeloEntityFrameworkCoreMySqlSettings), Action(Of DbContextOptionsBuilder))
+- uid: Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions
+  name: MySqlOutboxModelBuilderExtensions
+  href: api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.html
+  commentId: T:Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions
+  fullName: Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions
+  nameWithType: MySqlOutboxModelBuilderExtensions
+- uid: Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  name: ApplyMySqlOutbox(ModelBuilder)
+  href: api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Infrastructure_MySql_MySqlOutboxModelBuilderExtensions_ApplyMySqlOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  fullName: Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  nameWithType: MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox(ModelBuilder)
+- uid: Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox*
+  name: ApplyMySqlOutbox
+  href: api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Infrastructure_MySql_MySqlOutboxModelBuilderExtensions_ApplyMySqlOutbox_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox
+  nameWithType: MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox
 - uid: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing
   name: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing
   href: api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.html
@@ -8084,28 +8759,6 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore(Of TContext).FetchMessagesAsync
   nameWithType: MySqlOutboxStore<TContext>.FetchMessagesAsync
   nameWithType.vb: MySqlOutboxStore(Of TContext).FetchMessagesAsync
-- uid: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration
-  name: OutboxMessageEntityConfiguration
-  href: api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.html
-  commentId: T:Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration
-  fullName: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration
-  nameWithType: OutboxMessageEntityConfiguration
-- uid: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name: Configure(EntityTypeBuilder<OutboxMessage>)
-  href: api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_OutboxMessageEntityConfiguration_Configure_Microsoft_EntityFrameworkCore_Metadata_Builders_EntityTypeBuilder_Vulthil_SharedKernel_Outbox_OutboxMessage__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name.vb: Configure(EntityTypeBuilder(Of OutboxMessage))
-  fullName: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder(Of Vulthil.SharedKernel.Outbox.OutboxMessage))
-  nameWithType: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder<OutboxMessage>)
-  nameWithType.vb: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder(Of OutboxMessage))
-- uid: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure*
-  name: Configure
-  href: api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_OutboxMessageEntityConfiguration_Configure_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure
-  nameWithType: OutboxMessageEntityConfiguration.Configure
 - uid: Vulthil.SharedKernel.Infrastructure.Npgsql
   name: Vulthil.SharedKernel.Infrastructure.Npgsql
   href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.html
@@ -8125,15 +8778,34 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql
   nameWithType: DependencyInjectionExtensions.UseNpgsql
-- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings})
-  name: UseNpgsql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<NpgsqlEntityFrameworkCorePostgreSQLSettings>?)
-  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings})
-  name.vb: UseNpgsql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of NpgsqlEntityFrameworkCorePostgreSQLSettings))
-  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings>?)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings))
-  nameWithType: DependencyInjectionExtensions.UseNpgsql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<NpgsqlEntityFrameworkCorePostgreSQLSettings>?)
-  nameWithType.vb: DependencyInjectionExtensions.UseNpgsql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of NpgsqlEntityFrameworkCorePostgreSQLSettings))
+- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name: UseNpgsql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<NpgsqlEntityFrameworkCorePostgreSQLSettings>?, Action<DbContextOptionsBuilder>?)
+  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name.vb: UseNpgsql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of NpgsqlEntityFrameworkCorePostgreSQLSettings), Action(Of DbContextOptionsBuilder))
+  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings>?, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder>?)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings), System.Action(Of Microsoft.EntityFrameworkCore.DbContextOptionsBuilder))
+  nameWithType: DependencyInjectionExtensions.UseNpgsql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<NpgsqlEntityFrameworkCorePostgreSQLSettings>?, Action<DbContextOptionsBuilder>?)
+  nameWithType.vb: DependencyInjectionExtensions.UseNpgsql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of NpgsqlEntityFrameworkCorePostgreSQLSettings), Action(Of DbContextOptionsBuilder))
+- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions
+  name: NpgsqlOutboxModelBuilderExtensions
+  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.html
+  commentId: T:Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions
+  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions
+  nameWithType: NpgsqlOutboxModelBuilderExtensions
+- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  name: ApplyNpgsqlOutbox(ModelBuilder)
+  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_NpgsqlOutboxModelBuilderExtensions_ApplyNpgsqlOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  nameWithType: NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox(ModelBuilder)
+- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox*
+  name: ApplyNpgsqlOutbox
+  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_NpgsqlOutboxModelBuilderExtensions_ApplyNpgsqlOutbox_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox
+  nameWithType: NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox
 - uid: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing
   name: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing
   href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.html
@@ -8186,28 +8858,6 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore(Of TContext).FetchMessagesAsync
   nameWithType: NpgsqlOutboxStore<TContext>.FetchMessagesAsync
   nameWithType.vb: NpgsqlOutboxStore(Of TContext).FetchMessagesAsync
-- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration
-  name: OutboxMessageEntityConfiguration
-  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.html
-  commentId: T:Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration
-  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration
-  nameWithType: OutboxMessageEntityConfiguration
-- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name: Configure(EntityTypeBuilder<OutboxMessage>)
-  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_OutboxMessageEntityConfiguration_Configure_Microsoft_EntityFrameworkCore_Metadata_Builders_EntityTypeBuilder_Vulthil_SharedKernel_Outbox_OutboxMessage__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name.vb: Configure(EntityTypeBuilder(Of OutboxMessage))
-  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder(Of Vulthil.SharedKernel.Outbox.OutboxMessage))
-  nameWithType: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder<OutboxMessage>)
-  nameWithType.vb: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder(Of OutboxMessage))
-- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure*
-  name: Configure
-  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_OutboxMessageEntityConfiguration_Configure_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure
-  nameWithType: OutboxMessageEntityConfiguration.Configure
 - uid: Vulthil.SharedKernel.Infrastructure.Relational
   name: Vulthil.SharedKernel.Infrastructure.Relational
   href: api/Vulthil.SharedKernel.Infrastructure.Relational.html
@@ -8567,6 +9217,23 @@ references:
   fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).IsInTransaction
   nameWithType: EntityFrameworkOutboxStore<TContext>.IsInTransaction
   nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).IsInTransaction
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.Logger
+  name: Logger
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_Logger
+  commentId: P:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.Logger
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.Logger
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).Logger
+  nameWithType: EntityFrameworkOutboxStore<TContext>.Logger
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).Logger
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.Logger*
+  name: Logger
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_Logger_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.Logger
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.Logger
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).Logger
+  nameWithType: EntityFrameworkOutboxStore<TContext>.Logger
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).Logger
 - uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.OutboxMessages
   name: OutboxMessages
   href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_OutboxMessages
@@ -8688,28 +9355,25 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.SaveChangesAsync
   nameWithType: ISaveOutboxMessages.SaveChangesAsync
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration
-  name: OutboxMessageEntityConfiguration
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.html
-  commentId: T:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration
-  nameWithType: OutboxMessageEntityConfiguration
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name: Configure(EntityTypeBuilder<OutboxMessage>)
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxMessageEntityConfiguration_Configure_Microsoft_EntityFrameworkCore_Metadata_Builders_EntityTypeBuilder_Vulthil_SharedKernel_Outbox_OutboxMessage__
-  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{Vulthil.SharedKernel.Outbox.OutboxMessage})
-  name.vb: Configure(EntityTypeBuilder(Of OutboxMessage))
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage>)
-  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder(Of Vulthil.SharedKernel.Outbox.OutboxMessage))
-  nameWithType: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder<OutboxMessage>)
-  nameWithType.vb: OutboxMessageEntityConfiguration.Configure(EntityTypeBuilder(Of OutboxMessage))
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.Configure*
-  name: Configure
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxMessageEntityConfiguration_Configure_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.Configure
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions
+  name: OutboxModelBuilderExtensions
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html
+  commentId: T:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions
+  nameWithType: OutboxModelBuilderExtensions
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  name: ApplyOutbox(ModelBuilder)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxModelBuilderExtensions_ApplyOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)
+  nameWithType: OutboxModelBuilderExtensions.ApplyOutbox(ModelBuilder)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox*
+  name: ApplyOutbox
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxModelBuilderExtensions_ApplyOutbox_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxMessageEntityConfiguration.Configure
-  nameWithType: OutboxMessageEntityConfiguration.Configure
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox
+  nameWithType: OutboxModelBuilderExtensions.ApplyOutbox
 - uid: Vulthil.SharedKernel.Outbox.IOutboxDispatcher
   name: IOutboxDispatcher
   href: api/Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html
@@ -8945,6 +9609,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxMessage.Error
   nameWithType: OutboxMessage.Error
+- uid: Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc
+  name: FailedOnUtc
+  href: api/Vulthil.SharedKernel.Outbox.OutboxMessage.html#Vulthil_SharedKernel_Outbox_OutboxMessage_FailedOnUtc
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc
+  fullName: Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc
+  nameWithType: OutboxMessage.FailedOnUtc
+- uid: Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc*
+  name: FailedOnUtc
+  href: api/Vulthil.SharedKernel.Outbox.OutboxMessage.html#Vulthil_SharedKernel_Outbox_OutboxMessage_FailedOnUtc_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc
+  nameWithType: OutboxMessage.FailedOnUtc
 - uid: Vulthil.SharedKernel.Outbox.OutboxMessage.GroupId
   name: GroupId
   href: api/Vulthil.SharedKernel.Outbox.OutboxMessage.html#Vulthil_SharedKernel_Outbox_OutboxMessage_GroupId
@@ -9274,6 +9951,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing
   nameWithType: OutboxProcessingOptions.EnableTracing
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism
+  name: MaxDegreeOfParallelism
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxDegreeOfParallelism
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism
+  nameWithType: OutboxProcessingOptions.MaxDegreeOfParallelism
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism*
+  name: MaxDegreeOfParallelism
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxDegreeOfParallelism_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism
+  nameWithType: OutboxProcessingOptions.MaxDegreeOfParallelism
 - uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds
   name: MaxDelaySeconds
   href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxDelaySeconds
@@ -9438,6 +10128,41 @@ references:
   fullName.vb: Vulthil.SharedKernel.Primitives.Entity(Of TId).New
   nameWithType: Entity<TId>.Entity
   nameWithType.vb: Entity(Of TId).New
+- uid: Vulthil.SharedKernel.Primitives.Entity`1.Equals(System.Object)
+  name: Equals(object?)
+  href: api/Vulthil.SharedKernel.Primitives.Entity-1.html#Vulthil_SharedKernel_Primitives_Entity_1_Equals_System_Object_
+  commentId: M:Vulthil.SharedKernel.Primitives.Entity`1.Equals(System.Object)
+  name.vb: Equals(Object)
+  fullName: Vulthil.SharedKernel.Primitives.Entity<TId>.Equals(object?)
+  fullName.vb: Vulthil.SharedKernel.Primitives.Entity(Of TId).Equals(Object)
+  nameWithType: Entity<TId>.Equals(object?)
+  nameWithType.vb: Entity(Of TId).Equals(Object)
+- uid: Vulthil.SharedKernel.Primitives.Entity`1.Equals*
+  name: Equals
+  href: api/Vulthil.SharedKernel.Primitives.Entity-1.html#Vulthil_SharedKernel_Primitives_Entity_1_Equals_
+  commentId: Overload:Vulthil.SharedKernel.Primitives.Entity`1.Equals
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Primitives.Entity<TId>.Equals
+  fullName.vb: Vulthil.SharedKernel.Primitives.Entity(Of TId).Equals
+  nameWithType: Entity<TId>.Equals
+  nameWithType.vb: Entity(Of TId).Equals
+- uid: Vulthil.SharedKernel.Primitives.Entity`1.GetHashCode
+  name: GetHashCode()
+  href: api/Vulthil.SharedKernel.Primitives.Entity-1.html#Vulthil_SharedKernel_Primitives_Entity_1_GetHashCode
+  commentId: M:Vulthil.SharedKernel.Primitives.Entity`1.GetHashCode
+  fullName: Vulthil.SharedKernel.Primitives.Entity<TId>.GetHashCode()
+  fullName.vb: Vulthil.SharedKernel.Primitives.Entity(Of TId).GetHashCode()
+  nameWithType: Entity<TId>.GetHashCode()
+  nameWithType.vb: Entity(Of TId).GetHashCode()
+- uid: Vulthil.SharedKernel.Primitives.Entity`1.GetHashCode*
+  name: GetHashCode
+  href: api/Vulthil.SharedKernel.Primitives.Entity-1.html#Vulthil_SharedKernel_Primitives_Entity_1_GetHashCode_
+  commentId: Overload:Vulthil.SharedKernel.Primitives.Entity`1.GetHashCode
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Primitives.Entity<TId>.GetHashCode
+  fullName.vb: Vulthil.SharedKernel.Primitives.Entity(Of TId).GetHashCode
+  nameWithType: Entity<TId>.GetHashCode
+  nameWithType.vb: Entity(Of TId).GetHashCode
 - uid: Vulthil.SharedKernel.Primitives.Entity`1.Id
   name: Id
   href: api/Vulthil.SharedKernel.Primitives.Entity-1.html#Vulthil_SharedKernel_Primitives_Entity_1_Id

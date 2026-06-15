@@ -153,16 +153,16 @@ package <code>Vulthil.Messaging.Inbox.EntityFrameworkCore</code>, so you impleme
     public DbSet&lt;InboxMessage&gt; InboxMessages =&gt; Set&lt;InboxMessage&gt;();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        =&gt; modelBuilder.ApplyConfiguration(new InboxMessageEntityConfiguration());
+        =&gt; modelBuilder.ApplyRelationalInbox();
 }
 </code></pre>
 <pre><code class="lang-csharp">builder.Services.AddRelationalInbox&lt;AppDbContext&gt;();
 </code></pre>
 <p>The consumer and the store must share the same scoped <code>DbContext</code> instance (the default with <code>AddDbContext</code>), so the consumer's writes and the marker enlist in the same transaction. The consumer keeps calling <code>SaveChanges</code> as usual — the store owns the transaction, not <code>SaveChanges</code>. Add an EF Core migration for the <code>InboxMessage</code> table as you would for any entity.</p>
 <h3 id="cosmos-store">Cosmos store</h3>
-<p>The Cosmos store is wired the same way — apply <code>CosmosInboxMessageEntityConfiguration</code> and call <code>AddCosmosInbox&lt;AppDbContext&gt;()</code>:</p>
+<p>The Cosmos store is wired the same way — apply the Cosmos mapping with <code>ApplyCosmosInbox()</code> and call <code>AddCosmosInbox&lt;AppDbContext&gt;()</code>:</p>
 <pre><code class="lang-csharp">protected override void OnModelCreating(ModelBuilder modelBuilder)
-    =&gt; modelBuilder.ApplyConfiguration(new CosmosInboxMessageEntityConfiguration());
+    =&gt; modelBuilder.ApplyCosmosInbox();
 </code></pre>
 <pre><code class="lang-csharp">builder.Services.AddCosmosInbox&lt;AppDbContext&gt;();
 </code></pre>

@@ -162,7 +162,7 @@ Class CosmosInboxExtensions  <a class="header-action link-secondary" title="View
 
   <div class="markdown level1 summary"><p>Registers an <a class="xref" href="Vulthil.Messaging.Inbox.IIdempotencyStore.html">IIdempotencyStore</a> backed by the application's Cosmos <code class="typeparamref">TContext</code>.
 The context must be registered, implement <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.ISaveInboxMessages.html">ISaveInboxMessages</a>, and map <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html">InboxMessage</a>
-(see <a class="xref" href="Vulthil.Messaging.Inbox.Cosmos.CosmosInboxMessageEntityConfiguration.html">CosmosInboxMessageEntityConfiguration</a>). Provides effectively-once processing — pair it with
+(via <a class="xref" href="Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.html#Vulthil_Messaging_Inbox_Cosmos_CosmosInboxModelBuilderExtensions_ApplyCosmosInbox_Microsoft_EntityFrameworkCore_ModelBuilder_">ApplyCosmosInbox(ModelBuilder)</a>). Provides effectively-once processing — pair it with
 idempotent consumer writes.</p>
 </div>
   <div class="markdown level1 conceptual"></div>

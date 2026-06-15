@@ -388,7 +388,7 @@ and problem-detail responses in the API layer.</p>
 
   <h3 id="Vulthil_Results_Error_Conflict_System_String_System_String_" data-uid="Vulthil.Results.Error.Conflict(System.String,System.String)">
   Conflict(string, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a conflict error.</p>
@@ -539,6 +539,48 @@ and problem-detail responses in the API layer.</p>
   <dl class="parameters">
     <dt><a class="xref" href="Vulthil.Results.Error.html">Error</a></dt>
     <dd><p>A new <a class="xref" href="Vulthil.Results.Error.html">Error</a> with <a class="xref" href="Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Problem">Problem</a> classification.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Results_Error_Validation_" data-uid="Vulthil.Results.Error.Validation*"></a>
+
+  <h3 id="Vulthil_Results_Error_Validation_System_String_System_String_" data-uid="Vulthil.Results.Error.Validation(System.String,System.String)">
+  Validation(string, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a problem error.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Error Validation(string code, string description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The error code.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The error description.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Results.Error.html">Error</a></dt>
+    <dd><p>A new <a class="xref" href="Vulthil.Results.Error.html">Error</a> with <a class="xref" href="Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Validation">Validation</a> classification.</p>
 </dd>
   </dl>
 

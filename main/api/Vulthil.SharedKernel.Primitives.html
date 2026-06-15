@@ -101,7 +101,9 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Primitives.Entity-1.html">Entity&lt;TId&gt;</a></dt>
-      <dd><p>Base class for domain entities identified by a strongly-typed identifier.</p>
+      <dd><p>Base class for domain entities identified by a strongly-typed identifier. Entities are compared by identity:
+two entities are equal when they have the same runtime type and equal, non-default <a class="xref" href="Vulthil.SharedKernel.Primitives.Entity-1.html#Vulthil_SharedKernel_Primitives_Entity_1_Id">Id</a> values.
+A transient entity — one whose <a class="xref" href="Vulthil.SharedKernel.Primitives.Entity-1.html#Vulthil_SharedKernel_Primitives_Entity_1_Id">Id</a> is still the default value — is only equal to itself.</p>
 </dd>
     </dl>
     <h3 id="interfaces">

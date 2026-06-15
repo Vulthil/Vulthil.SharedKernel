@@ -96,7 +96,8 @@ Classes
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior-2.html">TransactionalPipelineBehavior&lt;TCommand, TResponse&gt;</a></dt>
-      <dd><p>Pipeline behavior that wraps transactional commands in a database transaction, committing on success.</p>
+      <dd><p>Pipeline behavior that wraps transactional commands in a database transaction, committing when the command
+succeeds and rolling back when it returns a failed <a class="xref" href="Vulthil.Results.Result.html">Result</a> or throws.</p>
 </dd>
     </dl>
 

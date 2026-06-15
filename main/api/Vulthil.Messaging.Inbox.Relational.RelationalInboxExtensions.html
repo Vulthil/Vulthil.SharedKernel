@@ -162,8 +162,8 @@ Class RelationalInboxExtensions  <a class="header-action link-secondary" title="
 
   <div class="markdown level1 summary"><p>Registers an <a class="xref" href="Vulthil.Messaging.Inbox.IIdempotencyStore.html">IIdempotencyStore</a> backed by the application's <code class="typeparamref">TContext</code>,
 using ambient relational transactions. The context must be registered (e.g. via <code>AddDbContext</code>),
-implement <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.ISaveInboxMessages.html">ISaveInboxMessages</a>, and map <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html">InboxMessage</a> (see
-<a class="xref" href="Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.html">InboxMessageEntityConfiguration</a>).</p>
+implement <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.ISaveInboxMessages.html">ISaveInboxMessages</a>, and map <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html">InboxMessage</a> (via
+<a class="xref" href="Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html#Vulthil_Messaging_Inbox_Relational_RelationalInboxModelBuilderExtensions_ApplyRelationalInbox_Microsoft_EntityFrameworkCore_ModelBuilder_">ApplyRelationalInbox(ModelBuilder)</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

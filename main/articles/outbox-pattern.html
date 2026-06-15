@@ -94,7 +94,7 @@
 <li>The aggregate root's event collection is cleared.</li>
 <li>A background service (<code>OutboxBackgroundService</code>) relays unprocessed outbox messages — woken immediately once the captured rows are durable (on transaction commit, or right after a non-transactional <code>SaveChanges</code> that captured domain events) for low latency, and polling on an interval as the backstop.</li>
 <li>Each message is routed by its <code>OutboxDestination</code> to the registered <code>IOutboxDispatcher</code> that handles it (in-process domain events by default, or the broker — see below).</li>
-<li>Successfully relayed messages are marked as processed; failures are retried up to the configured maximum.</li>
+<li>Successfully relayed messages are marked as processed; failures are retried up to the configured maximum, after which the message is dead-lettered — its <code>FailedOnUtc</code> timestamp is set, it is no longer relayed, and an error is logged with the last failure (the <code>Error</code> column).</li>
 </ol>
 <p>This guarantees <strong>at-least-once delivery</strong> because the event and the business data are committed atomically.</p>
 <h2 id="configuration">Configuration</h2>
@@ -107,7 +107,7 @@
         .EnableOutboxProcessing(o =&gt;
         {
             o.BatchSize = 10;   // Messages fetched per poll cycle
-            o.MaxRetries = 3;   // Retry limit before a message is abandoned
+            o.MaxRetries = 3;   // Retries before a message is dead-lettered
         });
 });
 </code></pre>
@@ -120,9 +120,15 @@
         typeof(AppDbContext).Assembly;
 
     public DbSet&lt;User&gt; Users =&gt; Set&lt;User&gt;();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyNpgsqlOutbox();
+    }
 }
 </code></pre>
-<p>The <code>OutboxMessage</code> entity configuration is applied automatically by <code>BaseDbContext.OnModelCreating</code>.</p>
+<p><code>BaseDbContext</code> owns the <code>OutboxMessages</code> <code>DbSet</code>; apply the provider-optimized mapping in <code>OnModelCreating</code> by calling your provider's extension — <code>ApplyNpgsqlOutbox()</code>, <code>ApplyMySqlOutbox()</code>, or <code>ApplyCosmosOutbox()</code> (as shown above). The agnostic <code>ApplyOutbox()</code> is available for custom providers.</p>
 <h2 id="outbox-processing-options">Outbox Processing Options</h2>
 <table>
 <thead>
@@ -141,12 +147,17 @@
 <tr>
 <td><code>MaxRetries</code></td>
 <td>3</td>
-<td>Maximum publish attempts before a message is abandoned</td>
+<td>Publish attempts before a message is dead-lettered (<code>FailedOnUtc</code> set, no longer relayed)</td>
 </tr>
 <tr>
 <td><code>EnableParallelPublishing</code></td>
 <td><code>false</code></td>
-<td>Publish messages in parallel within a batch</td>
+<td>Publish messages in parallel within a batch (each dispatch runs in its own DI scope)</td>
+</tr>
+<tr>
+<td><code>MaxDegreeOfParallelism</code></td>
+<td>4</td>
+<td>Maximum concurrent dispatches when <code>EnableParallelPublishing</code> is enabled</td>
 </tr>
 <tr>
 <td><code>OutboxProcessingDelayInSeconds</code></td>
@@ -228,7 +239,7 @@ OutboxBackgroundService polls
     ↓
 OutboxProcessor deserialises &amp; publishes via IDomainEventPublisher
     ↓
-Message marked as processed (or retried on failure)
+Message marked as processed (or retried on failure, then dead-lettered after MaxRetries)
 </code></pre>
 <h2 id="when-to-use">When to Use</h2>
 <ul>

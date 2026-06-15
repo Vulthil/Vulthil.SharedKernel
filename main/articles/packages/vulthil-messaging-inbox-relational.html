@@ -109,7 +109,7 @@ separate store with a different (effectively-once) mechanism.</p>
     public DbSet&lt;InboxMessage&gt; InboxMessages =&gt; Set&lt;InboxMessage&gt;();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        =&gt; modelBuilder.ApplyConfiguration(new InboxMessageEntityConfiguration());
+        =&gt; modelBuilder.ApplyRelationalInbox();
 }
 </code></pre>
 <pre><code class="lang-csharp">builder.Services.AddRelationalInbox&lt;AppDbContext&gt;();

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface ITransactionalCommand | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Marker interface for a command that should be executed within a transaction.">
+      <meta name="description" content="Marker interface for a command that returns a  and should be executed within a transaction.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -97,12 +97,12 @@ Interface ITransactionalCommand  <a class="header-action link-secondary" title="
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Application.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Marker interface for a command that should be executed within a transaction.</p>
+  <div class="markdown summary"><p>Marker interface for a command that returns a <a class="xref" href="Vulthil.Results.Result.html">Result</a> and should be executed within a transaction.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface ITransactionalCommand : ICommand, ICommand&lt;Result&gt;, IRequest&lt;Result&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public interface ITransactionalCommand : ICommand, ITransactionalCommand&lt;Result&gt;, ICommand&lt;Result&gt;, IRequest&lt;Result&gt;</code></pre>
   </div>
 
 

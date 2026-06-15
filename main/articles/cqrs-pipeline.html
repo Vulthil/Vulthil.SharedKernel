@@ -181,7 +181,7 @@ public sealed class GetUserQueryHandler(AppDbContext db)
 <h2 id="pipeline-behaviors">Pipeline Behaviors</h2>
 <p>Pipeline behaviors wrap every handler invocation, allowing you to add cross-cutting logic without modifying individual handlers.</p>
 <h3 id="validation">Validation</h3>
-<p><code>ValidationPipelineBehavior</code> runs all registered <code>IValidator&lt;TCommand&gt;</code> instances before the handler executes. When validation fails, it short-circuits and returns a <code>Result</code> containing a <code>ValidationError</code>:</p>
+<p><code>ValidationPipelineBehavior</code> runs all registered <code>IValidator&lt;TCommand&gt;</code> instances before the handler executes. When validation fails it short-circuits: a command returning <code>Result</code> or <code>Result&lt;T&gt;</code> receives a failed result containing a <code>ValidationError</code>, while a command with any other response type throws a <code>ValidationException</code> (there is no in-band way to represent failure for a non-result response):</p>
 <pre><code class="lang-csharp">public sealed class CreateUserCommandValidator : AbstractValidator&lt;CreateUserCommand&gt;
 {
     public CreateUserCommandValidator()
@@ -196,7 +196,7 @@ public sealed class GetUserQueryHandler(AppDbContext db)
 <h3 id="request-logging">Request Logging</h3>
 <p><code>RequestLoggingPipelineBehavior</code> logs the start and completion of every request, attaching the serialised error to the logging scope when the result is a failure.</p>
 <h3 id="transactional">Transactional</h3>
-<p><code>TransactionalPipelineBehavior</code> wraps <code>ITransactionalCommand</code> handlers inside a database transaction. If the handler succeeds, the transaction commits; if it throws, the transaction rolls back.</p>
+<p><code>TransactionalPipelineBehavior</code> wraps <code>ITransactionalCommand</code> handlers inside a database transaction. If the handler returns a successful <code>Result</code>, the transaction commits; if it returns a failed <code>Result</code> or throws, the transaction rolls back. (The non-generic <code>ITransactionalCommand</code> marker returns <code>Result</code> and is wrapped the same way as <code>ITransactionalCommand&lt;Result&gt;</code>.)</p>
 <pre><code class="lang-csharp">// Mark a command as transactional
 public sealed record TransferFundsCommand(Guid FromAccount, Guid ToAccount, decimal Amount)
     : ITransactionalCommand&lt;Result&gt;;

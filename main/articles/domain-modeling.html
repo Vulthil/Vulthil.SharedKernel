@@ -120,11 +120,8 @@
 </tbody>
 </table>
 <h2 id="defining-an-entity">Defining an Entity</h2>
-<p>Entities are compared by identity, not by attribute values:</p>
-<pre><code class="lang-csharp">public sealed class UserId(Guid value)
-{
-    public Guid Value { get; } = value;
-}
+<p>Entities are compared by identity, not by attribute values. Give the identifier value equality — a <code>record</code> or <code>readonly record struct</code> — so two entities with the same id compare as equal:</p>
+<pre><code class="lang-csharp">public sealed record UserId(Guid Value);
 
 public sealed class User : AggregateRoot&lt;UserId&gt;
 {

@@ -95,15 +95,13 @@
 Classes
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.Messaging.Inbox.Relational.InboxMessageEntityConfiguration.html">InboxMessageEntityConfiguration</a></dt>
-      <dd><p>Default relational mapping for <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html">InboxMessage</a>. The <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html#Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage_MessageId">MessageId</a> is the
-primary key, giving the uniqueness guarantee the idempotency store relies on. Consumers may override this
-mapping in their <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext">DbContext</a>.</p>
+      <dt><a class="xref" href="Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.html">RelationalInboxExtensions</a></dt>
+      <dd><p>Service-collection extensions that register the relational Entity Framework Core idempotency store.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.html">RelationalInboxExtensions</a></dt>
-      <dd><p>Service-collection extensions that register the relational Entity Framework Core idempotency store.</p>
+      <dt><a class="xref" href="Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html">RelationalInboxModelBuilderExtensions</a></dt>
+      <dd><p><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.modelbuilder">ModelBuilder</a> extensions that apply the relational <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html">InboxMessage</a> mapping.</p>
 </dd>
     </dl>
 

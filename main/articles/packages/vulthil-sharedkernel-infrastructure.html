@@ -109,6 +109,12 @@ the DI wiring (<code>EnableOutboxProcessing</code>).</p>
     protected override Assembly? ConfigurationAssembly =&gt; typeof(AppDbContext).Assembly;
 
     public DbSet&lt;User&gt; Users =&gt; Set&lt;User&gt;();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyNpgsqlOutbox();
+    }
 }
 </code></pre>
 <h3 id="registration-with-outbox-processing">Registration with outbox processing</h3>

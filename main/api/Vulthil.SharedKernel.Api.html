@@ -96,7 +96,7 @@ Classes
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Api.BaseController.html">BaseController</a></dt>
-      <dd><p>Abstract base API controller with preconfigured route conventions and logging.</p>
+      <dd><p>Abstract base API controller with preconfigured route conventions and a lazily-resolved logger.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -117,6 +117,12 @@ Classes
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Api.Extensions.html">Extensions</a></dt>
       <dd><p>Provides extension methods for converting <a class="xref" href="Vulthil.Results.Result.html">Result</a> values to HTTP responses.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html">ProblemDetailsExtensions</a></dt>
+      <dd><p>Provides extension methods for wiring RFC 7807 ProblemDetails responses across the request pipeline,
+covering handled failures, uncaught exceptions, and bare error status codes.</p>
 </dd>
     </dl>
     <h3 id="interfaces">

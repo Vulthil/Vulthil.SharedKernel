@@ -155,9 +155,9 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
   <a id="Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb_" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Microsoft_EntityFrameworkCore_Cosmos_EntityFrameworkCoreCosmosSettings__" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings})">
-  UseCosmosDb&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;EntityFrameworkCoreCosmosSettings&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Microsoft_EntityFrameworkCore_Cosmos_EntityFrameworkCoreCosmosSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})">
+  UseCosmosDb&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;EntityFrameworkCoreCosmosSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/DependencyInjectionExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the database infrastructure to use the Cosmos-specific outbox strategy.</p>
@@ -165,7 +165,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseCosmosDb&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionName, Action&lt;EntityFrameworkCoreCosmosSettings&gt;? configureSettings) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
+    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseCosmosDb&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionName, Action&lt;EntityFrameworkCoreCosmosSettings&gt;? configureSettings = null, Action&lt;DbContextOptionsBuilder&gt;? configureDbContextOptions = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -177,7 +177,10 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
     <dd><p>The name of the Cosmos DB connection.</p>
 </dd>
     <dt><code>configureSettings</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">EntityFrameworkCoreCosmosSettings</span>&gt;</dt>
-    <dd><p>An action to configure the Cosmos DB settings.</p>
+    <dd><p>An optional action to configure the Cosmos DB settings.</p>
+</dd>
+    <dt><code>configureDbContextOptions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder">DbContextOptionsBuilder</a>&gt;</dt>
+    <dd><p>An optional action to configure the DbContext options.</p>
 </dd>
   </dl>
 

@@ -200,6 +200,12 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapAsync__1_Vulthil_Results_Result_System_Func_System_Threading_Tasks_Task___0___">ResultExtensions.MapAsync&lt;T2&gt;(Result, Func&lt;Task&lt;T2&gt;&gt;)</a>
   </div>
   <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapError_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_Vulthil_Results_Error__">ResultExtensions.MapError(Result, Func&lt;Error, Error&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Error___">ResultExtensions.MapErrorAsync(Result, Func&lt;Error, Task&lt;Error&gt;&gt;)</a>
+  </div>
+  <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Map__1_Vulthil_Results_Result_System_Func___0__">ResultExtensions.Map&lt;T2&gt;(Result, Func&lt;T2&gt;)</a>
   </div>
   <div>
@@ -227,10 +233,25 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Match__1_Vulthil_Results_Result_System_Func___0__System_Func_Vulthil_Results_Error___0__">ResultExtensions.Match&lt;TOut&gt;(Result, Func&lt;TOut&gt;, Func&lt;Error, TOut&gt;)</a>
   </div>
   <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Or_Vulthil_Results_Result_Vulthil_Results_Result_">ResultExtensions.Or(Result, Result)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElse_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_Vulthil_Results_Result__">ResultExtensions.OrElse(Result, Func&lt;Error, Result&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Result___">ResultExtensions.OrElseAsync(Result, Func&lt;Error, Task&lt;Result&gt;&gt;)</a>
+  </div>
+  <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Tap_Vulthil_Results_Result_System_Action_">ResultExtensions.Tap(Result, Action)</a>
   </div>
   <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapAsync_Vulthil_Results_Result_System_Func_System_Threading_Tasks_Task__">ResultExtensions.TapAsync(Result, Func&lt;Task&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapError_Vulthil_Results_Result_System_Action_Vulthil_Results_Error__">ResultExtensions.TapError(Result, Action&lt;Error&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync_Vulthil_Results_Result_System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task__">ResultExtensions.TapErrorAsync(Result, Func&lt;Error, Task&gt;)</a>
   </div>
   <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_BindAsync__1_Vulthil_Results_Result___0__System_Func___0_System_Threading_Tasks_Task_Vulthil_Results_Result___">ResultExtensions.BindAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;T1, Task&lt;Result&gt;&gt;)</a>
@@ -245,7 +266,25 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Bind__2_Vulthil_Results_Result___0__System_Func___0_Vulthil_Results_Result___1___">ResultExtensions.Bind&lt;T1, T2&gt;(Result&lt;T1&gt;, Func&lt;T1, Result&lt;T2&gt;&gt;)</a>
   </div>
   <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_EnsureAsync__1_Vulthil_Results_Result___0__System_Func___0_System_Threading_Tasks_Task_System_Boolean___Vulthil_Results_Error_">ResultExtensions.EnsureAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;T1, Task&lt;bool&gt;&gt;, Error)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Ensure__1_Vulthil_Results_Result___0__System_Func___0_System_Boolean__Vulthil_Results_Error_">ResultExtensions.Ensure&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;T1, bool&gt;, Error)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefault__1_Vulthil_Results_Result___0__">ResultExtensions.GetValueOrDefault&lt;T1&gt;(Result&lt;T1&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_GetValueOrDefault__1_Vulthil_Results_Result___0____0_">ResultExtensions.GetValueOrDefault&lt;T1&gt;(Result&lt;T1&gt;, T1)</a>
+  </div>
+  <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapAsync__2_Vulthil_Results_Result___0__System_Func___0_System_Threading_Tasks_Task___1___">ResultExtensions.MapAsync&lt;T1, T2&gt;(Result&lt;T1&gt;, Func&lt;T1, Task&lt;T2&gt;&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapErrorAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Error___">ResultExtensions.MapErrorAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Error, Task&lt;Error&gt;&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_MapError__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_Vulthil_Results_Error__">ResultExtensions.MapError&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Error, Error&gt;)</a>
   </div>
   <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Map__2_Vulthil_Results_Result___0__System_Func___0___1__">ResultExtensions.Map&lt;T1, T2&gt;(Result&lt;T1&gt;, Func&lt;T1, T2&gt;)</a>
@@ -275,10 +314,31 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Match__2_Vulthil_Results_Result___0__System_Func___0___1__System_Func_Vulthil_Results_Error___1__">ResultExtensions.Match&lt;TIn, TOut&gt;(Result&lt;TIn&gt;, Func&lt;TIn, TOut&gt;, Func&lt;Error, TOut&gt;)</a>
   </div>
   <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElseAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task_Vulthil_Results_Result___0____">ResultExtensions.OrElseAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Error, Task&lt;Result&lt;T1&gt;&gt;&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_OrElse__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_Vulthil_Results_Result___0___">ResultExtensions.OrElse&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Error, Result&lt;T1&gt;&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Or__1_Vulthil_Results_Result___0__Vulthil_Results_Result___0__">ResultExtensions.Or&lt;T1&gt;(Result&lt;T1&gt;, Result&lt;T1&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_RecoverAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task___0___">ResultExtensions.RecoverAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Error, Task&lt;T1&gt;&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Recover__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error___0__">ResultExtensions.Recover&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Error, T1&gt;)</a>
+  </div>
+  <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapAsync__1_Vulthil_Results_Result___0__System_Func_System_Threading_Tasks_Task__">ResultExtensions.TapAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Task&gt;)</a>
   </div>
   <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapAsync__1_Vulthil_Results_Result___0__System_Func___0_System_Threading_Tasks_Task__">ResultExtensions.TapAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;T1, Task&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapErrorAsync__1_Vulthil_Results_Result___0__System_Func_Vulthil_Results_Error_System_Threading_Tasks_Task__">ResultExtensions.TapErrorAsync&lt;T1&gt;(Result&lt;T1&gt;, Func&lt;Error, Task&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_TapError__1_Vulthil_Results_Result___0__System_Action_Vulthil_Results_Error__">ResultExtensions.TapError&lt;T1&gt;(Result&lt;T1&gt;, Action&lt;Error&gt;)</a>
   </div>
   <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Tap__1_Vulthil_Results_Result___0__System_Action_">ResultExtensions.Tap&lt;T1&gt;(Result&lt;T1&gt;, Action)</a>
@@ -288,6 +348,12 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
   </div>
   <div>
       <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Zip__2_Vulthil_Results_Result___0__Vulthil_Results_Result___1__">ResultExtensions.Zip&lt;T1, T2&gt;(Result&lt;T1&gt;, Result&lt;T2&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Zip__3_Vulthil_Results_Result___0__Vulthil_Results_Result___1__System_Func___0___1___2__">ResultExtensions.Zip&lt;T1, T2, TOut&gt;(Result&lt;T1&gt;, Result&lt;T2&gt;, Func&lt;T1, T2, TOut&gt;)</a>
   </div>
   </dd></dl>
 

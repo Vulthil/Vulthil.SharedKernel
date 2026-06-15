@@ -103,7 +103,7 @@ or to have a <code>DbContext</code> implement <code>ISaveOutboxMessages</code> w
 (execution strategy, transaction, fetch, dispatch, mark, commit) plus the capture surface. Provider packages
 override fetch/mark/transaction for row-level locking and Cosmos best-effort behaviour.</li>
 <li><code>DomainEventsToOutboxMessageSaveChangesInterceptor</code> / <code>IOutboxInterceptor</code> — domain-event capture.</li>
-<li><code>OutboxMessageEntityConfiguration</code> — the provider-agnostic <code>OutboxMessage</code> mapping.</li>
+<li><code>ApplyOutbox()</code> — a <code>ModelBuilder</code> extension applying the provider-agnostic <code>OutboxMessage</code> mapping. Provider packages offer optimized alternatives (<code>ApplyNpgsqlOutbox()</code>, <code>ApplyMySqlOutbox()</code>, <code>ApplyCosmosOutbox()</code>).</li>
 </ul>
 <p>See the <a href="https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md">Outbox Pattern</a>
 article for the design.</p>

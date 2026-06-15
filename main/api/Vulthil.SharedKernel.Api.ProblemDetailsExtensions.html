@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class CustomResults | Vulthil.SharedKernel </title>
+      <title>Class ProblemDetailsExtensions | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class CustomResults | Vulthil.SharedKernel ">
+      <meta name="title" content="Class ProblemDetailsExtensions | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Provides factory methods for creating problem-detail HTTP responses from  values.">
+      <meta name="description" content="Provides extension methods for wiring RFC 7807 ProblemDetails responses across the request pipeline, covering handled failures, uncaught exceptions, and bare error status codes.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Api_CustomResults.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Api.CustomResults%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Api_ProblemDetailsExtensions.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Api.ProblemDetailsExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,12 +84,12 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.SharedKernel.Api.CustomResults">
+        <article data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions">
 
 
 
-  <h1 id="Vulthil_SharedKernel_Api_CustomResults" data-uid="Vulthil.SharedKernel.Api.CustomResults" class="text-break">
-Class CustomResults  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/Extensions.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions" class="text-break">
+Class ProblemDetailsExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,13 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Api.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Provides factory methods for creating problem-detail HTTP responses from <a class="xref" href="Vulthil.Results.Error.html">Error</a> values.</p>
+  <div class="markdown summary"><p>Provides extension methods for wiring RFC 7807 ProblemDetails responses across the request pipeline,
+covering handled failures, uncaught exceptions, and bare error status codes.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static class CustomResults</code></pre>
+    <pre><code class="lang-csharp hljs">public static class ProblemDetailsExtensions</code></pre>
   </div>
 
 
@@ -112,7 +113,7 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><span class="xref">CustomResults</span></div>
+      <div><span class="xref">ProblemDetailsExtensions</span></div>
     </dd>
   </dl>
 
@@ -153,32 +154,32 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
 </h2>
 
 
-  <a id="Vulthil_SharedKernel_Api_CustomResults_Problem_" data-uid="Vulthil.SharedKernel.Api.CustomResults.Problem*"></a>
+  <a id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_AddProblemDetailsHandling_" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_" data-uid="Vulthil.SharedKernel.Api.CustomResults.Problem(Vulthil.Results.Error)">
-  Problem(Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/Extensions.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_AddProblemDetailsHandling_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+  AddProblemDetailsHandling(IServiceCollection)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Creates a <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a> from an <a class="xref" href="Vulthil.Results.Error.html">Error</a>, mapping the error type to the appropriate HTTP status code.</p>
+  <div class="markdown level1 summary"><p>Registers ProblemDetails generation and the global exception handler.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ProblemHttpResult Problem(Error error)</code></pre>
+    <pre><code class="lang-csharp hljs">public static IServiceCollection AddProblemDetailsHandling(this IServiceCollection services)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>error</code> <a class="xref" href="Vulthil.Results.Error.html">Error</a></dt>
-    <dd><p>The error to convert.</p>
+    <dt><code>services</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a></dt>
+    <dd><p>The service collection.</p>
 </dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a> representing the problem response.</p>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a></dt>
+    <dd><p>The service collection for chaining.</p>
 </dd>
   </dl>
 
@@ -188,6 +189,53 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
 
 
 
+  <h4 class="section" id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_AddProblemDetailsHandling_Microsoft_Extensions_DependencyInjection_IServiceCollection__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Every produced <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.problemdetails">ProblemDetails</a> is enriched with the request
+method and path as the instance, the request identifier, and the current trace identifier when available.</p>
+</div>
+
+
+
+
+  <a id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_UseProblemDetailsHandling_" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_UseProblemDetailsHandling_Microsoft_AspNetCore_Builder_IApplicationBuilder_" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+  UseProblemDetailsHandling(IApplicationBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds the exception-handling and status-code-pages middleware that produce ProblemDetails responses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IApplicationBuilder UseProblemDetailsHandling(this IApplicationBuilder app)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>app</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.builder.iapplicationbuilder">IApplicationBuilder</a></dt>
+    <dd><p>The application builder.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.builder.iapplicationbuilder">IApplicationBuilder</a></dt>
+    <dd><p>The application builder for chaining.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_UseProblemDetailsHandling_Microsoft_AspNetCore_Builder_IApplicationBuilder__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Register this as the first middleware so it wraps the entire request pipeline. The parameterless
+exception handler relies on the registered <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iproblemdetailsservice">IProblemDetailsService</a>.</p>
+</div>
 
 
 
@@ -196,7 +244,7 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/Extensions.cs/#L180" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

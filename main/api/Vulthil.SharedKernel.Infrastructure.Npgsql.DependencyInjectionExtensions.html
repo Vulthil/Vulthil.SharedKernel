@@ -155,9 +155,9 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
   <a id="Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql_" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings})">
-  UseNpgsql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/DependencyInjectionExtensions.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})">
+  UseNpgsql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/DependencyInjectionExtensions.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the database infrastructure to use the PostgreSQL-optimized outbox strategy and
@@ -166,7 +166,7 @@ registers an Aspire-wired <a class="xref" href="https://learn.microsoft.com/dotn
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseNpgsql&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionStringKey, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;? configureSettings = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
+    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseNpgsql&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionStringKey, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;? configureSettings = null, Action&lt;DbContextOptionsBuilder&gt;? configureDbContextOptions = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -179,6 +179,9 @@ registers an Aspire-wired <a class="xref" href="https://learn.microsoft.com/dotn
 </dd>
     <dt><code>configureSettings</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">NpgsqlEntityFrameworkCorePostgreSQLSettings</span>&gt;</dt>
     <dd><p>Optional action to configure PostgreSQL-specific settings.</p>
+</dd>
+    <dt><code>configureDbContextOptions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder">DbContextOptionsBuilder</a>&gt;</dt>
+    <dd><p>Optional action to configure the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder">DbContextOptionsBuilder</a>.</p>
 </dd>
   </dl>
 
@@ -200,9 +203,9 @@ registers an Aspire-wired <a class="xref" href="https://learn.microsoft.com/dotn
 
 
 
-  <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings___remarks">Remarks</h4>
+  <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder___remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>The actual call to <code>AddNpgsqlDbContext</code> is deferred until the full configurator chain
-has executed, so the order of <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__">UseNpgsql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;?)</a> and
+has executed, so the order of <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__">UseNpgsql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)</a> and
 <a class="xref" href="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_EnableOutboxProcessing_System_Action_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__">EnableOutboxProcessing(Action&lt;OutboxProcessingOptions&gt;?)</a> is irrelevant.
 The outbox processor runs its transactional unit inside the context's execution strategy
 (<code>Database.CreateExecutionStrategy().ExecuteAsync</code>), so a retrying execution strategy is fully

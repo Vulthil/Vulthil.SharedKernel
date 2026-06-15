@@ -34,28 +34,6 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
     {
         base.OnModelCreating(modelBuilder);
 
-        // If the DbContext's ConfigurationAssembly contains a provider-specific IEntityTypeConfiguration<OutboxMessage>,
-        // prefer that configuration. Otherwise fall back to the built-in provider-agnostic configuration.
-        var outboxHasProviderConfig = false;
-
-        if (ConfigurationAssembly is not null)
-        {
-            outboxHasProviderConfig = ConfigurationAssembly
-                .GetTypes()
-                .Where(t => !t.IsAbstract && !t.IsInterface)
-                .SelectMany(t => t.GetInterfaces())
-                .Any(i =>
-                    i.IsGenericType &&
-                    i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>) &&
-                    i.GenericTypeArguments.Length == 1 &&
-                    i.GenericTypeArguments[0] == typeof(OutboxMessage));
-        }
-
-        if (!outboxHasProviderConfig)
-        {
-            modelBuilder.ApplyConfiguration(new OutboxMessageEntityConfiguration());
-        }
-
         if (ConfigurationAssembly is not null)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(ConfigurationAssembly, ConfigurationTypeConstraints);

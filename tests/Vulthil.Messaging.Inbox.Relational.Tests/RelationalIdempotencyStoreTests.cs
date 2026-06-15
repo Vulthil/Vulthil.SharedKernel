@@ -172,7 +172,7 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);
-            modelBuilder.ApplyConfiguration(new InboxMessageEntityConfiguration());
+            modelBuilder.ApplyRelationalInbox();
             modelBuilder.Entity<Thing>().HasKey(thing => thing.Id);
         }
     }

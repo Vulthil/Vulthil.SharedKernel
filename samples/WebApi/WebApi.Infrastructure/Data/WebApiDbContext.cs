@@ -1,12 +1,12 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
 using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 using Vulthil.Messaging.Inbox.Relational;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Infrastructure.Data;
+using Vulthil.SharedKernel.Infrastructure.Npgsql;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using WebApi.Application;
@@ -25,6 +25,13 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
     public DbSet<SideEffect> SideEffects => Set<SideEffect>();
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
     protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyNpgsqlOutbox();
+        modelBuilder.ApplyRelationalInbox();
+    }
 }
 
 /// <summary>
@@ -45,6 +52,8 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WebApiDbContextNoBase).Assembly);
+        modelBuilder.ApplyNpgsqlOutbox();
+        modelBuilder.ApplyRelationalInbox();
     }
 
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
@@ -82,26 +91,6 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
             },
             cancellationToken);
     }
-}
-
-internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
-{
-    public void Configure(EntityTypeBuilder<OutboxMessage> builder)
-    {
-        builder.HasKey(o => o.Id);
-        builder.HasIndex(o => new { o.OccurredOnUtc, o.ProcessedOnUtc })
-            .HasFilter($"\"{nameof(OutboxMessage.ProcessedOnUtc)}\" IS NULL")
-            .IncludeProperties(o => new { o.Id, o.Type, o.Content });
-
-        builder.Property(o => o.Content)
-            .HasColumnType("jsonb");
-    }
-}
-
-internal sealed class WebApiInboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
-{
-    public void Configure(EntityTypeBuilder<InboxMessage> builder) =>
-        new InboxMessageEntityConfiguration().Configure(builder);
 }
 
 public class WebApiDbContextFactory : IDesignTimeDbContextFactory<WebApiDbContext>

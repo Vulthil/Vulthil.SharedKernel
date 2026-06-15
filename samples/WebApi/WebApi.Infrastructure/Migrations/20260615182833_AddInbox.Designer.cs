@@ -12,7 +12,7 @@ using WebApi.Infrastructure.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(WebApiDbContext))]
-    [Migration("20260614111958_AddInbox")]
+    [Migration("20260615182833_AddInbox")]
     partial class AddInbox
     {
         /// <inheritdoc />
@@ -85,10 +85,9 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OccurredOnUtc", "ProcessedOnUtc")
-                        .HasFilter("\"ProcessedOnUtc\" IS NULL");
-
-                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("OccurredOnUtc", "ProcessedOnUtc"), new[] { "Id", "Type", "Content" });
+                    b.HasIndex("OccurredOnUtc", "Id")
+                        .HasDatabaseName("IX_OutboxMessages_OccurredOnUtc_Id")
+                        .HasFilter("\"ProcessedOnUtc\" IS NULL AND \"FailedOnUtc\" IS NULL");
 
                     b.ToTable("OutboxMessages");
                 });

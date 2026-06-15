@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Vulthil.Messaging.Inbox.EntityFrameworkCore;
 using Vulthil.Messaging.Inbox.Relational;
 using Vulthil.SharedKernel.Infrastructure.Data;
-using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Infrastructure.Npgsql;
 using Vulthil.TestHost.Probes;
 
 namespace Vulthil.TestHost.Data;
@@ -20,6 +20,13 @@ public sealed class TestHostDbContext(DbContextOptions<TestHostDbContext> option
     public DbSet<ProbeSideEffect> ProbeSideEffects => Set<ProbeSideEffect>();
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
     protected override Assembly? ConfigurationAssembly => typeof(TestHostDbContext).Assembly;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyNpgsqlOutbox();
+        modelBuilder.ApplyRelationalInbox();
+    }
 }
 
 internal sealed class ProbeSideEffectConfiguration : IEntityTypeConfiguration<ProbeSideEffect>
@@ -29,18 +36,6 @@ internal sealed class ProbeSideEffectConfiguration : IEntityTypeConfiguration<Pr
         builder.HasKey(sideEffect => sideEffect.Id);
         builder.HasIndex(sideEffect => sideEffect.ProbeId);
     }
-}
-
-internal sealed class TestHostOutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
-{
-    public void Configure(EntityTypeBuilder<OutboxMessage> builder) =>
-        new SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration().Configure(builder);
-}
-
-internal sealed class TestHostInboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
-{
-    public void Configure(EntityTypeBuilder<InboxMessage> builder) =>
-        new InboxMessageEntityConfiguration().Configure(builder);
 }
 
 public sealed class TestHostDbContextFactory : IDesignTimeDbContextFactory<TestHostDbContext>

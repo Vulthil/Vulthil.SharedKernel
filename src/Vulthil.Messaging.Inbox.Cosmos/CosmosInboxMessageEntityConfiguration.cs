@@ -9,7 +9,7 @@ namespace Vulthil.Messaging.Inbox.Cosmos;
 /// by <see cref="InboxMessage.MessageId"/> in its own container, so duplicate inserts conflict and point lookups
 /// stay cheap. Consumers may override the container name or partitioning in their <see cref="DbContext"/>.
 /// </summary>
-public sealed class CosmosInboxMessageEntityConfiguration : IEntityTypeConfiguration<InboxMessage>
+internal sealed class CosmosInboxMessageEntityConfiguration : IEntityTypeConfiguration<InboxMessage>
 {
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<InboxMessage> builder)

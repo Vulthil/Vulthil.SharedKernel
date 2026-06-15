@@ -4,6 +4,5 @@ static Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.
 Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions
 Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>
 Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>.NpgsqlOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! options) -> void
-Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration
-Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
-Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage!>! builder) -> void
+Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions
+static Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!

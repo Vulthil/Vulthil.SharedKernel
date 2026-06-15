@@ -29,7 +29,7 @@ internal sealed class CosmosProbeDbContext(DbContextOptions<CosmosProbeDbContext
             entity.HasPartitionKey(probe => probe.Id);
         });
 
-        modelBuilder.ApplyConfiguration(new CosmosInboxMessageEntityConfiguration());
+        modelBuilder.ApplyCosmosInbox();
 
         modelBuilder.Entity<CosmosSideEffect>(entity =>
         {

@@ -4,6 +4,5 @@ static Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.
 Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions
 Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>
 Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>.CosmosOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! options) -> void
-Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration
-Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
-Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage!>! builder) -> void
+Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions
+static Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!

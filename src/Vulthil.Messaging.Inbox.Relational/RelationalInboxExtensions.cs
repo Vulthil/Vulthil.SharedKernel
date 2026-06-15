@@ -13,8 +13,8 @@ public static class RelationalInboxExtensions
     /// <summary>
     /// Registers an <see cref="IIdempotencyStore"/> backed by the application's <typeparamref name="TContext"/>,
     /// using ambient relational transactions. The context must be registered (e.g. via <c>AddDbContext</c>),
-    /// implement <see cref="ISaveInboxMessages"/>, and map <see cref="InboxMessage"/> (see
-    /// <see cref="InboxMessageEntityConfiguration"/>).
+    /// implement <see cref="ISaveInboxMessages"/>, and map <see cref="InboxMessage"/> (via
+    /// <see cref="RelationalInboxModelBuilderExtensions.ApplyRelationalInbox"/>).
     /// </summary>
     /// <typeparam name="TContext">The application's <see cref="DbContext"/> type.</typeparam>
     /// <param name="services">The service collection.</param>

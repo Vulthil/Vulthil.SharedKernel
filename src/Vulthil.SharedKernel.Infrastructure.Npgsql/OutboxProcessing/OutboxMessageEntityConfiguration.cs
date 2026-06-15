@@ -7,7 +7,7 @@ namespace Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
 /// <summary>
 /// PostgreSQL-specific OutboxMessage mapping. Stores Content as jsonb and adds helpful indexes.
 /// </summary>
-public sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
+internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)

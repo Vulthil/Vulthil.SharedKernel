@@ -17,7 +17,7 @@ engine. It isolates all EF Core coupling so the engine package stays persistence
   (execution strategy, transaction, fetch, dispatch, mark, commit) plus the capture surface. Provider packages
   override fetch/mark/transaction for row-level locking and Cosmos best-effort behaviour.
 - `DomainEventsToOutboxMessageSaveChangesInterceptor` / `IOutboxInterceptor` — domain-event capture.
-- `OutboxMessageEntityConfiguration` — the provider-agnostic `OutboxMessage` mapping.
+- `ApplyOutbox()` — a `ModelBuilder` extension applying the provider-agnostic `OutboxMessage` mapping. Provider packages offer optimized alternatives (`ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, `ApplyCosmosOutbox()`).
 
 See the [Outbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md)
 article for the design.

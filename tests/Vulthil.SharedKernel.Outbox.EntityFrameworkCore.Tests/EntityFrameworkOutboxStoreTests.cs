@@ -113,7 +113,7 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);
-            modelBuilder.ApplyConfiguration(new OutboxMessageEntityConfiguration());
+            modelBuilder.ApplyOutbox();
             modelBuilder.Entity<OutboxMessage>().Property(message => message.OccurredOnUtc)
                 .HasConversion(value => value.UtcDateTime, value => new DateTimeOffset(value, TimeSpan.Zero));
         }

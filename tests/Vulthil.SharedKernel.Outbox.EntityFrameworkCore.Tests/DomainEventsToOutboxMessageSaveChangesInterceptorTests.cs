@@ -124,7 +124,7 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);
-            modelBuilder.ApplyConfiguration(new OutboxMessageEntityConfiguration());
+            modelBuilder.ApplyOutbox();
             modelBuilder.Entity<TestAggregate>().HasKey(aggregate => aggregate.Id);
         }
     }

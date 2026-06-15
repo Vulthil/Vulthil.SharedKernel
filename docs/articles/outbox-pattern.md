@@ -43,10 +43,16 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
         typeof(AppDbContext).Assembly;
 
     public DbSet<User> Users => Set<User>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyNpgsqlOutbox();
+    }
 }
 ```
 
-The `OutboxMessage` entity configuration is applied automatically by `BaseDbContext.OnModelCreating`.
+`BaseDbContext` owns the `OutboxMessages` `DbSet`; apply the provider-optimized mapping in `OnModelCreating` by calling your provider's extension — `ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, or `ApplyCosmosOutbox()` (as shown above). The agnostic `ApplyOutbox()` is available for custom providers.
 
 ## Outbox Processing Options
 

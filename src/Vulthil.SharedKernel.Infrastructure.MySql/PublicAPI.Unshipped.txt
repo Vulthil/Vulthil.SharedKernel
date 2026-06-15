@@ -3,6 +3,5 @@ override Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxS
 Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions
 Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>
 Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! options) -> void
-Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration
-Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.OutboxMessageEntityConfiguration() -> void
-Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.OutboxMessageEntityConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Vulthil.SharedKernel.Outbox.OutboxMessage!>! builder) -> void
+Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions
+static Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!

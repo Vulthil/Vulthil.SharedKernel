@@ -82,10 +82,9 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OccurredOnUtc", "ProcessedOnUtc")
-                        .HasFilter("\"ProcessedOnUtc\" IS NULL");
-
-                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("OccurredOnUtc", "ProcessedOnUtc"), new[] { "Id", "Type", "Content" });
+                    b.HasIndex("OccurredOnUtc", "Id")
+                        .HasDatabaseName("IX_OutboxMessages_OccurredOnUtc_Id")
+                        .HasFilter("\"ProcessedOnUtc\" IS NULL AND \"FailedOnUtc\" IS NULL");
 
                     b.ToTable("OutboxMessages");
                 });

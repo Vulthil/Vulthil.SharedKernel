@@ -4,14 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 /// <summary>
-/// Provider-agnostic base configuration for <see cref="OutboxMessage"/>.
-/// Provider packages should supply their own <see cref="IEntityTypeConfiguration{OutboxMessage}"/>
-/// with optimized indexes, column types, and filters (e.g., jsonb + filtered index for Postgres).
+/// Provider-agnostic <see cref="OutboxMessage"/> mapping (primary key and required columns only). Applied via the
+/// <c>ApplyOutbox</c> model-builder extension; provider packages supply optimized configurations with
+/// provider-specific column types, indexes, and filters.
 /// </summary>
-public class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
+internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
-    /// <inheritdoc />
-    public virtual void Configure(EntityTypeBuilder<OutboxMessage> builder)
+    public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
         builder.HasKey(o => o.Id);
         builder.Property(o => o.Type).IsRequired();

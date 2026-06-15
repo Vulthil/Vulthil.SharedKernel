@@ -8,7 +8,7 @@
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.17</FrameworkVersion>
     <NpgsqlEfCoreVersion>10.0.2</NpgsqlEfCoreVersion>
     <NpgsqlEfCoreVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.4</NpgsqlEfCoreVersion>
-    <AspireVersion>13.4.3</AspireVersion>
+    <AspireVersion>13.4.4</AspireVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
@@ -20,7 +20,7 @@
     <PackageVersion Include="Aspire.RabbitMQ.Client" Version="$(AspireVersion)" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.1" />
+    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />

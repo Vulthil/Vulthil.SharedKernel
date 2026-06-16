@@ -36,6 +36,13 @@ public static class OutboxEngineServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        if (IsTracingEnabled(configureOptions))
+        {
+            services
+                .AddOpenTelemetry()
+                .WithTracing(tracing => tracing.AddVulthilOutboxInstrumentation());
+        }
+
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IOutboxSignal, OutboxSignal>();
 
@@ -45,5 +52,12 @@ public static class OutboxEngineServiceCollectionExtensions
         services.AddHostedService<OutboxBackgroundService>();
 
         return services;
+    }
+
+    private static bool IsTracingEnabled(Action<OutboxProcessingOptions>? configureOptions)
+    {
+        var options = new OutboxProcessingOptions();
+        configureOptions?.Invoke(options);
+        return options.EnableTracing;
     }
 }

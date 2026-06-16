@@ -68,7 +68,7 @@ public static class Telemetry
     /// <summary>
     /// ActivitySourceName for all outbox processing operations, allowing correlation of events across the capture, processing, and publishing stages.
     /// </summary>
-    public static readonly string ActivitySourceName = "Vulthil.SharedKernel.Infrastructure";
+    public static readonly string ActivitySourceName = "Vulthil.SharedKernel.Outbox";
     /// <summary>
     /// ActivitySource for all outbox processing operations, allowing correlation of events across the capture, processing, and publishing stages.
     /// </summary>

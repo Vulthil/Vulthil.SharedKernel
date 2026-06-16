@@ -48,5 +48,5 @@ public sealed class OutboxProcessingOptions
     /// <br/>
     /// Default: <see langword="true"/>
     /// </summary>
-    public bool EnableTracing { get; init; } = true;
+    public bool EnableTracing { get; set; } = true;
 }

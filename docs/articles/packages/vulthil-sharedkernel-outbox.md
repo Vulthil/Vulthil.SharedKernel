@@ -20,6 +20,8 @@ seam. It has **no EF Core dependency**; the EF implementation lives in
 - The engine relies on `IOutboxStore` for both capture (`AddOutboxMessage`/`SaveChangesAsync`/`IsInTransaction`) and
   the relay batch unit (`ProcessBatchAsync`); the EF implementation and provider stores supply the transaction and
   row-locking. `AddOutboxEngine` registers the engine's own internals.
+- Relay spans are emitted on the `ActivitySource` `"Vulthil.SharedKernel.Outbox"` (`Telemetry.ActivitySourceName`),
+  auto-registered with OpenTelemetry by `AddOutboxEngine` (manual: `tracing.AddVulthilOutboxInstrumentation()`).
 
 See the [Outbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md)
 article for the design, the pluggable-sink model, and the commit-time trigger.

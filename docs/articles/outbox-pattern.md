@@ -66,6 +66,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 | `MaxDelaySeconds` | 60 | Maximum back-off delay when no messages are found |
 | `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 
+## Observability
+
+The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (exposed as `Telemetry.ActivitySourceName`). When `EnableTracing` is on (the default), each relayed message starts an `OutboxPublishing` span parented on the trace that captured the row — the originating trace is carried forward through the `OutboxMessage.TraceParent`/`TraceState` columns stamped at capture — so the relay, which runs later on its own background service, still correlates back to the request that produced the message.
+
+`AddOutboxEngine` (called by `EnableOutboxProcessing`) registers the source with OpenTelemetry automatically when `EnableTracing` is on (the default), so the spans reach whatever tracer the application has configured without extra wiring. If you build a `TracerProviderBuilder` yourself, the same registration is available as `tracing.AddVulthilOutboxInstrumentation()` — sugar for `AddSource(Telemetry.ActivitySourceName)`.
+
 ## Custom Outbox Store
 
 The relay engine talks to the database through an EF-free `IOutboxStore` (in `Vulthil.SharedKernel.Outbox`). The EF

@@ -554,7 +554,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Inbox.IIdempotencyStore",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.IIdempotencyStore.yml\" sourcestartlinenumber=\"1\">A persistence-agnostic store that records which messages have already been processed, enabling\nexactly-once consumer processing on top of at-least-once delivery.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.IIdempotencyStore.yml\" sourcestartlinenumber=\"1\">A persistence-agnostic store that records which messages have already been processed, enabling\nexactly-once consumer processing on a transactional store (effectively-once otherwise) on top of\nat-least-once delivery.</p>\n"
     },
     {
       "type": "ManagedReference",

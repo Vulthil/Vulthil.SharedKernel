@@ -116,7 +116,8 @@ Interfaces
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Inbox.IIdempotencyStore.html">IIdempotencyStore</a></dt>
       <dd><p>A persistence-agnostic store that records which messages have already been processed, enabling
-exactly-once consumer processing on top of at-least-once delivery.</p>
+exactly-once consumer processing on a transactional store (effectively-once otherwise) on top of
+at-least-once delivery.</p>
 </dd>
     </dl>
     <dl class="jumplist">

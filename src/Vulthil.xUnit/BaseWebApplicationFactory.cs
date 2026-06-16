@@ -32,6 +32,8 @@ namespace Vulthil.xUnit;
 public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>, IAsyncLifetime, ITestHostMigrator
     where TEntryPoint : class
 {
+    private static readonly TimeSpan RestartTimeout = TimeSpan.FromSeconds(30);
+
     private bool _initialized;
 
     private readonly ContainerHost? _containerHost;
@@ -273,10 +275,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         // factory-owned containers and per-factory scopes. Containers owned by a ContainerHost outlive the factory.
         await base.DisposeAsync();
 
-        if (_initialized)
-        {
-            await Parallel.ForEachAsync(_containers, (container, ct) => container.DisposeAsync());
-        }
+        await Parallel.ForEachAsync(_containers, (container, ct) => container.DisposeAsync());
     }
 
     Task ITestHostMigrator.MigrateDatabases(IServiceProvider serviceProvider) =>
@@ -288,7 +287,8 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
         foreach (var service in restartableServices)
         {
-            await service.StopAsync(CancellationToken.None);
+            using var stopCts = new CancellationTokenSource(RestartTimeout);
+            await service.StopAsync(stopCts.Token);
         }
 
         try
@@ -299,7 +299,8 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         {
             foreach (var service in restartableServices)
             {
-                await service.StartAsync(CancellationToken.None);
+                using var startCts = new CancellationTokenSource(RestartTimeout);
+                await service.StartAsync(startCts.Token);
             }
         }
     }

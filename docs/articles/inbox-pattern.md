@@ -4,7 +4,7 @@ Message delivery is **at-least-once**: a broker can redeliver a message (after a
 
 The inbox pattern makes consumers **idempotent**: it records which messages have already been processed and skips duplicates. `Vulthil.Messaging.Inbox` provides this as a consume filter, with the processed-marker written in the **same transaction** as the consumer's business changes — so on a relational store, processing is exactly-once.
 
-This is an *idempotent receiver*, not a store-and-forward inbox: it rides on top of the transport's existing retry, fault, and dead-letter machinery rather than re-implementing them.
+This is an *idempotent receiver*, not a store-and-forward inbox: it rides on top of the transport's existing retry, fault, and dead-letter machinery rather than re-implementing them. Bounding a consumer that keeps failing is therefore **not** the guard's job — on RabbitMQ a poison delivery is retried up to the queue's `MaxRetryCount`, then a `Fault<T>` is published and the message is nacked to the dead-letter exchange. The filter deliberately ignores `IMessageContext.RetryCount` and adds no max-attempts of its own, keeping retry policy in one place (the transport).
 
 ## How It Works
 
@@ -15,6 +15,8 @@ This is an *idempotent receiver*, not a store-and-forward inbox: it rides on top
 5. The filter records the marker and commits — persisting the marker and the consumer's writes **atomically**.
 
 If the consumer throws, the transaction is rolled back (marker included) and the message is reprocessed cleanly on redelivery. The marker is written **on commit, not on receipt**, so an interrupted delivery never leaves a marker that would suppress reprocessing.
+
+The check (step 2) and the marker write (step 5) are serialized only at the **marker insert**, not across the whole unit. Two duplicates of the same key in flight *at the same time* — delivered to two consumers, or across two channels — can both pass the step-2 check and run the consumer body before either commits; the unique marker then lets only one commit, while the other fails the insert and is settled as a duplicate. So deduplication is exactly-once for *sequential* redelivery, but **concurrent** duplicates can each execute the handler body once. Keep side effects idempotent if concurrent duplicate delivery is possible.
 
 ## Guarantees
 
@@ -136,3 +138,4 @@ The [outbox](outbox-pattern.md) protects the **producer** side (write-atomicity 
 
 - The marker is keyed by message key alone. Two *distinct* consumers of the same message type share one marker; if each must process independently, use distinct keys (a future enhancement may scope markers per consumer).
 - Cosmos and other stores without cross-partition transactions provide effectively-once, not transactional exactly-once.
+- Only the marker insert is serialized, not the whole check-process-commit unit, so **concurrent** duplicates of one key can each run the consumer body once (see [How It Works](#how-it-works)). Sequential redelivery is deduplicated as expected.

@@ -40,6 +40,7 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// </summary>
     protected ITestOutputHelper? TestOutputHelper { get; }
 
+    private readonly object _gate = new();
     private AsyncServiceScope? _scope;
 
     /// <summary>
@@ -50,9 +51,12 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     {
         get
         {
-            _scope ??= Factory.Services.CreateAsyncScope();
+            lock (_gate)
+            {
+                _scope ??= Factory.Services.CreateAsyncScope();
 
-            return _scope.Value.ServiceProvider;
+                return _scope.Value.ServiceProvider;
+            }
         }
     }
 
@@ -60,7 +64,16 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// <summary>
     /// Gets an <see cref="HttpClient"/> connected to the test server, created on first access.
     /// </summary>
-    public HttpClient Client => _client ??= Factory.CreateClient();
+    public HttpClient Client
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _client ??= Factory.CreateClient();
+            }
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance with the shared web application factory and optional test output.
@@ -104,14 +117,21 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// <inheritdoc />
     public virtual async ValueTask DisposeAsync()
     {
-        await FactoryFixture.ResetAsync();
-        await ResetScope();
-        _client?.Dispose();
-        if (_lazyFactory.IsValueCreated && !ReferenceEquals(_lazyFactory.Value, FactoryFixture))
-        {
-            await _lazyFactory.Value.DisposeAsync();
-        }
         GC.SuppressFinalize(this);
+
+        try
+        {
+            await FactoryFixture.ResetAsync();
+        }
+        finally
+        {
+            await ResetScope();
+            _client?.Dispose();
+            if (_lazyFactory.IsValueCreated && !ReferenceEquals(_lazyFactory.Value, FactoryFixture))
+            {
+                await _lazyFactory.Value.DisposeAsync();
+            }
+        }
     }
 
     /// <summary>
@@ -121,8 +141,14 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// <returns>A task representing the asynchronous dispose operation.</returns>
     public async ValueTask ResetScope()
     {
-        await (_scope?.DisposeAsync() ?? ValueTask.CompletedTask);
-        _scope = null;
+        AsyncServiceScope? scope;
+        lock (_gate)
+        {
+            scope = _scope;
+            _scope = null;
+        }
+
+        await (scope?.DisposeAsync() ?? ValueTask.CompletedTask);
     }
 
     /// <inheritdoc />

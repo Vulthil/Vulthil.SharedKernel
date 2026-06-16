@@ -1,8 +1,9 @@
 # Vulthil.Messaging.Inbox
 
 An idempotent-receiver (inbox) consume filter for `Vulthil.Messaging`. Broker delivery is at-least-once; this
-package gives **exactly-once processing** by recording which messages were handled and skipping duplicates, with
-the marker committed in the same transaction as the consumer's business writes.
+package deduplicates redeliveries by recording which messages were handled and skipping the ones already seen.
+With a **transactional store** the marker commits in the same transaction as the consumer's business writes,
+giving **exactly-once processing**; without one (e.g. Cosmos) the guarantee is **effectively-once**.
 
 Persistence-agnostic: it defines the `IIdempotencyStore` contract and the filter. Provide a store via
 `Vulthil.Messaging.Inbox.Relational` (relational reference implementation) or your own.

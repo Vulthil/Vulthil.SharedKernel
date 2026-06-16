@@ -1,9 +1,10 @@
 # Vulthil.Messaging.Inbox
 
 Idempotent-receiver (inbox) consume filter for [Vulthil.Messaging](https://www.nuget.org/packages/Vulthil.Messaging).
-Broker delivery is at-least-once; this package gives **exactly-once processing** by recording which messages
-have been handled and skipping duplicates — with the marker committed in the **same transaction** as the
-consumer's business writes.
+Broker delivery is at-least-once; this package deduplicates redeliveries by recording which messages have been
+handled and skipping the ones already seen. With a **transactional store** the marker commits in the **same
+transaction** as the consumer's business writes, giving **exactly-once processing**; without one (e.g. Cosmos)
+the guarantee is **effectively-once** — see [Guarantees](#guarantees) below.
 
 This package is persistence-agnostic: it defines the `IIdempotencyStore` contract and the consume filter. Provide
 a store via `Vulthil.Messaging.Inbox.Relational` (relational reference implementation) or your own.
@@ -35,6 +36,14 @@ deduplication instead, call `messaging.ConfigureInbox(o => o.RejectMessagesWitho
 - **Relational store**: transactional exactly-once — the marker and the consumer's writes commit together.
 - **Cosmos / non-transactional stores**: effectively-once (best-effort dedup over idempotent writes); see the
   documentation for details.
+
+## Scope
+
+This package only **deduplicates**. Bounding a persistently-failing consumer is the transport's job: on RabbitMQ
+a poison delivery is retried up to the queue's `MaxRetryCount`, then a `Fault<T>` is published and the message is
+nacked to the dead-letter exchange — the guard ignores `RetryCount` and adds no max-attempts of its own. It also
+serializes only the marker *insert*, so two duplicates processed **concurrently** can each run the consumer body
+once. Keep side effects idempotent if concurrent duplicate delivery is possible.
 
 See the [inbox pattern documentation](https://vulthil.github.io/Vulthil.SharedKernel/articles/inbox-pattern.html)
 for the full design and the message-id stability contract.

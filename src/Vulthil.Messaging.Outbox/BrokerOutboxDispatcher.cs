@@ -20,11 +20,15 @@ internal sealed class BrokerOutboxDispatcher(
 {
     private static readonly MethodInfo PublishMethod = typeof(ITransportPublisher)
         .GetMethods()
-        .Single(method => method.Name == nameof(ITransportPublisher.PublishAsync));
+        .Single(method => method.Name == nameof(ITransportPublisher.PublishAsync)
+            && method.IsGenericMethodDefinition
+            && method.GetParameters().Length == 3);
 
     private static readonly MethodInfo SendMethod = typeof(ISendEndpoint)
         .GetMethods()
-        .Single(method => method.Name == nameof(ISendEndpoint.SendAsync) && method.GetParameters().Length == 3);
+        .Single(method => method.Name == nameof(ISendEndpoint.SendAsync)
+            && method.IsGenericMethodDefinition
+            && method.GetParameters().Length == 3);
 
     private static readonly ConcurrentDictionary<string, Type> TypeCache = [];
     private static readonly ConcurrentDictionary<Type, MethodInfo> PublishByType = [];
@@ -90,13 +94,15 @@ internal sealed class BrokerOutboxDispatcher(
         }
     }
 
-    private static Type ResolveType(string typeName) => TypeCache.GetOrAdd(typeName, name =>
+    private static Type ResolveType(string typeName) => TypeCache.GetOrAdd(typeName, static name =>
     {
-        var type = Type.GetType(name);
-        type ??= AppDomain.CurrentDomain.GetAssemblies()
+        var type = Type.GetType(name)
+            ?? AppDomain.CurrentDomain.GetAssemblies()
                 .Select(assembly => assembly.GetType(name))
                 .FirstOrDefault(found => found is not null);
 
-        return type!;
+        return type ?? throw new InvalidOperationException(
+            $"Unable to resolve the message type '{name}' for an outbox relay. " +
+            "Ensure the assembly that defines the type is loaded in the relay process.");
     });
 }

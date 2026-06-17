@@ -41,12 +41,12 @@ public sealed class OutboxProcessingOptions
     public int MaxDegreeOfParallelism { get; init; } = 4;
 
     /// <summary>
-    /// Gets a value indicating whether Trace Identifiers should be included when publishing outbox messages.
+    /// Gets or sets a value indicating whether Trace Identifiers should be included when publishing outbox messages.
     /// <br />
     /// This allows the originating action that persisted the outbox message to act as an owner for the resulting scope,
     /// even after the outbox delay
     /// <br/>
     /// Default: <see langword="true"/>
     /// </summary>
-    public bool EnableTracing { get; init; } = true;
+    public bool EnableTracing { get; set; } = true;
 }

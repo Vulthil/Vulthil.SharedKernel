@@ -7,6 +7,7 @@ static Vulthil.SharedKernel.Outbox.OutboxMessageData.operator !=(Vulthil.SharedK
 static Vulthil.SharedKernel.Outbox.OutboxMessageData.operator ==(Vulthil.SharedKernel.Outbox.OutboxMessageData left, Vulthil.SharedKernel.Outbox.OutboxMessageData right) -> bool
 static Vulthil.SharedKernel.Outbox.OutboxMessageFailure.operator !=(Vulthil.SharedKernel.Outbox.OutboxMessageFailure left, Vulthil.SharedKernel.Outbox.OutboxMessageFailure right) -> bool
 static Vulthil.SharedKernel.Outbox.OutboxMessageFailure.operator ==(Vulthil.SharedKernel.Outbox.OutboxMessageFailure left, Vulthil.SharedKernel.Outbox.OutboxMessageFailure right) -> bool
+static Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher.DispatchAsync(Vulthil.SharedKernel.Outbox.OutboxMessageData message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Outbox.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Outbox.OutboxDestination destination) -> bool
@@ -87,7 +88,7 @@ Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.BatchSize.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing.get -> bool
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing.get -> bool
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing.init -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing.set -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism.get -> int
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds.get -> int
@@ -98,6 +99,7 @@ Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSecon
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingOptions() -> void
 Vulthil.SharedKernel.Outbox.Telemetry
+Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions
 ~override Vulthil.SharedKernel.Outbox.OutboxMessageData.Equals(object obj) -> bool
 ~override Vulthil.SharedKernel.Outbox.OutboxMessageData.ToString() -> string
 ~override Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Equals(object obj) -> bool

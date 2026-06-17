@@ -106,6 +106,8 @@ depends on the engine alone (no EF Core, no infrastructure package).</li>
 <li>The engine relies on <code>IOutboxStore</code> for both capture (<code>AddOutboxMessage</code>/<code>SaveChangesAsync</code>/<code>IsInTransaction</code>) and
 the relay batch unit (<code>ProcessBatchAsync</code>); the EF implementation and provider stores supply the transaction and
 row-locking. <code>AddOutboxEngine</code> registers the engine's own internals.</li>
+<li>Relay spans are emitted on the <code>ActivitySource</code> <code>&quot;Vulthil.SharedKernel.Outbox&quot;</code> (<code>Telemetry.ActivitySourceName</code>),
+auto-registered with OpenTelemetry by <code>AddOutboxEngine</code> (manual: <code>tracing.AddVulthilOutboxInstrumentation()</code>).</li>
 </ul>
 <p>See the <a href="https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md">Outbox Pattern</a>
 article for the design, the pluggable-sink model, and the commit-time trigger.</p>

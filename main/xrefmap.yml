@@ -10015,6 +10015,25 @@ references:
   commentId: F:Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
   fullName: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
   nameWithType: Telemetry.ActivitySourceName
+- uid: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions
+  name: TracerProviderBuilderExtensions
+  href: api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.html
+  commentId: T:Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions
+  fullName: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions
+  nameWithType: TracerProviderBuilderExtensions
+- uid: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
+  name: AddVulthilOutboxInstrumentation(TracerProviderBuilder)
+  href: api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.html#Vulthil_SharedKernel_Outbox_TracerProviderBuilderExtensions_AddVulthilOutboxInstrumentation_OpenTelemetry_Trace_TracerProviderBuilder_
+  commentId: M:Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
+  fullName: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
+  nameWithType: TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation(TracerProviderBuilder)
+- uid: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation*
+  name: AddVulthilOutboxInstrumentation
+  href: api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.html#Vulthil_SharedKernel_Outbox_TracerProviderBuilderExtensions_AddVulthilOutboxInstrumentation_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation
+  nameWithType: TracerProviderBuilderExtensions.AddVulthilOutboxInstrumentation
 - uid: Vulthil.SharedKernel.Primitives
   name: Vulthil.SharedKernel.Primitives
   href: api/Vulthil.SharedKernel.Primitives.html

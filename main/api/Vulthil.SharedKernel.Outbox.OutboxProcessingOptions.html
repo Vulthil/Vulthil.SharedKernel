@@ -231,7 +231,7 @@ relay's <code>DbContext</code>, and concurrency is bounded by <a class="xref" hr
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets a value indicating whether Trace Identifiers should be included when publishing outbox messages.
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether Trace Identifiers should be included when publishing outbox messages.
 <br>
 This allows the originating action that persisted the outbox message to act as an owner for the resulting scope,
 even after the outbox delay
@@ -241,7 +241,7 @@ Default: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/b
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool EnableTracing { get; init; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool EnableTracing { get; set; }</code></pre>
   </div>
 
 

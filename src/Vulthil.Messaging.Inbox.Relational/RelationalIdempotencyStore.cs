@@ -18,9 +18,14 @@ namespace Vulthil.Messaging.Inbox.Relational;
 /// </remarks>
 /// <typeparam name="TContext">The application's <see cref="DbContext"/> type, which must expose the inbox set.</typeparam>
 internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, TimeProvider timeProvider)
-    : IIdempotencyStore
+    : IIdempotencyStore, IInboxRetentionStore
     where TContext : DbContext, ISaveInboxMessages
 {
+    public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken) =>
+        dbContext.InboxMessages
+            .Where(marker => marker.ProcessedOnUtc < olderThanUtc)
+            .ExecuteDeleteAsync(cancellationToken);
+
     public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(idempotencyKey);

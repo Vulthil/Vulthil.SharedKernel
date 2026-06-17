@@ -19,6 +19,7 @@ Persistence-agnostic: it defines the `IIdempotencyStore` contract and the filter
 - Dedupes on `MessageId` by default; pass a key selector to dedupe on a stable business field
 - The store owns the transactional unit (the filter hands it the consumer invocation); the consumer keeps calling `SaveChanges` as usual
 - Deliveries with no resolvable key are rejected (`MissingIdempotencyKeyException`) unless you opt out
+- Prune markers with `AddInboxRetention(...)` — an opt-in background sweep that deletes markers older than a window
 
 ## Usage
 

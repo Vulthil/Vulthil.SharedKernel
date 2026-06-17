@@ -70,6 +70,19 @@ By default a delivery with no resolvable key is rejected with `MissingIdempotenc
 messaging.ConfigureInbox(options => options.RejectMessagesWithoutKey = false);
 ```
 
+### Retention
+
+Markers accumulate — one per processed message — so prune them with an opt-in retention sweep that deletes markers older than a window:
+
+```csharp
+builder.Services.AddInboxRetention(options =>
+{
+    options.RetentionPeriod = TimeSpan.FromDays(7);
+});
+```
+
+Set `RetentionPeriod` comfortably longer than the broker's maximum redelivery delay — a marker removed while a duplicate could still arrive would let that duplicate through. The sweep runs through the registered `IIdempotencyStore` when it implements `IInboxRetentionStore` (the relational and Cosmos EF Core stores do); the relational store deletes set-based with `ExecuteDelete`.
+
 ### Relational store
 
 Expose the inbox set on your `DbContext`, apply the entity configuration, and register the store:

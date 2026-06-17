@@ -16,3 +16,15 @@ Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyExce
 Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(System.Type! messageType) -> void
 static Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.AddIdempotentInbox<TMessage>(this Vulthil.Messaging.IMessagingConfigurator! configurator, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>? keySelector = null) -> Vulthil.Messaging.IMessagingConfigurator!
 static Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox(this Vulthil.Messaging.IMessagingConfigurator! configurator, System.Action<Vulthil.Messaging.Inbox.InboxOptions!>! configure) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.Inbox.IInboxRetentionStore
+Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset olderThanUtc, int batchSize, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+Vulthil.Messaging.Inbox.InboxRetentionOptions
+Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize.get -> int
+Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize.set -> void
+Vulthil.Messaging.Inbox.InboxRetentionOptions.InboxRetentionOptions() -> void
+Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod.get -> System.TimeSpan
+Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod.set -> void
+Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval.get -> System.TimeSpan
+Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval.set -> void
+Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions
+static Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.Messaging.Inbox.InboxRetentionOptions!>? configureOptions = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

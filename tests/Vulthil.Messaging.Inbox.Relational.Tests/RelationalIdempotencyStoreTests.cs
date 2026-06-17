@@ -136,6 +136,31 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         (await verify.InboxMessages.AnyAsync(message => message.MessageId == "key-1", CancellationToken)).ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task DeleteProcessedRemovesOldMarkersButKeepsRecent()
+    {
+        // Arrange
+        var now = DateTimeOffset.UtcNow;
+        await using (var seed = NewContext())
+        {
+            seed.InboxMessages.Add(new InboxMessage { MessageId = "old", ProcessedOnUtc = now.AddDays(-10) });
+            seed.InboxMessages.Add(new InboxMessage { MessageId = "recent", ProcessedOnUtc = now.AddDays(-1) });
+            await seed.SaveChangesAsync(CancellationToken);
+        }
+
+        await using var context = NewContext();
+        var store = CreateStore(context);
+
+        // Act
+        var deleted = await store.DeleteProcessedAsync(now.AddDays(-7), batchSize: 100, CancellationToken);
+
+        // Assert
+        deleted.ShouldBe(1);
+        await using var verify = NewContext();
+        var remaining = await verify.InboxMessages.Select(marker => marker.MessageId).ToListAsync(CancellationToken);
+        remaining.ShouldBe(["recent"]);
+    }
+
     private static IMessageContext MessageContext => Mock.Of<IMessageContext>();
 
     private TestDbContext NewContext(bool useRetryingStrategy = false)
@@ -173,6 +198,8 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);
             modelBuilder.ApplyRelationalInbox();
+            modelBuilder.Entity<InboxMessage>().Property(message => message.ProcessedOnUtc)
+                .HasConversion(value => value.UtcDateTime, value => new DateTimeOffset(value, TimeSpan.Zero));
             modelBuilder.Entity<Thing>().HasKey(thing => thing.Id);
         }
     }

@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
 using Vulthil.xUnit;
 
@@ -89,10 +90,36 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         dispatched.ShouldBe([first, second]);
     }
 
+    [Fact]
+    public async Task DeleteProcessedRemovesOldTerminalRowsButKeepsRecentAndPending()
+    {
+        // Arrange
+        var now = DateTimeOffset.UtcNow;
+        await using var seed = NewContext();
+        seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), now.AddDays(-10), processedOnUtc: now.AddDays(-10)));
+        seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), now.AddDays(-10), failedOnUtc: now.AddDays(-10)));
+        seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), now.AddDays(-1), processedOnUtc: now.AddDays(-1)));
+        seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), now));
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewContext();
+        var store = NewStore(context, maxRetries: 3);
+
+        // Act
+        var deleted = await store.DeleteProcessedAsync(now.AddDays(-7), batchSize: 100, CancellationToken);
+
+        // Assert
+        deleted.ShouldBe(2);
+        await using var verify = NewContext();
+        var remaining = await verify.OutboxMessages.ToListAsync(CancellationToken);
+        remaining.Count.ShouldBe(2);
+        remaining.ShouldContain(message => message.ProcessedOnUtc == null);
+        remaining.ShouldContain(message => message.ProcessedOnUtc >= now.AddDays(-7));
+    }
+
     private static EntityFrameworkOutboxStore<TestDbContext> NewStore(TestDbContext context, int maxRetries) =>
         new(context, TimeProvider.System, Options.Create(new OutboxProcessingOptions { MaxRetries = maxRetries }));
 
-    private static OutboxMessage NewMessage(Guid id, DateTimeOffset occurredOn, DateTimeOffset? failedOnUtc = null) => new()
+    private static OutboxMessage NewMessage(Guid id, DateTimeOffset occurredOn, DateTimeOffset? failedOnUtc = null, DateTimeOffset? processedOnUtc = null) => new()
     {
         Id = id,
         Type = "Test",
@@ -100,6 +127,7 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         OccurredOnUtc = occurredOn,
         Destination = OutboxDestination.DomainEvent,
         FailedOnUtc = failedOnUtc,
+        ProcessedOnUtc = processedOnUtc,
     };
 
     private TestDbContext NewContext() => new(new DbContextOptionsBuilder<TestDbContext>().UseSqlite(_connection).Options);
@@ -114,8 +142,15 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);
             modelBuilder.ApplyOutbox();
-            modelBuilder.Entity<OutboxMessage>().Property(message => message.OccurredOnUtc)
-                .HasConversion(value => value.UtcDateTime, value => new DateTimeOffset(value, TimeSpan.Zero));
+
+            var utcConverter = new ValueConverter<DateTimeOffset, DateTime>(
+                value => value.UtcDateTime,
+                value => new DateTimeOffset(value, TimeSpan.Zero));
+
+            var entity = modelBuilder.Entity<OutboxMessage>();
+            entity.Property(message => message.OccurredOnUtc).HasConversion(utcConverter);
+            entity.Property(message => message.ProcessedOnUtc).HasConversion(utcConverter);
+            entity.Property(message => message.FailedOnUtc).HasConversion(utcConverter);
         }
     }
 }

@@ -63,4 +63,12 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
             }
         }
     }
+
+    /// <inheritdoc />
+    public override Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken) =>
+        OutboxMessages
+            .Where(o => o.ProcessedOnUtc != null && o.ProcessedOnUtc < olderThanUtc
+                || o.FailedOnUtc != null && o.FailedOnUtc < olderThanUtc)
+            .ExecuteDeleteAsync(cancellationToken);
 }
+

@@ -8,7 +8,7 @@
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.17</FrameworkVersion>
     <NpgsqlEfCoreVersion>10.0.2</NpgsqlEfCoreVersion>
     <NpgsqlEfCoreVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.4</NpgsqlEfCoreVersion>
-    <AspireVersion>13.4.4</AspireVersion>
+    <AspireVersion>13.4.5</AspireVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />

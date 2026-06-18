@@ -5,7 +5,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
+	</ItemGroup>
+	
 </Project>

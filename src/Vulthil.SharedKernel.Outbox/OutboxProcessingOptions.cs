@@ -49,4 +49,10 @@ public sealed class OutboxProcessingOptions
     /// Default: <see langword="true"/>
     /// </summary>
     public bool EnableTracing { get; set; } = true;
+
+    /// <summary>
+    /// Gets the retention sweep configuration. Set <see cref="OutboxRetentionOptions.Enabled"/> to periodically
+    /// delete processed and dead-lettered rows older than <see cref="OutboxRetentionOptions.RetentionPeriod"/>.
+    /// </summary>
+    public OutboxRetentionOptions Retention { get; } = new();
 }

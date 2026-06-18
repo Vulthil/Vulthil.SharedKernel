@@ -40,24 +40,4 @@ public static class InboxConfiguratorExtensions
 
         return configurator;
     }
-
-    /// <summary>
-    /// Configures global <see cref="InboxOptions"/> shared by all idempotency-guarded message types.
-    /// </summary>
-    /// <param name="configurator">The messaging configurator.</param>
-    /// <param name="configure">An action that configures the options.</param>
-    /// <returns>The same configurator, for chaining.</returns>
-    public static IMessagingConfigurator ConfigureInbox(
-        this IMessagingConfigurator configurator,
-        Action<InboxOptions> configure)
-    {
-        ArgumentNullException.ThrowIfNull(configurator);
-        ArgumentNullException.ThrowIfNull(configure);
-
-        var services = configurator.HostApplicationBuilder.Services;
-        services.AddOptions<InboxOptions>();
-        services.Configure(configure);
-
-        return configurator;
-    }
 }

@@ -1,4 +1,5 @@
 #nullable enable
+override Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.DeleteProcessedAsync(System.DateTimeOffset olderThanUtc, int batchSize, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 override Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList<System.Guid>! successIds, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageFailure>! failures, int maxRetries, System.DateTimeOffset processedOnUtc, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 static Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection.MigrateAsync<TDbContext>(this Microsoft.Extensions.Hosting.IHost! host) -> System.Threading.Tasks.Task!
 static Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection.MigrateAsync<TDbContext>(this System.IServiceProvider! services) -> System.Threading.Tasks.Task!

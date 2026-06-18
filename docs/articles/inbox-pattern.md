@@ -64,11 +64,25 @@ A registered `IIdempotencyStore` is required at consume time. Reference `Vulthil
 
 ### Messages without a key
 
-By default a delivery with no resolvable key is rejected with `MissingIdempotencyKeyException`, so it cannot silently bypass the guard. To process such messages without deduplication instead:
+By default a delivery with no resolvable key is rejected with `MissingIdempotencyKeyException`, so it cannot silently bypass the guard. To process such messages without deduplication instead, set it on the inbox store registration:
 
 ```csharp
-messaging.ConfigureInbox(options => options.RejectMessagesWithoutKey = false);
+builder.Services.AddRelationalInbox<AppDbContext>(o => o.RejectMessagesWithoutKey = false);
 ```
+
+### Retention
+
+Markers accumulate — one per processed message — so prune them with an opt-in retention sweep that deletes markers older than a window. Enable it on the inbox store registration:
+
+```csharp
+builder.Services.AddRelationalInbox<AppDbContext>(o =>
+{
+    o.Retention.Enabled = true;                       // turn the sweep on
+    o.Retention.RetentionPeriod = TimeSpan.FromDays(7);
+});
+```
+
+The sweep is registered only when `Retention.Enabled` is set. Choose `RetentionPeriod` comfortably longer than the broker's maximum redelivery delay — a marker removed while a duplicate could still arrive would let that duplicate through. The sweep runs through the registered `IIdempotencyStore` when it implements `IInboxRetentionStore` (the relational and Cosmos EF Core stores do); the relational store deletes set-based with `ExecuteDelete`.
 
 ### Relational store
 

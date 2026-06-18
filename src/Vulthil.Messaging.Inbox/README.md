@@ -29,7 +29,7 @@ builder.AddMessaging(messaging =>
 ```
 
 Deliveries with no resolvable key throw `MissingIdempotencyKeyException` by default. To process them without
-deduplication instead, call `messaging.ConfigureInbox(o => o.RejectMessagesWithoutKey = false)`.
+deduplication instead, set it on the store registration: `services.AddRelationalInbox<AppDbContext>(o => o.RejectMessagesWithoutKey = false)`.
 
 ## Guarantees
 

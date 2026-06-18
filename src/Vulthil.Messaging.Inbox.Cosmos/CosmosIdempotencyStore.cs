@@ -18,9 +18,26 @@ namespace Vulthil.Messaging.Inbox.Cosmos;
 /// </remarks>
 /// <typeparam name="TContext">The application's Cosmos <see cref="DbContext"/> type, which must expose the inbox set.</typeparam>
 internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeProvider timeProvider)
-    : IIdempotencyStore
+    : IIdempotencyStore, IInboxRetentionStore
     where TContext : DbContext, ISaveInboxMessages
 {
+    public async Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+    {
+        var markers = await dbContext.InboxMessages
+            .Where(marker => marker.ProcessedOnUtc < olderThanUtc)
+            .Take(batchSize)
+            .ToListAsync(cancellationToken);
+
+        if (markers.Count == 0)
+        {
+            return 0;
+        }
+
+        dbContext.InboxMessages.RemoveRange(markers);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return markers.Count;
+    }
+
     public async Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(idempotencyKey);

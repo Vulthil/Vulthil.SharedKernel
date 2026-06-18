@@ -18,14 +18,21 @@ public static class CosmosInboxExtensions
     /// </summary>
     /// <typeparam name="TContext">The application's Cosmos <see cref="DbContext"/> type.</typeparam>
     /// <param name="services">The service collection.</param>
+    /// <param name="configure">
+    /// An optional action to configure <see cref="InboxOptions"/>. Enable <see cref="InboxOptions.Retention"/> to
+    /// register a background sweep that periodically prunes old idempotency markers.
+    /// </param>
     /// <returns>The same service collection, for chaining.</returns>
-    public static IServiceCollection AddCosmosInbox<TContext>(this IServiceCollection services)
+    public static IServiceCollection AddCosmosInbox<TContext>(
+        this IServiceCollection services,
+        Action<InboxOptions>? configure = null)
         where TContext : DbContext, ISaveInboxMessages
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddScoped<IIdempotencyStore, CosmosIdempotencyStore<TContext>>();
+        services.AddInboxRetention(configure);
 
         return services;
     }

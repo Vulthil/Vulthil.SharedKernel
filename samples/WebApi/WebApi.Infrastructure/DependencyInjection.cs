@@ -24,9 +24,9 @@ public static class DependencyInjection
             .AddDbContext<IWebApiDbContext, WebApiDbContext>(databaseInfrastructureConfigurator =>
                     databaseInfrastructureConfigurator
                         .UseNpgsql(connectionStringKey)
-                        .EnableOutboxProcessing());
+                        .EnableOutboxProcessing(o => o.Retention.Enabled = true));
 
-        builder.Services.AddRelationalInbox<WebApiDbContext>();
+        builder.Services.AddRelationalInbox<WebApiDbContext>(o => o.Retention.Enabled = true);
 
         return builder;
     }

@@ -12,4 +12,10 @@ public sealed class InboxOptions
     /// deduplication.
     /// </summary>
     public bool RejectMessagesWithoutKey { get; set; } = true;
+
+    /// <summary>
+    /// Gets the retention sweep configuration. Set <see cref="InboxRetentionOptions.Enabled"/> to periodically
+    /// delete idempotency markers older than <see cref="InboxRetentionOptions.RetentionPeriod"/>.
+    /// </summary>
+    public InboxRetentionOptions Retention { get; } = new();
 }

@@ -22,6 +22,8 @@ seam. It has **no EF Core dependency**; the EF implementation lives in
   row-locking. `AddOutboxEngine` registers the engine's own internals.
 - Relay spans are emitted on the `ActivitySource` `"Vulthil.SharedKernel.Outbox"` (`Telemetry.ActivitySourceName`),
   auto-registered with OpenTelemetry by `AddOutboxEngine` (manual: `tracing.AddVulthilOutboxInstrumentation()`).
+- Opt into a retention sweep via `EnableOutboxProcessing(o => o.Retention.Enabled = true)` to periodically delete processed and dead-lettered rows
+  older than a window (relational set-based `ExecuteDelete`; the same sweep covers Cosmos).
 
 See the [Outbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md)
 article for the design, the pluggable-sink model, and the commit-time trigger.

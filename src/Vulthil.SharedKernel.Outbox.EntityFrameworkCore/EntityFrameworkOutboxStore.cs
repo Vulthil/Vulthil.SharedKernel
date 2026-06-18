@@ -14,7 +14,7 @@ namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 /// (<see cref="UpdateMessagesAsync"/>), or a no-op transaction (<see cref="BeginTransactionAsync"/>).
 /// </summary>
 /// <typeparam name="TContext">The application's <see cref="DbContext"/>, which exposes the outbox set.</typeparam>
-public class EntityFrameworkOutboxStore<TContext> : IOutboxStore
+public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetentionStore
     where TContext : DbContext, ISaveOutboxMessages
 {
     private readonly TimeProvider _timeProvider;
@@ -230,5 +230,25 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore
 
             await DbContext.SaveChangesAsync(cancellationToken);
         }
+    }
+
+    /// <inheritdoc />
+    public virtual async Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+    {
+        var rows = await OutboxMessages
+            .Where(o => o.ProcessedOnUtc != null && o.ProcessedOnUtc < olderThanUtc
+                || o.FailedOnUtc != null && o.FailedOnUtc < olderThanUtc)
+            .OrderBy(o => o.OccurredOnUtc)
+            .Take(batchSize)
+            .ToListAsync(cancellationToken);
+
+        if (rows.Count == 0)
+        {
+            return 0;
+        }
+
+        OutboxMessages.RemoveRange(rows);
+        await DbContext.SaveChangesAsync(cancellationToken);
+        return rows.Count;
     }
 }

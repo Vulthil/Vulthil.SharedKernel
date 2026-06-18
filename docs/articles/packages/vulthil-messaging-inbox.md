@@ -19,6 +19,7 @@ Persistence-agnostic: it defines the `IIdempotencyStore` contract and the filter
 - Dedupes on `MessageId` by default; pass a key selector to dedupe on a stable business field
 - The store owns the transactional unit (the filter hands it the consumer invocation); the consumer keeps calling `SaveChanges` as usual
 - Deliveries with no resolvable key are rejected (`MissingIdempotencyKeyException`) unless you opt out
+- Prune markers with an opt-in background sweep — enable it on the store registration via `AddRelationalInbox<T>(o => o.Retention.Enabled = true)` (or `AddCosmosInbox<T>`)
 
 ## Usage
 

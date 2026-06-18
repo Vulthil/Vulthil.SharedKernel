@@ -98,6 +98,19 @@ Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.get -> int
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.init -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingOptions() -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention.get -> Vulthil.SharedKernel.Outbox.OutboxRetentionOptions!
+Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
+Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset olderThanUtc, int batchSize, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize.get -> int
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize.set -> void
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled.get -> bool
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled.set -> void
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.OutboxRetentionOptions() -> void
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod.get -> System.TimeSpan
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod.set -> void
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval.get -> System.TimeSpan
+Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval.set -> void
 Vulthil.SharedKernel.Outbox.Telemetry
 Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions
 ~override Vulthil.SharedKernel.Outbox.OutboxMessageData.Equals(object obj) -> bool

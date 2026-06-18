@@ -72,6 +72,31 @@ The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (expos
 
 `AddOutboxEngine` (called by `EnableOutboxProcessing`) registers the source with OpenTelemetry automatically when `EnableTracing` is on (the default), so the spans reach whatever tracer the application has configured without extra wiring. If you build a `TracerProviderBuilder` yourself, the same registration is available as `tracing.AddVulthilOutboxInstrumentation()` — sugar for `AddSource(Telemetry.ActivitySourceName)`.
 
+## Retention
+
+Processed and dead-lettered rows remain in the `OutboxMessages` table after relay, so the table grows unbounded unless they are pruned. Opt into a retention sweep — a background service that periodically deletes terminal rows older than a window — by enabling `Retention` on the outbox options:
+
+```csharp
+.EnableOutboxProcessing(o =>
+{
+    o.Retention.Enabled = true;                          // turn the sweep on
+    o.Retention.RetentionPeriod = TimeSpan.FromDays(7);  // delete processed/dead-lettered rows older than this
+    o.Retention.SweepInterval = TimeSpan.FromHours(1);
+    o.Retention.BatchSize = 1000;
+});
+```
+
+`AddOutboxEngine` (called by `EnableOutboxProcessing`) registers the sweep only when `Retention.Enabled` is set, so it costs nothing when off.
+
+| `Retention` property | Default | Description |
+|---|---|---|
+| `Enabled` | `false` | Whether the retention sweep runs |
+| `RetentionPeriod` | 7 days | How long a processed or dead-lettered row is kept |
+| `SweepInterval` | 1 hour | Delay between sweeps |
+| `BatchSize` | 1000 | Rows deleted per batch within a sweep |
+
+The sweep deletes rows whose `ProcessedOnUtc` **or** `FailedOnUtc` is older than `RetentionPeriod`; **pending rows are never touched**. It runs through the registered `IOutboxStore` when it implements `IOutboxRetentionStore` (the EF Core store does) — relational providers delete set-based with `ExecuteDelete`, and the **same sweep covers Cosmos** (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).
+
 ## Custom Outbox Store
 
 The relay engine talks to the database through an EF-free `IOutboxStore` (in `Vulthil.SharedKernel.Outbox`). The EF

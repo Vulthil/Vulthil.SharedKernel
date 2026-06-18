@@ -133,7 +133,7 @@ Backed by the same instance that <a class="xref" href="Vulthil.Messaging.IMessag
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_ConsumeFilters" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.ConsumeFilters">
   ConsumeFilters
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the options controlling which built-in consume filters perform their work at runtime.
@@ -167,7 +167,7 @@ without re-registering the filter.</p>
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_DefaultTimeout" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.DefaultTimeout">
   DefaultTimeout
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the default request/response timeout used by transports.</p>
@@ -199,7 +199,7 @@ without re-registering the filter.</p>
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_FaultExchangeName" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.FaultExchangeName">
   FaultExchangeName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the name of the exchange used for fault messages.</p>
@@ -231,7 +231,7 @@ without re-registering the filter.</p>
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_JsonSerializerOptions" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.JsonSerializerOptions">
   JsonSerializerOptions
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the JSON serializer options used by the messaging system.</p>
@@ -263,7 +263,7 @@ without re-registering the filter.</p>
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_QueueDefinitions" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.QueueDefinitions">
   QueueDefinitions
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the queue definitions that were assembled from configuration and code at <code>AddMessaging</code> time.
@@ -335,50 +335,11 @@ Returned as a snapshot; subsequent mutations to the underlying store are not ref
 
 
 
-  <a id="Vulthil_Messaging_IMessageConfigurationProvider_GetMessageConfiguration_" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration*"></a>
-
-  <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_GetMessageConfiguration__1" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration``1">
-  GetMessageConfiguration&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L24"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets the message configuration for the specified generic message type.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">MessageConfiguration GetMessageConfiguration&lt;TMessage&gt;() where TMessage : class</code></pre>
-  </div>
-
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.Messaging.MessageConfiguration.html">MessageConfiguration</a></dt>
-    <dd><p>The resolved <a class="xref" href="Vulthil.Messaging.MessageConfiguration.html">MessageConfiguration</a> instance.</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Type Parameters</h4>
-  <dl class="parameters">
-    <dt><code>TMessage</code></dt>
-    <dd><p>The message CLR type.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
   <a id="Vulthil_Messaging_IMessageConfigurationProvider_GetMessageType_" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.GetMessageType*"></a>
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_GetMessageType_System_Uri_" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.GetMessageType(System.Uri)">
   GetMessageType(Uri)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resolves a CLR type from its wire URN. Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when no registered
@@ -419,7 +380,7 @@ the delivery as unknown).</p>
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_GetPartition_System_Type_" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.GetPartition(System.Type)">
   GetPartition(Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the partition configuration for a message type, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if it is not partitioned.</p>
@@ -456,7 +417,7 @@ the delivery as unknown).</p>
 
   <h3 id="Vulthil_Messaging_IMessageConfigurationProvider_GetUrn_System_Type_" data-uid="Vulthil.Messaging.IMessageConfigurationProvider.GetUrn(System.Type)">
   GetUrn(Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the stable wire URN for the supplied message type. Equivalent to

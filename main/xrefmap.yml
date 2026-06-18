@@ -1288,15 +1288,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration
   nameWithType: IMessageConfigurationProvider.GetMessageConfiguration
-- uid: Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration``1
-  name: GetMessageConfiguration<TMessage>()
-  href: api/Vulthil.Messaging.IMessageConfigurationProvider.html#Vulthil_Messaging_IMessageConfigurationProvider_GetMessageConfiguration__1
-  commentId: M:Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration``1
-  name.vb: GetMessageConfiguration(Of TMessage)()
-  fullName: Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage>()
-  fullName.vb: Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration(Of TMessage)()
-  nameWithType: IMessageConfigurationProvider.GetMessageConfiguration<TMessage>()
-  nameWithType.vb: IMessageConfigurationProvider.GetMessageConfiguration(Of TMessage)()
 - uid: Vulthil.Messaging.IMessageConfigurationProvider.GetMessageType(System.Uri)
   name: GetMessageType(Uri)
   href: api/Vulthil.Messaging.IMessageConfigurationProvider.html#Vulthil_Messaging_IMessageConfigurationProvider_GetMessageType_System_Uri_

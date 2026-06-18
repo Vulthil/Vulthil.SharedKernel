@@ -340,8 +340,9 @@ harness.Handle&lt;OrderShippedEvent&gt;(ctx =&gt; { observed.Add(ctx.Message.Ord
 var result = await requester.RequestAsync&lt;GetWeatherRequest, WeatherForecast&gt;(new GetWeatherRequest(&quot;Oslo&quot;));
 result.Value.TemperatureC.ShouldBe(20);
 </code></pre>
-<p>A request with neither a responder nor a registered request consumer completes with a
-<code>Messaging.Request.NoConsumer</code> failure; a request consumer that throws surfaces as a <code>Messaging.Request.Failure</code>.</p>
+<p>A request with neither a responder nor a registered request consumer <strong>times out</strong> with a
+<code>Messaging.Request.Timeout</code> failure — just as it would against a real broker, where no consumer means no reply;
+a request consumer that throws surfaces as a <code>Messaging.Request.Failure</code>.</p>
 <h3 id="swapping-the-transport-in-integration-tests">Swapping the transport in integration tests</h3>
 <p>To exercise the production composition root without a broker, call <code>ReplaceTransportWithTestHarness()</code> from the
 test host's service hook (for example a <code>WebApplicationFactory</code>). It swaps the registered transport for the

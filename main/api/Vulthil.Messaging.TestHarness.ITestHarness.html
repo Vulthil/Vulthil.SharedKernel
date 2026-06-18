@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_TestHarness_ITestHarness" data-uid="Vulthil.Messaging.TestHarness.ITestHarness" class="text-break">
-Interface ITestHarness  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L16"><i class="bi bi-code-slash"></i></a>
+Interface ITestHarness  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -127,8 +127,10 @@ external service by handling published messages or responding to requests.</p>
   <h2 id="Vulthil_Messaging_TestHarness_ITestHarness_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>The harness dispatches synchronously: by the time a publish, send, or request call completes, every
 consumer (and registered <a class="xref" href="Vulthil.Messaging.TestHarness.ITestHarness.html#Vulthil_Messaging_TestHarness_ITestHarness_Handle__1_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_Threading_Tasks_Task__">Handle&lt;TMessage&gt;(Func&lt;IMessageContext&lt;TMessage&gt;, Task&gt;)</a>/<a class="xref" href="Vulthil.Messaging.TestHarness.ITestHarness.html#Vulthil_Messaging_TestHarness_ITestHarness_Respond__2_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0____1__">Respond&lt;TRequest, TResponse&gt;(Func&lt;IMessageContext&lt;TRequest&gt;, TResponse&gt;)</a> stub)
-it triggered has run, so assertions need no polling. An exception thrown by a one-way consumer propagates
-to the caller of publish/send; a request consumer's exception is surfaced as a failed request result.</p>
+it triggered has run, so assertions need no polling. A one-way consumer that throws is retried per its
+configured policy and, once the attempts are exhausted, a <code>Fault&lt;T&gt;</code> is published — the publish or
+send itself still completes — mirroring the broker transport; a request consumer's exception is surfaced as a
+failed request result.</p>
 </div>
 
 
@@ -140,7 +142,7 @@ to the caller of publish/send; a request consumer's exception is surfaced as a f
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Clear" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Clear">
   Clear()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Clears all captured published, sent, consumed, and requested messages. Registered stubs are retained.</p>
@@ -167,7 +169,7 @@ to the caller of publish/send; a request consumer's exception is surfaced as a f
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Consumed__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Consumed``1">
   Consumed&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the messages delivered to a registered consumer that are assignable to <code class="typeparamref">TMessage</code>, in order. A message handled by several consumers is captured once per consumer.</p>
@@ -205,7 +207,7 @@ to the caller of publish/send; a request consumer's exception is surfaced as a f
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Handle__1_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_Threading_Tasks_Task__" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Handle``1(System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.Threading.Tasks.Task})">
   Handle&lt;TMessage&gt;(Func&lt;IMessageContext&lt;TMessage&gt;, Task&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a stub that runs whenever a <code class="typeparamref">TMessage</code> is published or sent, in addition to
@@ -246,7 +248,7 @@ follow-up messages through its context.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Published__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Published``1">
   Published&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the messages published via <code>IPublisher.PublishAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
@@ -284,7 +286,7 @@ follow-up messages through its context.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Requested__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Requested``1">
   Requested&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the requests issued via <code>IRequester.RequestAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
@@ -322,7 +324,7 @@ follow-up messages through its context.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Respond__2_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0____1__" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Respond``2(System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},``1})">
   Respond&lt;TRequest, TResponse&gt;(Func&lt;IMessageContext&lt;TRequest&gt;, TResponse&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a stub that answers requests of type <code class="typeparamref">TRequest</code> with a
@@ -366,7 +368,7 @@ takes precedence over a real request consumer for the same request type.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Sent__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Sent``1">
   Sent&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the messages sent via <code>ISendEndpoint.SendAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
@@ -404,7 +406,7 @@ takes precedence over a real request consumer for the same request type.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L16" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18" class="edit-link">Edit this page</a>
         </div>
 
 

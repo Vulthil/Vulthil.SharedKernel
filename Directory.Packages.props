@@ -8,7 +8,7 @@
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.17</FrameworkVersion>
     <NpgsqlEfCoreVersion>10.0.2</NpgsqlEfCoreVersion>
     <NpgsqlEfCoreVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.4</NpgsqlEfCoreVersion>
-    <AspireVersion>13.4.4</AspireVersion>
+    <AspireVersion>13.4.5</AspireVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
@@ -57,7 +57,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageVersion Include="ReportGenerator" Version="5.5.10" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
-    <PackageVersion Include="Scalar.Aspire" Version="0.10.3" />
+    <PackageVersion Include="Scalar.Aspire" Version="0.10.4" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.16.3" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.27.0.140913" />

@@ -7,16 +7,17 @@ namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
 /// Background service that periodically deletes processed and dead-lettered outbox rows older than the configured
-/// retention period. Enabled via <see cref="OutboxRetentionOptions"/>; the sweep is skipped when the registered
-/// <see cref="IOutboxStore"/> does not implement <see cref="IOutboxRetentionStore"/>.
+/// retention period. Registered by <c>AddOutboxEngine</c> only when <see cref="OutboxProcessingOptions.Retention"/>
+/// is enabled; the sweep is skipped when the registered <see cref="IOutboxStore"/> does not implement
+/// <see cref="IOutboxRetentionStore"/>.
 /// </summary>
 internal sealed class OutboxRetentionBackgroundService(
     IServiceScopeFactory scopeFactory,
     TimeProvider timeProvider,
-    IOptions<OutboxRetentionOptions> options,
+    IOptions<OutboxProcessingOptions> options,
     ILogger<OutboxRetentionBackgroundService> logger) : BackgroundService
 {
-    private readonly OutboxRetentionOptions _options = options.Value;
+    private readonly OutboxRetentionOptions _options = options.Value.Retention;
 
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -50,14 +51,15 @@ internal sealed class OutboxRetentionBackgroundService(
         }
 
         var cutoff = timeProvider.GetUtcNow() - _options.RetentionPeriod;
+        var batchSize = Math.Max(1, _options.BatchSize);
         var total = 0;
         int deleted;
         do
         {
-            deleted = await store.DeleteProcessedAsync(cutoff, _options.BatchSize, cancellationToken);
+            deleted = await store.DeleteProcessedAsync(cutoff, batchSize, cancellationToken);
             total += deleted;
         }
-        while (deleted >= _options.BatchSize && !cancellationToken.IsCancellationRequested);
+        while (deleted >= batchSize && !cancellationToken.IsCancellationRequested);
 
         if (total > 0 && logger.IsEnabled(LogLevel.Information))
         {

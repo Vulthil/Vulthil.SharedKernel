@@ -9,6 +9,11 @@ namespace Vulthil.SharedKernel.Outbox;
 public sealed class OutboxRetentionOptions
 {
     /// <summary>
+    /// Gets or sets a value indicating whether the retention sweep runs. Default is <see langword="false"/>.
+    /// </summary>
+    public bool Enabled { get; set; }
+
+    /// <summary>
     /// Gets or sets how long a processed or dead-lettered row is kept before it becomes eligible for deletion.
     /// Default is 7 days.
     /// </summary>

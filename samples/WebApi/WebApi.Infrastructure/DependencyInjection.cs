@@ -9,7 +9,6 @@ using Vulthil.Messaging.RabbitMq;
 using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
 using Vulthil.SharedKernel.Infrastructure.Relational;
-using Vulthil.SharedKernel.Outbox;
 using WebApi.Application;
 using WebApi.Application.MainEntities.Create;
 using WebApi.Application.SideEffects.Create;
@@ -25,12 +24,9 @@ public static class DependencyInjection
             .AddDbContext<IWebApiDbContext, WebApiDbContext>(databaseInfrastructureConfigurator =>
                     databaseInfrastructureConfigurator
                         .UseNpgsql(connectionStringKey)
-                        .EnableOutboxProcessing());
+                        .EnableOutboxProcessing(o => o.Retention.Enabled = true));
 
-        builder.Services.AddOutboxRetention();
-
-        builder.Services.AddRelationalInbox<WebApiDbContext>();
-        builder.Services.AddInboxRetention();
+        builder.Services.AddRelationalInbox<WebApiDbContext>(o => o.Retention.Enabled = true);
 
         return builder;
     }

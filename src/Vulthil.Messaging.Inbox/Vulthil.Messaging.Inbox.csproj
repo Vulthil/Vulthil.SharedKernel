@@ -12,5 +12,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
 	</ItemGroup>
-
+	
 </Project>

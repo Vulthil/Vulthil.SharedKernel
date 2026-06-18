@@ -74,21 +74,23 @@ The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (expos
 
 ## Retention
 
-Processed and dead-lettered rows remain in the `OutboxMessages` table after relay, so the table grows unbounded unless they are pruned. Opt into a retention sweep — a background service that periodically deletes terminal rows older than a window:
+Processed and dead-lettered rows remain in the `OutboxMessages` table after relay, so the table grows unbounded unless they are pruned. Opt into a retention sweep — a background service that periodically deletes terminal rows older than a window — by enabling `Retention` on the outbox options:
 
 ```csharp
-builder.Services.AddOutboxRetention(o =>
+.EnableOutboxProcessing(o =>
 {
-    o.RetentionPeriod = TimeSpan.FromDays(7);   // delete processed/dead-lettered rows older than this
-    o.SweepInterval = TimeSpan.FromHours(1);
-    o.BatchSize = 1000;
+    o.Retention.Enabled = true;                          // turn the sweep on
+    o.Retention.RetentionPeriod = TimeSpan.FromDays(7);  // delete processed/dead-lettered rows older than this
+    o.Retention.SweepInterval = TimeSpan.FromHours(1);
+    o.Retention.BatchSize = 1000;
 });
 ```
 
-Registering it is what turns the sweep on — there is no separate enabled flag.
+`AddOutboxEngine` (called by `EnableOutboxProcessing`) registers the sweep only when `Retention.Enabled` is set, so it costs nothing when off.
 
-| Property | Default | Description |
+| `Retention` property | Default | Description |
 |---|---|---|
+| `Enabled` | `false` | Whether the retention sweep runs |
 | `RetentionPeriod` | 7 days | How long a processed or dead-lettered row is kept |
 | `SweepInterval` | 1 hour | Delay between sweeps |
 | `BatchSize` | 1000 | Rows deleted per batch within a sweep |

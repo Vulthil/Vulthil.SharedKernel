@@ -36,7 +36,10 @@ public static class OutboxEngineServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        if (IsTracingEnabled(configureOptions))
+        var options = new OutboxProcessingOptions();
+        configureOptions?.Invoke(options);
+
+        if (options.EnableTracing)
         {
             services
                 .AddOpenTelemetry()
@@ -51,13 +54,11 @@ public static class OutboxEngineServiceCollectionExtensions
 
         services.AddHostedService<OutboxBackgroundService>();
 
-        return services;
-    }
+        if (options.Retention.Enabled)
+        {
+            services.AddHostedService<OutboxRetentionBackgroundService>();
+        }
 
-    private static bool IsTracingEnabled(Action<OutboxProcessingOptions>? configureOptions)
-    {
-        var options = new OutboxProcessingOptions();
-        configureOptions?.Invoke(options);
-        return options.EnableTracing;
+        return services;
     }
 }

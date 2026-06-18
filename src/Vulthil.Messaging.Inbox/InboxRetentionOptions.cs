@@ -9,6 +9,11 @@ namespace Vulthil.Messaging.Inbox;
 public sealed class InboxRetentionOptions
 {
     /// <summary>
+    /// Gets or sets a value indicating whether the retention sweep runs. Default is <see langword="false"/>.
+    /// </summary>
+    public bool Enabled { get; set; }
+
+    /// <summary>
     /// Gets or sets how long a marker is kept before it becomes eligible for deletion. Choose a value comfortably
     /// longer than the broker's maximum redelivery delay so a marker is never removed while a duplicate could still
     /// arrive. Default is 7 days.

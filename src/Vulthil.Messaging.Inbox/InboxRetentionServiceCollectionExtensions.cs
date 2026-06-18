@@ -14,20 +14,18 @@ public static class InboxRetentionServiceCollectionExtensions
     /// do).
     /// </summary>
     /// <param name="services">The service collection.</param>
-    /// <param name="configureOptions">An optional action to configure <see cref="InboxRetentionOptions"/>.</param>
+    /// <param name="configure">An optional action to configure <see cref="InboxOptions"/>.</param>
     /// <returns>The same service collection, for chaining.</returns>
-    public static IServiceCollection AddInboxRetention(
-        this IServiceCollection services,
-        Action<InboxRetentionOptions>? configureOptions = null)
+    public static IServiceCollection AddInboxRetention(this IServiceCollection services, Action<InboxOptions>? configure)
     {
-        ArgumentNullException.ThrowIfNull(services);
+        services.AddOptions<InboxOptions>().Configure(configure ?? (static _ => { }));
 
-        services.AddOptions<InboxRetentionOptions>()
-            .Configure(configureOptions ?? (static _ => { }))
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        services.AddHostedService<InboxRetentionBackgroundService>();
+        var options = new InboxOptions();
+        configure?.Invoke(options);
+        if (options.Retention.Enabled)
+        {
+            services.AddHostedService<InboxRetentionBackgroundService>();
+        }
 
         return services;
     }

@@ -1,4 +1,9 @@
 #nullable enable
+Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics.get -> bool
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics.set -> void
+static readonly Vulthil.SharedKernel.Outbox.Telemetry.MeterName -> string!
+static Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!
 override Vulthil.SharedKernel.Outbox.OutboxMessageData.GetHashCode() -> int
 override Vulthil.SharedKernel.Outbox.OutboxMessageFailure.GetHashCode() -> int
 static readonly Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName -> string!

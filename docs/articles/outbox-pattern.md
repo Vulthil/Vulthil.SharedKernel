@@ -72,6 +72,8 @@ The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (expos
 
 `AddOutboxEngine` (called by `EnableOutboxProcessing`) registers the source with OpenTelemetry automatically when `EnableTracing` is on (the default), so the spans reach whatever tracer the application has configured without extra wiring. If you build a `TracerProviderBuilder` yourself, the same registration is available as `tracing.AddVulthilOutboxInstrumentation()` — sugar for `AddSource(Telemetry.ActivitySourceName)`.
 
+The relay also emits **metrics** on a `Meter` named `Telemetry.MeterName` (`"Vulthil.SharedKernel.Outbox"`): the counters `vulthil.outbox.relayed` and `vulthil.outbox.failed`. `AddOutboxEngine` auto-registers the meter with OpenTelemetry when `EnableMetrics` is on (the default); for a hand-built `MeterProviderBuilder`, use `metrics.AddVulthilOutboxInstrumentation()`.
+
 ## Retention
 
 Processed and dead-lettered rows remain in the `OutboxMessages` table after relay, so the table grows unbounded unless they are pruned. Opt into a retention sweep — a background service that periodically deletes terminal rows older than a window — by enabling `Retention` on the outbox options:

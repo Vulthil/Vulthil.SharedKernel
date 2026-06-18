@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using Microsoft.Extensions.Options;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.xUnit;
@@ -94,6 +95,69 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
 
         // Assert
         _store.Verify(store => store.ProcessAsync("business-key", It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task NewMessageIncrementsTheProcessedCounter()
+    {
+        // Arrange
+        _context.SetupGet(context => context.MessageId).Returns("message-1");
+        SetupStore("message-1", runConsumer: true, processed: true);
+
+        // Act
+        var count = await MeasureCounterAsync("vulthil.inbox.processed", () => Target.ConsumeAsync(_context.Object, Next));
+
+        // Assert
+        count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task AlreadyProcessedMessageIncrementsTheDuplicateSkippedCounter()
+    {
+        // Arrange
+        _context.SetupGet(context => context.MessageId).Returns("message-1");
+        SetupStore("message-1", runConsumer: false, processed: false);
+
+        // Act
+        var count = await MeasureCounterAsync("vulthil.inbox.duplicate_skipped", () => Target.ConsumeAsync(_context.Object, Next));
+
+        // Assert
+        count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task MissingKeyWithRejectDisabledIncrementsTheMissingKeyCounter()
+    {
+        // Arrange
+        Use<IOptions<InboxOptions>>(Options.Create(new InboxOptions { RejectMessagesWithoutKey = false }));
+        _context.SetupGet(context => context.MessageId).Returns((string?)null);
+
+        // Act
+        var count = await MeasureCounterAsync("vulthil.inbox.missing_key", () => Target.ConsumeAsync(_context.Object, Next));
+
+        // Assert
+        count.ShouldBe(1);
+    }
+
+    private static async Task<long> MeasureCounterAsync(string instrumentName, Func<Task> action)
+    {
+        long total = 0;
+        using var listener = new MeterListener
+        {
+            InstrumentPublished = (instrument, l) =>
+            {
+                if (instrument.Meter.Name == InboxTelemetry.MeterName && instrument.Name == instrumentName)
+                {
+                    l.EnableMeasurementEvents(instrument);
+                }
+            },
+        };
+        listener.SetMeasurementEventCallback<long>((_, measurement, _, _) => total += measurement);
+        listener.Start();
+
+        await action();
+
+        return total;
     }
 
     private void SetupStore(string key, bool runConsumer, bool processed) =>

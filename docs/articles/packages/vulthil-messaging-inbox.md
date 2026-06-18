@@ -20,6 +20,7 @@ Persistence-agnostic: it defines the `IIdempotencyStore` contract and the filter
 - The store owns the transactional unit (the filter hands it the consumer invocation); the consumer keeps calling `SaveChanges` as usual
 - Deliveries with no resolvable key are rejected (`MissingIdempotencyKeyException`) unless you opt out
 - Prune markers with an opt-in background sweep — enable it on the store registration via `AddRelationalInbox<T>(o => o.Retention.Enabled = true)` (or `AddCosmosInbox<T>`)
+- Emits metrics (counters `vulthil.inbox.processed`/`duplicate_skipped`/`missing_key`) on a `Meter` (`InboxTelemetry.MeterName`), auto-registered by `AddRelationalInbox`/`AddCosmosInbox` when `EnableMetrics` is on (manual: `metrics.AddVulthilInboxInstrumentation()`)
 
 ## Usage
 

@@ -34,6 +34,13 @@ public static class CosmosInboxExtensions
         services.TryAddScoped<IIdempotencyStore, CosmosIdempotencyStore<TContext>>();
         services.AddInboxRetention(configure);
 
+        var options = new InboxOptions();
+        configure?.Invoke(options);
+        if (options.EnableMetrics)
+        {
+            services.AddOpenTelemetry().WithMetrics(metrics => metrics.AddVulthilInboxInstrumentation());
+        }
+
         return services;
     }
 }

@@ -51,6 +51,12 @@ public sealed class OutboxProcessingOptions
     public bool EnableTracing { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether outbox relay metrics (the <c>vulthil.outbox.*</c> counters on the
+    /// <see cref="Telemetry.MeterName"/> meter) are auto-registered with OpenTelemetry. Default: <see langword="true"/>.
+    /// </summary>
+    public bool EnableMetrics { get; set; } = true;
+
+    /// <summary>
     /// Gets the retention sweep configuration. Set <see cref="OutboxRetentionOptions.Enabled"/> to periodically
     /// delete processed and dead-lettered rows older than <see cref="OutboxRetentionOptions.RetentionPeriod"/>.
     /// </summary>

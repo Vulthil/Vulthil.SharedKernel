@@ -46,6 +46,13 @@ public static class OutboxEngineServiceCollectionExtensions
                 .WithTracing(tracing => tracing.AddVulthilOutboxInstrumentation());
         }
 
+        if (options.EnableMetrics)
+        {
+            services
+                .AddOpenTelemetry()
+                .WithMetrics(metrics => metrics.AddVulthilOutboxInstrumentation());
+        }
+
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IOutboxSignal, OutboxSignal>();
 

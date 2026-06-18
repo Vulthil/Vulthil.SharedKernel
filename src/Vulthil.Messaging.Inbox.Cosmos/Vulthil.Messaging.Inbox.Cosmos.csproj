@@ -11,6 +11,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
+	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
 	</ItemGroup>
 
 </Project>

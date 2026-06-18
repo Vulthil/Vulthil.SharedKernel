@@ -42,15 +42,21 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
             }
 
             InboxLog.MissingKeyAllowed(_logger, messageType);
+            InboxTelemetry.MissingKey.Add(1);
             await next(context);
             return;
         }
 
         var processed = await _store.ProcessAsync(key, context, _ => next(context), context.CancellationToken);
 
-        if (!processed)
+        if (processed)
+        {
+            InboxTelemetry.Processed.Add(1);
+        }
+        else
         {
             InboxLog.DuplicateSkipped(_logger, messageType, key);
+            InboxTelemetry.DuplicateSkipped.Add(1);
         }
     }
 }

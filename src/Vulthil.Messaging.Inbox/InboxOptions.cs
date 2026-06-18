@@ -14,6 +14,12 @@ public sealed class InboxOptions
     public bool RejectMessagesWithoutKey { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether inbox metrics (the <c>vulthil.inbox.*</c> counters on the
+    /// <see cref="InboxTelemetry.MeterName"/> meter) are auto-registered with OpenTelemetry. Default: <see langword="true"/>.
+    /// </summary>
+    public bool EnableMetrics { get; set; } = true;
+
+    /// <summary>
     /// Gets the retention sweep configuration. Set <see cref="InboxRetentionOptions.Enabled"/> to periodically
     /// delete idempotency markers older than <see cref="InboxRetentionOptions.RetentionPeriod"/>.
     /// </summary>

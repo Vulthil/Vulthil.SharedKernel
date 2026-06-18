@@ -86,7 +86,7 @@ internal static class MessageContextFactory
         return new MessageContext
         {
             MessageId = props.MessageId,
-            CorrelationId = props.CorrelationId ?? string.Empty,
+            CorrelationId = props.CorrelationId,
             RequestId = props.CorrelationId,
             RoutingKey = ea.RoutingKey,
             Headers = headers.ToDictionary(),
@@ -120,7 +120,7 @@ internal static class MessageContextFactory
             SendEndpointProvider = sendEndpointProvider,
             CancellationToken = cancellationToken,
             MessageId = props.MessageId,
-            CorrelationId = props.CorrelationId ?? string.Empty,
+            CorrelationId = props.CorrelationId,
             RequestId = props.CorrelationId,
             RoutingKey = ea.RoutingKey,
             Headers = headers.ToDictionary(),

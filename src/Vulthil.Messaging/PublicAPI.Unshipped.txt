@@ -125,7 +125,6 @@ Vulthil.Messaging.IMessageConfigurationProvider.ConsumeFilters.get -> Vulthil.Me
 Vulthil.Messaging.IMessageConfigurationProvider.DefaultTimeout.get -> System.TimeSpan
 Vulthil.Messaging.IMessageConfigurationProvider.FaultExchangeName.get -> string!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration(System.Type! messageType) -> Vulthil.Messaging.MessageConfiguration!
-Vulthil.Messaging.IMessageConfigurationProvider.GetMessageConfiguration<TMessage>() -> Vulthil.Messaging.MessageConfiguration!
 Vulthil.Messaging.IMessageConfigurationProvider.GetMessageType(System.Uri! urn) -> System.Type?
 Vulthil.Messaging.IMessageConfigurationProvider.GetPartition(System.Type! messageType) -> Vulthil.Messaging.PartitionSpec?
 Vulthil.Messaging.IMessageConfigurationProvider.GetUrn(System.Type! messageType) -> System.Uri!
@@ -352,7 +351,7 @@ Vulthil.Messaging.Transport.MessageContext.CancellationToken.get -> System.Threa
 Vulthil.Messaging.Transport.MessageContext.CancellationToken.init -> void
 Vulthil.Messaging.Transport.MessageContext.ConversationId.get -> string?
 Vulthil.Messaging.Transport.MessageContext.ConversationId.init -> void
-Vulthil.Messaging.Transport.MessageContext.CorrelationId.get -> string!
+Vulthil.Messaging.Transport.MessageContext.CorrelationId.get -> string?
 Vulthil.Messaging.Transport.MessageContext.CorrelationId.init -> void
 Vulthil.Messaging.Transport.MessageContext.DestinationAddress.get -> System.Uri?
 Vulthil.Messaging.Transport.MessageContext.DestinationAddress.init -> void

@@ -81,7 +81,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
 
         // Assert
-        context.CorrelationId.ShouldBe(string.Empty);
+        context.CorrelationId.ShouldBeNull();
         context.RequestId.ShouldBeNull();
         context.Headers.ShouldNotBeNull();
         context.Headers.Count.ShouldBe(0);

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.TestHarness;
@@ -12,23 +13,53 @@ namespace Vulthil.Messaging.TestHarness;
 /// </summary>
 internal static class InMemoryMessageHandlers
 {
-    /// <summary>Builds a handler for a one-way <see cref="IConsumer{TMessage}"/>.</summary>
-    public static InMemoryHandler ForConsumer<TConsumer, TMessage>()
+    /// <summary>
+    /// Builds a handler for a one-way <see cref="IConsumer{TMessage}"/>. A throwing consumer is retried in-process
+    /// per <paramref name="retryPolicy"/> — a fresh scope per attempt, mirroring the broker transport but without
+    /// the real back-off delays — and once the attempts are exhausted a <see cref="Fault{TMessage}"/> is published
+    /// and the delivery completes normally, so the originating publish/send succeeds just as it would against a
+    /// real broker.
+    /// </summary>
+    public static InMemoryHandler ForConsumer<TConsumer, TMessage>(RetryPolicyDefinition? retryPolicy)
         where TConsumer : class, IConsumer<TMessage>
         where TMessage : notnull
-        => new(HandlerKind.Consumer, async (scope, message, envelope, ct) =>
+        => new(HandlerKind.Consumer, async (scope, message, envelope, cancellationToken) =>
         {
-            var consumer = scope.GetRequiredService<TConsumer>();
+            var scopeFactory = scope.GetRequiredService<IServiceScopeFactory>();
             var harness = scope.GetRequiredService<TestHarness>();
-            var context = InMemoryContext.Create(scope, (TMessage)message, envelope, ct);
+            var maxRetries = Math.Max(0, retryPolicy?.MaxRetryCount ?? 0);
+            var ignoredExceptions = retryPolicy?.GetIgnoredExceptionTypes();
 
-            var pipeline = ConsumePipelineFactory.Build<TMessage>(scope, terminal: c =>
+            Exception? lastError = null;
+            for (var attempt = 0; attempt <= maxRetries; attempt++)
             {
-                harness.RecordConsumed((TMessage)message, envelope);
-                return consumer.ConsumeAsync(c, c.CancellationToken);
-            });
+                await using var attemptScope = scopeFactory.CreateAsyncScope();
+                var serviceProvider = attemptScope.ServiceProvider;
+                var consumer = serviceProvider.GetRequiredService<TConsumer>();
+                var context = InMemoryContext.Create(serviceProvider, (TMessage)message, envelope, cancellationToken, attempt);
 
-            await pipeline(context);
+                try
+                {
+                    var pipeline = ConsumePipelineFactory.Build<TMessage>(serviceProvider, terminal: async c =>
+                    {
+                        await consumer.ConsumeAsync(c, c.CancellationToken);
+                        harness.RecordConsumed((TMessage)message, envelope);
+                    });
+
+                    await pipeline(context);
+                    return null;
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    lastError = ex;
+                    if (ignoredExceptions is not null && ignoredExceptions.Contains(ex.GetType()))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            await PublishFaultAsync<TMessage>(scope, (TMessage)message, envelope, lastError!, maxRetries, cancellationToken);
             return null;
         });
 
@@ -73,4 +104,55 @@ internal static class InMemoryMessageHandlers
                 return InMemoryReply.BuildFault(ex, options, envelope);
             }
         });
+
+    /// <summary>
+    /// Publishes a <see cref="Fault{TMessage}"/> for a terminally-failed one-way delivery, mirroring the broker
+    /// transport: the fault is captured (so tests can assert it) and delivered in-process to any consumer bound to
+    /// it. Best-effort — it never disrupts completing the original delivery.
+    /// </summary>
+    private static async Task PublishFaultAsync<TMessage>(
+        IServiceProvider scope,
+        TMessage message,
+        MessageEnvelope envelope,
+        Exception error,
+        int retryCount,
+        CancellationToken cancellationToken)
+        where TMessage : notnull
+    {
+        var provider = scope.GetRequiredService<IMessageConfigurationProvider>();
+        var transport = scope.GetRequiredService<InMemoryTransport>();
+        var harness = scope.GetRequiredService<TestHarness>();
+        var context = InMemoryContext.Create(scope, message, envelope, cancellationToken, retryCount);
+
+        var fault = new Fault<TMessage>
+        {
+            Message = message,
+            ExceptionMessage = error.Message,
+            StackTrace = error.StackTrace,
+            ExceptionType = error.GetType().FullName ?? "Unknown",
+            FaultedAt = DateTimeOffset.UtcNow,
+            OriginalContext = CreateSnapshot(context),
+        };
+
+        var faultEnvelope = OutgoingEnvelope.Build(provider, fault, new PublishContext());
+        harness.RecordPublished(fault, faultEnvelope);
+        await transport.DeliverAsync(faultEnvelope, cancellationToken);
+    }
+
+    private static MessageContextSnapshot CreateSnapshot<TMessage>(MessageContext<TMessage> context)
+        where TMessage : notnull
+        => new()
+        {
+            MessageId = context.MessageId,
+            RequestId = context.RequestId,
+            CorrelationId = context.CorrelationId,
+            ConversationId = context.ConversationId,
+            InitiatorId = context.InitiatorId,
+            SourceAddress = context.SourceAddress,
+            DestinationAddress = context.DestinationAddress,
+            ResponseAddress = context.ResponseAddress,
+            FaultAddress = context.FaultAddress,
+            RoutingKey = context.RoutingKey,
+            RetryCount = context.RetryCount,
+        };
 }

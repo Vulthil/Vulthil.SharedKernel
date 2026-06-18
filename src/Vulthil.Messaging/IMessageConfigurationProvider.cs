@@ -17,13 +17,6 @@ public interface IMessageConfigurationProvider
     MessageConfiguration GetMessageConfiguration(Type messageType);
 
     /// <summary>
-    /// Gets the message configuration for the specified generic message type.
-    /// </summary>
-    /// <typeparam name="TMessage">The message CLR type.</typeparam>
-    /// <returns>The resolved <see cref="MessageConfiguration"/> instance.</returns>
-    MessageConfiguration GetMessageConfiguration<TMessage>() where TMessage : class;
-
-    /// <summary>
     /// Gets the stable wire URN for the supplied message type. Equivalent to
     /// <c>GetMessageConfiguration(messageType).Urn</c> — provided for clarity at call sites.
     /// </summary>

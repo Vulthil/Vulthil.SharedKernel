@@ -48,7 +48,7 @@ public sealed class MessagingOptionsTests : BaseUnitTestCase
         var options = new MessagingOptions();
 
         // Assert
-        var config = options.GetMessageConfiguration<TestMessage>();
+        var config = options.GetMessageConfiguration(typeof(TestMessage));
         config.CorrelationIdFormatter.ShouldBeNull();
         config.RoutingKeyFormatter.ShouldBeNull();
         config.Exchange.ShouldBe(typeof(TestMessage).FullName!);

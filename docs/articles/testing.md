@@ -292,8 +292,9 @@ var result = await requester.RequestAsync<GetWeatherRequest, WeatherForecast>(ne
 result.Value.TemperatureC.ShouldBe(20);
 ```
 
-A request with neither a responder nor a registered request consumer completes with a
-`Messaging.Request.NoConsumer` failure; a request consumer that throws surfaces as a `Messaging.Request.Failure`.
+A request with neither a responder nor a registered request consumer **times out** with a
+`Messaging.Request.Timeout` failure — just as it would against a real broker, where no consumer means no reply;
+a request consumer that throws surfaces as a `Messaging.Request.Failure`.
 
 ### Swapping the transport in integration tests
 

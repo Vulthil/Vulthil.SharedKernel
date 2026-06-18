@@ -51,10 +51,6 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
     }
 
     /// <inheritdoc />
-    public MessageConfiguration GetMessageConfiguration<TMessage>() where TMessage : class
-        => GetMessageConfiguration(typeof(TMessage));
-
-    /// <inheritdoc />
     public Uri GetUrn(Type messageType) => GetMessageConfiguration(messageType).Urn;
 
     /// <inheritdoc />

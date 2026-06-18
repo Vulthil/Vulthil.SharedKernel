@@ -56,9 +56,9 @@ internal sealed class InMemoryRequester : IRequester
     {
         if (reply is null)
         {
-            return Result.Failure<TResponse>(Error.NotFound(
-                "Messaging.Request.NoConsumer",
-                "No request consumer or responder is registered for the request type."));
+            return Result.Failure<TResponse>(Error.Failure(
+                "Messaging.Request.Timeout",
+                "Request timed out — no consumer or responder is registered for the request type."));
         }
 
         var options = _provider.JsonSerializerOptions;

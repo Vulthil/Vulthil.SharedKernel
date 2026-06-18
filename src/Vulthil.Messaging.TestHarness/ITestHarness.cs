@@ -10,8 +10,10 @@ namespace Vulthil.Messaging.TestHarness;
 /// <remarks>
 /// The harness dispatches synchronously: by the time a publish, send, or request call completes, every
 /// consumer (and registered <see cref="Handle{TMessage}"/>/<see cref="Respond{TRequest, TResponse}"/> stub)
-/// it triggered has run, so assertions need no polling. An exception thrown by a one-way consumer propagates
-/// to the caller of publish/send; a request consumer's exception is surfaced as a failed request result.
+/// it triggered has run, so assertions need no polling. A one-way consumer that throws is retried per its
+/// configured policy and, once the attempts are exhausted, a <c>Fault&lt;T&gt;</c> is published — the publish or
+/// send itself still completes — mirroring the broker transport; a request consumer's exception is surfaced as a
+/// failed request result.
 /// </remarks>
 public interface ITestHarness
 {

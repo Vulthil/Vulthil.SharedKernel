@@ -22,7 +22,7 @@ public record MessageContext : IMessageContext
     /// <inheritdoc />
     public string? MessageId { get; init; }
     /// <inheritdoc />
-    public required string CorrelationId { get; init; }
+    public string? CorrelationId { get; init; }
     /// <inheritdoc />
     public string? RequestId { get; init; }
     /// <inheritdoc />

@@ -105,6 +105,7 @@ giving <strong>exactly-once processing</strong>; without one (e.g. Cosmos) the g
 <li>The store owns the transactional unit (the filter hands it the consumer invocation); the consumer keeps calling <code>SaveChanges</code> as usual</li>
 <li>Deliveries with no resolvable key are rejected (<code>MissingIdempotencyKeyException</code>) unless you opt out</li>
 <li>Prune markers with an opt-in background sweep — enable it on the store registration via <code>AddRelationalInbox&lt;T&gt;(o =&gt; o.Retention.Enabled = true)</code> (or <code>AddCosmosInbox&lt;T&gt;</code>)</li>
+<li>Emits metrics (counters <code>vulthil.inbox.processed</code>/<code>duplicate_skipped</code>/<code>missing_key</code>) on a <code>Meter</code> (<code>InboxTelemetry.MeterName</code>), auto-registered by <code>AddRelationalInbox</code>/<code>AddCosmosInbox</code> when <code>EnableMetrics</code> is on (manual: <code>metrics.AddVulthilInboxInstrumentation()</code>)</li>
 </ul>
 <h2 id="usage">Usage</h2>
 <pre><code class="lang-csharp">builder.AddMessaging(messaging =&gt;

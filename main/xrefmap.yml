@@ -1820,6 +1820,19 @@ references:
   commentId: T:Vulthil.Messaging.Inbox.InboxOptions
   fullName: Vulthil.Messaging.Inbox.InboxOptions
   nameWithType: InboxOptions
+- uid: Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics
+  name: EnableMetrics
+  href: api/Vulthil.Messaging.Inbox.InboxOptions.html#Vulthil_Messaging_Inbox_InboxOptions_EnableMetrics
+  commentId: P:Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics
+  fullName: Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics
+  nameWithType: InboxOptions.EnableMetrics
+- uid: Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics*
+  name: EnableMetrics
+  href: api/Vulthil.Messaging.Inbox.InboxOptions.html#Vulthil_Messaging_Inbox_InboxOptions_EnableMetrics_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics
+  nameWithType: InboxOptions.EnableMetrics
 - uid: Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey
   name: RejectMessagesWithoutKey
   href: api/Vulthil.Messaging.Inbox.InboxOptions.html#Vulthil_Messaging_Inbox_InboxOptions_RejectMessagesWithoutKey
@@ -1926,6 +1939,37 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention
   nameWithType: InboxRetentionServiceCollectionExtensions.AddInboxRetention
+- uid: Vulthil.Messaging.Inbox.InboxTelemetry
+  name: InboxTelemetry
+  href: api/Vulthil.Messaging.Inbox.InboxTelemetry.html
+  commentId: T:Vulthil.Messaging.Inbox.InboxTelemetry
+  fullName: Vulthil.Messaging.Inbox.InboxTelemetry
+  nameWithType: InboxTelemetry
+- uid: Vulthil.Messaging.Inbox.InboxTelemetry.MeterName
+  name: MeterName
+  href: api/Vulthil.Messaging.Inbox.InboxTelemetry.html#Vulthil_Messaging_Inbox_InboxTelemetry_MeterName
+  commentId: F:Vulthil.Messaging.Inbox.InboxTelemetry.MeterName
+  fullName: Vulthil.Messaging.Inbox.InboxTelemetry.MeterName
+  nameWithType: InboxTelemetry.MeterName
+- uid: Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions
+  name: MeterProviderBuilderExtensions
+  href: api/Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.html
+  commentId: T:Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions
+  fullName: Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions
+  nameWithType: MeterProviderBuilderExtensions
+- uid: Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation(OpenTelemetry.Metrics.MeterProviderBuilder)
+  name: AddVulthilInboxInstrumentation(MeterProviderBuilder)
+  href: api/Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.html#Vulthil_Messaging_Inbox_MeterProviderBuilderExtensions_AddVulthilInboxInstrumentation_OpenTelemetry_Metrics_MeterProviderBuilder_
+  commentId: M:Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation(OpenTelemetry.Metrics.MeterProviderBuilder)
+  fullName: Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation(OpenTelemetry.Metrics.MeterProviderBuilder)
+  nameWithType: MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation(MeterProviderBuilder)
+- uid: Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation*
+  name: AddVulthilInboxInstrumentation
+  href: api/Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.html#Vulthil_Messaging_Inbox_MeterProviderBuilderExtensions_AddVulthilInboxInstrumentation_
+  commentId: Overload:Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation
+  nameWithType: MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation
 - uid: Vulthil.Messaging.Inbox.MissingIdempotencyKeyException
   name: MissingIdempotencyKeyException
   href: api/Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.html
@@ -9666,6 +9710,25 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.IOutboxStore.SaveChangesAsync
   nameWithType: IOutboxStore.SaveChangesAsync
+- uid: Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions
+  name: MeterProviderBuilderExtensions
+  href: api/Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.html
+  commentId: T:Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions
+  fullName: Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions
+  nameWithType: MeterProviderBuilderExtensions
+- uid: Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation(OpenTelemetry.Metrics.MeterProviderBuilder)
+  name: AddVulthilOutboxInstrumentation(MeterProviderBuilder)
+  href: api/Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.html#Vulthil_SharedKernel_Outbox_MeterProviderBuilderExtensions_AddVulthilOutboxInstrumentation_OpenTelemetry_Metrics_MeterProviderBuilder_
+  commentId: M:Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation(OpenTelemetry.Metrics.MeterProviderBuilder)
+  fullName: Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation(OpenTelemetry.Metrics.MeterProviderBuilder)
+  nameWithType: MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation(MeterProviderBuilder)
+- uid: Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation*
+  name: AddVulthilOutboxInstrumentation
+  href: api/Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.html#Vulthil_SharedKernel_Outbox_MeterProviderBuilderExtensions_AddVulthilOutboxInstrumentation_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation
+  nameWithType: MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation
 - uid: Vulthil.SharedKernel.Outbox.OutboxDestination
   name: OutboxDestination
   href: api/Vulthil.SharedKernel.Outbox.OutboxDestination.html
@@ -10073,6 +10136,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.BatchSize
   nameWithType: OutboxProcessingOptions.BatchSize
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics
+  name: EnableMetrics
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableMetrics
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics
+  nameWithType: OutboxProcessingOptions.EnableMetrics
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics*
+  name: EnableMetrics
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableMetrics_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics
+  nameWithType: OutboxProcessingOptions.EnableMetrics
 - uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing
   name: EnableParallelPublishing
   href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableParallelPublishing
@@ -10234,6 +10310,12 @@ references:
   commentId: F:Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
   fullName: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
   nameWithType: Telemetry.ActivitySourceName
+- uid: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  name: MeterName
+  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_MeterName
+  commentId: F:Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  fullName: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  nameWithType: Telemetry.MeterName
 - uid: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions
   name: TracerProviderBuilderExtensions
   href: api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.html

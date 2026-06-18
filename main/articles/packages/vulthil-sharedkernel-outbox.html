@@ -108,6 +108,8 @@ the relay batch unit (<code>ProcessBatchAsync</code>); the EF implementation and
 row-locking. <code>AddOutboxEngine</code> registers the engine's own internals.</li>
 <li>Relay spans are emitted on the <code>ActivitySource</code> <code>&quot;Vulthil.SharedKernel.Outbox&quot;</code> (<code>Telemetry.ActivitySourceName</code>),
 auto-registered with OpenTelemetry by <code>AddOutboxEngine</code> (manual: <code>tracing.AddVulthilOutboxInstrumentation()</code>).</li>
+<li>Relay metrics (counters <code>vulthil.outbox.relayed</code>/<code>vulthil.outbox.failed</code>) are emitted on a <code>Meter</code> (<code>Telemetry.MeterName</code>),
+auto-registered by <code>AddOutboxEngine</code> when <code>EnableMetrics</code> is on (manual: <code>metrics.AddVulthilOutboxInstrumentation()</code>).</li>
 <li>Opt into a retention sweep via <code>EnableOutboxProcessing(o =&gt; o.Retention.Enabled = true)</code> to periodically delete processed and dead-lettered rows
 older than a window (relational set-based <code>ExecuteDelete</code>; the same sweep covers Cosmos).</li>
 </ul>

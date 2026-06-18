@@ -157,6 +157,39 @@ Class InboxOptions  <a class="header-action link-secondary" title="View source" 
 </h2>
 
 
+  <a id="Vulthil_Messaging_Inbox_InboxOptions_EnableMetrics_" data-uid="Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics*"></a>
+
+  <h3 id="Vulthil_Messaging_Inbox_InboxOptions_EnableMetrics" data-uid="Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics">
+  EnableMetrics
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxOptions.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether inbox metrics (the <code>vulthil.inbox.*</code> counters on the
+<a class="xref" href="Vulthil.Messaging.Inbox.InboxTelemetry.html#Vulthil_Messaging_Inbox_InboxTelemetry_MeterName">MeterName</a> meter) are auto-registered with OpenTelemetry. Default: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool EnableMetrics { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Vulthil_Messaging_Inbox_InboxOptions_RejectMessagesWithoutKey_" data-uid="Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey*"></a>
 
   <h3 id="Vulthil_Messaging_Inbox_InboxOptions_RejectMessagesWithoutKey" data-uid="Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey">
@@ -196,7 +229,7 @@ deduplication.</p>
 
   <h3 id="Vulthil_Messaging_Inbox_InboxOptions_Retention" data-uid="Vulthil.Messaging.Inbox.InboxOptions.Retention">
   Retention
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxOptions.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxOptions.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the retention sweep configuration. Set <a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_Enabled">Enabled</a> to periodically

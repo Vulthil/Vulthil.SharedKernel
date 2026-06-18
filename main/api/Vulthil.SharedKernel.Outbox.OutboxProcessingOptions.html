@@ -190,6 +190,39 @@ public int BatchSize { get; init; }</code></pre>
 
 
 
+  <a id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableMetrics_" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableMetrics" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics">
+  EnableMetrics
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether outbox relay metrics (the <code>vulthil.outbox.*</code> counters on the
+<a class="xref" href="Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_MeterName">MeterName</a> meter) are auto-registered with OpenTelemetry. Default: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool EnableMetrics { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableParallelPublishing_" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing*"></a>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableParallelPublishing" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing">
@@ -398,7 +431,7 @@ public int OutboxProcessingDelayInSeconds { get; init; }</code></pre>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_Retention" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention">
   Retention
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the retention sweep configuration. Set <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled">Enabled</a> to periodically

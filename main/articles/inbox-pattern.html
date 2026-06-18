@@ -155,6 +155,8 @@ package <code>Vulthil.Messaging.Inbox.EntityFrameworkCore</code>, so you impleme
 });
 </code></pre>
 <p>The sweep is registered only when <code>Retention.Enabled</code> is set. Choose <code>RetentionPeriod</code> comfortably longer than the broker's maximum redelivery delay — a marker removed while a duplicate could still arrive would let that duplicate through. The sweep runs through the registered <code>IIdempotencyStore</code> when it implements <code>IInboxRetentionStore</code> (the relational and Cosmos EF Core stores do); the relational store deletes set-based with <code>ExecuteDelete</code>.</p>
+<h3 id="metrics">Metrics</h3>
+<p>The guard emits metrics on a <code>Meter</code> named <code>&quot;Vulthil.Messaging.Inbox&quot;</code> (<code>InboxTelemetry.MeterName</code>): the counters <code>vulthil.inbox.processed</code>, <code>vulthil.inbox.duplicate_skipped</code>, and <code>vulthil.inbox.missing_key</code>. <code>AddRelationalInbox</code>/<code>AddCosmosInbox</code> auto-register the meter when <code>EnableMetrics</code> is on (the default); for a hand-built <code>MeterProviderBuilder</code>, use <code>metrics.AddVulthilInboxInstrumentation()</code>.</p>
 <h3 id="relational-store">Relational store</h3>
 <p>Expose the inbox set on your <code>DbContext</code>, apply the entity configuration, and register the store:</p>
 <pre><code class="lang-csharp">public sealed class AppDbContext(DbContextOptions&lt;AppDbContext&gt; options)

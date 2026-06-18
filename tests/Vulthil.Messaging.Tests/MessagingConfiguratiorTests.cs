@@ -30,6 +30,18 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicati
     }
 
     [Fact]
+    public async Task StartingTheHostWithoutATransportThrowsAClearError()
+    {
+        // Arrange — messaging configured, but no transport (no UseRabbitMq/UseTestHarness).
+        Target.AddMessaging(x => x.ConfigureQueue("orders", _ => { }));
+        using var host = Target.Build();
+
+        // Act & Assert
+        var exception = await Should.ThrowAsync<InvalidOperationException>(() => host.StartAsync(CancellationToken));
+        exception.Message.ShouldContain("No messaging transport is registered");
+    }
+
+    [Fact]
     public void AddMessagingShouldRegisterMessageConfigurationProvider()
     {
         // Arrange

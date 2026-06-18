@@ -22,6 +22,9 @@ public static class DependencyInjection
     /// Code registrations performed inside the configurator action merge onto the loaded values and take precedence.
     /// Built-in consume filters (see <see cref="ConsumeFilterOptions"/>) are registered before the configurator
     /// action runs, so user-registered filters compose INSIDE the defaults.
+    /// <para>A transport must be configured — e.g. <c>UseRabbitMq(...)</c> inside the configurator, or registered
+    /// separately (as <c>ReplaceTransportWithTestHarness</c> does) — otherwise the host fails to start with a clear
+    /// error.</para>
     /// </remarks>
     /// <param name="builder">The host application builder.</param>
     /// <param name="messagingConfiguratorAction">An action to configure messaging through <see cref="IMessagingConfigurator"/>.</param>

@@ -19,14 +19,14 @@ internal sealed class InMemoryHandlerFactory : IMessageHandlerFactory<InMemoryHa
         .GetMethod(nameof(InMemoryMessageHandlers.ForRequestConsumer), BindingFlags.Public | BindingFlags.Static)
         ?? throw new InvalidOperationException($"{nameof(InMemoryMessageHandlers)}.{nameof(InMemoryMessageHandlers.ForRequestConsumer)} not found.");
 
-    private readonly ConcurrentDictionary<(Type Consumer, Type Message), Func<InMemoryHandler>> _consumerCache = new();
+    private readonly ConcurrentDictionary<(Type Consumer, Type Message), Func<RetryPolicyDefinition?, InMemoryHandler>> _consumerCache = new();
     private readonly ConcurrentDictionary<(Type Consumer, Type Request, Type Response), Func<InMemoryHandler>> _requestCache = new();
 
     public HandlerEntry<InMemoryHandler> ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
     {
         var factory = _consumerCache.GetOrAdd((consumerType, messageType), static key =>
-            _consumerMethod.MakeGenericMethod(key.Consumer, key.Message).CreateDelegate<Func<InMemoryHandler>>());
-        return new HandlerEntry<InMemoryHandler>(factory(), HandlerKind.Consumer);
+            _consumerMethod.MakeGenericMethod(key.Consumer, key.Message).CreateDelegate<Func<RetryPolicyDefinition?, InMemoryHandler>>());
+        return new HandlerEntry<InMemoryHandler>(factory(retryPolicy), HandlerKind.Consumer);
     }
 
     public HandlerEntry<InMemoryHandler> ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)

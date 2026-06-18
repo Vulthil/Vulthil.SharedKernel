@@ -20,14 +20,14 @@ internal static class InMemoryContext
             ?? throw new InvalidOperationException($"The in-memory transport could not deserialize a '{envelope.MessageType}' payload.");
     }
 
-    public static MessageContext<TMessage> Create<TMessage>(IServiceProvider scope, TMessage message, MessageEnvelope envelope, CancellationToken cancellationToken)
+    public static MessageContext<TMessage> Create<TMessage>(IServiceProvider scope, TMessage message, MessageEnvelope envelope, CancellationToken cancellationToken, int retryCount = 0)
         where TMessage : notnull
         => MessageContext.CreateFromEnvelope(
             message,
             envelope,
             routingKey: string.Empty,
-            redelivered: false,
-            retryCount: 0,
+            redelivered: retryCount > 0,
+            retryCount: retryCount,
             replyToFallback: null,
             scope.GetRequiredService<IPublisher>(),
             scope.GetRequiredService<ISendEndpointProvider>(),

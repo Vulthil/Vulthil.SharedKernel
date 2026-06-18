@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging;
@@ -28,8 +29,11 @@ public sealed class TestHarnessTests : BaseUnitTestCase
             messaging.ConfigureQueue("weather-commands", queue => queue.AddConsumer<RecordWeatherConsumer>());
             messaging.ConfigureQueue("weather-requests", queue => queue.AddRequestConsumer<GetWeatherConsumer>());
             messaging.ConfigureQueue("exploding", queue => queue.AddRequestConsumer<ExplodingConsumer>());
+            messaging.ConfigureQueue("flaky", queue => queue.AddConsumer<FlakyConsumer>(c => c.UseRetry(r => r.Immediate(5))));
+            messaging.ConfigureQueue("always-fails", queue => queue.AddConsumer<AlwaysFailsConsumer>(c => c.UseRetry(r => r.Immediate(3))));
             messaging.UseTestHarness();
         });
+        builder.Services.AddSingleton<RetryProbe>();
         _host = builder.Build();
     }
 
@@ -102,7 +106,7 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task RequestingWithNoConsumerOrResponderReturnsAFailureResult()
+    public async Task RequestingWithNoConsumerOrResponderTimesOut()
     {
         // Arrange
         var request = new ExternalQuery("unhandled");
@@ -112,7 +116,7 @@ public sealed class TestHarnessTests : BaseUnitTestCase
 
         // Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.Code.ShouldBe("Messaging.Request.NoConsumer");
+        result.Error.Code.ShouldBe("Messaging.Request.Timeout");
     }
 
     [Fact]
@@ -202,6 +206,35 @@ public sealed class TestHarnessTests : BaseUnitTestCase
         harness.Consumed<OrderCreated>().ShouldHaveSingleItem().Message.Id.ShouldBe(orderId);
     }
 
+    [Fact]
+    public async Task OneWayConsumerThatKeepsFailingIsRetriedThenPublishesAFaultLeavingThePublishSuccessful()
+    {
+        // Arrange & Act — the consumer always throws, but the publish itself must still complete.
+        await Publisher.PublishAsync(new AlwaysFailsMessage("boom"), CancellationToken);
+
+        // Assert — never successfully consumed; exactly one Fault<T> published carrying the original message.
+        Harness.Consumed<AlwaysFailsMessage>().ShouldBeEmpty();
+        var fault = Harness.Published<Fault<AlwaysFailsMessage>>().ShouldHaveSingleItem();
+        fault.Message.Message.Value.ShouldBe("boom");
+        fault.Message.ExceptionMessage.ShouldContain("always fails");
+    }
+
+    [Fact]
+    public async Task OneWayConsumerIsRetriedWithAnIncrementingRetryCountUntilItSucceeds()
+    {
+        // Arrange — fail on the first two attempts, succeed on the third.
+        var probe = _host.Services.GetRequiredService<RetryProbe>();
+        probe.SucceedOnRetry = 2;
+
+        // Act
+        await Publisher.PublishAsync(new FlakyMessage("ok"), CancellationToken);
+
+        // Assert — three attempts with retry counts 0, 1, 2; consumed once on success; no fault.
+        probe.ObservedRetryCounts.ToArray().ShouldBe([0, 1, 2]);
+        Harness.Consumed<FlakyMessage>().ShouldHaveSingleItem();
+        Harness.Published<Fault<FlakyMessage>>().ShouldBeEmpty();
+    }
+
     private sealed class ThrowingTransport : ITransport
     {
         public Task StartAsync(CancellationToken cancellationToken = default) => throw new NotSupportedException();
@@ -257,5 +290,31 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     {
         public Task<WeatherForecast> ConsumeAsync(IMessageContext<ExplodingRequest> messageContext, CancellationToken cancellationToken = default)
             => throw new InvalidOperationException(messageContext.Message.Value);
+    }
+
+    public sealed record FlakyMessage(string Value);
+    public sealed record AlwaysFailsMessage(string Value);
+
+    public sealed class RetryProbe
+    {
+        public ConcurrentQueue<int> ObservedRetryCounts { get; } = new();
+        public int SucceedOnRetry { get; set; } = int.MaxValue;
+    }
+
+    public sealed class FlakyConsumer(RetryProbe probe) : IConsumer<FlakyMessage>
+    {
+        public Task ConsumeAsync(IMessageContext<FlakyMessage> messageContext, CancellationToken cancellationToken = default)
+        {
+            probe.ObservedRetryCounts.Enqueue(messageContext.RetryCount);
+            return messageContext.RetryCount < probe.SucceedOnRetry
+                ? throw new InvalidOperationException("flaky")
+                : Task.CompletedTask;
+        }
+    }
+
+    public sealed class AlwaysFailsConsumer : IConsumer<AlwaysFailsMessage>
+    {
+        public Task ConsumeAsync(IMessageContext<AlwaysFailsMessage> messageContext, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("always fails: " + messageContext.Message.Value);
     }
 }

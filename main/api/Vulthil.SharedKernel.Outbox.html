@@ -113,6 +113,12 @@ implementation for its provider.</p>
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html">OutboxRetentionOptions</a></dt>
+      <dd><p>Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows
+once they are older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> so the outbox table does not grow unbounded.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.Telemetry.html">Telemetry</a></dt>
       <dd><p>Static class for holding the Telemetry ActivitySource used for all outbox processing operations, enabling consistent correlation of telemetry across the capture, processing, and publishing stages.</p>
 </dd>
@@ -152,6 +158,13 @@ broker publishes/sends) that coexist in one application.</p>
 the relay until its delivery channel is ready — for example, the message-broker sink waits for the transport to
 declare its subscriber topology, so a relayed publish is not lost by being sent before the subscriber queues are
 bound. When no gate is registered the relay starts immediately.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html">IOutboxRetentionStore</a></dt>
+      <dd><p>An <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a> that can purge old terminal (processed or dead-lettered) rows for the retention
+sweep. The EF Core outbox store implements this; the retention background service skips the sweep when the
+registered store does not.</p>
 </dd>
     </dl>
     <dl class="jumplist">

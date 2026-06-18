@@ -104,7 +104,7 @@ scale should supply an SDK-backed store.</p>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class CosmosOutboxStore&lt;TContext&gt; : EntityFrameworkOutboxStore&lt;TContext&gt;, IOutboxStore where TContext : DbContext, ISaveOutboxMessages</code></pre>
+    <pre><code class="lang-csharp hljs">public class CosmosOutboxStore&lt;TContext&gt; : EntityFrameworkOutboxStore&lt;TContext&gt;, IOutboxStore, IOutboxRetentionStore where TContext : DbContext, ISaveOutboxMessages</code></pre>
   </div>
 
 
@@ -129,6 +129,7 @@ scale should supply an SDK-backed store.</p>
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a></div>
+      <div><a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html">IOutboxRetentionStore</a></div>
     </dd>
   </dl>
 
@@ -162,6 +163,9 @@ scale should supply an SDK-backed store.</p>
     </div>
     <div>
       <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, DateTimeOffset, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>

@@ -155,9 +155,9 @@ Class CosmosInboxExtensions  <a class="header-action link-secondary" title="View
 
   <a id="Vulthil_Messaging_Inbox_Cosmos_CosmosInboxExtensions_AddCosmosInbox_" data-uid="Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox*"></a>
 
-  <h3 id="Vulthil_Messaging_Inbox_Cosmos_CosmosInboxExtensions_AddCosmosInbox__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
-  AddCosmosInbox&lt;TContext&gt;(IServiceCollection)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.Cosmos/CosmosInboxExtensions.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_Messaging_Inbox_Cosmos_CosmosInboxExtensions_AddCosmosInbox__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_Messaging_Inbox_InboxOptions__" data-uid="Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})">
+  AddCosmosInbox&lt;TContext&gt;(IServiceCollection, Action&lt;InboxOptions&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.Cosmos/CosmosInboxExtensions.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an <a class="xref" href="Vulthil.Messaging.Inbox.IIdempotencyStore.html">IIdempotencyStore</a> backed by the application's Cosmos <code class="typeparamref">TContext</code>.
@@ -168,13 +168,17 @@ idempotent consumer writes.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IServiceCollection AddCosmosInbox&lt;TContext&gt;(this IServiceCollection services) where TContext : DbContext, ISaveInboxMessages</code></pre>
+    <pre><code class="lang-csharp hljs">public static IServiceCollection AddCosmosInbox&lt;TContext&gt;(this IServiceCollection services, Action&lt;InboxOptions&gt;? configure = null) where TContext : DbContext, ISaveInboxMessages</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>services</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a></dt>
     <dd><p>The service collection.</p>
+</dd>
+    <dt><code>configure</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Inbox.InboxOptions.html">InboxOptions</a>&gt;</dt>
+    <dd><p>An optional action to configure <a class="xref" href="Vulthil.Messaging.Inbox.InboxOptions.html">InboxOptions</a>. Enable <a class="xref" href="Vulthil.Messaging.Inbox.InboxOptions.html#Vulthil_Messaging_Inbox_InboxOptions_Retention">Retention</a> to
+register a background sweep that periodically prunes old idempotency markers.</p>
 </dd>
   </dl>
 

@@ -179,6 +179,49 @@
 <h2 id="observability">Observability</h2>
 <p>The relay emits an <code>ActivitySource</code> named <code>&quot;Vulthil.SharedKernel.Outbox&quot;</code> (exposed as <code>Telemetry.ActivitySourceName</code>). When <code>EnableTracing</code> is on (the default), each relayed message starts an <code>OutboxPublishing</code> span parented on the trace that captured the row — the originating trace is carried forward through the <code>OutboxMessage.TraceParent</code>/<code>TraceState</code> columns stamped at capture — so the relay, which runs later on its own background service, still correlates back to the request that produced the message.</p>
 <p><code>AddOutboxEngine</code> (called by <code>EnableOutboxProcessing</code>) registers the source with OpenTelemetry automatically when <code>EnableTracing</code> is on (the default), so the spans reach whatever tracer the application has configured without extra wiring. If you build a <code>TracerProviderBuilder</code> yourself, the same registration is available as <code>tracing.AddVulthilOutboxInstrumentation()</code> — sugar for <code>AddSource(Telemetry.ActivitySourceName)</code>.</p>
+<h2 id="retention">Retention</h2>
+<p>Processed and dead-lettered rows remain in the <code>OutboxMessages</code> table after relay, so the table grows unbounded unless they are pruned. Opt into a retention sweep — a background service that periodically deletes terminal rows older than a window — by enabling <code>Retention</code> on the outbox options:</p>
+<pre><code class="lang-csharp">.EnableOutboxProcessing(o =&gt;
+{
+    o.Retention.Enabled = true;                          // turn the sweep on
+    o.Retention.RetentionPeriod = TimeSpan.FromDays(7);  // delete processed/dead-lettered rows older than this
+    o.Retention.SweepInterval = TimeSpan.FromHours(1);
+    o.Retention.BatchSize = 1000;
+});
+</code></pre>
+<p><code>AddOutboxEngine</code> (called by <code>EnableOutboxProcessing</code>) registers the sweep only when <code>Retention.Enabled</code> is set, so it costs nothing when off.</p>
+<table>
+<thead>
+<tr>
+<th><code>Retention</code> property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Enabled</code></td>
+<td><code>false</code></td>
+<td>Whether the retention sweep runs</td>
+</tr>
+<tr>
+<td><code>RetentionPeriod</code></td>
+<td>7 days</td>
+<td>How long a processed or dead-lettered row is kept</td>
+</tr>
+<tr>
+<td><code>SweepInterval</code></td>
+<td>1 hour</td>
+<td>Delay between sweeps</td>
+</tr>
+<tr>
+<td><code>BatchSize</code></td>
+<td>1000</td>
+<td>Rows deleted per batch within a sweep</td>
+</tr>
+</tbody>
+</table>
+<p>The sweep deletes rows whose <code>ProcessedOnUtc</code> <strong>or</strong> <code>FailedOnUtc</code> is older than <code>RetentionPeriod</code>; <strong>pending rows are never touched</strong>. It runs through the registered <code>IOutboxStore</code> when it implements <code>IOutboxRetentionStore</code> (the EF Core store does) — relational providers delete set-based with <code>ExecuteDelete</code>, and the <strong>same sweep covers Cosmos</strong> (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).</p>
 <h2 id="custom-outbox-store">Custom Outbox Store</h2>
 <p>The relay engine talks to the database through an EF-free <code>IOutboxStore</code> (in <code>Vulthil.SharedKernel.Outbox</code>). The EF
 implementation lives in <code>Vulthil.SharedKernel.Outbox.EntityFrameworkCore</code> (<code>EntityFrameworkOutboxStore&lt;TContext&gt;</code>),

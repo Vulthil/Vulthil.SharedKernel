@@ -572,6 +572,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.IInboxRetentionStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.IInboxRetentionStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.IInboxRetentionStore",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.IInboxRetentionStore.yml\" sourcestartlinenumber=\"1\">An <xref href=\"Vulthil.Messaging.Inbox.IIdempotencyStore\" data-throw-if-not-resolved=\"false\"></xref> that can purge old idempotency markers for the inbox retention sweep. The EF\nCore idempotency stores implement this; the retention background service skips the sweep when the registered store\ndoes not.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.yml",
       "output": {
         ".html": {
@@ -597,6 +611,34 @@
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Inbox.InboxOptions",
       "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for the idempotent-receiver (inbox) consume filter.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxRetentionOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxRetentionOptions.yml\" sourcestartlinenumber=\"1\">Configuration for the inbox retention sweep, which periodically deletes idempotency markers once they are older\nthan <xref href=\"Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref> so the inbox table does not grow unbounded.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extension that enables the inbox retention sweep.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2686,6 +2728,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.IOutboxRetentionStore",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.yml\" sourcestartlinenumber=\"1\">An <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxStore\" data-throw-if-not-resolved=\"false\"></xref> that can purge old terminal (processed or dead-lettered) rows for the retention\nsweep. The EF Core outbox store implements this; the retention background service skips the sweep when the\nregistered store does not.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxSignal.yml",
       "output": {
         ".html": {
@@ -2795,6 +2851,20 @@
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.OutboxProcessingOptions",
       "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for the outbox background processing service.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxRetentionOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.yml\" sourcestartlinenumber=\"1\">Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows\nonce they are older than <xref href=\"Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref> so the outbox table does not grow unbounded.</p>\n"
     },
     {
       "type": "ManagedReference",

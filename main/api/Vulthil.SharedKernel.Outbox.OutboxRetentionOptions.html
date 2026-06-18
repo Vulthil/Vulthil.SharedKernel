@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class InboxOptions | Vulthil.SharedKernel </title>
+      <title>Class OutboxRetentionOptions | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class InboxOptions | Vulthil.SharedKernel ">
+      <meta name="title" content="Class OutboxRetentionOptions | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Configuration options for the idempotent-receiver (inbox) consume filter.">
+      <meta name="description" content="Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows once they are older than  so the outbox table does not grow unbounded.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Inbox_InboxOptions.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Inbox.InboxOptions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Outbox_OutboxRetentionOptions.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Outbox.OutboxRetentionOptions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,25 +84,26 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.Messaging.Inbox.InboxOptions">
+        <article data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions">
 
 
 
-  <h1 id="Vulthil_Messaging_Inbox_InboxOptions" data-uid="Vulthil.Messaging.Inbox.InboxOptions" class="text-break">
-Class InboxOptions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxOptions.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions" class="text-break">
+Class OutboxRetentionOptions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L9"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.Inbox.html">Inbox</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.Inbox.dll</dd></dl>
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.SharedKernel.html">SharedKernel</a>.<a class="xref" href="Vulthil.SharedKernel.Outbox.html">Outbox</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Outbox.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Configuration options for the idempotent-receiver (inbox) consume filter.</p>
+  <div class="markdown summary"><p>Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows
+once they are older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> so the outbox table does not grow unbounded.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class InboxOptions</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class OutboxRetentionOptions</code></pre>
   </div>
 
 
@@ -112,7 +113,7 @@ Class InboxOptions  <a class="header-action link-secondary" title="View source" 
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><span class="xref">InboxOptions</span></div>
+      <div><span class="xref">OutboxRetentionOptions</span></div>
     </dd>
   </dl>
 
@@ -157,22 +158,53 @@ Class InboxOptions  <a class="header-action link-secondary" title="View source" 
 </h2>
 
 
-  <a id="Vulthil_Messaging_Inbox_InboxOptions_RejectMessagesWithoutKey_" data-uid="Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey*"></a>
+  <a id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_BatchSize_" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize*"></a>
 
-  <h3 id="Vulthil_Messaging_Inbox_InboxOptions_RejectMessagesWithoutKey" data-uid="Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey">
-  RejectMessagesWithoutKey
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxOptions.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_BatchSize" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize">
+  BatchSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether a delivery with no resolvable idempotency key is rejected.
-When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> (the default), such a delivery throws <a class="xref" href="Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.html">MissingIdempotencyKeyException</a>
-so it cannot bypass the guard silently. When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, the delivery is processed without
-deduplication.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the maximum number of rows deleted per batch within a sweep; a sweep keeps deleting batches until
+fewer than this many rows remain. Default is 1000.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RejectMessagesWithoutKey { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[Range(1, 2147483647)]
+public int BatchSize { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled_" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled">
+  Enabled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the retention sweep runs. Default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Enabled { get; set; }</code></pre>
   </div>
 
 
@@ -192,20 +224,20 @@ deduplication.</p>
 
 
 
-  <a id="Vulthil_Messaging_Inbox_InboxOptions_Retention_" data-uid="Vulthil.Messaging.Inbox.InboxOptions.Retention*"></a>
+  <a id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod_" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod*"></a>
 
-  <h3 id="Vulthil_Messaging_Inbox_InboxOptions_Retention" data-uid="Vulthil.Messaging.Inbox.InboxOptions.Retention">
-  Retention
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxOptions.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod">
+  RetentionPeriod
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets the retention sweep configuration. Set <a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_Enabled">Enabled</a> to periodically
-delete idempotency markers older than <a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_RetentionPeriod">RetentionPeriod</a>.</p>
+  <div class="markdown level1 summary"><p>Gets or sets how long a processed or dead-lettered row is kept before it becomes eligible for deletion.
+Default is 7 days.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public InboxRetentionOptions Retention { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public TimeSpan RetentionPeriod { get; set; }</code></pre>
   </div>
 
 
@@ -214,7 +246,39 @@ delete idempotency markers older than <a class="xref" href="Vulthil.Messaging.In
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionOptions.html">InboxRetentionOptions</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_SweepInterval_" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_SweepInterval" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval">
+  SweepInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the delay between retention sweeps. Default is 1 hour.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan SweepInterval { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
     <dd></dd>
   </dl>
 
@@ -229,7 +293,7 @@ delete idempotency markers older than <a class="xref" href="Vulthil.Messaging.In
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxOptions.cs/#L6" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L9" class="edit-link">Edit this page</a>
         </div>
 
 

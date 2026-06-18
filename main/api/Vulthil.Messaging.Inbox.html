@@ -105,6 +105,17 @@ Classes
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionOptions.html">InboxRetentionOptions</a></dt>
+      <dd><p>Configuration for the inbox retention sweep, which periodically deletes idempotency markers once they are older
+than <a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> so the inbox table does not grow unbounded.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.html">InboxRetentionServiceCollectionExtensions</a></dt>
+      <dd><p>Service-collection extension that enables the inbox retention sweep.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.html">MissingIdempotencyKeyException</a></dt>
       <dd><p>Thrown when an idempotency-guarded delivery has no resolvable idempotency key and
 <a class="xref" href="Vulthil.Messaging.Inbox.InboxOptions.html#Vulthil_Messaging_Inbox_InboxOptions_RejectMessagesWithoutKey">RejectMessagesWithoutKey</a> is enabled.</p>
@@ -124,6 +135,13 @@ at-least-once delivery.</p>
       <dt><a class="xref" href="Vulthil.Messaging.Inbox.IInboxKeySelector-1.html">IInboxKeySelector&lt;TMessage&gt;</a></dt>
       <dd><p>Resolves the idempotency key for a delivery of <code class="typeparamref">TMessage</code>. The key must be stable across
 redeliveries (and ideally across producer republishes) of the same logical message.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Inbox.IInboxRetentionStore.html">IInboxRetentionStore</a></dt>
+      <dd><p>An <a class="xref" href="Vulthil.Messaging.Inbox.IIdempotencyStore.html">IIdempotencyStore</a> that can purge old idempotency markers for the inbox retention sweep. The EF
+Core idempotency stores implement this; the retention background service skips the sweep when the registered store
+does not.</p>
 </dd>
     </dl>
 

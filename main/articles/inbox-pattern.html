@@ -143,9 +143,18 @@ package <code>Vulthil.Messaging.Inbox.EntityFrameworkCore</code>, so you impleme
 </code></pre>
 <p>A registered <code>IIdempotencyStore</code> is required at consume time. Reference <code>Vulthil.Messaging.Inbox.Relational</code> for the relational implementation, or implement <code>IIdempotencyStore</code> yourself.</p>
 <h3 id="messages-without-a-key">Messages without a key</h3>
-<p>By default a delivery with no resolvable key is rejected with <code>MissingIdempotencyKeyException</code>, so it cannot silently bypass the guard. To process such messages without deduplication instead:</p>
-<pre><code class="lang-csharp">messaging.ConfigureInbox(options =&gt; options.RejectMessagesWithoutKey = false);
+<p>By default a delivery with no resolvable key is rejected with <code>MissingIdempotencyKeyException</code>, so it cannot silently bypass the guard. To process such messages without deduplication instead, set it on the inbox store registration:</p>
+<pre><code class="lang-csharp">builder.Services.AddRelationalInbox&lt;AppDbContext&gt;(o =&gt; o.RejectMessagesWithoutKey = false);
 </code></pre>
+<h3 id="retention">Retention</h3>
+<p>Markers accumulate — one per processed message — so prune them with an opt-in retention sweep that deletes markers older than a window. Enable it on the inbox store registration:</p>
+<pre><code class="lang-csharp">builder.Services.AddRelationalInbox&lt;AppDbContext&gt;(o =&gt;
+{
+    o.Retention.Enabled = true;                       // turn the sweep on
+    o.Retention.RetentionPeriod = TimeSpan.FromDays(7);
+});
+</code></pre>
+<p>The sweep is registered only when <code>Retention.Enabled</code> is set. Choose <code>RetentionPeriod</code> comfortably longer than the broker's maximum redelivery delay — a marker removed while a duplicate could still arrive would let that duplicate through. The sweep runs through the registered <code>IIdempotencyStore</code> when it implements <code>IInboxRetentionStore</code> (the relational and Cosmos EF Core stores do); the relational store deletes set-based with <code>ExecuteDelete</code>.</p>
 <h3 id="relational-store">Relational store</h3>
 <p>Expose the inbox set on your <code>DbContext</code>, apply the entity configuration, and register the store:</p>
 <pre><code class="lang-csharp">public sealed class AppDbContext(DbContextOptions&lt;AppDbContext&gt; options)

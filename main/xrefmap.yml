@@ -1632,15 +1632,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox
   nameWithType: CosmosInboxExtensions.AddCosmosInbox
-- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name: AddCosmosInbox<TContext>(IServiceCollection)
-  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.html#Vulthil_Messaging_Inbox_Cosmos_CosmosInboxExtensions_AddCosmosInbox__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_
-  commentId: M:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name.vb: AddCosmosInbox(Of TContext)(IServiceCollection)
-  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox<TContext>(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  fullName.vb: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox(Of TContext)(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  nameWithType: CosmosInboxExtensions.AddCosmosInbox<TContext>(IServiceCollection)
-  nameWithType.vb: CosmosInboxExtensions.AddCosmosInbox(Of TContext)(IServiceCollection)
+- uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name: AddCosmosInbox<TContext>(IServiceCollection, Action<InboxOptions>?)
+  href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.html#Vulthil_Messaging_Inbox_Cosmos_CosmosInboxExtensions_AddCosmosInbox__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_Messaging_Inbox_InboxOptions__
+  commentId: M:Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name.vb: AddCosmosInbox(Of TContext)(IServiceCollection, Action(Of InboxOptions))
+  fullName: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox<TContext>(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action<Vulthil.Messaging.Inbox.InboxOptions>?)
+  fullName.vb: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox(Of TContext)(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action(Of Vulthil.Messaging.Inbox.InboxOptions))
+  nameWithType: CosmosInboxExtensions.AddCosmosInbox<TContext>(IServiceCollection, Action<InboxOptions>?)
+  nameWithType.vb: CosmosInboxExtensions.AddCosmosInbox(Of TContext)(IServiceCollection, Action(Of InboxOptions))
 - uid: Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions
   name: CosmosInboxModelBuilderExtensions
   href: api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.html
@@ -1779,6 +1779,28 @@ references:
   fullName.vb: Vulthil.Messaging.Inbox.IInboxKeySelector(Of TMessage).GetKey
   nameWithType: IInboxKeySelector<TMessage>.GetKey
   nameWithType.vb: IInboxKeySelector(Of TMessage).GetKey
+- uid: Vulthil.Messaging.Inbox.IInboxRetentionStore
+  name: IInboxRetentionStore
+  href: api/Vulthil.Messaging.Inbox.IInboxRetentionStore.html
+  commentId: T:Vulthil.Messaging.Inbox.IInboxRetentionStore
+  fullName: Vulthil.Messaging.Inbox.IInboxRetentionStore
+  nameWithType: IInboxRetentionStore
+- uid: Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  href: api/Vulthil.Messaging.Inbox.IInboxRetentionStore.html#Vulthil_Messaging_Inbox_IInboxRetentionStore_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name.vb: DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+  fullName: Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, Integer, System.Threading.CancellationToken)
+  nameWithType: IInboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  nameWithType.vb: IInboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+- uid: Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync*
+  name: DeleteProcessedAsync
+  href: api/Vulthil.Messaging.Inbox.IInboxRetentionStore.html#Vulthil_Messaging_Inbox_IInboxRetentionStore_DeleteProcessedAsync_
+  commentId: Overload:Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync
+  nameWithType: IInboxRetentionStore.DeleteProcessedAsync
 - uid: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions
   name: InboxConfiguratorExtensions
   href: api/Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.html
@@ -1801,22 +1823,6 @@ references:
   fullName.vb: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.AddIdempotentInbox(Of TMessage)(Vulthil.Messaging.IMessagingConfigurator, System.Func(Of Vulthil.Messaging.Abstractions.Consumers.IMessageContext(Of TMessage), String))
   nameWithType: InboxConfiguratorExtensions.AddIdempotentInbox<TMessage>(IMessagingConfigurator, Func<IMessageContext<TMessage>, string?>?)
   nameWithType.vb: InboxConfiguratorExtensions.AddIdempotentInbox(Of TMessage)(IMessagingConfigurator, Func(Of IMessageContext(Of TMessage), String))
-- uid: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox(Vulthil.Messaging.IMessagingConfigurator,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
-  name: ConfigureInbox(IMessagingConfigurator, Action<InboxOptions>)
-  href: api/Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.html#Vulthil_Messaging_Inbox_InboxConfiguratorExtensions_ConfigureInbox_Vulthil_Messaging_IMessagingConfigurator_System_Action_Vulthil_Messaging_Inbox_InboxOptions__
-  commentId: M:Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox(Vulthil.Messaging.IMessagingConfigurator,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
-  name.vb: ConfigureInbox(IMessagingConfigurator, Action(Of InboxOptions))
-  fullName: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox(Vulthil.Messaging.IMessagingConfigurator, System.Action<Vulthil.Messaging.Inbox.InboxOptions>)
-  fullName.vb: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox(Vulthil.Messaging.IMessagingConfigurator, System.Action(Of Vulthil.Messaging.Inbox.InboxOptions))
-  nameWithType: InboxConfiguratorExtensions.ConfigureInbox(IMessagingConfigurator, Action<InboxOptions>)
-  nameWithType.vb: InboxConfiguratorExtensions.ConfigureInbox(IMessagingConfigurator, Action(Of InboxOptions))
-- uid: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox*
-  name: ConfigureInbox
-  href: api/Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.html#Vulthil_Messaging_Inbox_InboxConfiguratorExtensions_ConfigureInbox_
-  commentId: Overload:Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox
-  isSpec: "True"
-  fullName: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.ConfigureInbox
-  nameWithType: InboxConfiguratorExtensions.ConfigureInbox
 - uid: Vulthil.Messaging.Inbox.InboxOptions
   name: InboxOptions
   href: api/Vulthil.Messaging.Inbox.InboxOptions.html
@@ -1836,6 +1842,99 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey
   nameWithType: InboxOptions.RejectMessagesWithoutKey
+- uid: Vulthil.Messaging.Inbox.InboxOptions.Retention
+  name: Retention
+  href: api/Vulthil.Messaging.Inbox.InboxOptions.html#Vulthil_Messaging_Inbox_InboxOptions_Retention
+  commentId: P:Vulthil.Messaging.Inbox.InboxOptions.Retention
+  fullName: Vulthil.Messaging.Inbox.InboxOptions.Retention
+  nameWithType: InboxOptions.Retention
+- uid: Vulthil.Messaging.Inbox.InboxOptions.Retention*
+  name: Retention
+  href: api/Vulthil.Messaging.Inbox.InboxOptions.html#Vulthil_Messaging_Inbox_InboxOptions_Retention_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxOptions.Retention
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxOptions.Retention
+  nameWithType: InboxOptions.Retention
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions
+  name: InboxRetentionOptions
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html
+  commentId: T:Vulthil.Messaging.Inbox.InboxRetentionOptions
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions
+  nameWithType: InboxRetentionOptions
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize
+  name: BatchSize
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_BatchSize
+  commentId: P:Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize
+  nameWithType: InboxRetentionOptions.BatchSize
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize*
+  name: BatchSize
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_BatchSize_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize
+  nameWithType: InboxRetentionOptions.BatchSize
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled
+  name: Enabled
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_Enabled
+  commentId: P:Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled
+  nameWithType: InboxRetentionOptions.Enabled
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled*
+  name: Enabled
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_Enabled_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled
+  nameWithType: InboxRetentionOptions.Enabled
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod
+  name: RetentionPeriod
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_RetentionPeriod
+  commentId: P:Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod
+  nameWithType: InboxRetentionOptions.RetentionPeriod
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod*
+  name: RetentionPeriod
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_RetentionPeriod_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod
+  nameWithType: InboxRetentionOptions.RetentionPeriod
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval
+  name: SweepInterval
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_SweepInterval
+  commentId: P:Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval
+  nameWithType: InboxRetentionOptions.SweepInterval
+- uid: Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval*
+  name: SweepInterval
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_SweepInterval_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval
+  nameWithType: InboxRetentionOptions.SweepInterval
+- uid: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions
+  name: InboxRetentionServiceCollectionExtensions
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.html
+  commentId: T:Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions
+  nameWithType: InboxRetentionServiceCollectionExtensions
+- uid: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name: AddInboxRetention(IServiceCollection, Action<InboxOptions>?)
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.html#Vulthil_Messaging_Inbox_InboxRetentionServiceCollectionExtensions_AddInboxRetention_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_Messaging_Inbox_InboxOptions__
+  commentId: M:Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name.vb: AddInboxRetention(IServiceCollection, Action(Of InboxOptions))
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action<Vulthil.Messaging.Inbox.InboxOptions>?)
+  fullName.vb: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action(Of Vulthil.Messaging.Inbox.InboxOptions))
+  nameWithType: InboxRetentionServiceCollectionExtensions.AddInboxRetention(IServiceCollection, Action<InboxOptions>?)
+  nameWithType.vb: InboxRetentionServiceCollectionExtensions.AddInboxRetention(IServiceCollection, Action(Of InboxOptions))
+- uid: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention*
+  name: AddInboxRetention
+  href: api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.html#Vulthil_Messaging_Inbox_InboxRetentionServiceCollectionExtensions_AddInboxRetention_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention
+  nameWithType: InboxRetentionServiceCollectionExtensions.AddInboxRetention
 - uid: Vulthil.Messaging.Inbox.MissingIdempotencyKeyException
   name: MissingIdempotencyKeyException
   href: api/Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.html
@@ -1920,15 +2019,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox
   nameWithType: RelationalInboxExtensions.AddRelationalInbox
-- uid: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name: AddRelationalInbox<TContext>(IServiceCollection)
-  href: api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.html#Vulthil_Messaging_Inbox_Relational_RelationalInboxExtensions_AddRelationalInbox__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_
-  commentId: M:Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name.vb: AddRelationalInbox(Of TContext)(IServiceCollection)
-  fullName: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox<TContext>(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  fullName.vb: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox(Of TContext)(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  nameWithType: RelationalInboxExtensions.AddRelationalInbox<TContext>(IServiceCollection)
-  nameWithType.vb: RelationalInboxExtensions.AddRelationalInbox(Of TContext)(IServiceCollection)
+- uid: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name: AddRelationalInbox<TContext>(IServiceCollection, Action<InboxOptions>?)
+  href: api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.html#Vulthil_Messaging_Inbox_Relational_RelationalInboxExtensions_AddRelationalInbox__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_Messaging_Inbox_InboxOptions__
+  commentId: M:Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name.vb: AddRelationalInbox(Of TContext)(IServiceCollection, Action(Of InboxOptions))
+  fullName: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox<TContext>(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action<Vulthil.Messaging.Inbox.InboxOptions>?)
+  fullName.vb: Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox(Of TContext)(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action(Of Vulthil.Messaging.Inbox.InboxOptions))
+  nameWithType: RelationalInboxExtensions.AddRelationalInbox<TContext>(IServiceCollection, Action<InboxOptions>?)
+  nameWithType.vb: RelationalInboxExtensions.AddRelationalInbox(Of TContext)(IServiceCollection, Action(Of InboxOptions))
 - uid: Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions
   name: RelationalInboxModelBuilderExtensions
   href: api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html
@@ -8929,6 +9028,24 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).New
   nameWithType: RelationalOutboxStore<TContext>.RelationalOutboxStore
   nameWithType.vb: RelationalOutboxStore(Of TContext).New
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name.vb: DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.DeleteProcessedAsync(System.DateTimeOffset, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).DeleteProcessedAsync(System.DateTimeOffset, Integer, System.Threading.CancellationToken)
+  nameWithType: RelationalOutboxStore<TContext>.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  nameWithType.vb: RelationalOutboxStore(Of TContext).DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync*
+  name: DeleteProcessedAsync
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.DeleteProcessedAsync
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).DeleteProcessedAsync
+  nameWithType: RelationalOutboxStore<TContext>.DeleteProcessedAsync
+  nameWithType.vb: RelationalOutboxStore(Of TContext).DeleteProcessedAsync
 - uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.DateTimeOffset,System.Threading.CancellationToken)
   name: UpdateMessagesAsync(IReadOnlyList<Guid>, IReadOnlyList<OutboxMessageFailure>, int, DateTimeOffset, CancellationToken)
   href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_
@@ -9182,6 +9299,24 @@ references:
   fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).DbContext
   nameWithType: EntityFrameworkOutboxStore<TContext>.DbContext
   nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).DbContext
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name.vb: DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync(System.DateTimeOffset, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync(System.DateTimeOffset, Integer, System.Threading.CancellationToken)
+  nameWithType: EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync*
+  name: DeleteProcessedAsync
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync
+  nameWithType: EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync
 - uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.FetchMessagesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)
   name: FetchMessagesAsync(int, int, CancellationToken)
   href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_
@@ -9425,6 +9560,28 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayGate.WaitUntilReadyAsync
   nameWithType: IOutboxRelayGate.WaitUntilReadyAsync
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
+  name: IOutboxRetentionStore
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html
+  commentId: T:Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
+  nameWithType: IOutboxRetentionStore
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html#Vulthil_SharedKernel_Outbox_IOutboxRetentionStore_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name.vb: DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, Integer, System.Threading.CancellationToken)
+  nameWithType: IOutboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
+  nameWithType.vb: IOutboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync*
+  name: DeleteProcessedAsync
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html#Vulthil_SharedKernel_Outbox_IOutboxRetentionStore_DeleteProcessedAsync_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync
+  nameWithType: IOutboxRetentionStore.DeleteProcessedAsync
 - uid: Vulthil.SharedKernel.Outbox.IOutboxSignal
   name: IOutboxSignal
   href: api/Vulthil.SharedKernel.Outbox.IOutboxSignal.html
@@ -10003,6 +10160,77 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds
   nameWithType: OutboxProcessingOptions.OutboxProcessingDelayInSeconds
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention
+  name: Retention
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_Retention
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention
+  nameWithType: OutboxProcessingOptions.Retention
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention*
+  name: Retention
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_Retention_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention
+  nameWithType: OutboxProcessingOptions.Retention
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions
+  name: OutboxRetentionOptions
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html
+  commentId: T:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions
+  nameWithType: OutboxRetentionOptions
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize
+  name: BatchSize
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_BatchSize
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize
+  nameWithType: OutboxRetentionOptions.BatchSize
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize*
+  name: BatchSize
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_BatchSize_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize
+  nameWithType: OutboxRetentionOptions.BatchSize
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled
+  name: Enabled
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled
+  nameWithType: OutboxRetentionOptions.Enabled
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled*
+  name: Enabled
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled
+  nameWithType: OutboxRetentionOptions.Enabled
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod
+  name: RetentionPeriod
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod
+  nameWithType: OutboxRetentionOptions.RetentionPeriod
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod*
+  name: RetentionPeriod
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod
+  nameWithType: OutboxRetentionOptions.RetentionPeriod
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval
+  name: SweepInterval
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_SweepInterval
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval
+  nameWithType: OutboxRetentionOptions.SweepInterval
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval*
+  name: SweepInterval
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_SweepInterval_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval
+  nameWithType: OutboxRetentionOptions.SweepInterval
 - uid: Vulthil.SharedKernel.Outbox.Telemetry
   name: Telemetry
   href: api/Vulthil.SharedKernel.Outbox.Telemetry.html

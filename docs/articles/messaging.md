@@ -413,6 +413,12 @@ execution modes:
 On exhaustion the message is dead-lettered (when a dead-letter queue is configured) in both
 modes.
 
+> **Head-of-line caveat (delayed re-delivery):** the delayed retry uses one shared retry queue with a
+> per-message TTL, and RabbitMQ expires messages only from the *head* of a queue. With variable or jittered
+> back-off intervals, a long-delay message at the head holds back shorter-delayed messages queued behind it.
+> For predictable timing, use a single fixed interval (uniform TTL) or in-memory retry (`r.InMemory()`), which
+> holds the delivery in-process and is unaffected.
+
 ## Faults
 
 When a consumed message fails terminally — every retry exhausted — a `Fault<T>` is published

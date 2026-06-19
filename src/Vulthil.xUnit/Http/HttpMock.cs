@@ -50,7 +50,7 @@ public sealed class HttpMock : IHttpMock
     }
 
     /// <inheritdoc />
-    public ValueTask ResetAsync()
+    public ValueTask ResetAsync(IServiceProvider serviceProvider)
     {
         lock (_gate)
         {

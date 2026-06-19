@@ -46,9 +46,10 @@ internal class TestContainerScope<TContainer>(TContainer container) : ITestConta
     /// Forwards the reset to the underlying container when it is resettable; otherwise does nothing. Note that a
     /// forwarded reset acts on shared state and therefore also affects other test classes using the container.
     /// </summary>
+    /// <param name="serviceProvider">The application's root service provider, forwarded to the underlying container.</param>
     /// <returns>A task representing the asynchronous reset work.</returns>
-    public virtual ValueTask ResetAsync() =>
-        Container is IResettableResource resettable ? resettable.ResetAsync() : ValueTask.CompletedTask;
+    public virtual ValueTask ResetAsync(IServiceProvider serviceProvider) =>
+        Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
 }
 
 /// <summary>

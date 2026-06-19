@@ -76,6 +76,8 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         .OfType<IResettableResource>()
         .Concat(_httpMocks.Values);
 
+    private IEnumerable<IStartupResource> StartupResources => _containers.OfType<IStartupResource>();
+
     /// <summary>
     /// Registers a test container to be managed by this factory.
     /// </summary>
@@ -278,8 +280,12 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         await Parallel.ForEachAsync(_containers, (container, ct) => container.DisposeAsync());
     }
 
-    Task ITestHostMigrator.MigrateDatabases(IServiceProvider serviceProvider) =>
-        Parallel.ForEachAsync(DatabaseContainers, (x, ct) => x.MigrateDatabase(serviceProvider));
+    async Task ITestHostMigrator.PrepareAsync(IServiceProvider serviceProvider)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        await Parallel.ForEachAsync(DatabaseContainers, (container, ct) => container.MigrateDatabase(scope.ServiceProvider));
+        await Parallel.ForEachAsync(StartupResources, (resource, ct) => resource.InitializeAsync(serviceProvider));
+    }
 
     internal async Task ResetAsync()
     {
@@ -293,7 +299,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
         try
         {
-            await Parallel.ForEachAsync(ResettableResources, (resource, ct) => resource.ResetAsync());
+            await ResetResourcesAsync(Services);
         }
         finally
         {
@@ -304,11 +310,14 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             }
         }
     }
+
+    private Task ResetResourcesAsync(IServiceProvider serviceProvider) =>
+        Parallel.ForEachAsync(ResettableResources, (resource, ct) => resource.ResetAsync(serviceProvider));
 }
 
 internal interface ITestHostMigrator
 {
-    Task MigrateDatabases(IServiceProvider serviceProvider);
+    Task PrepareAsync(IServiceProvider serviceProvider);
 }
 
 internal sealed class TestMigrationHostedService(ITestHostMigrator migrator, IServiceProvider serviceProvider) : IHostedService
@@ -323,9 +332,7 @@ internal sealed class TestMigrationHostedService(ITestHostMigrator migrator, ISe
             return;
         }
 
-        await using var scope = serviceProvider.CreateAsyncScope();
-
-        await migrator.MigrateDatabases(scope.ServiceProvider);
+        await migrator.PrepareAsync(serviceProvider);
         _completed = true;
     }
 

@@ -4,6 +4,7 @@ using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using Testcontainers.Xunit;
@@ -42,15 +43,37 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     }
 
     /// <inheritdoc />
-    public virtual void ConfigureServices(IServiceCollection services)
+    /// <remarks>
+    /// The base implementation decorates the application's <see cref="DbContextOptions{TContext}"/> registration to
+    /// ignore <see cref="CoreEventId.ManyServiceProvidersCreatedWarning"/>. With shared containers every test class
+    /// fixture (and every per-test <c>WithWebHostBuilder</c> clone) builds its own host, and therefore its own EF Core
+    /// internal service provider, so large suites trip that warning even though each host is correct. Overrides should
+    /// call <see langword="base"/> to preserve this behavior.
+    /// </remarks>
+    public virtual void ConfigureServices(IServiceCollection services) => IgnoreManyServiceProvidersWarning(services);
+
+    private static void IgnoreManyServiceProvidersWarning(IServiceCollection services)
     {
+        var optionsDescriptor = services.LastOrDefault(service => service.ServiceType == typeof(DbContextOptions<TDbContext>));
+        if (optionsDescriptor?.ImplementationFactory is not { } originalFactory)
+        {
+            return;
+        }
+
+        services.Remove(optionsDescriptor);
+        services.Add(new ServiceDescriptor(
+            optionsDescriptor.ServiceType,
+            serviceProvider => new DbContextOptionsBuilder<TDbContext>((DbContextOptions<TDbContext>)originalFactory(serviceProvider))
+                .ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning))
+                .Options,
+            optionsDescriptor.Lifetime));
     }
 
     /// <inheritdoc />
     public ValueTask MigrateDatabase(IServiceProvider serviceProvider) => DefaultScope.MigrateDatabase(serviceProvider);
 
     /// <inheritdoc />
-    public ValueTask ResetAsync() => DefaultScope.ResetAsync();
+    public ValueTask ResetAsync(IServiceProvider serviceProvider) => DefaultScope.ResetAsync(serviceProvider);
 
     /// <summary>
     /// Creates a scope view backed by its own database on this server, named after <paramref name="scopeId"/>. The
@@ -233,7 +256,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 $"Pending migrations for '{typeof(TDbContext).Name}' did not complete after {MaxMigrationAttempts} attempts.");
         }
 
-        public async ValueTask ResetAsync()
+        public async ValueTask ResetAsync(IServiceProvider serviceProvider)
         {
             if (!_hasBeenMigrated)
             {

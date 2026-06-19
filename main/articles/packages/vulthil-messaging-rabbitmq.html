@@ -130,6 +130,12 @@
   }
 }
 </code></pre>
+<h3 id="effective-concurrency">Effective concurrency</h3>
+<p>The three queue knobs combine: the broker keeps up to <strong><code>ChannelCount × PrefetchCount</code></strong> messages in flight for
+the queue, and up to <strong><code>ChannelCount × ConcurrencyLimit</code></strong> consumer handlers run in parallel (each channel
+dispatches <code>ConcurrencyLimit</code> callbacks concurrently; <code>PrefetchCount</code> is the unacked-message window per channel).
+A partitioned queue is forced to a single channel with ordered dispatch — parallelism then comes from the
+partition lanes (one sequential lane per key), bounded by <code>PrefetchCount</code>.</p>
 <h3 id="transport-options">Transport options</h3>
 <p>Transport tuning binds from the <code>Messaging:RabbitMq</code> section and can be overridden in
 code (code takes precedence). The publisher pools channels for concurrent publishing —
@@ -148,6 +154,11 @@ each leased channel awaits its own publisher confirm — so <code>PublishChannel
     options.PublishChannelPoolSize = 32;
 });
 </code></pre>
+<h3 id="connection-recovery">Connection recovery</h3>
+<p>Connection and channel recovery is handled by <code>RabbitMQ.Client</code> (automatic + topology recovery, on by default
+via the Aspire client), so a dropped connection re-establishes along with its queues, consumers, and the
+request/reply listener's reply queue. A request in flight <em>during</em> a disconnect can still time out — its reply is
+lost with the connection — and is retried by your own policy, not the transport.</p>
 <h3 id="tracing-and-health-checks">Tracing and health checks</h3>
 <p><code>UseRabbitMq</code> registers an OpenTelemetry <code>ActivitySource</code>
 (<code>&quot;Vulthil.Messaging.RabbitMq&quot;</code>) and a startup health check

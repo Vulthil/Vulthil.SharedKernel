@@ -443,6 +443,13 @@ use in-memory retry <strong>automatically</strong>, since ordering requires it.<
 </ul>
 <p>On exhaustion the message is dead-lettered (when a dead-letter queue is configured) in both
 modes.</p>
+<blockquote>
+<p><strong>Head-of-line caveat (delayed re-delivery):</strong> the delayed retry uses one shared retry queue with a
+per-message TTL, and RabbitMQ expires messages only from the <em>head</em> of a queue. With variable or jittered
+back-off intervals, a long-delay message at the head holds back shorter-delayed messages queued behind it.
+For predictable timing, use a single fixed interval (uniform TTL) or in-memory retry (<code>r.InMemory()</code>), which
+holds the delivery in-process and is unaffected.</p>
+</blockquote>
 <h2 id="faults">Faults</h2>
 <p>When a consumed message fails terminally — every retry exhausted — a <code>Fault&lt;T&gt;</code> is published
 <strong>by convention</strong> to a shared topic exchange (default <code>Fault.Exchange</code>, configurable via

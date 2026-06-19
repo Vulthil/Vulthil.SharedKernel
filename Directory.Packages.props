@@ -70,4 +70,11 @@
     <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
   </ItemGroup>
+  <!-- GHSA-2m69-gcr7-jv3q: high-severity advisory on the native SQLitePCLRaw.lib.e_sqlite3, pulled transitively by
+       Microsoft.EntityFrameworkCore.Sqlite — referenced only by the relational in-memory test projects, so the
+       vulnerable native library never ships in a packaged library. Suppressed as a documented stopgap; remove once a
+       patched SQLitePCLRaw flows through EF Core's pinned version. -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-2m69-gcr7-jv3q" />
+  </ItemGroup>
 </Project>

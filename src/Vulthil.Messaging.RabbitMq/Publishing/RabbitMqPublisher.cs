@@ -54,7 +54,7 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         }
         catch
         {
-            await _channelPool.DiscardAsync(channel);
+            await ReturnOrDiscardAsync(channel);
             throw;
         }
     }
@@ -78,7 +78,7 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         }
         catch
         {
-            await _channelPool.DiscardAsync(channel);
+            await ReturnOrDiscardAsync(channel);
             throw;
         }
     }
@@ -176,5 +176,22 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
 
         _knownExchanges.TryAdd(exchange, true);
         MessagingLog.ExchangeDeclared(_logger, exchange, messageConfiguration.ExchangeType);
+    }
+
+    /// <summary>
+    /// Returns a channel to the pool when it is still open and discards it only when a genuine fault has closed it.
+    /// A returned (unroutable mandatory send) or nacked publish surfaces as an exception but leaves the channel
+    /// healthy, so discarding it would churn the pool on every unroutable message; a closed channel is faulted and
+    /// must not be reused.
+    /// </summary>
+    private ValueTask ReturnOrDiscardAsync(IChannel channel)
+    {
+        if (channel.IsOpen)
+        {
+            _channelPool.Return(channel);
+            return ValueTask.CompletedTask;
+        }
+
+        return _channelPool.DiscardAsync(channel);
     }
 }

@@ -52,6 +52,14 @@ Queue settings can be bound from `appsettings.json` under `Messaging:Queues:{nam
 }
 ```
 
+### Effective concurrency
+
+The three queue knobs combine: the broker keeps up to **`ChannelCount × PrefetchCount`** messages in flight for
+the queue, and up to **`ChannelCount × ConcurrencyLimit`** consumer handlers run in parallel (each channel
+dispatches `ConcurrencyLimit` callbacks concurrently; `PrefetchCount` is the unacked-message window per channel).
+A partitioned queue is forced to a single channel with ordered dispatch — parallelism then comes from the
+partition lanes (one sequential lane per key), bounded by `PrefetchCount`.
+
 ### Transport options
 
 Transport tuning binds from the `Messaging:RabbitMq` section and can be overridden in
@@ -75,6 +83,13 @@ messaging.UseRabbitMq(configureTransport: options =>
     options.PublishChannelPoolSize = 32;
 });
 ```
+
+### Connection recovery
+
+Connection and channel recovery is handled by `RabbitMQ.Client` (automatic + topology recovery, on by default
+via the Aspire client), so a dropped connection re-establishes along with its queues, consumers, and the
+request/reply listener's reply queue. A request in flight *during* a disconnect can still time out — its reply is
+lost with the connection — and is retried by your own policy, not the transport.
 
 ### Tracing and health checks
 

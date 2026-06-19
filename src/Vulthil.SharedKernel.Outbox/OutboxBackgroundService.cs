@@ -16,7 +16,10 @@ internal sealed class OutboxBackgroundService(
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await WaitForRelayGatesAsync(stoppingToken);
+        if (!await TryWaitForRelayGatesAsync(stoppingToken))
+        {
+            return;
+        }
 
         int baseDelayMs = options.Value.OutboxProcessingDelayInSeconds * 1000;
         int maxDelayMs = options.Value.MaxDelaySeconds * 1000;
@@ -57,7 +60,11 @@ internal sealed class OutboxBackgroundService(
         }
     }
 
-    private async Task WaitForRelayGatesAsync(CancellationToken stoppingToken)
+    /// <summary>
+    /// Waits for every relay gate to open. Returns <see langword="false"/> if the service is stopped while waiting, so
+    /// the caller exits cleanly instead of letting the cancellation fault the background service and stop the host.
+    /// </summary>
+    private async Task<bool> TryWaitForRelayGatesAsync(CancellationToken stoppingToken)
     {
         foreach (var gate in relayGates)
         {
@@ -67,12 +74,14 @@ internal sealed class OutboxBackgroundService(
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
-                throw;
+                return false;
             }
             catch (Exception ex)
             {
                 logger.LogWarning(ex, "Outbox relay readiness gate {Gate} failed; starting the relay anyway", gate.GetType().Name);
             }
         }
+
+        return true;
     }
 }

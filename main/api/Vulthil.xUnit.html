@@ -124,6 +124,14 @@ Interfaces
 reset via Respawn, or an HTTP mock whose configured responses and captured requests are cleared.</p>
 </dd>
     </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.xUnit.IStartupResource.html">IStartupResource</a></dt>
+      <dd><p>A test resource that performs one-time setup during host startup using the application's services — for
+example a Cosmos store creating its database and containers through the registered <code>DbContext</code>. Invoked once,
+after database migrations and before the application's background services, so the resource is ready before the
+first test runs.</p>
+</dd>
+    </dl>
 
 
 </article>

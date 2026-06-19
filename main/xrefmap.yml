@@ -11395,6 +11395,14 @@ references:
   fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).InitializeAsync()
   nameWithType: CosmosTestContainerFixture<TDbContext>.InitializeAsync()
   nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).InitializeAsync()
+- uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.InitializeAsync(System.IServiceProvider)
+  name: InitializeAsync(IServiceProvider)
+  href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_InitializeAsync_System_IServiceProvider_
+  commentId: M:Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.InitializeAsync(System.IServiceProvider)
+  fullName: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.InitializeAsync(System.IServiceProvider)
+  fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).InitializeAsync(System.IServiceProvider)
+  nameWithType: CosmosTestContainerFixture<TDbContext>.InitializeAsync(IServiceProvider)
+  nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).InitializeAsync(IServiceProvider)
 - uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.InitializeAsync*
   name: InitializeAsync
   href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_InitializeAsync_
@@ -11404,14 +11412,14 @@ references:
   fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).InitializeAsync
   nameWithType: CosmosTestContainerFixture<TDbContext>.InitializeAsync
   nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).InitializeAsync
-- uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ResetAsync
-  name: ResetAsync()
-  href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_ResetAsync
-  commentId: M:Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ResetAsync
-  fullName: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.ResetAsync()
-  fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).ResetAsync()
-  nameWithType: CosmosTestContainerFixture<TDbContext>.ResetAsync()
-  nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).ResetAsync()
+- uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ResetAsync(System.IServiceProvider)
+  name: ResetAsync(IServiceProvider)
+  href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_ResetAsync_System_IServiceProvider_
+  commentId: M:Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ResetAsync(System.IServiceProvider)
+  fullName: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.ResetAsync(System.IServiceProvider)
+  fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).ResetAsync(System.IServiceProvider)
+  nameWithType: CosmosTestContainerFixture<TDbContext>.ResetAsync(IServiceProvider)
+  nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).ResetAsync(IServiceProvider)
 - uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ResetAsync*
   name: ResetAsync
   href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_ResetAsync_
@@ -12092,14 +12100,14 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).MigrateDatabase
   nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.MigrateDatabase
   nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).MigrateDatabase
-- uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync
-  name: ResetAsync()
-  href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ResetAsync
-  commentId: M:Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync
-  fullName: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync()
-  fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).ResetAsync()
-  nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync()
-  nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).ResetAsync()
+- uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync(System.IServiceProvider)
+  name: ResetAsync(IServiceProvider)
+  href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ResetAsync_System_IServiceProvider_
+  commentId: M:Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync(System.IServiceProvider)
+  fullName: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync(System.IServiceProvider)
+  fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).ResetAsync(System.IServiceProvider)
+  nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync(IServiceProvider)
+  nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).ResetAsync(IServiceProvider)
 - uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync*
   name: ResetAsync
   href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ResetAsync_
@@ -12241,12 +12249,12 @@ references:
   isSpec: "True"
   fullName: Vulthil.xUnit.Http.HttpMock.ReceivedRequests
   nameWithType: HttpMock.ReceivedRequests
-- uid: Vulthil.xUnit.Http.HttpMock.ResetAsync
-  name: ResetAsync()
-  href: api/Vulthil.xUnit.Http.HttpMock.html#Vulthil_xUnit_Http_HttpMock_ResetAsync
-  commentId: M:Vulthil.xUnit.Http.HttpMock.ResetAsync
-  fullName: Vulthil.xUnit.Http.HttpMock.ResetAsync()
-  nameWithType: HttpMock.ResetAsync()
+- uid: Vulthil.xUnit.Http.HttpMock.ResetAsync(System.IServiceProvider)
+  name: ResetAsync(IServiceProvider)
+  href: api/Vulthil.xUnit.Http.HttpMock.html#Vulthil_xUnit_Http_HttpMock_ResetAsync_System_IServiceProvider_
+  commentId: M:Vulthil.xUnit.Http.HttpMock.ResetAsync(System.IServiceProvider)
+  fullName: Vulthil.xUnit.Http.HttpMock.ResetAsync(System.IServiceProvider)
+  nameWithType: HttpMock.ResetAsync(IServiceProvider)
 - uid: Vulthil.xUnit.Http.HttpMock.ResetAsync*
   name: ResetAsync
   href: api/Vulthil.xUnit.Http.HttpMock.html#Vulthil_xUnit_Http_HttpMock_ResetAsync_
@@ -12373,12 +12381,12 @@ references:
   commentId: T:Vulthil.xUnit.IResettableResource
   fullName: Vulthil.xUnit.IResettableResource
   nameWithType: IResettableResource
-- uid: Vulthil.xUnit.IResettableResource.ResetAsync
-  name: ResetAsync()
-  href: api/Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync
-  commentId: M:Vulthil.xUnit.IResettableResource.ResetAsync
-  fullName: Vulthil.xUnit.IResettableResource.ResetAsync()
-  nameWithType: IResettableResource.ResetAsync()
+- uid: Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)
+  name: ResetAsync(IServiceProvider)
+  href: api/Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_
+  commentId: M:Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)
+  fullName: Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)
+  nameWithType: IResettableResource.ResetAsync(IServiceProvider)
 - uid: Vulthil.xUnit.IResettableResource.ResetAsync*
   name: ResetAsync
   href: api/Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_
@@ -12386,3 +12394,22 @@ references:
   isSpec: "True"
   fullName: Vulthil.xUnit.IResettableResource.ResetAsync
   nameWithType: IResettableResource.ResetAsync
+- uid: Vulthil.xUnit.IStartupResource
+  name: IStartupResource
+  href: api/Vulthil.xUnit.IStartupResource.html
+  commentId: T:Vulthil.xUnit.IStartupResource
+  fullName: Vulthil.xUnit.IStartupResource
+  nameWithType: IStartupResource
+- uid: Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider)
+  name: InitializeAsync(IServiceProvider)
+  href: api/Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_System_IServiceProvider_
+  commentId: M:Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider)
+  fullName: Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider)
+  nameWithType: IStartupResource.InitializeAsync(IServiceProvider)
+- uid: Vulthil.xUnit.IStartupResource.InitializeAsync*
+  name: InitializeAsync
+  href: api/Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_
+  commentId: Overload:Vulthil.xUnit.IStartupResource.InitializeAsync
+  isSpec: "True"
+  fullName: Vulthil.xUnit.IStartupResource.InitializeAsync
+  nameWithType: IStartupResource.InitializeAsync

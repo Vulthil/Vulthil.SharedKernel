@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3" class="text-break">
-Class TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L19"><i class="bi bi-code-slash"></i></a>
+Class TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -232,7 +232,7 @@ uniquely named database on the shared server, so parallel test classes never see
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3__ctor_Xunit_Sdk_IMessageSink_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor(Xunit.Sdk.IMessageSink)">
   TestDatabaseContainerFixture(IMessageSink)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Fixture that wraps a database container, applies EF Core migrations, and supports Respawn-based data resets between
@@ -270,7 +270,7 @@ uniquely named database on the shared server, so parallel test classes never see
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ConnectionStringKey" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ConnectionStringKey">
   ConnectionStringKey
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the configuration key name where the connection string should be injected.</p>
@@ -302,7 +302,7 @@ uniquely named database on the shared server, so parallel test classes never see
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_DbAdapter" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.DbAdapter">
   DbAdapter
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the Respawn database adapter matching the container's database engine.</p>
@@ -338,7 +338,7 @@ uniquely named database on the shared server, so parallel test classes never see
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_BuildScopedConnectionString_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.BuildScopedConnectionString(System.String)">
   BuildScopedConnectionString(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds a connection string pointing at <code class="paramref">databaseName</code> on this server by rewriting the
@@ -378,7 +378,7 @@ container's default connection string. Override when the provider does not use t
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ConfigureServices_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
   ConfigureServices(IServiceCollection)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers or replaces services for this container in the test host. Invoked through
@@ -405,6 +405,13 @@ replace them (for example, repointing a <code>DbContext</code> at the containeri
 
 
 
+  <h4 class="section" id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ConfigureServices_Microsoft_Extensions_DependencyInjection_IServiceCollection__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The base implementation decorates the application's <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptions-1">DbContextOptions&lt;TContext&gt;</a> registration to
+ignore <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.coreeventid.manyserviceproviderscreatedwarning">ManyServiceProvidersCreatedWarning</a>. With shared containers every test class
+fixture (and every per-test <code>WithWebHostBuilder</code> clone) builds its own host, and therefore its own EF Core
+internal service provider, so large suites trip that warning even though each host is correct. Overrides should
+call <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/base">base</a> to preserve this behavior.</p>
+</div>
 
 
 
@@ -413,7 +420,7 @@ replace them (for example, repointing a <code>DbContext</code> at the containeri
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ConfigureWebHost_Microsoft_AspNetCore_Hosting_IWebHostBuilder_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)">
   ConfigureWebHost(IWebHostBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the test host for this container. Invoked by <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a>
@@ -448,7 +455,7 @@ during host build, after connection strings are injected and before the factory'
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_CreateDatabaseAsync_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.CreateDatabaseAsync(System.String)">
   CreateDatabaseAsync(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates the database <code class="paramref">databaseName</code> on the server, using a connection to the container's
@@ -488,7 +495,7 @@ default database. Override for engines that need non-standard DDL.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_CreateScope_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.CreateScope(System.String)">
   CreateScope(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a scope view backed by its own database on this server, named after <code class="paramref">scopeId</code>. The
@@ -530,7 +537,7 @@ view creates the database when it initializes, applies migrations through
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_DropDatabaseAsync_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.DropDatabaseAsync(System.String)">
   DropDatabaseAsync(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L128"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Drops the database <code class="paramref">databaseName</code> on the server. Invoked best-effort when a scope is
@@ -573,7 +580,7 @@ to single-user first — so consumers normally never override this.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ExecuteServerCommandAsync_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ExecuteServerCommandAsync(System.String)">
   ExecuteServerCommandAsync(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Executes a single DDL command against the container's default database.</p>
@@ -612,7 +619,7 @@ to single-user first — so consumers normally never override this.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_MigrateDatabase_System_IServiceProvider_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.MigrateDatabase(System.IServiceProvider)">
   MigrateDatabase(IServiceProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Ensures pending EF Core migrations are applied to the containerized database. Invoked during host startup,
@@ -652,19 +659,28 @@ than fought.</p>
 
   <a id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ResetAsync_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync*"></a>
 
-  <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ResetAsync" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync">
-  ResetAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_ResetAsync_System_IServiceProvider_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.ResetAsync(System.IServiceProvider)">
+  ResetAsync(IServiceProvider)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Resets the resource to a clean state.</p>
+  <div class="markdown level1 summary"><p>Resets the resource to a clean state after each test, with the application's root service provider so a resource
+that needs the app's services — for example a Cosmos store recreating its database through the registered
+<code>DbContext</code> — can resolve them from a fresh scope. Resources that need no services ignore the argument.
+One-time setup that must run before the first test instead belongs in <a class="xref" href="Vulthil.xUnit.IStartupResource.html">IStartupResource</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ValueTask ResetAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public ValueTask ResetAsync(IServiceProvider serviceProvider)</code></pre>
   </div>
 
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serviceProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></dt>
+    <dd><p>The application's root service provider; create a scope from it to resolve scoped services.</p>
+</dd>
+  </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
@@ -687,7 +703,7 @@ than fought.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_SanitizeDatabaseName_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.SanitizeDatabaseName(System.String)">
   SanitizeDatabaseName(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L168"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Normalizes <code class="paramref">scopeId</code> into an identifier that is safe to use unquoted as a database name on
@@ -728,7 +744,7 @@ characters.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L19" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestDatabaseContainerFixture.cs/#L20" class="edit-link">Edit this page</a>
         </div>
 
 

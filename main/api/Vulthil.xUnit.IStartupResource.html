@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Interface IResettableResource | Vulthil.SharedKernel </title>
+      <title>Interface IStartupResource | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Interface IResettableResource | Vulthil.SharedKernel ">
+      <meta name="title" content="Interface IStartupResource | Vulthil.SharedKernel ">
       
-      <meta name="description" content="A test resource whose state can be reset to a clean baseline between tests — for example a database reset via Respawn, or an HTTP mock whose configured responses and captured requests are cleared.">
+      <meta name="description" content="A test resource that performs one-time setup during host startup using the application&#39;s services — for example a Cosmos store creating its database and containers through the registered DbContext. Invoked once, after database migrations and before the application&#39;s background services, so the resource is ready before the first test runs.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_xUnit_IResettableResource.md&amp;value=---%0Auid%3A%20Vulthil.xUnit.IResettableResource%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_xUnit_IStartupResource.md&amp;value=---%0Auid%3A%20Vulthil.xUnit.IStartupResource%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,12 +84,12 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.xUnit.IResettableResource">
+        <article data-uid="Vulthil.xUnit.IStartupResource">
 
 
 
-  <h1 id="Vulthil_xUnit_IResettableResource" data-uid="Vulthil.xUnit.IResettableResource" class="text-break">
-Interface IResettableResource  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IResettableResource.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_xUnit_IStartupResource" data-uid="Vulthil.xUnit.IStartupResource" class="text-break">
+Interface IStartupResource  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IStartupResource.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,13 +97,15 @@ Interface IResettableResource  <a class="header-action link-secondary" title="Vi
   <dl><dt>Assembly</dt><dd>Vulthil.xUnit.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>A test resource whose state can be reset to a clean baseline between tests — for example a database
-reset via Respawn, or an HTTP mock whose configured responses and captured requests are cleared.</p>
+  <div class="markdown summary"><p>A test resource that performs one-time setup during host startup using the application's services — for
+example a Cosmos store creating its database and containers through the registered <code>DbContext</code>. Invoked once,
+after database migrations and before the application's background services, so the resource is ready before the
+first test runs.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IResettableResource</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IStartupResource</code></pre>
   </div>
 
 
@@ -123,8 +125,9 @@ reset via Respawn, or an HTTP mock whose configured responses and captured reque
 
 
 
-  <h2 id="Vulthil_xUnit_IResettableResource_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p><a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-2.html">BaseIntegrationTestCase&lt;TFactory, TEntryPoint&gt;</a> resets every registered resettable resource after each test.</p>
+  <h2 id="Vulthil_xUnit_IStartupResource_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Distinct from <a class="xref" href="Vulthil.xUnit.IResettableResource.html">IResettableResource</a>: startup setup runs once before any test, whereas a reset runs after
+each test. A resource may implement both — creating its store at startup and recreating it between tests.</p>
 </div>
 
 
@@ -132,22 +135,19 @@ reset via Respawn, or an HTTP mock whose configured responses and captured reque
 </h2>
 
 
-  <a id="Vulthil_xUnit_IResettableResource_ResetAsync_" data-uid="Vulthil.xUnit.IResettableResource.ResetAsync*"></a>
+  <a id="Vulthil_xUnit_IStartupResource_InitializeAsync_" data-uid="Vulthil.xUnit.IStartupResource.InitializeAsync*"></a>
 
-  <h3 id="Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_" data-uid="Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)">
-  ResetAsync(IServiceProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IResettableResource.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_xUnit_IStartupResource_InitializeAsync_System_IServiceProvider_" data-uid="Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider)">
+  InitializeAsync(IServiceProvider)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IStartupResource.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Resets the resource to a clean state after each test, with the application's root service provider so a resource
-that needs the app's services — for example a Cosmos store recreating its database through the registered
-<code>DbContext</code> — can resolve them from a fresh scope. Resources that need no services ignore the argument.
-One-time setup that must run before the first test instead belongs in <a class="xref" href="Vulthil.xUnit.IStartupResource.html">IStartupResource</a>.</p>
+  <div class="markdown level1 summary"><p>Performs the resource's one-time startup setup.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask ResetAsync(IServiceProvider serviceProvider)</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask InitializeAsync(IServiceProvider serviceProvider)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -160,7 +160,7 @@ One-time setup that must run before the first test instead belongs in <a class="
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A task representing the asynchronous reset work.</p>
+    <dd><p>A task representing the asynchronous setup work.</p>
 </dd>
   </dl>
 
@@ -178,7 +178,7 @@ One-time setup that must run before the first test instead belongs in <a class="
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IResettableResource.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IStartupResource.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

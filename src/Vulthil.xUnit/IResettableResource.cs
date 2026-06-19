@@ -1,3 +1,5 @@
+using System;
+
 namespace Vulthil.xUnit;
 
 /// <summary>
@@ -10,8 +12,12 @@ namespace Vulthil.xUnit;
 public interface IResettableResource
 {
     /// <summary>
-    /// Resets the resource to a clean state.
+    /// Resets the resource to a clean state after each test, with the application's root service provider so a resource
+    /// that needs the app's services — for example a Cosmos store recreating its database through the registered
+    /// <c>DbContext</c> — can resolve them from a fresh scope. Resources that need no services ignore the argument.
+    /// One-time setup that must run before the first test instead belongs in <see cref="IStartupResource"/>.
     /// </summary>
+    /// <param name="serviceProvider">The application's root service provider; create a scope from it to resolve scoped services.</param>
     /// <returns>A task representing the asynchronous reset work.</returns>
-    ValueTask ResetAsync();
+    ValueTask ResetAsync(IServiceProvider serviceProvider);
 }

@@ -7,4 +7,5 @@ override Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.InitializeA
 virtual Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.DatabaseName.get -> string!
 Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>
 Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
-Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.ResetAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.InitializeAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask

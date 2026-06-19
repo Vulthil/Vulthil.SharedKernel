@@ -94,7 +94,7 @@ Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, 
 Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink! messageSink) -> void
 Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
 Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
-Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
 Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
 Vulthil.xUnit.Http.CapturedHttpRequest
 Vulthil.xUnit.Http.CapturedHttpRequest.Body.get -> string?
@@ -106,7 +106,7 @@ Vulthil.xUnit.Http.HttpMock.HttpMock() -> void
 Vulthil.xUnit.Http.HttpMock.On(System.Func<System.Net.Http.HttpRequestMessage!, bool>! predicate) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
 Vulthil.xUnit.Http.HttpMock.On(System.Net.Http.HttpMethod! method, string! pathPattern) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
 Vulthil.xUnit.Http.HttpMock.ReceivedRequests.get -> System.Collections.Generic.IReadOnlyList<Vulthil.xUnit.Http.CapturedHttpRequest!>!
-Vulthil.xUnit.Http.HttpMock.ResetAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Http.HttpMock.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
 Vulthil.xUnit.Http.IHttpMock
 Vulthil.xUnit.Http.IHttpMock.On(System.Func<System.Net.Http.HttpRequestMessage!, bool>! predicate) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
 Vulthil.xUnit.Http.IHttpMock.On(System.Net.Http.HttpMethod! method, string! pathPattern) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
@@ -118,4 +118,6 @@ Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWith<TResponse>(System.Net.Ht
 Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWithJson(System.Net.HttpStatusCode statusCode, string! json) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
 Vulthil.xUnit.Http.IHttpMockResponseBuilder.WithHeader(string! name, params string![]! values) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
 Vulthil.xUnit.IResettableResource
-Vulthil.xUnit.IResettableResource.ResetAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.IStartupResource
+Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask

@@ -35,20 +35,20 @@ public static partial class ResultExtensions
     /// <summary>
     /// Asynchronously converts a nullable value type to a <see cref="Result{T}"/>, returning a failure with the specified error when the value is <see langword="null"/>.
     /// </summary>
-    public static async Task<Result<T>> ToResultAsync<T>(this Task<T?> nullableTask, Error errors)
+    public static async Task<Result<T>> ToResultAsync<T>(this Task<T?> nullableTask, Error error)
         where T : struct
     {
         var nullable = await nullableTask.ConfigureAwait(false);
-        return nullable.ToResult(errors);
+        return nullable.ToResult(error);
     }
 
     /// <summary>
     /// Asynchronously converts a nullable reference type to a <see cref="Result{T}"/>, returning a failure with the specified error when the value is <see langword="null"/>.
     /// </summary>
-    public static async Task<Result<T>> ToResultAsync<T>(this Task<T?> nullableTask, Error errors)
+    public static async Task<Result<T>> ToResultAsync<T>(this Task<T?> nullableTask, Error error)
         where T : class
     {
         var nullable = await nullableTask.ConfigureAwait(false);
-        return nullable.ToResult(errors);
+        return nullable.ToResult(error);
     }
 }

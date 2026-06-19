@@ -101,12 +101,6 @@ Vulthil.xUnit.Http.CapturedHttpRequest.Body.get -> string?
 Vulthil.xUnit.Http.CapturedHttpRequest.CapturedHttpRequest(System.Net.Http.HttpMethod! method, System.Uri? requestUri, string? body) -> void
 Vulthil.xUnit.Http.CapturedHttpRequest.Method.get -> System.Net.Http.HttpMethod!
 Vulthil.xUnit.Http.CapturedHttpRequest.RequestUri.get -> System.Uri?
-Vulthil.xUnit.Http.HttpMock
-Vulthil.xUnit.Http.HttpMock.HttpMock() -> void
-Vulthil.xUnit.Http.HttpMock.On(System.Func<System.Net.Http.HttpRequestMessage!, bool>! predicate) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
-Vulthil.xUnit.Http.HttpMock.On(System.Net.Http.HttpMethod! method, string! pathPattern) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
-Vulthil.xUnit.Http.HttpMock.ReceivedRequests.get -> System.Collections.Generic.IReadOnlyList<Vulthil.xUnit.Http.CapturedHttpRequest!>!
-Vulthil.xUnit.Http.HttpMock.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
 Vulthil.xUnit.Http.IHttpMock
 Vulthil.xUnit.Http.IHttpMock.On(System.Func<System.Net.Http.HttpRequestMessage!, bool>! predicate) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
 Vulthil.xUnit.Http.IHttpMock.On(System.Net.Http.HttpMethod! method, string! pathPattern) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!

@@ -40,8 +40,6 @@ Vulthil.SharedKernel.Outbox.OutboxMessage.Error.get -> string?
 Vulthil.SharedKernel.Outbox.OutboxMessage.Error.set -> void
 Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc.get -> System.DateTimeOffset?
 Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc.set -> void
-Vulthil.SharedKernel.Outbox.OutboxMessage.GroupId.get -> System.Guid
-Vulthil.SharedKernel.Outbox.OutboxMessage.GroupId.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessage.Id.get -> System.Guid
 Vulthil.SharedKernel.Outbox.OutboxMessage.Id.init -> void
 Vulthil.SharedKernel.Outbox.OutboxMessage.Metadata.get -> string?

@@ -254,7 +254,7 @@ Vulthil.Messaging.Queues.QueueDefinition.DefaultRetryPolicy.set -> void
 Vulthil.Messaging.Queues.QueueDefinition.Durable.get -> bool
 Vulthil.Messaging.Queues.QueueDefinition.Durable.set -> void
 Vulthil.Messaging.Queues.QueueDefinition.Equals(Vulthil.Messaging.Queues.QueueDefinition? other) -> bool
-Vulthil.Messaging.Queues.QueueDefinition.ExchangeArguments.get -> System.Collections.Generic.Dictionary<string!, object?>!
+Vulthil.Messaging.Queues.QueueDefinition.ExchangeArguments.get -> System.Collections.Generic.IDictionary<string!, object?>!
 Vulthil.Messaging.Queues.QueueDefinition.ExchangeAutoDelete.get -> bool
 Vulthil.Messaging.Queues.QueueDefinition.ExchangeAutoDelete.set -> void
 Vulthil.Messaging.Queues.QueueDefinition.ExchangeDurable.get -> bool

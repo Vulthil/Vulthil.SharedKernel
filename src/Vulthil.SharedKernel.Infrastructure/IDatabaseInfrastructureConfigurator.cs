@@ -34,9 +34,9 @@ public interface IDatabaseInfrastructureConfigurator<TDbContext>
     /// <summary>
     /// Configures the database infrastructure to use the specified outbox store.
     /// </summary>
-    /// <typeparam name="T">The type of outbox store to use.</typeparam>
+    /// <typeparam name="TStore">The type of outbox store to use.</typeparam>
     /// <returns>The database infrastructure configurator instance.</returns>
-    IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStore<T>() where T : class, IOutboxStore;
+    IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStore<TStore>() where TStore : class, IOutboxStore;
 
     /// <summary>
     /// Registers a callback that runs once the configurator action has finished executing

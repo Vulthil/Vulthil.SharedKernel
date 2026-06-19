@@ -34,12 +34,6 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
             activity = Activity.Current;
         }
 
-#if NET10_0_OR_GREATER
-        var groupId = Guid.CreateVersion7();
-#else
-        var groupId = Guid.NewGuid();
-#endif
-
         var outboxMessages = dbContext.ChangeTracker.Entries<IAggregateRoot>()
             .Select(x => x.Entity)
             .SelectMany(aggregateRoot =>
@@ -52,7 +46,6 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
             })
             .Select(d => new OutboxMessage
             {
-                GroupId = groupId,
                 OccurredOnUtc = _timeProvider.GetUtcNow(),
                 Type = d.GetType().FullName!,
                 Content = JsonSerializer.Serialize(d, d.GetType()),

@@ -158,8 +158,8 @@ static Vulthil.Results.ResultExtensions.TapErrorAsync<T1>(this System.Threading.
 static Vulthil.Results.ResultExtensions.TapErrorAsync<T1>(this Vulthil.Results.Result<T1>! result, System.Func<Vulthil.Results.Error!, System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>!
 static Vulthil.Results.ResultExtensions.ToResult<T>(this T? obj, Vulthil.Results.Error! error) -> Vulthil.Results.Result<T!>!
 static Vulthil.Results.ResultExtensions.ToResult<T>(this in T? nullable, Vulthil.Results.Error! error) -> Vulthil.Results.Result<T>!
-static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! errors) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T!>!>!
-static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! errors) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!
+static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! error) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T!>!>!
+static Vulthil.Results.ResultExtensions.ToResultAsync<T>(this System.Threading.Tasks.Task<T?>! nullableTask, Vulthil.Results.Error! error) -> System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!
 static Vulthil.Results.ResultExtensions.Zip<T1, T2, TOut>(this Vulthil.Results.Result<T1>! first, Vulthil.Results.Result<T2>! second, System.Func<T1, T2, TOut>! selector) -> Vulthil.Results.Result<TOut>!
 static Vulthil.Results.ResultExtensions.Zip<T1, T2>(this Vulthil.Results.Result<T1>! first, Vulthil.Results.Result<T2>! second) -> Vulthil.Results.Result<(T1, T2)>!
 static Vulthil.Results.ResultExtensions.ZipAsync<T1, T2, TOut>(this System.Threading.Tasks.Task<Vulthil.Results.Result<T1>!>! firstTask, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>! secondTask, System.Func<T1, T2, TOut>! selector) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TOut>!>!

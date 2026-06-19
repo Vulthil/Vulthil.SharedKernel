@@ -1,7 +1,6 @@
 #nullable enable
 abstract Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ConfigurationAssembly.get -> System.Reflection.Assembly?
 override Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> void
-static Vulthil.SharedKernel.Infrastructure.Data.DbContextExtensions.SaveAndPublishChangesAsync(this Microsoft.EntityFrameworkCore.DbContext! dbContext, Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher! publisher, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 static Vulthil.SharedKernel.Infrastructure.DependencyInjection.AddDbContext<TDbContext>(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! hostApplicationBuilder, System.Action<Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!>! databaseInfrastructureConfiguratorAction) -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
 static Vulthil.SharedKernel.Infrastructure.DependencyInjection.AddDbContext<TDbContextInterface, TDbContext>(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! hostApplicationBuilder, System.Action<Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!>! databaseInfrastructureConfiguratorAction) -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
 static Vulthil.SharedKernel.Infrastructure.DependencyInjection.EnsureCreatedAsync<TDbContext>(this Microsoft.Extensions.Hosting.IHost! host) -> System.Threading.Tasks.Task!
@@ -15,7 +14,6 @@ Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.ExecuteInTransactionAsync<TResult>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>!>! operation, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TResult>!
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.IsInTransaction.get -> bool
 Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Vulthil.SharedKernel.Outbox.OutboxMessage!>!
-Vulthil.SharedKernel.Infrastructure.Data.DbContextExtensions
 Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper
 Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.CommitAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.DbContextTransactionWrapper(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction! dbContextTransaction) -> void
@@ -34,7 +32,7 @@ Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbConte
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.HostApplicationBuilder.get -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.OnConfigured(System.Action<Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!>! action) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
 Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled.get -> bool
-Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore<T>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
+Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore<TStore>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
 Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>
 Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.DbContext.get -> TDbContext!
 Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GenericRepository(TDbContext! dbContext) -> void

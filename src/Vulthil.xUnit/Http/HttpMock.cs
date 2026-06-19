@@ -10,7 +10,7 @@ namespace Vulthil.xUnit.Http;
 /// requests as durable state, and hands out lightweight <see cref="HttpMessageHandler"/> instances (which the
 /// HTTP client factory owns and may dispose) that delegate back to this shared state.
 /// </summary>
-public sealed class HttpMock : IHttpMock
+internal sealed class HttpMock : IHttpMock
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 

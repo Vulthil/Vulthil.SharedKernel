@@ -8,7 +8,7 @@ namespace Vulthil.SharedKernel.Api;
 /// <summary>
 /// Provides extension methods for converting <see cref="Result"/> values to HTTP responses.
 /// </summary>
-public static class Extensions
+public static class ResultHttpExtensions
 {
     /// <summary>
     /// Converts a <see cref="Task{Result}"/> to an <see cref="IActionResult"/>, returning 204 No Content on success.

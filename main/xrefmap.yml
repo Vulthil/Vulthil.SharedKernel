@@ -7368,45 +7368,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddValidationPipelineBehavior
   nameWithType: ApplicationOptions.AddValidationPipelineBehavior
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies
-  name: FluentValidationAssemblies
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_FluentValidationAssemblies
-  commentId: P:Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies
-  nameWithType: ApplicationOptions.FluentValidationAssemblies
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies*
-  name: FluentValidationAssemblies
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_FluentValidationAssemblies_
-  commentId: Overload:Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.FluentValidationAssemblies
-  nameWithType: ApplicationOptions.FluentValidationAssemblies
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.HandlerAssemblies
-  name: HandlerAssemblies
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_HandlerAssemblies
-  commentId: P:Vulthil.SharedKernel.Application.ApplicationOptions.HandlerAssemblies
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.HandlerAssemblies
-  nameWithType: ApplicationOptions.HandlerAssemblies
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.HandlerAssemblies*
-  name: HandlerAssemblies
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_HandlerAssemblies_
-  commentId: Overload:Vulthil.SharedKernel.Application.ApplicationOptions.HandlerAssemblies
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.HandlerAssemblies
-  nameWithType: ApplicationOptions.HandlerAssemblies
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.PipelineHandlers
-  name: PipelineHandlers
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_PipelineHandlers
-  commentId: P:Vulthil.SharedKernel.Application.ApplicationOptions.PipelineHandlers
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.PipelineHandlers
-  nameWithType: ApplicationOptions.PipelineHandlers
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.PipelineHandlers*
-  name: PipelineHandlers
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_PipelineHandlers_
-  commentId: Overload:Vulthil.SharedKernel.Application.ApplicationOptions.PipelineHandlers
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.PipelineHandlers
-  nameWithType: ApplicationOptions.PipelineHandlers
 - uid: Vulthil.SharedKernel.Application.ApplicationOptions.RegisterFluentValidationAssemblies(System.Reflection.Assembly[])
   name: RegisterFluentValidationAssemblies(params Assembly[])
   href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_RegisterFluentValidationAssemblies_System_Reflection_Assembly___
@@ -7851,15 +7812,6 @@ references:
   commentId: T:Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher
   fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher
   nameWithType: IDomainEventPublisher
-- uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(System.Object)
-  name: PublishAsync(object)
-  href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_System_Object_
-  commentId: M:Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(System.Object)
-  name.vb: PublishAsync(Object)
-  fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(object)
-  fullName.vb: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Object)
-  nameWithType: IDomainEventPublisher.PublishAsync(object)
-  nameWithType.vb: IDomainEventPublisher.PublishAsync(Object)
 - uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(System.Object,System.Threading.CancellationToken)
   name: PublishAsync(object, CancellationToken)
   href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_System_Object_System_Threading_CancellationToken_
@@ -7876,15 +7828,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync
   nameWithType: IDomainEventPublisher.PublishAsync
-- uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync``1(``0)
-  name: PublishAsync<TNotification>(TNotification)
-  href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync__1___0_
-  commentId: M:Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync``1(``0)
-  name.vb: PublishAsync(Of TNotification)(TNotification)
-  fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync<TNotification>(TNotification)
-  fullName.vb: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Of TNotification)(TNotification)
-  nameWithType: IDomainEventPublisher.PublishAsync<TNotification>(TNotification)
-  nameWithType.vb: IDomainEventPublisher.PublishAsync(Of TNotification)(TNotification)
 - uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync``1(``0,System.Threading.CancellationToken)
   name: PublishAsync<TNotification>(TNotification, CancellationToken)
   href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync__1___0_System_Threading_CancellationToken_
@@ -10155,19 +10098,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries
   nameWithType: OutboxProcessingOptions.MaxRetries
-- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds
-  name: OutboxProcessingDelayInSeconds
-  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelayInSeconds
-  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds
-  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds
-  nameWithType: OutboxProcessingOptions.OutboxProcessingDelayInSeconds
-- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds*
-  name: OutboxProcessingDelayInSeconds
-  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelayInSeconds_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
+  name: OutboxProcessingDelaySeconds
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelaySeconds
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
+  nameWithType: OutboxProcessingOptions.OutboxProcessingDelaySeconds
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds*
+  name: OutboxProcessingDelaySeconds
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelaySeconds_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds
-  nameWithType: OutboxProcessingOptions.OutboxProcessingDelayInSeconds
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
+  nameWithType: OutboxProcessingOptions.OutboxProcessingDelaySeconds
 - uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention
   name: Retention
   href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_Retention
@@ -10248,13 +10191,27 @@ references:
 - uid: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
   name: ActivitySourceName
   href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_ActivitySourceName
-  commentId: F:Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
+  commentId: P:Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
+  fullName: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
+  nameWithType: Telemetry.ActivitySourceName
+- uid: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName*
+  name: ActivitySourceName
+  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_ActivitySourceName_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
+  isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
   nameWithType: Telemetry.ActivitySourceName
 - uid: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
   name: MeterName
   href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_MeterName
-  commentId: F:Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  commentId: P:Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  fullName: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  nameWithType: Telemetry.MeterName
+- uid: Vulthil.SharedKernel.Outbox.Telemetry.MeterName*
+  name: MeterName
+  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_MeterName_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
   nameWithType: Telemetry.MeterName
 - uid: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions

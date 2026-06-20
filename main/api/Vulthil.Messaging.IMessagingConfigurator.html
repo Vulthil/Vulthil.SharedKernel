@@ -315,7 +315,7 @@ sending it immediately. The filter is resolved from the caller's scope, so it ma
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMessagingConfigurator ConfigureMessage&lt;TMessage&gt;(Action&lt;MessageConfiguration&lt;TMessage&gt;&gt; configureMessageAction) where TMessage : class</code></pre>
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator ConfigureMessage&lt;TMessage&gt;(Action&lt;MessageConfiguration&lt;TMessage&gt;&gt; configureMessageAction) where TMessage : notnull</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>

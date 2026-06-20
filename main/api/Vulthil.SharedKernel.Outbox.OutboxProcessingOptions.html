@@ -170,7 +170,7 @@ Class OutboxProcessingOptions  <a class="header-action link-secondary" title="Vi
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Range(1, 2147483647)]
-public int BatchSize { get; init; }</code></pre>
+public int BatchSize { get; set; }</code></pre>
   </div>
 
 
@@ -237,7 +237,7 @@ relay's <code>DbContext</code>, and concurrency is bounded by <a class="xref" hr
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool EnableParallelPublishing { get; init; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool EnableParallelPublishing { get; set; }</code></pre>
   </div>
 
 
@@ -308,7 +308,7 @@ enabled. Default is 4. Ignored when parallel publishing is disabled.</p>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Range(1, 100)]
-public int MaxDegreeOfParallelism { get; init; }</code></pre>
+public int MaxDegreeOfParallelism { get; set; }</code></pre>
   </div>
 
 
@@ -341,7 +341,7 @@ public int MaxDegreeOfParallelism { get; init; }</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Range(1, 300)]
-public int MaxDelaySeconds { get; init; }</code></pre>
+public int MaxDelaySeconds { get; set; }</code></pre>
   </div>
 
 
@@ -374,7 +374,7 @@ public int MaxDelaySeconds { get; init; }</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Range(1, 2147483647)]
-public int MaxRetries { get; init; }</code></pre>
+public int MaxRetries { get; set; }</code></pre>
   </div>
 
 
@@ -394,10 +394,10 @@ public int MaxRetries { get; init; }</code></pre>
 
 
 
-  <a id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelayInSeconds_" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds*"></a>
+  <a id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelaySeconds_" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelayInSeconds" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds">
-  OutboxProcessingDelayInSeconds
+  <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelaySeconds" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds">
+  OutboxProcessingDelaySeconds
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -407,7 +407,7 @@ public int MaxRetries { get; init; }</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Range(1, 100)]
-public int OutboxProcessingDelayInSeconds { get; init; }</code></pre>
+public int OutboxProcessingDelaySeconds { get; set; }</code></pre>
   </div>
 
 

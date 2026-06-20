@@ -102,7 +102,7 @@ Class MessageConfiguration&lt;TMessage&gt;  <a class="header-action link-seconda
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed record MessageConfiguration&lt;TMessage&gt; : MessageConfiguration, IEquatable&lt;MessageConfiguration&gt;, IEquatable&lt;MessageConfiguration&lt;TMessage&gt;&gt; where TMessage : class</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed record MessageConfiguration&lt;TMessage&gt; : MessageConfiguration, IEquatable&lt;MessageConfiguration&gt;, IEquatable&lt;MessageConfiguration&lt;TMessage&gt;&gt; where TMessage : notnull</code></pre>
   </div>
 
 

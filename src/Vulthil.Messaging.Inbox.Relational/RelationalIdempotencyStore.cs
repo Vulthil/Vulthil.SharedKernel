@@ -21,10 +21,24 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
     : IIdempotencyStore, IInboxRetentionStore
     where TContext : DbContext, ISaveInboxMessages
 {
-    public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken) =>
-        dbContext.InboxMessages
+    public async Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+    {
+        var keys = await dbContext.InboxMessages
             .Where(marker => marker.ProcessedOnUtc < olderThanUtc)
+            .OrderBy(marker => marker.ProcessedOnUtc)
+            .Take(batchSize)
+            .Select(marker => marker.MessageId)
+            .ToListAsync(cancellationToken);
+
+        if (keys.Count == 0)
+        {
+            return 0;
+        }
+
+        return await dbContext.InboxMessages
+            .Where(marker => keys.Contains(marker.MessageId))
             .ExecuteDeleteAsync(cancellationToken);
+    }
 
     public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
     {

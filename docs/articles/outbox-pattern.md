@@ -62,7 +62,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 | `MaxRetries` | 3 | Publish attempts before a message is dead-lettered (`FailedOnUtc` set, no longer relayed) |
 | `EnableParallelPublishing` | `false` | Publish messages in parallel within a batch (each dispatch runs in its own DI scope) |
 | `MaxDegreeOfParallelism` | 4 | Maximum concurrent dispatches when `EnableParallelPublishing` is enabled |
-| `OutboxProcessingDelayInSeconds` | 2 | Base polling delay between processing cycles |
+| `OutboxProcessingDelaySeconds` | 2 | Base polling delay between processing cycles |
 | `MaxDelaySeconds` | 60 | Maximum back-off delay when no messages are found |
 | `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 

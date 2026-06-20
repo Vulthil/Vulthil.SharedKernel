@@ -11,34 +11,34 @@ public sealed class OutboxProcessingOptions
     /// Gets the base polling delay in seconds between outbox processing cycles. Default is 2.
     /// </summary>
     [Range(1, 100)]
-    public int OutboxProcessingDelayInSeconds { get; init; } = 2;
+    public int OutboxProcessingDelaySeconds { get; set; } = 2;
     /// <summary>
     /// Gets the maximum back-off delay in seconds when no messages are found. Default is 60.
     /// </summary>
     [Range(1, 300)]
-    public int MaxDelaySeconds { get; init; } = 60;
+    public int MaxDelaySeconds { get; set; } = 60;
     /// <summary>
     /// Gets the maximum number of outbox messages to process per cycle. Default is 10.
     /// </summary>
     [Range(1, int.MaxValue)]
-    public int BatchSize { get; init; } = 10;
+    public int BatchSize { get; set; } = 10;
     /// <summary>
     /// Gets the maximum number of delivery attempts before a message is marked as processed. Default is 3.
     /// </summary>
     [Range(1, int.MaxValue)]
-    public int MaxRetries { get; init; } = 3;
+    public int MaxRetries { get; set; } = 3;
     /// <summary>
     /// Gets a value indicating whether messages within a batch should be published in parallel.
     /// When enabled, each message is dispatched in its own dependency-injection scope so handlers do not share the
     /// relay's <c>DbContext</c>, and concurrency is bounded by <see cref="MaxDegreeOfParallelism"/>.
     /// </summary>
-    public bool EnableParallelPublishing { get; init; }
+    public bool EnableParallelPublishing { get; set; }
     /// <summary>
     /// Gets the maximum number of messages dispatched concurrently when <see cref="EnableParallelPublishing"/> is
     /// enabled. Default is 4. Ignored when parallel publishing is disabled.
     /// </summary>
     [Range(1, 100)]
-    public int MaxDegreeOfParallelism { get; init; } = 4;
+    public int MaxDegreeOfParallelism { get; set; } = 4;
 
     /// <summary>
     /// Gets or sets a value indicating whether Trace Identifiers should be included when publishing outbox messages.

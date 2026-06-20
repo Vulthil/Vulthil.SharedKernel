@@ -2,11 +2,11 @@
 Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics.get -> bool
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics.set -> void
-static readonly Vulthil.SharedKernel.Outbox.Telemetry.MeterName -> string!
+static Vulthil.SharedKernel.Outbox.Telemetry.MeterName.get -> string!
 static Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.AddVulthilOutboxInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!
 override Vulthil.SharedKernel.Outbox.OutboxMessageData.GetHashCode() -> int
 override Vulthil.SharedKernel.Outbox.OutboxMessageFailure.GetHashCode() -> int
-static readonly Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName -> string!
+static Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName.get -> string!
 static Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.AddOutboxEngine(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>? configureOptions = null, Microsoft.Extensions.DependencyInjection.ServiceLifetime processorLifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Vulthil.SharedKernel.Outbox.OutboxMessageData.operator !=(Vulthil.SharedKernel.Outbox.OutboxMessageData left, Vulthil.SharedKernel.Outbox.OutboxMessageData right) -> bool
 static Vulthil.SharedKernel.Outbox.OutboxMessageData.operator ==(Vulthil.SharedKernel.Outbox.OutboxMessageData left, Vulthil.SharedKernel.Outbox.OutboxMessageData right) -> bool
@@ -87,19 +87,19 @@ Vulthil.SharedKernel.Outbox.OutboxMessageFailure.OutboxMessageFailure() -> void
 Vulthil.SharedKernel.Outbox.OutboxMessageFailure.OutboxMessageFailure(System.Guid Id, string! Error) -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.BatchSize.get -> int
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.BatchSize.init -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.BatchSize.set -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing.get -> bool
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing.init -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing.set -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing.get -> bool
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing.set -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism.get -> int
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism.init -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism.set -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds.get -> int
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds.init -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds.set -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries.get -> int
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries.init -> void
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.get -> int
-Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelayInSeconds.init -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries.set -> void
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds.get -> int
+Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds.set -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingOptions() -> void
 Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention.get -> Vulthil.SharedKernel.Outbox.OutboxRetentionOptions!
 Vulthil.SharedKernel.Outbox.IOutboxRetentionStore

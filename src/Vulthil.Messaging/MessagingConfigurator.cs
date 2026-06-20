@@ -56,7 +56,7 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
     internal static string ConstructMessageSectionName(string fullName) => $"{DefaultSectionName}:Messages:{fullName}";
 
     public IMessagingConfigurator ConfigureMessage<TMessage>(Action<MessageConfiguration<TMessage>> configureMessageAction)
-        where TMessage : class
+        where TMessage : notnull
     {
         var fullName = typeof(TMessage).FullName
             ?? throw new InvalidOperationException($"Cannot derive a message configuration key for type '{typeof(TMessage)}'.");

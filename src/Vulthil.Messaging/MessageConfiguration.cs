@@ -78,7 +78,7 @@ public record MessageConfiguration
 /// </summary>
 /// <typeparam name="TMessage">The message type to configure.</typeparam>
 public sealed record MessageConfiguration<TMessage> : MessageConfiguration
-    where TMessage : class
+    where TMessage : notnull
 {
     /// <summary>
     /// Initializes a new <see cref="MessageConfiguration{TMessage}"/> whose exchange defaults to the CLR full type name of <typeparamref name="TMessage"/>

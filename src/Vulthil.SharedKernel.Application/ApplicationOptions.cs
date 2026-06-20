@@ -102,21 +102,6 @@ public sealed class ApplicationOptions
 {
     internal FluentValidationOptions FluentValidationOptions { get; } = new();
     internal HandlerOptions HandlerOptions { get; } = new();
-    /// <summary>
-    /// Gets the assemblies registered for FluentValidation validator scanning.
-    /// Delegates to the internal <see cref="FluentValidationOptions"/>.
-    /// </summary>
-    public IReadOnlyList<Assembly> FluentValidationAssemblies => FluentValidationOptions.FluentValidationAssemblies;
-    /// <summary>
-    /// Gets the assemblies registered for handler scanning.
-    /// Delegates to the internal <see cref="HandlerOptions"/>.
-    /// </summary>
-    public IReadOnlyList<Assembly> HandlerAssemblies => HandlerOptions.HandlerAssemblies;
-
-    /// <summary>
-    /// Gets the pipeline handler service descriptors for both request and domain event pipelines.
-    /// </summary>
-    public IReadOnlyList<ServiceDescriptor> PipelineHandlers => HandlerOptions.PipelineHandlers;
 
     /// <summary>
     /// Registers assemblies to scan for request and domain event handlers.

@@ -21,7 +21,7 @@ internal sealed class OutboxBackgroundService(
             return;
         }
 
-        int baseDelayMs = options.Value.OutboxProcessingDelayInSeconds * 1000;
+        int baseDelayMs = options.Value.OutboxProcessingDelaySeconds * 1000;
         int maxDelayMs = options.Value.MaxDelaySeconds * 1000;
         int currentDelayMs = 0;
 

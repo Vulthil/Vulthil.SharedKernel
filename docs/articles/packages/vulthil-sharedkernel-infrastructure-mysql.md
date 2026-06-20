@@ -38,7 +38,7 @@ builder.AddDbContext<AppDbContext>(config => config
 
 ### Configuring the integration
 
-`UseMySql` takes an optional `configure` delegate. Because the Aspire integration only exists on .NET 9, its type differs per target framework — the Aspire `PomeloEntityFrameworkCoreMySqlSettings` on .NET 9, and the EF Core `MySqlDbContextOptionsBuilder` on .NET 10:
+`UseMySql` takes an optional `configureSettings` delegate. Because the Aspire integration only exists on .NET 9, its type differs per target framework — the Aspire `PomeloEntityFrameworkCoreMySqlSettings` on .NET 9, and the EF Core `MySqlDbContextOptionsBuilder` on .NET 10:
 
 ```csharp
 // .NET 9 (Aspire) — toggle health checks, tracing, retries, command timeout:

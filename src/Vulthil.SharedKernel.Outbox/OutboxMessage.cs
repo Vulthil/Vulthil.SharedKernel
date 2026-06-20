@@ -11,10 +11,6 @@ public sealed class OutboxMessage
     /// </summary>
     public Guid Id { get; init; } = Guid.CreateVersion7();
     /// <summary>
-    /// Gets the group identifier linking messages that were captured during the same <c>SaveChanges</c> call.
-    /// </summary>
-    public Guid GroupId { get; init; }
-    /// <summary>
     /// Gets the fully-qualified type name of the serialized domain event.
     /// </summary>
     public required string Type { get; init; }

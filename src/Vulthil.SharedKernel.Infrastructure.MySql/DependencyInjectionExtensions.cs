@@ -22,49 +22,49 @@ public static class DependencyInjectionExtensions
 #if NET10_0_OR_GREATER
     /// <summary> ... </summary>
     /// <remarks> ... </remarks>
-    /// <typeparam name="TContext">...</typeparam>
+    /// <typeparam name="TDbContext">...</typeparam>
     /// <param name="configurator">...</param>
     /// <param name="connectionStringKey">...</param>
-    /// <param name="configure">... .NET 10 wording ...</param>
+    /// <param name="configureSettings">... .NET 10 wording ...</param>
     /// <returns>The configurator for chaining.</returns>
-    public static IDatabaseInfrastructureConfigurator<TContext> UseMySql<TContext>(
-        this IDatabaseInfrastructureConfigurator<TContext> configurator,
+    public static IDatabaseInfrastructureConfigurator<TDbContext> UseMySql<TDbContext>(
+        this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionStringKey,
-        Action<MySqlDbContextOptionsBuilder>? configure = null)
-        where TContext : DbContext, ISaveOutboxMessages
-        => UseMySqlCore(configurator, connectionStringKey, configure);
+        Action<MySqlDbContextOptionsBuilder>? configureSettings = null)
+        where TDbContext : DbContext, ISaveOutboxMessages
+        => UseMySqlCore(configurator, connectionStringKey, configureSettings);
 #else
     /// <summary> ... </summary>
     /// <remarks> ... </remarks>
-    /// <typeparam name="TContext">...</typeparam>
+    /// <typeparam name="TDbContext">...</typeparam>
     /// <param name="configurator">...</param>
     /// <param name="connectionStringKey">...</param>
-    /// <param name="configure">... .NET 9 wording ...</param>
+    /// <param name="configureSettings">... .NET 9 wording ...</param>
     /// <param name="configureDbContextOptions">An optional action to configure the DbContext options.</param>
     /// <returns>The configurator for chaining.</returns>
-    public static IDatabaseInfrastructureConfigurator<TContext> UseMySql<TContext>(
-        this IDatabaseInfrastructureConfigurator<TContext> configurator,
+    public static IDatabaseInfrastructureConfigurator<TDbContext> UseMySql<TDbContext>(
+        this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionStringKey,
-        Action<PomeloEntityFrameworkCoreMySqlSettings>? configure = null,
+        Action<PomeloEntityFrameworkCoreMySqlSettings>? configureSettings = null,
         Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
-        where TContext : DbContext, ISaveOutboxMessages
-        => UseMySqlCore(configurator, connectionStringKey, configure, configureDbContextOptions);
+        where TDbContext : DbContext, ISaveOutboxMessages
+        => UseMySqlCore(configurator, connectionStringKey, configureSettings, configureDbContextOptions);
 #endif
 
-    private static IDatabaseInfrastructureConfigurator<TContext> UseMySqlCore<TContext>(
-        this IDatabaseInfrastructureConfigurator<TContext> configurator,
+    private static IDatabaseInfrastructureConfigurator<TDbContext> UseMySqlCore<TDbContext>(
+        this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionStringKey,
 #if NET10_0_OR_GREATER
-        Action<MySqlDbContextOptionsBuilder>? configure = null)
+        Action<MySqlDbContextOptionsBuilder>? configureSettings = null)
 #else
-        Action<PomeloEntityFrameworkCoreMySqlSettings>? configure = null,
+        Action<PomeloEntityFrameworkCoreMySqlSettings>? configureSettings = null,
         Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
 #endif
-        where TContext : DbContext, ISaveOutboxMessages
+        where TDbContext : DbContext, ISaveOutboxMessages
     {
         ArgumentNullException.ThrowIfNull(configurator);
 
-        configurator.UseOutboxStore<MySqlOutboxStore<TContext>>();
+        configurator.UseOutboxStore<MySqlOutboxStore<TDbContext>>();
 
         configurator.OnConfigured(c =>
         {
@@ -72,10 +72,10 @@ public static class DependencyInjectionExtensions
             var connectionString = c.HostApplicationBuilder.Configuration.GetConnectionString(connectionStringKey)
                 ?? throw new InvalidOperationException($"A connection string named '{connectionStringKey}' was not found.");
 
-            c.HostApplicationBuilder.Services.AddDbContextPool<TContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), configure));
+            c.HostApplicationBuilder.Services.AddDbContextPool<TDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), configureSettings));
 #else
-            c.HostApplicationBuilder.AddMySqlDbContext<TContext>(connectionStringKey, configure, configureDbContextOptions);
+            c.HostApplicationBuilder.AddMySqlDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
 #endif
 
             if (c.OutboxProcessingEnabled)

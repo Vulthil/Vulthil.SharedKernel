@@ -18,9 +18,6 @@ Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey.set -> void
 Vulthil.Messaging.Inbox.InboxOptions.Retention.get -> Vulthil.Messaging.Inbox.InboxRetentionOptions!
 Vulthil.Messaging.Inbox.MissingIdempotencyKeyException
 Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MessageType.get -> System.Type?
-Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException() -> void
-Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(string! message) -> void
-Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(string! message, System.Exception! innerException) -> void
 Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(System.Type! messageType) -> void
 static Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.AddIdempotentInbox<TMessage>(this Vulthil.Messaging.IMessagingConfigurator! configurator, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>? keySelector = null) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.Inbox.IInboxRetentionStore

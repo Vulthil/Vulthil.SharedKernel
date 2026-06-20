@@ -10,7 +10,7 @@ Use `Vulthil.SharedKernel.Infrastructure.Cosmos` to run the shared infrastructur
 
 ## Pattern
 
-- Call `UseCosmosDb("connectionName")` on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox strategy
+- Call `UseCosmosDb("connectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox strategy
 - Configure the Cosmos-specific entity model for `OutboxMessage` via the `ApplyCosmosOutbox()` model-builder extension (call it from your `OnModelCreating`)
 - Order between `UseCosmosDb` and `EnableOutboxProcessing` does not matter; the configurator defers the underlying call until the full chain has executed
 

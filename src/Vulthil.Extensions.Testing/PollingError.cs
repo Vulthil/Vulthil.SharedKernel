@@ -27,7 +27,7 @@ public sealed record PollingError : Error
     /// Gets the individual errors collected during polling.
     /// Each element represents the error from a single failed attempt.
     /// </summary>
-    public Error[] Errors { get; }
+    public IReadOnlyList<Error> Errors { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PollingError"/> record.
@@ -36,7 +36,7 @@ public sealed record PollingError : Error
     public PollingError(Error[] errors)
         : base(Polling.Timeout.Code,
               Polling.Timeout.Description,
-              ErrorType.Failure) => Errors = errors;
+              ErrorType.Failure) => Errors = [.. errors];
 
     /// <summary>
     /// Creates a <see cref="PollingError"/> from a collection of errors.

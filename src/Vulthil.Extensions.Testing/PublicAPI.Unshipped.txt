@@ -23,7 +23,7 @@ Vulthil.Extensions.Testing.HttpResponseMessageExtensions
 Vulthil.Extensions.Testing.Polling
 Vulthil.Extensions.Testing.PollingError
 Vulthil.Extensions.Testing.PollingError.Equals(Vulthil.Extensions.Testing.PollingError? other) -> bool
-Vulthil.Extensions.Testing.PollingError.Errors.get -> Vulthil.Results.Error![]!
+Vulthil.Extensions.Testing.PollingError.Errors.get -> System.Collections.Generic.IReadOnlyList<Vulthil.Results.Error!>!
 Vulthil.Extensions.Testing.PollingError.PollingError(Vulthil.Results.Error![]! errors) -> void
 Vulthil.Extensions.Testing.PollingResult
 Vulthil.Extensions.Testing.PollingResult.PollingError.get -> Vulthil.Extensions.Testing.PollingError?

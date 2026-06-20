@@ -150,7 +150,7 @@ public sealed record QueueDefinition(string Name)
     /// <summary>
     /// Gets additional arguments passed to the broker during exchange declaration.
     /// </summary>
-    public Dictionary<string, object?> ExchangeArguments { get; } = [];
+    public IDictionary<string, object?> ExchangeArguments { get; } = new Dictionary<string, object?>();
 
     /// <summary>
     /// Gets the collection of consumer-to-message bindings configured for this queue.

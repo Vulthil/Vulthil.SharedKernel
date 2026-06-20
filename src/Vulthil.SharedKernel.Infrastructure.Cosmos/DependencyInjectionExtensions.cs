@@ -14,13 +14,13 @@ public static class DependencyInjectionExtensions
     /// Configures the database infrastructure to use the Cosmos-specific outbox strategy.
     /// </summary>
     /// <param name="configurator">The database infrastructure configurator.</param>
-    /// <param name="connectionName">The name of the Cosmos DB connection.</param>
+    /// <param name="connectionStringKey">The name of the Cosmos DB connection.</param>
     /// <param name="configureSettings">An optional action to configure the Cosmos DB settings.</param>
     /// <param name="configureDbContextOptions">An optional action to configure the DbContext options.</param>
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TDbContext> UseCosmosDb<TDbContext>(
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
-        string connectionName,
+        string connectionStringKey,
         Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>? configureSettings = null,
         Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
         where TDbContext : DbContext, ISaveOutboxMessages
@@ -28,7 +28,7 @@ public static class DependencyInjectionExtensions
         configurator.UseOutboxStore<CosmosOutboxStore<TDbContext>>();
         configurator.OnConfigured(c =>
         {
-            c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionName, configureSettings, configureDbContextOptions);
+            c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
         });
         return configurator;
     }

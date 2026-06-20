@@ -18,7 +18,16 @@ public static class InboxRetentionServiceCollectionExtensions
     /// <returns>The same service collection, for chaining.</returns>
     public static IServiceCollection AddInboxRetention(this IServiceCollection services, Action<InboxOptions>? configure)
     {
-        services.AddOptions<InboxOptions>().Configure(configure ?? (static _ => { }));
+        services.AddOptions<InboxOptions>()
+            .Configure(configure ?? (static _ => { }))
+            .Validate(
+                o => !o.Retention.Enabled
+                    || o.Retention.RetentionPeriod > TimeSpan.Zero
+                    && o.Retention.SweepInterval > TimeSpan.Zero
+                    && o.Retention.BatchSize >= 1,
+                "Inbox retention requires RetentionPeriod and SweepInterval greater than zero and BatchSize of at least 1 when enabled.")
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         var options = new InboxOptions();
         configure?.Invoke(options);

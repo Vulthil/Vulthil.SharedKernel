@@ -29,7 +29,7 @@ public interface IMessagingConfigurator
     /// <param name="configureMessageAction">An action to configure the message's publish settings.</param>
     /// <returns>The current configurator instance for chaining.</returns>
     IMessagingConfigurator ConfigureMessage<TMessage>(Action<MessageConfiguration<TMessage>> configureMessageAction)
-        where TMessage : class;
+        where TMessage : notnull;
 
     /// <summary>
     /// Configures global messaging options such as serialization, timeouts, and built-in filters.

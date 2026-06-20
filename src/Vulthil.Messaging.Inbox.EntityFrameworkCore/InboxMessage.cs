@@ -14,5 +14,5 @@ public sealed record InboxMessage
     /// <summary>
     /// Gets or sets the UTC timestamp at which the message was processed.
     /// </summary>
-    public DateTimeOffset ProcessedOnUtc { get; set; }
+    public DateTimeOffset ProcessedOnUtc { get; init; }
 }

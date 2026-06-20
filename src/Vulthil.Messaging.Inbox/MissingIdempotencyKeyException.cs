@@ -11,7 +11,7 @@ public sealed class MissingIdempotencyKeyException : Exception
     /// </summary>
     /// <param name="messageType">The message type whose delivery lacked an idempotency key.</param>
     public MissingIdempotencyKeyException(Type messageType)
-        : base($"A delivery of '{messageType?.FullName}' has no resolvable idempotency key and cannot be deduplicated. Set {nameof(InboxOptions)}.{nameof(InboxOptions.RejectMessagesWithoutKey)} to false to process such messages without deduplication, or supply a key selector.")
+        : base($"A delivery of '{messageType.FullName}' has no resolvable idempotency key and cannot be deduplicated. Set {nameof(InboxOptions)}.{nameof(InboxOptions.RejectMessagesWithoutKey)} to false to process such messages without deduplication, or supply a key selector.")
     {
         MessageType = messageType;
     }
@@ -19,5 +19,5 @@ public sealed class MissingIdempotencyKeyException : Exception
     /// <summary>
     /// Gets the message type whose delivery lacked an idempotency key, when available.
     /// </summary>
-    public Type? MessageType { get; }
+    public Type MessageType { get; }
 }

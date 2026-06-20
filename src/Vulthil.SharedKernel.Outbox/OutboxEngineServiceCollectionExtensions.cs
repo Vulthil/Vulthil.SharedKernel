@@ -33,6 +33,12 @@ public static class OutboxEngineServiceCollectionExtensions
 
         services.AddOptions<OutboxProcessingOptions>()
             .Configure(configureOptions ?? (static _ => { }))
+            .Validate(
+                o => !o.Retention.Enabled
+                    || o.Retention.RetentionPeriod > TimeSpan.Zero
+                    && o.Retention.SweepInterval > TimeSpan.Zero
+                    && o.Retention.BatchSize >= 1,
+                "Outbox retention requires RetentionPeriod and SweepInterval greater than zero and BatchSize of at least 1 when enabled.")
             .ValidateDataAnnotations()
             .ValidateOnStart();
 

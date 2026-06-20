@@ -71,7 +71,7 @@ public static class Telemetry
     /// <summary>
     /// ActivitySourceName for all outbox processing operations, allowing correlation of events across the capture, processing, and publishing stages.
     /// </summary>
-    public static readonly string ActivitySourceName = "Vulthil.SharedKernel.Outbox";
+    public static string ActivitySourceName => "Vulthil.SharedKernel.Outbox";
     /// <summary>
     /// ActivitySource for all outbox processing operations, allowing correlation of events across the capture, processing, and publishing stages.
     /// </summary>
@@ -81,7 +81,7 @@ public static class Telemetry
     /// Meter name for outbox relay metrics. Subscribe to it on a <c>MeterProviderBuilder</c> with
     /// <c>AddVulthilOutboxInstrumentation()</c>.
     /// </summary>
-    public static readonly string MeterName = "Vulthil.SharedKernel.Outbox";
+    public static string MeterName => "Vulthil.SharedKernel.Outbox";
     internal static readonly Meter Meter = new(MeterName);
     internal static readonly Counter<long> Relayed = Meter.CreateCounter<long>(
         "vulthil.outbox.relayed", unit: "{message}", description: "Outbox messages successfully relayed.");

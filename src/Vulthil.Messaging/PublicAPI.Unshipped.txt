@@ -134,7 +134,7 @@ Vulthil.Messaging.IMessagingConfigurator
 Vulthil.Messaging.IMessagingConfigurator.AddConsumeFilter<TFilter>() -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.AddOpenConsumeFilter(System.Type! openFilterType) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.AddPublishFilter<TFilter>() -> Vulthil.Messaging.IMessagingConfigurator!
-Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage<TMessage>(System.Action<Vulthil.Messaging.MessageConfiguration<TMessage!>!>! configureMessageAction) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage<TMessage>(System.Action<Vulthil.Messaging.MessageConfiguration<TMessage>!>! configureMessageAction) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action<Vulthil.Messaging.IMessagingOptionsConfigurator!>! action) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.ConfigureQueue(string! queueName, System.Action<Vulthil.Messaging.Queues.IQueueConfigurator!>! queueConfigurationAction) -> Vulthil.Messaging.IMessagingConfigurator!
 Vulthil.Messaging.IMessagingConfigurator.HostApplicationBuilder.get -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
@@ -173,9 +173,13 @@ Vulthil.Messaging.MessageConfiguration.Urn.get -> System.Uri!
 Vulthil.Messaging.MessageConfiguration.Urn.set -> void
 Vulthil.Messaging.MessageConfiguration<TMessage>
 Vulthil.Messaging.MessageConfiguration<TMessage>.MessageConfiguration() -> void
-Vulthil.Messaging.MessageConfiguration<TMessage>.UseCorrelationId(System.Func<TMessage!, string!>! selector) -> Vulthil.Messaging.MessageConfiguration<TMessage!>!
-Vulthil.Messaging.MessageConfiguration<TMessage>.UseRoutingKey(string! routingKey) -> Vulthil.Messaging.MessageConfiguration<TMessage!>!
-Vulthil.Messaging.MessageConfiguration<TMessage>.UseRoutingKey(System.Func<TMessage!, string!>! selector) -> Vulthil.Messaging.MessageConfiguration<TMessage!>!
+Vulthil.Messaging.MessageConfiguration<TMessage>.UseCorrelationId(System.Func<TMessage, string!>! selector) -> Vulthil.Messaging.MessageConfiguration<TMessage>!
+Vulthil.Messaging.MessageConfiguration<TMessage>.UseRoutingKey(string! routingKey) -> Vulthil.Messaging.MessageConfiguration<TMessage>!
+Vulthil.Messaging.MessageConfiguration<TMessage>.UseRoutingKey(System.Func<TMessage, string!>! selector) -> Vulthil.Messaging.MessageConfiguration<TMessage>!
+static Vulthil.Messaging.MessageConfiguration<TMessage>.operator !=(Vulthil.Messaging.MessageConfiguration<TMessage>? left, Vulthil.Messaging.MessageConfiguration<TMessage>? right) -> bool
+static Vulthil.Messaging.MessageConfiguration<TMessage>.operator ==(Vulthil.Messaging.MessageConfiguration<TMessage>? left, Vulthil.Messaging.MessageConfiguration<TMessage>? right) -> bool
+Vulthil.Messaging.MessageConfiguration<TMessage>.Equals(Vulthil.Messaging.MessageConfiguration<TMessage>? other) -> bool
+override Vulthil.Messaging.MessageConfiguration<TMessage>.<Clone>$() -> Vulthil.Messaging.MessageConfiguration<TMessage>!
 Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Direct = 1 -> Vulthil.Messaging.MessagingExchangeType
 Vulthil.Messaging.MessagingExchangeType.Fanout = 0 -> Vulthil.Messaging.MessagingExchangeType
@@ -505,7 +509,3 @@ Vulthil.Messaging.Transport.RpcFault.Message.init -> void
 Vulthil.Messaging.Transport.RpcFault.RpcFault() -> void
 Vulthil.Messaging.Transport.RpcFault.StackTrace.get -> string?
 Vulthil.Messaging.Transport.RpcFault.StackTrace.init -> void
-~override Vulthil.Messaging.MessageConfiguration<TMessage>.<Clone>$() -> Vulthil.Messaging.MessageConfiguration<TMessage>!
-~static Vulthil.Messaging.MessageConfiguration<TMessage>.operator !=(Vulthil.Messaging.MessageConfiguration<TMessage>? left, Vulthil.Messaging.MessageConfiguration<TMessage>? right) -> bool
-~static Vulthil.Messaging.MessageConfiguration<TMessage>.operator ==(Vulthil.Messaging.MessageConfiguration<TMessage>? left, Vulthil.Messaging.MessageConfiguration<TMessage>? right) -> bool
-~Vulthil.Messaging.MessageConfiguration<TMessage>.Equals(Vulthil.Messaging.MessageConfiguration<TMessage>? other) -> bool

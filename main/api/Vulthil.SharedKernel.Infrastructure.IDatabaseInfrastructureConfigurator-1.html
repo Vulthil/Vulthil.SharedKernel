@@ -289,7 +289,7 @@ processing has been enabled — regardless of the order in which the user chaine
   <a id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseOutboxStore_" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseOutboxStore*"></a>
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseOutboxStore__1" data-uid="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseOutboxStore``1">
-  UseOutboxStore&lt;T&gt;()
+  UseOutboxStore&lt;TStore&gt;()
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/IDatabaseInfrastructureConfigurator.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -298,7 +298,7 @@ processing has been enabled — regardless of the order in which the user chaine
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseOutboxStore&lt;T&gt;() where T : class, IOutboxStore</code></pre>
+    <pre><code class="lang-csharp hljs">IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseOutboxStore&lt;TStore&gt;() where TStore : class, IOutboxStore</code></pre>
   </div>
 
 
@@ -311,7 +311,7 @@ processing has been enabled — regardless of the order in which the user chaine
 
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
-    <dt><code>T</code></dt>
+    <dt><code>TStore</code></dt>
     <dd><p>The type of outbox store to use.</p>
 </dd>
   </dl>

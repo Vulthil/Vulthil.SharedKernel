@@ -165,7 +165,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseCosmosDb&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionName, Action&lt;EntityFrameworkCoreCosmosSettings&gt;? configureSettings = null, Action&lt;DbContextOptionsBuilder&gt;? configureDbContextOptions = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
+    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseCosmosDb&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionStringKey, Action&lt;EntityFrameworkCoreCosmosSettings&gt;? configureSettings = null, Action&lt;DbContextOptionsBuilder&gt;? configureDbContextOptions = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -173,7 +173,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
     <dt><code>configurator</code> <a class="xref" href="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html">IDatabaseInfrastructureConfigurator</a>&lt;TDbContext&gt;</dt>
     <dd><p>The database infrastructure configurator.</p>
 </dd>
-    <dt><code>connectionName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dt><code>connectionStringKey</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
     <dd><p>The name of the Cosmos DB connection.</p>
 </dd>
     <dt><code>configureSettings</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">EntityFrameworkCoreCosmosSettings</span>&gt;</dt>

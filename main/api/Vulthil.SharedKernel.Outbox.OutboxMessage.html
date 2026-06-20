@@ -161,7 +161,7 @@ Class OutboxMessage  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_Content" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.Content">
   Content
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the JSON-serialized domain event content.</p>
@@ -193,7 +193,7 @@ Class OutboxMessage  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_Destination" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.Destination">
   Destination
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the sink this message is relayed to (in-process domain event, broker publish, or broker send). Defaults
@@ -226,7 +226,7 @@ to <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxDestination.html#Vult
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_Error" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.Error">
   Error
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the error message from the last failed delivery attempt, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if no failures.</p>
@@ -258,7 +258,7 @@ to <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxDestination.html#Vult
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_FailedOnUtc" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.FailedOnUtc">
   FailedOnUtc
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the UTC timestamp when the message was dead-lettered after exhausting its retries, or
@@ -279,38 +279,6 @@ last failure.</p>
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a>?</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Vulthil_SharedKernel_Outbox_OutboxMessage_GroupId_" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.GroupId*"></a>
-
-  <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_GroupId" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.GroupId">
-  GroupId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L16"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets the group identifier linking messages that were captured during the same <code>SaveChanges</code> call.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Guid GroupId { get; init; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
     <dd></dd>
   </dl>
 
@@ -358,7 +326,7 @@ stable, time-ordered tie-breaker when ordering messages with the same <a class="
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_Metadata" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.Metadata">
   Metadata
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets optional destination-specific metadata serialized as JSON (e.g. the broker message id, correlation,
@@ -391,7 +359,7 @@ headers, and destination address for bus-publish rows). <a href="https://learn.m
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_OccurredOnUtc" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.OccurredOnUtc">
   OccurredOnUtc
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the UTC timestamp when the domain event occurred.</p>
@@ -423,7 +391,7 @@ headers, and destination address for bus-publish rows). <a href="https://learn.m
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_ProcessedOnUtc" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.ProcessedOnUtc">
   ProcessedOnUtc
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the UTC timestamp when the message was successfully processed, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if pending
@@ -456,7 +424,7 @@ or dead-lettered.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_RetryCount" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.RetryCount">
   RetryCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the number of delivery attempts made for this message.</p>
@@ -488,7 +456,7 @@ or dead-lettered.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_TraceParent" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.TraceParent">
   TraceParent
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Activity TraceParent, for distributed tracing correlation.</p>
@@ -520,7 +488,7 @@ or dead-lettered.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_TraceState" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.TraceState">
   TraceState
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Activity TraceState, for distributed tracing correlation.</p>
@@ -552,7 +520,7 @@ or dead-lettered.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxMessage_Type" data-uid="Vulthil.SharedKernel.Outbox.OutboxMessage.Type">
   Type
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxMessage.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the fully-qualified type name of the serialized domain event.</p>

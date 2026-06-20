@@ -117,7 +117,7 @@
     }));
 </code></pre>
 <h3 id="configuring-the-integration">Configuring the integration</h3>
-<p><code>UseMySql</code> takes an optional <code>configure</code> delegate. Because the Aspire integration only exists on .NET 9, its type differs per target framework — the Aspire <code>PomeloEntityFrameworkCoreMySqlSettings</code> on .NET 9, and the EF Core <code>MySqlDbContextOptionsBuilder</code> on .NET 10:</p>
+<p><code>UseMySql</code> takes an optional <code>configureSettings</code> delegate. Because the Aspire integration only exists on .NET 9, its type differs per target framework — the Aspire <code>PomeloEntityFrameworkCoreMySqlSettings</code> on .NET 9, and the EF Core <code>MySqlDbContextOptionsBuilder</code> on .NET 10:</p>
 <pre><code class="lang-csharp">// .NET 9 (Aspire) — toggle health checks, tracing, retries, command timeout:
 config.UseMySql(&quot;Default&quot;, settings =&gt; settings.DisableHealthChecks = true);
 

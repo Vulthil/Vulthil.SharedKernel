@@ -156,7 +156,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
   <a id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql_" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql*"></a>
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Pomelo_EntityFrameworkCore_MySql_PomeloEntityFrameworkCoreMySqlSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Pomelo.EntityFrameworkCore.MySql.PomeloEntityFrameworkCoreMySqlSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})">
-  UseMySql&lt;TContext&gt;(IDatabaseInfrastructureConfigurator&lt;TContext&gt;, string, Action&lt;PomeloEntityFrameworkCoreMySqlSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)
+  UseMySql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;PomeloEntityFrameworkCoreMySqlSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/DependencyInjectionExtensions.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -165,18 +165,18 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TContext&gt; UseMySql&lt;TContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TContext&gt; configurator, string connectionStringKey, Action&lt;PomeloEntityFrameworkCoreMySqlSettings&gt;? configure = null, Action&lt;DbContextOptionsBuilder&gt;? configureDbContextOptions = null) where TContext : DbContext, ISaveOutboxMessages</code></pre>
+    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseMySql&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionStringKey, Action&lt;PomeloEntityFrameworkCoreMySqlSettings&gt;? configureSettings = null, Action&lt;DbContextOptionsBuilder&gt;? configureDbContextOptions = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>configurator</code> <a class="xref" href="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html">IDatabaseInfrastructureConfigurator</a>&lt;TContext&gt;</dt>
+    <dt><code>configurator</code> <a class="xref" href="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html">IDatabaseInfrastructureConfigurator</a>&lt;TDbContext&gt;</dt>
     <dd><p>...</p>
 </dd>
     <dt><code>connectionStringKey</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
     <dd><p>...</p>
 </dd>
-    <dt><code>configure</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">PomeloEntityFrameworkCoreMySqlSettings</span>&gt;</dt>
+    <dt><code>configureSettings</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">PomeloEntityFrameworkCoreMySqlSettings</span>&gt;</dt>
     <dd><p>... .NET 9 wording ...</p>
 </dd>
     <dt><code>configureDbContextOptions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder">DbContextOptionsBuilder</a>&gt;</dt>
@@ -186,14 +186,14 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html">IDatabaseInfrastructureConfigurator</a>&lt;TContext&gt;</dt>
+    <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html">IDatabaseInfrastructureConfigurator</a>&lt;TDbContext&gt;</dt>
     <dd><p>The configurator for chaining.</p>
 </dd>
   </dl>
 
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
-    <dt><code>TContext</code></dt>
+    <dt><code>TDbContext</code></dt>
     <dd><p>...</p>
 </dd>
   </dl>

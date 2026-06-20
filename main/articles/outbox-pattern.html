@@ -230,7 +230,7 @@ and each provider supplies a subclass with its row-locking fetch — <code>Relat
 <code>ExecuteUpdate</code> base), <code>NpgsqlOutboxStore&lt;TContext&gt;</code> / <code>MySqlOutboxStore&lt;TContext&gt;</code> (<code>FOR UPDATE SKIP LOCKED</code>), and
 <code>CosmosOutboxStore&lt;TContext&gt;</code> (best-effort, no transaction). A provider's <code>UseNpgsql</code>/<code>UseMySql</code>/<code>UseCosmosDb</code>
 selects the store; you can supply your own by implementing <code>IOutboxStore</code> (or deriving from the EF base) and
-registering it with <code>UseOutboxStore&lt;T&gt;()</code>:</p>
+registering it with <code>UseOutboxStore&lt;TStore&gt;()</code>:</p>
 <pre><code class="lang-csharp">config
     .UseNpgsql(connectionStringKey)
     .UseOutboxStore&lt;CustomOutboxStore&lt;AppDbContext&gt;&gt;()

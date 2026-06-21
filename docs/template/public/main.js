@@ -1,9 +1,16 @@
 // DocFX modern-template hooks. Adds a version selector to the navbar so readers
 // can switch between the released docs (the default) and the pre-release "main"
-// build. The manifest lives at the site root; see docs/design/docs-versioning.md.
+// build. Switching keeps the reader on the same page when that page also exists
+// in the target version, otherwise it falls back to the version's home page.
+// The manifest (versions.json) lives at the site root and is produced by
+// eng/update_versions.py during each docs deploy.
+//
+// DocFX 2.78's modern template only invokes the `start` hook from this module
+// (it has no `ready` hook), so the selector is mounted from `start`. The navbar
+// shell is static markup and docfx.min.js loads as a deferred module, so the
+// mount target already exists by the time `start` runs.
 export default {
-  start: () => {},
-  ready: () => {
+  start: () => {
     renderVersionSelector();
   },
 };
@@ -41,7 +48,7 @@ async function renderVersionSelector() {
   }
 
   select.addEventListener('change', () => {
-    window.location.href = `${REPO_BASE}${select.value}/`;
+    switchToVersion(select.value);
   });
 
   mountSelector(select);
@@ -53,6 +60,40 @@ function currentSlug() {
     return '';
   }
   return path.slice(REPO_BASE.length).split('/')[0];
+}
+
+function currentSubpath() {
+  const slug = currentSlug();
+  if (!slug) {
+    return '';
+  }
+  const prefix = `${REPO_BASE}${slug}/`;
+  const path = window.location.pathname;
+  return path.startsWith(prefix) ? path.slice(prefix.length) : '';
+}
+
+async function switchToVersion(slug) {
+  const target = `${REPO_BASE}${slug}/`;
+  const subpath = currentSubpath();
+
+  if (subpath) {
+    const candidate = `${target}${subpath}`;
+    if (await pageExists(candidate)) {
+      window.location.href = `${candidate}${window.location.hash}`;
+      return;
+    }
+  }
+
+  window.location.href = target;
+}
+
+async function pageExists(url) {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 function labelFor(version, defaultSlug) {

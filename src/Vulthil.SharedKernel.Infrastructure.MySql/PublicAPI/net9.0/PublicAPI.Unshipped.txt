@@ -1,2 +1,1 @@
 #nullable enable
-static Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql<TDbContext>(this Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>! configurator, string! connectionStringKey, System.Action<Aspire.Pomelo.EntityFrameworkCore.MySql.PomeloEntityFrameworkCoreMySqlSettings!>? configureSettings = null, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>? configureDbContextOptions = null) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!

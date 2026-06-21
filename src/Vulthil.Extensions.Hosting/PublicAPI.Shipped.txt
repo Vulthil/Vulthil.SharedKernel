@@ -1,1 +1,2 @@
 #nullable enable
+Vulthil.Extensions.Hosting.IRestartableHostedService

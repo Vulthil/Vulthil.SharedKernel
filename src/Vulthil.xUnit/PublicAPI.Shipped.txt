@@ -1,1 +1,117 @@
 #nullable enable
+abstract Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.ConnectionString.get -> string!
+override Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+override Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+static Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.SanitizeDatabaseName(string! scopeId) -> string!
+virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CreateFactory() -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.CreateScopeId() -> string!
+virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ShouldUseContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> bool
+virtual Vulthil.xUnit.Fixtures.ContainerHost.ConfigureContainers() -> System.Threading.Tasks.Task!
+virtual Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.BuildScopedConnectionString(string! virtualHost) -> string!
+virtual Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.VirtualHostUsername.get -> string!
+virtual Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.BuildScopedConnectionString(string! databaseName) -> string!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.CreateDatabaseAsync(string! databaseName) -> System.Threading.Tasks.Task!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.DropDatabaseAsync(string! databaseName) -> System.Threading.Tasks.Task!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.FactoryFixture.get -> TFactory!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory(Vulthil.xUnit.Fixtures.ContainerHost! containerHost) -> void
+Vulthil.xUnit.Fixtures.ContainerHost
+Vulthil.xUnit.Fixtures.ContainerHost.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> void
+Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Fixtures.ContainerHost.Containers.get -> System.Collections.Generic.IReadOnlyCollection<Vulthil.xUnit.Fixtures.ITestContainer!>!
+Vulthil.xUnit.Fixtures.ContainerHost.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ContainerHost.EnsureStartedAsync(Vulthil.xUnit.Fixtures.ITestContainer! container) -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Fixtures.ContainerHost.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ContainerHost.MessageSink.get -> Xunit.Sdk.IMessageSink!
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ExecuteServerCommandAsync(string! commandText) -> System.Threading.Tasks.Task!
+Vulthil.xUnit.Fixtures.ITestContainerScopeProvider
+Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
+Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+abstract Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.ConnectionStringKey.get -> string!
+abstract Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ConnectionStringKey.get -> string!
+abstract Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.DbAdapter.get -> Respawn.IDbAdapter!
+override sealed Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+override Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+static Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CancellationToken.get -> System.Threading.CancellationToken
+static Vulthil.xUnit.BaseUnitTestCase.CancellationToken.get -> System.Threading.CancellationToken
+virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseUnitTestCase.CreateInstance<TTarget>() -> TTarget!
+virtual Vulthil.xUnit.BaseUnitTestCase.Dispose() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseUnitTestCase.GetMock<TMock>() -> Moq.Mock<TMock!>!
+virtual Vulthil.xUnit.BaseUnitTestCase.Initialize() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseUnitTestCase.Use<TService>(TService service) -> void
+virtual Vulthil.xUnit.BaseUnitTestCase.UseReal<TService>() -> void
+virtual Vulthil.xUnit.BaseUnitTestCase.UseRealFor<TService, TImplementation>() -> void
+virtual Vulthil.xUnit.BaseUnitTestCase<TTarget>.CreateInstance() -> TTarget!
+virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers() -> System.Threading.Tasks.Task!
+virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureCustomWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+virtual Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+virtual Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+virtual Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase(TFactory! factory, Xunit.ITestOutputHelper? testOutputHelper = null) -> void
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Client.get -> System.Net.Http.HttpClient!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Factory.get -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock(string! name) -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices.get -> System.IServiceProvider!
+Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper.get -> Xunit.ITestOutputHelper?
+Vulthil.xUnit.BaseUnitTestCase
+Vulthil.xUnit.BaseUnitTestCase.AutoMocker.get -> Moq.AutoMock.AutoMocker!
+Vulthil.xUnit.BaseUnitTestCase.BaseUnitTestCase() -> void
+Vulthil.xUnit.BaseUnitTestCase.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseUnitTestCase.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseUnitTestCase<TTarget>
+Vulthil.xUnit.BaseUnitTestCase<TTarget>.BaseUnitTestCase() -> void
+Vulthil.xUnit.BaseUnitTestCase<TTarget>.Target.get -> TTarget!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> void
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.AddHttpMock(string! name) -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.AddHttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory() -> void
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ContainersWithConnectionStrings.get -> System.Collections.Generic.IEnumerable<Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString!>!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.DatabaseContainers.get -> System.Collections.Generic.IEnumerable<Vulthil.xUnit.Fixtures.ITestDatabaseContainer!>!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.GetHttpMock(string! name) -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.GetHttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ITestContainer
+Vulthil.xUnit.Fixtures.ITestContainer.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+Vulthil.xUnit.Fixtures.ITestContainer.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString
+Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.ConnectionString.get -> string!
+Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.ConnectionStringKey.get -> string!
+Vulthil.xUnit.Fixtures.ITestDatabaseContainer
+Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Http.CapturedHttpRequest
+Vulthil.xUnit.Http.CapturedHttpRequest.Body.get -> string?
+Vulthil.xUnit.Http.CapturedHttpRequest.CapturedHttpRequest(System.Net.Http.HttpMethod! method, System.Uri? requestUri, string? body) -> void
+Vulthil.xUnit.Http.CapturedHttpRequest.Method.get -> System.Net.Http.HttpMethod!
+Vulthil.xUnit.Http.CapturedHttpRequest.RequestUri.get -> System.Uri?
+Vulthil.xUnit.Http.IHttpMock
+Vulthil.xUnit.Http.IHttpMock.On(System.Func<System.Net.Http.HttpRequestMessage!, bool>! predicate) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
+Vulthil.xUnit.Http.IHttpMock.On(System.Net.Http.HttpMethod! method, string! pathPattern) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
+Vulthil.xUnit.Http.IHttpMock.ReceivedRequests.get -> System.Collections.Generic.IReadOnlyList<Vulthil.xUnit.Http.CapturedHttpRequest!>!
+Vulthil.xUnit.Http.IHttpMockResponseBuilder
+Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWith(System.Func<System.Net.Http.HttpRequestMessage!, System.Threading.CancellationToken, System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!>! responder) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
+Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWith(System.Net.HttpStatusCode statusCode) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
+Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWith<TResponse>(System.Net.HttpStatusCode statusCode, TResponse body) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
+Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWithJson(System.Net.HttpStatusCode statusCode, string! json) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
+Vulthil.xUnit.Http.IHttpMockResponseBuilder.WithHeader(string! name, params string![]! values) -> Vulthil.xUnit.Http.IHttpMockResponseBuilder!
+Vulthil.xUnit.IResettableResource
+Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.IStartupResource
+Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask

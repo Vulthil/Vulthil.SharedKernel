@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Vulthil.SharedKernel.Infrastructure.MySql | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Vulthil.SharedKernel.Infrastructure.MySql | Vulthil.SharedKernel ">
+      
+      
+      <link rel="icon" href="../../images/favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/packages/vulthil-sharedkernel-infrastructure-mysql.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="vulthilsharedkernelinfrastructuremysql">Vulthil.SharedKernel.Infrastructure.MySql</h1>
+
+<p>Use <code>Vulthil.SharedKernel.Infrastructure.MySql</code> to wire a MySQL-backed <code>DbContext</code> together with the MySQL-tuned outbox strategy.</p>
+<h2 id="when-to-use">When to use</h2>
+<ul>
+<li>MySQL is the underlying database for an application's primary <code>DbContext</code></li>
+<li>Outbox processing should use the MySQL strategy (row-level locking via <code>FOR UPDATE SKIP LOCKED</code>)</li>
+</ul>
+<h2 id="pattern">Pattern</h2>
+<ul>
+<li>Call <code>UseMySql(&quot;ConnectionStringKey&quot;)</code> on the database infrastructure configurator – it registers a pooled EF Core context for the named connection string, selects the MySQL outbox strategy, and (when outbox processing is enabled) wires the commit-time relay trigger</li>
+<li>Order between <code>UseMySql</code> and <code>EnableOutboxProcessing</code> does not matter; the configurator defers the underlying registration until the full chain has executed</li>
+<li>Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (<code>Database.CreateExecutionStrategy().ExecuteAsync</code>)</li>
+</ul>
+<h2 id="provider">Provider</h2>
+<p>The MySQL EF Core provider is resolved per target framework:</p>
+<ul>
+<li><strong>.NET 9</strong> – the Aspire client integration <a href="https://www.nuget.org/packages/Aspire.Pomelo.EntityFrameworkCore.MySql"><code>Aspire.Pomelo.EntityFrameworkCore.MySql</code></a>, which resolves the connection string and adds health checks, telemetry, and connection resiliency (parity with the Npgsql and Cosmos integrations)</li>
+<li><strong>.NET 10</strong> – the API-compatible <a href="https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql"><code>Microting.EntityFrameworkCore.MySql</code></a> fork of Pomelo, registered directly, until the official Pomelo and Aspire packages ship EF Core 10 support</li>
+</ul>
+<p>On .NET 10 the MySQL server version is detected from the connection at startup via <code>ServerVersion.AutoDetect</code>, so the database must be reachable when the host starts.</p>
+<h2 id="usage">Usage</h2>
+<h3 id="registration">Registration</h3>
+<pre><code class="lang-csharp">builder.AddDbContext&lt;AppDbContext&gt;(config =&gt; config
+    .UseMySql(&quot;Default&quot;)
+    .EnableOutboxProcessing(o =&gt;
+    {
+        o.BatchSize = 25;
+        o.MaxRetries = 3;
+    }));
+</code></pre>
+<h3 id="configuring-the-integration">Configuring the integration</h3>
+<p><code>UseMySql</code> takes an optional <code>configureSettings</code> delegate. Because the Aspire integration only exists on .NET 9, its type differs per target framework — the Aspire <code>PomeloEntityFrameworkCoreMySqlSettings</code> on .NET 9, and the EF Core <code>MySqlDbContextOptionsBuilder</code> on .NET 10:</p>
+<pre><code class="lang-csharp">// .NET 9 (Aspire) — toggle health checks, tracing, retries, command timeout:
+config.UseMySql(&quot;Default&quot;, settings =&gt; settings.DisableHealthChecks = true);
+
+// .NET 10 (Microting) — configure EF Core/Pomelo options:
+config.UseMySql(&quot;Default&quot;, mySql =&gt; mySql.CommandTimeout(30));
+</code></pre>
+<h3 id="applying-migrations-on-startup">Applying migrations on startup</h3>
+<p><code>Vulthil.SharedKernel.Infrastructure.Relational</code> (pulled in transitively) exposes <code>MigrateAsync</code>:</p>
+<pre><code class="lang-csharp">var app = builder.Build();
+await app.MigrateAsync&lt;AppDbContext&gt;();
+app.Run();
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/packages/vulthil-sharedkernel-infrastructure-mysql.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

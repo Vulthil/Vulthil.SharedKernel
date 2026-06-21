@@ -1,9 +1,13 @@
 {
-  "default": null,
+  "default": "1.0.0",
   "versions": [
     {
       "slug": "main",
       "prerelease": true
+    },
+    {
+      "slug": "1.0.0",
+      "prerelease": false
     }
   ]
 }

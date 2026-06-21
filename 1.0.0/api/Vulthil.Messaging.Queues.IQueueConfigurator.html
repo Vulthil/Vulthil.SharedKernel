@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IQueueConfigurator | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IQueueConfigurator | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="Configures a queue&#39;s consumers, retry policies, and dead letter settings.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Queues_IQueueConfigurator.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Queues.IQueueConfigurator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.Queues.IQueueConfigurator">
+
+
+
+  <h1 id="Vulthil_Messaging_Queues_IQueueConfigurator" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator" class="text-break">
+Interface IQueueConfigurator  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.Queues.html">Queues</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Configures a queue's consumers, retry policies, and dead letter settings.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IQueueConfigurator</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_AddConsumer_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.AddConsumer*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_AddConsumer__1_System_Action_Vulthil_Messaging_Queues_IConsumerConfigurator___0___" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.AddConsumer``1(System.Action{Vulthil.Messaging.Queues.IConsumerConfigurator{``0}})">
+  AddConsumer&lt;TConsumer&gt;(Action&lt;IConsumerConfigurator&lt;TConsumer&gt;&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a one-way consumer on this queue with optional per-consumer configuration.
+If the consumer's <code>TMessage</code> is concrete, the queue is auto-subscribed to it at build time;
+for polymorphic consumers (e.g. <code>IConsumer&lt;IOrderEvent&gt;</code>) the caller must explicitly
+<a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_">Subscribe&lt;TMessage&gt;(string?)</a> the concrete implementers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator AddConsumer&lt;TConsumer&gt;(Action&lt;IConsumerConfigurator&lt;TConsumer&gt;&gt;? configure = null) where TConsumer : class, IConsumer</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>configure</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.IConsumerConfigurator-1.html">IConsumerConfigurator</a>&lt;TConsumer&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TConsumer</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_AddRequestConsumer_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_AddRequestConsumer__1_System_Action_Vulthil_Messaging_Queues_IRequestConfigurator___0___" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer``1(System.Action{Vulthil.Messaging.Queues.IRequestConfigurator{``0}})">
+  AddRequestConsumer&lt;TConsumer&gt;(Action&lt;IRequestConfigurator&lt;TConsumer&gt;&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a request/reply consumer on this queue with optional per-consumer configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator AddRequestConsumer&lt;TConsumer&gt;(Action&lt;IRequestConfigurator&lt;TConsumer&gt;&gt;? configure = null) where TConsumer : class, IRequestConsumer</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>configure</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.IRequestConfigurator-1.html">IRequestConfigurator</a>&lt;TConsumer&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TConsumer</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_ConfigureQueue_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.ConfigureQueue*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_ConfigureQueue_System_Action_Vulthil_Messaging_Queues_QueueDefinition__" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.ConfigureQueue(System.Action{Vulthil.Messaging.Queues.QueueDefinition})">
+  ConfigureQueue(Action&lt;QueueDefinition&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies additional configuration to the underlying <a class="xref" href="Vulthil.Messaging.Queues.QueueDefinition.html">QueueDefinition</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator ConfigureQueue(Action&lt;QueueDefinition&gt; configureAction)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>configureAction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.QueueDefinition.html">QueueDefinition</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_SubscribeAll_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.SubscribeAll*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_SubscribeAll__1_System_Reflection_Assembly_System_String_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.SubscribeAll``1(System.Reflection.Assembly,System.String)">
+  SubscribeAll&lt;TInterface&gt;(Assembly, string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Discovers every concrete (non-abstract, non-interface) type in <code class="paramref">assembly</code> that is
+assignable to <code class="typeparamref">TInterface</code>, and calls <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_">Subscribe&lt;TMessage&gt;(string?)</a> for each.
+Pair with a polymorphic <code>AddConsumer&lt;TConsumer&gt;()</code> (where <code>TConsumer : IConsumer&lt;TInterface&gt;</code>)
+to dispatch all implementers through one consumer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator SubscribeAll&lt;TInterface&gt;(Assembly assembly, string? routingKey = null) where TInterface : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>assembly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.reflection.assembly">Assembly</a></dt>
+    <dd><p>The assembly to scan for concrete implementers.</p>
+</dd>
+    <dt><code>routingKey</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The binding pattern applied to every discovered implementer's exchange. <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> = broker default.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TInterface</code></dt>
+    <dd><p>The polymorphic dispatch type — typically an interface or abstract base class.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe``1(System.String)">
+  Subscribe&lt;TMessage&gt;(string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subscribes this queue to receive deliveries of the concrete message type <code class="typeparamref">TMessage</code>.
+At topology setup time, the queue is bound to <code class="typeparamref">TMessage</code>'s exchange with the supplied
+<code class="paramref">routingKey</code> pattern (the broker uses this to filter; the worker does not re-filter).
+Abstract types and interfaces are rejected — those have no exchange; use <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_SubscribeAll__1_System_Reflection_Assembly_System_String_">SubscribeAll&lt;TInterface&gt;(Assembly, string?)</a>
+or call <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_">Subscribe&lt;TMessage&gt;(string?)</a> for each concrete implementer instead.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator Subscribe&lt;TMessage&gt;(string? routingKey = null) where TMessage : class</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>routingKey</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The binding pattern. When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, the broker receives an empty string —
+fanout/headers exchanges ignore it; direct exchanges only deliver messages with an empty
+published routing key; topic exchanges match no patterns. For non-empty needs, supply a specific
+pattern (e.g. <code>&quot;order.created&quot;</code> for direct, <code>&quot;order.*&quot;</code> for topic).</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>A concrete (non-abstract, non-interface) message type.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_UseDeadLetterQueue_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseDeadLetterQueue*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_UseDeadLetterQueue_System_String_System_String_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseDeadLetterQueue(System.String,System.String)">
+  UseDeadLetterQueue(string?, string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Enables a dead letter queue for this queue.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator UseDeadLetterQueue(string? queueName = null, string? exchangeName = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>queueName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Optional dead letter queue name.</p>
+</dd>
+    <dt><code>exchangeName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Optional dead letter exchange name.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_UseRetry_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseRetry*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseRetry(System.Action{Vulthil.Messaging.Queues.RetryPolicyConfigurator})">
+  UseRetry(Action&lt;RetryPolicyConfigurator&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Configures the default retry policy for all consumers on this queue.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator UseRetry(Action&lt;RetryPolicyConfigurator&gt; configure)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>configure</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.RetryPolicyConfigurator.html">RetryPolicyConfigurator</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Queues_IQueueConfigurator_UseSingleActiveConsumer_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseSingleActiveConsumer*"></a>
+
+  <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_UseSingleActiveConsumer" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseSingleActiveConsumer">
+  UseSingleActiveConsumer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Declares the queue with RabbitMQ's single active consumer feature: only one consumer is active at a
+time while additional consumers stand by and take over on failure. This preserves per-queue order
+across load-balanced consumer instances — extending the in-process partitioner's ordering guarantee
+to multiple instances — at the cost of throughput scale-out for the queue. Partitioned queues enable
+this automatically.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IQueueConfigurator UseSingleActiveConsumer()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L10" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface ITestHarness | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface ITestHarness | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="In-memory messaging test harness. Captures every message produced and consumed through the in-memory transport so tests can assert on messaging behaviour with no broker, and lets a test stand in for an external service by handling published messages or responding to requests.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_TestHarness_ITestHarness.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.TestHarness.ITestHarness%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.TestHarness.ITestHarness">
+
+
+
+  <h1 id="Vulthil_Messaging_TestHarness_ITestHarness" data-uid="Vulthil.Messaging.TestHarness.ITestHarness" class="text-break">
+Interface ITestHarness  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.TestHarness.html">TestHarness</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.TestHarness.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>In-memory messaging test harness. Captures every message produced and consumed through the in-memory
+transport so tests can assert on messaging behaviour with no broker, and lets a test stand in for an
+external service by handling published messages or responding to requests.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface ITestHarness</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="Vulthil_Messaging_TestHarness_ITestHarness_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>The harness dispatches synchronously: by the time a publish, send, or request call completes, every
+consumer (and registered <a class="xref" href="Vulthil.Messaging.TestHarness.ITestHarness.html#Vulthil_Messaging_TestHarness_ITestHarness_Handle__1_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_Threading_Tasks_Task__">Handle&lt;TMessage&gt;(Func&lt;IMessageContext&lt;TMessage&gt;, Task&gt;)</a>/<a class="xref" href="Vulthil.Messaging.TestHarness.ITestHarness.html#Vulthil_Messaging_TestHarness_ITestHarness_Respond__2_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0____1__">Respond&lt;TRequest, TResponse&gt;(Func&lt;IMessageContext&lt;TRequest&gt;, TResponse&gt;)</a> stub)
+it triggered has run, so assertions need no polling. A one-way consumer that throws is retried per its
+configured policy and, once the attempts are exhausted, a <code>Fault&lt;T&gt;</code> is published — the publish or
+send itself still completes — mirroring the broker transport; a request consumer's exception is surfaced as a
+failed request result.</p>
+</div>
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_Messaging_TestHarness_ITestHarness_Clear_" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Clear*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Clear" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clears all captured published, sent, consumed, and requested messages. Registered stubs are retained.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_TestHarness_ITestHarness_Consumed_" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Consumed*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Consumed__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Consumed``1">
+  Consumed&lt;TMessage&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the messages delivered to a registered consumer that are assignable to <code class="typeparamref">TMessage</code>, in order. A message handled by several consumers is captured once per consumer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyList&lt;CapturedMessage&lt;TMessage&gt;&gt; Consumed&lt;TMessage&gt;() where TMessage : notnull</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Vulthil.Messaging.TestHarness.CapturedMessage-1.html">CapturedMessage</a>&lt;TMessage&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to filter by.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_TestHarness_ITestHarness_Handle_" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Handle*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Handle__1_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_Threading_Tasks_Task__" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Handle``1(System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.Threading.Tasks.Task})">
+  Handle&lt;TMessage&gt;(Func&lt;IMessageContext&lt;TMessage&gt;, Task&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a stub that runs whenever a <code class="typeparamref">TMessage</code> is published or sent, in addition to
+any registered consumers. Use it to stand in for a downstream service — the stub can publish or send
+follow-up messages through its context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Handle&lt;TMessage&gt;(Func&lt;IMessageContext&lt;TMessage&gt;, Task&gt; handler) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handler</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.html">IMessageContext</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</dt>
+    <dd><p>The stub invoked with the delivered message context.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to react to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_TestHarness_ITestHarness_Published_" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Published*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Published__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Published``1">
+  Published&lt;TMessage&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the messages published via <code>IPublisher.PublishAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyList&lt;CapturedMessage&lt;TMessage&gt;&gt; Published&lt;TMessage&gt;() where TMessage : notnull</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Vulthil.Messaging.TestHarness.CapturedMessage-1.html">CapturedMessage</a>&lt;TMessage&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to filter by.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_TestHarness_ITestHarness_Requested_" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Requested*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Requested__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Requested``1">
+  Requested&lt;TMessage&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the requests issued via <code>IRequester.RequestAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyList&lt;CapturedMessage&lt;TMessage&gt;&gt; Requested&lt;TMessage&gt;() where TMessage : notnull</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Vulthil.Messaging.TestHarness.CapturedMessage-1.html">CapturedMessage</a>&lt;TMessage&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The request type to filter by.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_TestHarness_ITestHarness_Respond_" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Respond*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Respond__2_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0____1__" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Respond``2(System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},``1})">
+  Respond&lt;TRequest, TResponse&gt;(Func&lt;IMessageContext&lt;TRequest&gt;, TResponse&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a stub that answers requests of type <code class="typeparamref">TRequest</code> with a
+<code class="typeparamref">TResponse</code>, standing in for an external request consumer. A registered responder
+takes precedence over a real request consumer for the same request type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Respond&lt;TRequest, TResponse&gt;(Func&lt;IMessageContext&lt;TRequest&gt;, TResponse&gt; responder) where TRequest : notnull where TResponse : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>responder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.html">IMessageContext</a>&lt;TRequest&gt;, TResponse&gt;</dt>
+    <dd><p>The stub invoked with the request context to produce the response.</p>
+</dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TRequest</code></dt>
+    <dd><p>The request type to answer.</p>
+</dd>
+    <dt><code>TResponse</code></dt>
+    <dd><p>The response type to return.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_TestHarness_ITestHarness_Sent_" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Sent*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Sent__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Sent``1">
+  Sent&lt;TMessage&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the messages sent via <code>ISendEndpoint.SendAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyList&lt;CapturedMessage&lt;TMessage&gt;&gt; Sent&lt;TMessage&gt;() where TMessage : notnull</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Vulthil.Messaging.TestHarness.CapturedMessage-1.html">CapturedMessage</a>&lt;TMessage&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to filter by.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

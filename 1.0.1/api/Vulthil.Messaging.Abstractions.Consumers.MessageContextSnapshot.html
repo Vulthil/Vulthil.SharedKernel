@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MessageContextSnapshot | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MessageContextSnapshot | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="An immutable, serializable snapshot of an &#39;s transport metadata captured at a point in time (e.g. when a  is produced). Unlike  it carries no behavior and no live transport binding, so it round-trips cleanly through serialization.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot">
+
+
+
+  <h1 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot" class="text-break">
+Class MessageContextSnapshot  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.Abstractions.html">Abstractions</a>.<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.html">Consumers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.Abstractions.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>An immutable, serializable snapshot of an <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html">IMessageContext</a>'s transport metadata captured at a
+point in time (e.g. when a <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.Fault-1.html">Fault&lt;TMessage&gt;</a> is produced). Unlike <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html">IMessageContext</a>
+it carries no behavior and no live transport binding, so it round-trips cleanly through serialization.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed record MessageContextSnapshot : IEquatable&lt;MessageContextSnapshot&gt;</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">MessageContextSnapshot</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.html">MessageContextSnapshot</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_ConversationId_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.ConversationId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_ConversationId" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.ConversationId">
+  ConversationId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The conversation identifier grouping related messages, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? ConversationId { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_CorrelationId_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.CorrelationId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_CorrelationId" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.CorrelationId">
+  CorrelationId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The business correlation identifier, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? CorrelationId { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_DestinationAddress_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.DestinationAddress*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_DestinationAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.DestinationAddress">
+  DestinationAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The intended destination address, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Uri? DestinationAddress { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_FaultAddress_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.FaultAddress*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_FaultAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.FaultAddress">
+  FaultAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The address where fault notifications should be sent, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for the default.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Uri? FaultAddress { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_InitiatorId_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.InitiatorId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_InitiatorId" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.InitiatorId">
+  InitiatorId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The identifier of the message that initiated this chain, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? InitiatorId { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_MessageId_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.MessageId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_MessageId" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.MessageId">
+  MessageId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The unique message identifier, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? MessageId { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_RequestId_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.RequestId*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_RequestId" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.RequestId">
+  RequestId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The request identifier correlating a reply to its request, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? RequestId { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_ResponseAddress_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.ResponseAddress*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_ResponseAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.ResponseAddress">
+  ResponseAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The address where replies should be sent, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if none.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Uri? ResponseAddress { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_RetryCount_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.RetryCount*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_RetryCount" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.RetryCount">
+  RetryCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The number of times the message had been retried when the snapshot was taken.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RetryCount { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_RoutingKey_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.RoutingKey*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_RoutingKey" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.RoutingKey">
+  RoutingKey
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The routing key the transport used to deliver the message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string RoutingKey { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_SourceAddress_" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.SourceAddress*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_MessageContextSnapshot_SourceAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.SourceAddress">
+  SourceAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The address of the endpoint that produced the message, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if unknown.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Uri? SourceAddress { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/MessageContextSnapshot.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,3745 @@
+{
+  "source_base_path": "/home/runner/work/Vulthil.SharedKernel/Vulthil.SharedKernel/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Hosting.IRestartableHostedService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Hosting.IRestartableHostedService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Hosting.IRestartableHostedService",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Hosting.IRestartableHostedService.yml\" sourcestartlinenumber=\"1\">Marks an <xref href=\"Microsoft.Extensions.Hosting.IHostedService\" data-throw-if-not-resolved=\"false\"></xref> whose execution can be stopped and started again cleanly, so infrastructure\nmay pause it for the duration of an operation that must not run concurrently with it — for example a test harness\nresetting the database between tests, where a live database-polling relay would otherwise contend with the reset.\nImplement this only on services whose <xref href=\"Microsoft.Extensions.Hosting.IHostedService.StartAsync(System.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> / <xref href=\"Microsoft.Extensions.Hosting.IHostedService.StopAsync(System.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>\nare idempotent across repeated cycles (a <xref href=\"Microsoft.Extensions.Hosting.BackgroundService\" data-throw-if-not-resolved=\"false\"></xref> whose <code>ExecuteAsync</code> re-runs cleanly).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Hosting.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Hosting.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Hosting",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.HttpResponseMessageExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.HttpResponseMessageExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.HttpResponseMessageExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.HttpResponseMessageExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for <xref href=\"System.Net.Http.HttpResponseMessage\" data-throw-if-not-resolved=\"false\"></xref> to simplify testing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.Polling.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.Polling.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.Polling",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.Polling.yml\" sourcestartlinenumber=\"1\">Provides polling utilities for waiting on asynchronous conditions during tests.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.PollingError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.PollingError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.PollingError",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.PollingError.yml\" sourcestartlinenumber=\"1\">Represents a polling timeout error that aggregates all individual errors\ncollected from each failed polling attempt.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.PollingResult-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.PollingResult-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.PollingResult<T>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.PollingResult-1.yml\" sourcestartlinenumber=\"1\">Represents the result of a polling operation that returns a value of type <code class=\"typeparamref\">T</code>.\nInherits from <xref href=\"Vulthil.Results.Result%601\" data-throw-if-not-resolved=\"false\"></xref> and provides strongly-typed access to the\n<xref href=\"Vulthil.Extensions.Testing.PollingError\" data-throw-if-not-resolved=\"false\"></xref> when the operation times out.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.PollingResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.PollingResult.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.PollingResult",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.PollingResult.yml\" sourcestartlinenumber=\"1\">Represents the result of a polling operation.\nInherits from <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> and provides strongly-typed access to the\n<xref href=\"Vulthil.Extensions.Testing.PollingError\" data-throw-if-not-resolved=\"false\"></xref> when the operation times out.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate-1.yml\" sourcestartlinenumber=\"1\">Delegate that invokes the next stage in the consume pipeline.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.Fault-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.Fault-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.Fault-1.yml\" sourcestartlinenumber=\"1\">Represents a fault envelope containing the original message and failure details.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter-1.yml\" sourcestartlinenumber=\"1\">A filter in the consume pipeline. Filters wrap the consumer invocation, allowing\ncross-cutting concerns (logging, validation, scoped resource management, telemetry, etc.)\nto be composed without modifying transport or consumer code.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IConsumer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IConsumer-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.IConsumer<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.IConsumer-1.yml\" sourcestartlinenumber=\"1\">Defines a consumer that processes messages of type <code class=\"typeparamref\">TMessage</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IConsumer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IConsumer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.IConsumer",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.IConsumer.yml\" sourcestartlinenumber=\"1\">Marker interface for message consumers.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.yml\" sourcestartlinenumber=\"1\">Provides transport-level metadata and the deserialized payload for a received message.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IMessageContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.IMessageContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.IMessageContext.yml\" sourcestartlinenumber=\"1\">Provides transport-level metadata for a received message.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer<TRequest, TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer-2.yml\" sourcestartlinenumber=\"1\">Defines a consumer that handles a request of type <code class=\"typeparamref\">TRequest</code> and produces a response of type <code class=\"typeparamref\">TResponse</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer.yml\" sourcestartlinenumber=\"1\">Marker interface for request/reply consumers.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Consumers.MessageContextSnapshot.yml\" sourcestartlinenumber=\"1\">An immutable, serializable snapshot of an <xref href=\"Vulthil.Messaging.Abstractions.Consumers.IMessageContext\" data-throw-if-not-resolved=\"false\"></xref>'s transport metadata captured at a\npoint in time (e.g. when a <xref href=\"Vulthil.Messaging.Abstractions.Consumers.Fault%601\" data-throw-if-not-resolved=\"false\"></xref> is produced). Unlike <xref href=\"Vulthil.Messaging.Abstractions.Consumers.IMessageContext\" data-throw-if-not-resolved=\"false\"></xref>\nit carries no behavior and no live transport binding, so it round-trips cleanly through serialization.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Consumers.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Consumers",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IPublishContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers.IPublishContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Publishers.IPublishContext.yml\" sourcestartlinenumber=\"1\">Provides a write-only context for configuring outgoing message properties. Every member sets a value on the\nmessage being published; nothing is read back through this interface.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IPublisher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IPublisher.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers.IPublisher",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Publishers.IPublisher.yml\" sourcestartlinenumber=\"1\">Publishes messages to a message broker.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IRequestContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IRequestContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers.IRequestContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Publishers.IRequestContext.yml\" sourcestartlinenumber=\"1\">Extends <xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublishContext\" data-throw-if-not-resolved=\"false\"></xref> with request-specific configuration options, such as timeouts.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IRequester.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.IRequester.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers.IRequester",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Publishers.IRequester.yml\" sourcestartlinenumber=\"1\">Sends a request message and awaits a response from a remote consumer.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.yml\" sourcestartlinenumber=\"1\">Sends messages to a single, addressable destination (point-to-point delivery).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.yml\" sourcestartlinenumber=\"1\">Resolves <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint\" data-throw-if-not-resolved=\"false\"></xref> instances for point-to-point message delivery.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.ConsumeFilterOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.ConsumeFilterOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.ConsumeFilterOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.ConsumeFilterOptions.yml\" sourcestartlinenumber=\"1\">Configures the built-in consume filters that <code>AddMessaging</code> registers by default.\nEach flag toggles a specific filter on or off; setting a flag to <a href=\"https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool\">false</a>\ncauses the filter to pass deliveries straight through without performing its work.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.DependencyInjection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.DependencyInjection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.DependencyInjection",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.DependencyInjection.yml\" sourcestartlinenumber=\"1\">Provides extension methods for registering messaging services.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.IMessageConfigurationProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.IMessageConfigurationProvider.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.IMessageConfigurationProvider",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.IMessageConfigurationProvider.yml\" sourcestartlinenumber=\"1\">Read-only view of the messaging options resolved at runtime by transports, consumers, and filters.\nBacked by the same instance that <xref href=\"Vulthil.Messaging.IMessagingOptionsConfigurator\" data-throw-if-not-resolved=\"false\"></xref> writes to during composition.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.IMessagingConfigurator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.IMessagingConfigurator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.IMessagingConfigurator",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.IMessagingConfigurator.yml\" sourcestartlinenumber=\"1\">Fluent configurator for registering messaging queues, consumers, and options.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.IMessagingOptionsConfigurator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.IMessagingOptionsConfigurator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.IMessagingOptionsConfigurator",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.IMessagingOptionsConfigurator.yml\" sourcestartlinenumber=\"1\">Mutable view of the messaging options used during composition. Passed to the action\nof <xref href=\"Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action%7bVulthil.Messaging.IMessagingOptionsConfigurator%7d)\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.ITransport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.ITransport.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.ITransport",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.ITransport.yml\" sourcestartlinenumber=\"1\">Represents the message transport responsible for starting consumer connections.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extensions that register the Cosmos idempotency store.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the Cosmos <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.Cosmos.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.Cosmos",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.EntityFrameworkCore.ISaveInboxMessages.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.EntityFrameworkCore.ISaveInboxMessages.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.EntityFrameworkCore.ISaveInboxMessages",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.EntityFrameworkCore.ISaveInboxMessages.yml\" sourcestartlinenumber=\"1\">Exposes the <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage\" data-throw-if-not-resolved=\"false\"></xref> set for persistence contexts that support inbox-based idempotency.\nImplement this on the application's <xref href=\"Microsoft.EntityFrameworkCore.DbContext\" data-throw-if-not-resolved=\"false\"></xref> so an idempotency store can read and write markers,\nregardless of the underlying provider (relational or Cosmos).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.yml\" sourcestartlinenumber=\"1\">A persisted idempotency marker recording that a message with a given key has been processed. Shared by the\nrelational and Cosmos idempotency stores.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.EntityFrameworkCore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.EntityFrameworkCore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.EntityFrameworkCore",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.IIdempotencyStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.IIdempotencyStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.IIdempotencyStore",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.IIdempotencyStore.yml\" sourcestartlinenumber=\"1\">A persistence-agnostic store that records which messages have already been processed, enabling\nexactly-once consumer processing on a transactional store (effectively-once otherwise) on top of\nat-least-once delivery.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.IInboxKeySelector-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.IInboxKeySelector-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.IInboxKeySelector<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.IInboxKeySelector-1.yml\" sourcestartlinenumber=\"1\">Resolves the idempotency key for a delivery of <code class=\"typeparamref\">TMessage</code>. The key must be stable across\nredeliveries (and ideally across producer republishes) of the same logical message.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.IInboxRetentionStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.IInboxRetentionStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.IInboxRetentionStore",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.IInboxRetentionStore.yml\" sourcestartlinenumber=\"1\">An <xref href=\"Vulthil.Messaging.Inbox.IIdempotencyStore\" data-throw-if-not-resolved=\"false\"></xref> that can purge old idempotency markers for the inbox retention sweep. The EF\nCore idempotency stores implement this; the retention background service skips the sweep when the registered store\ndoes not.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxConfiguratorExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.yml\" sourcestartlinenumber=\"1\">Configurator extensions that opt a message type into idempotent (inbox) processing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for the idempotent-receiver (inbox) consume filter.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxRetentionOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxRetentionOptions.yml\" sourcestartlinenumber=\"1\">Configuration for the inbox retention sweep, which periodically deletes idempotency markers once they are older\nthan <xref href=\"Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref> so the inbox table does not grow unbounded.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extension that enables the inbox retention sweep.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxTelemetry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxTelemetry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxTelemetry",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxTelemetry.yml\" sourcestartlinenumber=\"1\">Holds the <xref href=\"System.Diagnostics.Metrics.Meter\" data-throw-if-not-resolved=\"false\"></xref> and instruments for inbox idempotency metrics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for subscribing a <xref href=\"OpenTelemetry.Metrics.MeterProviderBuilder\" data-throw-if-not-resolved=\"false\"></xref> to the inbox metrics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.MissingIdempotencyKeyException",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.yml\" sourcestartlinenumber=\"1\">Thrown when an idempotency-guarded delivery has no resolvable idempotency key and\n<xref href=\"Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey\" data-throw-if-not-resolved=\"false\"></xref> is enabled.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extensions that register the relational Entity Framework Core idempotency store.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the relational <xref href=\"Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.Relational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.Relational.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.Relational",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.MessageConfiguration-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.MessageConfiguration-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.MessageConfiguration<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.MessageConfiguration-1.yml\" sourcestartlinenumber=\"1\">Configuration options for a specific message type, including exchange, routing key and correlation ID selection.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.MessageConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.MessageConfiguration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.MessageConfiguration",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.MessageConfiguration.yml\" sourcestartlinenumber=\"1\">Configuration used when publishing or binding a message type.\nContains exchange declaration settings, the stable wire URN, and optional formatters for routing keys and correlation ids.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.MessagingExchangeType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.MessagingExchangeType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.MessagingExchangeType",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.MessagingExchangeType.yml\" sourcestartlinenumber=\"1\">Specifies values for MessagingExchangeType.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Outbox.TransactionalOutboxExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.yml\" sourcestartlinenumber=\"1\">Messaging-configurator extensions that enable the transactional bus-publish outbox.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Outbox.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Outbox.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Outbox",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.PartitionSpec.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.PartitionSpec.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.PartitionSpec",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.PartitionSpec.yml\" sourcestartlinenumber=\"1\">Records how a message type is partitioned for ordered consumption: the <xref href=\"Vulthil.Messaging.PartitionSpec.Partitioner\" data-throw-if-not-resolved=\"false\"></xref>\nwhose lanes serialize same-key processing, and the typed key selector (held as a <xref href=\"System.Delegate\" data-throw-if-not-resolved=\"false\"></xref>\nbecause the message type is only known generically at registration). The transport resolves the\nconcrete selector via the registered message type.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Partitioner.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Partitioner.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Partitioner",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Partitioner.yml\" sourcestartlinenumber=\"1\">Distributes work across a fixed number of ordered partitions (&quot;lanes&quot;), selected by a hash of a\npartition key. Work submitted for the same key runs strictly sequentially and in submission order;\nwork for keys that hash to different lanes runs concurrently.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.ConsumerRegistration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.ConsumerRegistration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.ConsumerRegistration",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.ConsumerRegistration.yml\" sourcestartlinenumber=\"1\">A consumer registration for one-way message consumption.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.ConsumerType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.ConsumerType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.ConsumerType",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.ConsumerType.yml\" sourcestartlinenumber=\"1\">Wraps a CLR type representing a consumer in the messaging infrastructure.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.DeadLetterDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.DeadLetterDefinition.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.DeadLetterDefinition",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.DeadLetterDefinition.yml\" sourcestartlinenumber=\"1\">Describes the dead letter queue and exchange configuration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.IBaseConfigurator-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.IBaseConfigurator-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.IBaseConfigurator<TConfigurator>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.IBaseConfigurator-1.yml\" sourcestartlinenumber=\"1\">Self-typed base interface for fluent consumer configurators. <code class=\"typeparamref\">TConfigurator</code>\nis the derived configurator interface (e.g. <xref href=\"Vulthil.Messaging.Queues.IConsumerConfigurator%601\" data-throw-if-not-resolved=\"false\"></xref>), so\n<xref href=\"Vulthil.Messaging.Queues.IBaseConfigurator%601.UseRetry(System.Action%7bVulthil.Messaging.Queues.RetryPolicyConfigurator%7d)\" data-throw-if-not-resolved=\"false\"></xref> returns it directly — concrete configurator classes inherit\n<xref href=\"Vulthil.Messaging.Queues.BaseConfigurator%601\" data-throw-if-not-resolved=\"false\"></xref> without needing their own explicit interface implementations.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.IConsumerConfigurator-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.IConsumerConfigurator-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.IConsumerConfigurator<TConsumer>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.IConsumerConfigurator-1.yml\" sourcestartlinenumber=\"1\">Configures per-consumer settings. Binding patterns live on\n<xref href=\"Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe%60%601(System.String)\" data-throw-if-not-resolved=\"false\"></xref>; routing-key formatters for the producer side\nlive on <xref href=\"Vulthil.Messaging.MessageConfiguration%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.IQueueConfigurator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.IQueueConfigurator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.IQueueConfigurator",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.IQueueConfigurator.yml\" sourcestartlinenumber=\"1\">Configures a queue's consumers, retry policies, and dead letter settings.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.IRequestConfigurator-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.IRequestConfigurator-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.IRequestConfigurator-1.yml\" sourcestartlinenumber=\"1\">Configures per-request-consumer settings. Binding patterns live on\n<xref href=\"Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe%60%601(System.String)\" data-throw-if-not-resolved=\"false\"></xref>; routing-key formatters for the producer side\nlive on <xref href=\"Vulthil.Messaging.MessageConfiguration%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.MessageType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.MessageType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.MessageType",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.MessageType.yml\" sourcestartlinenumber=\"1\">Wraps a CLR type representing a message exchanged through the messaging infrastructure.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.QueueDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.QueueDefinition.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.QueueDefinition",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.QueueDefinition.yml\" sourcestartlinenumber=\"1\">Describes a queue including its consumer registrations, exchange bindings, and runtime settings.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.Registration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.Registration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.Registration",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.Registration.yml\" sourcestartlinenumber=\"1\">Base record for a consumer registration on a queue, binding a consumer to the message type it handles.\nRouting-key patterns belong on <xref href=\"Vulthil.Messaging.Queues.Subscription\" data-throw-if-not-resolved=\"false\"></xref> (queue→exchange binding) or\n<xref href=\"Vulthil.Messaging.MessageConfiguration%601\" data-throw-if-not-resolved=\"false\"></xref> (producer-side routing key).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.RequestConsumerRegistration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.RequestConsumerRegistration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.RequestConsumerRegistration",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.RequestConsumerRegistration.yml\" sourcestartlinenumber=\"1\">A consumer registration for request/reply message consumption.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.RetryPolicyConfigurator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.RetryPolicyConfigurator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.RetryPolicyConfigurator",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.RetryPolicyConfigurator.yml\" sourcestartlinenumber=\"1\">Fluent builder for constructing a <xref href=\"Vulthil.Messaging.Queues.RetryPolicyDefinition\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.RetryPolicyDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.RetryPolicyDefinition.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.RetryPolicyDefinition",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.RetryPolicyDefinition.yml\" sourcestartlinenumber=\"1\">Defines a retry policy including intervals, jitter, and exception filtering.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.Subscription.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.Subscription.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues.Subscription",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.Subscription.yml\" sourcestartlinenumber=\"1\">Binds the queue to a concrete message type's exchange. One <xref href=\"Vulthil.Messaging.Queues.Subscription\" data-throw-if-not-resolved=\"false\"></xref> = one\n<code>exchange→queue</code> binding declared at topology setup time.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Queues.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Queues.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Queues",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for configuring the RabbitMQ transport on an <xref href=\"Vulthil.Messaging.IMessagingConfigurator\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions.yml\" sourcestartlinenumber=\"1\">RabbitMQ transport tuning options. Bound from the <code>Messaging:RabbitMq</code> configuration section and\noptionally overridden in code via the <code>configureTransport</code> callback on\n<xref href=\"Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq(Vulthil.Messaging.IMessagingConfigurator%2cSystem.String%2cSystem.Action%7bAspire.RabbitMQ.Client.RabbitMQClientSettings%7d%2cSystem.Action%7bRabbitMQ.Client.ConnectionFactory%7d%2cSystem.Action%7bVulthil.Messaging.RabbitMq.RabbitMqTransportOptions%7d)\" data-throw-if-not-resolved=\"false\"></xref> (code takes precedence over configuration).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.yml\" sourcestartlinenumber=\"1\">Provides the <xref href=\"System.Diagnostics.ActivitySource\" data-throw-if-not-resolved=\"false\"></xref> emitted by the Vulthil RabbitMQ transport.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.yml\" sourcestartlinenumber=\"1\">OpenTelemetry registration helpers for the Vulthil RabbitMQ transport.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.RabbitMq.Telemetry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.RabbitMq.Telemetry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.RabbitMq.Telemetry",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.RabbitMq.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.RabbitMq.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.RabbitMq",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.TestHarness.CapturedMessage-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.TestHarness.CapturedMessage-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.TestHarness.CapturedMessage<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.TestHarness.CapturedMessage-1.yml\" sourcestartlinenumber=\"1\">A single message captured by the <xref href=\"Vulthil.Messaging.TestHarness.ITestHarness\" data-throw-if-not-resolved=\"false\"></xref>: the deserialized payload and the wire\n<xref href=\"Vulthil.Messaging.Transport.MessageEnvelope\" data-throw-if-not-resolved=\"false\"></xref> it travelled in (correlation/conversation ids, headers, addresses, …).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.TestHarness.ITestHarness.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.TestHarness.ITestHarness.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.TestHarness.ITestHarness",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.TestHarness.ITestHarness.yml\" sourcestartlinenumber=\"1\">In-memory messaging test harness. Captures every message produced and consumed through the in-memory\ntransport so tests can assert on messaging behaviour with no broker, and lets a test stand in for an\nexternal service by handling published messages or responding to requests.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.TestHarness.TestHarnessExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.TestHarness.TestHarnessExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.TestHarness.TestHarnessExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.TestHarness.TestHarnessExtensions.yml\" sourcestartlinenumber=\"1\">Registers the in-memory <xref href=\"Vulthil.Messaging.TestHarness.ITestHarness\" data-throw-if-not-resolved=\"false\"></xref> transport. The harness reuses the messaging configuration\n(queues, consumers, message settings) that <code>AddMessaging</code> registered, so it mirrors the real topology\nwith no broker.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.TestHarness.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.TestHarness.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.TestHarness",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.ConsumePipelineFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.ConsumePipelineFactory.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.ConsumePipelineFactory",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ConsumePipelineFactory.yml\" sourcestartlinenumber=\"1\">Composes the registered <xref href=\"Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter%601\" data-throw-if-not-resolved=\"false\"></xref> instances into a single delegate.\nTransport authors call this in their consume path to wrap a terminal stage (the consumer invocation)\nwith the configured middleware.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.HandlerEntry-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.HandlerEntry-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.HandlerEntry<THandler>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.HandlerEntry-1.yml\" sourcestartlinenumber=\"1\">Pairs a transport-specific dispatch handler with the consumer contract it implements. Returned by\n<xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> so <xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref> can\nenforce request-consumer uniqueness without inspecting the opaque <code class=\"typeparamref\">THandler</code> value.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.HandlerKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.HandlerKind.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.HandlerKind",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.HandlerKind.yml\" sourcestartlinenumber=\"1\">Classifies a dispatch handler by its consumer contract.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.IMessageHandlerFactory-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.IMessageHandlerFactory-1.yml\" sourcestartlinenumber=\"1\">Builds transport-specific dispatch handlers from the open-generic consumer/message type pairs collected\nduring registration. A transport implements this to bind a registration to its own delivery closure;\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref> calls it while assembling execution plans.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.IPublishFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.IPublishFilter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.IPublishFilter",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.IPublishFilter.yml\" sourcestartlinenumber=\"1\">A filter in the publish/send pipeline. Filters wrap the transport send, allowing cross-cutting concerns\n(transactional outbox capture, logging, validation, telemetry, …) to be composed without modifying transport\nor caller code.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.ITransportPublisher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.ITransportPublisher.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.ITransportPublisher",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ITransportPublisher.yml\" sourcestartlinenumber=\"1\">A transport's raw publish terminal: it builds the wire envelope and sends it to the broker. The public\n<xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublisher\" data-throw-if-not-resolved=\"false\"></xref> registered to callers is a filtering facade that runs the publish pipeline and then\ndelegates to this terminal. Transports register their publisher under this interface instead of\n<xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublisher\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.ITransportSendEndpointProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.ITransportSendEndpointProvider.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.ITransportSendEndpointProvider",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ITransportSendEndpointProvider.yml\" sourcestartlinenumber=\"1\">A transport's raw send-endpoint provider. The public <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref> registered to callers\nis a filtering facade that wraps the returned <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint\" data-throw-if-not-resolved=\"false\"></xref> with the publish pipeline. Transports\nregister their provider under this interface instead of <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageContext-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageContext-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageContext<TMessage>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageContext-1.yml\" sourcestartlinenumber=\"1\">A strongly-typed <xref href=\"Vulthil.Messaging.Transport.MessageContext\" data-throw-if-not-resolved=\"false\"></xref> carrying the deserialized message payload.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageContext.yml\" sourcestartlinenumber=\"1\">Transport-agnostic <xref href=\"Vulthil.Messaging.Abstractions.Consumers.IMessageContext\" data-throw-if-not-resolved=\"false\"></xref> implementation describing a delivered message and the\ntransport services that back its <xref href=\"Vulthil.Messaging.Transport.MessageContext.PublishAsync%60%601(%60%600%2cSystem.Func%7bVulthil.Messaging.Abstractions.Publishers.IPublishContext%2cSystem.Threading.Tasks.ValueTask%7d)\" data-throw-if-not-resolved=\"false\"></xref> and <xref href=\"Vulthil.Messaging.Transport.MessageContext.SendAsync%60%601(System.Uri%2c%60%600%2cSystem.Func%7bVulthil.Messaging.Abstractions.Publishers.IPublishContext%2cSystem.Threading.Tasks.ValueTask%7d)\" data-throw-if-not-resolved=\"false\"></xref>\nhelpers. A transport builds one per delivery (typically via <xref href=\"Vulthil.Messaging.Transport.MessageContext.CreateFromEnvelope%60%601(%60%600%2cVulthil.Messaging.Transport.MessageEnvelope%2cSystem.String%2cSystem.Boolean%2cSystem.Int32%2cSystem.String%2cVulthil.Messaging.Abstractions.Publishers.IPublisher%2cVulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>); a\ncontext with no live transport binding (e.g. a fault snapshot) throws when a publish or send is attempted.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageEnvelope.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageEnvelope.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageEnvelope",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageEnvelope.yml\" sourcestartlinenumber=\"1\">On-the-wire wrapper for messages carried by a Vulthil transport. The body of every produced\nmessage is a serialized <xref href=\"Vulthil.Messaging.Transport.MessageEnvelope\" data-throw-if-not-resolved=\"false\"></xref>; receivers fall back to bare JSON only for\ncompatibility with non-Vulthil producers.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageEnvelopeFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageEnvelopeFactory.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageEnvelopeFactory",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageEnvelopeFactory.yml\" sourcestartlinenumber=\"1\">Builds <xref href=\"Vulthil.Messaging.Transport.MessageEnvelope\" data-throw-if-not-resolved=\"false\"></xref> instances from the resolved publish state for a single outgoing message.\nPromotes the reserved metadata headers carried by a <xref href=\"Vulthil.Messaging.Transport.PublishContext\" data-throw-if-not-resolved=\"false\"></xref> to typed envelope fields and\ncopies the remaining custom headers verbatim.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageExecutionPlan-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageExecutionPlan-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageExecutionPlan<THandler>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageExecutionPlan-1.yml\" sourcestartlinenumber=\"1\">Transport-agnostic execution plan for a single concrete message type: the ordered set of handlers that\nrun on every delivery, plus the partition specification when the type is partitioned for ordered\nconsumption. Built and keyed by <xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageExecutionRegistry-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageExecutionRegistry-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageExecutionRegistry-1.yml\" sourcestartlinenumber=\"1\">Transport-agnostic registry that turns <xref href=\"Vulthil.Messaging.Queues.QueueDefinition\" data-throw-if-not-resolved=\"false\"></xref> registrations into per-message-type\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionPlan%601\" data-throw-if-not-resolved=\"false\"></xref> instances. It keys plans by wire URN (and CLR full name for the\nbare-JSON receive path), fans a polymorphic registration out across every matching concrete subscription,\ndedupes handlers, rejects a second request consumer for the same message type, and attaches the partition\nspecification read from <xref href=\"Vulthil.Messaging.IMessageConfigurationProvider.GetPartition(System.Type)\" data-throw-if-not-resolved=\"false\"></xref>. A transport drives it by\nsupplying an <xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> that builds its own delivery closures.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.PublishContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.PublishContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.PublishContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishContext.yml\" sourcestartlinenumber=\"1\">Mutable, write-through configuration captured for a single outgoing message. A transport creates one,\npasses it to the caller's <code>configure</code> callback as <xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublishContext\" data-throw-if-not-resolved=\"false\"></xref>, then reads the resolved\nvalues to build its wire message. Metadata that maps to typed envelope fields is stored under reserved header\nkeys and surfaced through the strongly-typed properties.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.PublishFilterContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.PublishFilterContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.PublishFilterContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishFilterContext.yml\" sourcestartlinenumber=\"1\">The context flowing through the publish/send filter pipeline for a single outgoing message. A filter may\ninspect the message and its resolved metadata, adjust <xref href=\"Vulthil.Messaging.Transport.PublishFilterContext.Context\" data-throw-if-not-resolved=\"false\"></xref>, short-circuit the pipeline by not\ninvoking <code>next</code> (e.g. to capture the message into a transactional outbox), or let it proceed to the\ntransport terminal.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.PublishFilterDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.PublishFilterDelegate.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.PublishFilterDelegate",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishFilterDelegate.yml\" sourcestartlinenumber=\"1\">Delegate that invokes the next stage in the publish/send pipeline. The terminal stage performs the actual\ntransport publish or send.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.PublishFilteringServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.PublishFilteringServiceCollectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.PublishFilteringServiceCollectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishFilteringServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Registers the publish/send filtering facade in front of a transport's raw publish terminal. A transport\nregisters its publisher and send-endpoint provider under <xref href=\"Vulthil.Messaging.Transport.ITransportPublisher\" data-throw-if-not-resolved=\"false\"></xref> /\n<xref href=\"Vulthil.Messaging.Transport.ITransportSendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref> and then calls <xref href=\"Vulthil.Messaging.Transport.PublishFilteringServiceCollectionExtensions.AddPublishFiltering(Microsoft.Extensions.DependencyInjection.IServiceCollection)\" data-throw-if-not-resolved=\"false\"></xref> so the public\n<xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublisher\" data-throw-if-not-resolved=\"false\"></xref> / <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref> run every publish and send through the pipeline.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.PublishKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.PublishKind.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.PublishKind",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishKind.yml\" sourcestartlinenumber=\"1\">Identifies whether an outgoing message is being broadcast over an exchange (publish) or delivered to a single\naddressable destination (send).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.PublishPipelineFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.PublishPipelineFactory.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.PublishPipelineFactory",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishPipelineFactory.yml\" sourcestartlinenumber=\"1\">Composes the registered <xref href=\"Vulthil.Messaging.Transport.IPublishFilter\" data-throw-if-not-resolved=\"false\"></xref> instances around a terminal delegate (the transport send).\nThe filtering publisher/send-endpoint call this in their publish path to wrap the transport with the configured\nmiddleware.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.RequestContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.RequestContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.RequestContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.RequestContext.yml\" sourcestartlinenumber=\"1\">A <xref href=\"Vulthil.Messaging.Transport.PublishContext\" data-throw-if-not-resolved=\"false\"></xref> for request/reply: adds the per-request timeout. A transport creates one,\npasses it to the caller's <code>configure</code> callback as <xref href=\"Vulthil.Messaging.Abstractions.Publishers.IRequestContext\" data-throw-if-not-resolved=\"false\"></xref>, then reads\n<xref href=\"Vulthil.Messaging.Transport.RequestContext.Timeout\" data-throw-if-not-resolved=\"false\"></xref> to bound the wait for a response.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.RpcFault.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.RpcFault.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.RpcFault",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.RpcFault.yml\" sourcestartlinenumber=\"1\">Wire payload for an RPC failure reply. Carried as the <code>message</code> of a <xref href=\"Vulthil.Messaging.Transport.MessageEnvelope\" data-throw-if-not-resolved=\"false\"></xref>\nwhose <code>messageType</code> is <xref href=\"Vulthil.Messaging.Transport.RpcFault.UrnUri\" data-throw-if-not-resolved=\"false\"></xref>. Property names are fixed (camelCase) so the reply\nround-trips regardless of the configured JSON naming policy.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.Error.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.Error.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results.Error",
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.Error.yml\" sourcestartlinenumber=\"1\">Represents a structured error with a code, description, and classification.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.ErrorType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.ErrorType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results.ErrorType",
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.ErrorType.yml\" sourcestartlinenumber=\"1\">Specifies values for ErrorType.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.Result-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.Result-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results.Result<TValue>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.Result-1.yml\" sourcestartlinenumber=\"1\">Represents the outcome of an operation that returns a value of type <code class=\"typeparamref\">TValue</code> on success.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.Result.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.Result.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results.Result",
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.Result.yml\" sourcestartlinenumber=\"1\">Represents the outcome of an operation that may succeed or fail.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.ResultExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.ResultExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results.ResultExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.ResultExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods for <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> and <xref href=\"Vulthil.Results.Result%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.ValidationError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.ValidationError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results.ValidationError",
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.ValidationError.yml\" sourcestartlinenumber=\"1\">Represents a validation error containing one or more inner errors.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.BaseController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.BaseController.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.BaseController",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.BaseController.yml\" sourcestartlinenumber=\"1\">Abstract base API controller with preconfigured route conventions and a lazily-resolved logger.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.CustomResults.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.CustomResults.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.CustomResults",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.CustomResults.yml\" sourcestartlinenumber=\"1\">Provides factory methods for creating problem-detail HTTP responses from <xref href=\"Vulthil.Results.Error\" data-throw-if-not-resolved=\"false\"></xref> values.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.DependencyInjection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.DependencyInjection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.DependencyInjection",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.DependencyInjection.yml\" sourcestartlinenumber=\"1\">Provides extension methods for registering API-layer services.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.EndpointExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.EndpointExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.EndpointExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.EndpointExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods for discovering and mapping <xref href=\"Vulthil.SharedKernel.Api.IEndpoint\" data-throw-if-not-resolved=\"false\"></xref> implementations.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.IEndpoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.IEndpoint.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.IEndpoint",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.IEndpoint.yml\" sourcestartlinenumber=\"1\">Defines a minimal API endpoint that registers its routes during application startup.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.ProblemDetailsExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.ProblemDetailsExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods for wiring RFC 7807 ProblemDetails responses across the request pipeline,\ncovering handled failures, uncaught exceptions, and bare error status codes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.ResultHttpExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.ResultHttpExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.ResultHttpExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.ResultHttpExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods for converting <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> values to HTTP responses.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.ApplicationOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.ApplicationOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.ApplicationOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.ApplicationOptions.yml\" sourcestartlinenumber=\"1\">Aggregated configuration options for the application layer, combining handler and validation settings.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior<TCommand, TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior-2.yml\" sourcestartlinenumber=\"1\">Pipeline behavior that wraps transactional commands in a database transaction, committing when the command\nsucceeds and rolling back when it returns a failed <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> or throws.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Behaviors.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Behaviors.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Behaviors",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Data.IDbTransaction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Data.IDbTransaction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Data.IDbTransaction",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Data.IDbTransaction.yml\" sourcestartlinenumber=\"1\">Represents an active database transaction that can be committed or rolled back.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Data.IUnitOfWork.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Data.IUnitOfWork.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Data.IUnitOfWork",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Data.IUnitOfWork.yml\" sourcestartlinenumber=\"1\">Abstracts the persistence boundary for saving changes and managing transactions.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Data.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Data",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.DependencyInjection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.DependencyInjection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.DependencyInjection",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.DependencyInjection.yml\" sourcestartlinenumber=\"1\">Provides extension methods for registering application-layer services.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.FluentValidationExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.FluentValidationExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.FluentValidationExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.FluentValidationExtensions.yml\" sourcestartlinenumber=\"1\">Provides FluentValidation integration helpers for <xref href=\"Vulthil.Results.Error\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.FluentValidationOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.FluentValidationOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.FluentValidationOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.FluentValidationOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for FluentValidation assembly scanning.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.HandlerOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.HandlerOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.HandlerOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.HandlerOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for handler assembly scanning and pipeline registration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.yml\" sourcestartlinenumber=\"1\">Publishes domain events to their registered handlers.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.DomainEvents",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommand-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommand-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.ICommand<TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ICommand-1.yml\" sourcestartlinenumber=\"1\">Marker interface for a command that returns a response of type <code class=\"typeparamref\">TResponse</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommand.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommand.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.ICommand",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ICommand.yml\" sourcestartlinenumber=\"1\">Marker interface for a command that returns a <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommandHandler-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommandHandler-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.ICommandHandler<TCommand>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ICommandHandler-1.yml\" sourcestartlinenumber=\"1\">Defines a handler for a command that returns a <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommandHandler-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ICommandHandler-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.ICommandHandler<TCommand, TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ICommandHandler-2.yml\" sourcestartlinenumber=\"1\">Defines a handler for a command that returns a response of type <code class=\"typeparamref\">TResponse</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IHandler-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IHandler-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.IHandler<TRequest, TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.IHandler-2.yml\" sourcestartlinenumber=\"1\">Defines a handler that processes a request and returns a response.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IQuery-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IQuery-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.IQuery<TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.IQuery-1.yml\" sourcestartlinenumber=\"1\">Marker interface for a query that returns a response of type <code class=\"typeparamref\">TResponse</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IQueryHandler-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IQueryHandler-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.IQueryHandler<TQuery, TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.IQueryHandler-2.yml\" sourcestartlinenumber=\"1\">Defines a handler for a query that returns a response of type <code class=\"typeparamref\">TResponse</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IRequest-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IRequest-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.IRequest<TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.IRequest-1.yml\" sourcestartlinenumber=\"1\">Marker interface for a request that produces a response of type <code class=\"typeparamref\">TResponse</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.IRequest.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.IRequest",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.IRequest.yml\" sourcestartlinenumber=\"1\">Marker interface for a request that produces a <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ISender.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ISender.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.ISender",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ISender.yml\" sourcestartlinenumber=\"1\">Dispatches requests to their registered handlers through the pipeline.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand<TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand-1.yml\" sourcestartlinenumber=\"1\">Marker interface for a transactional command that returns a response of type <code class=\"typeparamref\">TResponse</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Messaging.ITransactionalCommand.yml\" sourcestartlinenumber=\"1\">Marker interface for a command that returns a <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> and should be executed within a transaction.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Messaging.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Messaging.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Messaging",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate.yml\" sourcestartlinenumber=\"1\">Represents the next step in the domain event pipeline.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.IDomainEventPipelineHandler-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.IDomainEventPipelineHandler-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Pipeline.IDomainEventPipelineHandler<TDomainEvent>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.IDomainEventPipelineHandler-1.yml\" sourcestartlinenumber=\"1\">Defines a pipeline handler that wraps domain event processing with cross-cutting behavior.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.IPipelineHandler-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.IPipelineHandler-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Pipeline.IPipelineHandler<TRequest, TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.IPipelineHandler-2.yml\" sourcestartlinenumber=\"1\">Defines a pipeline handler that wraps request processing with cross-cutting behavior.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate-1.yml\" sourcestartlinenumber=\"1\">Represents the next step in the request pipeline.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.Pipeline.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.Pipeline",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Events.IDomainEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Events.IDomainEvent.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Events.IDomainEvent",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Events.IDomainEvent.yml\" sourcestartlinenumber=\"1\">Marker interface for domain events raised by aggregate roots.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Events.IDomainEventHandler-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Events.IDomainEventHandler-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Events.IDomainEventHandler<TDomainEvent>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Events.IDomainEventHandler-1.yml\" sourcestartlinenumber=\"1\">Defines a handler that processes a specific domain event type.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Events.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Events.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Events",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Exceptions.DomainException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Exceptions.DomainException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Exceptions.DomainException",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Exceptions.DomainException.yml\" sourcestartlinenumber=\"1\">Base exception for domain rule violations, carrying a structured <xref href=\"Vulthil.SharedKernel.Exceptions.DomainException.Error\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Exceptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Exceptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Exceptions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the Cosmos DB <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.yml\" sourcestartlinenumber=\"1\">Extensions to configure provider-specific behavior for database infrastructure when using Cosmos DB.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Cosmos outbox store. Cosmos DB has no cross-partition transaction, so the relay runs without an ambient\ntransaction (best-effort): it uses the base LINQ fetch and materialized update. Consumers targeting Cosmos at\nscale should supply an SDK-backed store.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Cosmos.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Cosmos",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.yml\" sourcestartlinenumber=\"1\">Abstract base <xref href=\"Microsoft.EntityFrameworkCore.DbContext\" data-throw-if-not-resolved=\"false\"></xref> that implements <xref href=\"Vulthil.SharedKernel.Application.Data.IUnitOfWork\" data-throw-if-not-resolved=\"false\"></xref> and <xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages\" data-throw-if-not-resolved=\"false\"></xref> for outbox integration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.yml\" sourcestartlinenumber=\"1\">Wraps an EF Core <xref href=\"Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction\" data-throw-if-not-resolved=\"false\"></xref> as an <xref href=\"Vulthil.SharedKernel.Application.Data.IDbTransaction\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Data.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Data",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.yml\" sourcestartlinenumber=\"1\">Fluent configurator for database infrastructure including outbox processing. The DbContext itself\nis registered by provider-specific extensions (e.g. <code>UseNpgsql</code>) via the <xref href=\"Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator%601.OnConfigured(System.Action%7bVulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator%7b%600%7d%7d)\" data-throw-if-not-resolved=\"false\"></xref>\nhook, not by this class.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.DependencyInjection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.DependencyInjection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.DependencyInjection",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.DependencyInjection.yml\" sourcestartlinenumber=\"1\">Provides extension methods for registering infrastructure-layer services.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.yml\" sourcestartlinenumber=\"1\">Defines methods for configuring database infrastructure options for Entity Framework Core DbContext instances.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.yml\" sourcestartlinenumber=\"1\">Extensions to configure provider-specific behavior for database infrastructure when using MySQL.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the MySQL-optimized <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.MySql.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.MySql",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.yml\" sourcestartlinenumber=\"1\">Extensions to configure provider-specific behavior for database infrastructure when using PostgreSQL.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the PostgreSQL-optimized <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Npgsql.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Relational.DependencyInjection.yml\" sourcestartlinenumber=\"1\">Provides extension methods for applying pending Entity Framework Core migrations to a specified DbContext using\ndependency injection.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Outbox store for relational database providers. Records processed and failed messages with set-based\n<code>ExecuteUpdate</code> calls instead of materializing rows. Provider packages (e.g. Npgsql, MySQL) inherit from this\nclass and override <xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.FetchMessagesAsync(System.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> to add row-level locking.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.RelationalOutboxServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.RelationalOutboxServiceCollectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Relational.RelationalOutboxServiceCollectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Relational.RelationalOutboxServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extensions for relational outbox providers.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Relational.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Relational",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.yml\" sourcestartlinenumber=\"1\">Base repository providing common data access operations for aggregate roots.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure.Repository",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Infrastructure",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.yml\" sourcestartlinenumber=\"1\">EF Core save-changes interceptor that captures domain events from tracked aggregate roots\nand persists them as <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> entries before the main save completes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Entity Framework Core implementation of <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxStore\" data-throw-if-not-resolved=\"false\"></xref>. It owns the relay batch unit — runs inside the\ncontext's execution strategy, opens the transaction, fetches a batch, dispatches each message, records the\noutcome, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from\nthis type to add row-level locking (<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.FetchMessagesAsync(System.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>), set-based updates\n(<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList%7bSystem.Guid%7d%2cSystem.Collections.Generic.IReadOnlyList%7bVulthil.SharedKernel.Outbox.OutboxMessageFailure%7d%2cSystem.Int32%2cSystem.DateTimeOffset%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>), or a no-op transaction (<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.BeginTransactionAsync(System.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.IOutboxInterceptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.IOutboxInterceptor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.IOutboxInterceptor",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.IOutboxInterceptor.yml\" sourcestartlinenumber=\"1\">Marker for EF Core interceptors that the outbox attaches to an outbox-enabled <xref href=\"Microsoft.EntityFrameworkCore.DbContext\" data-throw-if-not-resolved=\"false\"></xref>.\nImplementations are resolved from DI and added to the context options when outbox processing is enabled, so a\nprovider package (e.g. relational) can contribute a transaction-commit interceptor without the provider-agnostic\nbase needing to reference relational-only interceptor types.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.yml\" sourcestartlinenumber=\"1\">Exposes the <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> entity set for persistence contexts that support outbox integration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the provider-agnostic <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxDispatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.IOutboxDispatcher",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxDispatcher.yml\" sourcestartlinenumber=\"1\">Relays a fetched outbox message to its sink. The <xref href=\"Vulthil.SharedKernel.Outbox.OutboxProcessor\" data-throw-if-not-resolved=\"false\"></xref> routes each row to the\nregistered dispatcher whose <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Outbox.OutboxDestination)\" data-throw-if-not-resolved=\"false\"></xref> returns <a href=\"https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool\">true</a> for the row's\n<xref href=\"Vulthil.SharedKernel.Outbox.OutboxDestination\" data-throw-if-not-resolved=\"false\"></xref>, so a single outbox table can feed several sinks (in-process domain events,\nbroker publishes/sends) that coexist in one application.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRelayGate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRelayGate.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.IOutboxRelayGate",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxRelayGate.yml\" sourcestartlinenumber=\"1\">A readiness gate the outbox relay awaits once before its first processing pass. It lets a downstream sink defer\nthe relay until its delivery channel is ready — for example, the message-broker sink waits for the transport to\ndeclare its subscriber topology, so a relayed publish is not lost by being sent before the subscriber queues are\nbound. When no gate is registered the relay starts immediately.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.IOutboxRetentionStore",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.yml\" sourcestartlinenumber=\"1\">An <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxStore\" data-throw-if-not-resolved=\"false\"></xref> that can purge old terminal (processed or dead-lettered) rows for the retention\nsweep. The EF Core outbox store implements this; the retention background service skips the sweep when the\nregistered store does not.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxSignal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxSignal.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.IOutboxSignal",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxSignal.yml\" sourcestartlinenumber=\"1\">Wakes the outbox background service when a transaction commits, so freshly-written outbox messages are relayed\npromptly instead of waiting for the next poll. Signals coalesce (at most one pending wake), and the periodic\npoll remains the correctness backstop for retries, other instances, and missed signals.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxStore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.IOutboxStore",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxStore.yml\" sourcestartlinenumber=\"1\">Persistence-agnostic store the outbox engine relies on for both capture and relay. A relational or other\nEF Core implementation lives in <code>Vulthil.SharedKernel.Outbox.EntityFrameworkCore</code> and its provider\npackages; the engine itself takes no dependency on EF Core.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.MeterProviderBuilderExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for subscribing a <xref href=\"OpenTelemetry.Metrics.MeterProviderBuilder\" data-throw-if-not-resolved=\"false\"></xref> to the outbox relay metrics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxDestination.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxDestination.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxDestination",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxDestination.yml\" sourcestartlinenumber=\"1\">Identifies the sink an outbox message is relayed to, so the <xref href=\"Vulthil.SharedKernel.Outbox.OutboxProcessor\" data-throw-if-not-resolved=\"false\"></xref> can route each row to\nthe matching <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxDispatcher\" data-throw-if-not-resolved=\"false\"></xref>. One outbox table can carry messages bound for different sinks.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extensions that register the provider-agnostic outbox engine — the relay processor, the\nbackground service, the commit-time signal, and the in-process domain-event sink. A persistence host (e.g.\n<code>Vulthil.SharedKernel.Infrastructure</code>) calls this and then registers an <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxStore\" data-throw-if-not-resolved=\"false\"></xref>\nimplementation for its provider.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessage.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxMessage",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxMessage.yml\" sourcestartlinenumber=\"1\">Represents a serialized domain event stored for reliable outbox-based delivery.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessageData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessageData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxMessageData",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxMessageData.yml\" sourcestartlinenumber=\"1\">Contains the data of an outbox message fetched for delivery.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessageFailure.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessageFailure.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxMessageFailure",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxMessageFailure.yml\" sourcestartlinenumber=\"1\">Contains failure details for an outbox message that could not be published.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxProcessingOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.yml\" sourcestartlinenumber=\"1\">Configuration options for the outbox background processing service.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxRetentionOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.yml\" sourcestartlinenumber=\"1\">Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows\nonce they are older than <xref href=\"Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref> so the outbox table does not grow unbounded.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.Telemetry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.Telemetry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.Telemetry",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.Telemetry.yml\" sourcestartlinenumber=\"1\">Static class for holding the Telemetry ActivitySource used for all outbox processing operations, enabling consistent correlation of telemetry across the capture, processing, and publishing stages.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.yml\" sourcestartlinenumber=\"1\">OpenTelemetry registration helpers for the Vulthil outbox processing telemetry.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Primitives.AggregateRoot-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Primitives.AggregateRoot-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Primitives.AggregateRoot<TId>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Primitives.AggregateRoot-1.yml\" sourcestartlinenumber=\"1\">Base class for aggregate roots that track and raise domain events.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Primitives.Entity-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Primitives.Entity-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Primitives.Entity<TId>",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Primitives.Entity-1.yml\" sourcestartlinenumber=\"1\">Base class for domain entities identified by a strongly-typed identifier. Entities are compared by identity:\ntwo entities are equal when they have the same runtime type and equal, non-default <xref href=\"Vulthil.SharedKernel.Primitives.Entity%601.Id\" data-throw-if-not-resolved=\"false\"></xref> values.\nA transient entity — one whose <xref href=\"Vulthil.SharedKernel.Primitives.Entity%601.Id\" data-throw-if-not-resolved=\"false\"></xref> is still the default value — is only equal to itself.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Primitives.IAggregateRoot.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Primitives.IAggregateRoot.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Primitives.IAggregateRoot",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Primitives.IAggregateRoot.yml\" sourcestartlinenumber=\"1\">Defines the contract for an aggregate root that tracks domain events.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Primitives.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Primitives.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Primitives",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.BaseIntegrationTestCase-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.BaseIntegrationTestCase-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseIntegrationTestCase-2.yml\" sourcestartlinenumber=\"1\">Base class for integration tests that use a <xref href=\"Vulthil.xUnit.BaseWebApplicationFactory%601\" data-throw-if-not-resolved=\"false\"></xref> with container-based infrastructure.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.BaseUnitTestCase-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.BaseUnitTestCase-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.BaseUnitTestCase<TTarget>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseUnitTestCase-1.yml\" sourcestartlinenumber=\"1\">Base class for unit tests that automatically creates and exposes a lazily-initialized target instance of <code class=\"typeparamref\">TTarget</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.BaseUnitTestCase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.BaseUnitTestCase.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.BaseUnitTestCase",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseUnitTestCase.yml\" sourcestartlinenumber=\"1\">Base class for unit tests providing auto-mocking, lifecycle hooks, and a shared cancellation token.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.BaseWebApplicationFactory-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.BaseWebApplicationFactory-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseWebApplicationFactory-1.yml\" sourcestartlinenumber=\"1\">Abstract <xref href=\"Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601\" data-throw-if-not-resolved=\"false\"></xref> that manages a set of test containers,\ninjects their connection strings into the test host, and ensures EF Core migrations are applied during host startup.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.yml\" sourcestartlinenumber=\"1\">Fixture that starts the Azure Cosmos DB Linux emulator in a container and registers\n<code class=\"typeparamref\">TDbContext</code> in the test host pointed at it. Connectivity goes through the container's own\n<xref href=\"Testcontainers.CosmosDb.CosmosDbContainer.HttpClient\" data-throw-if-not-resolved=\"false\"></xref>, whose handler rewrites every request to the mapped emulator endpoint,\nso no certificate or endpoint plumbing is needed. When owned by a <xref href=\"Vulthil.xUnit.Fixtures.ContainerHost\" data-throw-if-not-resolved=\"false\"></xref>, every consuming\nfactory works in its own emulator database, so parallel test classes never share data; data is reset between\ntests by recreating that database. Derived classes only supply the configuration key (and optionally pin the\nemulator image via <code>Configure</code>).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Cosmos.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Cosmos.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Cosmos",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.ContainerHost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.ContainerHost.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.ContainerHost",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.ContainerHost.yml\" sourcestartlinenumber=\"1\">Assembly-level fixture that owns a set of shared test containers, so heavyweight infrastructure (database servers,\nmessage brokers, emulators) starts at most once per test run instead of once per test class.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.ITestContainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.ITestContainer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.ITestContainer",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.ITestContainer.yml\" sourcestartlinenumber=\"1\">Represents a test container that can be started and stopped as part of the test lifecycle, and that may\nparticipate in configuring the test host.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.ITestContainerScopeProvider",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.yml\" sourcestartlinenumber=\"1\">Implemented by test containers that can mint per-scope views of themselves, so a single running container\n(typically owned by a <xref href=\"Vulthil.xUnit.Fixtures.ContainerHost\" data-throw-if-not-resolved=\"false\"></xref> assembly fixture) can serve many test classes in parallel\nwithout sharing state. A scope usually maps to an isolated namespace inside the shared container — a uniquely\nnamed database on a database server, a virtual host on a message broker, or a key prefix in a cache.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString.yml\" sourcestartlinenumber=\"1\">Extends <xref href=\"Vulthil.xUnit.Fixtures.ITestContainer\" data-throw-if-not-resolved=\"false\"></xref> with a connection string for use in integration tests.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.ITestDatabaseContainer",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.yml\" sourcestartlinenumber=\"1\">Extends <xref href=\"Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString\" data-throw-if-not-resolved=\"false\"></xref> with database migration capabilities. Data is reset\nbetween tests through <xref href=\"Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)\" data-throw-if-not-resolved=\"false\"></xref> (Respawn).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.yml\" sourcestartlinenumber=\"1\">Fixture that wraps a RabbitMQ broker container. When owned by a <xref href=\"Vulthil.xUnit.Fixtures.ContainerHost\" data-throw-if-not-resolved=\"false\"></xref>, every consuming\nfactory gets its own virtual host on the shared broker (created via <code>rabbitmqctl</code> inside the container and\nappended to the AMQP connection string), so parallel test classes never see each other's exchanges, queues or\nmessages. Derived classes only configure the container and supply the connection string and key.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.yml\" sourcestartlinenumber=\"1\">Base fixture that wraps a Testcontainers container as an <xref href=\"Vulthil.xUnit.Fixtures.ITestContainer\" data-throw-if-not-resolved=\"false\"></xref> for use in <xref href=\"Vulthil.xUnit.BaseWebApplicationFactory%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.yml\" sourcestartlinenumber=\"1\">Fixture that wraps a Testcontainers container and exposes a connection string for integration test configuration.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.yml\" sourcestartlinenumber=\"1\">Fixture that wraps a database container, applies EF Core migrations, and supports Respawn-based data resets between\ntests. When owned by a <xref href=\"Vulthil.xUnit.Fixtures.ContainerHost\" data-throw-if-not-resolved=\"false\"></xref>, <xref href=\"Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture%603.CreateScope(System.String)\" data-throw-if-not-resolved=\"false\"></xref> gives every consuming factory its own\nuniquely named database on the shared server, so parallel test classes never see each other's data.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Http.CapturedHttpRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Http.CapturedHttpRequest.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Http.CapturedHttpRequest",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Http.CapturedHttpRequest.yml\" sourcestartlinenumber=\"1\">A snapshot of a request received by an <xref href=\"Vulthil.xUnit.Http.IHttpMock\" data-throw-if-not-resolved=\"false\"></xref>, captured for assertions.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Http.IHttpMock.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Http.IHttpMock.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Http.IHttpMock",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Http.IHttpMock.yml\" sourcestartlinenumber=\"1\">An in-process fake for an outbound <xref href=\"System.Net.Http.HttpClient\" data-throw-if-not-resolved=\"false\"></xref> dependency. Configure stubbed responses per test\nand inspect the requests the system under test sent. Register one per typed client via\n<code>AddHttpMock&lt;TClient, TImplementation&gt;()</code> on the factory and retrieve it with <code>HttpMock&lt;TClient&gt;()</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Http.IHttpMockResponseBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Http.IHttpMockResponseBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Http.IHttpMockResponseBuilder",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Http.IHttpMockResponseBuilder.yml\" sourcestartlinenumber=\"1\">Configures the response a matched request should receive. Returned by the <code>On</code> methods on <xref href=\"Vulthil.xUnit.Http.IHttpMock\" data-throw-if-not-resolved=\"false\"></xref>.\nHeader methods apply to the response defined by the preceding <code>RespondWith</code> call and can be chained.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Http.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Http.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Http",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.IResettableResource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.IResettableResource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.IResettableResource",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.IResettableResource.yml\" sourcestartlinenumber=\"1\">A test resource whose state can be reset to a clean baseline between tests — for example a database\nreset via Respawn, or an HTTP mock whose configured responses and captured requests are cleared.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.IStartupResource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.IStartupResource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.IStartupResource",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.IStartupResource.yml\" sourcestartlinenumber=\"1\">A test resource that performs one-time setup during host startup using the application's services — for\nexample a Cosmos store creating its database and containers through the registered <code>DbContext</code>. Invoked once,\nafter database migrations and before the application's background services, so the resource is ready before the\nfirst test runs.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit",
+      "Summary": null
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/cqrs-pipeline.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/cqrs-pipeline.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/domain-modeling.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/domain-modeling.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/getting-started.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/inbox-pattern.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/inbox-pattern.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/messaging.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/messaging.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/outbox-pattern.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/outbox-pattern.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/packages/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/packages/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-extensions-testing.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-extensions-testing.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-abstractions.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-abstractions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-inbox-cosmos.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-inbox-cosmos.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-inbox-entityframeworkcore.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-inbox-entityframeworkcore.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-inbox-relational.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-inbox-relational.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-inbox.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-inbox.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-outbox.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-outbox.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-rabbitmq.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-rabbitmq.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging-testharness.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging-testharness.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-messaging.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-messaging.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-results.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-results.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-api.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-api.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-application.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-application.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-cosmos.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-cosmos.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-mysql.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-mysql.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-npgsql.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-npgsql.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-relational.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-infrastructure-relational.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-infrastructure.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-infrastructure.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-outbox-entityframeworkcore.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-outbox-entityframeworkcore.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel-outbox.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel-outbox.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-sharedkernel.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-sharedkernel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-xunit-cosmos.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-xunit-cosmos.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-xunit.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-xunit.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/result-pattern.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/result-pattern.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/testing.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/testing.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/favicon.ico",
+      "output": {
+        "resource": {
+          "relative_path": "images/favicon.ico"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/logo.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/logo.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

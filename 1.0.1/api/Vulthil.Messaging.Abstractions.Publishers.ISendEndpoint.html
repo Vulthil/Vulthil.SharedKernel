@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface ISendEndpoint | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface ISendEndpoint | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="Sends messages to a single, addressable destination (point-to-point delivery).">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint">
+
+
+
+  <h1 id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint" data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint" class="text-break">
+Interface ISendEndpoint  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Publishers/ISendEndpoint.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.Abstractions.html">Abstractions</a>.<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.html">Publishers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.Abstractions.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Sends messages to a single, addressable destination (point-to-point delivery).</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface ISendEndpoint</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Sends are addressed directly to the destination identified by <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html#Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_Address">Address</a> and bypass the
+per-message-type exchange used by <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublisher.html">IPublisher</a>. Topology for the destination queue is owned
+by the receiving service; the sender does not declare it.</p>
+</div>
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_Address_" data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.Address*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_Address" data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.Address">
+  Address
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Publishers/ISendEndpoint.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the destination address this endpoint sends to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Uri Address { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_SendAsync_" data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.SendAsync*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_SendAsync__1___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.SendAsync``1(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask},System.Threading.CancellationToken)">
+  SendAsync&lt;TMessage&gt;(TMessage, Func&lt;IPublishContext, ValueTask&gt;?, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Publishers/ISendEndpoint.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sends a message to <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html#Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_Address">Address</a> with optional context configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task SendAsync&lt;TMessage&gt;(TMessage message, Func&lt;IPublishContext, ValueTask&gt;? configureContext = null, CancellationToken cancellationToken = default) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <span class="xref">TMessage</span></dt>
+    <dd><p>The message to send.</p>
+</dd>
+    <dt><code>configureContext</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html">IPublishContext</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a>&gt;</dt>
+    <dd><p>An optional callback for configuring the publish context (correlation, headers, etc.).</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The type of message to send.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_SendAsync_" data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.SendAsync*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_SendAsync__1___0_System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.SendAsync``1(``0,System.Threading.CancellationToken)">
+  SendAsync&lt;TMessage&gt;(TMessage, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Publishers/ISendEndpoint.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sends a message to <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html#Vulthil_Messaging_Abstractions_Publishers_ISendEndpoint_Address">Address</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task SendAsync&lt;TMessage&gt;(TMessage message, CancellationToken cancellationToken) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <span class="xref">TMessage</span></dt>
+    <dd><p>The message to send.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The type of message to send.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Publishers/ISendEndpoint.cs/#L31" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

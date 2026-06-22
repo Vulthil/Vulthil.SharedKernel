@@ -1,1 +1,4 @@
 #nullable enable
+Vulthil.Messaging.Outbox.TransactionalOutboxExtensions
+static Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.AddTransactionalConsumer<TMessage>(this Vulthil.Messaging.IMessagingConfigurator! configurator) -> Vulthil.Messaging.IMessagingConfigurator!
+static Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.AddTransactionalOutbox(this Vulthil.Messaging.IMessagingConfigurator! configurator) -> Vulthil.Messaging.IMessagingConfigurator!

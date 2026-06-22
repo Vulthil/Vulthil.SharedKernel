@@ -1,2 +1,1 @@
 #nullable enable
-static Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql<TDbContext>(this Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>! configurator, string! connectionStringKey, System.Action<Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder!>? configureSettings = null) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!

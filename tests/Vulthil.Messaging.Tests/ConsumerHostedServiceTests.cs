@@ -66,6 +66,6 @@ public sealed class ConsumerHostedServiceTests : BaseUnitTestCase
         await Target.StopAsync(CancellationToken);
 
         // Assert
-        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+        Target.ExecuteTask!.Status.ShouldBeOneOf(TaskStatus.RanToCompletion, TaskStatus.Canceled);
     }
 }

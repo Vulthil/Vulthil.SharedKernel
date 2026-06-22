@@ -1,1 +1,35 @@
 #nullable enable
+Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics.get -> bool
+Vulthil.Messaging.Inbox.InboxOptions.EnableMetrics.set -> void
+Vulthil.Messaging.Inbox.InboxTelemetry
+Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions
+static readonly Vulthil.Messaging.Inbox.InboxTelemetry.MeterName -> string!
+static Vulthil.Messaging.Inbox.MeterProviderBuilderExtensions.AddVulthilInboxInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!
+static Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.Messaging.Inbox.InboxOptions!>? configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Vulthil.Messaging.Inbox.IIdempotencyStore
+Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(string! idempotencyKey, Vulthil.Messaging.Abstractions.Consumers.IMessageContext! context, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! process, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Vulthil.Messaging.Inbox.IInboxKeySelector<TMessage>
+Vulthil.Messaging.Inbox.IInboxKeySelector<TMessage>.GetKey(Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>! context) -> string?
+Vulthil.Messaging.Inbox.InboxConfiguratorExtensions
+Vulthil.Messaging.Inbox.InboxOptions
+Vulthil.Messaging.Inbox.InboxOptions.InboxOptions() -> void
+Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey.get -> bool
+Vulthil.Messaging.Inbox.InboxOptions.RejectMessagesWithoutKey.set -> void
+Vulthil.Messaging.Inbox.InboxOptions.Retention.get -> Vulthil.Messaging.Inbox.InboxRetentionOptions!
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MessageType.get -> System.Type!
+Vulthil.Messaging.Inbox.MissingIdempotencyKeyException.MissingIdempotencyKeyException(System.Type! messageType) -> void
+static Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.AddIdempotentInbox<TMessage>(this Vulthil.Messaging.IMessagingConfigurator! configurator, System.Func<Vulthil.Messaging.Abstractions.Consumers.IMessageContext<TMessage>!, string?>? keySelector = null) -> Vulthil.Messaging.IMessagingConfigurator!
+Vulthil.Messaging.Inbox.IInboxRetentionStore
+Vulthil.Messaging.Inbox.IInboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset olderThanUtc, int batchSize, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+Vulthil.Messaging.Inbox.InboxRetentionOptions
+Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize.get -> int
+Vulthil.Messaging.Inbox.InboxRetentionOptions.BatchSize.set -> void
+Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled.get -> bool
+Vulthil.Messaging.Inbox.InboxRetentionOptions.Enabled.set -> void
+Vulthil.Messaging.Inbox.InboxRetentionOptions.InboxRetentionOptions() -> void
+Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod.get -> System.TimeSpan
+Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod.set -> void
+Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval.get -> System.TimeSpan
+Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval.set -> void
+Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions

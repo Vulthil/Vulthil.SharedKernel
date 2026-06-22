@@ -1,1 +1,5 @@
 #nullable enable
+Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions
+static Vulthil.Messaging.Inbox.Relational.RelationalInboxExtensions.AddRelationalInbox<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.Messaging.Inbox.InboxOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions
+static Vulthil.Messaging.Inbox.Relational.RelationalInboxModelBuilderExtensions.ApplyRelationalInbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!

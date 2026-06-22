@@ -1,5 +1,1 @@
 #nullable enable
-Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions
-static Vulthil.Messaging.Inbox.Cosmos.CosmosInboxExtensions.AddCosmosInbox<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.Messaging.Inbox.InboxOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions
-static Vulthil.Messaging.Inbox.Cosmos.CosmosInboxModelBuilderExtensions.ApplyCosmosInbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!

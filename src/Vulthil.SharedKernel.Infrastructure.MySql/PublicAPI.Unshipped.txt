@@ -1,7 +1,1 @@
 #nullable enable
-override Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>.FetchMessagesAsync(int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!
-Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions
-Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>
-Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! options) -> void
-Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions
-static Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.ApplyMySqlOutbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!

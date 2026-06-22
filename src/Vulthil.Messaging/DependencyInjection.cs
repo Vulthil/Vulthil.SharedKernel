@@ -37,6 +37,7 @@ public static class DependencyInjection
         LoadQueueDefinitionsFromConfiguration(builder.Configuration, messagingOptions);
         LoadMessageConfigurationsFromConfiguration(builder.Configuration, messagingOptions);
 
+        builder.Services.TryAddSingleton(TimeProvider.System);
         builder.Services.AddHostedService<ConsumerHostedService>();
 
         var messagingConfigurator = new MessagingConfigurator(builder, messagingOptions);

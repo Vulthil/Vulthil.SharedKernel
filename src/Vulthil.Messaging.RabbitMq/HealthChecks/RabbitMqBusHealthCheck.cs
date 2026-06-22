@@ -17,20 +17,8 @@ internal sealed class RabbitMqBusHealthCheck : IHealthCheck
 
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        var ready = _status.Ready;
-
-        if (ready.IsCompletedSuccessfully)
-        {
-            return Task.FromResult(HealthCheckResult.Healthy("RabbitMQ bus started."));
-        }
-
-        if (ready.IsFaulted)
-        {
-            return Task.FromResult(HealthCheckResult.Unhealthy(
-                "RabbitMQ bus failed to start.",
-                ready.Exception?.GetBaseException()));
-        }
-
-        return Task.FromResult(HealthCheckResult.Unhealthy("RabbitMQ bus is starting."));
+        return _status.Ready.IsCompletedSuccessfully
+            ? Task.FromResult(HealthCheckResult.Healthy("RabbitMQ bus started."))
+            : Task.FromResult(HealthCheckResult.Unhealthy("RabbitMQ bus is starting."));
     }
 }

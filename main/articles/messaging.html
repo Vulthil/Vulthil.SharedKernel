@@ -698,9 +698,11 @@ activities on the receiving service without any extra setup.</p>
 reports:</p>
 <ul>
 <li><code>Unhealthy(&quot;starting&quot;)</code> until <code>RabbitMqBus.StartAsync</code> completes (topology
-declaration + consumer registration finished).</li>
+declaration + consumer registration finished). A transient startup failure —
+for example a broker that is still coming up — is retried with backoff until it
+succeeds or the host stops, so the probe stays <code>Unhealthy(&quot;starting&quot;)</code> (and each
+failed attempt is logged) instead of faulting the host.</li>
 <li><code>Healthy(&quot;started&quot;)</code> after a successful startup.</li>
-<li><code>Unhealthy(...)</code> with the original exception if startup fails.</li>
 </ul>
 <p>Registration is gated on the Aspire client's <code>DisableHealthChecks</code> setting; set
 that to <code>true</code> to suppress the health check alongside Aspire's connection-level

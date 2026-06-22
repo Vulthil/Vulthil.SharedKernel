@@ -36,6 +36,11 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         _typeCache = new MessageTypeCache(messageConfigurationProvider);
     }
 
+    /// <remarks>
+    /// A failed start disposes any partially-created consumer workers and rethrows without faulting the readiness
+    /// signal, so the hosting consumer service can retry a transient failure (such as a broker that is still coming
+    /// up) while <see cref="RabbitMqBusStartupStatus.Ready"/> stays pending until a start attempt succeeds.
+    /// </remarks>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         try
@@ -49,9 +54,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             MessagingLog.BusStarted(_logger);
             _startupStatus.MarkStarted();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            _startupStatus.MarkFailed(ex);
+            await DisposeWorkersAsync();
             throw;
         }
     }
@@ -217,11 +222,17 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        await DisposeWorkersAsync();
+        GC.SuppressFinalize(this);
+    }
+
+    private async Task DisposeWorkersAsync()
+    {
         foreach (var worker in _workers)
         {
             await worker.DisposeAsync();
         }
 
-        GC.SuppressFinalize(this);
+        _workers.Clear();
     }
 }

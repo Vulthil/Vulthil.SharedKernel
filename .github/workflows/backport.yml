@@ -1,0 +1,49 @@
+name: Backport
+
+# Backport a merged PR to a servicing branch by adding a "backport <branch>"
+# label to it (e.g. "backport v1.0"). The action cherry-picks the PR's commits
+# onto the target branch and opens a PR. The label can be added before or after
+# merge -- nothing happens until the PR is actually merged.
+#
+# End-to-end patch flow this enables:
+#   1. Fix merges to main.
+#   2. Label the PR "backport v1.0"  -> this workflow opens the patch PR on v1.0.
+#   3. CI validates the patch PR (ci.yml runs on v* servicing branches).
+#   4. Merge the patch PR into v1.0.
+#   5. Bump the patch version: dispatch "Manual Version Bump" (patch) against v1.0.
+#   6. Publish: dispatch "Release" against v1.0.
+on:
+  pull_request_target:
+    types: [closed, labeled]
+
+permissions:
+  contents: write       # push the backport branch
+  pull-requests: write  # open the backport PR
+
+jobs:
+  backport:
+    name: Backport to servicing branch
+    # Only merged PRs are backported; a "backport ..." label added before merge
+    # simply waits. pull_request_target runs on commits, not PR code, so it does
+    # not execute untrusted contributor code.
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create backport PRs
+        uses: korthout/backport-action@v3
+        with:
+          # AUTOMATION_TOKEN (a PAT/App token) lets the required `build` check
+          # run on the created PR; pushes made with the default GITHUB_TOKEN do
+          # not trigger CI. Mirrors version-bump.yml / release.yml.
+          github_token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+          # Label form: "backport <target-branch>", e.g. "backport v1.0".
+          label_pattern: '^backport ([^ ]+)$'
+          pull_title: '[Backport ${target_branch}] ${pull_title}'
+          pull_description: |-
+            Automated backport of #${pull_number} to `${target_branch}`.
+
+            After merge, bump the patch version on `${target_branch}` (dispatch **Manual Version Bump** with `patch` against the branch) and run **Release**.

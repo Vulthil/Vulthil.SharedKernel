@@ -65,25 +65,25 @@ jobs:
 
       - name: Generate release notes
         id: changelog
-        uses: orhun/git-cliff-action@v4
+        uses: orhun/git-cliff-action@f50e11560dce63f7c33227798f90b924471a88b5 # v4
         with:
           config: cliff.toml
           args: --unreleased --tag v${{ steps.version.outputs.version }} --strip header
         env:
           OUTPUT: CHANGES.md
 
+      # Uses gh release create directly instead of a third-party release action
+      # -- one less individual-maintainer action holding contents: write.
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          name: v${{ steps.version.outputs.version }}
-          tag_name: v${{ steps.version.outputs.version }}
-          target_commitish: ${{ github.sha }}
-          body_path: CHANGES.md
-          files: |
-            ./artifacts/*.nupkg
-            ./artifacts/*.snupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+            ./artifacts/*.nupkg ./artifacts/*.snupkg \
+            --repo "${{ github.repository }}" \
+            --title "v${{ steps.version.outputs.version }}" \
+            --notes-file CHANGES.md \
+            --target "${{ github.sha }}"
 
       - name: Publish to GitHub Packages
         run: |
@@ -99,7 +99,7 @@ jobs:
       # https://learn.microsoft.com/nuget/nuget-org/trusted-publishing
       - name: NuGet login (trusted publishing)
         id: nuget-login
-        uses: NuGet/login@v1
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1
         with:
           user: ${{ secrets.NUGET_USER }}
 
@@ -149,7 +149,7 @@ jobs:
 
       - name: Open public API promotion PR
         id: cpr
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
           # AUTOMATION_TOKEN lets the required `build` check run on the PR; with
           # the default GITHUB_TOKEN, pushes from a workflow do not trigger CI.

@@ -69,6 +69,9 @@ jobs:
       # (version.json), so every CI build carries a prerelease suffix. PRs pack
       # and upload a downloadable artifact for testing; only merges to main are
       # published to the shared feed, so transient PR commits don't pollute it.
+      # Package validation (APICompat vs. PackageValidationBaselineVersion) also
+      # runs here, i.e. AFTER build+test -- a baseline diff stays latent on any
+      # commit where tests already failed and this step didn't run.
       - name: Pack preview
         if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
         run: dotnet pack -c Release -o ./artifacts

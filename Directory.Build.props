@@ -22,8 +22,8 @@
 	<!-- NuGet package validation -->
 	<PropertyGroup Condition="'$(IsPackable)' != 'false'">
 		<EnablePackageValidation>true</EnablePackageValidation>
-		<!-- Set this after shipping the first stable release:
-		<PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion> -->
+		<!-- Bumped by eng/mark_api_shipped.py to the version just released. -->
+		<PackageValidationBaselineVersion>1.0.1</PackageValidationBaselineVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(IsPackable)' != 'false' and Exists('README.md')">

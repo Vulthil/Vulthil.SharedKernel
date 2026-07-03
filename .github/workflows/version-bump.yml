@@ -30,15 +30,25 @@ jobs:
         id: bump
         run: python3 eng/bump_version.py "${{ github.event.inputs.bump_type }}"
 
+      - name: Require automation token
+        env:
+          AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+        run: |
+          if [ -z "$AUTOMATION_TOKEN" ]; then
+            echo "::error::AUTOMATION_TOKEN is not set. The default GITHUB_TOKEN cannot open this PR: pushes made with it do not trigger the required 'build' check, so an admin would have to bypass the ruleset to merge."
+            exit 1
+          fi
+
       - name: Open version bump PR
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
           # A PAT or GitHub App token (AUTOMATION_TOKEN) lets the required `build`
           # check run on the PR. With the default GITHUB_TOKEN, pushes from this
           # workflow do not trigger CI, so an admin must bypass the ruleset to merge.
-          token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+          # Enforced by the "Require automation token" step above -- no fallback.
+          token: ${{ secrets.AUTOMATION_TOKEN }}
           add-paths: version.json
-          branch: chore/version-bump
+          branch: chore/version-bump-${{ steps.bump.outputs.version }}
           delete-branch: true
           commit-message: "chore: bump version to ${{ steps.bump.outputs.version }}"
           title: "chore: bump version to ${{ steps.bump.outputs.version }}"

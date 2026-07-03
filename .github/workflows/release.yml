@@ -53,26 +53,37 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "::notice::Publishing version $VERSION"
 
+      - name: Check version not already released
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if gh release view "v$VERSION" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "::error::v$VERSION is already released. Bump version.json before dispatching Release again."
+            exit 1
+          fi
+
       - name: Generate release notes
         id: changelog
-        uses: orhun/git-cliff-action@v4
+        uses: orhun/git-cliff-action@f50e11560dce63f7c33227798f90b924471a88b5 # v4
         with:
           config: cliff.toml
           args: --unreleased --tag v${{ steps.version.outputs.version }} --strip header
         env:
           OUTPUT: CHANGES.md
 
+      # Uses gh release create directly instead of a third-party release action
+      # -- one less individual-maintainer action holding contents: write.
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          name: v${{ steps.version.outputs.version }}
-          tag_name: v${{ steps.version.outputs.version }}
-          body_path: CHANGES.md
-          files: |
-            ./artifacts/*.nupkg
-            ./artifacts/*.snupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+            ./artifacts/*.nupkg ./artifacts/*.snupkg \
+            --repo "${{ github.repository }}" \
+            --title "v${{ steps.version.outputs.version }}" \
+            --notes-file CHANGES.md \
+            --target "${{ github.sha }}"
 
       - name: Publish to GitHub Packages
         run: |
@@ -88,7 +99,7 @@ jobs:
       # https://learn.microsoft.com/nuget/nuget-org/trusted-publishing
       - name: NuGet login (trusted publishing)
         id: nuget-login
-        uses: NuGet/login@v1
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1
         with:
           user: ${{ secrets.NUGET_USER }}
 
@@ -125,25 +136,37 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Promote unshipped public API
-        run: python3 eng/mark_api_shipped.py
+        run: python3 eng/mark_api_shipped.py --version ${{ needs.release.outputs.version }}
+
+      - name: Require automation token
+        env:
+          AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+        run: |
+          if [ -z "$AUTOMATION_TOKEN" ]; then
+            echo "::error::AUTOMATION_TOKEN is not set. The default GITHUB_TOKEN cannot open this PR: pushes made with it do not trigger the required 'build' check, so auto-merge would stall silently."
+            exit 1
+          fi
 
       - name: Open public API promotion PR
         id: cpr
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
           # AUTOMATION_TOKEN lets the required `build` check run on the PR; with
           # the default GITHUB_TOKEN, pushes from a workflow do not trigger CI.
-          token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
-          add-paths: src/**/PublicAPI.*.txt
-          branch: chore/mark-api-shipped
+          # Enforced by the "Require automation token" step above -- no fallback.
+          token: ${{ secrets.AUTOMATION_TOKEN }}
+          add-paths: |
+            src/**/PublicAPI.*.txt
+            Directory.Build.props
+          branch: chore/mark-api-shipped-${{ needs.release.outputs.version }}
           delete-branch: true
           commit-message: "chore: mark public API shipped for v${{ needs.release.outputs.version }}"
           title: "chore: mark public API shipped for v${{ needs.release.outputs.version }}"
           labels: automated
           body: |
-            Promotes the unshipped public API surface to shipped for **v${{ needs.release.outputs.version }}**.
+            Promotes the unshipped public API surface to shipped for **v${{ needs.release.outputs.version }}** and bumps `PackageValidationBaselineVersion` to match.
 
-            Each `PublicAPI.Unshipped.txt` was folded into its sibling `PublicAPI.Shipped.txt` and reset to the `#nullable enable` header. Merge this so the next development cycle starts from a clean unshipped surface.
+            Each `PublicAPI.Unshipped.txt` was folded into its sibling `PublicAPI.Shipped.txt` and reset to the `#nullable enable` header. Merge this so the next development cycle starts from a clean unshipped surface and package validation compares against the release that just shipped.
 
       # Hands-off promotion, mirroring the dependabot auto-approve-and-merge flow.
       # Approve with GITHUB_TOKEN (the github-actions[bot] identity) so the review

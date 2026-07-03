@@ -9,6 +9,12 @@
     <NpgsqlEfCoreVersion>10.0.2</NpgsqlEfCoreVersion>
     <NpgsqlEfCoreVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.4</NpgsqlEfCoreVersion>
     <AspireVersion>13.4.6</AspireVersion>
+    <!-- GHSA-v5pm-xwqc-g5wc: Microsoft.AspNetCore.OpenApi 10.0.9 (net10.0) pulls in the vulnerable
+         Microsoft.OpenApi 2.0.0. net9.0's Microsoft.AspNetCore.OpenApi 9.0.17 already depends on the
+         unaffected 1.x line, so only override the net10.0 leg; remove once AspNetCore.OpenApi bumps its own
+         floor past 2.7.5. -->
+    <MicrosoftOpenApiVersion>2.9.0</MicrosoftOpenApiVersion>
+    <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">1.6.17</MicrosoftOpenApiVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
@@ -23,6 +29,7 @@
     <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="$(MicrosoftOpenApiVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(FrameworkVersion)" />

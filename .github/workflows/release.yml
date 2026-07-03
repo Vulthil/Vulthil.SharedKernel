@@ -136,7 +136,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Promote unshipped public API
-        run: python3 eng/mark_api_shipped.py
+        run: python3 eng/mark_api_shipped.py --version ${{ needs.release.outputs.version }}
 
       - name: Require automation token
         env:
@@ -155,16 +155,18 @@ jobs:
           # the default GITHUB_TOKEN, pushes from a workflow do not trigger CI.
           # Enforced by the "Require automation token" step above -- no fallback.
           token: ${{ secrets.AUTOMATION_TOKEN }}
-          add-paths: src/**/PublicAPI.*.txt
+          add-paths: |
+            src/**/PublicAPI.*.txt
+            Directory.Build.props
           branch: chore/mark-api-shipped-${{ needs.release.outputs.version }}
           delete-branch: true
           commit-message: "chore: mark public API shipped for v${{ needs.release.outputs.version }}"
           title: "chore: mark public API shipped for v${{ needs.release.outputs.version }}"
           labels: automated
           body: |
-            Promotes the unshipped public API surface to shipped for **v${{ needs.release.outputs.version }}**.
+            Promotes the unshipped public API surface to shipped for **v${{ needs.release.outputs.version }}** and bumps `PackageValidationBaselineVersion` to match.
 
-            Each `PublicAPI.Unshipped.txt` was folded into its sibling `PublicAPI.Shipped.txt` and reset to the `#nullable enable` header. Merge this so the next development cycle starts from a clean unshipped surface.
+            Each `PublicAPI.Unshipped.txt` was folded into its sibling `PublicAPI.Shipped.txt` and reset to the `#nullable enable` header. Merge this so the next development cycle starts from a clean unshipped surface and package validation compares against the release that just shipped.
 
       # Hands-off promotion, mirroring the dependabot auto-approve-and-merge flow.
       # Approve with GITHUB_TOKEN (the github-actions[bot] identity) so the review

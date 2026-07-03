@@ -1,4 +1,14 @@
 name: Dependabot Auto-Approve and Auto-Merge
+
+# Auto-merges Dependabot patch/minor updates, narrowed by blast radius:
+# github-actions bumps (CI-only, and SHA-pinned per T10) and NuGet packages
+# NOT referenced by any shipped src/ project still auto-merge once CI (build)
+# passes. NuGet's own dependency-type classification has no test-project
+# detection (every NuGet requirement reports as "direct:production" -- see
+# Dependabot::Dependency.register_production_check in dependabot-core), so the
+# src/ check below is done directly against src/**/*.csproj instead of trusted
+# from Dependabot metadata. Majors, dotnet-sdk bumps, docker bumps, and any
+# NuGet package referenced by src/ always require a human review and merge.
 on: pull_request
 
 permissions:
@@ -12,20 +22,54 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v3.1.0
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
       # Only auto-approve/merge patch and minor updates. A major bump can carry
       # breaking changes that still compile and pass tests, then ship to consumers
-      # unnoticed -- leave majors for a human to review and merge.
-      - name: Approve a PR
+      # unnoticed -- leave majors for a human to review and merge. Within
+      # patch/minor, narrow further by dependency risk (see file header).
+      - name: Decide auto-merge eligibility
+        id: eligibility
         if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        env:
+          ECOSYSTEM: ${{ steps.metadata.outputs.package-ecosystem }}
+          UPDATED_DEPENDENCIES_JSON: ${{ steps.metadata.outputs.updated-dependencies-json }}
+        run: |
+          case "$ECOSYSTEM" in
+            github_actions)
+              echo "eligible=true" >> "$GITHUB_OUTPUT"
+              ;;
+            nuget)
+              production_found=false
+              while IFS= read -r name; do
+                [ -z "$name" ] && continue
+                if grep -rqiF "Include=\"$name\"" src/ --include="*.csproj"; then
+                  production_found=true
+                  echo "::notice::src/ references $name -- not auto-merging"
+                fi
+              done < <(echo "$UPDATED_DEPENDENCIES_JSON" | jq -r '.[].dependencyName' | sort -u)
+              echo "eligible=$([ "$production_found" = true ] && echo false || echo true)" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "eligible=false" >> "$GITHUB_OUTPUT"
+              echo "::notice::Not auto-merging -- $ECOSYSTEM ecosystem requires human review"
+              ;;
+          esac
+
+      - name: Approve a PR
+        if: steps.eligibility.outputs.eligible == 'true'
         run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Enable auto-merge for Dependabot PRs
-        if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        if: steps.eligibility.outputs.eligible == 'true'
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}

@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-dotnet@v5
 
@@ -56,14 +56,16 @@ jobs:
           name: coverage-report
           path: ./CoverageReport
 
+      # Uses gh api directly instead of a third-party gist-deploy action -- one
+      # less individual-maintainer action holding a token in its supply chain.
       - name: Publish coverage badge to Gist
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: exuanbo/actions-deploy-gist@v1
-        with:
-          token: ${{ secrets.GIST_TOKEN }}
-          gist_id: 2852f1400e27493b185559c76b38e9b7
-          file_path: ./CoverageReport/badge_combined.svg
-          file_type: binary
+        env:
+          GH_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          jq -n --rawfile content ./CoverageReport/badge_combined.svg \
+            '{files: {"badge_combined.svg": {content: $content}}}' \
+          | gh api --method PATCH /gists/2852f1400e27493b185559c76b38e9b7 --input -
 
       # Preview (prerelease) packages. main is not a public release ref
       # (version.json), so every CI build carries a prerelease suffix. PRs pack
@@ -83,8 +85,41 @@ jobs:
           name: nuget-packages
           path: ./artifacts/*
 
-      - name: Publish preview to GitHub Packages
+      # Hands packages to the publish-preview job below, which carries
+      # packages: write instead of this job -- keeps that credential out of the
+      # job that runs untrusted PR code (dotnet build/test run arbitrary MSBuild
+      # targets from the PR).
+      - name: Upload preview packages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: preview-packages
+          path: ./artifacts/*
+
+  # Split from `build` so the packages: write token is never present while
+  # building/testing PR code. Only runs for pushes to main, never for PRs
+  # (including same-repo ones), so a compromised dependency can't use this
+  # token from its own PR build.
+  publish-preview:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@v5
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: preview-packages
+          path: ./artifacts
+
+      - name: Publish preview to GitHub Packages
         run: |
           dotnet nuget push "./artifacts/*.nupkg" \
             --api-key ${{ secrets.GITHUB_TOKEN }} \

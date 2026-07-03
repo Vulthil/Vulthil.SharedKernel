@@ -53,6 +53,16 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "::notice::Publishing version $VERSION"
 
+      - name: Check version not already released
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if gh release view "v$VERSION" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "::error::v$VERSION is already released. Bump version.json before dispatching Release again."
+            exit 1
+          fi
+
       - name: Generate release notes
         id: changelog
         uses: orhun/git-cliff-action@v4
@@ -67,6 +77,7 @@ jobs:
         with:
           name: v${{ steps.version.outputs.version }}
           tag_name: v${{ steps.version.outputs.version }}
+          target_commitish: ${{ github.sha }}
           body_path: CHANGES.md
           files: |
             ./artifacts/*.nupkg
@@ -127,15 +138,25 @@ jobs:
       - name: Promote unshipped public API
         run: python3 eng/mark_api_shipped.py
 
+      - name: Require automation token
+        env:
+          AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+        run: |
+          if [ -z "$AUTOMATION_TOKEN" ]; then
+            echo "::error::AUTOMATION_TOKEN is not set. The default GITHUB_TOKEN cannot open this PR: pushes made with it do not trigger the required 'build' check, so auto-merge would stall silently."
+            exit 1
+          fi
+
       - name: Open public API promotion PR
         id: cpr
         uses: peter-evans/create-pull-request@v8
         with:
           # AUTOMATION_TOKEN lets the required `build` check run on the PR; with
           # the default GITHUB_TOKEN, pushes from a workflow do not trigger CI.
-          token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+          # Enforced by the "Require automation token" step above -- no fallback.
+          token: ${{ secrets.AUTOMATION_TOKEN }}
           add-paths: src/**/PublicAPI.*.txt
-          branch: chore/mark-api-shipped
+          branch: chore/mark-api-shipped-${{ needs.release.outputs.version }}
           delete-branch: true
           commit-message: "chore: mark public API shipped for v${{ needs.release.outputs.version }}"
           title: "chore: mark public API shipped for v${{ needs.release.outputs.version }}"

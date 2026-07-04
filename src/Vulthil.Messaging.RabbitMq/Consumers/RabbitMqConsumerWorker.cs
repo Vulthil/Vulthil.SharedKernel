@@ -26,11 +26,12 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private readonly bool _partitioned;
     private readonly ConcurrentDictionary<ulong, Task> _inFlight = new();
 
-    // RabbitMQ channels must not be used concurrently. On a partitioned queue the lanes complete in parallel
-    // and each settles its delivery (ack/nack/retry-republish/fault) on this shared channel, so every channel
-    // write is serialized through this gate to avoid interleaved frames. Message processing stays parallel;
-    // only the brief settle/publish frames are serialized.
+    // RabbitMQ channels must not be used concurrently. Concurrent dispatch (and, on a partitioned queue, the
+    // lanes completing in parallel) settles deliveries (ack/nack/retry-republish/fault) and publishes RPC
+    // replies on this shared channel, so every channel write is serialized through this gate to avoid
+    // interleaved frames. Message processing stays parallel; only the brief settle/publish frames are serialized.
     private readonly SemaphoreSlim _channelGate = new(1, 1);
+    private readonly GatedPublisher _gatedPublisher;
 
     private JsonSerializerOptions _jsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
 
@@ -54,6 +55,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         _logger = logger;
         _channelIndex = channelIndex;
         _partitioned = partitioned;
+        _gatedPublisher = PublishThroughGateAsync;
     }
 
     /// <summary>
@@ -76,6 +78,14 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private Task AckAsync(BasicDeliverEventArgs ea) => OnChannelAsync(() => _channel.BasicAckAsync(ea.DeliveryTag, false));
 
     private Task NackAsync(BasicDeliverEventArgs ea) => OnChannelAsync(() => _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false));
+
+    /// <summary>
+    /// Publishes on the shared consumer channel through the channel gate. Handed to handler dispatch as the
+    /// <see cref="GatedPublisher"/> so a request/reply response serializes with the acks, nacks and republishes
+    /// settling other deliveries on this channel.
+    /// </summary>
+    private Task PublishThroughGateAsync(string exchange, string routingKey, bool mandatory, BasicProperties basicProperties, ReadOnlyMemory<byte> body)
+        => OnChannelAsync(() => _channel.BasicPublishAsync(exchange, routingKey, mandatory, basicProperties, body));
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -280,7 +290,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
             props.Expiration = delay.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
 
-            await OnChannelAsync(() => _channel.BasicPublishAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body));
+            await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body);
             await AckAsync(ea);
             return;
         }
@@ -323,7 +333,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             };
 
-            await OnChannelAsync(() => _channel.BasicPublishAsync(exchange, routingKey, false, faultProps, faultBody));
+            await PublishThroughGateAsync(exchange, routingKey, false, faultProps, faultBody);
         }
         catch (Exception faultEx)
         {
@@ -429,7 +439,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
         foreach (var handler in plan.Handlers)
         {
-            await handler.DispatchAsync(scope.ServiceProvider, message, ea, envelope, _channel, ea.CancellationToken);
+            await handler.DispatchAsync(scope.ServiceProvider, message, ea, envelope, _gatedPublisher, ea.CancellationToken);
         }
     }
 

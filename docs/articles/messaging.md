@@ -859,8 +859,13 @@ internal sealed class MyHandlerFactory : IMessageHandlerFactory<Dispatch>
 ```
 
 Let `MessageExecutionRegistry<THandler>` assemble the per-message-type plans from the configured
-queues — it handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness,
-and partition attachment:
+queues — it handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness
+(at most one per message type per queue), and partition attachment. Plans are keyed by URN within
+a registry instance, so queues registered into the same instance accumulate their handlers into
+one plan per message type. Register every queue in a single instance only when your transport
+dispatches each produced message exactly once (as the in-memory test harness does); a transport
+that receives a distinct delivery per queue (as the RabbitMQ transport does) must build one
+registry per queue so a delivery dispatches only the handlers its own queue registered:
 
 ```csharp
 var registry = new MessageExecutionRegistry<Dispatch>(provider, new MyHandlerFactory());

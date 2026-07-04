@@ -132,12 +132,6 @@ and persists them as <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMes
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.savechangesinterceptor.savingchanges">SaveChangesInterceptor.SavingChanges(DbContextEventData, InterceptionResult&lt;int&gt;)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.savechangesinterceptor.savedchanges">SaveChangesInterceptor.SavedChanges(SaveChangesCompletedEventData, int)</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.savechangesinterceptor.savechangesfailed">SaveChangesInterceptor.SaveChangesFailed(DbContextErrorEventData)</a>
     </div>
     <div>
@@ -232,11 +226,53 @@ and persists them as <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMes
 </h2>
 
 
+  <a id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavedChanges_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavedChanges*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavedChanges_Microsoft_EntityFrameworkCore_Diagnostics_SaveChangesCompletedEventData_System_Int32_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavedChanges(Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesCompletedEventData,System.Int32)">
+  SavedChanges(SaveChangesCompletedEventData, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Wakes the outbox relay after a save that committed outside an explicit transaction, so domain events captured
+by a bare <code>SaveChanges</code> are relayed promptly instead of waiting for the next poll. When a transaction is
+open the relay is signalled on commit by the transaction-commit interceptor instead, so this skips that case to
+avoid waking the relay before the rows are committed and visible.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>eventData</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.savechangescompletedeventdata">SaveChangesCompletedEventData</a></dt>
+    <dd></dd>
+    <dt><code>result</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavedChangesAsync_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavedChangesAsync*"></a>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavedChangesAsync_Microsoft_EntityFrameworkCore_Diagnostics_SaveChangesCompletedEventData_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavedChangesAsync(Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesCompletedEventData,System.Int32,System.Threading.CancellationToken)">
   SavedChangesAsync(SaveChangesCompletedEventData, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wakes the outbox relay after a save that committed outside an explicit transaction, so domain events captured
@@ -276,11 +312,50 @@ avoid waking the relay before the rows are committed and visible.</p>
 
 
 
+  <a id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavingChanges_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChanges*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavingChanges_Microsoft_EntityFrameworkCore_Diagnostics_DbContextEventData_Microsoft_EntityFrameworkCore_Diagnostics_InterceptionResult_System_Int32__" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChanges(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData,Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult{System.Int32})">
+  SavingChanges(DbContextEventData, InterceptionResult&lt;int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Captures domain events from tracked aggregate roots and stores them as outbox messages before persisting changes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override InterceptionResult&lt;int&gt; SavingChanges(DbContextEventData eventData, InterceptionResult&lt;int&gt; result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>eventData</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.dbcontexteventdata">DbContextEventData</a></dt>
+    <dd></dd>
+    <dt><code>result</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.interceptionresult-1">InterceptionResult</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.diagnostics.interceptionresult-1">InterceptionResult</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavingChangesAsync_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChangesAsync*"></a>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavingChangesAsync_Microsoft_EntityFrameworkCore_Diagnostics_DbContextEventData_Microsoft_EntityFrameworkCore_Diagnostics_InterceptionResult_System_Int32__System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChangesAsync(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData,Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult{System.Int32},System.Threading.CancellationToken)">
   SavingChangesAsync(DbContextEventData, InterceptionResult&lt;int&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Captures domain events from tracked aggregate roots and stores them as outbox messages before persisting changes.</p>

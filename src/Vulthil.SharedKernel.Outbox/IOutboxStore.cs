@@ -23,7 +23,11 @@ public interface IOutboxStore
     /// against the row as a failed attempt.
     /// </param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <returns>The number of messages fetched and processed in the batch.</returns>
+    /// <returns>
+    /// The number of messages <paramref name="dispatch"/> reported as successful. A caller uses this to decide
+    /// whether more work is likely waiting (the count reaches the configured batch size) — a batch that included
+    /// failures must not be mistaken for one that is exhausted.
+    /// </returns>
     Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken);
 
     /// <summary>

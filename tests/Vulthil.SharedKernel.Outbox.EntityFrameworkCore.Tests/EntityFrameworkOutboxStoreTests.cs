@@ -65,6 +65,29 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task ReturnsOnlyTheSuccessfullyDispatchedCountWhenTheBatchHasFailures()
+    {
+        // Arrange
+        await using var seed = NewContext();
+        seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), DateTimeOffset.UtcNow));
+        seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), DateTimeOffset.UtcNow));
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewContext();
+        var store = NewStore(context, maxRetries: 3);
+        var dispatchCount = 0;
+
+        // Act
+        var processed = await store.ProcessBatchAsync((_, _) =>
+        {
+            dispatchCount++;
+            return Task.FromResult<string?>(dispatchCount == 1 ? "boom" : null);
+        }, CancellationToken);
+
+        // Assert
+        processed.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task FetchesMessagesOrderedByOccurredOnThenId()
     {
         // Arrange

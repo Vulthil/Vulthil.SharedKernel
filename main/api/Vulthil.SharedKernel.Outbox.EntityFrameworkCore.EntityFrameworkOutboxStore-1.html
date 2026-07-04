@@ -557,7 +557,9 @@ against the row as a failed attempt.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
-    <dd><p>The number of messages fetched and processed in the batch.</p>
+    <dd><p>The number of messages <code class="paramref">dispatch</code> reported as successful. A caller uses this to decide
+whether more work is likely waiting (the count reaches the configured batch size) — a batch that included
+failures must not be mistaken for one that is exhausted.</p>
 </dd>
   </dl>
 

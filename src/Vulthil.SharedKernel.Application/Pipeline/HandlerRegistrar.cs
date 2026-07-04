@@ -75,21 +75,17 @@ internal static class HandlerRegistrar
 
     private static void RegisterRequestHandlerInterfaces(IServiceCollection services, Type implType)
     {
-        Type? handlerInterface = null;
         foreach (var iface in implType.GetInterfaces())
         {
             if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IHandler<,>))
             {
-                handlerInterface = iface;
-                break;
+                RegisterRequestHandlerInterface(services, implType, iface);
             }
         }
+    }
 
-        if (handlerInterface is null)
-        {
-            return;
-        }
-
+    private static void RegisterRequestHandlerInterface(IServiceCollection services, Type implType, Type handlerInterface)
+    {
         var requestType = handlerInterface.GenericTypeArguments[0];
         var responseType = handlerInterface.GenericTypeArguments[1];
 

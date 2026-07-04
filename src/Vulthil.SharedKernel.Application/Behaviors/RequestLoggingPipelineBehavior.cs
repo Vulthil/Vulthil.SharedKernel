@@ -34,7 +34,7 @@ internal static partial class LoggingBehaviors
             {
                 using (_logger.BeginScope(new Dictionary<string, string>
                 {
-                    ["Error"] = JsonSerializer.Serialize(result.Error)
+                    ["Error"] = JsonSerializer.Serialize(result.Error, result.Error.GetType())
                 }))
                 {
                     LogCompletedRequestWithError(_logger, requestName);

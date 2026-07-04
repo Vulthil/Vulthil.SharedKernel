@@ -1,3 +1,4 @@
+using System.Reflection;
 using FluentValidation;
 using FluentValidation.Results;
 using Vulthil.Results;
@@ -16,6 +17,8 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
     IPipelineHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>
 {
+    private static readonly MethodInfo? ValidationFailureMethod = CreateValidationFailureMethod();
+
     private readonly IEnumerable<IValidator<TCommand>> _validators = validators;
 
     /// <inheritdoc />
@@ -28,26 +31,32 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
             return await next(cancellationToken);
         }
 
-        if (typeof(TResponse).IsGenericType &&
-            typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
+        if (ValidationFailureMethod is not null)
         {
-            var resultType = typeof(TResponse).GetGenericArguments()[0];
-            var failureMethod = typeof(Result<>)
-                .MakeGenericType(resultType)
-                .GetMethod(nameof(Result.ValidationFailure));
-
-            if (failureMethod is not null)
-            {
-                return (TResponse)failureMethod.Invoke(null, [CreateValidationError(validationFailures)])!;
-            }
-
+            return (TResponse)ValidationFailureMethod.Invoke(null, [CreateValidationError(validationFailures)])!;
         }
-        else if (typeof(TResponse) == typeof(Result))
+
+        if (typeof(TResponse) == typeof(Result))
         {
             return (TResponse)(object)Result.Failure(CreateValidationError(validationFailures));
         }
 
         throw new ValidationException(validationFailures);
+    }
+
+    private static MethodInfo? CreateValidationFailureMethod()
+    {
+        if (!typeof(TResponse).IsGenericType || typeof(TResponse).GetGenericTypeDefinition() != typeof(Result<>))
+        {
+            return null;
+        }
+
+        var resultType = typeof(TResponse).GetGenericArguments()[0];
+        var openValidationFailureMethod = typeof(Result)
+            .GetMethods()
+            .Single(m => m.Name == nameof(Result.ValidationFailure) && m.IsGenericMethodDefinition);
+
+        return openValidationFailureMethod.MakeGenericMethod(resultType);
     }
 
     private async Task<ValidationFailure[]> ValidateAsync(TCommand command, CancellationToken cancellationToken)

@@ -164,6 +164,11 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
         catch (Exception ex)
         {
+            if (ex is OperationCanceledException && ea.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             activity?.AddException(ex);
             await HandleFailureAsync(ex, ea, prepared.DiagnosticTypeName);

@@ -32,7 +32,8 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
     public async Task ConsumeAsync(IMessageContext<TMessage> context, ConsumeDelegate<TMessage> next)
     {
         var messageType = typeof(TMessage).FullName ?? typeof(TMessage).Name;
-        var key = _keySelector.GetKey(context) ?? context.MessageId;
+        var key = _keySelector.GetKey(context);
+        key = string.IsNullOrEmpty(key) ? context.MessageId : key;
 
         if (string.IsNullOrEmpty(key))
         {

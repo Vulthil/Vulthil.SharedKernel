@@ -15,6 +15,11 @@ namespace Vulthil.Messaging.Inbox.Relational;
 /// (<c>Database.CreateExecutionStrategy().ExecuteAsync</c>), so it works whether or not a retrying execution strategy
 /// is configured — there is no need to disable EF Core retries. Under a retrying strategy a transient fault re-runs
 /// the unit (including the consumer) on a cleared change tracker, which is consistent with at-least-once redelivery.
+/// If an outer filter already opened the transaction, the store joins it instead of opening its own; in that case a
+/// concurrent marker conflict is rethrown rather than swallowed, since the store cannot commit or roll back a
+/// transaction it does not own. The exception propagates to the transaction's owner, which rolls back — including
+/// this delivery's business writes — and the transport redelivers the message, at which point the pre-check
+/// deduplicates it.
 /// </remarks>
 /// <typeparam name="TContext">The application's <see cref="DbContext"/> type, which must expose the inbox set.</typeparam>
 internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, TimeProvider timeProvider)
@@ -97,21 +102,8 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
 
         await process(cancellationToken);
         AddMarker(idempotencyKey);
-
-        try
-        {
-            await dbContext.SaveChangesAsync(cancellationToken);
-            return true;
-        }
-        catch (DbUpdateException)
-        {
-            if (await HasProcessedAsync(idempotencyKey, cancellationToken))
-            {
-                return false;
-            }
-
-            throw;
-        }
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return true;
     }
 
     private Task<bool> HasProcessedAsync(string idempotencyKey, CancellationToken cancellationToken) =>

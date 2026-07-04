@@ -137,6 +137,70 @@ public sealed class HandlerRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task HandlerImplementingTwoInterfacesResolvesAndDispatchesBothViaDirectInjection()
+    {
+        var services = BuildServices(addBehavior: false);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var commandHandler = scope.ServiceProvider.GetRequiredService<IHandler<MultiHandlerCommand, Result<string>>>();
+        var queryHandler = scope.ServiceProvider.GetRequiredService<IHandler<MultiHandlerQuery, Result<string>>>();
+
+        var commandResult = await commandHandler.HandleAsync(new MultiHandlerCommand("cmd"), CancellationToken);
+        var queryResult = await queryHandler.HandleAsync(new MultiHandlerQuery("qry"), CancellationToken);
+
+        commandResult.Value.ShouldBe("[command] cmd");
+        queryResult.Value.ShouldBe("[query] qry");
+    }
+
+    [Fact]
+    public async Task HandlerImplementingTwoInterfacesResolvesAndDispatchesBothViaSender()
+    {
+        var services = BuildServices(addBehavior: false);
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+
+        var commandResult = await sender.SendAsync(new MultiHandlerCommand("cmd"), CancellationToken);
+        var queryResult = await sender.SendAsync(new MultiHandlerQuery("qry"), CancellationToken);
+
+        commandResult.Value.ShouldBe("[command] cmd");
+        queryResult.Value.ShouldBe("[query] qry");
+    }
+
+    [Fact]
+    public async Task AsyncDisposableHandlerIsDisposedWhenAsyncScopeEnds()
+    {
+        AsyncDisposableCommandHandler.Reset();
+        var services = BuildServices(addBehavior: false);
+        await using var provider = services.BuildServiceProvider();
+
+        await using (var scope = provider.CreateAsyncScope())
+        {
+            var handler = scope.ServiceProvider.GetRequiredService<IHandler<AsyncDisposableCommand, Result>>();
+            await handler.HandleAsync(new AsyncDisposableCommand(), CancellationToken);
+        }
+
+        AsyncDisposableCommandHandler.WasDisposed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task DisposableHandlerIsDisposedWhenScopeEnds()
+    {
+        SyncDisposableCommandHandler.Reset();
+        var services = BuildServices(addBehavior: false);
+        await using var provider = services.BuildServiceProvider();
+
+        using (var scope = provider.CreateScope())
+        {
+            var handler = scope.ServiceProvider.GetRequiredService<IHandler<SyncDisposableCommand, Result>>();
+            await handler.HandleAsync(new SyncDisposableCommand(), CancellationToken);
+        }
+
+        SyncDisposableCommandHandler.WasDisposed.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task BareTransactionalCommandIsWrappedByTheTransactionalBehavior()
     {
         var unitOfWork = new Mock<IUnitOfWork>();
@@ -245,4 +309,51 @@ internal sealed class EchoQueryHandler : IQueryHandler<EchoQuery, Result<string>
 {
     public Task<Result<string>> HandleAsync(EchoQuery request, CancellationToken cancellationToken = default) =>
         Task.FromResult(Result.Success(request.Value));
+}
+
+public sealed record MultiHandlerCommand(string Message) : ICommand<Result<string>>;
+
+public sealed record MultiHandlerQuery(string Message) : IQuery<Result<string>>;
+
+internal sealed class MultiHandlerHandler :
+    ICommandHandler<MultiHandlerCommand, Result<string>>,
+    IQueryHandler<MultiHandlerQuery, Result<string>>
+{
+    public Task<Result<string>> HandleAsync(MultiHandlerCommand request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success("[command] " + request.Message));
+
+    public Task<Result<string>> HandleAsync(MultiHandlerQuery request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success("[query] " + request.Message));
+}
+
+public sealed record AsyncDisposableCommand : ICommand;
+
+internal sealed class AsyncDisposableCommandHandler : ICommandHandler<AsyncDisposableCommand>, IAsyncDisposable
+{
+    public static bool WasDisposed { get; private set; }
+
+    public static void Reset() => WasDisposed = false;
+
+    public Task<Result> HandleAsync(AsyncDisposableCommand request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success());
+
+    public ValueTask DisposeAsync()
+    {
+        WasDisposed = true;
+        return ValueTask.CompletedTask;
+    }
+}
+
+public sealed record SyncDisposableCommand : ICommand;
+
+internal sealed class SyncDisposableCommandHandler : ICommandHandler<SyncDisposableCommand>, IDisposable
+{
+    public static bool WasDisposed { get; private set; }
+
+    public static void Reset() => WasDisposed = false;
+
+    public Task<Result> HandleAsync(SyncDisposableCommand request, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result.Success());
+
+    public void Dispose() => WasDisposed = true;
 }

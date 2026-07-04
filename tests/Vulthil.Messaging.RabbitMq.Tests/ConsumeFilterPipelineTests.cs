@@ -12,7 +12,7 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 {
     private readonly Lazy<MessageTypeCache> _lazyTarget;
-    private readonly Mock<IChannel> _channelMock;
+    private readonly RecordingGatedPublisher _publisher = new();
     private MessageTypeCache Target => _lazyTarget.Value;
 
     public ConsumeFilterPipelineTests()
@@ -20,7 +20,6 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         Use(TestProviders.Build());
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
-        _channelMock = GetMock<IChannel>();
         _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
     }
 
@@ -107,7 +106,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
         // Act
-        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _channelMock.Object, CancellationToken.None);
+        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _publisher.PublishAsync, CancellationToken.None);
 
         // Assert
         consumerInstance.Received.ShouldHaveSingleItem().Content.ShouldBe("payload");
@@ -136,7 +135,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
         // Act
-        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _channelMock.Object, CancellationToken.None);
+        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _publisher.PublishAsync, CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["outer:before", "inner:before", "inner:after", "outer:after"]);
@@ -163,7 +162,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
         // Act
-        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _channelMock.Object, CancellationToken.None);
+        await handler.DispatchAsync(AutoMocker, new TestMessage("payload"), CreateDeliverEventArgs(), (MessageEnvelope?)null, _publisher.PublishAsync, CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["gate:before", "gate:short-circuit"]);
@@ -190,34 +189,20 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
-        ReadOnlyMemory<byte> publishedBody = default;
-        _channelMock.Setup(x => x.BasicPublishAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>(),
-                It.IsAny<BasicProperties>(),
-                It.IsAny<ReadOnlyMemory<byte>>(),
-                It.IsAny<CancellationToken>()))
-            .Callback((string _, string _, bool _, BasicProperties _, ReadOnlyMemory<byte> body, CancellationToken _) =>
-            {
-                publishedBody = body;
-            })
-            .Returns(ValueTask.CompletedTask);
-
         // Act
         await handler.DispatchAsync(
             AutoMocker,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply", correlationId: "corr-1"),
             (MessageEnvelope?)null,
-            _channelMock.Object,
+            _publisher.PublishAsync,
             CancellationToken.None);
 
         // Assert
         trace.ShouldBe(["log:before", "log:after"]);
         consumerInstance.Received.ShouldHaveSingleItem();
 
-        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(_publisher.Published.ShouldHaveSingleItem().Body.Span);
         envelope.ShouldNotBeNull();
         envelope.MessageType.ShouldBe(new MessageConfiguration(typeof(TestResponse).FullName!).Urn);
         var response = envelope.Message.Deserialize<TestResponse>();
@@ -243,33 +228,19 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 
         var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
-        ReadOnlyMemory<byte> publishedBody = default;
-        _channelMock.Setup(x => x.BasicPublishAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>(),
-                It.IsAny<BasicProperties>(),
-                It.IsAny<ReadOnlyMemory<byte>>(),
-                It.IsAny<CancellationToken>()))
-            .Callback((string _, string _, bool _, BasicProperties _, ReadOnlyMemory<byte> body, CancellationToken _) =>
-            {
-                publishedBody = body;
-            })
-            .Returns(ValueTask.CompletedTask);
-
         // Act
         await handler.DispatchAsync(
             AutoMocker,
             new TestRequest("query"),
             CreateDeliverEventArgs(replyTo: "reply"),
             (MessageEnvelope?)null,
-            _channelMock.Object,
+            _publisher.PublishAsync,
             CancellationToken.None);
 
         // Assert
         consumerInstance.Received.ShouldBeEmpty();
 
-        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(_publisher.Published.ShouldHaveSingleItem().Body.Span);
         envelope.ShouldNotBeNull();
         envelope.MessageType.ShouldBe(RpcFault.UrnUri);
         var fault = envelope.Message.Deserialize<RpcFault>();

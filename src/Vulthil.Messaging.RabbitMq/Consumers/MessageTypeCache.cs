@@ -7,7 +7,8 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 /// RabbitMQ adapter over <see cref="MessageExecutionRegistry{THandler}"/>. Delegates plan assembly to the core
 /// registry and decorates each resolved plan with a <see cref="RabbitMqPlan"/> carrying the AMQP partition key
 /// extractor. Wrappers are built once per plan (keyed by URN) during registration, so delivery-time lookups stay
-/// read-only.
+/// read-only. The bus builds one cache per queue, so a worker's plan lookups resolve only the handlers its own
+/// queue registered even when several queues consume the same message type.
 /// </summary>
 internal sealed class MessageTypeCache
 {

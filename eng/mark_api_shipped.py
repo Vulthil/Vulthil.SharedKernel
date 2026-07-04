@@ -13,16 +13,25 @@ marker delete the named API from the shipped file instead of being appended.
 Existing line order is preserved (the analyzer emits entries in declaration
 order, not sorted), so promotion adds no reordering churn. The count of
 promoted files is written to the GITHUB_OUTPUT "promoted" key for the caller.
+
+When --version is given, this also bumps Directory.Build.props'
+PackageValidationBaselineVersion to that version, so the next pack validates
+against the release that just shipped instead of going stale.
 """
 import argparse
 import glob
 import os
+import re
 import sys
 
 NULLABLE_HEADER = "#nullable enable"
 REMOVED_PREFIX = "*REMOVED*"
 UNSHIPPED_NAME = "PublicAPI.Unshipped.txt"
 SHIPPED_NAME = "PublicAPI.Shipped.txt"
+BASELINE_FILE = "Directory.Build.props"
+BASELINE_PATTERN = re.compile(
+    r"(<PackageValidationBaselineVersion>)[^<]*(</PackageValidationBaselineVersion>)"
+)
 
 
 def read_entries(path):
@@ -83,9 +92,25 @@ def promote(unshipped_path):
     return True
 
 
+def bump_validation_baseline(version, path=BASELINE_FILE):
+    with open(path, encoding="utf-8") as handle:
+        content = handle.read()
+
+    updated, count = BASELINE_PATTERN.subn(rf"\g<1>{version}\g<2>", content)
+    if count == 0:
+        print(f"::warning::{path}: no <PackageValidationBaselineVersion> element found; skipped.")
+        return False
+
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(updated)
+    print(f"Bumped package validation baseline: {path} -> {version}")
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default="src", help="Directory to scan (default: src)")
+    parser.add_argument("--version", help="Version just released; also bumps PackageValidationBaselineVersion")
     args = parser.parse_args()
 
     pattern = os.path.join(args.root, "**", UNSHIPPED_NAME)
@@ -94,6 +119,9 @@ def main():
     )
 
     print(f"Promoted public API in {promoted} project(s).")
+
+    if args.version:
+        bump_validation_baseline(args.version)
 
     output = os.environ.get("GITHUB_OUTPUT")
     if output:

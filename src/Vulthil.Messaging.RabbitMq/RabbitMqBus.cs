@@ -16,7 +16,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     private readonly RabbitMqBusStartupStatus _startupStatus;
     private readonly ILogger<RabbitMqBus> _logger;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly MessageTypeCache _typeCache;
     private readonly List<RabbitMqConsumerWorker> _workers = [];
 
     public RabbitMqBus(
@@ -33,23 +32,27 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         _startupStatus = startupStatus;
         _logger = logger;
         _loggerFactory = loggerFactory;
-        _typeCache = new MessageTypeCache(messageConfigurationProvider);
     }
 
     /// <remarks>
     /// A failed start disposes any partially-created consumer workers and rethrows without faulting the readiness
     /// signal, so the hosting consumer service can retry a transient failure (such as a broker that is still coming
-    /// up) while <see cref="RabbitMqBusStartupStatus.Ready"/> stays pending until a start attempt succeeds.
+    /// up) while <see cref="RabbitMqBusStartupStatus.Ready"/> stays pending until a start attempt succeeds. A fresh
+    /// type cache is built for every attempt (rather than kept as instance state) so a retry after a partial failure
+    /// re-registers queues against an empty registry instead of appending to handlers (or request-consumer
+    /// bookkeeping) left over from the attempt that failed.
     /// </remarks>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
+        var typeCache = new MessageTypeCache(_messageConfigurationProvider);
+
         try
         {
             var queues = _messageConfigurationProvider.QueueDefinitions;
             MessagingLog.BusStarting(_logger, queues.Count);
 
-            await SetupTopology(queues, cancellationToken);
-            await StartConsumersAsync(queues, cancellationToken);
+            await SetupTopology(queues, typeCache, cancellationToken);
+            await StartConsumersAsync(queues, typeCache, cancellationToken);
 
             MessagingLog.BusStarted(_logger);
             _startupStatus.MarkStarted();
@@ -69,15 +72,15 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     /// partition lanes in arrival order; parallelism comes from the lanes (bounded by <c>PrefetchCount</c>) rather
     /// than concurrent dispatch.
     /// </remarks>
-    private async Task StartConsumersAsync(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
+    private async Task StartConsumersAsync(IReadOnlyCollection<QueueDefinition> queues, MessageTypeCache typeCache, CancellationToken cancellationToken)
     {
         var workerLogger = _loggerFactory.CreateLogger<RabbitMqConsumerWorker>();
 
         foreach (var queue in queues)
         {
-            _typeCache.RegisterQueue(queue);
+            typeCache.RegisterQueue(queue);
 
-            var partitioned = _typeCache.IsQueuePartitioned(queue);
+            var partitioned = typeCache.IsQueuePartitioned(queue);
             var channelCount = partitioned ? 1 : queue.ChannelCount;
             var dispatchConcurrency = partitioned ? (ushort)1 : queue.ConcurrencyLimit;
 
@@ -96,7 +99,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                     _serviceScopeFactory,
                     queue,
                     channel,
-                    _typeCache,
+                    typeCache,
                     _messageConfigurationProvider,
                     workerLogger,
                     i,
@@ -113,7 +116,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     /// here by convention with the faulted message's URN as the routing key, so a subscriber binds its queue with
     /// <c>"#"</c> to observe all faults or with a specific URN to filter by faulted message type.
     /// </remarks>
-    private async Task SetupTopology(IReadOnlyCollection<QueueDefinition> queues, CancellationToken cancellationToken)
+    private async Task SetupTopology(IReadOnlyCollection<QueueDefinition> queues, MessageTypeCache typeCache, CancellationToken cancellationToken)
     {
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
@@ -126,7 +129,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 
         foreach (var queue in queues)
         {
-            await SetupQueueTopology(queue, channel, cancellationToken);
+            await SetupQueueTopology(queue, typeCache, channel, cancellationToken);
             MessagingLog.QueueDeclared(_logger, queue.Name, queue.Registrations.Count);
         }
     }
@@ -136,7 +139,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     /// active (others stand by for failover) so ordering survives across load-balanced consumers. Partitioned queues
     /// opt in automatically; any queue can request it explicitly.
     /// </remarks>
-    private async Task SetupQueueTopology(QueueDefinition queue, IChannel channel, CancellationToken cancellationToken)
+    private async Task SetupQueueTopology(QueueDefinition queue, MessageTypeCache typeCache, IChannel channel, CancellationToken cancellationToken)
     {
         await channel.ExchangeDeclareAsync(
             exchange: queue.Name,
@@ -152,7 +155,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             args.Add("x-queue-type", "quorum");
         }
 
-        if (queue.SingleActiveConsumer || _typeCache.IsQueuePartitioned(queue))
+        if (queue.SingleActiveConsumer || typeCache.IsQueuePartitioned(queue))
         {
             args.Add("x-single-active-consumer", true);
         }

@@ -1,5 +1,7 @@
 # Vulthil.SharedKernel.Infrastructure
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.SharedKernel.Infrastructure)](https://www.nuget.org/packages/Vulthil.SharedKernel.Infrastructure)
+
 Infrastructure helpers for persistence, transactions, outbox, and EF Core integration.
 
 ## Install

@@ -1,5 +1,7 @@
 # Vulthil.Messaging
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Messaging)](https://www.nuget.org/packages/Vulthil.Messaging)
+
 Messaging composition APIs for configuring consumers, queues, and hosted processing.
 
 The `Vulthil.Messaging.Transport` namespace is a build-your-own-transport SDK for implementing

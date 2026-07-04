@@ -1,5 +1,7 @@
 # Vulthil.Messaging.Inbox.Cosmos
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Messaging.Inbox.Cosmos)](https://www.nuget.org/packages/Vulthil.Messaging.Inbox.Cosmos)
+
 Azure Cosmos DB idempotency store for [Vulthil.Messaging.Inbox](https://www.nuget.org/packages/Vulthil.Messaging.Inbox).
 
 Cosmos has no cross-partition transaction, so — unlike the relational store — it cannot commit the consumer's

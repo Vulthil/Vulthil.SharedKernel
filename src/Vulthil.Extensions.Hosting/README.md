@@ -1,5 +1,7 @@
 # Vulthil.Extensions.Hosting
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Extensions.Hosting)](https://www.nuget.org/packages/Vulthil.Extensions.Hosting)
+
 Small hosting abstractions for Vulthil.
 
 ## `IRestartableHostedService`

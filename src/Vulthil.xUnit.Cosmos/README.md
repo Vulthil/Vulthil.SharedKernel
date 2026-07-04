@@ -1,5 +1,7 @@
 # Vulthil.xUnit.Cosmos
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.xUnit.Cosmos)](https://www.nuget.org/packages/Vulthil.xUnit.Cosmos)
+
 Azure Cosmos DB emulator fixture for `Vulthil.xUnit`: starts the Cosmos emulator as a Testcontainer, registers your `DbContext` against it, and — when shared through a `ContainerHost` — gives every test class its own emulator database so classes run in parallel without sharing data.
 
 ## Install

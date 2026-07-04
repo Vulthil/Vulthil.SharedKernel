@@ -1,5 +1,7 @@
 # Vulthil.Messaging.TestHarness
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Messaging.TestHarness)](https://www.nuget.org/packages/Vulthil.Messaging.TestHarness)
+
 An in-memory messaging transport for tests: runs your consumers with no broker and captures produced and
 consumed messages for assertion.
 

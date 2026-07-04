@@ -6,9 +6,9 @@ namespace Vulthil.Messaging.Transport;
 /// Transport-agnostic registry that turns <see cref="QueueDefinition"/> registrations into per-message-type
 /// <see cref="MessageExecutionPlan{THandler}"/> instances. It keys plans by wire URN (and CLR full name for the
 /// bare-JSON receive path), fans a polymorphic registration out across every matching concrete subscription,
-/// dedupes handlers, rejects a second request consumer for the same message type, and attaches the partition
-/// specification read from <see cref="IMessageConfigurationProvider.GetPartition"/>. A transport drives it by
-/// supplying an <see cref="IMessageHandlerFactory{THandler}"/> that builds its own delivery closures.
+/// dedupes handlers, rejects a second request consumer for the same message type on the same queue, and attaches
+/// the partition specification read from <see cref="IMessageConfigurationProvider.GetPartition"/>. A transport
+/// drives it by supplying an <see cref="IMessageHandlerFactory{THandler}"/> that builds its own delivery closures.
 /// </summary>
 /// <typeparam name="THandler">The transport-specific handler type produced by the factory and stored in plans.</typeparam>
 public sealed class MessageExecutionRegistry<THandler>
@@ -18,7 +18,7 @@ public sealed class MessageExecutionRegistry<THandler>
     private readonly IMessageHandlerFactory<THandler> _handlerFactory;
     private readonly Dictionary<Uri, MessageExecutionPlan<THandler>> _plansByUrn = [];
     private readonly Dictionary<string, MessageExecutionPlan<THandler>> _plansByFullName = new(StringComparer.Ordinal);
-    private readonly HashSet<Uri> _urnsWithRequestConsumer = [];
+    private readonly HashSet<(string QueueName, Uri Urn)> _requestConsumerKeys = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MessageExecutionRegistry{THandler}"/> class.
@@ -38,11 +38,15 @@ public sealed class MessageExecutionRegistry<THandler>
 
     /// <summary>
     /// Assembles execution plans for every concrete message type consumed or subscribed by <paramref name="queue"/>.
-    /// Idempotent across queues that share message types: plans are keyed globally by URN, so a type consumed by
-    /// several queues accumulates all their handlers in one plan.
+    /// Plans are keyed by URN within this registry instance, so registering several queues that consume the same
+    /// message type accumulates all their handlers in one plan. A transport that delivers per queue must therefore
+    /// build one registry per queue so a queue's deliveries dispatch only its own handlers (as the RabbitMQ
+    /// transport does); a transport that dispatches each produced message exactly once can register every queue in
+    /// a single instance (as the in-memory test harness does). A message type can have at most one request
+    /// consumer per queue.
     /// </summary>
     /// <param name="queue">The queue whose registrations and subscriptions to register.</param>
-    /// <exception cref="InvalidOperationException">A second request consumer is registered for a message type that already has one.</exception>
+    /// <exception cref="InvalidOperationException">A second request consumer is registered for a message type that already has one on the same queue.</exception>
     public void RegisterQueue(QueueDefinition queue)
     {
         var effectiveSubscriptions = new HashSet<MessageType>(queue.Subscriptions.Select(s => s.MessageType));
@@ -70,7 +74,7 @@ public sealed class MessageExecutionRegistry<THandler>
                     ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType, rpc.RetryPolicy)
                     : _handlerFactory.ForConsumer(registration.ConsumerType.Type, registration.MessageType.Type, registration.RetryPolicy);
 
-                if (entry.Kind == HandlerKind.RequestConsumer && !_urnsWithRequestConsumer.Add(plan.Urn))
+                if (entry.Kind == HandlerKind.RequestConsumer && !_requestConsumerKeys.Add((queue.Name, plan.Urn)))
                 {
                     throw new InvalidOperationException(
                         $"Queue '{queue.Name}' already has a request consumer registered for message type '{subscription.Name}'. " +

@@ -18,6 +18,7 @@ internal sealed class InboxRetentionBackgroundService(
     ILogger<InboxRetentionBackgroundService> logger) : BackgroundService
 {
     private readonly InboxRetentionOptions _options = options.Value.Retention;
+    private bool _loggedMissingRetentionStore;
 
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,6 +48,12 @@ internal sealed class InboxRetentionBackgroundService(
         await using var scope = scopeFactory.CreateAsyncScope();
         if (scope.ServiceProvider.GetRequiredService<IIdempotencyStore>() is not IInboxRetentionStore store)
         {
+            if (!_loggedMissingRetentionStore)
+            {
+                _loggedMissingRetentionStore = true;
+                logger.LogWarning("Inbox retention is enabled, but the registered IIdempotencyStore does not implement IInboxRetentionStore; the retention sweep will not run.");
+            }
+
             return;
         }
 

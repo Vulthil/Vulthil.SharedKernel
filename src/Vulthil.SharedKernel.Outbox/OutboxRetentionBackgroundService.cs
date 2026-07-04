@@ -18,6 +18,7 @@ internal sealed class OutboxRetentionBackgroundService(
     ILogger<OutboxRetentionBackgroundService> logger) : BackgroundService
 {
     private readonly OutboxRetentionOptions _options = options.Value.Retention;
+    private bool _loggedMissingRetentionStore;
 
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,6 +48,12 @@ internal sealed class OutboxRetentionBackgroundService(
         await using var scope = scopeFactory.CreateAsyncScope();
         if (scope.ServiceProvider.GetRequiredService<IOutboxStore>() is not IOutboxRetentionStore store)
         {
+            if (!_loggedMissingRetentionStore)
+            {
+                _loggedMissingRetentionStore = true;
+                logger.LogWarning("Outbox retention is enabled, but the registered IOutboxStore does not implement IOutboxRetentionStore; the retention sweep will not run.");
+            }
+
             return;
         }
 

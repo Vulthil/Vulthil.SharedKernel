@@ -40,7 +40,7 @@ internal sealed class OutboxProcessor(
             Telemetry.Relayed.Add(1);
             return null;
         }
-        catch (Exception exception)
+        catch (Exception exception) when (exception is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
             logger.LogError(exception, "Failed to publish outbox message {MessageId}", outboxMessage.Id);
             Telemetry.Failed.Add(1);

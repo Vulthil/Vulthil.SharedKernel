@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_IMessagingConfigurator" data-uid="Vulthil.Messaging.IMessagingConfigurator" class="text-break">
-Interface IMessagingConfigurator  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Interface IMessagingConfigurator  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -147,7 +147,7 @@ Interface IMessagingConfigurator  <a class="header-action link-secondary" title=
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_HostApplicationBuilder" data-uid="Vulthil.Messaging.IMessagingConfigurator.HostApplicationBuilder">
   HostApplicationBuilder
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the host application builder used for service registration during messaging configuration.</p>
@@ -183,7 +183,7 @@ Interface IMessagingConfigurator  <a class="header-action link-secondary" title=
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_AddConsumeFilter__1" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddConsumeFilter``1">
   AddConsumeFilter&lt;TFilter&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a closed-generic consume filter. The filter is applied to every delivery whose
@@ -225,7 +225,7 @@ Multiple filters for the same message type are composed in registration order
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_AddOpenConsumeFilter_System_Type_" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddOpenConsumeFilter(System.Type)">
   AddOpenConsumeFilter(Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an open-generic consume filter that applies to every message type. Use this for
@@ -265,7 +265,7 @@ cross-cutting filters that do not depend on the typed payload (logging, telemetr
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_AddPublishFilter__1" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddPublishFilter``1">
   AddPublishFilter&lt;TFilter&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a publish/send filter applied to every outgoing publish and send. Multiple filters are composed in
@@ -307,7 +307,7 @@ sending it immediately. The filter is resolved from the caller's scope, so it ma
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_ConfigureMessage__1_System_Action_Vulthil_Messaging_MessageConfiguration___0___" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage``1(System.Action{Vulthil.Messaging.MessageConfiguration{``0}})">
   ConfigureMessage&lt;TMessage&gt;(Action&lt;MessageConfiguration&lt;TMessage&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a publish definition for messages of type <code class="typeparamref">TMessage</code>. This allows you to specify exchange and routing configurations for outgoing messages of that type.</p>
@@ -352,7 +352,7 @@ sending it immediately. The filter is resolved from the caller's scope, so it ma
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_ConfigureMessagingOptions_System_Action_Vulthil_Messaging_IMessagingOptionsConfigurator__" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action{Vulthil.Messaging.IMessagingOptionsConfigurator})">
   ConfigureMessagingOptions(Action&lt;IMessagingOptionsConfigurator&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures global messaging options such as serialization, timeouts, and built-in filters.</p>
@@ -391,7 +391,7 @@ sending it immediately. The filter is resolved from the caller's scope, so it ma
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_ConfigureQueue_System_String_System_Action_Vulthil_Messaging_Queues_IQueueConfigurator__" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureQueue(System.String,System.Action{Vulthil.Messaging.Queues.IQueueConfigurator})">
   ConfigureQueue(string, Action&lt;IQueueConfigurator&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a named queue with consumer and routing configuration.</p>
@@ -433,7 +433,7 @@ sending it immediately. The filter is resolved from the caller's scope, so it ma
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(System.Int32)">
   UsePartitioner&lt;TMessage&gt;(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries by their <code>CorrelationId</code> —
@@ -480,7 +480,7 @@ Deliveries with no correlation id bypass the partitioner.</p>
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(System.Int32,System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.String})">
   UsePartitioner&lt;TMessage&gt;(int, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries that share a partition key, so
@@ -532,7 +532,7 @@ key is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/key
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(Vulthil.Messaging.Partitioner)">
   UsePartitioner&lt;TMessage&gt;(Partitioner)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L121"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries by their <code>CorrelationId</code> using a
@@ -581,7 +581,7 @@ no correlation id bypass the partitioner.</p>
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(Vulthil.Messaging.Partitioner,System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.String})">
   UsePartitioner&lt;TMessage&gt;(Partitioner, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L108"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries that share a partition key using a
@@ -632,7 +632,7 @@ key is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/key
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

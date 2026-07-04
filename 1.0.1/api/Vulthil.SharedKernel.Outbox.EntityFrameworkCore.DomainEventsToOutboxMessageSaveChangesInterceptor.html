@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor" class="text-break">
-Class DomainEventsToOutboxMessageSaveChangesInterceptor  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class DomainEventsToOutboxMessageSaveChangesInterceptor  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -195,7 +195,7 @@ and persists them as <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMes
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor__ctor_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__Vulthil_SharedKernel_Outbox_IOutboxSignal_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.#ctor(System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions},Vulthil.SharedKernel.Outbox.IOutboxSignal)">
   DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider, IOptions&lt;OutboxProcessingOptions&gt;, IOutboxSignal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>EF Core save-changes interceptor that captures domain events from tracked aggregate roots
@@ -236,7 +236,7 @@ and persists them as <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMes
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavedChangesAsync_Microsoft_EntityFrameworkCore_Diagnostics_SaveChangesCompletedEventData_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavedChangesAsync(Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesCompletedEventData,System.Int32,System.Threading.CancellationToken)">
   SavedChangesAsync(SaveChangesCompletedEventData, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wakes the outbox relay after a save that committed outside an explicit transaction, so domain events captured
@@ -280,7 +280,7 @@ avoid waking the relay before the rows are committed and visible.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor_SavingChangesAsync_Microsoft_EntityFrameworkCore_Diagnostics_DbContextEventData_Microsoft_EntityFrameworkCore_Diagnostics_InterceptionResult_System_Int32__System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChangesAsync(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData,Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult{System.Int32},System.Threading.CancellationToken)">
   SavingChangesAsync(DbContextEventData, InterceptionResult&lt;int&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Captures domain events from tracked aggregate roots and stores them as outbox messages before persisting changes.</p>
@@ -321,7 +321,7 @@ avoid waking the relay before the rows are committed and visible.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/DomainEventsToOutboxMessageSaveChangesInterceptor.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext" class="text-break">
-Interface IMessageContext  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Interface IMessageContext  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L8"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -132,7 +132,7 @@ Interface IMessageContext  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_CancellationToken" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.CancellationToken">
   CancellationToken
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the cancellation token associated with the current delivery. Combines the transport's stop signal
@@ -165,7 +165,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_ConversationId" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ConversationId">
   ConversationId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the conversation identifier that groups related messages across services, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
@@ -197,7 +197,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_CorrelationId" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.CorrelationId">
   CorrelationId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the correlation identifier linking this message to a business transaction, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
@@ -229,7 +229,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_DestinationAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.DestinationAddress">
   DestinationAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the intended destination address for the message, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
@@ -261,7 +261,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_ExpirationTime" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ExpirationTime">
   ExpirationTime
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the UTC timestamp after which the message should be discarded, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if it does not expire.</p>
@@ -293,7 +293,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_FaultAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.FaultAddress">
   FaultAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the address where fault notifications should be sent, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to use the default.</p>
@@ -325,7 +325,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Headers" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Headers">
   Headers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the transport headers associated with the message, containing custom metadata.</p>
@@ -357,7 +357,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_InitiatorId" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.InitiatorId">
   InitiatorId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the identifier of the message that initiated this chain, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
@@ -389,7 +389,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_MessageId" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.MessageId">
   MessageId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the unique message identifier assigned by the transport, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
@@ -421,7 +421,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Redelivered" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Redelivered">
   Redelivered
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether the broker redelivered this message (e.g., after a consumer crash).</p>
@@ -453,7 +453,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_RequestId" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RequestId">
   RequestId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the request identifier used to correlate a reply back to the original request, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not set.</p>
@@ -485,7 +485,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_ResponseAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ResponseAddress">
   ResponseAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the address where replies should be sent, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if no reply is expected.</p>
@@ -517,7 +517,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_RetryCount" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RetryCount">
   RetryCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the number of times this message has been retried. A value of 0 indicates the first delivery attempt.</p>
@@ -549,7 +549,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_RoutingKey" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RoutingKey">
   RoutingKey
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the routing key that was used by the transport to deliver this message.</p>
@@ -581,7 +581,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_SentTime" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SentTime">
   SentTime
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the UTC timestamp when the message was originally sent, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not recorded.</p>
@@ -613,7 +613,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_SourceAddress" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SourceAddress">
   SourceAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the address of the endpoint that sent the message, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if unknown.</p>
@@ -649,7 +649,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_PublishAsync__1___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.PublishAsync``1(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask})">
   PublishAsync&lt;TMessage&gt;(TMessage, Func&lt;IPublishContext, ValueTask&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Publishes a message via the underlying transport, automatically propagating correlation metadata
@@ -699,7 +699,7 @@ The caller-supplied <code class="paramref">configure</code> callback runs after 
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_SendAsync__1_System_Uri___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SendAsync``1(System.Uri,``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask})">
   SendAsync&lt;TMessage&gt;(Uri, TMessage, Func&lt;IPublishContext, ValueTask&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sends a message point-to-point to the specified destination, automatically propagating correlation metadata
@@ -752,7 +752,7 @@ The caller-supplied <code class="paramref">configure</code> callback runs after 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L8" class="edit-link">Edit this page</a>
         </div>
 
 

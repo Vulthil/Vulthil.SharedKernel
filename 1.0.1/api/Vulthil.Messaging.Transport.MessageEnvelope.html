@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Transport_MessageEnvelope" data-uid="Vulthil.Messaging.Transport.MessageEnvelope" class="text-break">
-Class MessageEnvelope  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L15"><i class="bi bi-code-slash"></i></a>
+Class MessageEnvelope  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -173,7 +173,7 @@ envelope fields, so the envelope is the source of truth and the wire format is t
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_ConversationId" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.ConversationId">
   ConversationId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Identifier shared by every message in the same conversation across services.</p>
@@ -206,7 +206,7 @@ public string? ConversationId { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_CorrelationId" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.CorrelationId">
   CorrelationId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Business correlation identifier shared across all messages in a logical operation.</p>
@@ -239,7 +239,7 @@ public string? CorrelationId { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_DestinationAddress" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.DestinationAddress">
   DestinationAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Address of the endpoint this message was sent to (for point-to-point sends).</p>
@@ -272,7 +272,7 @@ public string? DestinationAddress { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_ExpirationTime" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.ExpirationTime">
   ExpirationTime
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UTC timestamp after which the message should be discarded.</p>
@@ -305,7 +305,7 @@ public DateTimeOffset? ExpirationTime { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_FaultAddress" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.FaultAddress">
   FaultAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Address where fault notifications should be sent.</p>
@@ -338,7 +338,7 @@ public string? FaultAddress { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_Headers" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.Headers">
   Headers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Custom transport headers (e.g. tenancy markers, retry counters).</p>
@@ -371,7 +371,7 @@ public Dictionary&lt;string, object?&gt;? Headers { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_InitiatorId" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.InitiatorId">
   InitiatorId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The identifier of the message that initiated this chain.</p>
@@ -404,7 +404,7 @@ public string? InitiatorId { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_Message" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.Message">
   Message
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The serialized payload. Receivers deserialize this into the CLR type resolved from <a class="xref" href="Vulthil.Messaging.Transport.MessageEnvelope.html#Vulthil_Messaging_Transport_MessageEnvelope_MessageType">MessageType</a>.</p>
@@ -437,7 +437,7 @@ public required JsonElement Message { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_MessageId" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.MessageId">
   MessageId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The unique identifier for this message.</p>
@@ -470,7 +470,7 @@ public string? MessageId { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_MessageType" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.MessageType">
   MessageType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The stable wire URN identifying the message type, e.g. <code>urn:message:Acme.Orders:OrderPlaced</code>.</p>
@@ -503,7 +503,7 @@ public required Uri MessageType { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_RequestId" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.RequestId">
   RequestId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>For request/reply: the identifier of the request being answered, or that this message represents.</p>
@@ -536,7 +536,7 @@ public string? RequestId { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_ResponseAddress" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.ResponseAddress">
   ResponseAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Address where replies to this message should be sent.</p>
@@ -569,7 +569,7 @@ public string? ResponseAddress { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_SentTime" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.SentTime">
   SentTime
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UTC timestamp when the message was sent.</p>
@@ -602,7 +602,7 @@ public DateTimeOffset? SentTime { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_SourceAddress" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.SourceAddress">
   SourceAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Address of the endpoint that produced this message.</p>
@@ -635,7 +635,7 @@ public string? SourceAddress { get; init; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L15" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

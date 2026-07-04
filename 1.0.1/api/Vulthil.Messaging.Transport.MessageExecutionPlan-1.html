@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Transport_MessageExecutionPlan_1" data-uid="Vulthil.Messaging.Transport.MessageExecutionPlan`1" class="text-break">
-Class MessageExecutionPlan&lt;THandler&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class MessageExecutionPlan&lt;THandler&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -175,7 +175,7 @@ consumption. Built and keyed by <a class="xref" href="Vulthil.Messaging.Transpor
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionPlan_1__ctor_Vulthil_Messaging_Queues_MessageType_System_Uri_" data-uid="Vulthil.Messaging.Transport.MessageExecutionPlan`1.#ctor(Vulthil.Messaging.Queues.MessageType,System.Uri)">
   MessageExecutionPlan(MessageType, Uri)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Transport-agnostic execution plan for a single concrete message type: the ordered set of handlers that
@@ -217,7 +217,7 @@ consumption. Built and keyed by <a class="xref" href="Vulthil.Messaging.Transpor
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionPlan_1_Handlers" data-uid="Vulthil.Messaging.Transport.MessageExecutionPlan`1.Handlers">
   Handlers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The set of handlers that should run when a message of <a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionPlan-1.html#Vulthil_Messaging_Transport_MessageExecutionPlan_1_MessageType">MessageType</a> is delivered.
@@ -250,7 +250,7 @@ Every handler in this list runs on every delivery; the broker is authoritative f
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionPlan_1_IsPartitioned" data-uid="Vulthil.Messaging.Transport.MessageExecutionPlan`1.IsPartitioned">
   IsPartitioned
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether deliveries of this message type are partitioned for ordered processing.</p>
@@ -282,7 +282,7 @@ Every handler in this list runs on every delivery; the broker is authoritative f
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionPlan_1_MessageType" data-uid="Vulthil.Messaging.Transport.MessageExecutionPlan`1.MessageType">
   MessageType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The concrete message type this plan dispatches.</p>
@@ -314,7 +314,7 @@ Every handler in this list runs on every delivery; the broker is authoritative f
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionPlan_1_Partition" data-uid="Vulthil.Messaging.Transport.MessageExecutionPlan`1.Partition">
   Partition
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The partition specification whose lanes serialize same-key deliveries of this message type, or
@@ -348,7 +348,7 @@ because it needs the transport's delivery type, so the plan only surfaces the sp
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionPlan_1_Urn" data-uid="Vulthil.Messaging.Transport.MessageExecutionPlan`1.Urn">
   Urn
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The stable wire URN for <code class="paramref">MessageType</code>.</p>
@@ -380,7 +380,7 @@ because it needs the transport's delivery type, so the plan only surfaces the sp
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionPlan.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

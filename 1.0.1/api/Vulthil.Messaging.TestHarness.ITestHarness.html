@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_TestHarness_ITestHarness" data-uid="Vulthil.Messaging.TestHarness.ITestHarness" class="text-break">
-Interface ITestHarness  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18"><i class="bi bi-code-slash"></i></a>
+Interface ITestHarness  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -142,7 +142,7 @@ failed request result.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Clear" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Clear">
   Clear()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Clears all captured published, sent, consumed, and requested messages. Registered stubs are retained.</p>
@@ -169,7 +169,7 @@ failed request result.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Consumed__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Consumed``1">
   Consumed&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the messages delivered to a registered consumer that are assignable to <code class="typeparamref">TMessage</code>, in order. A message handled by several consumers is captured once per consumer.</p>
@@ -207,7 +207,7 @@ failed request result.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Handle__1_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_Threading_Tasks_Task__" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Handle``1(System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.Threading.Tasks.Task})">
   Handle&lt;TMessage&gt;(Func&lt;IMessageContext&lt;TMessage&gt;, Task&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a stub that runs whenever a <code class="typeparamref">TMessage</code> is published or sent, in addition to
@@ -248,7 +248,7 @@ follow-up messages through its context.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Published__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Published``1">
   Published&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the messages published via <code>IPublisher.PublishAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
@@ -286,7 +286,7 @@ follow-up messages through its context.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Requested__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Requested``1">
   Requested&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the requests issued via <code>IRequester.RequestAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
@@ -324,7 +324,7 @@ follow-up messages through its context.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Respond__2_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0____1__" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Respond``2(System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},``1})">
   Respond&lt;TRequest, TResponse&gt;(Func&lt;IMessageContext&lt;TRequest&gt;, TResponse&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a stub that answers requests of type <code class="typeparamref">TRequest</code> with a
@@ -368,7 +368,7 @@ takes precedence over a real request consumer for the same request type.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_ITestHarness_Sent__1" data-uid="Vulthil.Messaging.TestHarness.ITestHarness.Sent``1">
   Sent&lt;TMessage&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the messages sent via <code>ISendEndpoint.SendAsync</code> that are assignable to <code class="typeparamref">TMessage</code>, in order.</p>
@@ -406,7 +406,7 @@ takes precedence over a real request consumer for the same request type.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/ITestHarness.cs/#L18" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Outbox_IOutboxStore" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore" class="text-break">
-Interface IOutboxStore  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Interface IOutboxStore  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -140,7 +140,7 @@ an outgoing message in the ambient business transaction.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_IOutboxStore_IsInTransaction" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.IsInTransaction">
   IsInTransaction
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether a database transaction is currently active. Capture uses this to decide
@@ -177,7 +177,7 @@ whether an outgoing message is enlisted in the ambient transaction or published 
 
   <h3 id="Vulthil_SharedKernel_Outbox_IOutboxStore_AddOutboxMessage_Vulthil_SharedKernel_Outbox_OutboxMessage_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.AddOutboxMessage(Vulthil.SharedKernel.Outbox.OutboxMessage)">
   AddOutboxMessage(OutboxMessage)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Stages an outbox message for persistence. Used by capture (e.g. a transactional bus-publish filter) to enlist
@@ -211,7 +211,7 @@ the message in the ambient business transaction; call <a class="xref" href="Vult
 
   <h3 id="Vulthil_SharedKernel_Outbox_IOutboxStore_ProcessBatchAsync_System_Func_Vulthil_SharedKernel_Outbox_OutboxMessageData_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_String___System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)">
   ProcessBatchAsync(Func&lt;OutboxMessageData, CancellationToken, Task&lt;string?&gt;&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Processes one batch of pending outbox messages: fetches up to the configured batch size, invokes
@@ -256,7 +256,7 @@ against the row as a failed attempt.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_IOutboxStore_SaveChangesAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.SaveChangesAsync(System.Threading.CancellationToken)">
   SaveChangesAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Persists pending staged outbox messages.</p>
@@ -295,7 +295,7 @@ against the row as a failed attempt.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/v1.0/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

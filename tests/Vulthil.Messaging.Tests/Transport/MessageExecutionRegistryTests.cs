@@ -123,6 +123,33 @@ public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExec
     }
 
     [Fact]
+    public void RegisterQueueAllowsRequestConsumersForTheSameMessageTypeOnDifferentQueues()
+    {
+        // Arrange
+        var first = Queue("alpha");
+        first.AddConsumer(new RequestConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(PingConsumer)),
+            MessageType = new MessageType(typeof(Ping)),
+            ResponseType = typeof(Pong),
+        });
+        var second = Queue("beta");
+        second.AddConsumer(new RequestConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(OtherPingConsumer)),
+            MessageType = new MessageType(typeof(Ping)),
+            ResponseType = typeof(Pong),
+        });
+
+        // Act
+        Target.RegisterQueue(first);
+        Target.RegisterQueue(second);
+
+        // Assert
+        Target.GetPlan(new MessageType(typeof(Ping)).Name)!.Handlers.Count.ShouldBe(2);
+    }
+
+    [Fact]
     public void RegisterQueueFansAPolymorphicRegistrationOutAcrossConcreteSubscriptions()
     {
         // Arrange

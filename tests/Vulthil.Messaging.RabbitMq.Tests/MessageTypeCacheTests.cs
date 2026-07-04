@@ -13,7 +13,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 {
     private readonly Lazy<MessageTypeCache> _lazyTarget;
     private readonly IServiceProvider _serviceProvider;
-    private readonly Mock<IChannel> _channelMock;
+    private readonly RecordingGatedPublisher _publisher = new();
 
     private MessageTypeCache Target => _lazyTarget.Value;
 
@@ -24,7 +24,6 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
 
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
-        _channelMock = GetMock<IChannel>();
         _serviceProvider = AutoMocker;
     }
 
@@ -154,11 +153,12 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var testMessage = new TestMessage("Hello, World!");
 
         // Act
-        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), null, _channelMock.Object, CancellationToken.None);
+        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), null, _publisher.PublishAsync, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedMessages.ShouldHaveSingleItem();
         consumerInstance.ReceivedMessages[0].Content.ShouldBe("Hello, World!");
+        _publisher.Published.ShouldBeEmpty();
     }
 
     [Fact]
@@ -185,33 +185,18 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var testRequest = new TestRequest("Find users");
         var deliveryArgs = CreateDeliverEventArgs(replyTo: "reply.queue", correlationId: "corr-1");
 
-        ReadOnlyMemory<byte> publishedBody = default;
-        BasicProperties? publishedProperties = null;
-
-        _channelMock.Setup(x => x.BasicPublishAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>(),
-                It.IsAny<BasicProperties>(),
-                It.IsAny<ReadOnlyMemory<byte>>(),
-                It.IsAny<CancellationToken>()))
-            .Callback((string _, string _, bool _, BasicProperties props, ReadOnlyMemory<byte> body, CancellationToken _) =>
-            {
-                publishedProperties = props;
-                publishedBody = body;
-            })
-            .Returns(ValueTask.CompletedTask);
-
         // Act
-        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, null, _channelMock.Object, CancellationToken.None);
+        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, null, _publisher.PublishAsync, CancellationToken.None);
 
         // Assert
         consumerInstance.ReceivedRequests.ShouldHaveSingleItem();
         consumerInstance.ReceivedRequests[0].Query.ShouldBe("Find users");
-        publishedProperties.ShouldNotBeNull();
-        publishedProperties.CorrelationId.ShouldBe("corr-1");
+        var published = _publisher.Published.ShouldHaveSingleItem();
+        published.Exchange.ShouldBe(string.Empty);
+        published.RoutingKey.ShouldBe("reply.queue");
+        published.Properties.CorrelationId.ShouldBe("corr-1");
 
-        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(published.Body.Span);
         envelope.ShouldNotBeNull();
         envelope.MessageType.ShouldBe(new MessageConfiguration(typeof(TestResponse).FullName!).Urn);
         envelope.RequestId.ShouldBe("corr-1");
@@ -241,32 +226,18 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
         var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
-        ReadOnlyMemory<byte> publishedBody = default;
-
-        _channelMock.Setup(x => x.BasicPublishAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<bool>(),
-                It.IsAny<BasicProperties>(),
-                It.IsAny<ReadOnlyMemory<byte>>(),
-                It.IsAny<CancellationToken>()))
-            .Callback((string _, string _, bool _, BasicProperties _, ReadOnlyMemory<byte> body, CancellationToken _) =>
-            {
-                publishedBody = body;
-            })
-            .Returns(ValueTask.CompletedTask);
-
         // Act
         await handler.DispatchAsync(
             _serviceProvider,
             new TestRequest("throw"),
             CreateDeliverEventArgs(replyTo: "reply.queue"),
             null,
-            _channelMock.Object,
+            _publisher.PublishAsync,
             CancellationToken.None);
 
         // Assert
-        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(publishedBody.Span);
+        var published = _publisher.Published.ShouldHaveSingleItem();
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(published.Body.Span);
         envelope.ShouldNotBeNull();
         envelope.MessageType.ShouldBe(RpcFault.UrnUri);
 

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Vulthil.Messaging.Queues;
 
@@ -6,15 +7,17 @@ namespace Vulthil.Messaging;
 /// <summary>
 /// Backing store for the messaging configuration. Implements <see cref="IMessagingOptionsConfigurator"/>
 /// for the write-side surface exposed during composition and <see cref="IMessageConfigurationProvider"/>
-/// for the read-side surface consumed at runtime by transports, consumers, and filters.
+/// for the read-side surface consumed at runtime by transports, consumers, and filters. The type/URN caches
+/// are concurrent because singleton publishers register unconfigured message types lazily, so first publishes
+/// of distinct types can write them in parallel.
 /// </summary>
 internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessageConfigurationProvider
 {
     public const string SectionName = "Messaging:Options";
 
 
-    private readonly Dictionary<Type, MessageConfiguration> _typeConfigurations = [];
-    private readonly Dictionary<Uri, Type> _urnToType = [];
+    private readonly ConcurrentDictionary<Type, MessageConfiguration> _typeConfigurations = new();
+    private readonly ConcurrentDictionary<Uri, Type> _urnToType = new();
     private readonly HashSet<MessageType> _registeredRequestTypes = [];
     private readonly Dictionary<Type, PartitionSpec> _partitions = [];
     internal Dictionary<string, MessageConfiguration> MessageConfigurations { get; } = new(StringComparer.Ordinal);
@@ -33,21 +36,30 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
             return cached;
         }
 
+        var registered = _typeConfigurations.GetOrAdd(messageType, ResolveConfiguration);
+        IndexUrn(messageType, registered.Urn);
+        return registered;
+    }
+
+    /// <summary>
+    /// Resolves the configuration for a message type that has no cached entry yet: walks the type hierarchy for
+    /// the nearest explicitly configured base, falling back to a fresh default configuration. Pure — safe to run
+    /// concurrently as a <see cref="ConcurrentDictionary{TKey,TValue}.GetOrAdd(TKey,Func{TKey,TValue})"/> factory.
+    /// </summary>
+    private MessageConfiguration ResolveConfiguration(Type messageType)
+    {
         var current = messageType;
         while (current != null && current != typeof(object))
         {
-            if (current.FullName is { } fullName && MessageConfigurations.TryGetValue(fullName, out var def))
+            if (current.FullName is { } fullName && MessageConfigurations.TryGetValue(fullName, out var configured))
             {
-                RegisterMessageType(messageType, def);
-                return def;
+                return configured;
             }
 
             current = current.BaseType;
         }
 
-        var fresh = new MessageConfiguration(messageType.FullName!);
-        RegisterMessageType(messageType, fresh);
-        return fresh;
+        return new MessageConfiguration(messageType.FullName!);
     }
 
     /// <inheritdoc />
@@ -70,6 +82,8 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
     /// <summary>
     /// Records a CLR type ↔ <see cref="MessageConfiguration"/> mapping and updates the URN reverse index.
     /// Idempotent on repeated calls for the same type; throws if two distinct types claim the same URN.
+    /// An explicit registration overwrites a prior one for the same type, so composition can upgrade a
+    /// lazily-created default to a configured instance.
     /// </summary>
     internal void RegisterMessageType(Type type, MessageConfiguration configuration)
     {
@@ -79,18 +93,21 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
         }
 
         _typeConfigurations[type] = configuration;
+        IndexUrn(type, configuration.Urn);
+    }
 
-        if (_urnToType.TryGetValue(configuration.Urn, out var owner))
+    /// <summary>
+    /// Records the URN → CLR type reverse mapping. Idempotent for the same pair; throws when the URN is
+    /// already owned by a different type.
+    /// </summary>
+    private void IndexUrn(Type type, Uri urn)
+    {
+        var owner = _urnToType.GetOrAdd(urn, type);
+        if (owner != type)
         {
-            if (owner != type)
-            {
-                throw new InvalidOperationException(
-                    $"URN '{configuration.Urn}' is already registered to type '{owner.FullName}'; cannot also register '{type.FullName}'. " +
-                    "URNs must be unique across message types — override one via MessageConfiguration<T>.Urn.");
-            }
-            return;
+            throw new InvalidOperationException(
+                $"URN '{urn}' is already registered to type '{owner.FullName}'; cannot also register '{type.FullName}'. " +
+                "URNs must be unique across message types — override one via MessageConfiguration<T>.Urn.");
         }
-
-        _urnToType[configuration.Urn] = type;
     }
 }

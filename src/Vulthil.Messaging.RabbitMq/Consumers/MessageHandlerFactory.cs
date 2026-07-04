@@ -54,7 +54,7 @@ internal static class MessageHandlerFactory
         {
             RetryPolicy = retryPolicy,
             Kind = HandlerKind.RequestConsumer,
-            DispatchAsync = async (sp, message, ea, envelope, channel, ct) =>
+            DispatchAsync = async (sp, message, ea, envelope, publishAsync, ct) =>
             {
                 var consumer = sp.GetRequiredService<TConsumer>();
                 var publisher = sp.GetRequiredService<IPublisher>();
@@ -98,7 +98,7 @@ internal static class MessageHandlerFactory
                     reply = BuildFaultReply(exception.Message, exception.GetType().FullName ?? "Unknown", exception.StackTrace, jsonOptions, ea, envelope);
                 }
 
-                await SendResponseAsync(ea, reply, channel, jsonOptions);
+                await SendResponseAsync(ea, reply, publishAsync, jsonOptions);
             }
         };
 
@@ -131,7 +131,7 @@ internal static class MessageHandlerFactory
         return BuildReply(RpcFault.UrnUri, JsonSerializer.SerializeToElement(fault, jsonOptions), ea, requestEnvelope);
     }
 
-    private static async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageEnvelope reply, IChannel channel, JsonSerializerOptions jsonOptions)
+    private static async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageEnvelope reply, GatedPublisher publishAsync, JsonSerializerOptions jsonOptions)
     {
         if (string.IsNullOrEmpty(ea.BasicProperties.ReplyTo))
         {
@@ -146,6 +146,6 @@ internal static class MessageHandlerFactory
             ContentType = RabbitMqConstants.ContentType,
         };
 
-        await channel.BasicPublishAsync(string.Empty, ea.BasicProperties.ReplyTo, true, replyProps, body);
+        await publishAsync(string.Empty, ea.BasicProperties.ReplyTo, true, replyProps, body);
     }
 }

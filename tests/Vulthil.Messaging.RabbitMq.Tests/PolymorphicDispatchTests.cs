@@ -62,7 +62,7 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
         // Act
         foreach (var handler in plan.Handlers)
         {
-            await handler.DispatchAsync(AutoMocker, message, ea, (MessageEnvelope?)null, Mock.Of<IChannel>(), CancellationToken.None);
+            await handler.DispatchAsync(AutoMocker, message, ea, (MessageEnvelope?)null, new RecordingGatedPublisher().PublishAsync, CancellationToken.None);
         }
 
         // Assert

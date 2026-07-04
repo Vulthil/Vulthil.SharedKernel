@@ -81,6 +81,24 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task EmptyStringKeySelectorResultFallsBackToMessageId()
+    {
+        // Arrange
+        _context.SetupGet(context => context.MessageId).Returns("message-1");
+        GetMock<IInboxKeySelector<TestMessage>>()
+            .Setup(selector => selector.GetKey(It.IsAny<IMessageContext<TestMessage>>()))
+            .Returns(string.Empty);
+        SetupStore("message-1", runConsumer: true, processed: true);
+
+        // Act
+        await Target.ConsumeAsync(_context.Object, Next);
+
+        // Assert
+        _consumerInvoked.ShouldBeTrue();
+        _store.Verify(store => store.ProcessAsync("message-1", It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
     public async Task CustomKeySelectorIsUsedForDeduplication()
     {
         // Arrange

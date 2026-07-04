@@ -1,7 +1,14 @@
 using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -76,5 +83,71 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
         retried.RoutingKey.ShouldBe("rk");
     }
 
+    [Fact]
+    public async Task ProcessAsyncLeavesTheDeliveryUnsettledWhenCancelledDuringShutdown()
+    {
+        // Arrange
+        var queue = new QueueDefinition("orders");
+        queue.AddConsumer(new ConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(CancellingConsumer)),
+            MessageType = new MessageType(typeof(TestMessage)),
+        });
+
+        Use(TestProviders.Build());
+        Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
+        Use(new CancellingConsumer());
+        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        Use<ILogger<RabbitMqConsumerWorker>>(NullLogger<RabbitMqConsumerWorker>.Instance);
+        Use(queue);
+        Use(0);
+        Use(false);
+
+        var typeCache = CreateInstance<MessageTypeCache>();
+        typeCache.RegisterQueue(queue);
+        Use(typeCache);
+
+        IAsyncBasicConsumer? capturedConsumer = null;
+        var channel = GetMock<IChannel>();
+        channel
+            .Setup(c => c.BasicConsumeAsync(
+                It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.IsAny<IDictionary<string, object?>>(), It.IsAny<IAsyncBasicConsumer>(), It.IsAny<CancellationToken>()))
+            .Callback((string _, bool _, string _, bool _, bool _, IDictionary<string, object?> _, IAsyncBasicConsumer consumer, CancellationToken _) =>
+                capturedConsumer = consumer)
+            .ReturnsAsync("consumer-tag");
+
+        var worker = CreateInstance<RabbitMqConsumerWorker>();
+        await worker.StartAsync(CancellationToken);
+
+        using var cancelledSource = new CancellationTokenSource();
+        await cancelledSource.CancelAsync();
+
+        // Act
+        await capturedConsumer!.HandleBasicDeliverAsync(
+            "consumer-tag",
+            1,
+            false,
+            "orders",
+            "orders",
+            new BasicProperties { Type = typeof(TestMessage).FullName, Headers = new Dictionary<string, object?>() },
+            JsonSerializer.SerializeToUtf8Bytes(new TestMessage("payload")),
+            cancelledSource.Token);
+
+        // Assert
+        channel.Verify(c => c.BasicAckAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+        channel.Verify(c => c.BasicNackAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+        channel.Verify(
+            c => c.BasicPublishAsync(
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<BasicProperties>(), It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
     private sealed record TestMessage(string Value);
+
+    private sealed class CancellingConsumer : IConsumer<TestMessage>
+    {
+        public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
+            => throw new OperationCanceledException();
+    }
 }

@@ -16,9 +16,35 @@ internal interface IInnerHandler<in TRequest, TResponse>
 }
 
 internal sealed class InnerHandlerAdapter<TRequest, TResponse>(IHandler<TRequest, TResponse> handler)
-    : IInnerHandler<TRequest, TResponse>
+    : IInnerHandler<TRequest, TResponse>, IDisposable, IAsyncDisposable
     where TRequest : IRequest<TResponse>
 {
     public Task<TResponse> HandleAsync(TRequest request, CancellationToken cancellationToken = default) =>
         handler.HandleAsync(request, cancellationToken);
+
+    public void Dispose()
+    {
+        switch (handler)
+        {
+            case IDisposable disposable:
+                disposable.Dispose();
+                break;
+            case IAsyncDisposable asyncDisposable:
+                asyncDisposable.DisposeAsync().AsTask().GetAwaiter().GetResult();
+                break;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        switch (handler)
+        {
+            case IAsyncDisposable asyncDisposable:
+                await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+                break;
+            case IDisposable disposable:
+                disposable.Dispose();
+                break;
+        }
+    }
 }

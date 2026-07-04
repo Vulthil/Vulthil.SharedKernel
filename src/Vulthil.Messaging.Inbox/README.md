@@ -1,5 +1,7 @@
 # Vulthil.Messaging.Inbox
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Messaging.Inbox)](https://www.nuget.org/packages/Vulthil.Messaging.Inbox)
+
 Idempotent-receiver (inbox) consume filter for [Vulthil.Messaging](https://www.nuget.org/packages/Vulthil.Messaging).
 Broker delivery is at-least-once; this package deduplicates redeliveries by recording which messages have been
 handled and skipping the ones already seen. With a **transactional store** the marker commits in the **same

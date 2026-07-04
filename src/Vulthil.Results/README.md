@@ -1,5 +1,7 @@
 # Vulthil.Results
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Results)](https://www.nuget.org/packages/Vulthil.Results)
+
 Small result primitives for explicit success/failure flows without exceptions.
 
 ## Install

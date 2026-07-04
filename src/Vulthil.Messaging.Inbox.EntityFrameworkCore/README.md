@@ -1,5 +1,7 @@
 # Vulthil.Messaging.Inbox.EntityFrameworkCore
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Messaging.Inbox.EntityFrameworkCore)](https://www.nuget.org/packages/Vulthil.Messaging.Inbox.EntityFrameworkCore)
+
 Shared Entity Framework Core primitives for [Vulthil.Messaging.Inbox](https://www.nuget.org/packages/Vulthil.Messaging.Inbox).
 Provider-agnostic within EF Core: it holds the `InboxMessage` marker entity and the `ISaveInboxMessages` context
 interface, reused by the provider-specific idempotency stores.

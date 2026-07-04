@@ -1,5 +1,7 @@
 # Vulthil.Messaging.Outbox
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Messaging.Outbox)](https://www.nuget.org/packages/Vulthil.Messaging.Outbox)
+
 Transactional bus-publish outbox for `Vulthil.Messaging`. Publishes and sends issued while a database transaction
 is open are captured into the shared outbox table (atomically with the business changes) and relayed to the broker
 after the transaction commits — eliminating the dual-write problem. A stable message id is carried through, so a

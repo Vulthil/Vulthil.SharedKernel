@@ -1,5 +1,7 @@
 # Vulthil.Messaging.Inbox.Relational
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.Messaging.Inbox.Relational)](https://www.nuget.org/packages/Vulthil.Messaging.Inbox.Relational)
+
 Relational Entity Framework Core idempotency store for
 [Vulthil.Messaging.Inbox](https://www.nuget.org/packages/Vulthil.Messaging.Inbox). Gives **transactional
 exactly-once** consumer processing on relational databases: the inbox marker and the consumer's business writes

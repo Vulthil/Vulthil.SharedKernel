@@ -1,5 +1,7 @@
 # Vulthil.SharedKernel.Infrastructure.Relational
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.SharedKernel.Infrastructure.Relational)](https://www.nuget.org/packages/Vulthil.SharedKernel.Infrastructure.Relational)
+
 Shared relational helpers for provider implementations.
 
 ## Install

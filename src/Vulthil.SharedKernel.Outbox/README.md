@@ -1,5 +1,7 @@
 # Vulthil.SharedKernel.Outbox
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.SharedKernel.Outbox)](https://www.nuget.org/packages/Vulthil.SharedKernel.Outbox)
+
 The transactional **outbox engine** for `Vulthil.SharedKernel`: the message-capture model (`OutboxMessage`), the
 relay processor and background service, pluggable sinks (`IOutboxDispatcher`), the commit-time relay signal, and the
 provider-agnostic strategy contracts (`IOutboxStrategy` / `BaseOutboxStrategy`).

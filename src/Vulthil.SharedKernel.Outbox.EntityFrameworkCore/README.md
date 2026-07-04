@@ -1,5 +1,7 @@
 # Vulthil.SharedKernel.Outbox.EntityFrameworkCore
 
+[![NuGet](https://img.shields.io/nuget/v/Vulthil.SharedKernel.Outbox.EntityFrameworkCore)](https://www.nuget.org/packages/Vulthil.SharedKernel.Outbox.EntityFrameworkCore)
+
 The Entity Framework Core implementation of the [`Vulthil.SharedKernel.Outbox`](../Vulthil.SharedKernel.Outbox)
 engine. It keeps all EF Core coupling out of the engine package:
 

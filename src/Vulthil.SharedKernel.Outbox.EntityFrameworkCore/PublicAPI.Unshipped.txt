@@ -1,1 +1,3 @@
 #nullable enable
+override Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavedChanges(Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesCompletedEventData! eventData, int result) -> int
+override Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChanges(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData! eventData, Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int> result) -> Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int>

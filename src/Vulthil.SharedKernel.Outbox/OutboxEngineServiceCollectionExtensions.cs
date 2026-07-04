@@ -39,6 +39,9 @@ public static class OutboxEngineServiceCollectionExtensions
                     && o.Retention.SweepInterval > TimeSpan.Zero
                     && o.Retention.BatchSize >= 1,
                 "Outbox retention requires RetentionPeriod and SweepInterval greater than zero and BatchSize of at least 1 when enabled.")
+            .Validate(
+                o => o.MaxDelaySeconds >= o.OutboxProcessingDelaySeconds,
+                "MaxDelaySeconds must be greater than or equal to OutboxProcessingDelaySeconds.")
             .ValidateDataAnnotations()
             .ValidateOnStart();
 

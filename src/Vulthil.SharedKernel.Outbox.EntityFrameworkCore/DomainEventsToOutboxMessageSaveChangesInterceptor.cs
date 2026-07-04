@@ -18,13 +18,50 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
     /// <summary>
     /// Captures domain events from tracked aggregate roots and stores them as outbox messages before persisting changes.
     /// </summary>
+    public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+    {
+        CaptureDomainEvents(eventData.Context);
+        return result;
+    }
+
+    /// <summary>
+    /// Captures domain events from tracked aggregate roots and stores them as outbox messages before persisting changes.
+    /// </summary>
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
-        var dbContext = eventData.Context;
+        CaptureDomainEvents(eventData.Context);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
 
+    /// <summary>
+    /// Wakes the outbox relay after a save that committed outside an explicit transaction, so domain events captured
+    /// by a bare <c>SaveChanges</c> are relayed promptly instead of waiting for the next poll. When a transaction is
+    /// open the relay is signalled on commit by the transaction-commit interceptor instead, so this skips that case to
+    /// avoid waking the relay before the rows are committed and visible.
+    /// </summary>
+    public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
+    {
+        WakeRelayIfNeeded(eventData.Context);
+        return result;
+    }
+
+    /// <summary>
+    /// Wakes the outbox relay after a save that committed outside an explicit transaction, so domain events captured
+    /// by a bare <c>SaveChanges</c> are relayed promptly instead of waiting for the next poll. When a transaction is
+    /// open the relay is signalled on commit by the transaction-commit interceptor instead, so this skips that case to
+    /// avoid waking the relay before the rows are committed and visible.
+    /// </summary>
+    public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
+    {
+        WakeRelayIfNeeded(eventData.Context);
+        return base.SavedChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private void CaptureDomainEvents(DbContext? dbContext)
+    {
         if (dbContext is not ISaveOutboxMessages dbContextWithOutboxMessages)
         {
-            return base.SavingChangesAsync(eventData, result, cancellationToken);
+            return;
         }
 
         Activity? activity = null;
@@ -55,24 +92,14 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
             }).ToList();
 
         dbContextWithOutboxMessages.OutboxMessages.AddRange(outboxMessages);
-
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    /// <summary>
-    /// Wakes the outbox relay after a save that committed outside an explicit transaction, so domain events captured
-    /// by a bare <c>SaveChanges</c> are relayed promptly instead of waiting for the next poll. When a transaction is
-    /// open the relay is signalled on commit by the transaction-commit interceptor instead, so this skips that case to
-    /// avoid waking the relay before the rows are committed and visible.
-    /// </summary>
-    public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
+    private void WakeRelayIfNeeded(DbContext? dbContext)
     {
-        if (ShouldWakeRelay(eventData.Context))
+        if (ShouldWakeRelay(dbContext))
         {
             signal.Notify();
         }
-
-        return base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 
     private static bool ShouldWakeRelay(DbContext? dbContext) =>

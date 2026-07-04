@@ -38,6 +38,24 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
     }
 
     [Fact]
+    public async Task SyncSaveCapturingDomainEventsWakesTheRelay()
+    {
+        // Arrange
+        await using var context = NewContext();
+        var aggregate = new TestAggregate(Guid.NewGuid());
+        aggregate.RaiseSomething();
+        context.Aggregates.Add(aggregate);
+
+        // Act
+        SaveChangesSynchronously(context);
+
+        // Assert
+        GetMock<IOutboxSignal>().Verify(signal => signal.Notify(), Times.Once());
+        var captured = await context.OutboxMessages.SingleAsync(CancellationToken);
+        captured.Type.ShouldBe(typeof(TestDomainEvent).FullName);
+    }
+
+    [Fact]
     public async Task SaveInsideAnExplicitTransactionDoesNotWakeTheRelay()
     {
         // Arrange
@@ -112,6 +130,8 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
 
         return new TestDbContext(builder.Options);
     }
+
+    private static void SaveChangesSynchronously(TestDbContext context) => context.SaveChanges();
 
     public sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options), ISaveOutboxMessages
     {

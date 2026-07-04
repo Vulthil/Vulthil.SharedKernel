@@ -11,10 +11,10 @@ public interface IInboxKeySelector<in TMessage>
     where TMessage : notnull
 {
     /// <summary>
-    /// Returns the idempotency key for the given delivery, or <see langword="null"/> to fall back to
-    /// <see cref="IMessageContext.MessageId"/>.
+    /// Returns the idempotency key for the given delivery, or <see langword="null"/> or an empty string to fall
+    /// back to <see cref="IMessageContext.MessageId"/>.
     /// </summary>
     /// <param name="context">The message context for the current delivery.</param>
-    /// <returns>The idempotency key, or <see langword="null"/> to use the message id.</returns>
+    /// <returns>The idempotency key, or <see langword="null"/> or an empty string to use the message id.</returns>
     string? GetKey(IMessageContext<TMessage> context);
 }

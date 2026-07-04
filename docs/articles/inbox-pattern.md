@@ -16,7 +16,9 @@ This is an *idempotent receiver*, not a store-and-forward inbox: it rides on top
 
 If the consumer throws, the transaction is rolled back (marker included) and the message is reprocessed cleanly on redelivery. The marker is written **on commit, not on receipt**, so an interrupted delivery never leaves a marker that would suppress reprocessing.
 
-The check (step 2) and the marker write (step 5) are serialized only at the **marker insert**, not across the whole unit. Two duplicates of the same key in flight *at the same time* — delivered to two consumers, or across two channels — can both pass the step-2 check and run the consumer body before either commits; the unique marker then lets only one commit, while the other fails the insert and is settled as a duplicate. So deduplication is exactly-once for *sequential* redelivery, but **concurrent** duplicates can each execute the handler body once. Keep side effects idempotent if concurrent duplicate delivery is possible.
+The check (step 2) and the marker write (step 5) are serialized only at the **marker insert**, not across the whole unit. Two duplicates of the same key in flight *at the same time* — delivered to two consumers, or across two channels — can both pass the step-2 check and run the consumer body before either commits; the unique marker then lets only one commit, while the other loses the insert race. So deduplication is exactly-once for *sequential* redelivery, but **concurrent** duplicates can each execute the handler body once. Keep side effects idempotent if concurrent duplicate delivery is possible.
+
+How the loser is settled depends on who owns the transaction. When the relational store opens its own transaction (no outer filter already started one), it rolls back, rechecks the marker, and returns `false` — the delivery is settled as a duplicate inline, without an exception. When the store instead joins a transaction an outer filter already opened (see [Filter Registration Order](#filter-registration-order)), it cannot commit or roll back a transaction it doesn't own, so the marker conflict is **rethrown**. The transaction's owner rolls back — discarding this delivery's business writes along with the marker — and the message is redelivered; the step-2 check then deduplicates it. Either way no duplicate side effect is ever committed, but the ambient case surfaces as an exception and a redelivery round-trip rather than a quiet skip.
 
 ## Guarantees
 
@@ -108,6 +110,19 @@ builder.Services.AddRelationalInbox<AppDbContext>();
 ```
 
 The consumer and the store must share the same scoped `DbContext` instance (the default with `AddDbContext`), so the consumer's writes and the marker enlist in the same transaction. The consumer keeps calling `SaveChanges` as usual — the store owns the transaction, not `SaveChanges`. Add an EF Core migration for the `InboxMessage` table as you would for any entity.
+
+### Filter Registration Order
+
+`IConsumeFilter<TMessage>` instances compose in plain DI registration order — the first one resolved becomes the outermost — and nothing enforces a particular order between the inbox and other transactional filters, such as `Vulthil.Messaging.Outbox`'s transactional consumer filter. Register the idempotency filter **before** (outside) a transactional consumer filter:
+
+```csharp
+messaging.AddIdempotentInbox<OrderPlaced>(context => context.Message.OrderId.ToString());
+messaging.AddTransactionalConsumer<OrderPlaced>();
+```
+
+With this order the inbox filter runs first and opens its own transaction (the relational store's `ProcessAsync` sees no ambient transaction yet), and the transactional consumer filter joins it. On a concurrent duplicate the loser rolls back and rechecks inline — the efficient path described in [How It Works](#how-it-works).
+
+Registering them in the opposite order still produces correct results — the relational store's ambient-conflict rethrow (above) guarantees a duplicate is never committed either way — but the transactional consumer filter becomes the transaction owner, so the inbox store always runs its ambient path. A concurrent duplicate then always surfaces as an exception and a redelivery, instead of the cheaper inline rollback-and-recheck. Prefer the order above.
 
 ### Cosmos store
 

@@ -142,8 +142,8 @@ redeliveries (and ideally across producer republishes) of the same logical messa
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/IInboxKeySelector.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns the idempotency key for the given delivery, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to fall back to
-<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_MessageId">MessageId</a>.</p>
+  <div class="markdown level1 summary"><p>Returns the idempotency key for the given delivery, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> or an empty string to fall
+back to <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_MessageId">MessageId</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -161,7 +161,7 @@ redeliveries (and ideally across producer republishes) of the same logical messa
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd><p>The idempotency key, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to use the message id.</p>
+    <dd><p>The idempotency key, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> or an empty string to use the message id.</p>
 </dd>
   </dl>
 

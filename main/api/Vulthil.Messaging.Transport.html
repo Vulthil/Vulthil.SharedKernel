@@ -147,9 +147,9 @@ consumption. Built and keyed by <a class="xref" href="Vulthil.Messaging.Transpor
       <dd><p>Transport-agnostic registry that turns <a class="xref" href="Vulthil.Messaging.Queues.QueueDefinition.html">QueueDefinition</a> registrations into per-message-type
 <a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionPlan-1.html">MessageExecutionPlan&lt;THandler&gt;</a> instances. It keys plans by wire URN (and CLR full name for the
 bare-JSON receive path), fans a polymorphic registration out across every matching concrete subscription,
-dedupes handlers, rejects a second request consumer for the same message type, and attaches the partition
-specification read from <a class="xref" href="Vulthil.Messaging.IMessageConfigurationProvider.html#Vulthil_Messaging_IMessageConfigurationProvider_GetPartition_System_Type_">GetPartition(Type)</a>. A transport drives it by
-supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> that builds its own delivery closures.</p>
+dedupes handlers, rejects a second request consumer for the same message type on the same queue, and attaches
+the partition specification read from <a class="xref" href="Vulthil.Messaging.IMessageConfigurationProvider.html#Vulthil_Messaging_IMessageConfigurationProvider_GetPartition_System_Type_">GetPartition(Type)</a>. A transport
+drives it by supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> that builds its own delivery closures.</p>
 </dd>
     </dl>
     <dl class="jumplist">

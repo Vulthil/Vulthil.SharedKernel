@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Vulthil.xUnit;
 
@@ -45,6 +46,36 @@ public sealed class OutboxProcessorMetricsTests : BaseUnitTestCase
 
         // Assert
         count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task CancellingMidBatchDoesNotIncrementTheFailedCounterOrLogAnError()
+    {
+        // Arrange
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+        SetupDispatcherToThrowOperationCanceled();
+        SetupStoreToDispatch();
+
+        // Act
+        var count = await MeasureCounterAsync("vulthil.outbox.failed", () =>
+            Should.ThrowAsync<OperationCanceledException>(() => Target.ExecuteAsync(cts.Token)));
+
+        // Assert
+        count.ShouldBe(0);
+        GetMock<ILogger<OutboxProcessor>>().Invocations.ShouldBeEmpty();
+    }
+
+    private void SetupDispatcherToThrowOperationCanceled()
+    {
+        var dispatcher = GetMock<IOutboxDispatcher>();
+        dispatcher.Setup(d => d.Handles(It.IsAny<OutboxDestination>())).Returns(true);
+        dispatcher.Setup(d => d.DispatchAsync(It.IsAny<OutboxMessageData>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new OperationCanceledException());
+
+        GetMock<IServiceProvider>()
+            .Setup(sp => sp.GetService(typeof(IEnumerable<IOutboxDispatcher>)))
+            .Returns(new[] { dispatcher.Object });
     }
 
     private void SetupDispatcher(bool succeeds)

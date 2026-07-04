@@ -111,7 +111,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
                 await transaction.CommitAsync(cancellationToken);
             }
 
-            return messages.Count;
+            return successIds.Count;
         }
         finally
         {

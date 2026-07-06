@@ -13,8 +13,8 @@
          Microsoft.OpenApi 2.0.0. net9.0's Microsoft.AspNetCore.OpenApi 9.0.17 already depends on the
          unaffected 1.x line, so only override the net10.0 leg; remove once AspNetCore.OpenApi bumps its own
          floor past 2.7.5. -->
-    <MicrosoftOpenApiVersion>2.9.0</MicrosoftOpenApiVersion>
-    <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">1.6.17</MicrosoftOpenApiVersion>
+    <MicrosoftOpenApiVersion>3.7.0</MicrosoftOpenApiVersion>
+    <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">3.7.0</MicrosoftOpenApiVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />

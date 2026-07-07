@@ -12,6 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.OpenApi" VersionOverride="3.8.0" />
 		<PackageReference Include="Testcontainers.PostgreSql" />
 		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 		<PackageReference Include="Moq.AutoMock" />

@@ -23,21 +23,34 @@ internal sealed class InboxRetentionBackgroundService(
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var timer = new PeriodicTimer(_options.SweepInterval, timeProvider);
-        do
+        try
         {
-            await SweepSafelyAsync(stoppingToken);
+            using var timer = new PeriodicTimer(_options.SweepInterval, timeProvider);
+            do
+            {
+                await SweepSafelyAsync(stoppingToken);
+            }
+            while (await timer.WaitForNextTickAsync(stoppingToken));
         }
-        while (await timer.WaitForNextTickAsync(stoppingToken));
+        catch (OperationCanceledException exception) when (stoppingToken.IsCancellationRequested)
+        {
+            logger.LogDebug(exception, "Inbox retention sweep loop stopped");
+        }
     }
 
+    /// <summary>
+    /// Runs one sweep, treating every failure as transient (logged, retried on the next tick). Only a cancellation
+    /// caused by the service stopping propagates; a foreign <see cref="OperationCanceledException"/> — for example a
+    /// store client surfacing a timeout as a cancellation — must not escape, because the host would treat the
+    /// canceled execute task of a still-running application as a fault and stop the host.
+    /// </summary>
     private async Task SweepSafelyAsync(CancellationToken cancellationToken)
     {
         try
         {
             await SweepAsync(cancellationToken);
         }
-        catch (Exception exception) when (exception is not OperationCanceledException)
+        catch (Exception exception) when (exception is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
             logger.LogError(exception, "Inbox retention sweep failed.");
         }

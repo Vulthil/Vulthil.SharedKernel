@@ -8960,6 +8960,23 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).New
   nameWithType: RelationalOutboxStore<TContext>.RelationalOutboxStore
   nameWithType.vb: RelationalOutboxStore(Of TContext).New
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.BeginTransactionAsync(System.Threading.CancellationToken)
+  name: BeginTransactionAsync(CancellationToken)
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_BeginTransactionAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.BeginTransactionAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.BeginTransactionAsync(System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).BeginTransactionAsync(System.Threading.CancellationToken)
+  nameWithType: RelationalOutboxStore<TContext>.BeginTransactionAsync(CancellationToken)
+  nameWithType.vb: RelationalOutboxStore(Of TContext).BeginTransactionAsync(CancellationToken)
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.BeginTransactionAsync*
+  name: BeginTransactionAsync
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_BeginTransactionAsync_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.BeginTransactionAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.BeginTransactionAsync
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).BeginTransactionAsync
+  nameWithType: RelationalOutboxStore<TContext>.BeginTransactionAsync
+  nameWithType.vb: RelationalOutboxStore(Of TContext).BeginTransactionAsync
 - uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
   name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
   href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_

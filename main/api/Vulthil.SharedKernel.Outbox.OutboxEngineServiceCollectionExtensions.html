@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Outbox_OutboxEngineServiceCollectionExtensions" data-uid="Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions" class="text-break">
-Class OutboxEngineServiceCollectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxEngineServiceCollectionExtensions.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class OutboxEngineServiceCollectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxEngineServiceCollectionExtensions.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -160,13 +160,16 @@ implementation for its provider.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxEngineServiceCollectionExtensions_AddOutboxEngine_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__Microsoft_Extensions_DependencyInjection_ServiceLifetime_" data-uid="Vulthil.SharedKernel.Outbox.OutboxEngineServiceCollectionExtensions.AddOutboxEngine(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
   AddOutboxEngine(IServiceCollection, Action&lt;OutboxProcessingOptions&gt;?, ServiceLifetime)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxEngineServiceCollectionExtensions.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxEngineServiceCollectionExtensions.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers the outbox engine: <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html">OutboxProcessingOptions</a> (validated on start), the commit-time
 <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxSignal.html">IOutboxSignal</a>, the relay <span class="xref">Vulthil.SharedKernel.Outbox.OutboxProcessor</span> and its background service, and the
 default in-process <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html">IOutboxDispatcher</a> for domain events. An <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a> must be
-registered separately by the persistence provider.</p>
+registered separately by the persistence provider. The engine's own services are registered idempotently, so
+calling this repeatedly (e.g. once per <code>EnableOutboxProcessing</code> call) never duplicates them; only one
+<a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a> is supported per host, because the relay and retention services resolve a single
+instance, so a second one being already registered fails fast instead of orphaning the first context's outbox.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -202,6 +205,12 @@ registered separately by the persistence provider.</p>
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>An <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a> is already registered for a different context.</p>
+</dd>
+  </dl>
 
 
 
@@ -209,7 +218,7 @@ registered separately by the persistence provider.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxEngineServiceCollectionExtensions.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxEngineServiceCollectionExtensions.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

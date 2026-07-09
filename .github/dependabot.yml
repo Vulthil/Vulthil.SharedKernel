@@ -26,6 +26,13 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 25
+    ignore:
+      # Microsoft.OpenApi 3.x is a separate major that ASP.NET Core's Microsoft.AspNetCore.OpenApi does
+      # not consume; the explicit 2.x pin in Directory.Packages.props tracks the patched line for
+      # GHSA-v5pm-xwqc-g5wc. Allow 2.x patch/minor bumps; drop this rule together with that pin once
+      # Microsoft.AspNetCore.OpenApi's own dependency floor passes 2.7.5.
+      - dependency-name: "Microsoft.OpenApi"
+        update-types: ["version-update:semver-major"]
     groups:
       xunit:
         patterns:

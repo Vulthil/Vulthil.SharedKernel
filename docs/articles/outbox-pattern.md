@@ -54,6 +54,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 
 `BaseDbContext` owns the `OutboxMessages` `DbSet`; apply the provider-optimized mapping in `OnModelCreating` by calling your provider's extension — `ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, or `ApplyCosmosOutbox()` (as shown above). The agnostic `ApplyOutbox()` is available for custom providers.
 
+Only one outbox-enabled `DbContext` is supported per host: the relay and retention background services resolve a
+single `IOutboxStore`, so calling `EnableOutboxProcessing()` for a second context throws an
+`InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed. The
+Npgsql and MySQL stores also require your context to derive from `BaseDbContext` (or otherwise implement
+`IUnitOfWork`) — without a transaction their `FOR UPDATE SKIP LOCKED` fetch would release its locks immediately,
+letting concurrent relay instances double-dispatch the same messages, so `RelationalOutboxStore` throws instead of
+running unprotected.
+
 ## Outbox Processing Options
 
 | Property | Default | Description |
@@ -165,6 +173,13 @@ directly. The transaction is established by one of:
   to run a consumer in a transaction without the inbox. The two compose: if the inbox is also enabled it opens the
   transaction and the consume filter joins it rather than nesting.
 - **Anything else** — wrap the work in `IUnitOfWork.ExecuteInTransactionAsync(...)`.
+
+Ambient `System.Transactions.TransactionScope` transactions are **not supported**: the capture gate checks for an
+Entity Framework Core transaction specifically, and EF Core does not surface an ambient scope as one. Publishing
+inside a `TransactionScope` with no EF Core transaction throws `NotSupportedException` rather than silently
+publishing directly while the scope is still uncommitted (a ghost message on rollback) — establish the transaction
+with one of the options above instead. Full ambient-scope support may be added in the future; it is deferred over
+provider enlistment edge cases.
 
 ## Typical Flow
 

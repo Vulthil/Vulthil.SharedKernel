@@ -49,6 +49,10 @@ builder.AddDbContext<AppDbContext>(config => config
     }));
 ```
 
+Only one outbox-enabled `DbContext` is supported per host: the relay and retention background services resolve a
+single `IOutboxStore`, so a second `EnableOutboxProcessing()` call (on a different `DbContext`) throws an
+`InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed.
+
 ### Generic repository
 
 ```csharp

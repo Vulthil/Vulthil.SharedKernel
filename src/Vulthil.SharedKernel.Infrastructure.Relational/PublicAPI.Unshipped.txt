@@ -1,1 +1,2 @@
 #nullable enable
+override Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.BeginTransactionAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction?>!

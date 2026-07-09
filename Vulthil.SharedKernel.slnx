@@ -108,6 +108,9 @@
     <Project Path="tests/Vulthil.SharedKernel.Outbox.Tests/Vulthil.SharedKernel.Outbox.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.Tests/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.Tests.csproj" />
   </Folder>
+  <Folder Name="/tests/Infrastructure/">
+    <Project Path="tests/Vulthil.SharedKernel.Infrastructure.Relational.Tests/Vulthil.SharedKernel.Infrastructure.Relational.Tests.csproj" />
+  </Folder>
   <Folder Name="/tests/Messaging/">
     <Project Path="tests/Vulthil.Messaging.Tests/Vulthil.Messaging.Tests.csproj" />
     <Project Path="tests/Vulthil.Messaging.Outbox.Tests/Vulthil.Messaging.Outbox.Tests.csproj" />

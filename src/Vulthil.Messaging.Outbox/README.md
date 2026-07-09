@@ -35,3 +35,8 @@ builder.AddMessaging(messaging =>
 
 The application's `DbContext` must implement `ISaveOutboxMessages` (a `BaseDbContext` already does). Capture is
 relational-only (it needs a transaction to enlist in).
+
+Ambient `System.Transactions.TransactionScope` transactions are not supported: publishing inside one with no active
+Entity Framework Core transaction throws `NotSupportedException` instead of silently publishing directly while the
+scope is uncommitted. Use `IUnitOfWork.ExecuteInTransactionAsync`, a transactional command, or a transactional
+consumer to establish the transaction instead.

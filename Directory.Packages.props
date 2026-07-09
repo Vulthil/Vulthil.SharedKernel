@@ -13,8 +13,8 @@
          Microsoft.OpenApi 2.0.0. net9.0's Microsoft.AspNetCore.OpenApi 9.0.17 already depends on the
          unaffected 1.x line, so only override the net10.0 leg; remove once AspNetCore.OpenApi bumps its own
          floor past 2.7.5. -->
-    <MicrosoftOpenApiVersion>2.9.0</MicrosoftOpenApiVersion>
-    <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">1.6.17</MicrosoftOpenApiVersion>
+    <MicrosoftOpenApiVersion>2.10.0</MicrosoftOpenApiVersion>
+    <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">2.10.0</MicrosoftOpenApiVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
@@ -50,11 +50,11 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.7.0" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.8.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.9.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.9" PrivateAssets="all" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.85" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.91" />
     <PackageVersion Include="Moq.AutoMock" Version="4.0.2" />
     <PackageVersion Include="OpenTelemetry.Api" Version="1.16.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
@@ -64,7 +64,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageVersion Include="ReportGenerator" Version="5.5.10" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
-    <PackageVersion Include="Scalar.Aspire" Version="0.11.2" />
+    <PackageVersion Include="Scalar.Aspire" Version="0.11.6" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.16.3" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.28.0.143324" />

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Inbox.Tests;
@@ -37,6 +38,39 @@ public sealed class InboxRetentionBackgroundServiceTests : BaseUnitTestCase
 
         // Assert
         logger.WarningCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task AForeignCancellationDuringASweepDoesNotEndTheExecuteTask()
+    {
+        // Arrange
+        Use<IOptions<InboxOptions>>(Options.Create(new InboxOptions()));
+        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        var store = new TimeoutThrowingRetentionStore();
+        Use<IIdempotencyStore>(store);
+
+        // Act
+        await Target.StartAsync(CancellationToken);
+        await store.FirstSweepAttempted;
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    private sealed class TimeoutThrowingRetentionStore : IIdempotencyStore, IInboxRetentionStore
+    {
+        private readonly TaskCompletionSource _firstSweepAttempted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task FirstSweepAttempted => _firstSweepAttempted.Task;
+
+        public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken) => Task.FromResult(false);
+
+        public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+        {
+            _firstSweepAttempted.TrySetResult();
+            throw new OperationCanceledException();
+        }
     }
 
     private sealed class WarningCountingLogger : ILogger<InboxRetentionBackgroundService>

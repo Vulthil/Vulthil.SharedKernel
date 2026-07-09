@@ -147,6 +147,32 @@ jobs:
             exit 1
           fi
 
+      # This PR's baseline bump makes its own CI restore packages at the version
+      # that was just published above -- the SDK downloads the baseline version
+      # at restore time -- which fails with NU1102 until nuget.org finishes
+      # indexing it (observed lag: 5-30 min). Polling one representative package
+      # id is a proportionate proxy: all 24 packages publish together in the
+      # same job, so their indexing lag tracks closely; the grace sleep after a
+      # hit covers the remaining stragglers.
+      - name: Wait for nuget.org to index the release
+        env:
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          PACKAGE_ID="vulthil.sharedkernel"
+          INDEX_URL="https://api.nuget.org/v3-flatcontainer/${PACKAGE_ID}/index.json"
+          ATTEMPTS=40
+          for i in $(seq 1 "$ATTEMPTS"); do
+            if curl -fsS "$INDEX_URL" | jq -e --arg v "$VERSION" '.versions | index($v) != null' >/dev/null; then
+              echo "nuget.org has indexed $PACKAGE_ID $VERSION. Grace sleep for the rest of the set..."
+              sleep 60
+              exit 0
+            fi
+            echo "Attempt $i/$ATTEMPTS: $PACKAGE_ID $VERSION not yet indexed on nuget.org; retrying in 30s."
+            sleep 30
+          done
+          echo "::error::nuget.org did not index $PACKAGE_ID $VERSION within ~20 minutes. This PR's build will fail with NU1102 until indexing completes -- re-run the failed check once nuget.org catches up."
+          exit 1
+
       - name: Open public API promotion PR
         id: cpr
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
@@ -175,6 +201,97 @@ jobs:
       # distinct identity. Then queue the merge once the required `build` check
       # passes. Both steps are skipped when no APIs changed and no PR was opened.
       - name: Approve the promotion PR
+        if: steps.cpr.outputs.pull-request-number
+        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number
+        run: gh pr merge --auto --merge "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Each branch's mark-api-shipped bumps ITS OWN PackageValidationBaselineVersion
+  # only. After a servicing release (e.g. 1.0.2 from v1.0), main should also
+  # move to the new version -- every branch validates its packages against the
+  # newest release it must stay compatible with. This is one-directional by
+  # construction: it only ever targets main, and eng/propagate_baseline.py only
+  # ever raises a version, never lowers one. A release dispatched from main
+  # skips this job entirely via the `if` below, since main's own
+  # mark-api-shipped run already bumped main's baseline for this release.
+  # Never run the reverse (bumping a servicing branch's baseline to a newer
+  # minor from main) -- that would validate the servicing branch's packages
+  # against APIs it doesn't have yet and flag them all as removals.
+  propagate-baseline-to-main:
+    needs: release
+    if: github.ref_name != github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # create the propagation branch
+      pull-requests: write # open the PR
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Compute propagated baseline
+        id: propagate
+        run: python3 eng/propagate_baseline.py --released-version ${{ needs.release.outputs.version }}
+
+      - name: Require automation token
+        if: steps.propagate.outputs.bumped == 'true'
+        env:
+          AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+        run: |
+          if [ -z "$AUTOMATION_TOKEN" ]; then
+            echo "::error::AUTOMATION_TOKEN is not set. The default GITHUB_TOKEN cannot open this PR: pushes made with it do not trigger the required 'build' check, so auto-merge would stall silently."
+            exit 1
+          fi
+
+      # Same NU1102 race as mark-api-shipped's gate, repeated here rather than
+      # extracted: this PR also bumps a baseline that restores the
+      # just-published packages. Skipped when nothing was bumped above, since
+      # there is no PR -- and therefore no restore -- to protect.
+      - name: Wait for nuget.org to index the release
+        if: steps.propagate.outputs.bumped == 'true'
+        env:
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          PACKAGE_ID="vulthil.sharedkernel"
+          INDEX_URL="https://api.nuget.org/v3-flatcontainer/${PACKAGE_ID}/index.json"
+          ATTEMPTS=40
+          for i in $(seq 1 "$ATTEMPTS"); do
+            if curl -fsS "$INDEX_URL" | jq -e --arg v "$VERSION" '.versions | index($v) != null' >/dev/null; then
+              echo "nuget.org has indexed $PACKAGE_ID $VERSION. Grace sleep for the rest of the set..."
+              sleep 60
+              exit 0
+            fi
+            echo "Attempt $i/$ATTEMPTS: $PACKAGE_ID $VERSION not yet indexed on nuget.org; retrying in 30s."
+            sleep 30
+          done
+          echo "::error::nuget.org did not index $PACKAGE_ID $VERSION within ~20 minutes. This PR's build will fail with NU1102 until indexing completes -- re-run the failed check once nuget.org catches up."
+          exit 1
+
+      - name: Open baseline propagation PR
+        id: cpr
+        if: steps.propagate.outputs.bumped == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        with:
+          # AUTOMATION_TOKEN lets the required `build` check run on the PR; with
+          # the default GITHUB_TOKEN, pushes from a workflow do not trigger CI.
+          # Enforced by the "Require automation token" step above -- no fallback.
+          token: ${{ secrets.AUTOMATION_TOKEN }}
+          add-paths: Directory.Build.props
+          branch: chore/baseline-${{ needs.release.outputs.version }}-to-main
+          delete-branch: true
+          commit-message: "chore: validate packages against the ${{ needs.release.outputs.version }} baseline"
+          title: "chore: validate packages against the ${{ needs.release.outputs.version }} baseline"
+          labels: automated
+          body: |
+            **${{ github.ref_name }}** released **v${{ needs.release.outputs.version }}**. This raises main's `PackageValidationBaselineVersion` to match, so main keeps validating its packages against the newest release it must stay compatible with.
+
+      - name: Approve the propagation PR
         if: steps.cpr.outputs.pull-request-number
         run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
         env:

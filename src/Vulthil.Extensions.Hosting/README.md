@@ -14,10 +14,13 @@ around the per-test database reset, so a live database-polling relay (for exampl
 simply by implementing the marker — no test-only code, and the testing library never depends on the outbox engine.
 
 ```csharp
-internal sealed class OutboxBackgroundService(/* ... */) : BackgroundService, IRestartableHostedService
+internal sealed class OutboxBackgroundService(/* ... */) : IRestartableHostedService, IDisposable
 {
-    // ExecuteAsync is written so a Stop/Start cycle re-runs it cleanly.
+    // StartAsync/StopAsync manage the execute task so a Stop/Start cycle re-runs it cleanly.
 }
 ```
 
-Implement it only on services whose `StartAsync`/`StopAsync` are idempotent across repeated cycles.
+Implement it only on services whose `StartAsync`/`StopAsync` are idempotent across repeated cycles. Prefer
+implementing `IHostedService` directly over inheriting `BackgroundService`: the host observes only the execute task
+of a `BackgroundService`'s first start and stops the whole host when that task is canceled while the application is
+running — and on .NET 10 a stop racing service startup can cancel the task before `ExecuteAsync` has run at all.

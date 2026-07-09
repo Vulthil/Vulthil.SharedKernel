@@ -39,6 +39,47 @@ public sealed class OutboxRetentionBackgroundServiceTests : BaseUnitTestCase
         logger.WarningCount.ShouldBe(1);
     }
 
+    [Fact]
+    public async Task AForeignCancellationDuringASweepDoesNotEndTheExecuteTask()
+    {
+        // Arrange
+        Use<IOptions<OutboxProcessingOptions>>(Options.Create(new OutboxProcessingOptions()));
+        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        var store = new TimeoutThrowingRetentionStore();
+        Use<IOutboxStore>(store);
+
+        // Act
+        await Target.StartAsync(CancellationToken);
+        await store.FirstSweepAttempted;
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    private sealed class TimeoutThrowingRetentionStore : IOutboxStore, IOutboxRetentionStore
+    {
+        private readonly TaskCompletionSource _firstSweepAttempted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task FirstSweepAttempted => _firstSweepAttempted.Task;
+
+        public bool IsInTransaction => false;
+
+        public void AddOutboxMessage(OutboxMessage message)
+        {
+        }
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
+
+        public Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken) => Task.FromResult(0);
+
+        public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+        {
+            _firstSweepAttempted.TrySetResult();
+            throw new OperationCanceledException();
+        }
+    }
+
     private sealed class WarningCountingLogger : ILogger<OutboxRetentionBackgroundService>
     {
         private readonly TaskCompletionSource _firstWarning = new(TaskCreationOptions.RunContinuationsAsynchronously);

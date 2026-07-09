@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
+using System.Text.Json;
 using RabbitMQ.Client;
 using Vulthil.Extensions.Testing;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.IntegrationTest.Contracts;
 using Vulthil.Results;
 
@@ -238,18 +239,21 @@ public sealed class MessagingConfigurationTests(AppHostFixture fixture)
                 var message = await channel.BasicGetAsync(observer.QueueName, autoAck: true, ct);
                 if (message is null)
                 {
-                    return Result.Failure<bool>(Error.NotFound("Fault.Empty", "No fault published yet."));
+                    return Result.Failure<Fault<PoisonCommand>>(Error.NotFound("Fault.Empty", "No fault published yet."));
                 }
 
-                var body = Encoding.UTF8.GetString(message.Body.Span);
-                return body.Contains(command.Id.ToString(), StringComparison.OrdinalIgnoreCase)
-                    ? Result.Success(true)
-                    : Result.Failure<bool>(Error.NotFound("Fault.Mismatch", "Fault for another message."));
+                var fault = JsonSerializer.Deserialize<Fault<PoisonCommand>>(message.Body.Span);
+                return fault is not null && fault.Message.Id == command.Id
+                    ? Result.Success(fault)
+                    : Result.Failure<Fault<PoisonCommand>>(Error.NotFound("Fault.Mismatch", "Fault for another message."));
             },
             PollInterval,
             cancellationToken);
 
         faultResult.IsSuccess.ShouldBeTrue();
+        faultResult.Value.Message.Id.ShouldBe(command.Id);
+        faultResult.Value.ExceptionType.ShouldNotBeNullOrWhiteSpace();
+        faultResult.Value.OriginalContext.ShouldNotBeNull();
     }
 
     [Fact]

@@ -181,7 +181,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             activity?.AddException(ex);
-            await HandleFailureAsync(ex, ea, prepared.DiagnosticTypeName);
+            await HandleFailureAsync(ex, ea, prepared.Envelope, prepared.DiagnosticTypeName);
         }
     }
 
@@ -216,7 +216,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                     activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
                     activity?.AddException(ex);
                     MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey);
-                    await PublishFaultAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>(), prepared.DiagnosticTypeName);
+                    await PublishFaultAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>(), prepared.Envelope, prepared.DiagnosticTypeName);
                     await NackAsync(ea);
                     return;
                 }
@@ -262,7 +262,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         return activity;
     }
 
-    private async Task HandleFailureAsync(Exception ex, BasicDeliverEventArgs ea, string messageTypeName)
+    private async Task HandleFailureAsync(Exception ex, BasicDeliverEventArgs ea, MessageEnvelope? envelope, string messageTypeName)
     {
         var plan = _typeCache.GetPlan(messageTypeName);
         var policy = GetPolicy(plan, _queueDefinition);
@@ -272,7 +272,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         if (policy is null)
         {
             MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-            await PublishFaultAsync(ex, ea, headers, messageTypeName);
+            await PublishFaultAsync(ex, ea, headers, envelope, messageTypeName);
             await NackAsync(ea);
             return;
         }
@@ -296,7 +296,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
 
         MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-        await PublishFaultAsync(ex, ea, headers, messageTypeName);
+        await PublishFaultAsync(ex, ea, headers, envelope, messageTypeName);
         await NackAsync(ea);
     }
 
@@ -304,20 +304,24 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// Publishes a <see cref="Fault{TMessage}"/> for a terminally-failed delivery. When the delivery carries an
     /// explicit <c>FaultAddress</c> the fault is routed point-to-point to that address (via the broker's default
     /// exchange); otherwise it is published by convention to the shared fault exchange with the faulted message's
-    /// URN as the routing key. Exactly one fault is emitted per failure. Publishing is best-effort: a failure to
-    /// publish the fault is logged and never disrupts settling the original delivery.
+    /// URN as the routing key. Exactly one fault is emitted per failure. The fault's <c>Message</c> is the original
+    /// message payload: for an envelope-wrapped delivery the wire envelope is unwrapped (re-parsing the body when
+    /// the caller has no parsed envelope at hand), so a subscriber can deserialize the fault as
+    /// <see cref="Fault{TMessage}"/> of the faulted message type. Publishing is best-effort: a failure to publish
+    /// the fault is logged and never disrupts settling the original delivery.
     /// </summary>
-    private async Task PublishFaultAsync(Exception ex, BasicDeliverEventArgs ea, IDictionary<string, object?> headers, string messageTypeName)
+    private async Task PublishFaultAsync(Exception ex, BasicDeliverEventArgs ea, IDictionary<string, object?> headers, MessageEnvelope? envelope, string messageTypeName)
     {
         var (exchange, routingKey) = ResolveFaultRoute(headers, _messageConfigurationProvider.FaultExchangeName, messageTypeName);
 
         try
         {
-            var originalBody = JsonSerializer.Deserialize<JsonElement>(ea.Body.Span, _jsonOptions);
+            var faultedEnvelope = envelope ?? TryParseEnvelope(ea.Body, _jsonOptions);
+            var originalMessage = faultedEnvelope?.Message ?? JsonSerializer.Deserialize<JsonElement>(ea.Body.Span, _jsonOptions);
 
             var fault = new Fault<JsonElement>
             {
-                Message = originalBody,
+                Message = originalMessage,
                 ExceptionMessage = ex.Message,
                 StackTrace = ex.StackTrace,
                 ExceptionType = ex.GetType().FullName ?? "Unknown",

@@ -22,13 +22,18 @@ internal static class RabbitMqConstants
         return 0;
     }
 
-    public static DateTimeOffset? TryParseExpiration(string? expiration)
+    /// <summary>
+    /// Maps a per-message AMQP TTL to an absolute expiration instant. The TTL is relative to when the message
+    /// was published, so it is anchored to <paramref name="sentTime"/> when the delivery carries a timestamp;
+    /// without one the consume-side clock is the only anchor available and the result is an upper bound.
+    /// </summary>
+    public static DateTimeOffset? TryParseExpiration(string? expiration, DateTimeOffset? sentTime)
     {
         if (!string.IsNullOrWhiteSpace(expiration) && long.TryParse(expiration, out var ms))
         {
             try
             {
-                return DateTimeOffset.UtcNow.AddMilliseconds(ms);
+                return (sentTime ?? DateTimeOffset.UtcNow).AddMilliseconds(ms);
             }
             catch (ArgumentOutOfRangeException)
             {

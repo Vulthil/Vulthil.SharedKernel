@@ -79,6 +79,8 @@ public record MessageContext : IMessageContext
     /// does not carry are supplied by the caller: the broker <paramref name="routingKey"/>, the
     /// <paramref name="redelivered"/> flag, the in-memory <paramref name="retryCount"/>, and a
     /// <paramref name="replyToFallback"/> used for the response address when the envelope omits one.
+    /// Header values deserialized from the wire are normalized to CLR primitives
+    /// (see <see cref="IMessageContext.Headers"/> for the contract).
     /// </summary>
     /// <typeparam name="TMessage">The deserialized message type.</typeparam>
     /// <param name="message">The deserialized message.</param>
@@ -102,7 +104,11 @@ public record MessageContext : IMessageContext
         ISendEndpointProvider? sendEndpointProvider,
         CancellationToken cancellationToken)
     {
-        var userHeaders = envelope.Headers is { } h ? new Dictionary<string, object?>(h) : [];
+        var userHeaders = new Dictionary<string, object?>();
+        foreach (var (key, value) in envelope.Headers ?? [])
+        {
+            userHeaders[key] = HeaderValueNormalizer.Normalize(value);
+        }
 
         return new MessageContext<TMessage>
         {

@@ -66,6 +66,82 @@ public sealed class MessageContextTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void CreateFromEnvelopeNormalizesWireDeserializedHeaderValuesToClrPrimitives()
+    {
+        // Arrange — round-trip the envelope through JSON exactly as a broker delivery does.
+        var envelope = Envelope() with
+        {
+            Headers = new Dictionary<string, object?>
+            {
+                ["tenant"] = "acme",
+                ["attempt"] = 3,
+                ["big"] = 5_000_000_000L,
+                ["ratio"] = 1.5,
+                ["critical"] = true,
+                ["id"] = Guid.Parse("11111111-2222-3333-4444-555555555555"),
+                ["shape"] = new Dictionary<string, int> { ["a"] = 1 },
+                ["missing"] = null,
+            },
+        };
+        var wireEnvelope = JsonSerializer.Deserialize<MessageEnvelope>(JsonSerializer.Serialize(envelope))!;
+
+        // Act
+        var context = MessageContext.CreateFromEnvelope(
+            new TestMessage("payload"),
+            wireEnvelope,
+            routingKey: "rk",
+            redelivered: false,
+            retryCount: 0,
+            replyToFallback: null,
+            publisher: null,
+            sendEndpointProvider: null,
+            CancellationToken.None);
+
+        // Assert
+        context.Headers["tenant"].ShouldBeOfType<string>().ShouldBe("acme");
+        context.Headers["attempt"].ShouldBeOfType<int>().ShouldBe(3);
+        context.Headers["big"].ShouldBeOfType<long>().ShouldBe(5_000_000_000L);
+        context.Headers["ratio"].ShouldBeOfType<double>().ShouldBe(1.5);
+        context.Headers["critical"].ShouldBeOfType<bool>().ShouldBe(true);
+        context.Headers["id"].ShouldBeOfType<string>().ShouldBe("11111111-2222-3333-4444-555555555555");
+        context.Headers["shape"].ShouldBeOfType<JsonElement>().GetProperty("a").GetInt32().ShouldBe(1);
+        context.Headers["missing"].ShouldBeNull();
+    }
+
+    [Fact]
+    public void CreateFromEnvelopeLeavesInMemoryClrHeaderValuesUntouched()
+    {
+        // Arrange — an in-memory transport hands over the envelope without a JSON round-trip.
+        var tenantId = Guid.NewGuid();
+        var envelope = Envelope() with
+        {
+            Headers = new Dictionary<string, object?>
+            {
+                ["tenant"] = "acme",
+                ["attempt"] = 3,
+                ["id"] = tenantId,
+            },
+        };
+
+        // Act
+        var context = MessageContext.CreateFromEnvelope(
+            new TestMessage("payload"),
+            envelope,
+            routingKey: "rk",
+            redelivered: false,
+            retryCount: 0,
+            replyToFallback: null,
+            publisher: null,
+            sendEndpointProvider: null,
+            CancellationToken.None);
+
+        // Assert
+        context.Headers["tenant"].ShouldBeOfType<string>().ShouldBe("acme");
+        context.Headers["attempt"].ShouldBeOfType<int>().ShouldBe(3);
+        context.Headers["id"].ShouldBeOfType<Guid>().ShouldBe(tenantId);
+    }
+
+    [Fact]
     public void CreateFromEnvelopeFallsBackToReplyToWhenEnvelopeHasNoResponseAddress()
     {
         // Act

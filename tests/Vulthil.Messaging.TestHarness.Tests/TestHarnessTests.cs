@@ -167,6 +167,33 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task ConsumedContextSurfacesPublishedHeaderPrimitivesUnchanged()
+    {
+        // Arrange
+        IReadOnlyDictionary<string, object?>? observed = null;
+        Harness.Handle<OrderShipped>(context =>
+        {
+            observed = context.Headers;
+            return Task.CompletedTask;
+        });
+
+        // Act
+        await Publisher.PublishAsync(new OrderShipped(Guid.NewGuid()), ctx =>
+        {
+            ctx.AddHeader("tenant", "acme");
+            ctx.AddHeader("attempt", 3);
+            ctx.AddHeader("critical", true);
+            return ValueTask.CompletedTask;
+        }, CancellationToken);
+
+        // Assert
+        var headers = observed.ShouldNotBeNull();
+        headers["tenant"].ShouldBeOfType<string>().ShouldBe("acme");
+        headers["attempt"].ShouldBeOfType<int>().ShouldBe(3);
+        headers["critical"].ShouldBeOfType<bool>().ShouldBe(true);
+    }
+
+    [Fact]
     public async Task ClearResetsCapturedMessages()
     {
         // Arrange

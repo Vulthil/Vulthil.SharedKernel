@@ -1,3 +1,4 @@
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
@@ -8,7 +9,10 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 /// <summary>
 /// Builds <see cref="MessageContext"/> instances from RabbitMQ deliveries: the AMQP property/header paths plus a
 /// serializable snapshot for faults. The envelope receive path delegates the transport-agnostic mapping to
-/// <see cref="MessageContext.CreateFromEnvelope{TMessage}"/>.
+/// <see cref="MessageContext.CreateFromEnvelope{TMessage}"/>. Header values are normalized via
+/// <see cref="AmqpHeaderValueNormalizer"/> so both receive paths honor the <see cref="IMessageContext.Headers"/>
+/// contract, and a per-message TTL is anchored to the delivery's timestamp when one is present (the AMQP
+/// expiration is relative to publish, not to consumption).
 /// </summary>
 internal static class MessageContextFactory
 {
@@ -83,13 +87,14 @@ internal static class MessageContextFactory
     {
         var props = ea.BasicProperties;
         var headers = props.Headers ?? new Dictionary<string, object?>();
+        var sentTime = GetSentTime(props);
         return new MessageContext
         {
             MessageId = props.MessageId,
             CorrelationId = props.CorrelationId,
             RequestId = props.CorrelationId,
             RoutingKey = ea.RoutingKey,
-            Headers = headers.ToDictionary(),
+            Headers = AmqpHeaderValueNormalizer.Normalize(headers),
             Redelivered = ea.Redelivered,
             RetryCount = RabbitMqConstants.GetRetryCount(headers),
             ConversationId = RabbitMqConstants.GetHeaderString(headers, "ConversationId"),
@@ -99,8 +104,8 @@ internal static class MessageContextFactory
             ResponseAddress = RabbitMqConstants.GetHeaderUri(headers, "ResponseAddress")
                 ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : new Uri($"queue:{props.ReplyTo}")),
             FaultAddress = RabbitMqConstants.GetHeaderUri(headers, "FaultAddress"),
-            SentTime = props.Timestamp.UnixTime > 0 ? DateTimeOffset.FromUnixTimeSeconds(props.Timestamp.UnixTime) : null,
-            ExpirationTime = RabbitMqConstants.TryParseExpiration(props.Expiration)
+            SentTime = sentTime,
+            ExpirationTime = RabbitMqConstants.TryParseExpiration(props.Expiration, sentTime)
         };
     }
 
@@ -113,6 +118,7 @@ internal static class MessageContextFactory
     {
         var props = ea.BasicProperties;
         var headers = props.Headers ?? new Dictionary<string, object?>();
+        var sentTime = GetSentTime(props);
         return new MessageContext<TMessage>
         {
             Message = message,
@@ -123,7 +129,7 @@ internal static class MessageContextFactory
             CorrelationId = props.CorrelationId,
             RequestId = props.CorrelationId,
             RoutingKey = ea.RoutingKey,
-            Headers = headers.ToDictionary(),
+            Headers = AmqpHeaderValueNormalizer.Normalize(headers),
             Redelivered = ea.Redelivered,
             RetryCount = RabbitMqConstants.GetRetryCount(headers),
             ConversationId = RabbitMqConstants.GetHeaderString(headers, "ConversationId"),
@@ -133,8 +139,11 @@ internal static class MessageContextFactory
             ResponseAddress = RabbitMqConstants.GetHeaderUri(headers, "ResponseAddress")
                 ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : new Uri($"queue:{props.ReplyTo}")),
             FaultAddress = RabbitMqConstants.GetHeaderUri(headers, "FaultAddress"),
-            SentTime = props.Timestamp.UnixTime > 0 ? DateTimeOffset.FromUnixTimeSeconds(props.Timestamp.UnixTime) : null,
-            ExpirationTime = RabbitMqConstants.TryParseExpiration(props.Expiration)
+            SentTime = sentTime,
+            ExpirationTime = RabbitMqConstants.TryParseExpiration(props.Expiration, sentTime)
         };
     }
+
+    private static DateTimeOffset? GetSentTime(IReadOnlyBasicProperties props)
+        => props.Timestamp.UnixTime > 0 ? DateTimeOffset.FromUnixTimeSeconds(props.Timestamp.UnixTime) : null;
 }

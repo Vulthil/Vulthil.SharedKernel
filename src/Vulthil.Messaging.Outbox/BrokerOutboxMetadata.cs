@@ -16,6 +16,12 @@ internal sealed record BrokerOutboxMetadata
 
     public string? DestinationAddress { get; init; }
 
+    /// <summary>
+    /// The captured publish headers. Values persist as JSON, so the relay reproduces JSON-primitive values
+    /// exactly and republishes anything else as its serialized JSON form — a relayed message's headers match
+    /// a directly-published message's on the wire, but CLR types with no JSON representation (e.g.
+    /// <see cref="Guid"/>) are not rematerialized as their original type.
+    /// </summary>
     [JsonConverter(typeof(BrokerOutboxMetadataHeadersConverter))]
     public Dictionary<string, object?>? Headers { get; init; }
 }

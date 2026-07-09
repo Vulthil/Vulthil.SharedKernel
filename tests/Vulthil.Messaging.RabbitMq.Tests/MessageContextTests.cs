@@ -54,6 +54,66 @@ public sealed class MessageContextTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void CreateContextNormalizesAmqpHeaderValuesToClrPrimitives()
+    {
+        // Arrange — the RabbitMQ client surfaces string headers (and strings nested in tables/arrays) as UTF-8 byte arrays.
+        var eventArgs = CreateDeliverEventArgs(headers: new Dictionary<string, object?>
+        {
+            ["tenant"] = Encoding.UTF8.GetBytes("acme"),
+            ["attempt"] = 3,
+            ["big"] = 5_000_000_000L,
+            ["critical"] = true,
+            ["tags"] = new List<object?> { Encoding.UTF8.GetBytes("vip"), 7 },
+            ["nested"] = new Dictionary<string, object?> { ["region"] = Encoding.UTF8.GetBytes("eu") },
+        });
+
+        // Act
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+
+        // Assert
+        context.Headers["tenant"].ShouldBeOfType<string>().ShouldBe("acme");
+        context.Headers["attempt"].ShouldBeOfType<int>().ShouldBe(3);
+        context.Headers["big"].ShouldBeOfType<long>().ShouldBe(5_000_000_000L);
+        context.Headers["critical"].ShouldBeOfType<bool>().ShouldBe(true);
+        var tags = context.Headers["tags"].ShouldBeAssignableTo<List<object?>>().ShouldNotBeNull();
+        tags[0].ShouldBeOfType<string>().ShouldBe("vip");
+        tags[1].ShouldBeOfType<int>().ShouldBe(7);
+        var nested = context.Headers["nested"].ShouldBeAssignableTo<Dictionary<string, object?>>().ShouldNotBeNull();
+        nested["region"].ShouldBeOfType<string>().ShouldBe("eu");
+    }
+
+    [Fact]
+    public void CreateContextAnchorsTheTtlExpirationToTheSentTimestamp()
+    {
+        // Arrange — the AMQP expiration is a TTL relative to publish, carried alongside the publish timestamp.
+        var sentTime = new DateTimeOffset(2026, 7, 1, 12, 0, 0, TimeSpan.Zero);
+        var eventArgs = CreateDeliverEventArgs(expiration: "5000", timestamp: sentTime.ToUnixTimeSeconds());
+
+        // Act
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+
+        // Assert
+        context.SentTime.ShouldBe(sentTime);
+        context.ExpirationTime.ShouldBe(sentTime.AddSeconds(5));
+    }
+
+    [Fact]
+    public void CreateContextFallsBackToTheConsumeClockForTtlWithoutASentTimestamp()
+    {
+        // Arrange
+        var eventArgs = CreateDeliverEventArgs(expiration: "5000", timestamp: 0);
+
+        // Act
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+
+        // Assert
+        context.SentTime.ShouldBeNull();
+        var expiration = context.ExpirationTime.ShouldNotBeNull();
+        expiration.ShouldBeGreaterThan(DateTimeOffset.UtcNow.AddSeconds(3));
+        expiration.ShouldBeLessThan(DateTimeOffset.UtcNow.AddSeconds(10));
+    }
+
+    [Fact]
     public void CreateContextShouldFallbackResponseAddressFromReplyTo()
     {
         // Arrange

@@ -131,6 +131,17 @@ public sealed class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
 `IMessageContext.CancellationToken` exposes the delivery's cancellation token for
 handlers that want to observe it alongside the explicit method parameter.
 
+### Header values on the consume side
+
+Custom headers travel as JSON, and the consume side normalizes them so every path — a Vulthil
+envelope, a bare-AMQP message from a non-Vulthil producer, or an outbox-relayed publish — surfaces
+the same CLR primitives in `IMessageContext.Headers`: strings arrive as `string`, booleans as
+`bool`, and numbers as `int`, `long`, or `double` (the narrowest that represents the value). A
+header published as `AddHeader("tenant", "acme")` is the string `"acme"` again in the consumer.
+Values without a JSON primitive form keep their JSON shape: objects and arrays surface as
+`JsonElement`, and types JSON serializes as strings (e.g. `Guid`, `DateTimeOffset`) surface as
+that string.
+
 ## Point-to-point Send
 
 `IPublisher.PublishAsync` fans a message out via its per-type exchange to any number of
@@ -439,6 +450,15 @@ public record Fault<TMessage> where TMessage : notnull
     public required DateTimeOffset FaultedAt { get; init; }
     public required MessageContextSnapshot OriginalContext { get; init; } // original transport metadata
 }
+```
+
+`Message` is the faulted message's own payload — for envelope-wrapped (Vulthil-produced) deliveries
+the wire envelope is unwrapped before the fault is built — so a subscriber reads the original fields
+with a plain deserialization:
+
+```csharp
+var fault = JsonSerializer.Deserialize<Fault<OrderCreatedEvent>>(body, jsonOptions)!;
+var orderId = fault.Message.OrderId;
 ```
 
 The fault exchange is a diagnostics/observability broadcast — drain it with a monitoring service or

@@ -55,6 +55,16 @@ public interface IMessageContext
     /// <summary>
     /// Gets the transport headers associated with the message, containing custom metadata.
     /// </summary>
+    /// <remarks>
+    /// Values are normalized when the context is built, so every consume path (envelope, bare AMQP, outbox
+    /// relay) surfaces the same CLR primitives: strings arrive as <see cref="string"/>, booleans as
+    /// <see cref="bool"/>, and numbers as <see cref="int"/>, <see cref="long"/>, or <see cref="double"/> —
+    /// the narrowest of the three that represents the value. Header values published as non-primitive
+    /// objects have no CLR type on the wire and surface in their JSON form: as a
+    /// <see cref="System.Text.Json.JsonElement"/> when published as an object or array, or as a
+    /// <see cref="string"/> for types JSON represents as strings (e.g. <see cref="Guid"/>,
+    /// <see cref="DateTimeOffset"/>).
+    /// </remarks>
     IReadOnlyDictionary<string, object?> Headers { get; }
 
     // --- Timing & Lifecycle ---

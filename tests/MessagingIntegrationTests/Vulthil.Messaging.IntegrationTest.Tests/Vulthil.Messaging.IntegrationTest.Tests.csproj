@@ -12,6 +12,7 @@
 		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.AppHost\Vulthil.Messaging.IntegrationTest.AppHost.csproj" />
 		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.Contracts\Vulthil.Messaging.IntegrationTest.Contracts.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
+		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.Abstractions\Vulthil.Messaging.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

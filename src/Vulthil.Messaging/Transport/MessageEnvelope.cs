@@ -66,7 +66,11 @@ public sealed record MessageEnvelope
     [JsonPropertyName("expirationTime")]
     public DateTimeOffset? ExpirationTime { get; init; }
 
-    /// <summary>Custom transport headers (e.g. tenancy markers, retry counters).</summary>
+    /// <summary>
+    /// Custom transport headers (e.g. tenancy markers, retry counters). Values travel as JSON, so receivers
+    /// observe JSON primitives regardless of the published CLR type; the consume side normalizes them per the
+    /// contract on <see cref="Abstractions.Consumers.IMessageContext.Headers"/>.
+    /// </summary>
     [JsonPropertyName("headers")]
     public Dictionary<string, object?>? Headers { get; init; }
 }

@@ -100,7 +100,7 @@ Interfaces
 may pause it for the duration of an operation that must not run concurrently with it — for example a test harness
 resetting the database between tests, where a live database-polling relay would otherwise contend with the reset.
 Implement this only on services whose <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice.startasync">StartAsync(CancellationToken)</a> / <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice.stopasync">StopAsync(CancellationToken)</a>
-are idempotent across repeated cycles (a <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a> whose <code>ExecuteAsync</code> re-runs cleanly).</p>
+are idempotent across repeated cycles.</p>
 </dd>
     </dl>
 

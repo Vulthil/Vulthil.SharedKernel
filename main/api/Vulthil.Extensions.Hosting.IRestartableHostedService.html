@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IRestartableHostedService | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Marks an  whose execution can be stopped and started again cleanly, so infrastructure may pause it for the duration of an operation that must not run concurrently with it — for example a test harness resetting the database between tests, where a live database-polling relay would otherwise contend with the reset. Implement this only on services whose  /  are idempotent across repeated cycles (a  whose ExecuteAsync re-runs cleanly).">
+      <meta name="description" content="Marks an  whose execution can be stopped and started again cleanly, so infrastructure may pause it for the duration of an operation that must not run concurrently with it — for example a test harness resetting the database between tests, where a live database-polling relay would otherwise contend with the reset. Implement this only on services whose  /  are idempotent across repeated cycles.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Extensions_Hosting_IRestartableHostedService" data-uid="Vulthil.Extensions.Hosting.IRestartableHostedService" class="text-break">
-Interface IRestartableHostedService  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Hosting/IRestartableHostedService.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Interface IRestartableHostedService  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Hosting/IRestartableHostedService.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -101,7 +101,7 @@ Interface IRestartableHostedService  <a class="header-action link-secondary" tit
 may pause it for the duration of an operation that must not run concurrently with it — for example a test harness
 resetting the database between tests, where a live database-polling relay would otherwise contend with the reset.
 Implement this only on services whose <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice.startasync">StartAsync(CancellationToken)</a> / <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice.stopasync">StopAsync(CancellationToken)</a>
-are idempotent across repeated cycles (a <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a> whose <code>ExecuteAsync</code> re-runs cleanly).</p>
+are idempotent across repeated cycles.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -136,13 +136,21 @@ are idempotent across repeated cycles (a <a class="xref" href="https://learn.mic
 
 
 
+  <h2 id="Vulthil_Extensions_Hosting_IRestartableHostedService_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Prefer implementing <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a> directly over inheriting <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a>: the
+host observes only the execute task created by a <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a>'s first start, and it treats a
+canceled execute task as a fault that stops the host whenever the application is not already shutting down. On
+.NET 10 that task is scheduled with a <code>Task.Run</code> gated on the stopping token, so a stop that races service
+startup can cancel the task before <code>ExecuteAsync</code> has run at all — no graceful handling inside
+<code>ExecuteAsync</code> can prevent the resulting host shutdown.</p>
+</div>
 
 
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Hosting/IRestartableHostedService.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Hosting/IRestartableHostedService.cs/#L20" class="edit-link">Edit this page</a>
         </div>
 
 

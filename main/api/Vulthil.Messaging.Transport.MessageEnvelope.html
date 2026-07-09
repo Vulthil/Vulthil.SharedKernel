@@ -338,10 +338,12 @@ public string? FaultAddress { get; init; }</code></pre>
 
   <h3 id="Vulthil_Messaging_Transport_MessageEnvelope_Headers" data-uid="Vulthil.Messaging.Transport.MessageEnvelope.Headers">
   Headers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageEnvelope.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Custom transport headers (e.g. tenancy markers, retry counters).</p>
+  <div class="markdown level1 summary"><p>Custom transport headers (e.g. tenancy markers, retry counters). Values travel as JSON, so receivers
+observe JSON primitives regardless of the published CLR type; the consume side normalizes them per the
+contract on <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Headers">Headers</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

@@ -397,6 +397,16 @@ with the consumer scope, allowing handlers to observe both.</p>
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_Transport_MessageContext_Headers_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Values are normalized when the context is built, so every consume path (envelope, bare AMQP, outbox
+relay) surfaces the same CLR primitives: strings arrive as <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, booleans as
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>, and numbers as <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>, or <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a> —
+the narrowest of the three that represents the value. Header values published as non-primitive
+objects have no CLR type on the wire and surface in their JSON form: as a
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonelement">JsonElement</a> when published as an object or array, or as a
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> for types JSON represents as strings (e.g. <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>,
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a>).</p>
+</div>
 
 
 
@@ -761,13 +771,15 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Transport_MessageContext_CreateFromEnvelope__1___0_Vulthil_Messaging_Transport_MessageEnvelope_System_String_System_Boolean_System_Int32_System_String_Vulthil_Messaging_Abstractions_Publishers_IPublisher_Vulthil_Messaging_Abstractions_Publishers_ISendEndpointProvider_System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Transport.MessageContext.CreateFromEnvelope``1(``0,Vulthil.Messaging.Transport.MessageEnvelope,System.String,System.Boolean,System.Int32,System.String,Vulthil.Messaging.Abstractions.Publishers.IPublisher,Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider,System.Threading.CancellationToken)">
   CreateFromEnvelope&lt;TMessage&gt;(TMessage, MessageEnvelope, string, bool, int, string?, IPublisher?, ISendEndpointProvider?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageContext.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageContext.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds a live typed context from a parsed <a class="xref" href="Vulthil.Messaging.Transport.MessageEnvelope.html">MessageEnvelope</a>. Transport-level fields the envelope
 does not carry are supplied by the caller: the broker <code class="paramref">routingKey</code>, the
 <code class="paramref">redelivered</code> flag, the in-memory <code class="paramref">retryCount</code>, and a
-<code class="paramref">replyToFallback</code> used for the response address when the envelope omits one.</p>
+<code class="paramref">replyToFallback</code> used for the response address when the envelope omits one.
+Header values deserialized from the wire are normalized to CLR primitives
+(see <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Headers">Headers</a> for the contract).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

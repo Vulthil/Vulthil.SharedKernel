@@ -132,7 +132,7 @@ Interface IMessageContext  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_CancellationToken" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.CancellationToken">
   CancellationToken
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the cancellation token associated with the current delivery. Combines the transport's stop signal
@@ -261,7 +261,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_ExpirationTime" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.ExpirationTime">
   ExpirationTime
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the UTC timestamp after which the message should be discarded, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if it does not expire.</p>
@@ -325,7 +325,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Headers" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Headers">
   Headers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the transport headers associated with the message, containing custom metadata.</p>
@@ -349,6 +349,16 @@ with the consumer scope, allowing handlers to observe both.</p>
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Headers_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Values are normalized when the context is built, so every consume path (envelope, bare AMQP, outbox
+relay) surfaces the same CLR primitives: strings arrive as <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, booleans as
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>, and numbers as <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>, or <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a> —
+the narrowest of the three that represents the value. Header values published as non-primitive
+objects have no CLR type on the wire and surface in their JSON form: as a
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonelement">JsonElement</a> when published as an object or array, or as a
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> for types JSON represents as strings (e.g. <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>,
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a>).</p>
+</div>
 
 
 
@@ -421,7 +431,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Redelivered" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.Redelivered">
   Redelivered
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L88"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether the broker redelivered this message (e.g., after a consumer crash).</p>
@@ -517,7 +527,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_RetryCount" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.RetryCount">
   RetryCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L84"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the number of times this message has been retried. A value of 0 indicates the first delivery attempt.</p>
@@ -581,7 +591,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_SentTime" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SentTime">
   SentTime
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the UTC timestamp when the message was originally sent, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not recorded.</p>
@@ -649,7 +659,7 @@ with the consumer scope, allowing handlers to observe both.</p>
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_PublishAsync__1___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.PublishAsync``1(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask})">
   PublishAsync&lt;TMessage&gt;(TMessage, Func&lt;IPublishContext, ValueTask&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L106"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Publishes a message via the underlying transport, automatically propagating correlation metadata
@@ -699,7 +709,7 @@ The caller-supplied <code class="paramref">configure</code> callback runs after 
 
   <h3 id="Vulthil_Messaging_Abstractions_Consumers_IMessageContext_SendAsync__1_System_Uri___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__" data-uid="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.SendAsync``1(System.Uri,``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask})">
   SendAsync&lt;TMessage&gt;(Uri, TMessage, Func&lt;IPublishContext, ValueTask&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IMessageContext.cs/#L121"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sends a message point-to-point to the specified destination, automatically propagating correlation metadata

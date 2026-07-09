@@ -214,6 +214,15 @@ after auto-propagation, so explicit values override the inherited ones.</p>
 </code></pre>
 <p><code>IMessageContext.CancellationToken</code> exposes the delivery's cancellation token for
 handlers that want to observe it alongside the explicit method parameter.</p>
+<h3 id="header-values-on-the-consume-side">Header values on the consume side</h3>
+<p>Custom headers travel as JSON, and the consume side normalizes them so every path — a Vulthil
+envelope, a bare-AMQP message from a non-Vulthil producer, or an outbox-relayed publish — surfaces
+the same CLR primitives in <code>IMessageContext.Headers</code>: strings arrive as <code>string</code>, booleans as
+<code>bool</code>, and numbers as <code>int</code>, <code>long</code>, or <code>double</code> (the narrowest that represents the value). A
+header published as <code>AddHeader(&quot;tenant&quot;, &quot;acme&quot;)</code> is the string <code>&quot;acme&quot;</code> again in the consumer.
+Values without a JSON primitive form keep their JSON shape: objects and arrays surface as
+<code>JsonElement</code>, and types JSON serializes as strings (e.g. <code>Guid</code>, <code>DateTimeOffset</code>) surface as
+that string.</p>
 <h2 id="point-to-point-send">Point-to-point Send</h2>
 <p><code>IPublisher.PublishAsync</code> fans a message out via its per-type exchange to any number of
 interested consumers. When you need to address a single, named destination — typically
@@ -467,6 +476,12 @@ filter by faulted message type — and reads the payload. The fault body is a <c
     public required DateTimeOffset FaultedAt { get; init; }
     public required MessageContextSnapshot OriginalContext { get; init; } // original transport metadata
 }
+</code></pre>
+<p><code>Message</code> is the faulted message's own payload — for envelope-wrapped (Vulthil-produced) deliveries
+the wire envelope is unwrapped before the fault is built — so a subscriber reads the original fields
+with a plain deserialization:</p>
+<pre><code class="lang-csharp">var fault = JsonSerializer.Deserialize&lt;Fault&lt;OrderCreatedEvent&gt;&gt;(body, jsonOptions)!;
+var orderId = fault.Message.OrderId;
 </code></pre>
 <p>The fault exchange is a diagnostics/observability broadcast — drain it with a monitoring service or
 any AMQP consumer bound to the exchange — rather than a typed <code>IConsumer&lt;Fault&lt;T&gt;&gt;</code> endpoint.</p>

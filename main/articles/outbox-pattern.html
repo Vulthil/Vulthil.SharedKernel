@@ -268,6 +268,12 @@ builder.AddMessaging(messaging =&gt;
 <p>Capture is relational-only (it enlists in the ambient transaction); the relay works on any provider. It is built on
 the general publish/send <strong>filter pipeline</strong> (<code>IPublishFilter</code>, registered via <code>AddPublishFilter&lt;T&gt;()</code>), which is the
 publish-side counterpart to consume filters and can host other cross-cutting concerns.</p>
+<p>The capture preserves the publish faithfully: the message id, correlation id, routing key, send destination, custom
+headers, and the current trace context (<code>TraceParent</code>/<code>TraceState</code>, when tracing is enabled) are stored with the row
+and re-applied on relay — the relayed publish runs under an activity linked to the capturing trace. Headers persist
+as JSON, so a relayed message and a directly-published one carry identical header bytes on the wire and surface
+identically to consumers; only CLR types with no JSON primitive form (e.g. a <code>Guid</code> header value) are re-published
+in their JSON-serialized form rather than as the original CLR type.</p>
 <p>On startup the relay waits for the broker transport to finish declaring its subscriber topology (exchanges, queues,
 and bindings) before its first publish — otherwise the commit-time trigger could relay a message before the
 subscriber queues exist, and a pub/sub message with no bound queue is silently dropped. This is wired automatically

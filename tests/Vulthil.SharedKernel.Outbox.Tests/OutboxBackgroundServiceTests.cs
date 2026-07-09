@@ -1,4 +1,6 @@
+using System.Threading.Channels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Vulthil.xUnit;
 
@@ -23,13 +25,81 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
         var gate = new BlockingRelayGate();
         Use<IEnumerable<IOutboxRelayGate>>([gate]);
         await Target.StartAsync(CancellationToken);
-        await gate.Entered;
+        await gate.WaitForEntryAsync(CancellationToken);
 
         // Act
         await Target.StopAsync(CancellationToken);
 
         // Assert
         Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
+    public async Task StoppingBeforeTheRelayLoopHasRunCompletesGracefully()
+    {
+        // Arrange
+        Use<IEnumerable<IOutboxRelayGate>>([new BlockingRelayGate()]);
+        await Target.StartAsync(CancellationToken);
+
+        // Act
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
+    public async Task StartingWithAnAlreadyCanceledTokenCompletesTheExecuteTaskGracefully()
+    {
+        // Arrange
+        Use<IEnumerable<IOutboxRelayGate>>([new BlockingRelayGate()]);
+        using var canceledTokenSource = new CancellationTokenSource();
+        await canceledTokenSource.CancelAsync();
+
+        // Act
+        await Target.StartAsync(canceledTokenSource.Token);
+        await Target.ExecuteTask!;
+
+        // Assert
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
+    public async Task RestartingAfterStopRunsTheRelayAgain()
+    {
+        // Arrange
+        var gate = new BlockingRelayGate();
+        Use<IEnumerable<IOutboxRelayGate>>([gate]);
+        await Target.StartAsync(CancellationToken);
+        await gate.WaitForEntryAsync(CancellationToken);
+        await Target.StopAsync(CancellationToken);
+        var firstExecuteTask = Target.ExecuteTask;
+
+        // Act
+        await Target.StartAsync(CancellationToken);
+        await gate.WaitForEntryAsync(CancellationToken);
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        Target.ExecuteTask.ShouldNotBeSameAs(firstExecuteTask);
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
+    public async Task AFaultOutsideTheProcessingLoopStopsTheApplication()
+    {
+        // Arrange
+        Use<IEnumerable<IOutboxRelayGate>>([]);
+        var failingOptions = new Mock<IOptions<OutboxProcessingOptions>>();
+        failingOptions.Setup(o => o.Value).Throws(new InvalidOperationException("Options failed"));
+        Use(failingOptions.Object);
+
+        // Act
+        await Target.StartAsync(CancellationToken);
+        await Target.ExecuteTask!;
+
+        // Assert
+        GetMock<IHostApplicationLifetime>().Verify(lifetime => lifetime.StopApplication(), Times.Once);
     }
 
     [Fact]
@@ -87,13 +157,13 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
 
     private sealed class BlockingRelayGate : IOutboxRelayGate
     {
-        private readonly TaskCompletionSource _entered = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly Channel<bool> _entries = Channel.CreateUnbounded<bool>();
 
-        public Task Entered => _entered.Task;
+        public async Task WaitForEntryAsync(CancellationToken cancellationToken) => await _entries.Reader.ReadAsync(cancellationToken);
 
         public Task WaitUntilReadyAsync(CancellationToken cancellationToken)
         {
-            _entered.TrySetResult();
+            _entries.Writer.TryWrite(true);
             return Task.Delay(Timeout.Infinite, cancellationToken);
         }
     }

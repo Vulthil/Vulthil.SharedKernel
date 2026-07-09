@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
@@ -16,6 +17,25 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
     : EntityFrameworkOutboxStore<TContext>(dbContext, timeProvider, options)
     where TContext : DbContext, ISaveOutboxMessages
 {
+    /// <summary>
+    /// Opens the transaction for the relay batch, requiring <typeparamref name="TContext"/> to support one.
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>The transaction to commit on success.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// <typeparamref name="TContext"/> does not implement <see cref="IUnitOfWork"/>, so no transaction could be opened.
+    /// </exception>
+    protected override async Task<IDbTransaction?> BeginTransactionAsync(CancellationToken cancellationToken)
+    {
+        var transaction = await base.BeginTransactionAsync(cancellationToken);
+
+        return transaction ?? throw new InvalidOperationException(
+            $"RelationalOutboxStore could not open a transaction because '{typeof(TContext).Name}' does not implement " +
+            "IUnitOfWork. Without a transaction, provider row-locking (e.g. FOR UPDATE SKIP LOCKED) releases immediately " +
+            "after the fetch statement, so concurrent relay instances can double-dispatch the same messages. Derive " +
+            $"'{typeof(TContext).Name}' from BaseDbContext or implement IUnitOfWork so a transaction can be opened.");
+    }
+
     /// <inheritdoc />
     protected override async Task UpdateMessagesAsync(IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
     {

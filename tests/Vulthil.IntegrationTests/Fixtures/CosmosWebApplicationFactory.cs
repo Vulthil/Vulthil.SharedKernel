@@ -6,6 +6,7 @@ using Vulthil.Messaging.Inbox.Cosmos;
 using Vulthil.Messaging.TestHarness;
 using Vulthil.TestHost;
 using Vulthil.xUnit;
+using Vulthil.xUnit.Fixtures;
 
 namespace Vulthil.IntegrationTests.Fixtures;
 
@@ -17,6 +18,8 @@ namespace Vulthil.IntegrationTests.Fixtures;
 /// </summary>
 public sealed class CosmosWebApplicationFactory(IntegrationTestContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost)
 {
+    protected override bool ShouldUseContainer(ITestContainer container) => container is PostgreSqlTestContainer or CosmosTestContainer;
+
     protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);

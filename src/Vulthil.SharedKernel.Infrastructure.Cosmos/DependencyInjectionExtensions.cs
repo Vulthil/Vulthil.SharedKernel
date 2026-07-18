@@ -25,9 +25,13 @@ public static class DependencyInjectionExtensions
         Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
-        configurator.UseOutboxStore<CosmosOutboxStore<TDbContext>>();
         configurator.OnConfigured(c =>
         {
+            if (c is not DatabaseInfrastructureConfigurator<TDbContext> { OutboxStoreCustomized: true })
+            {
+                c.UseOutboxStore<CosmosOutboxStore<TDbContext>>();
+            }
+
             c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
         });
         return configurator;

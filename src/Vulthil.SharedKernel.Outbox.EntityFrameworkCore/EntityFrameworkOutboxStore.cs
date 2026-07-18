@@ -186,7 +186,8 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
 
     /// <summary>
     /// Records processed and failed messages, dead-lettering any that reach <paramref name="maxRetries"/>. The default
-    /// materializes and updates the rows; relational providers override this with set-based <c>ExecuteUpdate</c> calls.
+    /// fetches every affected row in a single query, applies the outcome in memory, and saves once; relational
+    /// providers override this with set-based <c>ExecuteUpdate</c> calls.
     /// </summary>
     /// <param name="successIds">Identifiers of successfully delivered messages.</param>
     /// <param name="failures">Failures to record with a retry increment.</param>
@@ -195,40 +196,39 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     protected virtual async Task UpdateMessagesAsync(IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
     {
-        if (successIds.Count > 0)
+        if (successIds.Count == 0 && failures.Count == 0)
         {
-            var messages = await OutboxMessages.Where(x => successIds.Contains(x.Id)).ToArrayAsync(cancellationToken);
-            foreach (var item in messages)
-            {
-                item.ProcessedOnUtc = processedOnUtc;
-            }
-
-            await DbContext.SaveChangesAsync(cancellationToken);
+            return;
         }
 
-        foreach (var failure in failures)
-        {
-            var messages = await OutboxMessages.Where(x => x.Id == failure.Id).ToArrayAsync(cancellationToken);
-            foreach (var item in messages)
-            {
-                item.RetryCount++;
-                item.Error = failure.Error;
-            }
+        var errorsById = failures.ToDictionary(failure => failure.Id, failure => failure.Error);
+        var ids = successIds.Concat(errorsById.Keys).ToList();
+        var messages = await OutboxMessages.Where(x => ids.Contains(x.Id)).ToArrayAsync(cancellationToken);
 
-            await DbContext.SaveChangesAsync(cancellationToken);
+        foreach (var message in messages)
+        {
+            if (errorsById.TryGetValue(message.Id, out var error))
+            {
+                RecordFailure(message, error, maxRetries, processedOnUtc);
+            }
+            else
+            {
+                message.ProcessedOnUtc = processedOnUtc;
+            }
         }
 
-        if (failures.Count > 0)
-        {
-            var failedIds = failures.Select(f => f.Id).ToList();
-            var deadLettered = await OutboxMessages.Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries).ToArrayAsync(cancellationToken);
-            foreach (var item in deadLettered)
-            {
-                item.FailedOnUtc = processedOnUtc;
-                Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", item.Id, item.RetryCount, item.Error);
-            }
+        await DbContext.SaveChangesAsync(cancellationToken);
+    }
 
-            await DbContext.SaveChangesAsync(cancellationToken);
+    private void RecordFailure(OutboxMessage message, string error, int maxRetries, DateTimeOffset processedOnUtc)
+    {
+        message.RetryCount++;
+        message.Error = error;
+
+        if (message.RetryCount >= maxRetries)
+        {
+            message.FailedOnUtc = processedOnUtc;
+            Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", message.Id, message.RetryCount, message.Error);
         }
     }
 

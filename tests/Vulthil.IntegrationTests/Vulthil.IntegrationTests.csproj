@@ -5,12 +5,15 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
 		<PackageReference Include="Testcontainers.CosmosDb" />
+		<PackageReference Include="Testcontainers.MySql" />
 		<PackageReference Include="Testcontainers.PostgreSql" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Vulthil.Messaging.Inbox.Cosmos\Vulthil.Messaging.Inbox.Cosmos.csproj" />
 		<ProjectReference Include="..\..\src\Vulthil.Messaging.TestHarness\Vulthil.Messaging.TestHarness.csproj" />
+		<ProjectReference Include="..\..\src\Vulthil.SharedKernel.Infrastructure.Cosmos\Vulthil.SharedKernel.Infrastructure.Cosmos.csproj" />
+		<ProjectReference Include="..\..\src\Vulthil.SharedKernel.Infrastructure.MySql\Vulthil.SharedKernel.Infrastructure.MySql.csproj" />
 		<ProjectReference Include="..\..\src\Vulthil.xUnit.Cosmos\Vulthil.xUnit.Cosmos.csproj" />
 		<ProjectReference Include="..\Vulthil.TestHost\Vulthil.TestHost.csproj" />
 	</ItemGroup>

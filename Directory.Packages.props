@@ -70,6 +70,7 @@
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.28.0.143324" />
     <PackageVersion Include="Testcontainers" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.CosmosDb" Version="4.13.0" />
+    <PackageVersion Include="Testcontainers.MySql" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.XunitV3" Version="4.13.0" />

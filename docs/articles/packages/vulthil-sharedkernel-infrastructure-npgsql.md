@@ -11,7 +11,8 @@ Use `Vulthil.SharedKernel.Infrastructure.Npgsql` to wire a PostgreSQL-backed `Db
 ## Pattern
 
 - Call `UseNpgsql("ConnectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Npgsql outbox strategy
-- Order between `UseNpgsql` and `EnableOutboxProcessing` does not matter; the configurator defers the underlying call until the full chain has executed
+- Order between `UseNpgsql`, `EnableOutboxProcessing`, and `UseOutboxStore` does not matter; the configurator defers the underlying registrations until the full chain has executed, and the Npgsql outbox store is applied only as a default – a custom store selected via `UseOutboxStore` is always preserved
+- The relay's locking fetch SQL is composed from the model's mapped identifiers, so custom outbox table or column names (a naming convention such as `UseSnakeCaseNamingConvention`, `ToTable`, or `HasColumnName`) are supported, and the relay dispatches strictly in `(OccurredOnUtc, Id)` order
 - Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (`Database.CreateExecutionStrategy().ExecuteAsync`), so there is no need to force `DisableRetry`
 
 ## Usage

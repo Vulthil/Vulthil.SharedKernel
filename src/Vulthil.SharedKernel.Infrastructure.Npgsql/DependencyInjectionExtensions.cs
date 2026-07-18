@@ -18,8 +18,11 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <remarks>
     /// The actual call to <c>AddNpgsqlDbContext</c> is deferred until the full configurator chain
-    /// has executed, so the order of <see cref="UseNpgsql{TContext}"/> and
-    /// <see cref="IDatabaseInfrastructureConfigurator{TDbContext}.EnableOutboxProcessing"/> is irrelevant.
+    /// has executed, so the order of <see cref="UseNpgsql{TContext}"/>,
+    /// <see cref="IDatabaseInfrastructureConfigurator{TDbContext}.EnableOutboxProcessing"/>, and
+    /// <see cref="IDatabaseInfrastructureConfigurator{TDbContext}.UseOutboxStore{TStore}"/> is irrelevant: the
+    /// PostgreSQL-optimized outbox store is applied as a default, so a custom store selected via
+    /// <c>UseOutboxStore</c> is preserved no matter where in the chain this method is called.
     /// The outbox processor runs its transactional unit inside the context's execution strategy
     /// (<c>Database.CreateExecutionStrategy().ExecuteAsync</c>), so a retrying execution strategy is fully
     /// supported and there is no need to force <c>DisableRetry</c>. All settings — including
@@ -39,10 +42,13 @@ public static class DependencyInjectionExtensions
     {
         ArgumentNullException.ThrowIfNull(configurator);
 
-        configurator.UseOutboxStore<NpgsqlOutboxStore<TDbContext>>();
-
         configurator.OnConfigured(c =>
         {
+            if (c is not DatabaseInfrastructureConfigurator<TDbContext> { OutboxStoreCustomized: true })
+            {
+                c.UseOutboxStore<NpgsqlOutboxStore<TDbContext>>();
+            }
+
             c.HostApplicationBuilder.AddNpgsqlDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
 
             if (c.OutboxProcessingEnabled)

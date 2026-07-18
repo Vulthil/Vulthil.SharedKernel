@@ -22,6 +22,13 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     /// </summary>
     public Action<OutboxProcessingOptions>? OutboxOptionsAction { get; private set; }
     /// <summary>
+    /// Gets a value indicating whether an outbox store was explicitly selected via
+    /// <see cref="UseOutboxStore{TStore}"/> while the configurator chain executed. Provider extensions read this
+    /// inside an <see cref="OnConfigured"/> callback to apply their store only as a default, so a store the user
+    /// chose is never overwritten regardless of chaining order.
+    /// </summary>
+    public bool OutboxStoreCustomized { get; private set; }
+    /// <summary>
     /// Gets the outbox store type used by outbox processing. Defaults to the open generic
     /// <see cref="EntityFrameworkOutboxStore{TContext}"/> (closed over the context type at registration); a provider
     /// supplies a closed store type via <see cref="UseOutboxStore{TStore}"/>.
@@ -29,6 +36,7 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     internal Type OutboxStoreType { get; private set; } = typeof(EntityFrameworkOutboxStore<>);
 
     private readonly List<Action<IDatabaseInfrastructureConfigurator<TDbContext>>> _configuredCallbacks = [];
+    private bool _runningConfiguredCallbacks;
 
     /// <inheritdoc />
     public IHostApplicationBuilder HostApplicationBuilder { get; }
@@ -76,6 +84,11 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
         where TStore : class, IOutboxStore
     {
         OutboxStoreType = typeof(TStore);
+        if (!_runningConfiguredCallbacks)
+        {
+            OutboxStoreCustomized = true;
+        }
+
         return this;
     }
 
@@ -96,9 +109,17 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     /// </summary>
     internal void FinalizeConfiguration()
     {
-        foreach (var callback in _configuredCallbacks)
+        _runningConfiguredCallbacks = true;
+        try
         {
-            callback(this);
+            foreach (var callback in _configuredCallbacks)
+            {
+                callback(this);
+            }
+        }
+        finally
+        {
+            _runningConfiguredCallbacks = false;
         }
 
         if (OutboxProcessingEnabled)

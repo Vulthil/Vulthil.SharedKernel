@@ -10,7 +10,8 @@ Use `Vulthil.SharedKernel.Infrastructure.MySql` to wire a MySQL-backed `DbContex
 ## Pattern
 
 - Call `UseMySql("ConnectionStringKey")` on the database infrastructure configurator – it registers a pooled EF Core context for the named connection string, selects the MySQL outbox strategy, and (when outbox processing is enabled) wires the commit-time relay trigger
-- Order between `UseMySql` and `EnableOutboxProcessing` does not matter; the configurator defers the underlying registration until the full chain has executed
+- Order between `UseMySql`, `EnableOutboxProcessing`, and `UseOutboxStore` does not matter; the configurator defers the underlying registrations until the full chain has executed, and the MySQL outbox store is applied only as a default – a custom store selected via `UseOutboxStore` is always preserved
+- The relay's locking fetch SQL is composed from the model's mapped identifiers, so custom outbox table or column names (a naming convention, `ToTable`, or `HasColumnName`) are supported, and the relay dispatches strictly in `(OccurredOnUtc, Id)` order
 - Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (`Database.CreateExecutionStrategy().ExecuteAsync`)
 
 ## Provider

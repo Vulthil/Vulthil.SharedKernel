@@ -105,7 +105,7 @@ Processed and dead-lettered rows remain in the `OutboxMessages` table after rela
 | `SweepInterval` | 1 hour | Delay between sweeps |
 | `BatchSize` | 1000 | Rows deleted per batch within a sweep |
 
-The sweep deletes rows whose `ProcessedOnUtc` **or** `FailedOnUtc` is older than `RetentionPeriod`; **pending rows are never touched**. It runs through the registered `IOutboxStore` when it implements `IOutboxRetentionStore` (the EF Core store does) — relational providers delete set-based with `ExecuteDelete`, and the **same sweep covers Cosmos** (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).
+The sweep deletes rows whose `ProcessedOnUtc` **or** `FailedOnUtc` is older than `RetentionPeriod`; **pending rows are never touched**. It runs through the registered `IOutboxStore` when it implements `IOutboxRetentionStore` (the EF Core store does) — every store deletes at most `BatchSize` rows per call (relational providers select the oldest eligible keys and delete them set-based with `ExecuteDelete`), so a large backlog is drained in bounded, short-lived batches, and the **same sweep covers Cosmos** (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).
 
 ## Custom Outbox Store
 

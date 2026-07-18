@@ -85,10 +85,29 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
     }
 
     /// <inheritdoc />
-    public override Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken) =>
-        OutboxMessages
+    /// <remarks>
+    /// Selects the keys of the oldest eligible rows first and deletes by key, so a single call never removes more
+    /// than <paramref name="batchSize"/> rows — a large backlog is drained in bounded, short-lived deletes instead
+    /// of one long-locking statement.
+    /// </remarks>
+    public override async Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+    {
+        var ids = await OutboxMessages
             .Where(o => o.ProcessedOnUtc != null && o.ProcessedOnUtc < olderThanUtc
                 || o.FailedOnUtc != null && o.FailedOnUtc < olderThanUtc)
+            .OrderBy(o => o.OccurredOnUtc)
+            .Take(batchSize)
+            .Select(o => o.Id)
+            .ToListAsync(cancellationToken);
+
+        if (ids.Count == 0)
+        {
+            return 0;
+        }
+
+        return await OutboxMessages
+            .Where(o => ids.Contains(o.Id))
             .ExecuteDeleteAsync(cancellationToken);
+    }
 }
 

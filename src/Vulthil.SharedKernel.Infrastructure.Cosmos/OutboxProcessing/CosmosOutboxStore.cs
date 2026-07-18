@@ -16,14 +16,12 @@ public class CosmosOutboxStore<TContext>(TContext dbContext, TimeProvider timePr
     : EntityFrameworkOutboxStore<TContext>(dbContext, timeProvider, options)
     where TContext : DbContext, ISaveOutboxMessages
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Returns <see langword="null"/>: Cosmos DB has no relay-wide transaction, and the base batch unit treats a
+    /// <see langword="null"/> transaction as running without one.
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>Always <see langword="null"/>.</returns>
     protected override Task<IDbTransaction?> BeginTransactionAsync(CancellationToken cancellationToken) =>
-        Task.FromResult<IDbTransaction?>(new NoOpDbTransaction());
-}
-
-internal sealed class NoOpDbTransaction : IDbTransaction
-{
-    public Task CommitAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
-    public Task RollbackAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+        Task.FromResult<IDbTransaction?>(null);
 }

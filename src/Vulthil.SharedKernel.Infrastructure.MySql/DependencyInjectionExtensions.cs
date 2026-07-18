@@ -64,10 +64,13 @@ public static class DependencyInjectionExtensions
     {
         ArgumentNullException.ThrowIfNull(configurator);
 
-        configurator.UseOutboxStore<MySqlOutboxStore<TDbContext>>();
-
         configurator.OnConfigured(c =>
         {
+            if (c is not DatabaseInfrastructureConfigurator<TDbContext> { OutboxStoreCustomized: true })
+            {
+                c.UseOutboxStore<MySqlOutboxStore<TDbContext>>();
+            }
+
 #if NET10_0_OR_GREATER
             var connectionString = c.HostApplicationBuilder.Configuration.GetConnectionString(connectionStringKey)
                 ?? throw new InvalidOperationException($"A connection string named '{connectionStringKey}' was not found.");

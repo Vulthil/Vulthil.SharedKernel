@@ -92,13 +92,13 @@
 <ul>
 <li>Cosmos DB is the underlying store for an application's primary <code>DbContext</code></li>
 <li>Aspire-wired Cosmos connection via <code>AddCosmosDbContext</code></li>
-<li>Outbox processing should use the Cosmos-specific strategy (transactional batches per partition rather than relational locking)</li>
+<li>Outbox processing should use the Cosmos-specific strategy (best-effort relay without relational locking)</li>
 </ul>
 <h2 id="pattern">Pattern</h2>
 <ul>
 <li>Call <code>UseCosmosDb(&quot;connectionStringKey&quot;)</code> on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox strategy</li>
 <li>Configure the Cosmos-specific entity model for <code>OutboxMessage</code> via the <code>ApplyCosmosOutbox()</code> model-builder extension (call it from your <code>OnModelCreating</code>)</li>
-<li>Order between <code>UseCosmosDb</code> and <code>EnableOutboxProcessing</code> does not matter; the configurator defers the underlying call until the full chain has executed</li>
+<li>Order between <code>UseCosmosDb</code>, <code>EnableOutboxProcessing</code>, and <code>UseOutboxStore</code> does not matter; the configurator defers the underlying registrations until the full chain has executed, and the Cosmos outbox store is applied only as a default – a custom store selected via <code>UseOutboxStore</code> is always preserved</li>
 </ul>
 <h2 id="usage">Usage</h2>
 <h3 id="registration">Registration</h3>
@@ -115,7 +115,8 @@
 </code></pre>
 <h3 id="notes-on-cosmos-behavior">Notes on Cosmos behavior</h3>
 <ul>
-<li>The Cosmos outbox strategy uses Cosmos transactional batches, which require all participating documents to share a partition key. If you customize the outbox entity configuration, keep the partition key choice consistent with how messages are produced.</li>
+<li>Cosmos DB has no relay-wide transaction, so the Cosmos outbox store runs the relay batch without one: pending messages are fetched with the provider-agnostic query and their outcome is recorded through tracked updates in a single save. Delivery is at-least-once, as with every outbox provider.</li>
+<li>The relay fetch orders pending messages by <code>OccurredOnUtc</code> then <code>Id</code>. Azure Cosmos DB documents multi-property <code>ORDER BY</code> as requiring a composite index, which the default EF mapping does not create; the emulator serves this query on a container created with default indexing (pinned by the integration suite), but if the Azure service rejects the relay query or it becomes expensive, add a composite index over <code>(OccurredOnUtc, id)</code> to the outbox container's indexing policy.</li>
 <li>Migrations do not apply to Cosmos – use <code>EnsureCreatedAsync&lt;AppDbContext&gt;()</code> instead of <code>MigrateAsync&lt;AppDbContext&gt;()</code> during development setup.</li>
 </ul>
 

@@ -298,7 +298,7 @@ class and override <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrame
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)">
   DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/RelationalOutboxStore.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/RelationalOutboxStore.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Deletes up to <code class="paramref">batchSize</code> outbox rows that were processed or dead-lettered before
@@ -336,6 +336,11 @@ class and override <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrame
 
 
 
+  <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Selects the keys of the oldest eligible rows first and deletes by key, so a single call never removes more
+than <code class="paramref">batchSize</code> rows — a large backlog is drained in bounded, short-lived deletes instead
+of one long-locking statement.</p>
+</div>
 
 
 
@@ -348,7 +353,8 @@ class and override <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrame
   </h3>
 
   <div class="markdown level1 summary"><p>Records processed and failed messages, dead-lettering any that reach <code class="paramref">maxRetries</code>. The default
-materializes and updates the rows; relational providers override this with set-based <code>ExecuteUpdate</code> calls.</p>
+fetches every affected row in a single query, applies the outcome in memory, and saves once; relational
+providers override this with set-based <code>ExecuteUpdate</code> calls.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

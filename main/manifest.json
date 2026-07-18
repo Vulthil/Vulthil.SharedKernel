@@ -2416,7 +2416,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently. The fetch SQL is composed from the model's mapped table and\ncolumn names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported,\nand the composed query carries an explicit outer <code>ORDER BY</code> so dispatch order is deterministic.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2486,7 +2486,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently. The fetch SQL is composed from the model's mapped table and\ncolumn names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported,\nand the composed query carries an explicit outer <code>ORDER BY</code> so dispatch order is deterministic.</p>\n"
     },
     {
       "type": "ManagedReference",

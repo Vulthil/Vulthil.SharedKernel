@@ -8520,6 +8520,23 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
   nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled
   nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
+- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized
+  name: OutboxStoreCustomized
+  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxStoreCustomized
+  commentId: P:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized
+  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
+  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
+  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
+- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized*
+  name: OutboxStoreCustomized
+  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxStoreCustomized_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
+  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
+  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
 - uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.UseOutboxStore*
   name: UseOutboxStore
   href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_UseOutboxStore_

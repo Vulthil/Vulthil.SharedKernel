@@ -229,7 +229,7 @@ running unprotected.</p>
 </tr>
 </tbody>
 </table>
-<p>The sweep deletes rows whose <code>ProcessedOnUtc</code> <strong>or</strong> <code>FailedOnUtc</code> is older than <code>RetentionPeriod</code>; <strong>pending rows are never touched</strong>. It runs through the registered <code>IOutboxStore</code> when it implements <code>IOutboxRetentionStore</code> (the EF Core store does) — relational providers delete set-based with <code>ExecuteDelete</code>, and the <strong>same sweep covers Cosmos</strong> (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).</p>
+<p>The sweep deletes rows whose <code>ProcessedOnUtc</code> <strong>or</strong> <code>FailedOnUtc</code> is older than <code>RetentionPeriod</code>; <strong>pending rows are never touched</strong>. It runs through the registered <code>IOutboxStore</code> when it implements <code>IOutboxRetentionStore</code> (the EF Core store does) — every store deletes at most <code>BatchSize</code> rows per call (relational providers select the oldest eligible keys and delete them set-based with <code>ExecuteDelete</code>), so a large backlog is drained in bounded, short-lived batches, and the <strong>same sweep covers Cosmos</strong> (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).</p>
 <h2 id="custom-outbox-store">Custom Outbox Store</h2>
 <p>The relay engine talks to the database through an EF-free <code>IOutboxStore</code> (in <code>Vulthil.SharedKernel.Outbox</code>). The EF
 implementation lives in <code>Vulthil.SharedKernel.Outbox.EntityFrameworkCore</code> (<code>EntityFrameworkOutboxStore&lt;TContext&gt;</code>),

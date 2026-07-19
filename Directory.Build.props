@@ -23,7 +23,7 @@
 	<PropertyGroup Condition="'$(IsPackable)' != 'false'">
 		<EnablePackageValidation>true</EnablePackageValidation>
 		<!-- Bumped by eng/mark_api_shipped.py to the version just released. -->
-		<PackageValidationBaselineVersion>1.0.2</PackageValidationBaselineVersion>
+		<PackageValidationBaselineVersion>1.1.0</PackageValidationBaselineVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(IsPackable)' != 'false' and Exists('README.md')">

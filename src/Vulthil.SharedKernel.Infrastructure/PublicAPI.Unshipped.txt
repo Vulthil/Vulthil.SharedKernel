@@ -1,2 +1,1 @@
 #nullable enable
-Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized.get -> bool

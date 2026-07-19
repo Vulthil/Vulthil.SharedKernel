@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IRequestConfigurator&lt;TConsumer&gt; | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Configures per-request-consumer settings. Binding patterns live on ; routing-key formatters for the producer side live on .">
+      <meta name="description" content="Configures per-request-consumer settings. Binding patterns live on ; routing-key formatters for the producer side live on . Configuring  here throws at configuration time: request consumers do not retry — a thrown exception is returned to the requester as an RPC fault reply.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Queues_IRequestConfigurator_1" data-uid="Vulthil.Messaging.Queues.IRequestConfigurator`1" class="text-break">
-Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IRequestConfigurator.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IRequestConfigurator.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -99,7 +99,9 @@ Interface IRequestConfigurator&lt;TConsumer&gt;  <a class="header-action link-se
 
   <div class="markdown summary"><p>Configures per-request-consumer settings. Binding patterns live on
 <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_">Subscribe&lt;TMessage&gt;(string?)</a>; routing-key formatters for the producer side
-live on <a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">MessageConfiguration&lt;TMessage&gt;</a>.</p>
+live on <a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">MessageConfiguration&lt;TMessage&gt;</a>. Configuring
+<a class="xref" href="Vulthil.Messaging.Queues.IBaseConfigurator-1.html#Vulthil_Messaging_Queues_IBaseConfigurator_1_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__">UseRetry(Action&lt;RetryPolicyConfigurator&gt;)</a> here throws at configuration time: request
+consumers do not retry — a thrown exception is returned to the requester as an RPC fault reply.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -143,7 +145,7 @@ live on <a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">Mes
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IRequestConfigurator.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IRequestConfigurator.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

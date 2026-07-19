@@ -157,10 +157,10 @@ Class EndpointExtensions  <a class="header-action link-secondary" title="View so
 
   <h3 id="Vulthil_SharedKernel_Api_EndpointExtensions_AddEndpoints_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Reflection_Assembly_" data-uid="Vulthil.SharedKernel.Api.EndpointExtensions.AddEndpoints(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly)">
   AddEndpoints(IServiceCollection, Assembly)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/EndpointExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/EndpointExtensions.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Registers all <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementations from the specified assembly.</p>
+  <div class="markdown level1 summary"><p>Registers all concrete, closed <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementations from the specified assembly.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -191,6 +191,10 @@ Class EndpointExtensions  <a class="header-action link-secondary" title="View so
 
 
 
+  <h4 class="section" id="Vulthil_SharedKernel_Api_EndpointExtensions_AddEndpoints_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Reflection_Assembly__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Open generic <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementations are skipped, since they cannot be resolved
+without type arguments and would otherwise fail when <a class="xref" href="Vulthil.SharedKernel.Api.EndpointExtensions.html#Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_Microsoft_AspNetCore_Builder_WebApplication_Microsoft_AspNetCore_Routing_RouteGroupBuilder_">MapEndpoints(WebApplication, RouteGroupBuilder?)</a> enumerates them.</p>
+</div>
 
 
 
@@ -199,7 +203,7 @@ Class EndpointExtensions  <a class="header-action link-secondary" title="View so
 
   <h3 id="Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_Microsoft_AspNetCore_Builder_WebApplication_Microsoft_AspNetCore_Routing_RouteGroupBuilder_" data-uid="Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(Microsoft.AspNetCore.Builder.WebApplication,Microsoft.AspNetCore.Routing.RouteGroupBuilder)">
   MapEndpoints(WebApplication, RouteGroupBuilder?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/EndpointExtensions.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/EndpointExtensions.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maps all registered <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementations to the application's route builder.</p>
@@ -233,6 +237,11 @@ Class EndpointExtensions  <a class="header-action link-secondary" title="View so
 
 
 
+  <h4 class="section" id="Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_Microsoft_AspNetCore_Builder_WebApplication_Microsoft_AspNetCore_Routing_RouteGroupBuilder__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Endpoints are resolved from a dedicated service scope rather than the root provider, so that any
+scoped or transient dependencies an <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementation requires are resolved
+and disposed correctly instead of being rooted for the lifetime of the application.</p>
+</div>
 
 
 

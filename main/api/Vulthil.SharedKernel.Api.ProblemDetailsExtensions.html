@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions" class="text-break">
-Class ProblemDetailsExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class ProblemDetailsExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -158,7 +158,7 @@ covering handled failures, uncaught exceptions, and bare error status codes.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_AddProblemDetailsHandling_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions.AddProblemDetailsHandling(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
   AddProblemDetailsHandling(IServiceCollection)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers ProblemDetails generation and the global exception handler.</p>
@@ -191,7 +191,10 @@ covering handled failures, uncaught exceptions, and bare error status codes.</p>
 
   <h4 class="section" id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_AddProblemDetailsHandling_Microsoft_Extensions_DependencyInjection_IServiceCollection__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>Every produced <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.problemdetails">ProblemDetails</a> is enriched with the request
-method and path as the instance, the request identifier, and the current trace identifier when available.</p>
+method and path as the instance, the request identifier, and the current trace identifier when available.
+This enrichment composes with any consumer-supplied <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.problemdetailsoptions.customizeproblemdetails">CustomizeProblemDetails</a>
+delegate (configured via <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.optionsservicecollectionextensions.configure#microsoft-extensions-dependencyinjection-optionsservicecollectionextensions-configure-1(microsoft-extensions-dependencyinjection-iservicecollection-system-action((-0)))">Configure&lt;TOptions&gt;(IServiceCollection, Action&lt;TOptions&gt;)</a>
+or another call to <code>AddProblemDetails</code>) rather than overwriting it, regardless of registration order.</p>
 </div>
 
 
@@ -201,7 +204,7 @@ method and path as the instance, the request identifier, and the current trace i
 
   <h3 id="Vulthil_SharedKernel_Api_ProblemDetailsExtensions_UseProblemDetailsHandling_Microsoft_AspNetCore_Builder_IApplicationBuilder_" data-uid="Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
   UseProblemDetailsHandling(IApplicationBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds the exception-handling and status-code-pages middleware that produce ProblemDetails responses.</p>
@@ -244,7 +247,7 @@ exception handler relies on the registered <a class="xref" href="https://learn.m
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProblemDetailsExtensions.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -932,7 +932,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.IRequestConfigurator-1.yml\" sourcestartlinenumber=\"1\">Configures per-request-consumer settings. Binding patterns live on\n<xref href=\"Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe%60%601(System.String)\" data-throw-if-not-resolved=\"false\"></xref>; routing-key formatters for the producer side\nlive on <xref href=\"Vulthil.Messaging.MessageConfiguration%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Queues.IRequestConfigurator-1.yml\" sourcestartlinenumber=\"1\">Configures per-request-consumer settings. Binding patterns live on\n<xref href=\"Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe%60%601(System.String)\" data-throw-if-not-resolved=\"false\"></xref>; routing-key formatters for the producer side\nlive on <xref href=\"Vulthil.Messaging.MessageConfiguration%601\" data-throw-if-not-resolved=\"false\"></xref>. Configuring\n<xref href=\"Vulthil.Messaging.Queues.IBaseConfigurator%601.UseRetry(System.Action%7bVulthil.Messaging.Queues.RetryPolicyConfigurator%7d)\" data-throw-if-not-resolved=\"false\"></xref> here throws at configuration time: request\nconsumers do not retry — a thrown exception is returned to the requester as an RPC fault reply.</p>\n"
     },
     {
       "type": "ManagedReference",

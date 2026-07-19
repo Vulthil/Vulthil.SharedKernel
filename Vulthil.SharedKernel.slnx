@@ -103,6 +103,7 @@
   <Folder Name="/tests/SharedKernel/">
     <Project Path="tests/Vulthil.SharedKernel.Tests/Vulthil.SharedKernel.Tests.csproj" />
     <Project Path="tests/Vulthil.SharedKernel.Application.Tests/Vulthil.SharedKernel.Application.Tests.csproj" />
+    <Project Path="tests/Vulthil.SharedKernel.Api.Tests/Vulthil.SharedKernel.Api.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Outbox/">
     <Project Path="tests/Vulthil.SharedKernel.Outbox.Tests/Vulthil.SharedKernel.Outbox.Tests.csproj" />

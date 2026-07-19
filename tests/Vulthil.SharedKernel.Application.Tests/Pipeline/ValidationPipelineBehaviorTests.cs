@@ -65,7 +65,7 @@ public sealed class ValidationPipelineBehaviorTests : BaseUnitTestCase
         // Assert
         Assert.True(result.IsFailure);
         var validationError = Assert.IsType<ValidationError>(result.Error);
-        Assert.Contains(validationError.Errors, e => e.Code == "Name" && e.Description == "Name is required");
+        Assert.Contains(validationError.Errors, e => e.Code == "Name" && e.Description == "Name is required" && e.Type == ErrorType.Validation);
     }
 }
 
@@ -125,7 +125,7 @@ public sealed class ValidationPipelineBehaviorWithResultOfTResponseTests : BaseU
         // Assert
         Assert.True(result.IsFailure);
         var validationError = Assert.IsType<ValidationError>(result.Error);
-        Assert.Contains(validationError.Errors, e => e.Code == "Name" && e.Description == "Name is required");
+        Assert.Contains(validationError.Errors, e => e.Code == "Name" && e.Description == "Name is required" && e.Type == ErrorType.Validation);
     }
 }
 

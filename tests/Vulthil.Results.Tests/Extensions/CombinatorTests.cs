@@ -293,7 +293,32 @@ public sealed class CombinatorTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task CombineAsyncAggregatesFailedErrors()
+    public void CombinePropagatesOriginalErrorForSingleFailure()
+    {
+        // Arrange
+        var results = new[] { Result.Success(), Result.Failure(FirstError) };
+
+        // Act
+        var combined = results.Combine();
+
+        // Assert
+        combined.IsFailure.ShouldBeTrue();
+        combined.Error.ShouldBeSameAs(FirstError);
+    }
+
+    [Fact]
+    public void CombineParamsPropagatesOriginalErrorForSingleFailure()
+    {
+        // Act
+        var combined = ResultExtensions.Combine(Result.Success(), Result.Failure(FirstError));
+
+        // Assert
+        combined.IsFailure.ShouldBeTrue();
+        combined.Error.ShouldBeSameAs(FirstError);
+    }
+
+    [Fact]
+    public async Task CombineAsyncPropagatesOriginalErrorForSingleFailure()
     {
         // Arrange
         var resultTasks = new[]
@@ -306,9 +331,26 @@ public sealed class CombinatorTests : BaseUnitTestCase
         var combined = await resultTasks.CombineAsync();
 
         // Assert
+        combined.IsFailure.ShouldBeTrue();
+        combined.Error.ShouldBeSameAs(FirstError);
+    }
+
+    [Fact]
+    public async Task CombineAsyncAggregatesMultipleFailures()
+    {
+        // Arrange
+        var resultTasks = new[]
+        {
+            Task.FromResult(Result.Failure(FirstError)),
+            Task.FromResult(Result.Failure(SecondError))
+        };
+
+        // Act
+        var combined = await resultTasks.CombineAsync();
+
+        // Assert
         combined.Error.ShouldBeOfType<ValidationError>()
-            .Errors.ShouldHaveSingleItem()
-            .ShouldBe(FirstError);
+            .Errors.ShouldBe([FirstError, SecondError]);
     }
 
     [Fact]

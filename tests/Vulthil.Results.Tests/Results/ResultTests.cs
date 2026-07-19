@@ -73,6 +73,20 @@ public sealed class ResultTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void ResultShouldAllowFailureWithCustomErrorThatLooksLikeNone()
+    {
+        // Arrange
+        var lookAlike = Error.Failure(string.Empty, string.Empty);
+
+        // Act
+        var result = Result.Failure(lookAlike);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBeSameAs(lookAlike);
+    }
+
+    [Fact]
     public void ResultShouldThrowFailureWithValue()
     {
         // Act

@@ -64,7 +64,7 @@ public record Error
     /// <returns>A new <see cref="Error"/> with <see cref="ErrorType.Problem"/> classification.</returns>
     public static Error Problem(string code, string description) => new(code, description, ErrorType.Problem);
     /// <summary>
-    /// Creates a problem error.
+    /// Creates a validation error.
     /// </summary>
     /// <param name="code">The error code.</param>
     /// <param name="description">The error description.</param>
@@ -144,28 +144,34 @@ public sealed record ValidationError : Error
 }
 
 /// <summary>
-/// Specifies values for ErrorType.
+/// Classifies an <see cref="Error"/> so that presentation layers (e.g. <c>Vulthil.SharedKernel.Api</c>) can map it
+/// to the appropriate HTTP status code without inspecting its code or description.
 /// </summary>
 public enum ErrorType
 {
     /// <summary>
-    /// Specifies the Failure value.
+    /// An unclassified or unexpected failure with no more specific meaning. Maps to HTTP 500 Internal Server Error.
+    /// This is the default classification produced by <see cref="Error.Failure(string, string)"/>.
     /// </summary>
     Failure = 0,
     /// <summary>
-    /// Specifies the Validation value.
+    /// One or more input values failed validation (e.g. FluentValidation rule failures). Carried by
+    /// <see cref="ValidationError"/>, whose <see cref="ValidationError.Errors"/> lists every individual violation.
+    /// Maps to HTTP 400 Bad Request as a validation-problem response with per-field details.
     /// </summary>
     Validation = 1,
     /// <summary>
-    /// Specifies the Problem value.
+    /// A client-addressable business-rule violation the caller can act on (distinct from a plain validation
+    /// failure). Maps to HTTP 400 Bad Request with the error's full detail in the problem response.
     /// </summary>
     Problem = 2,
     /// <summary>
-    /// Specifies the NotFound value.
+    /// The requested resource does not exist. Maps to HTTP 404 Not Found.
     /// </summary>
     NotFound = 3,
     /// <summary>
-    /// Specifies the Conflict value.
+    /// The request conflicts with the current state of the resource (e.g. a uniqueness violation). Maps to
+    /// HTTP 409 Conflict.
     /// </summary>
     Conflict = 4,
 }

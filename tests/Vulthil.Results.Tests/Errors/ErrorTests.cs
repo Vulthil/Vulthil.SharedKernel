@@ -37,6 +37,7 @@ public sealed class ErrorTests : BaseUnitTestCase
         { Error.Problem("C", "D"), ("C", "D"), ErrorType.Problem },
         { Error.Conflict("C", "D"), ("C", "D"), ErrorType.Conflict },
         { Error.Failure("C", "D"), ("C", "D"), ErrorType.Failure },
+        { Error.Validation("C", "D"), ("C", "D"), ErrorType.Validation },
         { new ValidationError([Error.NullValue]), ("Validation.General", "One or more validation errors occurred"), ErrorType.Validation },
     };
 

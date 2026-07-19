@@ -4,6 +4,11 @@ namespace Vulthil.Results;
 /// <summary>
 /// Represents the outcome of an operation that may succeed or fail.
 /// </summary>
+/// <remarks>
+/// <see cref="Result"/> does not define value equality: two instances compare by reference, so two successful (or
+/// two identically-failed) results built separately are never <c>Equals</c>-equal. Compare <see cref="IsSuccess"/>
+/// and <see cref="Error"/> instead of the result itself. Value equality is tracked as a future breaking change.
+/// </remarks>
 public class Result
 {
     /// <summary>
@@ -25,11 +30,14 @@ public class Result
     /// </summary>
     /// <param name="isSuccess">Whether the result represents success.</param>
     /// <param name="error">The error, or <see cref="Error.None"/> for success.</param>
-    /// <exception cref="ArgumentException">Thrown when the success state and error are inconsistent.</exception>
+    /// <exception cref="ArgumentException">Thrown when the success state and error are inconsistent: a success
+    /// carrying an error other than the <see cref="Error.None"/> instance, or a failure carrying the
+    /// <see cref="Error.None"/> instance itself. The check is an identity check, so a custom error that merely
+    /// looks like <see cref="Error.None"/> (e.g. an empty code and description) is accepted as a valid failure.</exception>
     protected internal Result(bool isSuccess, Error error)
     {
-        if (isSuccess && error != Error.None ||
-            !isSuccess && error == Error.None)
+        if (isSuccess && !ReferenceEquals(error, Error.None) ||
+            !isSuccess && ReferenceEquals(error, Error.None))
         {
             throw new ArgumentException("Invalid error", nameof(error));
         }
@@ -78,6 +86,12 @@ public class Result
 /// Represents the outcome of an operation that returns a value of type <typeparamref name="TValue"/> on success.
 /// </summary>
 /// <typeparam name="TValue">The type of the success value.</typeparam>
+/// <remarks>
+/// Like <see cref="Result"/>, <see cref="Result{TValue}"/> does not define value equality: two instances compare
+/// by reference, even when they carry the same value or error. Compare <see cref="Result.IsSuccess"/> and
+/// <see cref="Value"/>/<see cref="Result.Error"/> instead of the result itself. Value equality is tracked as a
+/// future breaking change.
+/// </remarks>
 public class Result<TValue> : Result
 {
 #pragma warning disable IDE0032 // Use auto property
@@ -105,6 +119,13 @@ public class Result<TValue> : Result
     /// <summary>
     /// Implicitly converts a value to a successful result, or a failed result if the value is <see langword="null"/>.
     /// </summary>
+    /// <remarks>
+    /// <b>Sharp edge:</b> a <see langword="null"/> value silently converts to a <em>failed</em> result carrying
+    /// <see cref="Error.NullValue"/> — the conversion picks the error for you, and the failure is easy to miss at
+    /// the call site since it looks like an ordinary assignment. Prefer an explicit <see cref="Result.Failure{TValue}"/>
+    /// call with a domain-specific error when the caller should choose the error. Making this conversion explicit
+    /// (removing the implicit null-to-failure behavior) is tracked as a future breaking change.
+    /// </remarks>
     /// <param name="value">The value to convert.</param>
     public static implicit operator Result<TValue>(TValue? value) =>
         value is not null ? Success(value) : Failure<TValue>(Error.NullValue);

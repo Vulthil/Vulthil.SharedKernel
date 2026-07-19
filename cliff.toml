@@ -22,4 +22,7 @@ commit_parsers = [
     { message = "^test", group = "Testing" },
     { message = "^chore", group = "Miscellaneous" },
     { message = "^ci", group = "CI/CD" },
+    { message = "^build", group = "Build & Dependencies" },
+    { message = "^style", group = "Styling" },
+    { message = "^revert", group = "Reverts" },
 ]

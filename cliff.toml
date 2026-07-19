@@ -14,6 +14,13 @@ trim = true
 conventional_commits = true
 filter_unconventional = true
 commit_parsers = [
+    # Release-automation commits (mark-api-shipped, version-bump, and baseline-propagation PRs) are
+    # process noise in consumer-facing notes. Parsers are first-match-wins, so these skips must stay
+    # above the generic ^chore parser; the patterns anchor to the exact commit-message templates in
+    # release.yml and version-bump.yml.
+    { message = "^chore: mark public API shipped", skip = true },
+    { message = "^chore: bump version to", skip = true },
+    { message = "^chore: validate packages against", skip = true },
     { message = "^feat", group = "Features" },
     { message = "^fix", group = "Bug Fixes" },
     { message = "^docs", group = "Documentation" },

@@ -86,6 +86,95 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task StoppingAfterDisposeCompletesGracefully()
+    {
+        // Arrange
+        var gate = new BlockingRelayGate();
+        Use<IEnumerable<IOutboxRelayGate>>([gate]);
+        await Target.StartAsync(CancellationToken);
+        await gate.WaitForEntryAsync(CancellationToken);
+        Target.Dispose();
+
+        // Act
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
+    public async Task StoppingTwiceCompletesGracefully()
+    {
+        // Arrange
+        var gate = new BlockingRelayGate();
+        Use<IEnumerable<IOutboxRelayGate>>([gate]);
+        await Target.StartAsync(CancellationToken);
+        await gate.WaitForEntryAsync(CancellationToken);
+
+        // Act
+        await Target.StopAsync(CancellationToken);
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
+    public async Task DisposingTwiceIsSafe()
+    {
+        // Arrange
+        var gate = new BlockingRelayGate();
+        Use<IEnumerable<IOutboxRelayGate>>([gate]);
+        await Target.StartAsync(CancellationToken);
+        await gate.WaitForEntryAsync(CancellationToken);
+
+        // Act
+        Target.Dispose();
+        Target.Dispose();
+
+        // Assert
+        await Target.ExecuteTask!;
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
+    public async Task StoppingAndRestartingConcurrentlyConvergesCleanly()
+    {
+        // Arrange
+        Use<IEnumerable<IOutboxRelayGate>>([new BlockingRelayGate()]);
+        await Target.StartAsync(CancellationToken);
+
+        // Act
+        for (var i = 0; i < 300; i++)
+        {
+            using var startSignal = new SemaphoreSlim(0, 2);
+            var stopTask = Task.Run(
+                async () =>
+                {
+                    await startSignal.WaitAsync(CancellationToken);
+                    await Target.StopAsync(CancellationToken);
+                },
+                CancellationToken);
+            var startTask = Task.Run(
+                async () =>
+                {
+                    await startSignal.WaitAsync(CancellationToken);
+                    await Target.StartAsync(CancellationToken);
+                },
+                CancellationToken);
+            startSignal.Release(2);
+            await Task.WhenAll(stopTask, startTask).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken);
+            await Target.StopAsync(CancellationToken).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken);
+            await Target.StartAsync(CancellationToken);
+        }
+
+        await Target.StopAsync(CancellationToken).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken);
+
+        // Assert
+        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+    }
+
+    [Fact]
     public async Task AFaultOutsideTheProcessingLoopStopsTheApplication()
     {
         // Arrange

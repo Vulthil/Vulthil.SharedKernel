@@ -126,8 +126,8 @@ Result&lt;User&gt; failed = Result.Failure&lt;User&gt;(error);
 
 // Validation failure
 var validation = new ValidationError([
-    Error.Problem(&quot;Email.Required&quot;, &quot;Email is required&quot;),
-    Error.Problem(&quot;Name.TooLong&quot;, &quot;Name exceeds 100 characters&quot;)
+    Error.Validation(&quot;Email.Required&quot;, &quot;Email is required&quot;),
+    Error.Validation(&quot;Name.TooLong&quot;, &quot;Name exceeds 100 characters&quot;)
 ]);
 Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
 </code></pre>
@@ -139,6 +139,7 @@ Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
 <th>ErrorType</th>
 <th>Factory Method</th>
 <th>HTTP Status</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
@@ -146,29 +147,37 @@ Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
 <td><code>Failure</code></td>
 <td><code>Error.Failure(...)</code></td>
 <td>500 Internal Server Error</td>
+<td>Unclassified/unexpected failure</td>
 </tr>
 <tr>
 <td><code>NotFound</code></td>
 <td><code>Error.NotFound(...)</code></td>
 <td>404 Not Found</td>
+<td>The requested resource doesn't exist</td>
 </tr>
 <tr>
 <td><code>Problem</code></td>
 <td><code>Error.Problem(...)</code></td>
-<td>500 Internal Server Error</td>
+<td>400 Bad Request</td>
+<td>Client-addressable business-rule violation; full error detail is returned</td>
 </tr>
 <tr>
 <td><code>Conflict</code></td>
 <td><code>Error.Conflict(...)</code></td>
 <td>409 Conflict</td>
+<td>The request conflicts with current state</td>
 </tr>
 <tr>
 <td><code>Validation</code></td>
-<td><code>ValidationError(...)</code></td>
+<td><code>Error.Validation(...)</code> / <code>ValidationError</code></td>
 <td>400 Bad Request</td>
+<td>Input validation failure; <code>ValidationError.Errors</code> carries the per-field details</td>
 </tr>
 </tbody>
 </table>
+<p><code>Error.Validation</code> mints the <em>inner</em> errors of a <code>ValidationError</code> (this is what <code>ValidationPipelineBehavior</code> uses for
+FluentValidation failures). <code>Error.Problem</code> is for a single, standalone business-rule error — it is a different
+classification from <code>Validation</code>, not a supertype of it.</p>
 <h2 id="defining-domain-errors">Defining Domain Errors</h2>
 <p>Keep domain errors as static fields so they are reusable and discoverable:</p>
 <pre><code class="lang-csharp">public static class UserErrors
@@ -201,6 +210,40 @@ Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
     onFailure: error =&gt; $&quot;Error: {error.Description}&quot;);
 </code></pre>
 <p>All extensions have synchronous and asynchronous overloads so they compose naturally with <code>Task&lt;Result&lt;T&gt;&gt;</code>.</p>
+<h3 id="combine--zip--aggregate-multiple-results">Combine / Zip – aggregate multiple results</h3>
+<p><code>Combine</code> (a sequence of <code>Result</code>) and <code>Zip</code> (exactly two <code>Result&lt;T&gt;</code>) both follow the same aggregation rule:</p>
+<ul>
+<li><strong>All succeed</strong> → success.</li>
+<li><strong>Exactly one fails</strong> → that failure's <strong>original error</strong> propagates unwrapped. Combining a single <code>NotFound</code>
+failure still surfaces as <code>NotFound</code>, not as a validation failure.</li>
+<li><strong>More than one fails</strong> → the failures are aggregated into a single <code>ValidationError</code> whose <code>Errors</code> list holds
+every failed error in order.</li>
+</ul>
+<pre><code class="lang-csharp">Result combined = ResultExtensions.Combine(CheckName(), CheckEmail(), CheckAge());
+// combined.Error is the original NotFound/Conflict/etc. error if only one check failed,
+// or a ValidationError aggregating all of them if more than one failed.
+
+Result&lt;(User, Order)&gt; zipped = GetUser(userId).Zip(GetOrder(orderId));
+// same rule: a single failure propagates as-is; two failures aggregate into a ValidationError.
+</code></pre>
+<h2 id="sharp-edges">Sharp Edges</h2>
+<p>A few behaviors are easy to trip over. They are intentional for now; genuinely breaking fixes (marked below) are
+deferred to a future major version.</p>
+<ul>
+<li><strong>Implicit <code>TValue? → Result&lt;TValue&gt;</code> conversion swallows <code>null</code> as a failure.</strong> Assigning a <code>null</code> value to a
+<code>Result&lt;TValue&gt;</code> compiles and silently produces a <em>failed</em> result carrying <code>Error.NullValue</code> — the conversion
+picks the error for you, and there is no compiler warning at the call site. Prefer constructing the result
+explicitly (<code>Result.Failure&lt;TValue&gt;(someDomainError)</code>) when the caller should choose the error. <em>(Making this
+conversion explicit is a tracked future breaking change.)</em></li>
+<li><strong><code>Result</code> and <code>Result&lt;T&gt;</code> have no value equality.</strong> Both are plain classes with no <code>Equals</code>/<code>GetHashCode</code>
+override, so two results are only equal by reference — two separately-constructed successes (or two
+identically-failed results) are never <code>Equals</code>-equal. Compare <code>IsSuccess</code>/<code>Error</code>/<code>Value</code> instead of the result
+itself. <em>(Adding value equality is a tracked future breaking change.)</em></li>
+<li><strong>A custom error that &quot;looks like&quot; <code>Error.None</code> is a valid failure error.</strong> The <code>Result</code> constructor rejects a
+failure whose error is literally the <code>Error.None</code> singleton, but a custom error with the same empty code and
+description (e.g. <code>Error.Failure(string.Empty, string.Empty)</code>) is a distinct object and is accepted — it is not
+treated as &quot;no error&quot; just because its field values match.</li>
+</ul>
 <h2 id="mapping-to-http-responses">Mapping to HTTP Responses</h2>
 <p><code>Vulthil.SharedKernel.Api</code> provides helpers that turn a <code>Result</code> into the correct HTTP response with typed results for OpenAPI documentation:</p>
 <pre><code class="lang-csharp">// Minimal API endpoint – returns Results&lt;Ok&lt;UserDto&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;

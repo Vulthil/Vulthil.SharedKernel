@@ -1534,7 +1534,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Results.ErrorType",
-      "Summary": "<p sourcefile=\"api/Vulthil.Results.ErrorType.yml\" sourcestartlinenumber=\"1\">Specifies values for ErrorType.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.ErrorType.yml\" sourcestartlinenumber=\"1\">Classifies an <xref href=\"Vulthil.Results.Error\" data-throw-if-not-resolved=\"false\"></xref> so that presentation layers (e.g. <code>Vulthil.SharedKernel.Api</code>) can map it\nto the appropriate HTTP status code without inspecting its code or description.</p>\n"
     },
     {
       "type": "ManagedReference",

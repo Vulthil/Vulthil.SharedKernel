@@ -849,10 +849,11 @@ Class ResultExtensions  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Vulthil_Results_ResultExtensions_Combine_System_Collections_Generic_IEnumerable_Vulthil_Results_Result__" data-uid="Vulthil.Results.ResultExtensions.Combine(System.Collections.Generic.IEnumerable{Vulthil.Results.Result})">
   Combine(IEnumerable&lt;Result&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Extensions/ResultExtensions.Combine.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Extensions/ResultExtensions.Combine.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Combines a sequence of results, returning success when all succeed; otherwise a failure with a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> aggregating every failed result's error.</p>
+  <div class="markdown level1 summary"><p>Combines a sequence of results, returning success when all succeed; a single failure's original error when
+exactly one fails; otherwise a failure with a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> aggregating every failed result's error.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -886,10 +887,11 @@ Class ResultExtensions  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Vulthil_Results_ResultExtensions_Combine_Vulthil_Results_Result___" data-uid="Vulthil.Results.ResultExtensions.Combine(Vulthil.Results.Result[])">
   Combine(params Result[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Extensions/ResultExtensions.Combine.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Extensions/ResultExtensions.Combine.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Combines multiple results, returning success when all succeed; otherwise a failure with a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> aggregating every failed result's error.</p>
+  <div class="markdown level1 summary"><p>Combines multiple results, returning success when all succeed; a single failure's original error when exactly
+one fails; otherwise a failure with a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> aggregating every failed result's error.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -923,10 +925,12 @@ Class ResultExtensions  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Vulthil_Results_ResultExtensions_CombineAsync_System_Collections_Generic_IEnumerable_System_Threading_Tasks_Task_Vulthil_Results_Result___" data-uid="Vulthil.Results.ResultExtensions.CombineAsync(System.Collections.Generic.IEnumerable{System.Threading.Tasks.Task{Vulthil.Results.Result}})">
   CombineAsync(IEnumerable&lt;Task&lt;Result&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Extensions/ResultExtensions.Combine.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Extensions/ResultExtensions.Combine.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Asynchronously awaits and combines a sequence of result tasks, returning success when all succeed; otherwise a failure with a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> aggregating every failed result's error.</p>
+  <div class="markdown level1 summary"><p>Asynchronously awaits and combines a sequence of result tasks, returning success when all succeed; a single
+failure's original error when exactly one fails; otherwise a failure with a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a>
+aggregating every failed result's error.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

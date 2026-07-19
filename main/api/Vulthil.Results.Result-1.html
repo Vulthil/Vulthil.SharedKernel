@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Results_Result_1" data-uid="Vulthil.Results.Result`1" class="text-break">
-Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L81"><i class="bi bi-code-slash"></i></a>
+Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -359,6 +359,12 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
 
 
 
+  <h2 id="Vulthil_Results_Result_1_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Like <a class="xref" href="Vulthil.Results.Result.html">Result</a>, <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> does not define value equality: two instances compare
+by reference, even when they carry the same value or error. Compare <a class="xref" href="Vulthil.Results.Result.html#Vulthil_Results_Result_IsSuccess">IsSuccess</a> and
+<a class="xref" href="Vulthil.Results.Result-1.html#Vulthil_Results_Result_1_Value">Value</a>/<a class="xref" href="Vulthil.Results.Result.html#Vulthil_Results_Result_Error">Error</a> instead of the result itself. Value equality is tracked as a
+future breaking change.</p>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -369,7 +375,7 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
 
   <h3 id="Vulthil_Results_Result_1__ctor__0_System_Boolean_Vulthil_Results_Error_" data-uid="Vulthil.Results.Result`1.#ctor(`0,System.Boolean,Vulthil.Results.Error)">
   Result(TValue?, bool, Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> class.</p>
@@ -412,7 +418,7 @@ Class Result&lt;TValue&gt;  <a class="header-action link-secondary" title="View 
 
   <h3 id="Vulthil_Results_Result_1_Value" data-uid="Vulthil.Results.Result`1.Value">
   Value
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the value of a successful result.</p>
@@ -455,7 +461,7 @@ public TValue Value { get; }</code></pre>
 
   <h3 id="Vulthil_Results_Result_1_op_Implicit__0__Vulthil_Results_Result__0_" data-uid="Vulthil.Results.Result`1.op_Implicit(`0)~Vulthil.Results.Result{`0}">
   implicit operator Result&lt;TValue&gt;(TValue?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L130"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Implicitly converts a value to a successful result, or a failed result if the value is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
@@ -485,6 +491,13 @@ public TValue Value { get; }</code></pre>
 
 
 
+  <h4 class="section" id="Vulthil_Results_Result_1_op_Implicit__0__Vulthil_Results_Result__0__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p><b>Sharp edge:</b> a <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> value silently converts to a <em>failed</em> result carrying
+<a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_NullValue">NullValue</a> — the conversion picks the error for you, and the failure is easy to miss at
+the call site since it looks like an ordinary assignment. Prefer an explicit <a class="xref" href="Vulthil.Results.Result.html#Vulthil_Results_Result_Failure__1_Vulthil_Results_Error_">Failure&lt;TValue&gt;(Error)</a>
+call with a domain-specific error when the caller should choose the error. Making this conversion explicit
+(removing the implicit null-to-failure behavior) is tracked as a future breaking change.</p>
+</div>
 
 
 
@@ -493,7 +506,7 @@ public TValue Value { get; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L81" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L95" class="edit-link">Edit this page</a>
         </div>
 
 

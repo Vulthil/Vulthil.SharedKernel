@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Results_Result" data-uid="Vulthil.Results.Result" class="text-break">
-Class Result  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class Result  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -230,6 +230,11 @@ Class Result  <a class="header-action link-secondary" title="View source" href="
 
 
 
+  <h2 id="Vulthil_Results_Result_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p><a class="xref" href="Vulthil.Results.Result.html">Result</a> does not define value equality: two instances compare by reference, so two successful (or
+two identically-failed) results built separately are never <code>Equals</code>-equal. Compare <a class="xref" href="Vulthil.Results.Result.html#Vulthil_Results_Result_IsSuccess">IsSuccess</a>
+and <a class="xref" href="Vulthil.Results.Result.html#Vulthil_Results_Result_Error">Error</a> instead of the result itself. Value equality is tracked as a future breaking change.</p>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -240,7 +245,7 @@ Class Result  <a class="header-action link-secondary" title="View source" href="
 
   <h3 id="Vulthil_Results_Result__ctor_System_Boolean_Vulthil_Results_Error_" data-uid="Vulthil.Results.Result.#ctor(System.Boolean,Vulthil.Results.Error)">
   Result(bool, Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Vulthil.Results.Result.html">Result</a> class.</p>
@@ -272,7 +277,10 @@ Class Result  <a class="header-action link-secondary" title="View source" href="
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
-    <dd><p>Thrown when the success state and error are inconsistent.</p>
+    <dd><p>Thrown when the success state and error are inconsistent: a success
+carrying an error other than the <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_None">None</a> instance, or a failure carrying the
+<a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_None">None</a> instance itself. The check is an identity check, so a custom error that merely
+looks like <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_None">None</a> (e.g. an empty code and description) is accepted as a valid failure.</p>
 </dd>
   </dl>
 
@@ -286,7 +294,7 @@ Class Result  <a class="header-action link-secondary" title="View source" href="
 
   <h3 id="Vulthil_Results_Result_Error" data-uid="Vulthil.Results.Result.Error">
   Error
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the error associated with a failed result.
@@ -319,7 +327,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <h3 id="Vulthil_Results_Result_IsFailure" data-uid="Vulthil.Results.Result.IsFailure">
   IsFailure
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether the operation failed.</p>
@@ -351,7 +359,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <h3 id="Vulthil_Results_Result_IsSuccess" data-uid="Vulthil.Results.Result.IsSuccess">
   IsSuccess
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether the operation succeeded.</p>
@@ -387,7 +395,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <h3 id="Vulthil_Results_Result_Failure_Vulthil_Results_Error_" data-uid="Vulthil.Results.Result.Failure(Vulthil.Results.Error)">
   Failure(Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a failed result with the specified error.</p>
@@ -426,7 +434,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <h3 id="Vulthil_Results_Result_Failure__1_Vulthil_Results_Error_" data-uid="Vulthil.Results.Result.Failure``1(Vulthil.Results.Error)">
   Failure&lt;TValue&gt;(Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a failed result of the specified value type.</p>
@@ -471,7 +479,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <h3 id="Vulthil_Results_Result_Success" data-uid="Vulthil.Results.Result.Success">
   Success()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a successful result.</p>
@@ -504,7 +512,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <h3 id="Vulthil_Results_Result_Success__1___0_" data-uid="Vulthil.Results.Result.Success``1(``0)">
   Success&lt;TValue&gt;(TValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a successful result containing the specified value.</p>
@@ -549,7 +557,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <h3 id="Vulthil_Results_Result_ValidationFailure__1_Vulthil_Results_ValidationError_" data-uid="Vulthil.Results.Result.ValidationFailure``1(Vulthil.Results.ValidationError)">
   ValidationFailure&lt;TValue&gt;(ValidationError)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a failed result from a validation error.</p>
@@ -594,7 +602,7 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

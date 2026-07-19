@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Enum ErrorType | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Specifies values for ErrorType.">
+      <meta name="description" content="Classifies an  so that presentation layers (e.g. Vulthil.SharedKernel.Api) can map it to the appropriate HTTP status code without inspecting its code or description.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -90,7 +90,7 @@
 
 
   <h1 id="Vulthil_Results_ErrorType" data-uid="Vulthil.Results.ErrorType" class="text-break">
-Enum ErrorType  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L149"><i class="bi bi-code-slash"></i></a>
+Enum ErrorType  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L150"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -98,7 +98,8 @@ Enum ErrorType  <a class="header-action link-secondary" title="View source" href
   <dl><dt>Assembly</dt><dd>Vulthil.Results.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Specifies values for ErrorType.</p>
+  <div class="markdown summary"><p>Classifies an <a class="xref" href="Vulthil.Results.Error.html">Error</a> so that presentation layers (e.g. <code>Vulthil.SharedKernel.Api</code>) can map it
+to the appropriate HTTP status code without inspecting its code or description.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -119,23 +120,28 @@ Enum ErrorType  <a class="header-action link-secondary" title="View source" href
   <dl class="parameters">
     <dt id="Vulthil_Results_ErrorType_Conflict"><code>Conflict = 4</code></dt>
   
-  <dd><p>Specifies the Conflict value.</p>
+  <dd><p>The request conflicts with the current state of the resource (e.g. a uniqueness violation). Maps to
+HTTP 409 Conflict.</p>
 </dd>
     <dt id="Vulthil_Results_ErrorType_Failure"><code>Failure = 0</code></dt>
   
-  <dd><p>Specifies the Failure value.</p>
+  <dd><p>An unclassified or unexpected failure with no more specific meaning. Maps to HTTP 500 Internal Server Error.
+This is the default classification produced by <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_Failure_System_String_System_String_">Failure(string, string)</a>.</p>
 </dd>
     <dt id="Vulthil_Results_ErrorType_NotFound"><code>NotFound = 3</code></dt>
   
-  <dd><p>Specifies the NotFound value.</p>
+  <dd><p>The requested resource does not exist. Maps to HTTP 404 Not Found.</p>
 </dd>
     <dt id="Vulthil_Results_ErrorType_Problem"><code>Problem = 2</code></dt>
   
-  <dd><p>Specifies the Problem value.</p>
+  <dd><p>A client-addressable business-rule violation the caller can act on (distinct from a plain validation
+failure). Maps to HTTP 400 Bad Request with the error's full detail in the problem response.</p>
 </dd>
     <dt id="Vulthil_Results_ErrorType_Validation"><code>Validation = 1</code></dt>
   
-  <dd><p>Specifies the Validation value.</p>
+  <dd><p>One or more input values failed validation (e.g. FluentValidation rule failures). Carried by
+<a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a>, whose <a class="xref" href="Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError_Errors">Errors</a> lists every individual violation.
+Maps to HTTP 400 Bad Request as a validation-problem response with per-field details.</p>
 </dd>
   </dl>
 
@@ -144,7 +150,7 @@ Enum ErrorType  <a class="header-action link-secondary" title="View source" href
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L149" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L150" class="edit-link">Edit this page</a>
         </div>
 
 

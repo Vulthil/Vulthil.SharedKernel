@@ -248,7 +248,7 @@ drives it by supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMes
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionRegistry_1_GetPlan_System_String_" data-uid="Vulthil.Messaging.Transport.MessageExecutionRegistry`1.GetPlan(System.String)">
   GetPlan(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L139"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Convenience lookup used by the bare-JSON receive path and tests: tries URN parsing first, then falls back to CLR full name.</p>
@@ -287,7 +287,7 @@ drives it by supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMes
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionRegistry_1_GetPlanByFullName_System_String_" data-uid="Vulthil.Messaging.Transport.MessageExecutionRegistry`1.GetPlanByFullName(System.String)">
   GetPlanByFullName(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L132"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resolves a plan from the CLR full type name (bare-JSON compatibility path). Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when no plan matches.</p>
@@ -326,7 +326,7 @@ drives it by supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMes
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionRegistry_1_GetPlanByUrn_System_Uri_" data-uid="Vulthil.Messaging.Transport.MessageExecutionRegistry`1.GetPlanByUrn(System.Uri)">
   GetPlanByUrn(Uri)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L125"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resolves a plan from the wire URN (envelope path). Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when no plan matches.</p>
@@ -365,7 +365,7 @@ drives it by supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMes
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionRegistry_1_IsQueuePartitioned_Vulthil_Messaging_Queues_QueueDefinition_" data-uid="Vulthil.Messaging.Transport.MessageExecutionRegistry`1.IsQueuePartitioned(Vulthil.Messaging.Queues.QueueDefinition)">
   IsQueuePartitioned(QueueDefinition)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether any concrete message type subscribed or consumed by <code class="paramref">queue</code> is
@@ -407,7 +407,7 @@ and afterwards. Drives ordered single dispatch and the single-active-consumer qu
 
   <h3 id="Vulthil_Messaging_Transport_MessageExecutionRegistry_1_RegisterQueue_Vulthil_Messaging_Queues_QueueDefinition_" data-uid="Vulthil.Messaging.Transport.MessageExecutionRegistry`1.RegisterQueue(Vulthil.Messaging.Queues.QueueDefinition)">
   RegisterQueue(QueueDefinition)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageExecutionRegistry.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Assembles execution plans for every concrete message type consumed or subscribed by <code class="paramref">queue</code>.
@@ -416,10 +416,7 @@ message type accumulates all their handlers in one plan. A transport that delive
 build one registry per queue so a queue's deliveries dispatch only its own handlers (as the RabbitMQ
 transport does); a transport that dispatches each produced message exactly once can register every queue in
 a single instance (as the in-memory test harness does). A message type can have at most one request
-consumer per queue. Each handler is built with the registration's effective retry policy — the
-per-registration policy when set, otherwise the queue's <a class="xref" href="Vulthil.Messaging.Queues.QueueDefinition.html#Vulthil_Messaging_Queues_QueueDefinition_DefaultRetryPolicy">DefaultRetryPolicy</a> —
-which also applies to polymorphic registrations fanned out across their concrete implementers; request
-consumers never receive one, since they reply with an RPC fault instead of retrying.</p>
+consumer per queue.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

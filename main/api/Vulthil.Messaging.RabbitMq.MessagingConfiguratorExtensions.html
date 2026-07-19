@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_RabbitMq_MessagingConfiguratorExtensions" data-uid="Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions" class="text-break">
-Class MessagingConfiguratorExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
+Class MessagingConfiguratorExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,13 +157,10 @@ Class MessagingConfiguratorExtensions  <a class="header-action link-secondary" t
 
   <h3 id="Vulthil_Messaging_RabbitMq_MessagingConfiguratorExtensions_UseRabbitMq_Vulthil_Messaging_IMessagingConfigurator_System_String_System_Action_Aspire_RabbitMQ_Client_RabbitMQClientSettings__System_Action_RabbitMQ_Client_ConnectionFactory__System_Action_Vulthil_Messaging_RabbitMq_RabbitMqTransportOptions__" data-uid="Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq(Vulthil.Messaging.IMessagingConfigurator,System.String,System.Action{Aspire.RabbitMQ.Client.RabbitMQClientSettings},System.Action{RabbitMQ.Client.ConnectionFactory},System.Action{Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions})">
   UseRabbitMq(IMessagingConfigurator, string, Action&lt;RabbitMQClientSettings&gt;?, Action&lt;ConnectionFactory&gt;?, Action&lt;RabbitMqTransportOptions&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Configures the messaging infrastructure to use RabbitMQ as the transport. At host start the configured
-queue definitions are validated against the RabbitMQ topology contract — a queue's own exchange must be
-<a class="xref" href="Vulthil.Messaging.MessagingExchangeType.html#Vulthil_Messaging_MessagingExchangeType_Fanout">Fanout</a> — so a misconfiguration fails fast instead of silently
-dropping deliveries (see <span class="xref">Vulthil.Messaging.RabbitMq.RabbitMqQueueTopologyValidator</span>).</p>
+  <div class="markdown level1 summary"><p>Configures the messaging infrastructure to use RabbitMQ as the transport.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -214,7 +211,7 @@ first bound from the <code>Messaging:RabbitMq</code> configuration section; this
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L21" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/MessagingConfiguratorExtensions.cs/#L19" class="edit-link">Edit this page</a>
         </div>
 
 

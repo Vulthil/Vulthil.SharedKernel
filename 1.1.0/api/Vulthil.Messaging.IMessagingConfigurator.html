@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IMessagingConfigurator | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IMessagingConfigurator | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="Fluent configurator for registering messaging queues, consumers, and options.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_IMessagingConfigurator.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.IMessagingConfigurator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.IMessagingConfigurator">
+
+
+
+  <h1 id="Vulthil_Messaging_IMessagingConfigurator" data-uid="Vulthil.Messaging.IMessagingConfigurator" class="text-break">
+Interface IMessagingConfigurator  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Fluent configurator for registering messaging queues, consumers, and options.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IMessagingConfigurator</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.html#Vulthil_Messaging_Inbox_InboxConfiguratorExtensions_AddIdempotentInbox__1_Vulthil_Messaging_IMessagingConfigurator_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__">InboxConfiguratorExtensions.AddIdempotentInbox&lt;TMessage&gt;(IMessagingConfigurator, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.html#Vulthil_Messaging_Outbox_TransactionalOutboxExtensions_AddTransactionalConsumer__1_Vulthil_Messaging_IMessagingConfigurator_">TransactionalOutboxExtensions.AddTransactionalConsumer&lt;TMessage&gt;(IMessagingConfigurator)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.html#Vulthil_Messaging_Outbox_TransactionalOutboxExtensions_AddTransactionalOutbox_Vulthil_Messaging_IMessagingConfigurator_">TransactionalOutboxExtensions.AddTransactionalOutbox(IMessagingConfigurator)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.html#Vulthil_Messaging_RabbitMq_MessagingConfiguratorExtensions_UseRabbitMq_Vulthil_Messaging_IMessagingConfigurator_System_String_System_Action_Aspire_RabbitMQ_Client_RabbitMQClientSettings__System_Action_RabbitMQ_Client_ConnectionFactory__System_Action_Vulthil_Messaging_RabbitMq_RabbitMqTransportOptions__">MessagingConfiguratorExtensions.UseRabbitMq(IMessagingConfigurator, string, Action&lt;RabbitMQClientSettings&gt;?, Action&lt;ConnectionFactory&gt;?, Action&lt;RabbitMqTransportOptions&gt;?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Messaging.TestHarness.TestHarnessExtensions.html#Vulthil_Messaging_TestHarness_TestHarnessExtensions_UseTestHarness_Vulthil_Messaging_IMessagingConfigurator_">TestHarnessExtensions.UseTestHarness(IMessagingConfigurator)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_HostApplicationBuilder_" data-uid="Vulthil.Messaging.IMessagingConfigurator.HostApplicationBuilder*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_HostApplicationBuilder" data-uid="Vulthil.Messaging.IMessagingConfigurator.HostApplicationBuilder">
+  HostApplicationBuilder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the host application builder used for service registration during messaging configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IHostApplicationBuilder HostApplicationBuilder { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostapplicationbuilder">IHostApplicationBuilder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_AddConsumeFilter_" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddConsumeFilter*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_AddConsumeFilter__1" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddConsumeFilter``1">
+  AddConsumeFilter&lt;TFilter&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a closed-generic consume filter. The filter is applied to every delivery whose
+message type matches the filter's <code>IConsumeFilter&lt;TMessage&gt;</code> interface.
+Multiple filters for the same message type are composed in registration order
+(first registered is outermost).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator AddConsumeFilter&lt;TFilter&gt;() where TFilter : class</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TFilter</code></dt>
+    <dd><p>The filter implementation. Must implement at least one <code>IConsumeFilter&lt;TMessage&gt;</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_AddOpenConsumeFilter_" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddOpenConsumeFilter*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_AddOpenConsumeFilter_System_Type_" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddOpenConsumeFilter(System.Type)">
+  AddOpenConsumeFilter(Type)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers an open-generic consume filter that applies to every message type. Use this for
+cross-cutting filters that do not depend on the typed payload (logging, telemetry, etc.).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator AddOpenConsumeFilter(Type openFilterType)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>openFilterType</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd><p>An open generic type (e.g. <code>typeof(LoggingFilter&lt;&gt;)</code>) implementing <code>IConsumeFilter&lt;&gt;</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_AddPublishFilter_" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddPublishFilter*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_AddPublishFilter__1" data-uid="Vulthil.Messaging.IMessagingConfigurator.AddPublishFilter``1">
+  AddPublishFilter&lt;TFilter&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a publish/send filter applied to every outgoing publish and send. Multiple filters are composed in
+registration order (first registered is outermost). A filter may short-circuit the pipeline by not invoking
+<code>next</code> — for example a transactional outbox that captures the message into the database instead of
+sending it immediately. The filter is resolved from the caller's scope, so it may depend on scoped services.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator AddPublishFilter&lt;TFilter&gt;() where TFilter : class, IPublishFilter</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TFilter</code></dt>
+    <dd><p>The filter implementation, which must implement <a class="xref" href="Vulthil.Messaging.Transport.IPublishFilter.html">IPublishFilter</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_ConfigureMessage_" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_ConfigureMessage__1_System_Action_Vulthil_Messaging_MessageConfiguration___0___" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureMessage``1(System.Action{Vulthil.Messaging.MessageConfiguration{``0}})">
+  ConfigureMessage&lt;TMessage&gt;(Action&lt;MessageConfiguration&lt;TMessage&gt;&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a publish definition for messages of type <code class="typeparamref">TMessage</code>. This allows you to specify exchange and routing configurations for outgoing messages of that type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator ConfigureMessage&lt;TMessage&gt;(Action&lt;MessageConfiguration&lt;TMessage&gt;&gt; configureMessageAction) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>configureMessageAction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">MessageConfiguration</a>&lt;TMessage&gt;&gt;</dt>
+    <dd><p>An action to configure the message's publish settings.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The type of the message to publish.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_ConfigureMessagingOptions_" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_ConfigureMessagingOptions_System_Action_Vulthil_Messaging_IMessagingOptionsConfigurator__" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureMessagingOptions(System.Action{Vulthil.Messaging.IMessagingOptionsConfigurator})">
+  ConfigureMessagingOptions(Action&lt;IMessagingOptionsConfigurator&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Configures global messaging options such as serialization, timeouts, and built-in filters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator ConfigureMessagingOptions(Action&lt;IMessagingOptionsConfigurator&gt; action)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>action</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.IMessagingOptionsConfigurator.html">IMessagingOptionsConfigurator</a>&gt;</dt>
+    <dd><p>An action that receives the writable options surface.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_ConfigureQueue_" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureQueue*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_ConfigureQueue_System_String_System_Action_Vulthil_Messaging_Queues_IQueueConfigurator__" data-uid="Vulthil.Messaging.IMessagingConfigurator.ConfigureQueue(System.String,System.Action{Vulthil.Messaging.Queues.IQueueConfigurator})">
+  ConfigureQueue(string, Action&lt;IQueueConfigurator&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a named queue with consumer and routing configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator ConfigureQueue(string queueName, Action&lt;IQueueConfigurator&gt; queueConfigurationAction)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>queueName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the queue.</p>
+</dd>
+    <dt><code>queueConfigurationAction</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a>&gt;</dt>
+    <dd><p>An action to configure the queue's consumers and settings.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(System.Int32)">
+  UsePartitioner&lt;TMessage&gt;(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries by their <code>CorrelationId</code> —
+shorthand for the overload taking an explicit key selector with <code>ctx =&gt; ctx.CorrelationId</code>.
+Deliveries with no correlation id bypass the partitioner.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator UsePartitioner&lt;TMessage&gt;(int partitionCount) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>partitionCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of partitions (lanes) to distribute keys across.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to partition.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(System.Int32,System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.String})">
+  UsePartitioner&lt;TMessage&gt;(int, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries that share a partition key, so
+messages correlated to the same aggregate are handled one at a time and in order, while messages with
+different keys process concurrently. Effective only when the consuming queue allows concurrency
+(<code>ConcurrencyLimit &gt; 1</code>); at a concurrency of one, processing is already serial.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator UsePartitioner&lt;TMessage&gt;(int partitionCount, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt; keySelector) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>partitionCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of partitions (lanes) to distribute keys across.</p>
+</dd>
+    <dt><code>keySelector</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.html">IMessageContext</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>Selects the partition key from a delivery (e.g. <code>ctx =&gt; ctx.CorrelationId</code>). A delivery whose
+key is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> or empty bypasses the partitioner.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to partition.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(Vulthil.Messaging.Partitioner)">
+  UsePartitioner&lt;TMessage&gt;(Partitioner)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries by their <code>CorrelationId</code> using a
+caller-supplied <a class="xref" href="Vulthil.Messaging.Partitioner.html">Partitioner</a> — shorthand for the overload taking an explicit key selector
+with <code>ctx =&gt; ctx.CorrelationId</code>. Share one <a class="xref" href="Vulthil.Messaging.Partitioner.html">Partitioner</a> across several message types
+to serialize messages correlated to the same id regardless of their type (e.g. a saga). Deliveries with
+no correlation id bypass the partitioner.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator UsePartitioner&lt;TMessage&gt;(Partitioner partitioner) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>partitioner</code> <a class="xref" href="Vulthil.Messaging.Partitioner.html">Partitioner</a></dt>
+    <dd><p>The partitioner whose lanes serialize same-key processing.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to partition.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner*"></a>
+
+  <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(Vulthil.Messaging.Partitioner,System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.String})">
+  UsePartitioner&lt;TMessage&gt;(Partitioner, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries that share a partition key using a
+caller-supplied <a class="xref" href="Vulthil.Messaging.Partitioner.html">Partitioner</a>. Share one <a class="xref" href="Vulthil.Messaging.Partitioner.html">Partitioner</a> across several message
+types to serialize messages correlated to the same key regardless of their type (e.g. a saga).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMessagingConfigurator UsePartitioner&lt;TMessage&gt;(Partitioner partitioner, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt; keySelector) where TMessage : notnull</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>partitioner</code> <a class="xref" href="Vulthil.Messaging.Partitioner.html">Partitioner</a></dt>
+    <dd><p>The partitioner whose lanes serialize same-key processing.</p>
+</dd>
+    <dt><code>keySelector</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.html">IMessageContext</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>Selects the partition key from a delivery (e.g. <code>ctx =&gt; ctx.CorrelationId</code>). A delivery whose
+key is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> or empty bypasses the partitioner.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.IMessagingConfigurator.html">IMessagingConfigurator</a></dt>
+    <dd><p>The current configurator instance for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type to partition.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

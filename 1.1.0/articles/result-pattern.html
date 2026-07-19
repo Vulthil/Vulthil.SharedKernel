@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Result Pattern | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Result Pattern | Vulthil.SharedKernel ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/result-pattern.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="result-pattern">Result Pattern</h1>
+
+<p><code>Vulthil.Results</code> provides a railway-oriented <code>Result</code> / <code>Result&lt;T&gt;</code> type that models success and failure explicitly, eliminating the need to throw exceptions for expected error conditions.</p>
+<h2 id="core-types">Core Types</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Result</code></td>
+<td>Represents success or failure without a value</td>
+</tr>
+<tr>
+<td><code>Result&lt;T&gt;</code></td>
+<td>Represents success with a value of type <code>T</code>, or failure</td>
+</tr>
+<tr>
+<td><code>Error</code></td>
+<td>Structured error with <code>Code</code>, <code>Description</code>, and <code>ErrorType</code></td>
+</tr>
+<tr>
+<td><code>ValidationError</code></td>
+<td>An <code>Error</code> subtype that carries multiple inner errors</td>
+</tr>
+</tbody>
+</table>
+<h2 id="creating-results">Creating Results</h2>
+<pre><code class="lang-csharp">// Success
+Result ok = Result.Success();
+Result&lt;int&gt; typed = Result.Success(42);
+
+// Failure
+Error error = Error.NotFound(&quot;User.NotFound&quot;, &quot;User was not found&quot;);
+Result&lt;User&gt; failed = Result.Failure&lt;User&gt;(error);
+
+// Validation failure
+var validation = new ValidationError([
+    Error.Validation(&quot;Email.Required&quot;, &quot;Email is required&quot;),
+    Error.Validation(&quot;Name.TooLong&quot;, &quot;Name exceeds 100 characters&quot;)
+]);
+Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
+</code></pre>
+<h2 id="error-classifications">Error Classifications</h2>
+<p><code>ErrorType</code> determines how the error maps to HTTP status codes in the API layer:</p>
+<table>
+<thead>
+<tr>
+<th>ErrorType</th>
+<th>Factory Method</th>
+<th>HTTP Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Failure</code></td>
+<td><code>Error.Failure(...)</code></td>
+<td>500 Internal Server Error</td>
+<td>Unclassified/unexpected failure</td>
+</tr>
+<tr>
+<td><code>NotFound</code></td>
+<td><code>Error.NotFound(...)</code></td>
+<td>404 Not Found</td>
+<td>The requested resource doesn't exist</td>
+</tr>
+<tr>
+<td><code>Problem</code></td>
+<td><code>Error.Problem(...)</code></td>
+<td>400 Bad Request</td>
+<td>Client-addressable business-rule violation; full error detail is returned</td>
+</tr>
+<tr>
+<td><code>Conflict</code></td>
+<td><code>Error.Conflict(...)</code></td>
+<td>409 Conflict</td>
+<td>The request conflicts with current state</td>
+</tr>
+<tr>
+<td><code>Validation</code></td>
+<td><code>Error.Validation(...)</code> / <code>ValidationError</code></td>
+<td>400 Bad Request</td>
+<td>Input validation failure; <code>ValidationError.Errors</code> carries the per-field details</td>
+</tr>
+</tbody>
+</table>
+<p><code>Error.Validation</code> mints the <em>inner</em> errors of a <code>ValidationError</code> (this is what <code>ValidationPipelineBehavior</code> uses for
+FluentValidation failures). <code>Error.Problem</code> is for a single, standalone business-rule error — it is a different
+classification from <code>Validation</code>, not a supertype of it.</p>
+<h2 id="defining-domain-errors">Defining Domain Errors</h2>
+<p>Keep domain errors as static fields so they are reusable and discoverable:</p>
+<pre><code class="lang-csharp">public static class UserErrors
+{
+    public static readonly Error NotFound =
+        Error.NotFound(&quot;User.NotFound&quot;, &quot;User was not found&quot;);
+
+    public static readonly Error EmailTaken =
+        Error.Conflict(&quot;User.EmailTaken&quot;, &quot;Email is already in use&quot;);
+}
+</code></pre>
+<h2 id="functional-extensions">Functional Extensions</h2>
+<p>The library ships extension methods that let you compose operations without manual <code>if</code>/<code>else</code> branching.</p>
+<h3 id="bind--chain-dependent-operations">Bind – chain dependent operations</h3>
+<pre><code class="lang-csharp">Result&lt;Order&gt; result = await GetUser(userId)
+    .BindAsync(user =&gt; CreateOrder(user));
+</code></pre>
+<p>If <code>GetUser</code> fails, the error propagates and <code>CreateOrder</code> is never called.</p>
+<h3 id="map--transform-the-success-value">Map – transform the success value</h3>
+<pre><code class="lang-csharp">Result&lt;string&gt; email = getUser
+    .Map(user =&gt; user.Email);
+</code></pre>
+<h3 id="tap--execute-a-side-effect-without-changing-the-result">Tap – execute a side-effect without changing the result</h3>
+<pre><code class="lang-csharp">Result&lt;User&gt; result = await CreateUser(command)
+    .TapAsync(user =&gt; logger.LogInformation(&quot;Created {Id}&quot;, user.Id));
+</code></pre>
+<h3 id="match--branch-on-successfailure">Match – branch on success/failure</h3>
+<pre><code class="lang-csharp">string message = result.Match(
+    onSuccess: user =&gt; $&quot;Welcome, {user.Name}&quot;,
+    onFailure: error =&gt; $&quot;Error: {error.Description}&quot;);
+</code></pre>
+<p>All extensions have synchronous and asynchronous overloads so they compose naturally with <code>Task&lt;Result&lt;T&gt;&gt;</code>.</p>
+<h3 id="combine--zip--aggregate-multiple-results">Combine / Zip – aggregate multiple results</h3>
+<p><code>Combine</code> (a sequence of <code>Result</code>) and <code>Zip</code> (exactly two <code>Result&lt;T&gt;</code>) both follow the same aggregation rule:</p>
+<ul>
+<li><strong>All succeed</strong> → success.</li>
+<li><strong>Exactly one fails</strong> → that failure's <strong>original error</strong> propagates unwrapped. Combining a single <code>NotFound</code>
+failure still surfaces as <code>NotFound</code>, not as a validation failure.</li>
+<li><strong>More than one fails</strong> → the failures are aggregated into a single <code>ValidationError</code> whose <code>Errors</code> list holds
+every failed error in order.</li>
+</ul>
+<pre><code class="lang-csharp">Result combined = ResultExtensions.Combine(CheckName(), CheckEmail(), CheckAge());
+// combined.Error is the original NotFound/Conflict/etc. error if only one check failed,
+// or a ValidationError aggregating all of them if more than one failed.
+
+Result&lt;(User, Order)&gt; zipped = GetUser(userId).Zip(GetOrder(orderId));
+// same rule: a single failure propagates as-is; two failures aggregate into a ValidationError.
+</code></pre>
+<h2 id="sharp-edges">Sharp Edges</h2>
+<p>A few behaviors are easy to trip over. They are intentional for now; genuinely breaking fixes (marked below) are
+deferred to a future major version.</p>
+<ul>
+<li><strong>Implicit <code>TValue? → Result&lt;TValue&gt;</code> conversion swallows <code>null</code> as a failure.</strong> Assigning a <code>null</code> value to a
+<code>Result&lt;TValue&gt;</code> compiles and silently produces a <em>failed</em> result carrying <code>Error.NullValue</code> — the conversion
+picks the error for you, and there is no compiler warning at the call site. Prefer constructing the result
+explicitly (<code>Result.Failure&lt;TValue&gt;(someDomainError)</code>) when the caller should choose the error. <em>(Making this
+conversion explicit is a tracked future breaking change.)</em></li>
+<li><strong><code>Result</code> and <code>Result&lt;T&gt;</code> have no value equality.</strong> Both are plain classes with no <code>Equals</code>/<code>GetHashCode</code>
+override, so two results are only equal by reference — two separately-constructed successes (or two
+identically-failed results) are never <code>Equals</code>-equal. Compare <code>IsSuccess</code>/<code>Error</code>/<code>Value</code> instead of the result
+itself. <em>(Adding value equality is a tracked future breaking change.)</em></li>
+<li><strong>A custom error that &quot;looks like&quot; <code>Error.None</code> is a valid failure error.</strong> The <code>Result</code> constructor rejects a
+failure whose error is literally the <code>Error.None</code> singleton, but a custom error with the same empty code and
+description (e.g. <code>Error.Failure(string.Empty, string.Empty)</code>) is a distinct object and is accepted — it is not
+treated as &quot;no error&quot; just because its field values match.</li>
+</ul>
+<h2 id="mapping-to-http-responses">Mapping to HTTP Responses</h2>
+<p><code>Vulthil.SharedKernel.Api</code> provides helpers that turn a <code>Result</code> into the correct HTTP response with typed results for OpenAPI documentation:</p>
+<pre><code class="lang-csharp">// Minimal API endpoint – returns Results&lt;Ok&lt;UserDto&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;
+app.MapGet(&quot;/users/{id:guid}&quot;, async (Guid id, ISender sender) =&gt;
+{
+    var result = await sender.SendAsync(new GetUserQuery(id));
+    return result.ToIResult();
+});
+
+// Controller-based endpoint with typed results
+public async Task&lt;Results&lt;Ok&lt;UserDto&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;&gt; Get(Guid id)
+{
+    var result = await _sender.SendAsync(new GetUserQuery(id));
+    return result.ToIResult();
+}
+
+// Controller-based endpoint with IActionResult
+public async Task&lt;IActionResult&gt; Get(Guid id)
+{
+    var result = await _sender.SendAsync(new GetUserQuery(id));
+    return result.ToActionResult(this);
+}
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/result-pattern.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

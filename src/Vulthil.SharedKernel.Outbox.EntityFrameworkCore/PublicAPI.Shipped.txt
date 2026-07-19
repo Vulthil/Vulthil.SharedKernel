@@ -23,3 +23,5 @@ Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.OutboxMessag
 Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.SaveChangesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
 Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions
 static Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!
+override Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavedChanges(Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesCompletedEventData! eventData, int result) -> int
+override Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.SavingChanges(Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData! eventData, Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int> result) -> Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int>

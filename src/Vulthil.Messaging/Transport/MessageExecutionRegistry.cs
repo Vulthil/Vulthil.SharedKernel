@@ -43,7 +43,10 @@ public sealed class MessageExecutionRegistry<THandler>
     /// build one registry per queue so a queue's deliveries dispatch only its own handlers (as the RabbitMQ
     /// transport does); a transport that dispatches each produced message exactly once can register every queue in
     /// a single instance (as the in-memory test harness does). A message type can have at most one request
-    /// consumer per queue.
+    /// consumer per queue. Each handler is built with the registration's effective retry policy — the
+    /// per-registration policy when set, otherwise the queue's <see cref="QueueDefinition.DefaultRetryPolicy"/> —
+    /// which also applies to polymorphic registrations fanned out across their concrete implementers; request
+    /// consumers never receive one, since they reply with an RPC fault instead of retrying.
     /// </summary>
     /// <param name="queue">The queue whose registrations and subscriptions to register.</param>
     /// <exception cref="InvalidOperationException">A second request consumer is registered for a message type that already has one on the same queue.</exception>
@@ -71,8 +74,8 @@ public sealed class MessageExecutionRegistry<THandler>
                 }
 
                 var entry = registration is RequestConsumerRegistration rpc
-                    ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType, rpc.RetryPolicy)
-                    : _handlerFactory.ForConsumer(registration.ConsumerType.Type, registration.MessageType.Type, registration.RetryPolicy);
+                    ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType, retryPolicy: null)
+                    : _handlerFactory.ForConsumer(registration.ConsumerType.Type, registration.MessageType.Type, registration.RetryPolicy ?? queue.DefaultRetryPolicy);
 
                 if (entry.Kind == HandlerKind.RequestConsumer && !_requestConsumerKeys.Add((queue.Name, plan.Urn)))
                 {

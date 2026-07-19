@@ -29,20 +29,28 @@ internal static partial class MessagingLog
     public static partial void PoisonMessage(ILogger logger, Exception exception, string queue, string messageType, string routingKey);
 
     [LoggerMessage(EventId = 1103, Level = LogLevel.Warning,
-        Message = "Consumer threw on queue '{Queue}' (type='{MessageType}', routingKey='{RoutingKey}', retry={Retry}/{MaxRetry})")]
-    public static partial void ConsumerThrew(ILogger logger, Exception exception, string queue, string messageType, string routingKey, int retry, int maxRetry);
+        Message = "Consumer '{Consumer}' threw on queue '{Queue}' (routingKey='{RoutingKey}', retry={Retry}/{MaxRetry})")]
+    public static partial void ConsumerThrew(ILogger logger, Exception exception, string queue, string consumer, string routingKey, int retry, int maxRetry);
 
     [LoggerMessage(EventId = 1104, Level = LogLevel.Debug,
         Message = "Scheduling retry {Retry}/{MaxRetry} on queue '{Queue}' after delay {Delay}")]
     public static partial void SchedulingRetry(ILogger logger, string queue, int retry, int maxRetry, TimeSpan delay);
 
     [LoggerMessage(EventId = 1105, Level = LogLevel.Error,
-        Message = "Consumer permanently failed on queue '{Queue}' (type='{MessageType}', routingKey='{RoutingKey}'). Dead-lettering.")]
-    public static partial void ConsumerFailed(ILogger logger, Exception exception, string queue, string messageType, string routingKey);
+        Message = "Consumer '{Consumer}' permanently failed on queue '{Queue}' (type='{MessageType}', routingKey='{RoutingKey}'). Publishing fault.")]
+    public static partial void ConsumerFailed(ILogger logger, Exception exception, string queue, string consumer, string messageType, string routingKey);
 
     [LoggerMessage(EventId = 1106, Level = LogLevel.Error,
         Message = "Failed to publish fault to exchange '{FaultExchange}' (routingKey='{RoutingKey}'). Original exception preserved.")]
     public static partial void FaultPublishFailed(ILogger logger, Exception exception, string faultExchange, string routingKey);
+
+    [LoggerMessage(EventId = 1107, Level = LogLevel.Warning,
+        Message = "Retry re-delivery on queue '{Queue}' lists handler identities that are no longer registered: {MissingHandlers}. They will not be re-dispatched.")]
+    public static partial void RetryHandlersMissing(ILogger logger, string queue, string missingHandlers);
+
+    [LoggerMessage(EventId = 1108, Level = LogLevel.Warning,
+        Message = "Retry policy on queue '{Queue}' ignores exception type '{TypeName}', which cannot be resolved to a CLR type; matching exceptions WILL be retried. Use the assembly-qualified type name.")]
+    public static partial void IgnoredExceptionUnresolvable(ILogger logger, string queue, string typeName);
 
     [LoggerMessage(EventId = 1200, Level = LogLevel.Debug,
         Message = "Publishing {MessageType} to exchange '{Exchange}' (routingKey='{RoutingKey}', messageId='{MessageId}')")]

@@ -25,6 +25,7 @@ internal static class MessageHandlerFactory
         => new()
         {
             RetryPolicy = retryPolicy,
+            Identity = MessageHandler.BuildIdentity(typeof(TConsumer), typeof(TMessage)),
             Kind = HandlerKind.Consumer,
             DispatchAsync = async (sp, message, ea, envelope, _, ct) =>
             {
@@ -53,6 +54,7 @@ internal static class MessageHandlerFactory
         => new()
         {
             RetryPolicy = retryPolicy,
+            Identity = MessageHandler.BuildIdentity(typeof(TConsumer), typeof(TRequest)),
             Kind = HandlerKind.RequestConsumer,
             DispatchAsync = async (sp, message, ea, envelope, publishAsync, ct) =>
             {

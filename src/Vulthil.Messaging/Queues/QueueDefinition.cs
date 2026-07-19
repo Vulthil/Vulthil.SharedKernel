@@ -41,6 +41,8 @@ public abstract record Registration
 
     /// <summary>
     /// Gets the per-consumer retry policy, or <see langword="null"/> to inherit the queue-level default.
+    /// Ignored for request-consumer registrations: request consumers do not retry — a thrown exception is
+    /// returned to the requester as an RPC fault reply instead.
     /// </summary>
     public RetryPolicyDefinition? RetryPolicy { get; init; }
 }

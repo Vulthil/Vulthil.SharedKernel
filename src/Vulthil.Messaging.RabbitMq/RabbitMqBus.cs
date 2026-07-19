@@ -158,6 +158,8 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     /// </remarks>
     private async Task SetupQueueTopology(QueueDefinition queue, MessageTypeCache typeCache, IChannel channel, CancellationToken cancellationToken)
     {
+        WarnUnresolvableIgnoredExceptions(queue);
+
         await channel.ExchangeDeclareAsync(
             exchange: queue.Name,
             type: queue.ExchangeType.ToRabbitExchangeType(),
@@ -237,6 +239,37 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 source: exchangeName,
                 routingKey: subscription.RoutingKey ?? string.Empty,
                 cancellationToken: cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// Logs a startup warning for every configured ignored-exception name that does not resolve to a CLR
+    /// type: <c>Type.GetType</c> returns <see langword="null"/> for names outside the core library unless
+    /// they are assembly-qualified, and a silently unresolved name means the exception the user meant to
+    /// exclude is retried anyway.
+    /// </summary>
+    private void WarnUnresolvableIgnoredExceptions(QueueDefinition queue)
+    {
+        var policies = new HashSet<RetryPolicyDefinition>(ReferenceEqualityComparer.Instance);
+        if (queue.DefaultRetryPolicy is { } defaultPolicy)
+        {
+            policies.Add(defaultPolicy);
+        }
+
+        foreach (var registration in queue.Registrations)
+        {
+            if (registration.RetryPolicy is { } policy)
+            {
+                policies.Add(policy);
+            }
+        }
+
+        var unresolvableNames = policies
+            .SelectMany(static policy => policy.IgnoreExceptions)
+            .Where(static name => Type.GetType(name, false) is null);
+        foreach (var name in unresolvableNames)
+        {
+            MessagingLog.IgnoredExceptionUnresolvable(_logger, queue.Name, name);
         }
     }
 

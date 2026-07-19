@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 
 namespace Vulthil.Messaging.RabbitMq;
 
@@ -6,9 +7,13 @@ internal static class RabbitMqConstants
 {
     public const string ContentType = "application/json";
 
+    public const string RetryCountHeader = "x-retry-count";
+
+    public const string RetryHandlersHeader = "x-retry-handlers";
+
     public static int GetRetryCount(IDictionary<string, object?>? headers)
     {
-        if (headers?.TryGetValue("x-retry-count", out var countObj) == true)
+        if (headers?.TryGetValue(RetryCountHeader, out var countObj) == true)
         {
             return countObj switch
             {
@@ -21,6 +26,37 @@ internal static class RabbitMqConstants
 
         return 0;
     }
+
+    /// <summary>
+    /// Reads the handler identities stamped on a delayed-retry re-delivery by
+    /// <see cref="SerializeRetryHandlerIdentities"/>. Returns <see langword="null"/> when the delivery carries
+    /// none (a first delivery, an external producer, or an unparsable value) — the caller then dispatches the
+    /// full plan.
+    /// </summary>
+    public static IReadOnlyList<string>? GetRetryHandlerIdentities(IDictionary<string, object?>? headers)
+    {
+        var raw = headers is null ? null : GetHeaderString(headers, RetryHandlersHeader);
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<string[]>(raw);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Serializes handler identities for the <see cref="RetryHandlersHeader"/> header as a JSON string array,
+    /// which round-trips identities containing arbitrary characters (e.g. generic type names).
+    /// </summary>
+    public static string SerializeRetryHandlerIdentities(IEnumerable<string> identities)
+        => JsonSerializer.Serialize(identities);
 
     /// <summary>
     /// Maps a per-message AMQP TTL to an absolute expiration instant. The TTL is relative to when the message

@@ -54,6 +54,14 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         var configurator = new RequestConsumerConfigurator<TConsumer>();
         configure?.Invoke(configurator);
 
+        if (configurator.RetryPolicy is not null)
+        {
+            throw new InvalidOperationException(
+                $"Request consumer '{typeof(TConsumer).FullName}' configures UseRetry, but request consumers do not retry: " +
+                "a thrown exception is immediately returned to the requester as an RPC fault reply, so the policy would never run. " +
+                "Remove UseRetry from AddRequestConsumer and retry on the requesting side if needed.");
+        }
+
         var consumerType = new ConsumerType(typeof(TConsumer));
         _services.TryAddScoped<TConsumer>();
 

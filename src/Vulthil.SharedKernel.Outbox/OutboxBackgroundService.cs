@@ -11,6 +11,7 @@ namespace Vulthil.SharedKernel.Outbox;
 /// test harness resetting the database) can pause it around operations that must not run concurrently with it.
 /// </summary>
 /// <remarks>
+/// <para>
 /// The service implements <see cref="IHostedService"/> directly instead of inheriting
 /// <see cref="BackgroundService"/> because <see cref="BackgroundService"/> is not restart-safe: the host observes
 /// only the execute task created by the first <c>StartAsync</c>, and on .NET 10 that task is scheduled with
@@ -21,6 +22,27 @@ namespace Vulthil.SharedKernel.Outbox;
 /// (cancellation is observed inside it and always ends in a graceful return), and the host never awaits the task.
 /// A genuine fault escaping the loop still stops the application — matching the <see cref="BackgroundService"/>
 /// default — via <see cref="IHostApplicationLifetime.StopApplication"/>.
+/// </para>
+/// <para>
+/// The lifecycle methods are idempotent and safe to overlap, because the harness restart cycle and the host's final
+/// stop are not serialized with each other by any contract: a lock guards every transition, the stopping source and
+/// execute task are only ever swapped together (so a stop always cancels the same loop generation it awaits), a
+/// restart retires the previous generation by canceling it, and disposal marks the service so a later stop only
+/// awaits the already-canceled loop and a later start is a no-op. Without this, a stop that overlapped a restart or
+/// ran after disposal could await <see cref="CancellationTokenSource.CancelAsync"/> on a disposed source and fail
+/// the host's <c>StopAsync</c> with an <see cref="ObjectDisposedException"/> at teardown, or pair the cancellation
+/// of one generation with the wait for another and stall until its caller's token fired.
+/// </para>
+/// <para>
+/// Retired stopping sources are canceled but never disposed: disposing a source whose cancellation notification is
+/// still queued silently drops the pending callbacks (callback execution atomically claims the registration store,
+/// and <c>Dispose</c> clears that same store), which would strand the retired loop in a wait that no longer ends.
+/// They hold no timer or kernel handle, so unreferenced retired sources are reclaimed by garbage collection. Only
+/// <see cref="Dispose"/> disposes a source, and only one whose cancellation it also requested itself — the
+/// synchronous first-caller <see cref="CancellationTokenSource.Cancel()"/> runs the callbacks to completion before
+/// the disposal. A source some stop already canceled may still have its notification in flight, so it is left to
+/// garbage collection like the retired ones.
+/// </para>
 /// </remarks>
 internal sealed class OutboxBackgroundService(
     ILogger<OutboxBackgroundService> logger,
@@ -30,7 +52,10 @@ internal sealed class OutboxBackgroundService(
     IOptions<OutboxProcessingOptions> options,
     IHostApplicationLifetime applicationLifetime) : IRestartableHostedService, IDisposable
 {
+    private readonly Lock _lifecycleGate = new();
+
     private CancellationTokenSource? _stoppingCts;
+    private bool _disposed;
 
     /// <summary>
     /// Gets the task running the current relay loop, or <see langword="null"/> before the first start. The task
@@ -40,38 +65,74 @@ internal sealed class OutboxBackgroundService(
     internal Task? ExecuteTask { get; private set; }
 
     /// <inheritdoc />
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _stoppingCts?.Dispose();
-        _stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var stoppingToken = _stoppingCts.Token;
-        ExecuteTask = Task.Run(() => ExecuteAsync(stoppingToken), CancellationToken.None);
-        return Task.CompletedTask;
+        CancellationTokenSource? previous;
+        lock (_lifecycleGate)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            previous = _stoppingCts;
+            _stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var stoppingToken = _stoppingCts.Token;
+            ExecuteTask = Task.Run(() => ExecuteAsync(stoppingToken), CancellationToken.None);
+        }
+
+        if (previous is not null)
+        {
+            await previous.CancelAsync();
+        }
     }
 
     /// <inheritdoc />
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        if (ExecuteTask is null)
+        Task? executeTask;
+        var cancellation = Task.CompletedTask;
+        lock (_lifecycleGate)
+        {
+            executeTask = ExecuteTask;
+            if (executeTask is not null && !_disposed && _stoppingCts is { } stoppingCts)
+            {
+                cancellation = stoppingCts.CancelAsync();
+            }
+        }
+
+        if (executeTask is null)
         {
             return;
         }
 
         try
         {
-            await _stoppingCts!.CancelAsync();
+            await cancellation;
         }
         finally
         {
-            await ExecuteTask.WaitAsync(cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            await executeTask.WaitAsync(cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
     }
 
     /// <inheritdoc />
     public void Dispose()
     {
-        _stoppingCts?.Cancel();
-        _stoppingCts?.Dispose();
+        lock (_lifecycleGate)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            if (_stoppingCts is { IsCancellationRequested: false })
+            {
+                _stoppingCts.Cancel();
+                _stoppingCts.Dispose();
+            }
+        }
     }
 
     /// <summary>

@@ -11,8 +11,13 @@ namespace Vulthil.SharedKernel.Api;
 [Route("api/[controller]")]
 public abstract class BaseController : ControllerBase
 {
+#pragma warning disable IDE0032 // Use auto property
+    private ILogger? _logger;
+#pragma warning restore IDE0032
+
     /// <summary>
-    /// Gets a logger categorized for the concrete controller type, resolved from the request services.
+    /// Gets a logger categorized for the concrete controller type, lazily resolved from the request services
+    /// on first access and cached for the lifetime of this controller instance.
     /// </summary>
-    protected ILogger Logger => HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(GetType());
+    protected ILogger Logger => _logger ??= HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(GetType());
 }

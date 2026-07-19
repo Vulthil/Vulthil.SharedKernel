@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Vulthil.SharedKernel.Api;
 
@@ -17,12 +18,18 @@ public static class ProblemDetailsExtensions
     /// <remarks>
     /// Every produced <see cref="Microsoft.AspNetCore.Mvc.ProblemDetails"/> is enriched with the request
     /// method and path as the instance, the request identifier, and the current trace identifier when available.
+    /// This enrichment composes with any consumer-supplied <see cref="ProblemDetailsOptions.CustomizeProblemDetails"/>
+    /// delegate (configured via <see cref="Microsoft.Extensions.DependencyInjection.OptionsServiceCollectionExtensions.Configure{TOptions}(IServiceCollection, Action{TOptions})"/>
+    /// or another call to <c>AddProblemDetails</c>) rather than overwriting it, regardless of registration order.
     /// </remarks>
     /// <param name="services">The service collection.</param>
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddProblemDetailsHandling(this IServiceCollection services)
     {
-        services.AddProblemDetails(options => options.CustomizeProblemDetails = EnrichProblemDetails);
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.AddProblemDetails();
+        services.PostConfigure<ProblemDetailsOptions>(ComposeProblemDetailsEnrichment);
         services.AddExceptionHandler<GlobalExceptionHandler>();
 
         return services;
@@ -39,10 +46,22 @@ public static class ProblemDetailsExtensions
     /// <returns>The application builder for chaining.</returns>
     public static IApplicationBuilder UseProblemDetailsHandling(this IApplicationBuilder app)
     {
+        ArgumentNullException.ThrowIfNull(app);
+
         app.UseExceptionHandler();
         app.UseStatusCodePages();
 
         return app;
+    }
+
+    private static void ComposeProblemDetailsEnrichment(ProblemDetailsOptions options)
+    {
+        var existingCustomization = options.CustomizeProblemDetails;
+        options.CustomizeProblemDetails = context =>
+        {
+            existingCustomization?.Invoke(context);
+            EnrichProblemDetails(context);
+        };
     }
 
     private static void EnrichProblemDetails(ProblemDetailsContext context)

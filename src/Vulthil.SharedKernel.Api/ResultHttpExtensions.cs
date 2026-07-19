@@ -15,6 +15,9 @@ public static class ResultHttpExtensions
     /// </summary>
     public static async Task<IActionResult> ToActionResultAsync(this Task<Result> resultTask, ControllerBase controller)
     {
+        ArgumentNullException.ThrowIfNull(resultTask);
+        ArgumentNullException.ThrowIfNull(controller);
+
         var result = await resultTask;
         if (result.IsSuccess)
         {
@@ -29,6 +32,9 @@ public static class ResultHttpExtensions
     /// </summary>
     public static async Task<IActionResult> ToActionResultAsync<T>(this Task<Result<T>> resultTask, ControllerBase controller)
     {
+        ArgumentNullException.ThrowIfNull(resultTask);
+        ArgumentNullException.ThrowIfNull(controller);
+
         var result = await resultTask;
         if (result.IsSuccess)
         {
@@ -39,10 +45,20 @@ public static class ResultHttpExtensions
     }
 
     /// <summary>
-    /// Converts an <see cref="Error"/> to an appropriate <see cref="IActionResult"/> based on the error type.
+    /// Converts an <see cref="Error"/> to an appropriate <see cref="IActionResult"/> based on the error type, producing
+    /// an RFC 7807 <see cref="ProblemDetails"/> body carrying the error's code and description for every non-validation
+    /// error type.
     /// </summary>
     public static IActionResult ToActionResult(this Error error, ControllerBase controller)
     {
+        ArgumentNullException.ThrowIfNull(error);
+        ArgumentNullException.ThrowIfNull(controller);
+
+        if (error.Type != ErrorType.Validation)
+        {
+            return ProblemActionResult(error);
+        }
+
         if (error is ValidationError validationError)
         {
             foreach (var innerError in validationError.Errors)
@@ -55,13 +71,7 @@ public static class ResultHttpExtensions
             controller.ModelState.AddModelError(error.Code, error.Description);
         }
 
-        return error.Type switch
-        {
-            ErrorType.Validation => controller.ValidationProblem(),
-            ErrorType.NotFound => controller.NotFound(),
-            ErrorType.Conflict => controller.Conflict(),
-            _ => ProblemActionResult(error)
-        };
+        return controller.ValidationProblem();
     }
 
     /// <summary>
@@ -69,6 +79,9 @@ public static class ResultHttpExtensions
     /// </summary>
     public static IActionResult ToActionResult<T>(this Result<T> result, ControllerBase controller)
     {
+        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(controller);
+
         if (result.IsSuccess)
         {
             return controller.Ok(result.Value);
@@ -83,6 +96,9 @@ public static class ResultHttpExtensions
     /// </summary>
     public static IActionResult ToActionResult(this Result result, ControllerBase controller)
     {
+        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(controller);
+
         if (result.IsSuccess)
         {
             return controller.NoContent();
@@ -97,6 +113,8 @@ public static class ResultHttpExtensions
     /// </summary>
     public static Results<CreatedAtRoute<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToCreatedAtRouteHttpResult<T>(this Result<T> result, string? routeName = null, Func<T, object?>? routeValueFactory = null)
     {
+        ArgumentNullException.ThrowIfNull(result);
+
         if (result.IsSuccess)
         {
             return TypedResults.CreatedAtRoute(result.Value, routeName, routeValueFactory != null ? routeValueFactory(result.Value) : null);
@@ -111,6 +129,8 @@ public static class ResultHttpExtensions
     /// </summary>
     public static Results<Ok<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToIResult<T>(this Result<T> result)
     {
+        ArgumentNullException.ThrowIfNull(result);
+
         if (result.IsSuccess)
         {
             return TypedResults.Ok(result.Value);
@@ -125,6 +145,8 @@ public static class ResultHttpExtensions
     /// </summary>
     public static Results<NoContent, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToIResult(this Result result)
     {
+        ArgumentNullException.ThrowIfNull(result);
+
         if (result.IsSuccess)
         {
             return TypedResults.NoContent();
@@ -140,10 +162,12 @@ public static class ResultHttpExtensions
 
     private static ObjectResult ProblemActionResult(Error error)
     {
+        var statusCode = CustomResults.GetStatusCode(error.Type);
+
         var problemDetails = new ProblemDetails
         {
             Detail = error.Description,
-            Status = StatusCodes.Status500InternalServerError
+            Status = statusCode
         };
 
         foreach (var entry in CustomResults.GetErrorsDictionary(error))
@@ -153,24 +177,21 @@ public static class ResultHttpExtensions
 
         return new ObjectResult(problemDetails)
         {
-            StatusCode = StatusCodes.Status500InternalServerError
+            StatusCode = statusCode
         };
     }
 
     private static Results<TSuccess, ValidationProblem, NotFound, Conflict, ProblemHttpResult> MapError<TSuccess>(Error error)
         where TSuccess : IResult
     {
+        if (error.Type != ErrorType.Validation)
+        {
+            return CustomResults.Problem(error);
+        }
+
         var errors = CustomResults.GetErrorsDictionary(error);
 
-        return error.Type switch
-        {
-            ErrorType.Validation => TypedResults.ValidationProblem(errors, error.Description),
-            ErrorType.NotFound => TypedResults.NotFound(),
-            ErrorType.Conflict => TypedResults.Conflict(),
-            _ => TypedResults.Problem(
-                detail: error.Description,
-                extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value)),
-        };
+        return TypedResults.ValidationProblem(errors, error.Description);
     }
 }
 
@@ -186,19 +207,13 @@ public static class CustomResults
     /// <returns>A <see cref="ProblemHttpResult"/> representing the problem response.</returns>
     public static ProblemHttpResult Problem(Error error)
     {
-        var errors = GetErrorsDictionary(error);
+        ArgumentNullException.ThrowIfNull(error);
 
-        var statusCode = error.Type switch
-        {
-            ErrorType.Validation => StatusCodes.Status400BadRequest,
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            _ => StatusCodes.Status500InternalServerError,
-        };
+        var errors = GetErrorsDictionary(error);
 
         return TypedResults.Problem(
             detail: error.Description,
-            statusCode: statusCode,
+            statusCode: GetStatusCode(error.Type),
             extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value));
     }
 
@@ -216,4 +231,19 @@ public static class CustomResults
             {
                 [error.Code] = [error.Description]
             };
+
+    /// <summary>
+    /// Maps an <see cref="ErrorType"/> to the HTTP status code used across both the typed-<see cref="IResult"/> and
+    /// <see cref="IActionResult"/> problem-response paths.
+    /// </summary>
+    /// <param name="errorType">The error classification to map.</param>
+    /// <returns>The corresponding HTTP status code.</returns>
+    internal static int GetStatusCode(ErrorType errorType) => errorType switch
+    {
+        ErrorType.Validation => StatusCodes.Status400BadRequest,
+        ErrorType.Problem => StatusCodes.Status400BadRequest,
+        ErrorType.NotFound => StatusCodes.Status404NotFound,
+        ErrorType.Conflict => StatusCodes.Status409Conflict,
+        _ => StatusCodes.Status500InternalServerError,
+    };
 }

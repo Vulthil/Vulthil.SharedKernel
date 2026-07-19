@@ -15,10 +15,12 @@ internal static class InMemoryMessageHandlers
 {
     /// <summary>
     /// Builds a handler for a one-way <see cref="IConsumer{TMessage}"/>. A throwing consumer is retried in-process
-    /// per <paramref name="retryPolicy"/> — a fresh scope per attempt, mirroring the broker transport but without
-    /// the real back-off delays — and once the attempts are exhausted a <see cref="Fault{TMessage}"/> is published
-    /// and the delivery completes normally, so the originating publish/send succeeds just as it would against a
-    /// real broker.
+    /// per <paramref name="retryPolicy"/> — the registration's effective policy (per-consumer, or the queue default),
+    /// resolved by the registry — with a fresh scope per attempt, mirroring the broker transport but without the real
+    /// back-off delays. Retries are per handler: another consumer of the same message runs its own closure, so one
+    /// consumer's failure never re-runs a consumer that already succeeded. Once the attempts are exhausted a
+    /// <see cref="Fault{TMessage}"/> is published and the delivery completes normally, so the originating
+    /// publish/send succeeds just as it would against a real broker.
     /// </summary>
     public static InMemoryHandler ForConsumer<TConsumer, TMessage>(RetryPolicyDefinition? retryPolicy)
         where TConsumer : class, IConsumer<TMessage>

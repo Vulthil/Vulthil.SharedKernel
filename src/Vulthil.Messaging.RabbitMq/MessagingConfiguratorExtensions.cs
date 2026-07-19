@@ -1,7 +1,9 @@
 using Aspire.RabbitMQ.Client;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
@@ -19,7 +21,10 @@ namespace Vulthil.Messaging.RabbitMq;
 public static class MessagingConfiguratorExtensions
 {
     /// <summary>
-    /// Configures the messaging infrastructure to use RabbitMQ as the transport.
+    /// Configures the messaging infrastructure to use RabbitMQ as the transport. At host start the configured
+    /// queue definitions are validated against the RabbitMQ topology contract — a queue's own exchange must be
+    /// <see cref="MessagingExchangeType.Fanout"/> — so a misconfiguration fails fast instead of silently
+    /// dropping deliveries (see <see cref="RabbitMqQueueTopologyValidator"/>).
     /// </summary>
     /// <param name="configurator">The messaging configurator.</param>
     /// <param name="connectionStringKey">The Aspire connection-string key for the RabbitMQ resource.</param>
@@ -63,6 +68,8 @@ public static class MessagingConfiguratorExtensions
             transportOptionsBuilder.Configure(configureTransport);
         }
         transportOptionsBuilder.ValidateDataAnnotations().ValidateOnStart();
+
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<RabbitMqTransportOptions>, RabbitMqQueueTopologyValidator>());
 
         services.AddSingleton<RabbitMqBusStartupStatus>();
         services.AddSingleton<RabbitMqBus>();

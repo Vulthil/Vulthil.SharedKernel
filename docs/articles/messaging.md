@@ -411,8 +411,18 @@ Notes and trade-offs:
 
 ## Retries
 
-`q.UseRetry(...)` configures the retry policy for a queue's consumers. There are two
-execution modes:
+Retry policies are resolved **per consumer**. A consumer's effective policy is its own
+`AddConsumer<TConsumer>(c => c.UseRetry(...))` when configured, otherwise the queue-level
+`q.UseRetry(...)` default; a consumer with neither fails terminally on its first failure. The
+resolution also applies to polymorphic registrations — a policy configured on
+`IConsumer<IOrderEvent>` governs deliveries of every subscribed concrete implementer.
+
+Request consumers never retry: a thrown exception is immediately returned to the requester as an
+RPC fault reply (see [Request/Reply](#requestreply)), so `UseRetry` inside
+`AddRequestConsumer(...)` throws at configuration time, and a queue-level default does not apply
+to them. Retry a failed request on the requesting side if needed.
+
+There are two execution modes:
 
 - **Delayed re-delivery (default):** a failed message is re-published to the queue's retry
   exchange with a delay and re-delivered later. Good for back-off without holding a consumer,
@@ -421,8 +431,39 @@ execution modes:
   order. Opt in with `q.UseRetry(r => { r.Immediate(3); r.InMemory(); })`. Partitioned queues
   use in-memory retry **automatically**, since ordering requires it.
 
+### Several consumers on one delivery
+
+When a queue runs several consumers for the same message, one consumer's failure neither skips
+the others in that attempt nor re-runs the ones that already succeeded:
+
+- Every pending consumer runs once per attempt; failures are collected per consumer.
+- On retry, **only the consumers that failed are re-dispatched** — on the delayed path the
+  re-publish stamps the failed consumers' identities into an `x-retry-handlers` header and the
+  re-delivery dispatches just those (an identity that no longer matches — the consumer was renamed
+  or removed mid-retry — is logged and skipped).
+- Retries advance in shared rounds counted by `x-retry-count`, and each consumer's budget and
+  back-off come from **its own** policy. Consumers retrying in the same round share the actual
+  wait: the longest delay any of their policies requests, so no consumer retries earlier than its
+  own back-off asks (it may retry later).
+- The delivery is held in-process (in-memory mode) when the queue is partitioned or any retrying
+  consumer's policy is in-memory; otherwise it goes through the retry queue.
+- A consumer that exhausts its retries (or has no policy, or threw an ignored exception) fails
+  terminally: its `Fault<T>` is published immediately, while the delivery stays live for any
+  consumers still retrying.
+
 On exhaustion the message is dead-lettered (when a dead-letter queue is configured) in both
-modes.
+modes — precisely, the delivery is nacked for dead-lettering when its **final** retry round ends
+with a terminal failure. A consumer that failed terminally in an earlier round (while others kept
+retrying and eventually succeeded) is reported through its published fault, not through the
+dead-letter queue.
+
+### Ignored exceptions
+
+`r.Ignore<TException>()` (or the `IgnoreExceptions` list in configuration) exempts exception
+types from retrying — a matching failure is immediately terminal. The ignore list is resolved
+once, on first use; config-supplied names outside the core library must be **assembly-qualified**
+(`"Acme.Orders.PricingException, Acme.Orders"`), and a name that cannot be resolved is skipped
+with a startup warning — the exceptions it was meant to exclude are retried.
 
 > **Head-of-line caveat (delayed re-delivery):** the delayed retry uses one shared retry queue with a
 > per-message TTL, and RabbitMQ expires messages only from the *head* of a queue. With variable or jittered
@@ -432,9 +473,11 @@ modes.
 
 ## Faults
 
-When a consumed message fails terminally — every retry exhausted — a `Fault<T>` is published
-**by convention** to a shared topic exchange (default `Fault.Exchange`, configurable via
-`Messaging:Options:FaultExchangeName`). No per-message opt-in by the producer is required, so faults
+When a consumer fails terminally — its retries exhausted, or it has no retry policy — a `Fault<T>`
+is published **by convention** to a shared topic exchange (default `Fault.Exchange`, configurable via
+`Messaging:Options:FaultExchangeName`). Faults are per consumer: one fault is published for each
+terminally-failed consumer, so a delivery dispatched to several consumers can produce several faults,
+each carrying that consumer's exception. No per-message opt-in by the producer is required, so faults
 are observable broker-side without changing any producer. The faulted message's URN is the routing
 key, so an operator binds a queue to the fault exchange — `#` for every fault, or a specific URN to
 filter by faulted message type — and reads the payload. The fault body is a `Fault<T>` JSON document
@@ -466,7 +509,8 @@ any AMQP consumer bound to the exchange — rather than a typed `IConsumer<Fault
 
 A message can override the routing per-message: if it carries an explicit `FaultAddress`, the fault is
 routed **point-to-point** to that address (through the broker's default exchange) instead of being
-broadcast to the fault exchange — exactly one fault is emitted either way. Set it on publish:
+broadcast to the fault exchange — exactly one fault per terminally-failed consumer is emitted either
+way. Set it on publish:
 
 ```csharp
 await publisher.PublishAsync(new OrderCreatedEvent(orderId), ctx =>
@@ -492,6 +536,13 @@ The two sites can use the same value (typical for direct exchanges) or different
 binding `order.*` matching producer keys like `order.created`). When the binding pattern is left null,
 the broker receives an empty pattern: fanout/headers exchanges ignore it; direct/topic exchanges only
 match an empty published key — supply a specific pattern explicitly when needed.
+
+Exchange-type choice belongs to the **message** exchange (`MessageConfiguration<TMessage>.ExchangeType`),
+which is where `Subscribe` binding patterns filter. The queue's **own** exchange
+(`QueueDefinition.ExchangeType`) must stay `Fanout`: the queue is bound to it with an empty routing key,
+and retry re-deliveries dead-letter back into it carrying the original routing key, so a Direct, Topic,
+or Headers queue exchange would silently drop both normal and retry deliveries. The RabbitMQ transport
+rejects a non-fanout queue exchange when the host starts.
 
 ```csharp
 // Producer side: what the publisher writes on the wire.
@@ -825,6 +876,10 @@ The reply is a normal `MessageEnvelope` (single-serialized, like every other mes
 - **Failure** carries an RPC fault at `urn:message:Vulthil:RpcFault` (the remote exception's
   type and message); the requester maps it to a `Result<TResponse>` failure with the
   `Messaging.Request.Failure` error code.
+
+A request consumer runs exactly once per request: a thrown exception becomes the fault reply
+rather than entering the retry machinery, so retry policies do not apply to request consumers
+(see [Retries](#retries)) — retry on the requesting side when a request should be re-attempted.
 
 ## Writing a Custom Transport
 

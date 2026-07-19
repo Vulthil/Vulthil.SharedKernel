@@ -18,6 +18,9 @@ public interface IQueueConfigurator
     IQueueConfigurator AddConsumer<TConsumer>(Action<IConsumerConfigurator<TConsumer>>? configure = null) where TConsumer : class, IConsumer;
     /// <summary>
     /// Registers a request/reply consumer on this queue with optional per-consumer configuration.
+    /// Request consumers do not retry — a thrown exception is returned to the requester as an RPC fault
+    /// reply — so configuring <see cref="IBaseConfigurator{TConfigurator}.UseRetry"/> on
+    /// <paramref name="configure"/> throws at configuration time.
     /// </summary>
     IQueueConfigurator AddRequestConsumer<TConsumer>(Action<IRequestConfigurator<TConsumer>>? configure = null) where TConsumer : class, IRequestConsumer;
 
@@ -54,7 +57,10 @@ public interface IQueueConfigurator
     IQueueConfigurator ConfigureQueue(Action<QueueDefinition> configureAction);
 
     /// <summary>
-    /// Configures the default retry policy for all consumers on this queue.
+    /// Configures the default retry policy for this queue's one-way consumers. A consumer-level
+    /// <see cref="IBaseConfigurator{TConfigurator}.UseRetry"/> takes precedence over this default.
+    /// Request consumers never retry (a thrown exception is returned to the requester as an RPC
+    /// fault reply), so this default does not apply to them.
     /// </summary>
     IQueueConfigurator UseRetry(Action<RetryPolicyConfigurator> configure);
     /// <summary>
@@ -100,66 +106,81 @@ public sealed record RetryPolicyDefinition
     public ICollection<TimeSpan> Intervals { get; } = [];
     /// <summary>
     /// Gets the fully-qualified type names of exceptions that should be excluded from retry attempts.
+    /// Names outside the core library must be assembly-qualified to resolve; a name that cannot be
+    /// resolved is skipped (the RabbitMQ transport logs a startup warning for each such name).
     /// </summary>
     public ICollection<string> IgnoreExceptions { get; } = [];
 
+    private readonly object _ignoredTypesGate = new();
     private readonly HashSet<Type> _ignoredTypes = [];
+    private HashSet<Type>? _resolvedIgnoredTypes;
+
     internal void AddIgnoredType(Type type) => _ignoredTypes.Add(type);
     /// <summary>
-    /// Gets the resolved CLR exception types that should be excluded from retry attempts.
-    /// Lazily resolves from <see cref="IgnoreExceptions"/> on first access.
+    /// Gets the resolved CLR exception types that should be excluded from retry attempts. The set is built
+    /// once, on first access, from the fluently ignored types and the resolvable names in
+    /// <see cref="IgnoreExceptions"/>; the resolution is thread-safe and later mutations of either
+    /// collection do not change the result.
     /// </summary>
     public HashSet<Type> GetIgnoredExceptionTypes()
     {
-        if (IgnoreExceptions.Count > 0 && _ignoredTypes.Count == 0)
+        lock (_ignoredTypesGate)
         {
-            foreach (var name in IgnoreExceptions)
+            return _resolvedIgnoredTypes ??= ResolveIgnoredExceptionTypes();
+        }
+    }
+
+    private HashSet<Type> ResolveIgnoredExceptionTypes()
+    {
+        var resolved = new HashSet<Type>(_ignoredTypes);
+        foreach (var name in IgnoreExceptions)
+        {
+            if (Type.GetType(name, false) is { } type)
             {
-                var t = Type.GetType(name, false);
-                if (t != null)
-                {
-                    _ignoredTypes.Add(t);
-                }
+                resolved.Add(type);
             }
         }
 
-        return _ignoredTypes;
+        return resolved;
     }
+
     /// <summary>
     /// Calculates the delay for the specified retry attempt, applying jitter when configured.
+    /// Attempts beyond the last configured interval reuse that interval (capped back-off).
     /// </summary>
     /// <param name="attempt">The zero-based attempt index.</param>
     /// <returns>The delay before the next retry.</returns>
     public TimeSpan GetDelay(int attempt)
     {
-        var intervals = Intervals.ToList();
-        if (intervals.Count == 0)
+        if (Intervals.Count == 0)
         {
             return TimeSpan.Zero;
         }
-        var interval = (attempt >= intervals.Count) ? intervals[^1] : intervals[attempt];
 
-
+        var interval = GetIntervalForAttempt(attempt);
         if (JitterFactor <= 0.0)
         {
             return interval;
         }
 
-
-        var randomValue = RandomNumberGeneratorExtensions.GetDouble();
-        var jitterMultiplier = randomValue * 2 * JitterFactor - JitterFactor;
-
-        var jitterDelta = interval.TotalMilliseconds * jitterMultiplier;
-
-        var finalDelay = interval.TotalMilliseconds + jitterDelta;
+        var jitterMultiplier = RandomNumberGeneratorExtensions.GetDouble() * 2 * JitterFactor - JitterFactor;
+        var finalDelay = interval.TotalMilliseconds * (1 + jitterMultiplier);
         return TimeSpan.FromMilliseconds(Math.Max(0, finalDelay));
+    }
+
+    private TimeSpan GetIntervalForAttempt(int attempt)
+    {
+        var index = Math.Min(attempt, Intervals.Count - 1);
+        return Intervals is IList<TimeSpan> list ? list[index] : Intervals.ElementAt(index);
     }
 }
 
 internal static class RandomNumberGeneratorExtensions
 {
     /// <summary>
-    /// Generates a cryptographically random <see langword="double"/> in the range [0, 1).
+    /// Generates a cryptographically random <see langword="double"/> in the range [0, 1). Retry jitter does
+    /// not need cryptographic strength, but the repository enforces CA5394 (no <see cref="Random"/>) as an
+    /// error, so the secure generator is used here as well.
     /// </summary>
     public static double GetDouble()
     {

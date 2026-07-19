@@ -6,16 +6,16 @@ using Vulthil.xUnit;
 namespace Vulthil.Messaging.Tests.Transport;
 
 /// <summary>A transport-specific handler stand-in for exercising the agnostic registry.</summary>
-public sealed record FakeHandler(string Label);
+public sealed record FakeHandler(string Label, RetryPolicyDefinition? RetryPolicy = null);
 
 /// <summary>A fake factory that labels handlers by their registration shape, so tests can assert what was built.</summary>
 public sealed class FakeHandlerFactory : IMessageHandlerFactory<FakeHandler>
 {
     public HandlerEntry<FakeHandler> ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
-        => new(new FakeHandler($"consumer:{consumerType.Name}:{messageType.Name}"), HandlerKind.Consumer);
+        => new(new FakeHandler($"consumer:{consumerType.Name}:{messageType.Name}", retryPolicy), HandlerKind.Consumer);
 
     public HandlerEntry<FakeHandler> ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)
-        => new(new FakeHandler($"request:{consumerType.Name}:{requestType.Name}"), HandlerKind.RequestConsumer);
+        => new(new FakeHandler($"request:{consumerType.Name}:{requestType.Name}", retryPolicy), HandlerKind.RequestConsumer);
 }
 
 public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExecutionRegistry<FakeHandler>>
@@ -199,6 +199,94 @@ public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExec
         // Assert
         byUrn.ShouldNotBeNull();
         byUrn.ShouldBeSameAs(byFullName);
+    }
+
+    [Fact]
+    public void RegisterQueueAppliesTheQueueDefaultPolicyToConsumersWithoutTheirOwn()
+    {
+        // Arrange
+        var queueDefault = new RetryPolicyDefinition { MaxRetryCount = 3 };
+        var queue = Queue();
+        queue.DefaultRetryPolicy = queueDefault;
+        queue.AddConsumer(new ConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(OrderConsumer)),
+            MessageType = new MessageType(typeof(OrderPlaced)),
+        });
+
+        // Act
+        Target.RegisterQueue(queue);
+
+        // Assert
+        var handler = Target.GetPlan(new MessageType(typeof(OrderPlaced)).Name)!.Handlers.ShouldHaveSingleItem();
+        handler.RetryPolicy.ShouldBeSameAs(queueDefault);
+    }
+
+    [Fact]
+    public void RegisterQueuePrefersThePerConsumerPolicyOverTheQueueDefault()
+    {
+        // Arrange
+        var consumerPolicy = new RetryPolicyDefinition { MaxRetryCount = 5 };
+        var queue = Queue();
+        queue.DefaultRetryPolicy = new RetryPolicyDefinition { MaxRetryCount = 3 };
+        queue.AddConsumer(new ConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(OrderConsumer)),
+            MessageType = new MessageType(typeof(OrderPlaced)),
+            RetryPolicy = consumerPolicy,
+        });
+
+        // Act
+        Target.RegisterQueue(queue);
+
+        // Assert
+        var handler = Target.GetPlan(new MessageType(typeof(OrderPlaced)).Name)!.Handlers.ShouldHaveSingleItem();
+        handler.RetryPolicy.ShouldBeSameAs(consumerPolicy);
+    }
+
+    [Fact]
+    public void RegisterQueueCarriesThePolymorphicRegistrationsPolicyToEachConcretePlan()
+    {
+        // Arrange
+        var policy = new RetryPolicyDefinition { MaxRetryCount = 2 };
+        var queue = Queue();
+        queue.AddSubscription(new Subscription(new MessageType(typeof(OrderPlaced))));
+        queue.AddSubscription(new Subscription(new MessageType(typeof(OrderShipped))));
+        queue.AddConsumer(new ConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(OrderConsumer)),
+            MessageType = new MessageType(typeof(OrderEvent)),
+            RetryPolicy = policy,
+        });
+
+        // Act
+        Target.RegisterQueue(queue);
+
+        // Assert
+        Target.GetPlan(new MessageType(typeof(OrderPlaced)).Name)!.Handlers.ShouldHaveSingleItem().RetryPolicy.ShouldBeSameAs(policy);
+        Target.GetPlan(new MessageType(typeof(OrderShipped)).Name)!.Handlers.ShouldHaveSingleItem().RetryPolicy.ShouldBeSameAs(policy);
+    }
+
+    [Fact]
+    public void RegisterQueueNeverGivesARequestConsumerARetryPolicy()
+    {
+        // Arrange — even a directly-constructed registration with a policy, on a queue with a default, yields none.
+        var queue = Queue();
+        queue.DefaultRetryPolicy = new RetryPolicyDefinition { MaxRetryCount = 3 };
+        queue.AddConsumer(new RequestConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(PingConsumer)),
+            MessageType = new MessageType(typeof(Ping)),
+            ResponseType = typeof(Pong),
+            RetryPolicy = new RetryPolicyDefinition { MaxRetryCount = 5 },
+        });
+
+        // Act
+        Target.RegisterQueue(queue);
+
+        // Assert
+        var handler = Target.GetPlan(new MessageType(typeof(Ping)).Name)!.Handlers.ShouldHaveSingleItem();
+        handler.RetryPolicy.ShouldBeNull();
     }
 
     [Fact]

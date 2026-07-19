@@ -150,93 +150,237 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     }
 
     /// <summary>
-    /// Dispatches a prepared delivery and settles it. When the effective retry policy is in-memory — set
-    /// explicitly via <c>UseRetry(r =&gt; r.InMemory())</c> or implied by a partitioned queue — the consumer
-    /// is retried in-process while the delivery is held (preserving order); otherwise a failure goes through
-    /// the delay-queue re-delivery path.
+    /// Dispatches a prepared delivery in rounds and settles it. Round zero runs every pending handler (the full
+    /// plan, or the failed subset stamped on a delayed-retry re-delivery); each further round re-runs only the
+    /// handlers that failed the round before, so a consumer that already succeeded is never re-run. A failed
+    /// handler retries per its own effective policy: it is held in-process — preserving order — when the queue
+    /// is partitioned or its policy is in-memory, and re-published through the retry queue otherwise. A handler
+    /// whose retries are exhausted (or that has no policy) fails terminally: its fault is published immediately,
+    /// and the delivery is nacked for dead-lettering when the final round ends with a terminal failure.
     /// </summary>
     private async Task ProcessAsync(PreparedDelivery prepared, BasicDeliverEventArgs ea)
     {
         using var activity = StartReceiveActivity(ea, prepared.DiagnosticTypeName);
-        var policy = GetPolicy(prepared.Plan, _queueDefinition);
-
-        if (policy is not null && (policy.InMemory || _partitioned))
+        var pending = ResolvePendingHandlers(prepared.Plan, ea);
+        if (pending.Count == 0)
         {
-            await ExecuteWithInMemoryRetryAsync(policy, prepared, ea, activity);
+            await AckAsync(ea);
             return;
         }
 
-        try
+        var baseRound = RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers);
+        var round = baseRound;
+        while (true)
         {
-            await DispatchHandlersAsync(prepared.Plan, prepared.Message, ea, prepared.Envelope);
-            await AckAsync(ea);
-            activity?.SetStatus(ActivityStatusCode.Ok);
-        }
-        catch (Exception ex)
-        {
-            if (ex is OperationCanceledException && ea.CancellationToken.IsCancellationRequested)
+            var attemptDelivery = round == baseRound ? ea : WithRetryCount(ea, round);
+            var failures = await DispatchRoundAsync(pending, prepared, attemptDelivery);
+            if (failures is null)
             {
                 return;
             }
 
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.AddException(ex);
-            await HandleFailureAsync(ex, ea, prepared.Envelope, prepared.DiagnosticTypeName);
-        }
-    }
-
-    /// <summary>
-    /// Re-invokes the consumer in-process up to the policy's retry count, holding the delivery (and, on a
-    /// partitioned queue, its lane) so a later message cannot overtake the one being retried. Each attempt
-    /// runs in a fresh scope. On exhaustion a fault is published and the message is nacked for dead-lettering.
-    /// </summary>
-    private async Task ExecuteWithInMemoryRetryAsync(RetryPolicyDefinition policy, PreparedDelivery prepared, BasicDeliverEventArgs ea, Activity? activity)
-    {
-        var baseRetryCount = RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers);
-        for (var attempt = 0; attempt <= policy.MaxRetryCount; attempt++)
-        {
-            var attemptDelivery = attempt == 0 ? ea : WithRetryCount(ea, baseRetryCount + attempt);
-            try
+            if (failures.Count == 0)
             {
-                await DispatchHandlersAsync(prepared.Plan, prepared.Message, attemptDelivery, prepared.Envelope);
                 await AckAsync(ea);
                 activity?.SetStatus(ActivityStatusCode.Ok);
                 return;
             }
-            catch (Exception ex)
+
+            var (retryable, terminal) = PartitionFailures(failures, round);
+            await PublishTerminalFaultsAsync(terminal, prepared, ea, activity);
+
+            if (retryable.Count == 0)
             {
-                if (ex is OperationCanceledException && ea.CancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                var canRetry = attempt < policy.MaxRetryCount && !policy.GetIgnoredExceptionTypes().Contains(ex.GetType());
-                if (!canRetry)
-                {
-                    activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-                    activity?.AddException(ex);
-                    MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey);
-                    await PublishFaultAsync(ex, ea, ea.BasicProperties.Headers ?? new Dictionary<string, object?>(), prepared.Envelope, prepared.DiagnosticTypeName);
-                    await NackAsync(ea);
-                    return;
-                }
-
-                var delay = policy.GetDelay(attempt);
-                MessagingLog.ConsumerThrew(_logger, ex, _queueDefinition.Name, prepared.DiagnosticTypeName, ea.RoutingKey, attempt, policy.MaxRetryCount);
-                MessagingLog.SchedulingRetry(_logger, _queueDefinition.Name, attempt + 1, policy.MaxRetryCount, delay);
-
-                if (delay > TimeSpan.Zero)
-                {
-                    try
-                    {
-                        await Task.Delay(delay, ea.CancellationToken);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        return;
-                    }
-                }
+                activity?.SetStatus(ActivityStatusCode.Error, terminal[^1].Exception.Message);
+                await NackAsync(ea);
+                return;
             }
+
+            var delay = ScheduleRetry(retryable, round, ea.RoutingKey);
+            if (!_partitioned && retryable.TrueForAll(static failure => !failure.Policy.InMemory))
+            {
+                RecordRetryableFailures(retryable, activity);
+                await RepublishForRetryAsync(retryable, round, delay, ea);
+                await AckAsync(ea);
+                return;
+            }
+
+            if (!await TryDelayAsync(delay, ea.CancellationToken))
+            {
+                return;
+            }
+
+            pending = retryable.ConvertAll(static failure => failure.Handler);
+            round++;
+        }
+    }
+
+    /// <summary>
+    /// Resolves the handlers this delivery dispatches. A first delivery (no retry-handlers header) runs the
+    /// full plan; a delayed-retry re-delivery carries the identities of the handlers that failed and runs only
+    /// those. Identities that no longer match a registered handler (the consumer was renamed or removed since
+    /// the re-publish) are logged and skipped; when none remain the caller acks the delivery without dispatch.
+    /// </summary>
+    private List<MessageHandler> ResolvePendingHandlers(RabbitMqPlan plan, BasicDeliverEventArgs ea)
+    {
+        var identities = RabbitMqConstants.GetRetryHandlerIdentities(ea.BasicProperties.Headers);
+        if (identities is null)
+        {
+            return [.. plan.Handlers];
+        }
+
+        var requested = new HashSet<string>(identities, StringComparer.Ordinal);
+        var pending = plan.Handlers.Where(handler => requested.Contains(handler.Identity)).ToList();
+
+        var missing = requested.Except(pending.Select(static handler => handler.Identity), StringComparer.Ordinal).ToList();
+        if (missing.Count > 0)
+        {
+            MessagingLog.RetryHandlersMissing(_logger, _queueDefinition.Name, string.Join(", ", missing));
+        }
+
+        return pending;
+    }
+
+    /// <summary>
+    /// Runs one dispatch round: every handler in <paramref name="pending"/> once, in plan order, sharing one
+    /// fresh scope. Per-handler failures are collected instead of aborting the round, so one consumer's
+    /// exception cannot skip another consumer, and the caller retries only the handlers that actually failed.
+    /// Returns <see langword="null"/> when dispatch was cancelled by shutdown — the delivery is then left
+    /// unsettled for broker redelivery.
+    /// </summary>
+    private async Task<List<HandlerFailure>?> DispatchRoundAsync(List<MessageHandler> pending, PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    {
+        var failures = new List<HandlerFailure>();
+        await using var scope = _serviceScopeFactory.CreateAsyncScope();
+
+        foreach (var handler in pending)
+        {
+            try
+            {
+                await handler.DispatchAsync(scope.ServiceProvider, prepared.Message, ea, prepared.Envelope, _gatedPublisher, ea.CancellationToken);
+            }
+            catch (OperationCanceledException) when (ea.CancellationToken.IsCancellationRequested)
+            {
+                return null;
+            }
+            catch (Exception exception)
+            {
+                failures.Add(new HandlerFailure(handler, exception));
+            }
+        }
+
+        return failures;
+    }
+
+    /// <summary>
+    /// Splits a round's failures by each handler's own effective retry policy: a failure is retryable while the
+    /// current round is below the policy's retry count and the exception is not on the policy's ignore list; a
+    /// failure with no policy, an exhausted budget, or an ignored exception is terminal.
+    /// </summary>
+    private static (List<RetryableFailure> Retryable, List<HandlerFailure> Terminal) PartitionFailures(List<HandlerFailure> failures, int round)
+    {
+        var retryable = new List<RetryableFailure>();
+        var terminal = new List<HandlerFailure>();
+        foreach (var failure in failures)
+        {
+            if (failure.Handler.RetryPolicy is { } policy
+                && round < policy.MaxRetryCount
+                && !policy.GetIgnoredExceptionTypes().Contains(failure.Exception.GetType()))
+            {
+                retryable.Add(new RetryableFailure(failure.Handler, failure.Exception, policy));
+            }
+            else
+            {
+                terminal.Add(failure);
+            }
+        }
+
+        return (retryable, terminal);
+    }
+
+    /// <summary>
+    /// Publishes one fault per terminally-failed handler the moment it exhausts, so a terminal failure is
+    /// reported even when other handlers on the same delivery keep retrying (the delivery itself stays live
+    /// for them and only dead-letters when the final round ends with a terminal failure).
+    /// </summary>
+    private async Task PublishTerminalFaultsAsync(List<HandlerFailure> terminal, PreparedDelivery prepared, BasicDeliverEventArgs ea, Activity? activity)
+    {
+        if (terminal.Count == 0)
+        {
+            return;
+        }
+
+        var headers = ea.BasicProperties.Headers ?? new Dictionary<string, object?>();
+        foreach (var failure in terminal)
+        {
+            MessagingLog.ConsumerFailed(_logger, failure.Exception, _queueDefinition.Name, failure.Handler.Identity, prepared.DiagnosticTypeName, ea.RoutingKey);
+            activity?.AddException(failure.Exception);
+            await PublishFaultAsync(failure.Exception, ea, headers, prepared.Envelope, prepared.DiagnosticTypeName);
+        }
+    }
+
+    /// <summary>
+    /// Logs each retryable failure and computes the round's retry delay: the longest delay requested by any
+    /// retrying handler's policy, so no handler is retried earlier than its own back-off asks.
+    /// </summary>
+    private TimeSpan ScheduleRetry(List<RetryableFailure> retryable, int round, string routingKey)
+    {
+        var delay = TimeSpan.Zero;
+        var maxRetryCount = 0;
+        foreach (var failure in retryable)
+        {
+            MessagingLog.ConsumerThrew(_logger, failure.Exception, _queueDefinition.Name, failure.Handler.Identity, routingKey, round, failure.Policy.MaxRetryCount);
+
+            var handlerDelay = failure.Policy.GetDelay(round);
+            delay = handlerDelay > delay ? handlerDelay : delay;
+            maxRetryCount = Math.Max(maxRetryCount, failure.Policy.MaxRetryCount);
+        }
+
+        MessagingLog.SchedulingRetry(_logger, _queueDefinition.Name, round + 1, maxRetryCount, delay);
+        return delay;
+    }
+
+    private static void RecordRetryableFailures(List<RetryableFailure> retryable, Activity? activity)
+    {
+        foreach (var failure in retryable)
+        {
+            activity?.AddException(failure.Exception);
+        }
+
+        activity?.SetStatus(ActivityStatusCode.Error, retryable[^1].Exception.Message);
+    }
+
+    /// <summary>
+    /// Re-publishes the delivery to the queue's retry queue for delayed re-delivery, stamping the next retry
+    /// round and the identities of the handlers that failed so the re-delivery dispatches only those. The
+    /// per-message TTL is the round's computed delay; the caller acks the original delivery afterwards.
+    /// </summary>
+    private async Task RepublishForRetryAsync(List<RetryableFailure> retryable, int round, TimeSpan delay, BasicDeliverEventArgs ea)
+    {
+        var props = new BasicProperties(ea.BasicProperties);
+        props.Headers ??= new Dictionary<string, object?>();
+        props.Headers[RabbitMqConstants.RetryCountHeader] = round + 1;
+        props.Headers[RabbitMqConstants.RetryHandlersHeader] = RabbitMqConstants.SerializeRetryHandlerIdentities(retryable.Select(static failure => failure.Handler.Identity));
+        props.Expiration = delay.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
+
+        await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body);
+    }
+
+    private static async Task<bool> TryDelayAsync(TimeSpan delay, CancellationToken cancellationToken)
+    {
+        if (delay <= TimeSpan.Zero)
+        {
+            return true;
+        }
+
+        try
+        {
+            await Task.Delay(delay, cancellationToken);
+            return true;
+        }
+        catch (OperationCanceledException)
+        {
+            return false;
         }
     }
 
@@ -260,44 +404,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
 
         return activity;
-    }
-
-    private async Task HandleFailureAsync(Exception ex, BasicDeliverEventArgs ea, MessageEnvelope? envelope, string messageTypeName)
-    {
-        var plan = _typeCache.GetPlan(messageTypeName);
-        var policy = GetPolicy(plan, _queueDefinition);
-        var headers = ea.BasicProperties.Headers ?? new Dictionary<string, object?>();
-        int currentRetry = RabbitMqConstants.GetRetryCount(headers);
-
-        if (policy is null)
-        {
-            MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-            await PublishFaultAsync(ex, ea, headers, envelope, messageTypeName);
-            await NackAsync(ea);
-            return;
-        }
-
-        MessagingLog.ConsumerThrew(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey, currentRetry, policy.MaxRetryCount);
-
-        if (currentRetry < policy.MaxRetryCount && !policy.GetIgnoredExceptionTypes().Contains(ex.GetType()))
-        {
-            var delay = policy.GetDelay(currentRetry);
-            MessagingLog.SchedulingRetry(_logger, _queueDefinition.Name, currentRetry + 1, policy.MaxRetryCount, delay);
-
-            var props = new BasicProperties(ea.BasicProperties);
-            props.Headers ??= new Dictionary<string, object?>();
-            props.Headers["x-retry-count"] = currentRetry + 1;
-
-            props.Expiration = delay.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
-
-            await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body);
-            await AckAsync(ea);
-            return;
-        }
-
-        MessagingLog.ConsumerFailed(_logger, ex, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
-        await PublishFaultAsync(ex, ea, headers, envelope, messageTypeName);
-        await NackAsync(ea);
     }
 
     /// <summary>
@@ -362,20 +468,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             : (string.Empty, RabbitMqAddress.ResolveRoutingKey(faultAddress) ?? string.Empty);
     }
 
-    private static RetryPolicyDefinition? GetPolicy(RabbitMqPlan? plan, QueueDefinition queue)
-    {
-        if (plan is not null)
-        {
-            var registration = queue.Registrations
-                .FirstOrDefault(r => r.MessageType.Type == plan.MessageType.Type && r.RetryPolicy is not null);
-            if (registration?.RetryPolicy is { } policy)
-            {
-                return policy;
-            }
-        }
-        return queue.DefaultRetryPolicy;
-    }
-
     /// <summary>
     /// Returns a copy of <paramref name="ea"/> whose <c>x-retry-count</c> header is set to
     /// <paramref name="retryCount"/>, so a consumer reading <see cref="IMessageContext.RetryCount"/> sees the
@@ -385,7 +477,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     {
         var properties = new BasicProperties(ea.BasicProperties);
         properties.Headers ??= new Dictionary<string, object?>();
-        properties.Headers["x-retry-count"] = retryCount;
+        properties.Headers[RabbitMqConstants.RetryCountHeader] = retryCount;
         return new BasicDeliverEventArgs(
             ea.ConsumerTag, ea.DeliveryTag, ea.Redelivered, ea.Exchange, ea.RoutingKey, properties, ea.Body, ea.CancellationToken);
     }
@@ -435,16 +527,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
 
         return new PreparedDelivery(plan, message, envelope, diagnosticTypeName);
-    }
-
-    private async Task DispatchHandlersAsync(RabbitMqPlan plan, object message, BasicDeliverEventArgs ea, MessageEnvelope? envelope)
-    {
-        await using var scope = _serviceScopeFactory.CreateAsyncScope();
-
-        foreach (var handler in plan.Handlers)
-        {
-            await handler.DispatchAsync(scope.ServiceProvider, message, ea, envelope, _gatedPublisher, ea.CancellationToken);
-        }
     }
 
     /// <summary>
@@ -516,4 +598,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     }
 
     private sealed record PreparedDelivery(RabbitMqPlan Plan, object Message, MessageEnvelope? Envelope, string DiagnosticTypeName);
+
+    private sealed record HandlerFailure(MessageHandler Handler, Exception Exception);
+
+    private sealed record RetryableFailure(MessageHandler Handler, Exception Exception, RetryPolicyDefinition Policy);
 }

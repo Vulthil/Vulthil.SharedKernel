@@ -142,6 +142,39 @@ public sealed class QueueConfiguratorBuildTests : BaseUnitTestCase<HostApplicati
         queue.ShouldNotBeNull();
         queue.SingleActiveConsumer.ShouldBeFalse();
     }
+
+    [Fact]
+    public void AddRequestConsumerRejectsUseRetryAtConfigurationTime()
+    {
+        // Act & Assert
+        var ex = Should.Throw<InvalidOperationException>(() =>
+            Target.AddMessaging(m => m.ConfigureQueue("pricing", q =>
+                q.AddRequestConsumer<PriceQuoteConsumer>(c => c.UseRetry(r => r.Immediate(3))))));
+
+        ex.Message.ShouldContain(nameof(PriceQuoteConsumer));
+        ex.Message.ShouldContain("do not retry");
+    }
+
+    [Fact]
+    public void AddRequestConsumerWithoutUseRetrySucceeds()
+    {
+        // Act
+        Target.AddMessaging(m => m.ConfigureQueue("pricing", q => q.AddRequestConsumer<PriceQuoteConsumer>()));
+
+        // Assert
+        var queue = GetQueue(Target, "pricing");
+        queue.ShouldNotBeNull();
+        queue.Registrations.ShouldContain(r => r.ConsumerType.Type == typeof(PriceQuoteConsumer));
+    }
+
+    internal sealed record PriceQuoteRequest(string Sku);
+    internal sealed record PriceQuote(string Sku, decimal Price);
+
+    internal sealed class PriceQuoteConsumer : IRequestConsumer<PriceQuoteRequest, PriceQuote>
+    {
+        public Task<PriceQuote> ConsumeAsync(IMessageContext<PriceQuoteRequest> messageContext, CancellationToken cancellationToken = default)
+            => Task.FromResult(new PriceQuote(messageContext.Message.Sku, 1m));
+    }
 }
 
 internal interface IOrderEvent { }

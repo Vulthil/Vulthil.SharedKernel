@@ -33,21 +33,8 @@ jobs:
         run: dotnet build -c Release
 
       - name: Test with coverage
-        run: >
-          dotnet test -c Release --no-build --
-          --coverage
-          --coverage-output-format cobertura
-          --coverage-output coverage.cobertura.xml
-
-      - name: Restore tools
-        run: dotnet tool restore
-
-      - name: Generate coverage report & badges
-        run: >
-          dotnet reportgenerator
-          -reports:"**/TestResults/coverage.cobertura.xml"
-          -targetdir:"./CoverageReport"
-          -reporttypes:"Html;Badges"
+        shell: pwsh
+        run: ./eng/coverage.ps1 -NoBuild
 
       - name: Upload coverage report
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

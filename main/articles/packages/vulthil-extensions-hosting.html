@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Vulthil.Messaging.Inbox.EntityFrameworkCore | Vulthil.SharedKernel </title>
+      <title>Vulthil.Extensions.Hosting | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Vulthil.Messaging.Inbox.EntityFrameworkCore | Vulthil.SharedKernel ">
+      <meta name="title" content="Vulthil.Extensions.Hosting | Vulthil.SharedKernel ">
       
       
       <link rel="icon" href="../../images/favicon.ico">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/packages/vulthil-messaging-inbox-entityframeworkcore.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/packages/vulthil-extensions-hosting.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -85,34 +85,42 @@
         </div>
 
         <article data-uid="">
-<h1 id="vulthilmessaginginboxentityframeworkcore">Vulthil.Messaging.Inbox.EntityFrameworkCore</h1>
+<h1 id="vulthilextensionshosting">Vulthil.Extensions.Hosting</h1>
 
-<p>Shared Entity Framework Core primitives for
-<a href="https://www.nuget.org/packages/Vulthil.Messaging.Inbox">Vulthil.Messaging.Inbox</a> — provider-agnostic within EF
-Core. It holds the <code>InboxMessage</code> marker entity and the <code>ISaveInboxMessages</code> context interface, reused by the
-provider-specific stores.</p>
+<p>Small hosting abstractions for Vulthil. The package currently contains one contract:
+<code>IRestartableHostedService</code>.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>You normally don't reference this directly. Install a store, which brings this transitively:</p>
 <ul>
-<li><strong><code>Vulthil.Messaging.Inbox.Relational</code></strong> — PostgreSQL, SQL Server, MySQL, SQLite (transactional exactly-once)</li>
-<li><strong><code>Vulthil.Messaging.Inbox.Cosmos</code></strong> — Azure Cosmos DB (effectively-once)</li>
+<li>A hosted service (such as a database-polling relay) should be pausable around operations that must not run
+concurrently with it</li>
+<li>Test infrastructure needs to stop background work around a reset and resume it afterwards</li>
 </ul>
-<h2 id="pattern">Pattern</h2>
-<p>Implement <code>ISaveInboxMessages</code> on your <code>DbContext</code> <strong>once</strong>; the provider-specific entity configuration and store
-come from the store package. This mirrors how <code>Microsoft.EntityFrameworkCore</code> is the base for
-<code>Microsoft.EntityFrameworkCore.Relational</code> / <code>.Cosmos</code>.</p>
-<pre><code class="lang-csharp">public sealed class AppDbContext(DbContextOptions&lt;AppDbContext&gt; options) : DbContext(options), ISaveInboxMessages
+<h2 id="irestartablehostedservice"><code>IRestartableHostedService</code></h2>
+<p>A marker interface an <code>IHostedService</code> implements to declare that its execution can be <strong>stopped and started
+again cleanly</strong>. Infrastructure can then pause the service for the duration of an operation that must not run
+concurrently with it, and resume it afterwards.</p>
+<p>The primary use is test isolation: <code>Vulthil.xUnit</code> stops every registered hosted service implementing this
+marker around the per-test database reset and restarts it afterwards, so a live database-polling relay (for
+example the <code>Vulthil.SharedKernel.Outbox</code> background relay) does not contend with the reset and time it out.
+The relay opts in simply by implementing the marker — no test-only code, and the testing library never depends
+on the outbox engine.</p>
+<pre><code class="lang-csharp">internal sealed class OutboxBackgroundService(/* ... */) : IRestartableHostedService, IDisposable
 {
-    public DbSet&lt;InboxMessage&gt; InboxMessages =&gt; Set&lt;InboxMessage&gt;();
+    // StartAsync/StopAsync manage the execute task so a Stop/Start cycle re-runs it cleanly.
 }
 </code></pre>
-<p>See the <a href="../inbox-pattern.html">Inbox Pattern</a>
-article for the full design.</p>
+<h2 id="implementation-guidance">Implementation guidance</h2>
+<p>Implement the marker only on services whose <code>StartAsync</code>/<code>StopAsync</code> are idempotent across repeated cycles.
+Prefer implementing <code>IHostedService</code> directly over inheriting <code>BackgroundService</code>: the host observes only the
+execute task of a <code>BackgroundService</code>'s first start and stops the whole host when that task is canceled while
+the application is running — and on .NET 10 a stop racing service startup can cancel the task before
+<code>ExecuteAsync</code> has run at all.</p>
+<p>See <a href="../testing.html">Testing</a> for how the marker participates in the per-test reset.</p>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/packages/vulthil-messaging-inbox-entityframeworkcore.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/packages/vulthil-extensions-hosting.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>

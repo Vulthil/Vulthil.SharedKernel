@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IHttpMock | Vulthil.SharedKernel ">
       
-      <meta name="description" content="An in-process fake for an outbound  dependency. Configure stubbed responses per test and inspect the requests the system under test sent. Register one per typed client via AddHttpMock&amp;lt;TClient, TImplementation&amp;gt;() on the factory and retrieve it with HttpMock&amp;lt;TClient&amp;gt;().">
+      <meta name="description" content="An in-process fake for an outbound  dependency. Configure stubbed responses per test and inspect the requests the system under test sent. Register one per typed client via AddHttpMock&amp;lt;TClient&amp;gt;() (or per named client via AddHttpMock(&amp;quot;name&amp;quot;)) on the factory and retrieve it with HttpMock&amp;lt;TClient&amp;gt;() (or HttpMock(&amp;quot;name&amp;quot;)).">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Http_IHttpMock" data-uid="Vulthil.xUnit.Http.IHttpMock" class="text-break">
-Interface IHttpMock  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Interface IHttpMock  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -99,7 +99,8 @@ Interface IHttpMock  <a class="header-action link-secondary" title="View source"
 
   <div class="markdown summary"><p>An in-process fake for an outbound <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a> dependency. Configure stubbed responses per test
 and inspect the requests the system under test sent. Register one per typed client via
-<code>AddHttpMock&lt;TClient, TImplementation&gt;()</code> on the factory and retrieve it with <code>HttpMock&lt;TClient&gt;()</code>.</p>
+<code>AddHttpMock&lt;TClient&gt;()</code> (or per named client via <code>AddHttpMock(&quot;name&quot;)</code>) on the factory and
+retrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot;name&quot;)</code>).</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -141,7 +142,7 @@ and inspect the requests the system under test sent. Register one per typed clie
 
   <h3 id="Vulthil_xUnit_Http_IHttpMock_ReceivedRequests" data-uid="Vulthil.xUnit.Http.IHttpMock.ReceivedRequests">
   ReceivedRequests
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the requests received by this mock since the last reset, in the order they were sent.</p>
@@ -177,7 +178,7 @@ and inspect the requests the system under test sent. Register one per typed clie
 
   <h3 id="Vulthil_xUnit_Http_IHttpMock_On_System_Func_System_Net_Http_HttpRequestMessage_System_Boolean__" data-uid="Vulthil.xUnit.Http.IHttpMock.On(System.Func{System.Net.Http.HttpRequestMessage,System.Boolean})">
   On(Func&lt;HttpRequestMessage, bool&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Begins configuring a stubbed response for requests matching a custom predicate.</p>
@@ -216,7 +217,7 @@ and inspect the requests the system under test sent. Register one per typed clie
 
   <h3 id="Vulthil_xUnit_Http_IHttpMock_On_System_Net_Http_HttpMethod_System_String_" data-uid="Vulthil.xUnit.Http.IHttpMock.On(System.Net.Http.HttpMethod,System.String)">
   On(HttpMethod, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Begins configuring a stubbed response for requests whose method and absolute path match.
@@ -259,7 +260,7 @@ The <code class="paramref">pathPattern</code> is matched against the request's a
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

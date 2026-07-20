@@ -87,7 +87,7 @@
         <article data-uid="">
 <h1 id="vulthilsharedkernelinfrastructurerelational">Vulthil.SharedKernel.Infrastructure.Relational</h1>
 
-<p>Use <code>Vulthil.SharedKernel.Infrastructure.Relational</code> as the shared base for relational EF Core providers and as the source of the default relational outbox strategy.</p>
+<p>Use <code>Vulthil.SharedKernel.Infrastructure.Relational</code> as the shared base for relational EF Core providers: it holds the relational outbox store base class, the commit-time relay trigger, and the <code>MigrateAsync</code> startup helper.</p>
 <h2 id="when-to-use">When to use</h2>
 <ul>
 <li>Building a provider-specific package (Npgsql, MySql, SqlServer, …) that should reuse a common outbox implementation</li>
@@ -96,7 +96,7 @@
 <h2 id="pattern">Pattern</h2>
 <ul>
 <li>Pull this package in transitively via the provider package (<code>Vulthil.SharedKernel.Infrastructure.Npgsql</code>, <code>…MySql</code>, etc.); it is rarely referenced directly from application code</li>
-<li>Derive provider-specific outbox strategies from <code>RelationalOutboxStrategy</code> to add row-level locking or other provider-specific tuning</li>
+<li>Derive provider-specific outbox stores from <code>RelationalOutboxStore&lt;TContext&gt;</code> to add row-level locking or other provider-specific tuning</li>
 <li>Apply migrations during startup rather than at build time so deployments stay reproducible</li>
 </ul>
 <h2 id="usage">Usage</h2>
@@ -110,21 +110,24 @@ app.MapEndpoints();
 app.Run();
 </code></pre>
 <p><code>MigrateAsync</code> checks for pending migrations and only invokes <code>Database.MigrateAsync()</code> when at least one is pending, so it is safe to call on every startup.</p>
-<h3 id="reusing-the-relational-outbox-strategy">Reusing the relational outbox strategy</h3>
-<p>Provider packages wire <code>RelationalOutboxStrategy</code> (or a subclass of it) automatically through their own <code>Use*</code> extension. If you are authoring a new provider, inherit from <code>RelationalOutboxStrategy</code> and override <code>FetchMessagesAsync</code> to add provider-specific row locking:</p>
-<pre><code class="lang-csharp">public sealed class MyProviderOutboxStrategy : RelationalOutboxStrategy
+<h3 id="reusing-the-relational-outbox-store">Reusing the relational outbox store</h3>
+<p>Provider packages wire <code>RelationalOutboxStore&lt;TContext&gt;</code> (or a subclass of it) automatically through their own <code>Use*</code> extension. The base class records relay outcomes with set-based <code>ExecuteUpdate</code> calls, deletes retention batches by key, and requires the relay batch to run inside a transaction — it throws at relay time if <code>TContext</code> does not implement <code>IUnitOfWork</code> (derive from <code>BaseDbContext</code>), because without a transaction provider row-locking such as <code>FOR UPDATE SKIP LOCKED</code> would release immediately after the fetch and concurrent relay instances could double-dispatch.</p>
+<p>If you are authoring a new provider, inherit from <code>RelationalOutboxStore&lt;TContext&gt;</code> and override the fetch to add provider-specific row locking:</p>
+<pre><code class="lang-csharp">public sealed class MyProviderOutboxStore&lt;TContext&gt;(
+    TContext dbContext, TimeProvider timeProvider, IOptions&lt;OutboxProcessingOptions&gt; options)
+    : RelationalOutboxStore&lt;TContext&gt;(dbContext, timeProvider, options)
+    where TContext : DbContext, ISaveOutboxMessages
 {
-    public override Task&lt;List&lt;OutboxMessageData&gt;&gt; FetchMessagesAsync(
-        DbSet&lt;OutboxMessage&gt; outboxMessages,
-        int batchSize,
-        int maxRetries,
-        CancellationToken cancellationToken)
+    protected override Task&lt;List&lt;OutboxMessageData&gt;&gt; FetchMessagesAsync(
+        int batchSize, int maxRetries, CancellationToken cancellationToken)
     {
         // Add provider-specific FOR UPDATE SKIP LOCKED or equivalent here.
-        return base.FetchMessagesAsync(outboxMessages, batchSize, maxRetries, cancellationToken);
+        return base.FetchMessagesAsync(batchSize, maxRetries, cancellationToken);
     }
 }
 </code></pre>
+<h3 id="commit-time-relay-trigger">Commit-time relay trigger</h3>
+<p><code>AddRelationalOutboxCommitTrigger()</code> registers a transaction interceptor (<code>OutboxCommitInterceptor</code>) that wakes the outbox relay when an explicit database transaction commits, so captured messages relay promptly instead of waiting for the next poll. Provider <code>Use*</code> extensions register it automatically when outbox processing is enabled.</p>
 
 </article>
 

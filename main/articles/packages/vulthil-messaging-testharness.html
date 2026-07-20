@@ -89,7 +89,8 @@
 
 <p>An in-memory messaging transport for tests. It runs your consumers with no broker and captures every produced
 and consumed message for assertion. Built entirely on the public <code>Vulthil.Messaging.Transport</code> SDK, so it
-mirrors the real consumer topology assembled from your queue configuration.</p>
+assembles the same execution plans (consumers, polymorphic dispatch, per-consumer retry resolution) from your
+queue configuration that a real transport would.</p>
 <h2 id="when-to-use">When to use</h2>
 <ul>
 <li>Component/unit tests that assert published, sent, consumed, or requested messages</li>
@@ -99,7 +100,10 @@ mirrors the real consumer topology assembled from your queue configuration.</p>
 <h2 id="pattern">Pattern</h2>
 <ul>
 <li>Dispatch is synchronous: when a publish/send/request call returns, every consumer it triggered has run — no polling</li>
-<li>A one-way consumer's exception propagates to the publisher/sender; a request consumer's exception becomes a failed result</li>
+<li>A one-way consumer's exception does <strong>not</strong> propagate to the publisher/sender: the consumer is retried per its
+resolved retry policy (attempts run back-to-back, without the configured delays), then a <code>Fault&lt;T&gt;</code> is published
+and captured — assert it via <code>Published&lt;Fault&lt;TMessage&gt;&gt;()</code>. A request consumer's exception becomes a failed
+<code>Result&lt;TResponse&gt;</code> on the requesting side</li>
 <li>Keep assertions on <code>ITestHarness</code> deterministic and explicit; <code>Clear()</code> between phases</li>
 </ul>
 <h2 id="usage">Usage</h2>
@@ -132,8 +136,7 @@ harness.Handle&lt;OrderShippedEvent&gt;(ctx =&gt; { observed.Add(ctx.Message.Ord
 transport with the harness, leaving production code untouched:</p>
 <pre><code class="lang-csharp">builder.ConfigureServices(services =&gt; services.ReplaceTransportWithTestHarness());
 </code></pre>
-<p>See the <a href="https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/testing.md">Testing guide</a> for
-the full API and details.</p>
+<p>See the <a href="../testing.html#messaging-test-harness">Testing guide</a> for the full API and details.</p>
 
 </article>
 

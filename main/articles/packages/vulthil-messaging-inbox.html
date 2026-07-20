@@ -117,7 +117,7 @@ giving <strong>exactly-once processing</strong>; without one (e.g. Cosmos) the g
     messaging.AddIdempotentInbox&lt;OrderShipped&gt;(ctx =&gt; ctx.Message.OrderId.ToString()); // key on a business field
 });
 </code></pre>
-<p>See the <a href="https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/inbox-pattern.md">Inbox Pattern</a>
+<p>See the <a href="../inbox-pattern.html">Inbox Pattern</a>
 article for the design, guarantees, and the message-id stability contract.</p>
 
 </article>

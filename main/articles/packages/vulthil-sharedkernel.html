@@ -101,10 +101,9 @@
 </ul>
 <h2 id="usage">Usage</h2>
 <h3 id="defining-an-entity">Defining an entity</h3>
-<pre><code class="lang-csharp">public sealed class UserId(Guid value)
-{
-    public Guid Value { get; } = value;
-}
+<p>Entities compare by identity, so the identifier type must have value equality — use a <code>record</code> (or
+<code>readonly record struct</code>), not a plain class:</p>
+<pre><code class="lang-csharp">public sealed record UserId(Guid Value);
 
 public sealed class User : AggregateRoot&lt;UserId&gt;
 {

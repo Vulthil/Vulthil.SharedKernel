@@ -106,7 +106,8 @@ Interfaces
       <dt><a class="xref" href="Vulthil.xUnit.Http.IHttpMock.html">IHttpMock</a></dt>
       <dd><p>An in-process fake for an outbound <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a> dependency. Configure stubbed responses per test
 and inspect the requests the system under test sent. Register one per typed client via
-<code>AddHttpMock&lt;TClient, TImplementation&gt;()</code> on the factory and retrieve it with <code>HttpMock&lt;TClient&gt;()</code>.</p>
+<code>AddHttpMock&lt;TClient&gt;()</code> (or per named client via <code>AddHttpMock(&quot;name&quot;)</code>) on the factory and
+retrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot;name&quot;)</code>).</p>
 </dd>
     </dl>
     <dl class="jumplist">

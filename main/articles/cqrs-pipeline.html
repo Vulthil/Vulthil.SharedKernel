@@ -194,7 +194,7 @@ public sealed class GetUserQueryHandler(AppDbContext db)
 </code></pre>
 <p>No additional wiring is needed – the validator is picked up automatically from the registered assemblies.</p>
 <h3 id="request-logging">Request Logging</h3>
-<p><code>RequestLoggingPipelineBehavior</code> logs the start and completion of every request, attaching the serialised error to the logging scope when the result is a failure.</p>
+<p><code>RequestLoggingPipelineBehavior</code> logs the start and completion of requests whose response type is <code>Result</code> (or <code>Result&lt;T&gt;</code>), attaching the serialised error to the logging scope when the result is a failure. Requests with any other response type are not covered by this behavior.</p>
 <h3 id="transactional">Transactional</h3>
 <p><code>TransactionalPipelineBehavior</code> wraps <code>ITransactionalCommand</code> handlers inside a database transaction. If the handler returns a successful <code>Result</code>, the transaction commits; if it returns a failed <code>Result</code> or throws, the transaction rolls back. (The non-generic <code>ITransactionalCommand</code> marker returns <code>Result</code> and is wrapped the same way as <code>ITransactionalCommand&lt;Result&gt;</code>.)</p>
 <pre><code class="lang-csharp">// Mark a command as transactional

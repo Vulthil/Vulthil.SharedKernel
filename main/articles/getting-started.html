@@ -121,8 +121,18 @@
 </tr>
 <tr>
 <td>Infrastructure</td>
+<td><code>Vulthil.SharedKernel.Outbox</code></td>
+<td>EF-free transactional outbox engine (relay, dispatchers, <code>IOutboxStore</code>)</td>
+</tr>
+<tr>
+<td>Infrastructure</td>
+<td><code>Vulthil.SharedKernel.Outbox.EntityFrameworkCore</code></td>
+<td>EF Core implementation of the outbox engine</td>
+</tr>
+<tr>
+<td>Infrastructure</td>
 <td><code>Vulthil.SharedKernel.Infrastructure.Relational</code></td>
-<td>Shared relational support and the default relational outbox strategy</td>
+<td>Shared relational support and the relational outbox store base</td>
 </tr>
 <tr>
 <td>Infrastructure</td>
@@ -145,6 +155,11 @@
 <td>Minimal API endpoint conventions and <code>Result</code> → HTTP mapping</td>
 </tr>
 <tr>
+<td>Hosting</td>
+<td><code>Vulthil.Extensions.Hosting</code></td>
+<td><code>IRestartableHostedService</code> marker for cleanly pausable hosted services</td>
+</tr>
+<tr>
 <td>Messaging</td>
 <td><code>Vulthil.Messaging.Abstractions</code></td>
 <td>Transport-agnostic consumer and publisher contracts</td>
@@ -152,7 +167,7 @@
 <tr>
 <td>Messaging</td>
 <td><code>Vulthil.Messaging</code></td>
-<td>Queue/consumer registration and hosted service orchestration</td>
+<td>Queue/consumer registration, hosted orchestration, and the transport SDK</td>
 </tr>
 <tr>
 <td>Messaging</td>
@@ -160,9 +175,39 @@
 <td>RabbitMQ transport implementation</td>
 </tr>
 <tr>
+<td>Messaging</td>
+<td><code>Vulthil.Messaging.Outbox</code></td>
+<td>Transactional bus-publish outbox (captures publishes into the outbox)</td>
+</tr>
+<tr>
+<td>Messaging</td>
+<td><code>Vulthil.Messaging.Inbox</code></td>
+<td>Idempotent-receiver consume filter for exactly/effectively-once processing</td>
+</tr>
+<tr>
+<td>Messaging</td>
+<td><code>Vulthil.Messaging.Inbox.EntityFrameworkCore</code></td>
+<td>Shared EF Core inbox primitives</td>
+</tr>
+<tr>
+<td>Messaging</td>
+<td><code>Vulthil.Messaging.Inbox.Relational</code></td>
+<td>Relational idempotency store (transactional exactly-once)</td>
+</tr>
+<tr>
+<td>Messaging</td>
+<td><code>Vulthil.Messaging.Inbox.Cosmos</code></td>
+<td>Cosmos idempotency store (effectively-once)</td>
+</tr>
+<tr>
 <td>Testing</td>
 <td><code>Vulthil.xUnit</code></td>
 <td>Base test classes, auto-mocking, and Testcontainers integration</td>
+</tr>
+<tr>
+<td>Testing</td>
+<td><code>Vulthil.xUnit.Cosmos</code></td>
+<td>Cosmos DB emulator fixture for <code>Vulthil.xUnit</code></td>
 </tr>
 <tr>
 <td>Testing</td>
@@ -172,7 +217,7 @@
 <tr>
 <td>Testing</td>
 <td><code>Vulthil.Extensions.Testing</code></td>
-<td>Shared assertion and setup helpers</td>
+<td>Framework-agnostic polling and HTTP response helpers (no xUnit dependency)</td>
 </tr>
 </tbody>
 </table>

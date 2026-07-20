@@ -97,8 +97,8 @@ Classes
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.ConsumeFilterOptions.html">ConsumeFilterOptions</a></dt>
       <dd><p>Configures the built-in consume filters that <code>AddMessaging</code> registers by default.
-Each flag toggles a specific filter on or off; setting a flag to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>
-causes the filter to pass deliveries straight through without performing its work.</p>
+Each flag toggles a specific filter on or off; a filter whose flag is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>
+is never registered in DI, so deliveries do not pass through it at all.</p>
 </dd>
     </dl>
     <dl class="jumplist">

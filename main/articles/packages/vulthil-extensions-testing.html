@@ -87,17 +87,18 @@
         <article data-uid="">
 <h1 id="vulthilextensionstesting">Vulthil.Extensions.Testing</h1>
 
-<p>Use <code>Vulthil.Extensions.Testing</code> for shared testing helpers and extension points.</p>
+<p>Use <code>Vulthil.Extensions.Testing</code> for framework-agnostic test helpers. It has no xUnit dependency — the
+xUnit-coupled test stack (base classes, fixtures, containers) lives in <a href="vulthil-xunit.html"><code>Vulthil.xUnit</code></a>.</p>
 <h2 id="when-to-use">When to use</h2>
 <ul>
-<li>Reusing assertion and setup helpers across test suites</li>
-<li>Reducing repeated test composition boilerplate</li>
-<li>Polling asynchronous conditions during integration tests</li>
+<li>Polling asynchronous conditions during integration tests (<code>Polling.WaitAsync</code>)</li>
+<li>Reading and asserting JSON HTTP responses (<code>GetResponseAsync&lt;T&gt;</code>)</li>
+<li>Any test framework — nothing here requires xUnit</li>
 </ul>
 <h2 id="pattern">Pattern</h2>
 <ul>
+<li>Express the polled condition as a <code>Result</code>/<code>Result&lt;T&gt;</code> so each failed attempt carries a diagnosable <code>Error</code></li>
 <li>Keep helpers small and composable</li>
-<li>Prefer intent-revealing test extensions</li>
 <li>Avoid embedding production logic in test helpers</li>
 </ul>
 <h2 id="polling">Polling</h2>
@@ -118,6 +119,11 @@ so cancellation flows uniformly through the timer and (via the token-aware overl
 result.IsSuccess.ShouldBeTrue();
 </code></pre>
 <p>When polling times out, <code>PollingResult.PollingError</code> exposes the individual errors collected from each failed attempt.</p>
+<h2 id="http-responses">HTTP responses</h2>
+<p><code>GetResponseAsync&lt;T&gt;</code> asserts an <code>HttpResponseMessage</code> indicates success and deserializes its JSON body:</p>
+<pre><code class="lang-csharp">var response = await client.GetAsync(&quot;/weather/london&quot;);
+var forecast = await response.GetResponseAsync&lt;Forecast&gt;();
+</code></pre>
 
 </article>
 

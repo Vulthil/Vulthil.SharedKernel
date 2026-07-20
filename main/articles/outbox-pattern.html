@@ -90,13 +90,17 @@
 <p>The transactional outbox pattern guarantees that domain events raised by aggregate roots are published even if the process crashes after the database commit. The engine lives in <code>Vulthil.SharedKernel.Outbox</code>; <code>Vulthil.SharedKernel.Infrastructure</code> references it and adds the <code>DbContext</code> base and the <code>EnableOutboxProcessing</code> wiring.</p>
 <h2 id="how-it-works">How It Works</h2>
 <ol>
-<li>During <code>SaveChangesAsync</code>, a <code>SaveChangesInterceptor</code> serialises every pending domain event into an <code>OutboxMessage</code> row in the same database transaction.</li>
+<li>During <code>SaveChanges</code>/<code>SaveChangesAsync</code> (both the synchronous and asynchronous paths are intercepted), a <code>SaveChangesInterceptor</code> serialises every pending domain event into an <code>OutboxMessage</code> row in the same database transaction.</li>
 <li>The aggregate root's event collection is cleared.</li>
 <li>A background service (<code>OutboxBackgroundService</code>) relays unprocessed outbox messages — woken immediately once the captured rows are durable (on transaction commit, or right after a non-transactional <code>SaveChanges</code> that captured domain events) for low latency, and polling on an interval as the backstop.</li>
 <li>Each message is routed by its <code>OutboxDestination</code> to the registered <code>IOutboxDispatcher</code> that handles it (in-process domain events by default, or the broker — see below).</li>
 <li>Successfully relayed messages are marked as processed; failures are retried up to the configured maximum, after which the message is dead-lettered — its <code>FailedOnUtc</code> timestamp is set, it is no longer relayed, and an error is logged with the last failure (the <code>Error</code> column).</li>
 </ol>
 <p>This guarantees <strong>at-least-once delivery</strong> because the event and the business data are committed atomically.</p>
+<p>Relay order is best-effort, not a contract: messages are fetched oldest-first (<code>OccurredOnUtc</code>, then <code>Id</code>), but a
+failed message does not block the rest of its batch — the batch keeps dispatching, so later messages overtake the
+failure, which is retried on a later cycle (no head-of-line blocking). With <code>EnableParallelPublishing</code>, order
+within a batch is not preserved at all. Consumers that need ordering must not rely on the outbox for it.</p>
 <h2 id="configuration">Configuration</h2>
 <h3 id="enable-outbox-processing-during-dbcontext-registration">Enable outbox processing during DbContext registration</h3>
 <p><code>AddDbContext</code> is an extension on <code>IHostApplicationBuilder</code> (not <code>IServiceCollection</code>). Provider extensions such as <code>UseNpgsql</code> are called directly on the configurator — they register the EF Core context for you, so no separate <code>AddDbContext</code>/options callback is needed.</p>
@@ -129,6 +133,10 @@
 }
 </code></pre>
 <p><code>BaseDbContext</code> owns the <code>OutboxMessages</code> <code>DbSet</code>; apply the provider-optimized mapping in <code>OnModelCreating</code> by calling your provider's extension — <code>ApplyNpgsqlOutbox()</code>, <code>ApplyMySqlOutbox()</code>, or <code>ApplyCosmosOutbox()</code> (as shown above). The agnostic <code>ApplyOutbox()</code> is available for custom providers.</p>
+<p>Because the <code>DbSet</code> lives on the base class, EF Core's convention discovery puts the <code>OutboxMessage</code> entity into
+<strong>every</strong> derived context's model — and its migrations — even when outbox processing is never enabled for that
+context. A context that will never use the outbox can opt out with <code>modelBuilder.Ignore&lt;OutboxMessage&gt;()</code> in its
+<code>OnModelCreating</code>; an outbox-enabled context must keep the mapping (the relay store refuses to run without it).</p>
 <p>Only one outbox-enabled <code>DbContext</code> is supported per host: the relay and retention background services resolve a
 single <code>IOutboxStore</code>, so calling <code>EnableOutboxProcessing()</code> for a second context throws an
 <code>InvalidOperationException</code> at startup instead of silently leaving the first context's messages unrelayed. The
@@ -174,7 +182,7 @@ running unprotected.</p>
 <tr>
 <td><code>MaxDelaySeconds</code></td>
 <td>60</td>
-<td>Maximum back-off delay when no messages are found</td>
+<td>Maximum back-off delay when a cycle relays nothing (no pending messages, or every fetched message failed)</td>
 </tr>
 <tr>
 <td><code>EnableTracing</code></td>
@@ -229,7 +237,7 @@ running unprotected.</p>
 </tr>
 </tbody>
 </table>
-<p>The sweep deletes rows whose <code>ProcessedOnUtc</code> <strong>or</strong> <code>FailedOnUtc</code> is older than <code>RetentionPeriod</code>; <strong>pending rows are never touched</strong>. It runs through the registered <code>IOutboxStore</code> when it implements <code>IOutboxRetentionStore</code> (the EF Core store does) — every store deletes at most <code>BatchSize</code> rows per call (relational providers select the oldest eligible keys and delete them set-based with <code>ExecuteDelete</code>), so a large backlog is drained in bounded, short-lived batches, and the <strong>same sweep covers Cosmos</strong> (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).</p>
+<p>The sweep deletes rows whose <code>ProcessedOnUtc</code> <strong>or</strong> <code>FailedOnUtc</code> is older than <code>RetentionPeriod</code>; <strong>pending rows are never touched</strong>. It runs through the registered <code>IOutboxStore</code> when it implements <code>IOutboxRetentionStore</code> (the EF Core store does; a custom store that doesn't gets a one-time warning and the sweep is skipped) — every store deletes at most <code>BatchSize</code> rows per call (relational providers select the oldest eligible keys and delete them set-based with <code>ExecuteDelete</code>), so a large backlog is drained in bounded, short-lived batches, and the <strong>same sweep covers Cosmos</strong> (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).</p>
 <h2 id="custom-outbox-store">Custom Outbox Store</h2>
 <p>The relay engine talks to the database through an EF-free <code>IOutboxStore</code> (in <code>Vulthil.SharedKernel.Outbox</code>). The EF
 implementation lives in <code>Vulthil.SharedKernel.Outbox.EntityFrameworkCore</code> (<code>EntityFrameworkOutboxStore&lt;TContext&gt;</code>),
@@ -268,6 +276,12 @@ builder.AddMessaging(messaging =&gt;
 <p>Capture is relational-only (it enlists in the ambient transaction); the relay works on any provider. It is built on
 the general publish/send <strong>filter pipeline</strong> (<code>IPublishFilter</code>, registered via <code>AddPublishFilter&lt;T&gt;()</code>), which is the
 publish-side counterpart to consume filters and can host other cross-cutting concerns.</p>
+<p>Two pipeline consequences to know: capturing <strong>short-circuits</strong> the pipeline, so publish filters registered after
+<code>AddTransactionalOutbox()</code> never see a captured message; and the relay publishes captured messages straight through
+the transport, <strong>bypassing the publish-filter pipeline entirely</strong> (nothing runs twice, but nothing else observes the
+relayed publish either). Register any filter that must observe every outgoing message <em>before</em>
+<code>AddTransactionalOutbox()</code>. Request/reply is unaffected — requests never flow through the publish filters and are
+never captured (a request awaiting a synchronous reply cannot be deferred to a relay).</p>
 <p>The capture preserves the publish faithfully: the message id, correlation id, routing key, send destination, custom
 headers, and the current trace context (<code>TraceParent</code>/<code>TraceState</code>, when tracing is enabled) are stored with the row
 and re-applied on relay — the relayed publish runs under an activity linked to the capturing trace. Headers persist

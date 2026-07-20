@@ -87,15 +87,15 @@
         <article data-uid="">
 <h1 id="vulthilsharedkernelinfrastructuremysql">Vulthil.SharedKernel.Infrastructure.MySql</h1>
 
-<p>Use <code>Vulthil.SharedKernel.Infrastructure.MySql</code> to wire a MySQL-backed <code>DbContext</code> together with the MySQL-tuned outbox strategy.</p>
+<p>Use <code>Vulthil.SharedKernel.Infrastructure.MySql</code> to wire a MySQL-backed <code>DbContext</code> together with the MySQL-tuned outbox store.</p>
 <h2 id="when-to-use">When to use</h2>
 <ul>
 <li>MySQL is the underlying database for an application's primary <code>DbContext</code></li>
-<li>Outbox processing should use the MySQL strategy (row-level locking via <code>FOR UPDATE SKIP LOCKED</code>)</li>
+<li>Outbox processing should use the MySQL store (row-level locking via <code>FOR UPDATE SKIP LOCKED</code>)</li>
 </ul>
 <h2 id="pattern">Pattern</h2>
 <ul>
-<li>Call <code>UseMySql(&quot;ConnectionStringKey&quot;)</code> on the database infrastructure configurator – it registers a pooled EF Core context for the named connection string, selects the MySQL outbox strategy, and (when outbox processing is enabled) wires the commit-time relay trigger</li>
+<li>Call <code>UseMySql(&quot;ConnectionStringKey&quot;)</code> on the database infrastructure configurator – it registers a pooled EF Core context for the named connection string, selects the MySQL outbox store, and (when outbox processing is enabled) wires the commit-time relay trigger</li>
 <li>Order between <code>UseMySql</code>, <code>EnableOutboxProcessing</code>, and <code>UseOutboxStore</code> does not matter; the configurator defers the underlying registrations until the full chain has executed, and the MySQL outbox store is applied only as a default – a custom store selected via <code>UseOutboxStore</code> is always preserved</li>
 <li>The relay's locking fetch SQL is composed from the model's mapped identifiers, so custom outbox table or column names (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported, and the relay dispatches strictly in <code>(OccurredOnUtc, Id)</code> order</li>
 <li>Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (<code>Database.CreateExecutionStrategy().ExecuteAsync</code>)</li>

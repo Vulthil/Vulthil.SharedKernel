@@ -92,11 +92,11 @@
 <ul>
 <li>Cosmos DB is the underlying store for an application's primary <code>DbContext</code></li>
 <li>Aspire-wired Cosmos connection via <code>AddCosmosDbContext</code></li>
-<li>Outbox processing should use the Cosmos-specific strategy (best-effort relay without relational locking)</li>
+<li>Outbox processing should use the Cosmos-specific store (best-effort relay without relational locking)</li>
 </ul>
 <h2 id="pattern">Pattern</h2>
 <ul>
-<li>Call <code>UseCosmosDb(&quot;connectionStringKey&quot;)</code> on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox strategy</li>
+<li>Call <code>UseCosmosDb(&quot;connectionStringKey&quot;)</code> on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox store</li>
 <li>Configure the Cosmos-specific entity model for <code>OutboxMessage</code> via the <code>ApplyCosmosOutbox()</code> model-builder extension (call it from your <code>OnModelCreating</code>)</li>
 <li>Order between <code>UseCosmosDb</code>, <code>EnableOutboxProcessing</code>, and <code>UseOutboxStore</code> does not matter; the configurator defers the underlying registrations until the full chain has executed, and the Cosmos outbox store is applied only as a default – a custom store selected via <code>UseOutboxStore</code> is always preserved</li>
 </ul>

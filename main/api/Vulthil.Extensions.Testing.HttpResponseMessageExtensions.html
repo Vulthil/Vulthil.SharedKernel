@@ -157,10 +157,12 @@ Class HttpResponseMessageExtensions  <a class="header-action link-secondary" tit
 
   <h3 id="Vulthil_Extensions_Testing_HttpResponseMessageExtensions_GetResponseAsync__1_System_Net_Http_HttpResponseMessage_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.HttpResponseMessageExtensions.GetResponseAsync``1(System.Net.Http.HttpResponseMessage,System.Threading.CancellationToken)">
   GetResponseAsync&lt;TResponse&gt;(HttpResponseMessage?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/HttpResponseMessageExtensions.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/HttpResponseMessageExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Reads the JSON content of the HTTP response and deserializes it into the specified type.</p>
+  <div class="markdown level1 summary"><p>Asserts the response indicates success, then reads its JSON content and deserializes it into
+<code class="typeparamref">TResponse</code>. Throws when the response is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, has a
+non-success status code, or its body is empty or deserializes to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -171,21 +173,25 @@ Class HttpResponseMessageExtensions  <a class="header-action link-secondary" tit
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>response</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpresponsemessage">HttpResponseMessage</a></dt>
-    <dd></dd>
+    <dd><p>The HTTP response to read.</p>
+</dd>
     <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
-    <dd></dd>
+    <dd><p>A token to observe for cancellation.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResponse&gt;</dt>
-    <dd></dd>
+    <dd><p>The deserialized response body.</p>
+</dd>
   </dl>
 
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
     <dt><code>TResponse</code></dt>
-    <dd></dd>
+    <dd><p>The type to deserialize the JSON response body into.</p>
+</dd>
   </dl>
 
 

@@ -177,10 +177,13 @@ for polymorphic consumers (e.g. <code>IConsumer&lt;IOrderEvent&gt;</code>) the c
 
   <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_AddRequestConsumer__1_System_Action_Vulthil_Messaging_Queues_IRequestConfigurator___0___" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer``1(System.Action{Vulthil.Messaging.Queues.IRequestConfigurator{``0}})">
   AddRequestConsumer&lt;TConsumer&gt;(Action&lt;IRequestConfigurator&lt;TConsumer&gt;&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Registers a request/reply consumer on this queue with optional per-consumer configuration.</p>
+  <div class="markdown level1 summary"><p>Registers a request/reply consumer on this queue with optional per-consumer configuration.
+Request consumers do not retry — a thrown exception is returned to the requester as an RPC fault
+reply — so configuring <a class="xref" href="Vulthil.Messaging.Queues.IBaseConfigurator-1.html#Vulthil_Messaging_Queues_IBaseConfigurator_1_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__">UseRetry(Action&lt;RetryPolicyConfigurator&gt;)</a> on
+<code class="paramref">configure</code> throws at configuration time.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -219,7 +222,7 @@ for polymorphic consumers (e.g. <code>IConsumer&lt;IOrderEvent&gt;</code>) the c
 
   <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_ConfigureQueue_System_Action_Vulthil_Messaging_Queues_QueueDefinition__" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.ConfigureQueue(System.Action{Vulthil.Messaging.Queues.QueueDefinition})">
   ConfigureQueue(Action&lt;QueueDefinition&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Applies additional configuration to the underlying <a class="xref" href="Vulthil.Messaging.Queues.QueueDefinition.html">QueueDefinition</a>.</p>
@@ -256,7 +259,7 @@ for polymorphic consumers (e.g. <code>IConsumer&lt;IOrderEvent&gt;</code>) the c
 
   <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_SubscribeAll__1_System_Reflection_Assembly_System_String_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.SubscribeAll``1(System.Reflection.Assembly,System.String)">
   SubscribeAll&lt;TInterface&gt;(Assembly, string?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Discovers every concrete (non-abstract, non-interface) type in <code class="paramref">assembly</code> that is
@@ -306,7 +309,7 @@ to dispatch all implementers through one consumer.</p>
 
   <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.Subscribe``1(System.String)">
   Subscribe&lt;TMessage&gt;(string?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Subscribes this queue to receive deliveries of the concrete message type <code class="typeparamref">TMessage</code>.
@@ -357,7 +360,7 @@ pattern (e.g. <code>&quot;order.created&quot;</code> for direct, <code>&quot;ord
 
   <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_UseDeadLetterQueue_System_String_System_String_" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseDeadLetterQueue(System.String,System.String)">
   UseDeadLetterQueue(string?, string?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L71"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Enables a dead letter queue for this queue.</p>
@@ -398,10 +401,13 @@ pattern (e.g. <code>&quot;order.created&quot;</code> for direct, <code>&quot;ord
 
   <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseRetry(System.Action{Vulthil.Messaging.Queues.RetryPolicyConfigurator})">
   UseRetry(Action&lt;RetryPolicyConfigurator&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Configures the default retry policy for all consumers on this queue.</p>
+  <div class="markdown level1 summary"><p>Configures the default retry policy for this queue's one-way consumers. A consumer-level
+<a class="xref" href="Vulthil.Messaging.Queues.IBaseConfigurator-1.html#Vulthil_Messaging_Queues_IBaseConfigurator_1_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__">UseRetry(Action&lt;RetryPolicyConfigurator&gt;)</a> takes precedence over this default.
+Request consumers never retry (a thrown exception is returned to the requester as an RPC
+fault reply), so this default does not apply to them.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -435,7 +441,7 @@ pattern (e.g. <code>&quot;order.created&quot;</code> for direct, <code>&quot;ord
 
   <h3 id="Vulthil_Messaging_Queues_IQueueConfigurator_UseSingleActiveConsumer" data-uid="Vulthil.Messaging.Queues.IQueueConfigurator.UseSingleActiveConsumer">
   UseSingleActiveConsumer()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IQueueConfigurator.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Declares the queue with RabbitMQ's single active consumer feature: only one consumer is active at a

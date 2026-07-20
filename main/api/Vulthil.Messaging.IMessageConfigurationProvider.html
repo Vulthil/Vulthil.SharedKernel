@@ -136,9 +136,9 @@ Backed by the same instance that <a class="xref" href="Vulthil.Messaging.IMessag
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessageConfigurationProvider.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets the options controlling which built-in consume filters perform their work at runtime.
-Filters check the appropriate flag on this object on every delivery, so toggles take effect
-without re-registering the filter.</p>
+  <div class="markdown level1 summary"><p>Gets the built-in consume-filter flags as they were configured at <code>AddMessaging</code> time.
+The flags are applied once, at registration — a disabled filter is never added to DI — so
+mutating them through this snapshot has no effect on the composed pipeline.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

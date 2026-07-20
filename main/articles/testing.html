@@ -111,7 +111,7 @@
 </tr>
 <tr>
 <td><code>Vulthil.Extensions.Testing</code></td>
-<td>Shared assertion helpers and test composition utilities</td>
+<td>Framework-agnostic helpers — <code>Result</code>-based polling and HTTP response deserialization; no xUnit dependency</td>
 </tr>
 </tbody>
 </table>
@@ -180,7 +180,7 @@ Use&lt;IOptions&lt;AppSettings&gt;&gt;(Options.Create(new AppSettings { MaxRetri
 <p>Key features:</p>
 <ul>
 <li><strong>Scoped services</strong> – <code>ScopedServices</code> gives you a fresh DI scope per test.</li>
-<li><strong>Automatic database reset</strong> – the database is reset with Respawn after each test, so tests sharing a factory start from a clean state.</li>
+<li><strong>Automatic database reset</strong> – the database is reset with Respawn after each test, so tests sharing a factory start from a clean state. Hosted services implementing <code>IRestartableHostedService</code> (from <code>Vulthil.Extensions.Hosting</code>) are stopped around the reset and restarted afterwards, so a database-polling relay such as the outbox background service never contends with it.</li>
 <li><strong>Log capture</strong> – application logs are routed to the currently running test automatically (via <code>TestContext</code>). The <code>ITestOutputHelper</code> constructor parameter is for writing test output directly.</li>
 <li><strong>One host per class</strong> – all tests in a class run against the fixture's test host. Override <code>CreateFactory()</code> (e.g. <code>FactoryFixture.WithWebHostBuilder(...)</code>) when a class needs per-test host configuration; derived factories are disposed after each test.</li>
 </ul>
@@ -306,9 +306,15 @@ public async Task Uses_external_forecast()
 <h2 id="messaging-test-harness">Messaging Test Harness</h2>
 <p><code>Vulthil.Messaging.TestHarness</code> provides an in-memory transport that runs your consumers with no broker and
 captures every produced and consumed message for assertion. It is built entirely on the public
-<code>Vulthil.Messaging.Transport</code> SDK, so it mirrors the real consumer topology assembled from your queue
-configuration. Dispatch is synchronous — by the time a publish/send/request call returns, every consumer (and
-stub) it triggered has run, so assertions need no polling.</p>
+<code>Vulthil.Messaging.Transport</code> SDK, so it assembles the same execution plans — consumers, polymorphic dispatch,
+per-consumer retry resolution — from your queue configuration that a real transport would. Dispatch is
+synchronous — by the time a publish/send/request call returns, every consumer (and stub) it triggered has run,
+so assertions need no polling.</p>
+<p>Two fidelity limits to keep in mind: the harness dispatches each produced message <strong>once</strong> to all matching
+consumers (a real broker delivers a distinct copy per subscribed queue), and partition lanes are not simulated
+(dispatch is inline and ordered by call). Retries run back-to-back without the configured delays; a one-way
+consumer that exhausts them publishes a <code>Fault&lt;T&gt;</code> — observable via <code>Published&lt;Fault&lt;TMessage&gt;&gt;()</code> — while the
+publish call itself completes normally.</p>
 <h3 id="composing-a-harness-unitcomponent-tests">Composing a harness (unit/component tests)</h3>
 <p>Call <code>UseTestHarness()</code> in place of a broker transport, then resolve <code>ITestHarness</code> alongside the usual
 <code>IPublisher</code>/<code>ISendEndpoint</code>/<code>IRequester</code>:</p>

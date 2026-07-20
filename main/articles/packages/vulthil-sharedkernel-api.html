@@ -113,7 +113,7 @@
     }
 }
 </code></pre>
-<p><code>ToIResult()</code> returns <code>Results&lt;Ok&lt;T&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;</code>, so OpenAPI automatically documents all possible response types.</p>
+<p><code>ToIResult()</code> returns <code>Results&lt;Ok&lt;T&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;</code>, so OpenAPI automatically documents all possible response types. At runtime every failure — including <code>NotFound</code> and <code>Conflict</code> — is returned as a problem response (RFC 7807) with the status mapped from the <code>ErrorType</code> and the error's description as <code>detail</code>; the <code>NotFound</code>/<code>Conflict</code> union members exist for the OpenAPI documentation. See <a href="../result-pattern.html#mapping-to-http-responses">Result Pattern — Mapping to HTTP Responses</a>.</p>
 <h3 id="registration-and-mapping">Registration and mapping</h3>
 <pre><code class="lang-csharp">// In Program.cs
 builder.Services.AddEndpoints(typeof(Program).Assembly);

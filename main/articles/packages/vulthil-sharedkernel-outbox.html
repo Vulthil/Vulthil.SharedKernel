@@ -113,7 +113,7 @@ auto-registered by <code>AddOutboxEngine</code> when <code>EnableMetrics</code> 
 <li>Opt into a retention sweep via <code>EnableOutboxProcessing(o =&gt; o.Retention.Enabled = true)</code> to periodically delete processed and dead-lettered rows
 older than a window (relational set-based <code>ExecuteDelete</code>; the same sweep covers Cosmos).</li>
 </ul>
-<p>See the <a href="https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md">Outbox Pattern</a>
+<p>See the <a href="../outbox-pattern.html">Outbox Pattern</a>
 article for the design, the pluggable-sink model, and the commit-time trigger.</p>
 
 </article>

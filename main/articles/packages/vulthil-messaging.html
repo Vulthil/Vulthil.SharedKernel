@@ -127,12 +127,16 @@
     message.UseCorrelationId(e =&gt; e.OrderId.ToString());
 });
 </code></pre>
-<h3 id="per-consumer-routing-overrides">Per-consumer routing overrides</h3>
+<h3 id="per-consumer-retry-override">Per-consumer retry override</h3>
+<p><code>AddConsumer</code> accepts a configurator; its knob is the consumer's retry policy, which overrides the queue-level
+default for that consumer alone:</p>
 <pre><code class="lang-csharp">queue.AddConsumer&lt;OrderCreatedConsumer&gt;(c =&gt;
 {
-    c.Bind&lt;OrderCreatedEvent&gt;(&quot;order.eu&quot;);
+    c.UseRetry(r =&gt; r.Immediate(5));
 });
 </code></pre>
+<p>Binding patterns are configured per queue, not per consumer — use
+<code>queue.Subscribe&lt;OrderCreatedEvent&gt;(&quot;order.eu&quot;)</code> (see <a href="../messaging.html#routing-keys">Messaging — Routing Keys</a>).</p>
 <h3 id="configuration-driven-setup">Configuration-driven setup</h3>
 <p>Queue and message settings under <code>Messaging:Queues:*</code> and <code>Messaging:Messages:*</code>
 are loaded from <code>IConfiguration</code> before the configurator action runs, so a service

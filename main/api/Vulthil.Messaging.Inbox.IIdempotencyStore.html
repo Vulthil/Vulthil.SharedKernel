@@ -141,7 +141,7 @@ strategy is configured. The reference relational implementation lives in <code>V
 
   <h3 id="Vulthil_Messaging_Inbox_IIdempotencyStore_ProcessAsync_System_String_Vulthil_Messaging_Abstractions_Consumers_IMessageContext_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(System.String,Vulthil.Messaging.Abstractions.Consumers.IMessageContext,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken)">
   ProcessAsync(string, IMessageContext, Func&lt;CancellationToken, Task&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/IIdempotencyStore.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/IIdempotencyStore.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Processes the current delivery exactly once for the given idempotency key. If the key has not been seen,
@@ -161,10 +161,13 @@ skipped.</p>
     <dd><p>The idempotency key for the current delivery.</p>
 </dd>
     <dt><code>context</code> <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html">IMessageContext</a></dt>
-    <dd><p>The message context for the current delivery.</p>
+    <dd><p>The message context for the current delivery — optional input for implementations (e.g. to read metadata
+or headers); the built-in stores do not require it.</p>
 </dd>
     <dt><code>process</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</dt>
-    <dd><p>The consumer invocation to run when the delivery is not a duplicate.</p>
+    <dd><p>The consumer invocation to run when the delivery is not a duplicate. The token an implementation passes to
+this callback does not flow into the consumer: the consumer observes the delivery's own
+<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_CancellationToken">CancellationToken</a>, so the callback token cannot cancel the consumer body.</p>
 </dd>
     <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
     <dd><p>A token to observe for cancellation.</p>

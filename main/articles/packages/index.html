@@ -100,7 +100,9 @@
 <h2 id="infrastructure">Infrastructure</h2>
 <ul>
 <li><a href="vulthil-sharedkernel-infrastructure.html">Vulthil.SharedKernel.Infrastructure</a> – <code>BaseDbContext</code>, generic repository, and outbox composition entry point.</li>
-<li><a href="vulthil-sharedkernel-infrastructure-relational.html">Vulthil.SharedKernel.Infrastructure.Relational</a> – relational outbox strategy and <code>MigrateAsync</code> for EF Core providers.</li>
+<li><a href="vulthil-sharedkernel-outbox.html">Vulthil.SharedKernel.Outbox</a> – the EF-free transactional outbox engine (relay, dispatchers, <code>IOutboxStore</code> seam).</li>
+<li><a href="vulthil-sharedkernel-outbox-entityframeworkcore.html">Vulthil.SharedKernel.Outbox.EntityFrameworkCore</a> – the EF Core implementation of the outbox engine.</li>
+<li><a href="vulthil-sharedkernel-infrastructure-relational.html">Vulthil.SharedKernel.Infrastructure.Relational</a> – relational outbox store base and <code>MigrateAsync</code> for EF Core providers.</li>
 <li><a href="vulthil-sharedkernel-infrastructure-npgsql.html">Vulthil.SharedKernel.Infrastructure.Npgsql</a> – <code>UseNpgsql</code> provider wiring with PostgreSQL-tuned outbox.</li>
 <li><a href="vulthil-sharedkernel-infrastructure-mysql.html">Vulthil.SharedKernel.Infrastructure.MySql</a> – <code>UseMySql</code> provider wiring with MySQL-tuned outbox.</li>
 <li><a href="vulthil-sharedkernel-infrastructure-cosmos.html">Vulthil.SharedKernel.Infrastructure.Cosmos</a> – <code>UseCosmosDb</code> provider wiring with Cosmos-specific outbox.</li>
@@ -109,17 +111,27 @@
 <ul>
 <li><a href="vulthil-sharedkernel-api.html">Vulthil.SharedKernel.Api</a> – minimal API endpoint conventions and <code>Result</code> → HTTP mapping.</li>
 </ul>
+<h2 id="hosting">Hosting</h2>
+<ul>
+<li><a href="vulthil-extensions-hosting.html">Vulthil.Extensions.Hosting</a> – <code>IRestartableHostedService</code>, the marker for hosted services that can be paused and resumed cleanly.</li>
+</ul>
 <h2 id="messaging">Messaging</h2>
 <ul>
 <li><a href="vulthil-messaging-abstractions.html">Vulthil.Messaging.Abstractions</a> – transport-agnostic consumer and publisher contracts.</li>
-<li><a href="vulthil-messaging.html">Vulthil.Messaging</a> – queue/consumer registration and hosted processing.</li>
+<li><a href="vulthil-messaging.html">Vulthil.Messaging</a> – queue/consumer registration, hosted processing, and the transport-author SDK.</li>
 <li><a href="vulthil-messaging-rabbitmq.html">Vulthil.Messaging.RabbitMq</a> – RabbitMQ transport implementation.</li>
+<li><a href="vulthil-messaging-outbox.html">Vulthil.Messaging.Outbox</a> – transactional bus-publish outbox bridging the outbox engine to the broker.</li>
+<li><a href="vulthil-messaging-inbox.html">Vulthil.Messaging.Inbox</a> – idempotent-receiver consume filter (<code>IIdempotencyStore</code> contract).</li>
+<li><a href="vulthil-messaging-inbox-entityframeworkcore.html">Vulthil.Messaging.Inbox.EntityFrameworkCore</a> – shared EF Core inbox primitives (<code>InboxMessage</code>, <code>ISaveInboxMessages</code>).</li>
+<li><a href="vulthil-messaging-inbox-relational.html">Vulthil.Messaging.Inbox.Relational</a> – relational idempotency store (transactional exactly-once).</li>
+<li><a href="vulthil-messaging-inbox-cosmos.html">Vulthil.Messaging.Inbox.Cosmos</a> – Cosmos idempotency store (effectively-once).</li>
 </ul>
 <h2 id="testing">Testing</h2>
 <ul>
-<li><a href="vulthil-xunit.html">Vulthil.xUnit</a> – reusable xUnit base classes and auto-mocking.</li>
+<li><a href="vulthil-xunit.html">Vulthil.xUnit</a> – reusable xUnit base classes, auto-mocking, containers, and HTTP mocks.</li>
+<li><a href="vulthil-xunit-cosmos.html">Vulthil.xUnit.Cosmos</a> – Cosmos DB emulator fixture for <code>Vulthil.xUnit</code>.</li>
 <li><a href="vulthil-messaging-testharness.html">Vulthil.Messaging.TestHarness</a> – in-memory messaging test harness.</li>
-<li><a href="vulthil-extensions-testing.html">Vulthil.Extensions.Testing</a> – shared assertion and setup helpers.</li>
+<li><a href="vulthil-extensions-testing.html">Vulthil.Extensions.Testing</a> – framework-agnostic polling and HTTP response helpers.</li>
 </ul>
 
 </article>

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class ConsumeFilterOptions | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Configures the built-in consume filters that AddMessaging registers by default. Each flag toggles a specific filter on or off; setting a flag to false causes the filter to pass deliveries straight through without performing its work.">
+      <meta name="description" content="Configures the built-in consume filters that AddMessaging registers by default. Each flag toggles a specific filter on or off; a filter whose flag is false is never registered in DI, so deliveries do not pass through it at all.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_ConsumeFilterOptions" data-uid="Vulthil.Messaging.ConsumeFilterOptions" class="text-break">
-Class ConsumeFilterOptions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/ConsumeFilterOptions.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class ConsumeFilterOptions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/ConsumeFilterOptions.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -98,8 +98,8 @@ Class ConsumeFilterOptions  <a class="header-action link-secondary" title="View 
   </div>
 
   <div class="markdown summary"><p>Configures the built-in consume filters that <code>AddMessaging</code> registers by default.
-Each flag toggles a specific filter on or off; setting a flag to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>
-causes the filter to pass deliveries straight through without performing its work.</p>
+Each flag toggles a specific filter on or off; a filter whose flag is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>
+is never registered in DI, so deliveries do not pass through it at all.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -154,9 +154,10 @@ causes the filter to pass deliveries straight through without performing its wor
 
 
   <h2 id="Vulthil_Messaging_ConsumeFilterOptions_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>Filters remain registered in DI regardless of these flags so that user code can still
-resolve them (e.g. for unit tests); the flag is checked at invocation time. To disable
-every default filter, set each flag explicitly.</p>
+  <div class="markdown level0 remarks"><p>The flags are read once, when <code>AddMessaging</code> composes the pipeline (after the configurator
+action has run) — set them via configuration (<code>Messaging:Options:ConsumeFilters</code>) or
+<code>ConfigureMessagingOptions</code> inside the configurator. There is no runtime toggle: changing
+a flag after registration has no effect.</p>
 </div>
 
 
@@ -168,12 +169,13 @@ every default filter, set each flag explicitly.</p>
 
   <h3 id="Vulthil_Messaging_ConsumeFilterOptions_EnableLogging" data-uid="Vulthil.Messaging.ConsumeFilterOptions.EnableLogging">
   EnableLogging
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/ConsumeFilterOptions.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/ConsumeFilterOptions.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> (the default), <span class="xref">Vulthil.Messaging.Filters.LoggingConsumeFilter&lt;TMessage&gt;</span>
 emits structured Debug logs at the start and end of every consume, plus a Warning log on
-uncaught exceptions, with timing information.</p>
+uncaught exceptions, with timing information. When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, the filter is
+not registered at all.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -202,7 +204,7 @@ uncaught exceptions, with timing information.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/ConsumeFilterOptions.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/ConsumeFilterOptions.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

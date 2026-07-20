@@ -157,10 +157,13 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Pomelo_EntityFrameworkCore_MySql_PomeloEntityFrameworkCoreMySqlSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Pomelo.EntityFrameworkCore.MySql.PomeloEntityFrameworkCoreMySqlSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})">
   UseMySql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;PomeloEntityFrameworkCoreMySqlSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/DependencyInjectionExtensions.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/DependencyInjectionExtensions.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>...</p>
+  <div class="markdown level1 summary"><p>Configures the database infrastructure for MySQL: registers <code class="typeparamref">TDbContext</code> through the
+Aspire Pomelo integration for the named connection string and selects the MySQL outbox store (row-level
+locking via <code>FOR UPDATE SKIP LOCKED</code>) unless a custom store was chosen via <code>UseOutboxStore</code>. When
+outbox processing is enabled, the commit-time relay trigger is wired as well.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -171,13 +174,13 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>configurator</code> <a class="xref" href="Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html">IDatabaseInfrastructureConfigurator</a>&lt;TDbContext&gt;</dt>
-    <dd><p>...</p>
+    <dd><p>The database infrastructure configurator.</p>
 </dd>
     <dt><code>connectionStringKey</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd><p>...</p>
+    <dd><p>The connection-string name resolved by the Aspire integration.</p>
 </dd>
     <dt><code>configureSettings</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">PomeloEntityFrameworkCoreMySqlSettings</span>&gt;</dt>
-    <dd><p>... .NET 9 wording ...</p>
+    <dd><p>An optional action to configure the Aspire integration settings (health checks, tracing, retries).</p>
 </dd>
     <dt><code>configureDbContextOptions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder">DbContextOptionsBuilder</a>&gt;</dt>
     <dd><p>An optional action to configure the DbContext options.</p>
@@ -194,7 +197,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
     <dt><code>TDbContext</code></dt>
-    <dd><p>...</p>
+    <dd><p>The application's <code>DbContext</code>; it must expose the outbox set via <code>ISaveOutboxMessages</code>.</p>
 </dd>
   </dl>
 
@@ -204,7 +207,10 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
 
   <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Pomelo_EntityFrameworkCore_MySql_PomeloEntityFrameworkCoreMySqlSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder___remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>...</p>
+  <div class="markdown level1 remarks"><p>On .NET 9 the context is registered via the <code>Aspire.Pomelo.EntityFrameworkCore.MySql</code> client
+integration, which resolves the connection string and adds health checks, telemetry, and connection
+resiliency. The underlying registrations are deferred until the configuration chain has executed, so the
+order of <code>UseMySql</code>, <code>EnableOutboxProcessing</code>, and <code>UseOutboxStore</code> does not matter.</p>
 </div>
 
 

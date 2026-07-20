@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Http_IHttpMockResponseBuilder" data-uid="Vulthil.xUnit.Http.IHttpMockResponseBuilder" class="text-break">
-Interface IHttpMockResponseBuilder  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L38"><i class="bi bi-code-slash"></i></a>
+Interface IHttpMockResponseBuilder  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -133,7 +133,7 @@ Header methods apply to the response defined by the preceding <code>RespondWith<
 
   <h3 id="Vulthil_xUnit_Http_IHttpMockResponseBuilder_RespondWith_System_Func_System_Net_Http_HttpRequestMessage_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_Net_Http_HttpResponseMessage___" data-uid="Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWith(System.Func{System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Net.Http.HttpResponseMessage}})">
   RespondWith(Func&lt;HttpRequestMessage, CancellationToken, Task&lt;HttpResponseMessage&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Responds using a custom responder for full control over the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpresponsemessage">HttpResponseMessage</a>. The responder
@@ -173,7 +173,7 @@ must return a fresh message on each invocation.</p>
 
   <h3 id="Vulthil_xUnit_Http_IHttpMockResponseBuilder_RespondWith_System_Net_HttpStatusCode_" data-uid="Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWith(System.Net.HttpStatusCode)">
   RespondWith(HttpStatusCode)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Responds with the given status code and no body.</p>
@@ -212,7 +212,7 @@ must return a fresh message on each invocation.</p>
 
   <h3 id="Vulthil_xUnit_Http_IHttpMockResponseBuilder_RespondWithJson_System_Net_HttpStatusCode_System_String_" data-uid="Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWithJson(System.Net.HttpStatusCode,System.String)">
   RespondWithJson(HttpStatusCode, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Responds with the given status code and the supplied JSON string verbatim. Useful for replaying a real
@@ -255,7 +255,7 @@ response captured from the live endpoint and stored as a JSON document.</p>
 
   <h3 id="Vulthil_xUnit_Http_IHttpMockResponseBuilder_RespondWith__1_System_Net_HttpStatusCode___0_" data-uid="Vulthil.xUnit.Http.IHttpMockResponseBuilder.RespondWith``1(System.Net.HttpStatusCode,``0)">
   RespondWith&lt;TResponse&gt;(HttpStatusCode, TResponse)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Responds with the given status code and a JSON body produced by serializing <code class="paramref">body</code>
@@ -304,7 +304,7 @@ using web (camelCase) defaults.</p>
 
   <h3 id="Vulthil_xUnit_Http_IHttpMockResponseBuilder_WithHeader_System_String_System_String___" data-uid="Vulthil.xUnit.Http.IHttpMockResponseBuilder.WithHeader(System.String,System.String[])">
   WithHeader(string, params string[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a header to the response defined by the preceding <code>RespondWith</code> call. Content headers (such as
@@ -347,7 +347,7 @@ using web (camelCase) defaults.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L38" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L39" class="edit-link">Edit this page</a>
         </div>
 
 

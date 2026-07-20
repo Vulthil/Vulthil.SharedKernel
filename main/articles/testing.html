@@ -161,7 +161,18 @@ repoMock.Setup(r =&gt; r.GetByIdAsync(It.IsAny&lt;UserId&gt;(), It.IsAny&lt;Canc
 
 // Provide an explicit instance
 Use&lt;IOptions&lt;AppSettings&gt;&gt;(Options.Create(new AppSettings { MaxRetries = 3 }));
+
+// Use a real implementation instead of an auto-generated mock, with its own dependencies still auto-mocked
+UseReal&lt;OrderPricingCalculator&gt;();
+UseRealFor&lt;IOrderPricingCalculator, OrderPricingCalculator&gt;();
 </code></pre>
+<p><code>UseReal</code>/<code>UseRealFor</code> register the real type lazily — it is constructed the first time it is resolved (directly, or
+as another created instance's dependency), so a dependency registered afterward but before that first resolution is
+still picked up. Every disposable instance the auto-mocker holds — an explicit <code>Use()</code> instance, a <code>UseReal</code>/
+<code>UseRealFor</code> instance once resolved, or an auto-generated dependency mock — is disposed automatically after each
+test; only a synchronous <code>IDisposable</code> is covered, so an <code>IAsyncDisposable</code>-only registration needs an override of
+<code>Dispose()</code> to dispose it explicitly. The <code>BaseUnitTestCase&lt;TTarget&gt;</code> variant's <code>Target</code> is disposed the same way,
+and always before the auto-mocker's own instances.</p>
 <h2 id="integration-tests">Integration Tests</h2>
 <h3 id="baseintegrationtestcase">BaseIntegrationTestCase</h3>
 <p><code>BaseIntegrationTestCase&lt;TFactory, TEntryPoint&gt;</code> boots a real <code>WebApplicationFactory</code> backed by test containers. The factory is supplied as the xUnit fixture, so its containers start once for the scope and are shared across the tests in it:</p>
@@ -336,6 +347,23 @@ harness.Consumed&lt;OrderCreatedEvent&gt;().ShouldHaveSingleItem();
 </code></pre>
 <p><code>ITestHarness</code> exposes <code>Published&lt;T&gt;()</code>, <code>Sent&lt;T&gt;()</code>, <code>Consumed&lt;T&gt;()</code>, and <code>Requested&lt;T&gt;()</code> (each returns the
 matching <code>CapturedMessage&lt;T&gt;</code> items — <code>.Message</code> is the payload, <code>.Envelope</code> the wire metadata), plus <code>Clear()</code>.</p>
+<h3 id="resetting-between-tests">Resetting between tests</h3>
+<p><code>ITestHarness</code> is registered as a singleton, so a test class that reuses one host across several tests — a
+<code>WebApplicationFactory</code> supplied as a class fixture (see <a href="#integration-tests">Integration Tests</a>), or a hand-built
+<code>IHost</code> kept in a field — leaves an earlier test's captured messages visible to the next one. Call <code>Clear()</code> from
+your per-test setup hook so each test starts from an empty capture log:</p>
+<pre><code class="lang-csharp">public sealed class OrdersTests(AppWebFactory factory)
+    : BaseIntegrationTestCase&lt;AppWebFactory, Program&gt;(factory), IClassFixture&lt;AppWebFactory&gt;
+{
+    public override ValueTask Initialize()
+    {
+        Factory.Services.GetRequiredService&lt;ITestHarness&gt;().Clear();
+        return base.Initialize();
+    }
+}
+</code></pre>
+<p>A harness resolved from a fresh host per test (a new <code>Host.CreateApplicationBuilder().Build()</code> in the constructor,
+disposed in teardown, as in the snippet above) needs no such call, since each test gets its own instance.</p>
 <h3 id="mocking-responses">Mocking responses</h3>
 <p>A test can stand in for an external service. <code>Respond&lt;TRequest, TResponse&gt;</code> answers a request (taking precedence
 over a real request consumer), and <code>Handle&lt;TMessage&gt;</code> reacts to a published or sent message — useful to fake a

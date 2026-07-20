@@ -436,7 +436,7 @@ its primary message handler. Configure responses per test via <a class="xref" hr
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Vulthil.xUnit.Http.IHttpMock.html">IHttpMock</a></dt>
-    <dd><p>The registered mock, so responses can optionally be configured up front.</p>
+    <dd><p>The registered mock; configure it per test with <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_GetHttpMock_System_String_">GetHttpMock(string)</a>, since a reset clears every rule.</p>
 </dd>
   </dl>
 
@@ -471,7 +471,7 @@ need to be accessible. See <a class="xref" href="Vulthil.xUnit.BaseWebApplicatio
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Vulthil.xUnit.Http.IHttpMock.html">IHttpMock</a></dt>
-    <dd><p>The registered mock, so responses can optionally be configured up front.</p>
+    <dd><p>The registered mock; configure it per test with <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_GetHttpMock__1">GetHttpMock&lt;TClient&gt;()</a>, since a reset clears every rule.</p>
 </dd>
   </dl>
 

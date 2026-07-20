@@ -10953,6 +10953,23 @@ references:
   fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).CreateInstance
   nameWithType: BaseUnitTestCase<TTarget>.CreateInstance
   nameWithType.vb: BaseUnitTestCase(Of TTarget).CreateInstance
+- uid: Vulthil.xUnit.BaseUnitTestCase`1.Dispose
+  name: Dispose()
+  href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_Dispose
+  commentId: M:Vulthil.xUnit.BaseUnitTestCase`1.Dispose
+  fullName: Vulthil.xUnit.BaseUnitTestCase<TTarget>.Dispose()
+  fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).Dispose()
+  nameWithType: BaseUnitTestCase<TTarget>.Dispose()
+  nameWithType.vb: BaseUnitTestCase(Of TTarget).Dispose()
+- uid: Vulthil.xUnit.BaseUnitTestCase`1.Dispose*
+  name: Dispose
+  href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_Dispose_
+  commentId: Overload:Vulthil.xUnit.BaseUnitTestCase`1.Dispose
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseUnitTestCase<TTarget>.Dispose
+  fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).Dispose
+  nameWithType: BaseUnitTestCase<TTarget>.Dispose
+  nameWithType.vb: BaseUnitTestCase(Of TTarget).Dispose
 - uid: Vulthil.xUnit.BaseUnitTestCase`1.Target
   name: Target
   href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_Target

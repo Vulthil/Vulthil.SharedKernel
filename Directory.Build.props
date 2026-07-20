@@ -49,6 +49,7 @@
 		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
 		<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" Condition="'$(DisableNbgv)' != 'true'" />
 		<PackageReference Include="SonarAnalyzer.CSharp">
+			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>

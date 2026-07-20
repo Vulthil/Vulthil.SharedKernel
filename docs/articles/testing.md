@@ -68,7 +68,19 @@ repoMock.Setup(r => r.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToke
 
 // Provide an explicit instance
 Use<IOptions<AppSettings>>(Options.Create(new AppSettings { MaxRetries = 3 }));
+
+// Use a real implementation instead of an auto-generated mock, with its own dependencies still auto-mocked
+UseReal<OrderPricingCalculator>();
+UseRealFor<IOrderPricingCalculator, OrderPricingCalculator>();
 ```
+
+`UseReal`/`UseRealFor` register the real type lazily — it is constructed the first time it is resolved (directly, or
+as another created instance's dependency), so a dependency registered afterward but before that first resolution is
+still picked up. Every disposable instance the auto-mocker holds — an explicit `Use()` instance, a `UseReal`/
+`UseRealFor` instance once resolved, or an auto-generated dependency mock — is disposed automatically after each
+test; only a synchronous `IDisposable` is covered, so an `IAsyncDisposable`-only registration needs an override of
+`Dispose()` to dispose it explicitly. The `BaseUnitTestCase<TTarget>` variant's `Target` is disposed the same way,
+and always before the auto-mocker's own instances.
 
 ## Integration Tests
 

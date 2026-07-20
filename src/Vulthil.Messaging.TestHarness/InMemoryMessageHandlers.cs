@@ -85,8 +85,8 @@ internal static class InMemoryMessageHandlers
 
                 var pipeline = ConsumePipelineFactory.Build<TRequest>(scope, terminal: async c =>
                 {
-                    harness.RecordConsumed((TRequest)message, envelope);
                     response = await consumer.ConsumeAsync(c, c.CancellationToken);
+                    harness.RecordConsumed((TRequest)message, envelope);
                     produced = true;
                 });
 

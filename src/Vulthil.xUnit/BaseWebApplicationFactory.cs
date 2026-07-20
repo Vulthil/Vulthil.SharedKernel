@@ -91,7 +91,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     /// <c>HttpMock("<paramref name="name"/>")</c> on the test case); the mock is reset between tests.
     /// </summary>
     /// <param name="name">The logical name of the HTTP client to mock.</param>
-    /// <returns>The registered mock, so responses can optionally be configured up front.</returns>
+    /// <returns>The registered mock; configure it per test with <see cref="GetHttpMock(string)"/>, since a reset clears every rule.</returns>
     protected IHttpMock AddHttpMock(string name)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
@@ -112,7 +112,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     /// need to be accessible. See <see cref="AddHttpMock(string)"/>.
     /// </summary>
     /// <typeparam name="TClient">The typed client service type registered with <c>AddHttpClient</c>.</typeparam>
-    /// <returns>The registered mock, so responses can optionally be configured up front.</returns>
+    /// <returns>The registered mock; configure it per test with <see cref="GetHttpMock{TClient}()"/>, since a reset clears every rule.</returns>
     protected IHttpMock AddHttpMock<TClient>()
         where TClient : class
         => AddHttpMock(typeof(TClient).Name);
@@ -287,25 +287,38 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         await Parallel.ForEachAsync(StartupResources, (resource, ct) => resource.InitializeAsync(serviceProvider));
     }
 
-    internal async Task ResetAsync()
+    /// <summary>
+    /// Resets the given host's restartable services and this factory's registered resources. Accepts the host's
+    /// service provider explicitly so a caller running against a derived factory (for example one produced by
+    /// <c>WithWebHostBuilder(...)</c>) can pass that host's own <see cref="IServiceProvider"/> — resetting always
+    /// targets the host the caller actually ran the test against, never an unrelated, never-built host.
+    /// </summary>
+    /// <param name="hostServices">The service provider of the host the test ran against.</param>
+    /// <param name="cancellationToken">
+    /// A token observed in addition to the per-service <see cref="RestartTimeout"/> bound, so a canceled test run
+    /// unwinds the restart dance instead of always waiting out the full timeout.
+    /// </param>
+    internal async Task ResetAsync(IServiceProvider hostServices, CancellationToken cancellationToken)
     {
-        var restartableServices = Services.GetServices<IHostedService>().OfType<IRestartableHostedService>().ToList();
+        var restartableServices = hostServices.GetServices<IHostedService>().OfType<IRestartableHostedService>().ToList();
 
         foreach (var service in restartableServices)
         {
-            using var stopCts = new CancellationTokenSource(RestartTimeout);
+            using var stopCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            stopCts.CancelAfter(RestartTimeout);
             await service.StopAsync(stopCts.Token);
         }
 
         try
         {
-            await ResetResourcesAsync(Services);
+            await ResetResourcesAsync(hostServices);
         }
         finally
         {
             foreach (var service in restartableServices)
             {
-                using var startCts = new CancellationTokenSource(RestartTimeout);
+                using var startCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                startCts.CancelAfter(RestartTimeout);
                 await service.StartAsync(startCts.Token);
             }
         }

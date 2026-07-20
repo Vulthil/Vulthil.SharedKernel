@@ -68,7 +68,19 @@ repoMock.Setup(r => r.GetByIdAsync(It.IsAny<UserId>(), It.IsAny<CancellationToke
 
 // Provide an explicit instance
 Use<IOptions<AppSettings>>(Options.Create(new AppSettings { MaxRetries = 3 }));
+
+// Use a real implementation instead of an auto-generated mock, with its own dependencies still auto-mocked
+UseReal<OrderPricingCalculator>();
+UseRealFor<IOrderPricingCalculator, OrderPricingCalculator>();
 ```
+
+`UseReal`/`UseRealFor` register the real type lazily — it is constructed the first time it is resolved (directly, or
+as another created instance's dependency), so a dependency registered afterward but before that first resolution is
+still picked up. Every disposable instance the auto-mocker holds — an explicit `Use()` instance, a `UseReal`/
+`UseRealFor` instance once resolved, or an auto-generated dependency mock — is disposed automatically after each
+test; only a synchronous `IDisposable` is covered, so an `IAsyncDisposable`-only registration needs an override of
+`Dispose()` to dispose it explicitly. The `BaseUnitTestCase<TTarget>` variant's `Target` is disposed the same way,
+and always before the auto-mocker's own instances.
 
 ## Integration Tests
 
@@ -284,6 +296,28 @@ harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 
 `ITestHarness` exposes `Published<T>()`, `Sent<T>()`, `Consumed<T>()`, and `Requested<T>()` (each returns the
 matching `CapturedMessage<T>` items — `.Message` is the payload, `.Envelope` the wire metadata), plus `Clear()`.
+
+### Resetting between tests
+
+`ITestHarness` is registered as a singleton, so a test class that reuses one host across several tests — a
+`WebApplicationFactory` supplied as a class fixture (see [Integration Tests](#integration-tests)), or a hand-built
+`IHost` kept in a field — leaves an earlier test's captured messages visible to the next one. Call `Clear()` from
+your per-test setup hook so each test starts from an empty capture log:
+
+```csharp
+public sealed class OrdersTests(AppWebFactory factory)
+    : BaseIntegrationTestCase<AppWebFactory, Program>(factory), IClassFixture<AppWebFactory>
+{
+    public override ValueTask Initialize()
+    {
+        Factory.Services.GetRequiredService<ITestHarness>().Clear();
+        return base.Initialize();
+    }
+}
+```
+
+A harness resolved from a fresh host per test (a new `Host.CreateApplicationBuilder().Build()` in the constructor,
+disposed in teardown, as in the snippet above) needs no such call, since each test gets its own instance.
 
 ### Mocking responses
 

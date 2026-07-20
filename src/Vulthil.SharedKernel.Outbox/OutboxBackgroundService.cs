@@ -43,6 +43,15 @@ namespace Vulthil.SharedKernel.Outbox;
 /// the disposal. A source some stop already canceled may still have its notification in flight, so it is left to
 /// garbage collection like the retired ones.
 /// </para>
+/// <para>
+/// A caller's <c>StopAsync</c> can return while the execute task it was waiting for is still winding down — its own
+/// wait is bounded by the caller's token, not by how long the loop actually takes to observe cancellation. So
+/// <c>StartAsync</c> never assumes a prior generation has finished just because a prior stop returned: it cancels
+/// that generation (idempotent if a stop already did) and, if its execute task has not completed, waits for it
+/// before starting a new one — otherwise two generations of the loop would run concurrently against the same store
+/// for as long as the stale one takes to notice its own cancellation, which is exactly the overlap the restart dance
+/// exists to prevent.
+/// </para>
 /// </remarks>
 internal sealed class OutboxBackgroundService(
     ILogger<OutboxBackgroundService> logger,
@@ -68,6 +77,7 @@ internal sealed class OutboxBackgroundService(
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         CancellationTokenSource? previous;
+        Task? previousExecuteTask;
         lock (_lifecycleGate)
         {
             if (_disposed)
@@ -76,14 +86,29 @@ internal sealed class OutboxBackgroundService(
             }
 
             previous = _stoppingCts;
-            _stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            var stoppingToken = _stoppingCts.Token;
-            ExecuteTask = Task.Run(() => ExecuteAsync(stoppingToken), CancellationToken.None);
+            previousExecuteTask = ExecuteTask;
         }
 
         if (previous is not null)
         {
             await previous.CancelAsync();
+        }
+
+        if (previousExecuteTask is { IsCompleted: false })
+        {
+            await previousExecuteTask.WaitAsync(cancellationToken);
+        }
+
+        lock (_lifecycleGate)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var stoppingToken = _stoppingCts.Token;
+            ExecuteTask = Task.Run(() => ExecuteAsync(stoppingToken), CancellationToken.None);
         }
     }
 

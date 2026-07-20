@@ -26,6 +26,9 @@ harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 For an integration test that keeps the production composition, swap the transport instead:
 `services.ReplaceTransportWithTestHarness()`.
 
+`ITestHarness` is a singleton, so a test class that reuses one host across tests should call `Clear()` from its
+per-test setup hook — see the "Resetting between tests" section of the testing article linked below.
+
 ## Docs
 
 Usage patterns and articles: https://vulthil.github.io/Vulthil.SharedKernel/

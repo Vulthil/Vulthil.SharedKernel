@@ -91,7 +91,8 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
     /// Creates the <see cref="WebApplicationFactory{TEntryPoint}"/> this test runs against. Returns the shared
     /// <see cref="FactoryFixture"/> by default, so every test in the class reuses one test host. Override to derive a
     /// per-test factory (for example <c>FactoryFixture.WithWebHostBuilder(...)</c>) when the tests need per-test host
-    /// configuration; a derived factory is disposed automatically after each test.
+    /// configuration; a derived factory is disposed automatically after each test. The post-test reset always targets
+    /// whichever factory this method returns, never an unrelated, never-built host.
     /// </summary>
     /// <returns>The factory the current test should run against.</returns>
     protected virtual WebApplicationFactory<TEntryPoint> CreateFactory() => FactoryFixture;
@@ -121,7 +122,13 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
 
         try
         {
-            await FactoryFixture.ResetAsync();
+            // Only the factory this test actually ran on (Factory, e.g. a WithWebHostBuilder(...) clone of
+            // FactoryFixture) has the running host whose restartable services need pausing around the reset; a test
+            // that never touched Factory never built any host, so there is nothing to reset.
+            if (_lazyFactory.IsValueCreated)
+            {
+                await FactoryFixture.ResetAsync(_lazyFactory.Value.Services, CancellationToken);
+            }
         }
         finally
         {

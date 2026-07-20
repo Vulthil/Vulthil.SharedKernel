@@ -86,6 +86,33 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task StartingWhileThePreviousExecuteTaskIsStillRunningWaitsForItInsteadOfOverlapping()
+    {
+        // Arrange — a stop bounded by a token so short it elapses before the loop (deliberately unresponsive to
+        // cancellation, unlike BlockingRelayGate) can notice it, mirroring how a timed ResetAsync stop can return
+        // while the execute task it waited for is still winding down.
+        var gate = new UnresponsiveRelayGate();
+        Use<IEnumerable<IOutboxRelayGate>>([gate]);
+        await Target.StartAsync(CancellationToken);
+        await gate.WaitForEntryAsync(CancellationToken);
+        using var stopTimeout = new CancellationTokenSource(TimeSpan.FromMilliseconds(20));
+        await Target.StopAsync(stopTimeout.Token);
+        var firstExecuteTask = Target.ExecuteTask;
+
+        // Act
+        var startTask = Target.StartAsync(CancellationToken);
+        await Task.Delay(TimeSpan.FromMilliseconds(100), CancellationToken);
+        var stillWaitingForThePreviousLoop = !startTask.IsCompleted;
+        gate.Release();
+        await startTask.WaitAsync(TimeSpan.FromSeconds(10), CancellationToken);
+
+        // Assert
+        stillWaitingForThePreviousLoop.ShouldBeTrue();
+        firstExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+        Target.ExecuteTask.ShouldNotBeSameAs(firstExecuteTask);
+    }
+
+    [Fact]
     public async Task StoppingAfterDisposeCompletesGracefully()
     {
         // Arrange
@@ -254,6 +281,27 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
         {
             _entries.Writer.TryWrite(true);
             return Task.Delay(Timeout.Infinite, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// A relay gate that, unlike <see cref="BlockingRelayGate"/>, does not observe the stopping token at all — it only
+    /// unblocks when the test calls <see cref="Release"/>. Simulates a loop that has not yet noticed its own
+    /// cancellation, so a stop bounded by a short timeout returns while the loop is still running.
+    /// </summary>
+    private sealed class UnresponsiveRelayGate : IOutboxRelayGate
+    {
+        private readonly Channel<bool> _entries = Channel.CreateUnbounded<bool>();
+        private readonly TaskCompletionSource _release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public async Task WaitForEntryAsync(CancellationToken cancellationToken) => await _entries.Reader.ReadAsync(cancellationToken);
+
+        public void Release() => _release.TrySetResult();
+
+        public async Task WaitUntilReadyAsync(CancellationToken cancellationToken)
+        {
+            _entries.Writer.TryWrite(true);
+            await _release.Task;
         }
     }
 

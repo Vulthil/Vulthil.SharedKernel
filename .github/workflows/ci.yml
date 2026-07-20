@@ -10,9 +10,87 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
 
+# Cancel a PR's superseded runs (each push re-queues a full build+test); never
+# cancel main/servicing-branch pushes, which run once per merge and whose
+# coverage/badge/preview-publish side effects should always complete.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  build:
+  # Cheap, always-on classification so docs-only changes can skip the heavy
+  # `build` job below via a job-level `if:` instead of a workflow-level
+  # `paths-ignore`. This matters because main has required status checks: a
+  # workflow-level path filter leaves a required check stuck at "Expected"
+  # forever on a PR that never touches a matching path, which blocks merging.
+  # A job that is *conditionally skipped* still reports conclusion "skipped",
+  # which satisfies a required check the same as "success" -- so `build`
+  # keeps its exact name and required-check identity, it just doesn't run.
+  changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+    steps:
+      # No checkout: every changed path comes from the GitHub API, so this
+      # job never needs to fetch (trusted or PR-fork) code just to list files.
+      - name: Classify this change as docs-only or not
+        id: classify
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
+        run: |
+          # Deliberately no "-e": any failure below must fall through to the
+          # "not docs-only" default instead of failing this job outright,
+          # which would auto-skip `build` too (a skipped `needs:` job skips
+          # its dependents by default).
+          set -uo pipefail
+
+          FILES=""
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            FILES=$(gh api "repos/$REPO/pulls/$PR_NUMBER/files" --paginate --jq '.[].filename' 2>/dev/null) || FILES=""
+          else
+            if [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+              FILES=$(gh api "repos/$REPO/commits/$AFTER_SHA" --jq '.files[].filename' 2>/dev/null) || FILES=""
+            else
+              FILES=$(gh api "repos/$REPO/compare/$BEFORE_SHA...$AFTER_SHA" --paginate --jq '.files[].filename' 2>/dev/null) || FILES=""
+            fi
+          fi
+
+          DOCS_ONLY=false
+          if [ -n "$FILES" ]; then
+            echo "Changed files:"
+            echo "$FILES"
+            DOCS_ONLY=true
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+              case "$f" in
+                # Package READMEs pack into nupkgs -- never treat a README
+                # change as docs-only, no matter where it lives.
+                *README.md) DOCS_ONLY=false ;;
+                docs/*) ;;
+                *) DOCS_ONLY=false ;;
+              esac
+            done <<< "$FILES"
+          else
+            echo "::warning::Could not determine changed files -- treating this run as not-docs-only so 'build' still runs."
+          fi
+
+          echo "docs_only=$DOCS_ONLY" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
@@ -21,13 +99,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: actions/setup-dotnet@v6
-
-      - uses: actions/cache@v6
-        with:
-          path: ~/.nuget/packages
-          key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
-          restore-keys: nuget-
+      - uses: ./.github/actions/setup-build
 
       - name: Build
         run: dotnet build -c Release
@@ -91,6 +163,7 @@ jobs:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       packages: write

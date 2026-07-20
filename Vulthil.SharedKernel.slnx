@@ -11,9 +11,11 @@
     <File Path=".github/instructions/style-guidelines.instructions.md" />
   </Folder>
   <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/backport.yml" />
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/claude-code-review.yml" />
     <File Path=".github/workflows/claude.yml" />
+    <File Path=".github/workflows/codeql.yml" />
     <File Path=".github/workflows/dependabot-approve-and-automerge.yml" />
     <File Path=".github/workflows/docs.yml" />
     <File Path=".github/workflows/release.yml" />
@@ -21,6 +23,9 @@
   </Folder>
   <Folder Name="/docs/">
     <File Path="docs/docfx.json" />
+  </Folder>
+  <Folder Name="/eng/">
+    <File Path="eng/coverage.ps1" />
   </Folder>
   <Folder Name="/samples/">
     <File Path="samples/aspire.config.json" />
@@ -50,15 +55,8 @@
     <File Path="Directory.Packages.props" />
     <File Path="global.json" />
     <File Path="README.md" />
-    <File Path="test-reports" />
     <File Path="version.json" />
     <File Path="Vulthil.SharedKernel.png" />
-    <File Path="watch" />
-    <File Path="watch-samples" />
-  </Folder>
-  <Folder Name="/Solution Items/TestReports/">
-    <File Path="TestReports/Cobertura.xml" />
-    <File Path="TestReports/index.html" />
   </Folder>
   <Folder Name="/src/">
     <File Path="src/Directory.Build.props" />

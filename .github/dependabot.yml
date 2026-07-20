@@ -7,14 +7,9 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 10
     groups:
-      dotnet:
+      actions:
         patterns:
           - "*" # Prefer a single PR per solution update.
-  # Docker Images
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "daily"
   # Dotnet SDK
   - package-ecosystem: "dotnet-sdk"
     directory: "/"

@@ -2,7 +2,8 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Vulthil.SharedKernel.Outbox.EntityFrameworkCore)](https://www.nuget.org/packages/Vulthil.SharedKernel.Outbox.EntityFrameworkCore)
 
-The Entity Framework Core implementation of the [`Vulthil.SharedKernel.Outbox`](../Vulthil.SharedKernel.Outbox)
+The Entity Framework Core implementation of the
+[`Vulthil.SharedKernel.Outbox`](https://www.nuget.org/packages/Vulthil.SharedKernel.Outbox)
 engine. It keeps all EF Core coupling out of the engine package:
 
 - `ISaveOutboxMessages` — the `DbSet<OutboxMessage>` marker the application's `DbContext` implements.
@@ -14,5 +15,5 @@ engine. It keeps all EF Core coupling out of the engine package:
 - `ApplyOutbox()` — a `ModelBuilder` extension applying the provider-agnostic `OutboxMessage` mapping. Provider packages offer optimized alternatives (`ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, `ApplyCosmosOutbox()`).
 
 Most applications consume this transitively via `Vulthil.SharedKernel.Infrastructure` (`EnableOutboxProcessing`) and
-a provider package (`UseNpgsql`, `UseMySql`, `UseCosmosDb`). See the
-[Outbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md) article.
+a provider package (`UseNpgsql`, `UseMySql`, `UseCosmosDb`). See the Outbox Pattern article on the
+[documentation site](https://vulthil.github.io/Vulthil.SharedKernel/).

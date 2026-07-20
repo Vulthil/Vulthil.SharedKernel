@@ -42,10 +42,11 @@ deduplication instead, set it on the store registration: `services.AddRelational
 ## Scope
 
 This package only **deduplicates**. Bounding a persistently-failing consumer is the transport's job: on RabbitMQ
-a poison delivery is retried up to the queue's `MaxRetryCount`, then a `Fault<T>` is published and the message is
-nacked to the dead-letter exchange — the guard ignores `RetryCount` and adds no max-attempts of its own. It also
+a failing delivery is retried per the consumer's retry policy (its registration's, falling back to the queue
+default), then a `Fault<T>` is published and the delivery is dead-lettered when a dead-letter queue is
+configured — the guard ignores `RetryCount` and adds no max-attempts of its own. It also
 serializes only the marker *insert*, so two duplicates processed **concurrently** can each run the consumer body
 once. Keep side effects idempotent if concurrent duplicate delivery is possible.
 
-See the [inbox pattern documentation](https://vulthil.github.io/Vulthil.SharedKernel/articles/inbox-pattern.html)
+See the Inbox Pattern article on the [documentation site](https://vulthil.github.io/Vulthil.SharedKernel/)
 for the full design and the message-id stability contract.

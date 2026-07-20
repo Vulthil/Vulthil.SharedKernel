@@ -27,5 +27,5 @@ seam. It has **no EF Core dependency**; the EF implementation lives in
 - Opt into a retention sweep via `EnableOutboxProcessing(o => o.Retention.Enabled = true)` to periodically delete processed and dead-lettered rows
   older than a window (relational set-based `ExecuteDelete`; the same sweep covers Cosmos).
 
-See the [Outbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md)
+See the [Outbox Pattern](../outbox-pattern.md)
 article for the design, the pluggable-sink model, and the commit-time trigger.

@@ -28,4 +28,4 @@ For an integration test that keeps the production composition, swap the transpor
 
 ## Docs
 
-Usage patterns: https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/packages
+Usage patterns and articles: https://vulthil.github.io/Vulthil.SharedKernel/

@@ -35,5 +35,5 @@ builder.AddMessaging(messaging =>
 });
 ```
 
-See the [Inbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/inbox-pattern.md)
+See the [Inbox Pattern](../inbox-pattern.md)
 article for the design, guarantees, and the message-id stability contract.

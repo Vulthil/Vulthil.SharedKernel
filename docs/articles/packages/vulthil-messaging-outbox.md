@@ -37,5 +37,5 @@ builder.AddMessaging(messaging =>
 The application's `DbContext` must implement `ISaveOutboxMessages` (a `BaseDbContext` already does). Capture is
 relational-only (it enlists in the ambient transaction); the relay works on any provider.
 
-See the [Outbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md)
+See the [Outbox Pattern](../outbox-pattern.md)
 article for the design, the pluggable-sink model, and the commit-time trigger.

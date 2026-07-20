@@ -4,13 +4,18 @@ The transactional outbox pattern guarantees that domain events raised by aggrega
 
 ## How It Works
 
-1. During `SaveChangesAsync`, a `SaveChangesInterceptor` serialises every pending domain event into an `OutboxMessage` row in the same database transaction.
+1. During `SaveChanges`/`SaveChangesAsync` (both the synchronous and asynchronous paths are intercepted), a `SaveChangesInterceptor` serialises every pending domain event into an `OutboxMessage` row in the same database transaction.
 2. The aggregate root's event collection is cleared.
 3. A background service (`OutboxBackgroundService`) relays unprocessed outbox messages — woken immediately once the captured rows are durable (on transaction commit, or right after a non-transactional `SaveChanges` that captured domain events) for low latency, and polling on an interval as the backstop.
 4. Each message is routed by its `OutboxDestination` to the registered `IOutboxDispatcher` that handles it (in-process domain events by default, or the broker — see below).
 5. Successfully relayed messages are marked as processed; failures are retried up to the configured maximum, after which the message is dead-lettered — its `FailedOnUtc` timestamp is set, it is no longer relayed, and an error is logged with the last failure (the `Error` column).
 
 This guarantees **at-least-once delivery** because the event and the business data are committed atomically.
+
+Relay order is best-effort, not a contract: messages are fetched oldest-first (`OccurredOnUtc`, then `Id`), but a
+failed message does not block the rest of its batch — the batch keeps dispatching, so later messages overtake the
+failure, which is retried on a later cycle (no head-of-line blocking). With `EnableParallelPublishing`, order
+within a batch is not preserved at all. Consumers that need ordering must not rely on the outbox for it.
 
 ## Configuration
 
@@ -54,6 +59,11 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 
 `BaseDbContext` owns the `OutboxMessages` `DbSet`; apply the provider-optimized mapping in `OnModelCreating` by calling your provider's extension — `ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, or `ApplyCosmosOutbox()` (as shown above). The agnostic `ApplyOutbox()` is available for custom providers.
 
+Because the `DbSet` lives on the base class, EF Core's convention discovery puts the `OutboxMessage` entity into
+**every** derived context's model — and its migrations — even when outbox processing is never enabled for that
+context. A context that will never use the outbox can opt out with `modelBuilder.Ignore<OutboxMessage>()` in its
+`OnModelCreating`; an outbox-enabled context must keep the mapping (the relay store refuses to run without it).
+
 Only one outbox-enabled `DbContext` is supported per host: the relay and retention background services resolve a
 single `IOutboxStore`, so calling `EnableOutboxProcessing()` for a second context throws an
 `InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed. The
@@ -71,7 +81,7 @@ running unprotected.
 | `EnableParallelPublishing` | `false` | Publish messages in parallel within a batch (each dispatch runs in its own DI scope) |
 | `MaxDegreeOfParallelism` | 4 | Maximum concurrent dispatches when `EnableParallelPublishing` is enabled |
 | `OutboxProcessingDelaySeconds` | 2 | Base polling delay between processing cycles |
-| `MaxDelaySeconds` | 60 | Maximum back-off delay when no messages are found |
+| `MaxDelaySeconds` | 60 | Maximum back-off delay when a cycle relays nothing (no pending messages, or every fetched message failed) |
 | `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 
 ## Observability
@@ -105,7 +115,7 @@ Processed and dead-lettered rows remain in the `OutboxMessages` table after rela
 | `SweepInterval` | 1 hour | Delay between sweeps |
 | `BatchSize` | 1000 | Rows deleted per batch within a sweep |
 
-The sweep deletes rows whose `ProcessedOnUtc` **or** `FailedOnUtc` is older than `RetentionPeriod`; **pending rows are never touched**. It runs through the registered `IOutboxStore` when it implements `IOutboxRetentionStore` (the EF Core store does) — every store deletes at most `BatchSize` rows per call (relational providers select the oldest eligible keys and delete them set-based with `ExecuteDelete`), so a large backlog is drained in bounded, short-lived batches, and the **same sweep covers Cosmos** (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).
+The sweep deletes rows whose `ProcessedOnUtc` **or** `FailedOnUtc` is older than `RetentionPeriod`; **pending rows are never touched**. It runs through the registered `IOutboxStore` when it implements `IOutboxRetentionStore` (the EF Core store does; a custom store that doesn't gets a one-time warning and the sweep is skipped) — every store deletes at most `BatchSize` rows per call (relational providers select the oldest eligible keys and delete them set-based with `ExecuteDelete`), so a large backlog is drained in bounded, short-lived batches, and the **same sweep covers Cosmos** (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).
 
 ## Custom Outbox Store
 
@@ -155,6 +165,13 @@ builder.AddMessaging(messaging =>
 Capture is relational-only (it enlists in the ambient transaction); the relay works on any provider. It is built on
 the general publish/send **filter pipeline** (`IPublishFilter`, registered via `AddPublishFilter<T>()`), which is the
 publish-side counterpart to consume filters and can host other cross-cutting concerns.
+
+Two pipeline consequences to know: capturing **short-circuits** the pipeline, so publish filters registered after
+`AddTransactionalOutbox()` never see a captured message; and the relay publishes captured messages straight through
+the transport, **bypassing the publish-filter pipeline entirely** (nothing runs twice, but nothing else observes the
+relayed publish either). Register any filter that must observe every outgoing message *before*
+`AddTransactionalOutbox()`. Request/reply is unaffected — requests never flow through the publish filters and are
+never captured (a request awaiting a synchronous reply cannot be deferred to a relay).
 
 The capture preserves the publish faithfully: the message id, correlation id, routing key, send destination, custom
 headers, and the current trace context (`TraceParent`/`TraceState`, when tracing is enabled) are stored with the row

@@ -12,7 +12,7 @@ public sealed record InboxMessage
     public required string MessageId { get; init; }
 
     /// <summary>
-    /// Gets or sets the UTC timestamp at which the message was processed.
+    /// Gets the UTC timestamp at which the message was processed.
     /// </summary>
     public DateTimeOffset ProcessedOnUtc { get; init; }
 }

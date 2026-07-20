@@ -20,4 +20,4 @@ internal sealed class CosmosTestContainer(IMessageSink messageSink)
 
 ## Docs
 
-Usage patterns: https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/packages
+Usage patterns and articles: https://vulthil.github.io/Vulthil.SharedKernel/

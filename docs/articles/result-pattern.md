@@ -162,3 +162,14 @@ public async Task<IActionResult> Get(Guid id)
     return result.ToActionResult(this);
 }
 ```
+
+Success maps to `200 Ok<T>` (`Result<T>`), `204 NoContent` (non-generic `Result`), or `201 CreatedAtRoute<T>`
+via `ToCreatedAtRouteHttpResult`. Every failure returns an RFC 7807 problem body with the status from the
+[table above](#error-classifications): `detail` carries the error's `Description`, and the error's `Code`
+appears as a key in the problem `extensions` (mapped to the description). `Validation` failures return a
+validation problem whose per-field `errors` dictionary is built from the `ValidationError`'s inner errors. The
+minimal-API and MVC paths produce the same status and detail for the same error.
+
+One nuance of the typed union: at runtime `NotFound` and `Conflict` errors surface as a `ProblemHttpResult`
+carrying 404/409 **with that problem body** — the `NotFound`/`Conflict` members of the union exist so OpenAPI
+documents those status codes, not as the results actually returned.

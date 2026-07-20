@@ -25,5 +25,5 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 }
 ```
 
-See the [Inbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/inbox-pattern.md)
+See the [Inbox Pattern](../inbox-pattern.md)
 article for the full design.

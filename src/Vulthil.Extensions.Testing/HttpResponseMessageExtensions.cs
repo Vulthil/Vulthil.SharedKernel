@@ -8,12 +8,14 @@ namespace Vulthil.Extensions.Testing;
 public static class HttpResponseMessageExtensions
 {
     /// <summary>
-    /// Reads the JSON content of the HTTP response and deserializes it into the specified type.
+    /// Asserts the response indicates success, then reads its JSON content and deserializes it into
+    /// <typeparamref name="TResponse"/>. Throws when the response is <see langword="null"/>, has a
+    /// non-success status code, or its body is empty or deserializes to <see langword="null"/>.
     /// </summary>
-    /// <typeparam name="TResponse"></typeparam>
-    /// <param name="response"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <typeparam name="TResponse">The type to deserialize the JSON response body into.</typeparam>
+    /// <param name="response">The HTTP response to read.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>The deserialized response body.</returns>
     public static async Task<TResponse> GetResponseAsync<TResponse>(this HttpResponseMessage? response, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(response);

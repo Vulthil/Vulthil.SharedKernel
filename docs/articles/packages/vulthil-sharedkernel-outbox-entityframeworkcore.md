@@ -19,5 +19,5 @@ engine. It isolates all EF Core coupling so the engine package stays persistence
 - `DomainEventsToOutboxMessageSaveChangesInterceptor` / `IOutboxInterceptor` — domain-event capture.
 - `ApplyOutbox()` — a `ModelBuilder` extension applying the provider-agnostic `OutboxMessage` mapping. Provider packages offer optimized alternatives (`ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, `ApplyCosmosOutbox()`).
 
-See the [Outbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/outbox-pattern.md)
+See the [Outbox Pattern](../outbox-pattern.md)
 article for the design.

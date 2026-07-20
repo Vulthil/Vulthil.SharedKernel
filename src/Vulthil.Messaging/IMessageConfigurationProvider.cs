@@ -55,9 +55,9 @@ public interface IMessageConfigurationProvider
     IReadOnlyCollection<QueueDefinition> QueueDefinitions { get; }
 
     /// <summary>
-    /// Gets the options controlling which built-in consume filters perform their work at runtime.
-    /// Filters check the appropriate flag on this object on every delivery, so toggles take effect
-    /// without re-registering the filter.
+    /// Gets the built-in consume-filter flags as they were configured at <c>AddMessaging</c> time.
+    /// The flags are applied once, at registration — a disabled filter is never added to DI — so
+    /// mutating them through this snapshot has no effect on the composed pipeline.
     /// </summary>
     ConsumeFilterOptions ConsumeFilters { get; }
 

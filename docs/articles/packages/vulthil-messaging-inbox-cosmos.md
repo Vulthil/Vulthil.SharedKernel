@@ -33,5 +33,5 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 builder.Services.AddCosmosInbox<AppDbContext>();
 ```
 
-See the [Inbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/inbox-pattern.md)
+See the [Inbox Pattern](../inbox-pattern.md)
 article for how the guarantees differ from the relational store.

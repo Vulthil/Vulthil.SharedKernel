@@ -6,11 +6,11 @@ Use `Vulthil.SharedKernel.Infrastructure.Cosmos` to run the shared infrastructur
 
 - Cosmos DB is the underlying store for an application's primary `DbContext`
 - Aspire-wired Cosmos connection via `AddCosmosDbContext`
-- Outbox processing should use the Cosmos-specific strategy (best-effort relay without relational locking)
+- Outbox processing should use the Cosmos-specific store (best-effort relay without relational locking)
 
 ## Pattern
 
-- Call `UseCosmosDb("connectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox strategy
+- Call `UseCosmosDb("connectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox store
 - Configure the Cosmos-specific entity model for `OutboxMessage` via the `ApplyCosmosOutbox()` model-builder extension (call it from your `OnModelCreating`)
 - Order between `UseCosmosDb`, `EnableOutboxProcessing`, and `UseOutboxStore` does not matter; the configurator defers the underlying registrations until the full chain has executed, and the Cosmos outbox store is applied only as a default – a custom store selected via `UseOutboxStore` is always preserved
 

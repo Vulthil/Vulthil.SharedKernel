@@ -23,7 +23,8 @@ public sealed class OutboxProcessingOptions
     [Range(1, int.MaxValue)]
     public int BatchSize { get; set; } = 10;
     /// <summary>
-    /// Gets the maximum number of delivery attempts before a message is marked as processed. Default is 3.
+    /// Gets the maximum number of delivery attempts before a message is dead-lettered — its <c>FailedOnUtc</c>
+    /// is set and it is no longer relayed. Default is 3.
     /// </summary>
     [Range(1, int.MaxValue)]
     public int MaxRetries { get; set; } = 3;

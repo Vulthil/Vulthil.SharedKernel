@@ -36,5 +36,5 @@ builder.Services.AddRelationalInbox<AppDbContext>();
 
 The consumer and the store must resolve the same scoped `DbContext` instance (the default with `AddDbContext`).
 Add an EF Core migration for the `InboxMessage` table as you would for any entity. See the
-[Inbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/inbox-pattern.md) article
+[Inbox Pattern](../inbox-pattern.md) article
 for details.

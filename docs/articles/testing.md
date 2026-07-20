@@ -285,6 +285,28 @@ harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 `ITestHarness` exposes `Published<T>()`, `Sent<T>()`, `Consumed<T>()`, and `Requested<T>()` (each returns the
 matching `CapturedMessage<T>` items — `.Message` is the payload, `.Envelope` the wire metadata), plus `Clear()`.
 
+### Resetting between tests
+
+`ITestHarness` is registered as a singleton, so a test class that reuses one host across several tests — a
+`WebApplicationFactory` supplied as a class fixture (see [Integration Tests](#integration-tests)), or a hand-built
+`IHost` kept in a field — leaves an earlier test's captured messages visible to the next one. Call `Clear()` from
+your per-test setup hook so each test starts from an empty capture log:
+
+```csharp
+public sealed class OrdersTests(AppWebFactory factory)
+    : BaseIntegrationTestCase<AppWebFactory, Program>(factory), IClassFixture<AppWebFactory>
+{
+    public override ValueTask Initialize()
+    {
+        Factory.Services.GetRequiredService<ITestHarness>().Clear();
+        return base.Initialize();
+    }
+}
+```
+
+A harness resolved from a fresh host per test (a new `Host.CreateApplicationBuilder().Build()` in the constructor,
+disposed in teardown, as in the snippet above) needs no such call, since each test gets its own instance.
+
 ### Mocking responses
 
 A test can stand in for an external service. `Respond<TRequest, TResponse>` answers a request (taking precedence

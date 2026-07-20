@@ -103,6 +103,7 @@ public sealed class TestHarnessTests : BaseUnitTestCase
         result.IsSuccess.ShouldBeFalse();
         result.Error.Code.ShouldBe("Messaging.Request.Failure");
         result.Error.Description.ShouldContain("boom");
+        Harness.Consumed<ExplodingRequest>().ShouldBeEmpty();
     }
 
     [Fact]

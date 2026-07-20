@@ -1,1 +1,2 @@
 #nullable enable
+override Vulthil.xUnit.BaseUnitTestCase<TTarget>.Dispose() -> System.Threading.Tasks.ValueTask

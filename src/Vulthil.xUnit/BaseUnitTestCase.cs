@@ -55,6 +55,11 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     /// <summary>
     /// Configures the auto-mocker to create a real instance of <typeparamref name="TService"/> with all dependencies auto-mocked.
     /// </summary>
+    /// <remarks>
+    /// Unlike the lazily-created <see cref="BaseUnitTestCase{TTarget}.Target"/>, the instance is created immediately
+    /// (eagerly, on this call) and is not disposed automatically; dispose it yourself in <see cref="Dispose"/> if it
+    /// holds unmanaged resources.
+    /// </remarks>
     /// <typeparam name="TService">The service type.</typeparam>
     protected virtual void UseReal<TService>()
         where TService : class
@@ -63,6 +68,11 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     /// <summary>
     /// Configures the auto-mocker to create a real instance of <typeparamref name="TImplementation"/> registered as <typeparamref name="TService"/> with all dependencies auto-mocked.
     /// </summary>
+    /// <remarks>
+    /// Unlike the lazily-created <see cref="BaseUnitTestCase{TTarget}.Target"/>, the instance is created immediately
+    /// (eagerly, on this call) and is not disposed automatically; dispose it yourself in <see cref="Dispose"/> if it
+    /// holds unmanaged resources.
+    /// </remarks>
     /// <typeparam name="TService">The service type.</typeparam>
     /// <typeparam name="TImplementation">The implementation type.</typeparam>
     protected virtual void UseRealFor<TService, TImplementation>()
@@ -100,5 +110,27 @@ public abstract class BaseUnitTestCase<TTarget> : BaseUnitTestCase where TTarget
     /// </summary>
     /// <returns>A new instance of <typeparamref name="TTarget"/>.</returns>
     protected virtual TTarget CreateInstance() => CreateInstance<TTarget>();
+
+    /// <summary>
+    /// Disposes <see cref="Target"/> if it was created and is disposable, then runs any further cleanup from an override.
+    /// </summary>
+    /// <returns>A task representing the cleanup work.</returns>
+    protected override async ValueTask Dispose()
+    {
+        if (_lazyTarget.IsValueCreated)
+        {
+            switch (_lazyTarget.Value)
+            {
+                case IAsyncDisposable asyncDisposable:
+                    await asyncDisposable.DisposeAsync();
+                    break;
+                case IDisposable disposable:
+                    disposable.Dispose();
+                    break;
+            }
+        }
+
+        await base.Dispose();
+    }
 }
 

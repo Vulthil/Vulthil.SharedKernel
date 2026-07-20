@@ -2,7 +2,8 @@
 
 An in-memory messaging transport for tests. It runs your consumers with no broker and captures every produced
 and consumed message for assertion. Built entirely on the public `Vulthil.Messaging.Transport` SDK, so it
-mirrors the real consumer topology assembled from your queue configuration.
+assembles the same execution plans (consumers, polymorphic dispatch, per-consumer retry resolution) from your
+queue configuration that a real transport would.
 
 ## When to use
 
@@ -13,7 +14,10 @@ mirrors the real consumer topology assembled from your queue configuration.
 ## Pattern
 
 - Dispatch is synchronous: when a publish/send/request call returns, every consumer it triggered has run — no polling
-- A one-way consumer's exception propagates to the publisher/sender; a request consumer's exception becomes a failed result
+- A one-way consumer's exception does **not** propagate to the publisher/sender: the consumer is retried per its
+  resolved retry policy (attempts run back-to-back, without the configured delays), then a `Fault<T>` is published
+  and captured — assert it via `Published<Fault<TMessage>>()`. A request consumer's exception becomes a failed
+  `Result<TResponse>` on the requesting side
 - Keep assertions on `ITestHarness` deterministic and explicit; `Clear()` between phases
 
 ## Usage
@@ -57,5 +61,4 @@ transport with the harness, leaving production code untouched:
 builder.ConfigureServices(services => services.ReplaceTransportWithTestHarness());
 ```
 
-See the [Testing guide](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/testing.md) for
-the full API and details.
+See the [Testing guide](../testing.md#messaging-test-harness) for the full API and details.

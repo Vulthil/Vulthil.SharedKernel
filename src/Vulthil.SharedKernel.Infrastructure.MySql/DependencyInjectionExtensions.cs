@@ -20,12 +20,22 @@ public static class DependencyInjectionExtensions
 {
 
 #if NET10_0_OR_GREATER
-    /// <summary> ... </summary>
-    /// <remarks> ... </remarks>
-    /// <typeparam name="TDbContext">...</typeparam>
-    /// <param name="configurator">...</param>
-    /// <param name="connectionStringKey">...</param>
-    /// <param name="configureSettings">... .NET 10 wording ...</param>
+    /// <summary>
+    /// Configures the database infrastructure for MySQL: registers a pooled <typeparamref name="TDbContext"/> for
+    /// the named connection string and selects the MySQL outbox store (row-level locking via
+    /// <c>FOR UPDATE SKIP LOCKED</c>) unless a custom store was chosen via <c>UseOutboxStore</c>. When outbox
+    /// processing is enabled, the commit-time relay trigger is wired as well.
+    /// </summary>
+    /// <remarks>
+    /// On .NET 10 the Pomelo-compatible EF Core provider is registered directly and the MySQL server version is
+    /// detected from the connection at startup (<c>ServerVersion.AutoDetect</c>), so the database must be reachable
+    /// when the host starts. The underlying registrations are deferred until the configuration chain has executed,
+    /// so the order of <c>UseMySql</c>, <c>EnableOutboxProcessing</c>, and <c>UseOutboxStore</c> does not matter.
+    /// </remarks>
+    /// <typeparam name="TDbContext">The application's <c>DbContext</c>; it must expose the outbox set via <c>ISaveOutboxMessages</c>.</typeparam>
+    /// <param name="configurator">The database infrastructure configurator.</param>
+    /// <param name="connectionStringKey">The connection-string name resolved from the host's configuration.</param>
+    /// <param name="configureSettings">An optional action to configure the EF Core/Pomelo options (e.g. command timeout).</param>
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TDbContext> UseMySql<TDbContext>(
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
@@ -34,12 +44,22 @@ public static class DependencyInjectionExtensions
         where TDbContext : DbContext, ISaveOutboxMessages
         => UseMySqlCore(configurator, connectionStringKey, configureSettings);
 #else
-    /// <summary> ... </summary>
-    /// <remarks> ... </remarks>
-    /// <typeparam name="TDbContext">...</typeparam>
-    /// <param name="configurator">...</param>
-    /// <param name="connectionStringKey">...</param>
-    /// <param name="configureSettings">... .NET 9 wording ...</param>
+    /// <summary>
+    /// Configures the database infrastructure for MySQL: registers <typeparamref name="TDbContext"/> through the
+    /// Aspire Pomelo integration for the named connection string and selects the MySQL outbox store (row-level
+    /// locking via <c>FOR UPDATE SKIP LOCKED</c>) unless a custom store was chosen via <c>UseOutboxStore</c>. When
+    /// outbox processing is enabled, the commit-time relay trigger is wired as well.
+    /// </summary>
+    /// <remarks>
+    /// On .NET 9 the context is registered via the <c>Aspire.Pomelo.EntityFrameworkCore.MySql</c> client
+    /// integration, which resolves the connection string and adds health checks, telemetry, and connection
+    /// resiliency. The underlying registrations are deferred until the configuration chain has executed, so the
+    /// order of <c>UseMySql</c>, <c>EnableOutboxProcessing</c>, and <c>UseOutboxStore</c> does not matter.
+    /// </remarks>
+    /// <typeparam name="TDbContext">The application's <c>DbContext</c>; it must expose the outbox set via <c>ISaveOutboxMessages</c>.</typeparam>
+    /// <param name="configurator">The database infrastructure configurator.</param>
+    /// <param name="connectionStringKey">The connection-string name resolved by the Aspire integration.</param>
+    /// <param name="configureSettings">An optional action to configure the Aspire integration settings (health checks, tracing, retries).</param>
     /// <param name="configureDbContextOptions">An optional action to configure the DbContext options.</param>
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TDbContext> UseMySql<TDbContext>(

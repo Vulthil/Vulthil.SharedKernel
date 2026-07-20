@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Azure Cosmos DB idempotency store for Vulthil.Messaging.Inbox — effectively-once message processing (best-effort deduplication layered over idempotent-by-design writes). Cosmos has no cross-partition transaction, so it cannot offer the transactional exactly-once the relational store does.</Description>
+		<PackageTags>inbox;idempotency;deduplication;cosmosdb;azure-cosmos-db;efcore;messaging</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -12,9 +12,9 @@ namespace Vulthil.Messaging.Inbox;
 /// </summary>
 /// <remarks>
 /// The guard only deduplicates. Bounding a consumer that keeps failing — retry count, fault emission, and
-/// dead-lettering — is delegated to the transport (on RabbitMQ: retry up to the queue's max retry count, then a
-/// fault is published and the delivery is nacked to the dead-letter exchange), so this filter deliberately
-/// ignores <see cref="IMessageContext.RetryCount"/>.
+/// dead-lettering — is delegated to the transport (on RabbitMQ: retry per the consumer's resolved retry policy,
+/// then a fault is published and the delivery is dead-lettered when a dead-letter queue is configured), so this
+/// filter deliberately ignores <see cref="IMessageContext.RetryCount"/>.
 /// </remarks>
 /// <typeparam name="TMessage">The consumed message type.</typeparam>
 internal sealed class IdempotentConsumeFilter<TMessage>(

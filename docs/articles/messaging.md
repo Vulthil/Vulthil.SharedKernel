@@ -305,17 +305,19 @@ Or in code:
 m.ConfigureMessagingOptions(opts => opts.ConsumeFilters.EnableLogging = false);
 ```
 
-The filter stays registered in DI; only its behavior is skipped, so it's still
-resolvable in unit tests if you want to assert against it.
+The toggle is applied when `AddMessaging` composes the pipeline: a disabled filter is
+never registered in DI at all (there is no per-delivery flag check), so flipping the
+flag after registration has no effect.
 
 ### Idempotent receivers (inbox)
 
 `Vulthil.Messaging.Inbox` ships a consume filter that deduplicates redelivered
-messages, giving exactly-once processing on top of at-least-once delivery. It is a
-transaction-owning filter: the consumer runs inside an `IIdempotencyStore`
-transaction so the processed-marker and the consumer's writes commit atomically.
-Opt a message type in with `AddIdempotentInbox<TMessage>()`. See the
-[Inbox Pattern](inbox-pattern.md) article for the full design.
+messages on top of at-least-once delivery. The consumer invocation is handed to an
+`IIdempotencyStore`, which owns the unit: with a transactional (relational) store the
+processed-marker and the consumer's writes commit atomically — exactly-once
+processing — while a store without cross-partition transactions (e.g. Cosmos) is
+effectively-once. Opt a message type in with `AddIdempotentInbox<TMessage>()`. See
+the [Inbox Pattern](inbox-pattern.md) article for the full design.
 
 ## Ordered Processing (per-aggregate)
 
@@ -522,6 +524,17 @@ await publisher.PublishAsync(new OrderCreatedEvent(orderId), ctx =>
 
 Fault publishing is best-effort: a failure to publish the fault is logged and never prevents the
 original delivery from being settled (nacked for dead-lettering).
+
+### Poison deliveries
+
+Deliveries that fail **before** a consumer can run bypass the retry and fault machinery entirely, and
+no `Fault<T>` is published for them:
+
+- **Unknown message type** (no consumer/plan matches the delivery's type identity): the delivery is
+  **acked and dropped permanently**, with a warning log — it does not reach the dead-letter queue.
+- **Undeserializable body** (malformed JSON, or a body that deserializes to `null`): the delivery is
+  **nacked without requeue**, with an error log. When the queue has a dead-letter queue configured
+  (`q.UseDeadLetterQueue()`), the broker moves it there; otherwise it is discarded.
 
 ## Routing Keys
 

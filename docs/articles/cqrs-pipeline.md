@@ -98,7 +98,7 @@ No additional wiring is needed – the validator is picked up automatically from
 
 ### Request Logging
 
-`RequestLoggingPipelineBehavior` logs the start and completion of every request, attaching the serialised error to the logging scope when the result is a failure.
+`RequestLoggingPipelineBehavior` logs the start and completion of requests whose response type is `Result` (or `Result<T>`), attaching the serialised error to the logging scope when the result is a failure. Requests with any other response type are not covered by this behavior.
 
 ### Transactional
 

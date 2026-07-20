@@ -17,11 +17,11 @@ Use `Vulthil.SharedKernel` for domain primitives reused across bounded contexts.
 
 ### Defining an entity
 
+Entities compare by identity, so the identifier type must have value equality — use a `record` (or
+`readonly record struct`), not a plain class:
+
 ```csharp
-public sealed class UserId(Guid value)
-{
-    public Guid Value { get; } = value;
-}
+public sealed record UserId(Guid Value);
 
 public sealed class User : AggregateRoot<UserId>
 {

@@ -10,4 +10,4 @@ Small result primitives for explicit success/failure flows without exceptions.
 
 ## Docs
 
-Usage patterns: https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/packages
+Usage patterns and articles: https://vulthil.github.io/Vulthil.SharedKernel/

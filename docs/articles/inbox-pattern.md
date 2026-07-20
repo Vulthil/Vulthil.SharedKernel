@@ -4,7 +4,7 @@ Message delivery is **at-least-once**: a broker can redeliver a message (after a
 
 The inbox pattern makes consumers **idempotent**: it records which messages have already been processed and skips duplicates. `Vulthil.Messaging.Inbox` provides this as a consume filter, with the processed-marker written in the **same transaction** as the consumer's business changes — so on a relational store, processing is exactly-once.
 
-This is an *idempotent receiver*, not a store-and-forward inbox: it rides on top of the transport's existing retry, fault, and dead-letter machinery rather than re-implementing them. Bounding a consumer that keeps failing is therefore **not** the guard's job — on RabbitMQ a poison delivery is retried up to the queue's `MaxRetryCount`, then a `Fault<T>` is published and the message is nacked to the dead-letter exchange. The filter deliberately ignores `IMessageContext.RetryCount` and adds no max-attempts of its own, keeping retry policy in one place (the transport).
+This is an *idempotent receiver*, not a store-and-forward inbox: it rides on top of the transport's existing retry, fault, and dead-letter machinery rather than re-implementing them. Bounding a consumer that keeps failing is therefore **not** the guard's job — on RabbitMQ a persistently-failing delivery is retried per the consumer's [retry policy](messaging.md#retries) (its own registration's, falling back to the queue default), then a `Fault<T>` is published and the delivery is dead-lettered when a dead-letter queue is configured. The filter deliberately ignores `IMessageContext.RetryCount` and adds no max-attempts of its own, keeping retry policy in one place (the transport).
 
 ## How It Works
 

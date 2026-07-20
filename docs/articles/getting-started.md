@@ -12,17 +12,26 @@ The packages are organised into layers so you can adopt only what you need:
 | Domain | `Vulthil.Results` | Railway-oriented `Result<T>` for explicit error handling |
 | Application | `Vulthil.SharedKernel.Application` | Commands, queries, handlers, and pipeline behaviors |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure` | EF Core base context, generic repository, and outbox processing |
-| Infrastructure | `Vulthil.SharedKernel.Infrastructure.Relational` | Shared relational support and the default relational outbox strategy |
+| Infrastructure | `Vulthil.SharedKernel.Outbox` | EF-free transactional outbox engine (relay, dispatchers, `IOutboxStore`) |
+| Infrastructure | `Vulthil.SharedKernel.Outbox.EntityFrameworkCore` | EF Core implementation of the outbox engine |
+| Infrastructure | `Vulthil.SharedKernel.Infrastructure.Relational` | Shared relational support and the relational outbox store base |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.Npgsql` | PostgreSQL provider integration (`UseNpgsql`) |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.MySql` | MySQL provider integration (`UseMySql`) |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.Cosmos` | Azure Cosmos DB provider integration (`UseCosmosDb`) |
 | API | `Vulthil.SharedKernel.Api` | Minimal API endpoint conventions and `Result` → HTTP mapping |
+| Hosting | `Vulthil.Extensions.Hosting` | `IRestartableHostedService` marker for cleanly pausable hosted services |
 | Messaging | `Vulthil.Messaging.Abstractions` | Transport-agnostic consumer and publisher contracts |
-| Messaging | `Vulthil.Messaging` | Queue/consumer registration and hosted service orchestration |
+| Messaging | `Vulthil.Messaging` | Queue/consumer registration, hosted orchestration, and the transport SDK |
 | Messaging | `Vulthil.Messaging.RabbitMq` | RabbitMQ transport implementation |
+| Messaging | `Vulthil.Messaging.Outbox` | Transactional bus-publish outbox (captures publishes into the outbox) |
+| Messaging | `Vulthil.Messaging.Inbox` | Idempotent-receiver consume filter for exactly/effectively-once processing |
+| Messaging | `Vulthil.Messaging.Inbox.EntityFrameworkCore` | Shared EF Core inbox primitives |
+| Messaging | `Vulthil.Messaging.Inbox.Relational` | Relational idempotency store (transactional exactly-once) |
+| Messaging | `Vulthil.Messaging.Inbox.Cosmos` | Cosmos idempotency store (effectively-once) |
 | Testing | `Vulthil.xUnit` | Base test classes, auto-mocking, and Testcontainers integration |
+| Testing | `Vulthil.xUnit.Cosmos` | Cosmos DB emulator fixture for `Vulthil.xUnit` |
 | Testing | `Vulthil.Messaging.TestHarness` | In-memory messaging test harness |
-| Testing | `Vulthil.Extensions.Testing` | Shared assertion and setup helpers |
+| Testing | `Vulthil.Extensions.Testing` | Framework-agnostic polling and HTTP response helpers (no xUnit dependency) |
 
 ## Minimal Example
 

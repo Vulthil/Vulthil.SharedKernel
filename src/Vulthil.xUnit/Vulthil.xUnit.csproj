@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Reusable xUnit base infrastructure for integration and unit test composition.</Description>
+		<PackageTags>xunit;testing;integration-testing;testcontainers;webapplicationfactory;automocker;respawn;http-mock</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

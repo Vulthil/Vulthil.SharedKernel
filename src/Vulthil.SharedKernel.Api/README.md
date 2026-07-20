@@ -10,4 +10,4 @@ API-layer helpers for endpoints, controllers, and cross-cutting HTTP concerns.
 
 ## Docs
 
-Usage patterns: https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/packages
+Usage patterns and articles: https://vulthil.github.io/Vulthil.SharedKernel/

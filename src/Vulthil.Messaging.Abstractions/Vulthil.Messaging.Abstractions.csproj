@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <Description>Messaging contracts for producers/consumers and request/reply boundaries.</Description>
+		<PackageTags>messaging;abstractions;contracts;consumer;publisher;request-reply;message-bus</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

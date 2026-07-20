@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Test utilities for validating messaging flows in integration and component tests.</Description>
+		<PackageTags>testing;test-harness;in-memory;messaging;message-bus;consumers;transport</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

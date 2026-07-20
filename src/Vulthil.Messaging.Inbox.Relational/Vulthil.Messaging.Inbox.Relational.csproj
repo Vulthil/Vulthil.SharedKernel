@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Relational Entity Framework Core idempotency store for Vulthil.Messaging.Inbox — transactional exactly-once message processing where the inbox marker and the consumer's writes commit in one transaction. Works with any relational EF Core provider (PostgreSQL, SQL Server, MySQL, SQLite); Cosmos requires a separate store.</Description>
+		<PackageTags>inbox;idempotency;deduplication;exactly-once;efcore;relational;sql;messaging</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

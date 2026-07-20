@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Azure Cosmos DB emulator fixture for Vulthil.xUnit — wraps the Cosmos emulator Testcontainer, registers the DbContext against it, and gives every consuming factory its own emulator database for parallel-safe integration tests.</Description>
+		<PackageTags>xunit;testing;integration-testing;cosmosdb;azure-cosmos-db;cosmos-emulator;testcontainers</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -31,7 +31,7 @@ public sealed class GetUserEndpoint : IEndpoint
 }
 ```
 
-`ToIResult()` returns `Results<Ok<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>`, so OpenAPI automatically documents all possible response types.
+`ToIResult()` returns `Results<Ok<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>`, so OpenAPI automatically documents all possible response types. At runtime every failure — including `NotFound` and `Conflict` — is returned as a problem response (RFC 7807) with the status mapped from the `ErrorType` and the error's description as `detail`; the `NotFound`/`Conflict` union members exist for the OpenAPI documentation. See [Result Pattern — Mapping to HTTP Responses](../result-pattern.md#mapping-to-http-responses).
 
 ### Registration and mapping
 

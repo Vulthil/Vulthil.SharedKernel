@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Transactional bus-publish outbox for Vulthil.Messaging. A publish/send filter captures messages published inside a database transaction into the shared outbox table; the outbox relay sends them to the broker after the transaction commits, with a stable message id, eliminating the dual-write problem.</Description>
+		<PackageTags>outbox;transactional-outbox;outbox-pattern;messaging;message-bus;dual-write;reliability</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -35,6 +35,6 @@ builder.AddMessaging(messaging =>
 ```
 
 The marker is a self-contained document keyed and partitioned by `MessageId` (its own container), so duplicate
-inserts conflict and are treated as already-processed. See the
-[Inbox Pattern](https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/inbox-pattern.md) article
-for the guarantees and how this differs from the relational store.
+inserts conflict and are treated as already-processed. See the Inbox Pattern article on the
+[documentation site](https://vulthil.github.io/Vulthil.SharedKernel/) for the guarantees and how this differs
+from the relational store.

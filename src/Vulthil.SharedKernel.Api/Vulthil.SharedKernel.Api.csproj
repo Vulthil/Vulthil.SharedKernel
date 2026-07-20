@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>API-layer helpers for endpoints, controllers, and cross-cutting HTTP concerns.</Description>
+		<PackageTags>aspnetcore;minimal-api;endpoints;controllers;problemdetails;openapi;result;http</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

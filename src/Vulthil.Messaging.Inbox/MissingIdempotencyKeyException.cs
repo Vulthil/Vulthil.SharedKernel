@@ -17,7 +17,7 @@ public sealed class MissingIdempotencyKeyException : Exception
     }
 
     /// <summary>
-    /// Gets the message type whose delivery lacked an idempotency key, when available.
+    /// Gets the message type whose delivery lacked an idempotency key.
     /// </summary>
     public Type MessageType { get; }
 }

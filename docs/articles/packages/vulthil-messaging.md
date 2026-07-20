@@ -48,14 +48,20 @@ messaging.ConfigureMessage<OrderCreatedEvent>(message =>
 });
 ```
 
-### Per-consumer routing overrides
+### Per-consumer retry override
+
+`AddConsumer` accepts a configurator; its knob is the consumer's retry policy, which overrides the queue-level
+default for that consumer alone:
 
 ```csharp
 queue.AddConsumer<OrderCreatedConsumer>(c =>
 {
-    c.Bind<OrderCreatedEvent>("order.eu");
+    c.UseRetry(r => r.Immediate(5));
 });
 ```
+
+Binding patterns are configured per queue, not per consumer — use
+`queue.Subscribe<OrderCreatedEvent>("order.eu")` (see [Messaging — Routing Keys](../messaging.md#routing-keys)).
 
 ### Configuration-driven setup
 

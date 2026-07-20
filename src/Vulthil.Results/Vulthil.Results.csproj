@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <Description>Small result primitives for explicit success/failure flows without exceptions.</Description>
+		<PackageTags>result;result-pattern;railway-oriented-programming;error-handling;errors;functional</PackageTags>
     </PropertyGroup>
 
 </Project>

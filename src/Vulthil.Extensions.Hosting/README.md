@@ -26,3 +26,7 @@ Implement it only on services whose `StartAsync`/`StopAsync` are idempotent acro
 implementing `IHostedService` directly over inheriting `BackgroundService`: the host observes only the execute task
 of a `BackgroundService`'s first start and stops the whole host when that task is canceled while the application is
 running — and on .NET 10 a stop racing service startup can cancel the task before `ExecuteAsync` has run at all.
+
+## Docs
+
+Usage patterns and articles: https://vulthil.github.io/Vulthil.SharedKernel/

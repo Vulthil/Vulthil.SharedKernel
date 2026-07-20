@@ -5,7 +5,8 @@ namespace Vulthil.xUnit.Http;
 /// <summary>
 /// An in-process fake for an outbound <see cref="HttpClient"/> dependency. Configure stubbed responses per test
 /// and inspect the requests the system under test sent. Register one per typed client via
-/// <c>AddHttpMock&lt;TClient, TImplementation&gt;()</c> on the factory and retrieve it with <c>HttpMock&lt;TClient&gt;()</c>.
+/// <c>AddHttpMock&lt;TClient&gt;()</c> (or per named client via <c>AddHttpMock("name")</c>) on the factory and
+/// retrieve it with <c>HttpMock&lt;TClient&gt;()</c> (or <c>HttpMock("name")</c>).
 /// </summary>
 public interface IHttpMock : IResettableResource
 {

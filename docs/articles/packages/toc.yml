@@ -22,6 +22,8 @@
   href: vulthil-sharedkernel-infrastructure-cosmos.md
 - name: Vulthil.SharedKernel.Api
   href: vulthil-sharedkernel-api.md
+- name: Vulthil.Extensions.Hosting
+  href: vulthil-extensions-hosting.md
 - name: Vulthil.Messaging.Abstractions
   href: vulthil-messaging-abstractions.md
 - name: Vulthil.Messaging

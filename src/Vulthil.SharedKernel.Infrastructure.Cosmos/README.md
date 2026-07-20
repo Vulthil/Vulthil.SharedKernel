@@ -10,4 +10,4 @@ Provider-specific EF Core mapping and optimizations for Cosmos DB.
 
 ## Docs
 
-Usage patterns: https://github.com/Vulthil/Vulthil.SharedKernel/tree/main/docs/articles/packages
+Usage patterns and articles: https://vulthil.github.io/Vulthil.SharedKernel/

@@ -14,10 +14,10 @@ public static class GetAll
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapGet("main-entities", async (ISender sender) =>
+            app.MapGet("main-entities", async (ISender sender, CancellationToken cancellationToken) =>
             {
                 var query = new GetMainEntities();
-                var result = await sender.SendAsync(query);
+                var result = await sender.SendAsync(query, cancellationToken);
                 return result.Map(r => new Response(r)).ToIResult();
             })
             .WithName("GetMainEntities");

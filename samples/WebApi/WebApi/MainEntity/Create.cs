@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Application.Messaging;
@@ -20,10 +19,10 @@ public static class Create
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("main-entities", async Task<Results<CreatedAtRoute<Response>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>> (ICommandHandler<CreateMainEntityCommand, Result<Guid>> handler, Request request) =>
+            app.MapPost("main-entities", async (ICommandHandler<CreateMainEntityCommand, Result<Guid>> handler, Request request, CancellationToken cancellationToken) =>
             {
                 var command = new CreateMainEntityCommand(request.Name);
-                var result = await handler.HandleAsync(command);
+                var result = await handler.HandleAsync(command, cancellationToken);
                 return result
                     .Map(id => new Response(id))
                     .ToCreatedAtRouteHttpResult("GetMainEntity", r => r);

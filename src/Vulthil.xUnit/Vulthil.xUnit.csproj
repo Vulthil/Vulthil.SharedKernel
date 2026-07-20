@@ -7,7 +7,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Meziantou.Extensions.Logging.Xunit.v3" />
-		<PackageReference Include="Shouldly" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
@@ -27,7 +26,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Using Include="Shouldly" />
 		<Using Include="Xunit" />
 		<Using Include="Moq" />
 		<Using Include="Moq.AutoMock" />

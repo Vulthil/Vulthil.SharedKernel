@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<!-- Intentional divergence from the 1.1.0 baseline: UseRealFor's TService constraint changed
+     notnull -> class. No valid caller can break: TImplementation : class, TService already made a
+     non-reference TService uninstantiable (a class cannot derive from a struct, and interfaces
+     satisfy the class constraint). The tightening is required because AutoMocker's lazy factory
+     overload Use<TService>(Func<AutoMocker, TService>) cannot be bound when TService is merely
+     notnull - overload resolution against the class-constrained Use<TService>(Mock<TService>)
+     candidate fails with CS0452 under explicit type arguments and binds the wrong overload under
+     inference. Lazy creation + automatic disposal of UseRealFor instances depends on that factory
+     overload. -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0021</DiagnosticId>
+    <Target>M:Vulthil.xUnit.BaseUnitTestCase.UseRealFor``2``0:class</Target>
+    <Left>lib/net10.0/Vulthil.xUnit.dll</Left>
+    <Right>lib/net10.0/Vulthil.xUnit.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0021</DiagnosticId>
+    <Target>M:Vulthil.xUnit.BaseUnitTestCase.UseRealFor``2``0:notnull</Target>
+    <Left>lib/net10.0/Vulthil.xUnit.dll</Left>
+    <Right>lib/net10.0/Vulthil.xUnit.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0021</DiagnosticId>
+    <Target>M:Vulthil.xUnit.BaseUnitTestCase.UseRealFor``2``0:class</Target>
+    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
+    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0021</DiagnosticId>
+    <Target>M:Vulthil.xUnit.BaseUnitTestCase.UseRealFor``2``0:notnull</Target>
+    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
+    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>

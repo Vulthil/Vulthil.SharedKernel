@@ -6,8 +6,6 @@
   <PropertyGroup>
     <FrameworkVersion>10.0.9</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.17</FrameworkVersion>
-    <NpgsqlEfCoreVersion>10.0.2</NpgsqlEfCoreVersion>
-    <NpgsqlEfCoreVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.4</NpgsqlEfCoreVersion>
     <AspireVersion>13.4.6</AspireVersion>
     <!-- GHSA-v5pm-xwqc-g5wc: Microsoft.AspNetCore.OpenApi 10.0.9 (net10.0) pulls in the vulnerable
          Microsoft.OpenApi 2.0.0. net9.0's Microsoft.AspNetCore.OpenApi 9.0.17 already depends on the
@@ -19,7 +17,6 @@
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="$(AspireVersion)" />
-    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(AspireVersion)" />
@@ -34,7 +31,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(FrameworkVersion)" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(NpgsqlEfCoreVersion)" />
     <!-- MySQL: Aspire/Pomelo integration on net9; the Microting fork (a Pomelo fork) fills the EF Core 10 / net10 gap until the official Pomelo/Aspire packages ship it. -->
     <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="$(AspireVersion)" />
     <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.9" />
@@ -51,8 +47,6 @@
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.7.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.8.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.9" PrivateAssets="all" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.85" />
     <PackageVersion Include="Moq.AutoMock" Version="4.0.2" />
@@ -65,7 +59,6 @@
     <PackageVersion Include="ReportGenerator" Version="5.5.10" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Scalar.Aspire" Version="0.11.2" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.3" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.28.0.143324" />
     <PackageVersion Include="Testcontainers" Version="4.13.0" />

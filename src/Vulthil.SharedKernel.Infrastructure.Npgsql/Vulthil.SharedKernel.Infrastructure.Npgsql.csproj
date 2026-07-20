@@ -13,8 +13,12 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<!-- Not called directly by this project's code. Aspire.Npgsql.EntityFrameworkCore.PostgreSQL pulls these in
+		     transitively at a lower floor (OpenTelemetry.Extensions.Hosting/OpenTelemetry.Api 1.15.3 via its
+		     OpenTelemetry.Extensions.Hosting dependency; Microsoft.Extensions.Diagnostics.HealthChecks 10.0.8 via its
+		     Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore dependency) — kept as direct references
+		     so consumers resolve this solution's pinned 10.0.9 / 1.16.0 versions instead of Aspire's older floor. -->
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
 		<PackageReference Include="OpenTelemetry.Api" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
 	</ItemGroup>

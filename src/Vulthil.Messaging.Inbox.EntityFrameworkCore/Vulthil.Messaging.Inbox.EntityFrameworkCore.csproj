@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Shared Entity Framework Core primitives for Vulthil.Messaging.Inbox — the InboxMessage marker entity and the ISaveInboxMessages context interface, reused by the relational and Cosmos idempotency stores.</Description>
+		<PackageTags>inbox;idempotency;deduplication;efcore;entity-framework-core;messaging</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

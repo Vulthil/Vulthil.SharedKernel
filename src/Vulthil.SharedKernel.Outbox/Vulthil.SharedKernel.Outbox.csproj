@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Transactional outbox engine for Vulthil.SharedKernel — the message-capture model, the relay processor and background service, pluggable dispatchers, the commit-time relay signal, and the persistence-agnostic IOutboxStore seam. Free of any EF Core dependency; an EF implementation lives in Vulthil.SharedKernel.Outbox.EntityFrameworkCore.</Description>
+		<PackageTags>outbox;transactional-outbox;outbox-pattern;domain-events;messaging;reliability;background-service</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

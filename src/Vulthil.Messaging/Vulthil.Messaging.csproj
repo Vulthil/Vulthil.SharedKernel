@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Messaging composition APIs for configuring consumers, queues, and hosted processing.</Description>
+		<PackageTags>messaging;message-bus;consumers;queues;consume-filters;retry;partitioning;transport-sdk</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

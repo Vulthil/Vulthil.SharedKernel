@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Provider-specific EF Core mapping and optimizations for Cosmos DB.</Description>
+		<PackageTags>cosmosdb;azure-cosmos-db;cosmos;efcore;entity-framework-core;outbox;aspire</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

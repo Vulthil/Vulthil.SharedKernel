@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Shared relational helpers for provider implementations.</Description>
+		<PackageTags>efcore;entity-framework-core;relational;sql;outbox;migrations</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

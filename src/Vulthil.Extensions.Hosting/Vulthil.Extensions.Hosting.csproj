@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Hosting abstractions for Vulthil — notably IRestartableHostedService, a marker a background service implements to declare its execution can be stopped and started again cleanly, so infrastructure (such as test harnesses) may safely pause and resume it.</Description>
+		<PackageTags>hosting;hosted-service;ihostedservice;background-service;restartable;lifecycle</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Description>Testing-oriented extensions for asserting and composing application behaviors.</Description>
+		<Description>Framework-agnostic test helpers — Result-based polling (Polling.WaitAsync) for eventually-consistent checks and HTTP response JSON deserialization. No xUnit dependency; the xUnit-coupled test stack lives in Vulthil.xUnit.</Description>
+		<PackageTags>testing;polling;eventually-consistent;http;result;helpers</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

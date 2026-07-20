@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Provider-specific EF Core mapping and optimizations for MySql.</Description>
+		<PackageTags>mysql;pomelo;efcore;entity-framework-core;outbox;aspire</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

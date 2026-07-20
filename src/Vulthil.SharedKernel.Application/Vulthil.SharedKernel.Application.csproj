@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Application-layer building blocks such as handlers, pipelines, and validation helpers.</Description>
+		<PackageTags>cqrs;commands;queries;handlers;pipeline-behaviors;validation;fluentvalidation;application-layer</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

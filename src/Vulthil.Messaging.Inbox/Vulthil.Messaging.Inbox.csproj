@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Idempotent-receiver (inbox) consume filter for Vulthil.Messaging. Provides exactly-once message processing on top of at-least-once delivery via a pluggable, persistence-agnostic idempotency store.</Description>
+		<PackageTags>inbox;idempotency;idempotent-consumer;deduplication;messaging;exactly-once;consume-filter</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

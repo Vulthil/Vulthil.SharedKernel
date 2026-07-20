@@ -40,7 +40,7 @@
 		<Copyright>Copyright © Vulthil</Copyright>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/Vulthil/Vulthil.SharedKernel</PackageProjectUrl>
-		<PackageTags>shared-kernel;ddd;cqrs;result-pattern;dotnet</PackageTags>
+		<!-- PackageTags are set per project so each package's tags describe its own contents. -->
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/Vulthil/Vulthil.SharedKernel</RepositoryUrl>
 	</PropertyGroup>

@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Core domain primitives and base abstractions for shared domain logic.</Description>
+		<PackageTags>ddd;domain-driven-design;shared-kernel;entity;aggregate-root;domain-events;building-blocks</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

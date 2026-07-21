@@ -1,1 +1,4 @@
 #nullable enable
+*REMOVED*static Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+*REMOVED*static Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+*REMOVED*static Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

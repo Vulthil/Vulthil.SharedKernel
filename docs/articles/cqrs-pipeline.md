@@ -32,7 +32,31 @@ builder.Services.AddApplication(options =>
 });
 ```
 
-`AddApplication(Action<ApplicationOptions>)` is the single intended entry point for registering the application layer — it wires up handlers, validators, and pipeline behaviors together. The parameterless `AddApplication()`, `AddHandlers()`, and `AddFluentValidation()` overloads are obsolete: the first two always throw because no handler assemblies are registered, and the third silently registers no validators. Always configure through the action-based overload shown above.
+### Registering from multiple assemblies
+
+`AddApplication(Action<ApplicationOptions>)` is the host's application-composition entry point. Call it once from the project that owns the composition root, and register handler and validator assemblies from anywhere in the solution — including assemblies owned by other projects:
+
+```csharp
+builder.Services.AddApplication(options =>
+{
+    options.RegisterHandlerAssemblies(typeof(Program).Assembly, typeof(SomeDomainType).Assembly);
+    options.RegisterFluentValidationAssemblies(typeof(Program).Assembly, typeof(SomeDomainType).Assembly);
+});
+```
+
+A project that does not own the host — for example, an Infrastructure project with its own `AddInfrastructure` extension — can instead call `AddHandlers(Action<HandlerOptions>)` and `AddFluentValidation(Action<FluentValidationOptions>)` directly, registering its own assemblies additively without re-calling `AddApplication`:
+
+```csharp
+// In an Infrastructure project's own registration extension:
+public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+{
+    services.AddHandlers(o => o.RegisterHandlerAssemblies(typeof(AddInfrastructureExtensions).Assembly));
+    services.AddFluentValidation(o => o.RegisterFluentValidationAssemblies(typeof(AddInfrastructureExtensions).Assembly));
+    return services;
+}
+```
+
+Both entry points compose safely: `ISender` and `IDomainEventPublisher` are registered with `TryAddScoped`, so calling `AddHandlers` from more than one module never duplicates or conflicts with the host's own registration — each call only scans the assemblies it was given, and handlers discovered by every call resolve side by side. The same goes for validation types: a module's `AddFluentValidation` call registers only its own validators, additively alongside whatever the host or any other module already registered.
 
 ## Defining Commands and Handlers
 

@@ -1,7 +1,9 @@
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Application.Messaging;
+using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 using Vulthil.SharedKernel.Application.Pipeline;
 using Vulthil.xUnit;
 
@@ -139,6 +141,32 @@ public sealed class HandlerRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task AddHandlersAndAddFluentValidationFromASecondModuleComposeAdditively()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddApplication(o => o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly));
+        services.AddHandlers(o => o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly));
+        services.AddFluentValidation(o => o.RegisterFluentValidationAssemblies(typeof(HandlerRegistrationTests).Assembly));
+
+        // Act
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+        var hostResult = await sender.SendAsync(new PingCommand("host"), CancellationToken);
+        var moduleResult = await sender.SendAsync(new ModuleCommand("module"), CancellationToken);
+        var validator = scope.ServiceProvider.GetRequiredService<IValidator<ModuleCommand>>();
+        var validationResult = await validator.ValidateAsync(new ModuleCommand(string.Empty), CancellationToken);
+
+        // Assert
+        services.Count(d => d.ServiceType == typeof(ISender)).ShouldBe(1);
+        services.Count(d => d.ServiceType == typeof(IDomainEventPublisher)).ShouldBe(1);
+        hostResult.Value.ShouldBe("host");
+        moduleResult.Value.ShouldBe("[module] module");
+        validationResult.IsValid.ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task BehaviorWithUnmatchedConstraintIsSkipped()
     {
         var services = new ServiceCollection();
@@ -268,6 +296,19 @@ public sealed class HandlerRegistrationTests : BaseUnitTestCase
             }
         });
         return services;
+    }
+
+    internal sealed record ModuleCommand(string Message) : ICommand<Result<string>>;
+
+    internal sealed class ModuleCommandHandler : ICommandHandler<ModuleCommand, Result<string>>
+    {
+        public Task<Result<string>> HandleAsync(ModuleCommand request, CancellationToken cancellationToken = default) =>
+            Task.FromResult(Result.Success("[module] " + request.Message));
+    }
+
+    internal sealed class ModuleCommandValidator : AbstractValidator<ModuleCommand>
+    {
+        public ModuleCommandValidator() => RuleFor(x => x.Message).NotEmpty();
     }
 
     internal static class OrderTrackingBehaviors

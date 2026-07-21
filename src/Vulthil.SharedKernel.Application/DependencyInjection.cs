@@ -14,34 +14,20 @@ public static class DependencyInjection
 {
 
     /// <summary>
-    /// Registers application-layer services with no handler assemblies configured.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    /// <remarks>
-    /// This overload always throws <see cref="InvalidOperationException"/> at runtime because it registers zero
-    /// handler assemblies. Use <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/> and call
-    /// <see cref="ApplicationOptions.RegisterHandlerAssemblies"/> inside the configuration action instead.
-    /// </remarks>
-    /// <exception cref="InvalidOperationException">Always thrown because no handler assemblies are registered.</exception>
-    // S1133 flags every [Obsolete] member as a reminder to delete it; removal is tracked separately as a
-    // breaking change for the next major version, so the reminder is redundant for these trap overloads.
-#pragma warning disable S1133
-    [Obsolete("This overload always throws InvalidOperationException because it registers zero handler assemblies. Call AddApplication(Action<ApplicationOptions>) and use options.RegisterHandlerAssemblies(...) instead.")]
-    public static IServiceCollection AddApplication(this IServiceCollection services) => services.AddApplication(new ApplicationOptions());
-#pragma warning restore S1133
-
-    /// <summary>
     /// Registers application-layer services including handlers and FluentValidation validators.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="applicationOptionsAction">An action to configure application options.</param>
     /// <returns>The service collection for chaining.</returns>
     /// <remarks>
-    /// This is the single intended entry point for registering the application layer. Configure handler
-    /// assemblies, validator assemblies, and pipeline behaviors on the supplied <see cref="ApplicationOptions"/>
-    /// inside <paramref name="applicationOptionsAction"/> rather than calling <see cref="AddHandlers(IServiceCollection)"/>
-    /// or <see cref="AddFluentValidation(IServiceCollection)"/> directly.
+    /// This is the host's application-composition entry point: call it once from the project that owns the
+    /// composition root, and register handler and validator assemblies from anywhere in the solution — including
+    /// assemblies owned by other projects — via <see cref="ApplicationOptions.RegisterHandlerAssemblies"/> and
+    /// <see cref="ApplicationOptions.RegisterFluentValidationAssemblies"/>. A project that does not own the host
+    /// (for example, an Infrastructure project's own registration extension) can instead call
+    /// <see cref="AddHandlers(IServiceCollection, Action{HandlerOptions})"/> and/or
+    /// <see cref="AddFluentValidation(IServiceCollection, Action{FluentValidationOptions})"/> directly to register
+    /// that project's own assemblies additively, without re-calling this method.
     /// </remarks>
     public static IServiceCollection AddApplication(this IServiceCollection services, Action<ApplicationOptions> applicationOptionsAction)
     {
@@ -65,29 +51,19 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Registers FluentValidation validators with no assemblies configured.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    /// <remarks>
-    /// This overload silently registers no validators because it scans zero assemblies — it does not throw, so
-    /// the gap is easy to miss. Use <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>
-    /// and call <see cref="ApplicationOptions.RegisterFluentValidationAssemblies"/> inside the configuration
-    /// action instead.
-    /// </remarks>
-    // S1133: see the rationale on the AddApplication() trap overload above — removal is tracked separately.
-#pragma warning disable S1133
-    [Obsolete("This overload silently registers no validators because it scans zero assemblies. Call AddApplication(Action<ApplicationOptions>) and use options.RegisterFluentValidationAssemblies(...) instead.")]
-    public static IServiceCollection AddFluentValidation(this IServiceCollection services) => services.AddFluentValidation(new FluentValidationOptions());
-#pragma warning restore S1133
-
-
-    /// <summary>
     /// Registers FluentValidation validators from the configured assemblies.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="fluentValidationOptionsAction">An optional action to configure validation options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <remarks>
+    /// A supported modular entry point: call this from a project that does not own the host (for example, an
+    /// Infrastructure project's own registration extension) to additively register that project's own
+    /// FluentValidation validator assemblies without re-calling
+    /// <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>. Registration only scans the
+    /// assemblies configured in <paramref name="fluentValidationOptionsAction"/>, so calling this from multiple
+    /// independent modules composes additively instead of conflicting.
+    /// </remarks>
     public static IServiceCollection AddFluentValidation(this IServiceCollection services, Action<FluentValidationOptions> fluentValidationOptionsAction)
     {
         var fluentValidationOptions = new FluentValidationOptions();
@@ -112,28 +88,19 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Registers request handlers, domain event handlers, and pipeline handlers with no handler assemblies configured.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    /// <remarks>
-    /// This overload always throws <see cref="InvalidOperationException"/> at runtime because it registers zero
-    /// handler assemblies. Use <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/> and call
-    /// <see cref="ApplicationOptions.RegisterHandlerAssemblies"/> inside the configuration action instead.
-    /// </remarks>
-    /// <exception cref="InvalidOperationException">Always thrown because no handler assemblies are registered.</exception>
-    // S1133: see the rationale on the AddApplication() trap overload above — removal is tracked separately.
-#pragma warning disable S1133
-    [Obsolete("This overload always throws InvalidOperationException because it registers zero handler assemblies. Call AddApplication(Action<ApplicationOptions>) and use options.RegisterHandlerAssemblies(...) instead.")]
-    public static IServiceCollection AddHandlers(this IServiceCollection services) => services.AddHandlers(new HandlerOptions());
-#pragma warning restore S1133
-
-    /// <summary>
     /// Registers request handlers, domain event handlers, and pipeline handlers from the configured assemblies.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="handlerOptionsAction">An optional action to configure handler options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <remarks>
+    /// A supported modular entry point: call this from a project that does not own the host (for example, an
+    /// Infrastructure project's own registration extension) to additively register that project's own handler
+    /// assemblies without re-calling <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>.
+    /// Registration only scans the assemblies configured in <paramref name="handlerOptionsAction"/>, and the
+    /// shared <see cref="ISender"/>/<see cref="IDomainEventPublisher"/> registrations use <c>TryAddScoped</c>, so
+    /// calling this from multiple independent modules composes additively instead of conflicting.
+    /// </remarks>
     public static IServiceCollection AddHandlers(this IServiceCollection services, Action<HandlerOptions> handlerOptionsAction)
     {
         var handlerOptions = new HandlerOptions();
@@ -148,6 +115,13 @@ public static class DependencyInjection
     /// <param name="services">The service collection.</param>
     /// <param name="handlerOptions">The pre-configured handler options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <remarks>
+    /// The composition primitive both <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>
+    /// and <see cref="AddHandlers(IServiceCollection, Action{HandlerOptions})"/> delegate to. Safe to call from
+    /// multiple independent modules: registration only scans <see cref="HandlerOptions.HandlerAssemblies"/>, and
+    /// the shared <see cref="ISender"/>/<see cref="IDomainEventPublisher"/> registrations use
+    /// <c>TryAddScoped</c>, so calling it more than once composes additively instead of conflicting.
+    /// </remarks>
     /// <exception cref="InvalidOperationException">Thrown when no handler assemblies have been registered.</exception>
     public static IServiceCollection AddHandlers(this IServiceCollection services, HandlerOptions handlerOptions)
     {

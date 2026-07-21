@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<!-- Maintainer-approved removal of three trap overloads: the parameterless AddApplication() and
+     AddHandlers() always threw InvalidOperationException (they register zero handler assemblies), and
+     AddFluentValidation() silently registered no validators (it scans zero assemblies). No external
+     consumer of this package exists yet, so the maintainer approved removing them outright instead of
+     the usual deprecate-then-remove cycle. The working replacement for all three is the
+     Action<...>-configured overload of the same name. PublicAPI.Unshipped.txt carries the matching
+     *REMOVED* markers so PublicApiAnalyzer accepts the removal from source. -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Application.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Application.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Application.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Application.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Application.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Application.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection)</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Application.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Application.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection)</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Application.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Application.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection)</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Application.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Application.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>

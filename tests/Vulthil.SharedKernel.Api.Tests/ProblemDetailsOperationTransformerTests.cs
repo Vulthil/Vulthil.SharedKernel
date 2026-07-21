@@ -121,6 +121,16 @@ public sealed class ProblemDetailsOperationTransformerTests : BaseUnitTestCase
     }
 #endif
 
+    [Fact]
+    public async Task TransformAsyncThrowsOnNullOperation()
+    {
+        // Arrange
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            async () => await Target.TransformAsync(null!, CreateContext(), CancellationToken));
+    }
+
     private static OpenApiOperationTransformerContext CreateContext() => new()
     {
         DocumentName = "v1",

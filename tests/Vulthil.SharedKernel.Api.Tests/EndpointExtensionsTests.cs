@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -46,6 +47,64 @@ public sealed class EndpointExtensionsTests : BaseUnitTestCase
 
         // Assert
         Assert.Null(exception);
+    }
+
+    [Fact]
+    public void MapEndpointsMapsEachDiscoveredEndpointThroughTheProvidedRouteGroup()
+    {
+        // Arrange
+        var builder = WebApplication.CreateBuilder();
+        builder.Services.AddScoped<ScopedMarker>();
+        builder.Services.AddEndpoints(typeof(EndpointExtensionsTests).Assembly);
+        using var app = builder.Build();
+        var group = app.MapGroup("scoped-group");
+
+        // Act
+        var result = app.MapEndpoints(group);
+
+        // Assert
+        Assert.Same(app, result);
+        Assert.Contains(builder.Services, descriptor => descriptor.ImplementationType == typeof(RecordingEndpoint));
+        IEndpointRouteBuilder endpointRouteBuilder = app;
+        var routePatterns = endpointRouteBuilder.DataSources
+            .SelectMany(dataSource => dataSource.Endpoints)
+            .OfType<RouteEndpoint>()
+            .Select(endpoint => endpoint.RoutePattern.RawText)
+            .ToArray();
+        Assert.Contains("scoped-group/recording-endpoint", routePatterns);
+    }
+
+    [Fact]
+    public void MapEndpointsThrowsOnNullApp()
+    {
+        // Arrange
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => EndpointExtensions.MapEndpoints(null!));
+    }
+
+    [Fact]
+    public void AddEndpointsThrowsOnNullServices()
+    {
+        // Arrange
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => EndpointExtensions.AddEndpoints(null!, typeof(EndpointExtensionsTests).Assembly));
+    }
+
+    [Fact]
+    public void AddEndpointsThrowsOnNullAssembly()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => services.AddEndpoints(null!));
+    }
+
+    private sealed class RecordingEndpoint : IEndpoint
+    {
+        public void MapEndpoint(IEndpointRouteBuilder app) => app.MapGet("recording-endpoint", () => TypedResults.Ok());
     }
 
     private sealed class ScopedMarker

@@ -123,6 +123,10 @@
     <Project Path="tests/Vulthil.IntegrationTests/Vulthil.IntegrationTests.csproj" />
     <Project Path="tests/Vulthil.TestHost/Vulthil.TestHost.csproj" />
   </Folder>
+  <Folder Name="/tests/Testing/">
+    <Project Path="tests/Vulthil.Extensions.Testing.Tests/Vulthil.Extensions.Testing.Tests.csproj" />
+    <Project Path="tests/Vulthil.xUnit.Tests/Vulthil.xUnit.Tests.csproj" />
+  </Folder>
   <Folder Name="/tests/MessagingIntegrationTests/">
     <File Path="tests/MessagingIntegrationTests/aspire.config.json" />
     <File Path="tests/MessagingIntegrationTests/Directory.Build.props" />

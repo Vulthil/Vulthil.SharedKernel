@@ -34,8 +34,32 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
         }
 
         dbContext.InboxMessages.RemoveRange(markers);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await SaveRemovedMarkersAsync(cancellationToken);
         return markers.Count;
+    }
+
+    /// <summary>
+    /// Saves the pending removals, treating a concurrency conflict as progress rather than a failure: it means a
+    /// concurrent sweeper already deleted the same marker, so the goal (the row being gone) is already achieved.
+    /// </summary>
+    private async Task SaveRemovedMarkersAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException exception)
+        {
+            DetachConflictingEntries(exception);
+        }
+    }
+
+    private static void DetachConflictingEntries(DbUpdateConcurrencyException exception)
+    {
+        foreach (var entry in exception.Entries)
+        {
+            entry.State = EntityState.Detached;
+        }
     }
 
     public async Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken)

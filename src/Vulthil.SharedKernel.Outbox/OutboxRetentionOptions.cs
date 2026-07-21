@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
@@ -28,6 +26,5 @@ public sealed class OutboxRetentionOptions
     /// Gets or sets the maximum number of rows deleted per batch within a sweep; a sweep keeps deleting batches until
     /// fewer than this many rows remain. Default is 1000.
     /// </summary>
-    [Range(1, int.MaxValue)]
     public int BatchSize { get; set; } = 1000;
 }

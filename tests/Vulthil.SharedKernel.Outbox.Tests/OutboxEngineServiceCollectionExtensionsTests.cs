@@ -185,6 +185,87 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(101)]
+    public void OutboxProcessingDelaySecondsOutsideOneToOneHundredFailsValidationAtStartup(int value)
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine(o => o.OutboxProcessingDelaySeconds = value);
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(301)]
+    public void MaxDelaySecondsOutsideOneToThreeHundredFailsValidationAtStartup(int value)
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine(o => o.MaxDelaySeconds = value);
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
+    }
+
+    [Fact]
+    public void ZeroBatchSizeFailsValidationAtStartup()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine(o => o.BatchSize = 0);
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
+    }
+
+    [Fact]
+    public void ZeroMaxRetriesFailsValidationAtStartup()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine(o => o.MaxRetries = 0);
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(101)]
+    public void MaxDegreeOfParallelismOutsideOneToOneHundredFailsValidationAtStartup(int value)
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine(o => o.MaxDegreeOfParallelism = value);
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
+    }
+
+    [Fact]
+    public void DefaultOptionsPassValidation()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine();
+        using var provider = services.BuildServiceProvider();
+
+        // Act
+        var options = provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value;
+
+        // Assert
+        options.ShouldNotBeNull();
+    }
+
     private sealed class FakeOutboxStore<TContext> : IOutboxStore
     {
         public Type ContextType { get; } = typeof(TContext);

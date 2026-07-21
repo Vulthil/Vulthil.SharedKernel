@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Inbox_InboxRetentionServiceCollectionExtensions" data-uid="Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions" class="text-break">
-Class InboxRetentionServiceCollectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxRetentionServiceCollectionExtensions.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class InboxRetentionServiceCollectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxRetentionServiceCollectionExtensions.cs/#L9"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,7 +157,7 @@ Class InboxRetentionServiceCollectionExtensions  <a class="header-action link-se
 
   <h3 id="Vulthil_Messaging_Inbox_InboxRetentionServiceCollectionExtensions_AddInboxRetention_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_Messaging_Inbox_InboxOptions__" data-uid="Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})">
   AddInboxRetention(IServiceCollection, Action&lt;InboxOptions&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxRetentionServiceCollectionExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxRetentionServiceCollectionExtensions.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers the inbox retention background service, which periodically deletes idempotency markers older than
@@ -168,7 +168,7 @@ do).</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IServiceCollection AddInboxRetention(this IServiceCollection services, Action&lt;InboxOptions&gt;? configure)</code></pre>
+    <pre><code class="lang-csharp hljs">public static IServiceCollection AddInboxRetention(this IServiceCollection services, Action&lt;InboxOptions&gt;? configure = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -177,7 +177,9 @@ do).</p>
     <dd><p>The service collection.</p>
 </dd>
     <dt><code>configure</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Inbox.InboxOptions.html">InboxOptions</a>&gt;</dt>
-    <dd><p>An optional action to configure <a class="xref" href="Vulthil.Messaging.Inbox.InboxOptions.html">InboxOptions</a>.</p>
+    <dd><p>An optional action to configure <a class="xref" href="Vulthil.Messaging.Inbox.InboxOptions.html">InboxOptions</a>. Invoked once eagerly (to evaluate
+<a class="xref" href="Vulthil.Messaging.Inbox.InboxRetentionOptions.html#Vulthil_Messaging_Inbox_InboxRetentionOptions_Enabled">Enabled</a>) and once more when the options system materializes
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1">IOptions&lt;TOptions&gt;</a> for injected consumers.</p>
 </dd>
   </dl>
 
@@ -202,7 +204,7 @@ do).</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxRetentionServiceCollectionExtensions.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxRetentionServiceCollectionExtensions.cs/#L9" class="edit-link">Edit this page</a>
         </div>
 
 

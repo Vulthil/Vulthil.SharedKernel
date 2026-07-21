@@ -91,26 +91,28 @@ internal static class MessageContextFactory
         CancellationToken cancellationToken)
     {
         var metadata = ExtractMetadata(ea);
-        return MessageContext.BuildTyped(
-            message,
-            publisher,
-            sendEndpointProvider,
-            metadata.MessageId,
-            metadata.CorrelationId,
-            metadata.RequestId,
-            metadata.RoutingKey,
-            metadata.Headers,
-            metadata.Redelivered,
-            metadata.RetryCount,
-            metadata.ConversationId,
-            metadata.InitiatorId,
-            metadata.SourceAddress,
-            metadata.DestinationAddress,
-            metadata.ResponseAddress,
-            metadata.FaultAddress,
-            metadata.SentTime,
-            metadata.ExpirationTime,
-            cancellationToken);
+        return new MessageContext<TMessage>
+        {
+            Message = message,
+            Publisher = publisher,
+            SendEndpointProvider = sendEndpointProvider,
+            CancellationToken = cancellationToken,
+            MessageId = metadata.MessageId,
+            CorrelationId = metadata.CorrelationId,
+            RequestId = metadata.RequestId,
+            RoutingKey = metadata.RoutingKey,
+            Headers = metadata.Headers,
+            Redelivered = metadata.Redelivered,
+            RetryCount = metadata.RetryCount,
+            ConversationId = metadata.ConversationId,
+            InitiatorId = metadata.InitiatorId,
+            SourceAddress = metadata.SourceAddress,
+            DestinationAddress = metadata.DestinationAddress,
+            ResponseAddress = metadata.ResponseAddress,
+            FaultAddress = metadata.FaultAddress,
+            SentTime = metadata.SentTime,
+            ExpirationTime = metadata.ExpirationTime,
+        };
     }
 
     /// <summary>

@@ -18,10 +18,4 @@
 		<ProjectReference Include="..\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<!-- Vulthil.Messaging.Outbox's BrokerOutboxDispatcher shares OutboxMessageTypeResolver with this
-		     assembly's DomainEventOutboxDispatcher instead of duplicating the type-resolution cache. -->
-		<InternalsVisibleTo Include="Vulthil.Messaging.Outbox" />
-	</ItemGroup>
-
 </Project>

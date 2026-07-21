@@ -28,6 +28,7 @@ jobs:
     # not execute untrusted contributor code.
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
         with:

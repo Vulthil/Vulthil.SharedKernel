@@ -6,6 +6,10 @@
 # Local design / planning scratch — never commit
 docs/design/
 
+# Transient split-invocation solutions generated (and deleted) by eng/coverage.ps1;
+# ignored so a crashed run's leftovers can never be staged
+.coverage-*.generated.slnx
+
 # User-specific files
 *.rsuser
 *.suo

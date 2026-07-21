@@ -15,6 +15,7 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       packages: write
@@ -26,13 +27,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-dotnet@v6
-
-      - uses: actions/cache@v6
-        with:
-          path: ~/.nuget/packages
-          key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
-          restore-keys: nuget-
+      - uses: ./.github/actions/setup-build
 
       # PublicRelease=true forces nbgv to emit a stable version (no prerelease
       # suffix) regardless of branch, so a release can be cut from any branch.
@@ -129,6 +124,10 @@ jobs:
   mark-api-shipped:
     needs: release
     runs-on: ubuntu-latest
+    # Budgeted for the deliberate nuget.org indexing wait below (up to ~20
+    # minutes of polling plus a 60s grace sleep) on top of the PR open/
+    # approve/merge steps, not just the promotion script itself.
+    timeout-minutes: 35
     permissions:
       contents: write      # create the promotion branch
       pull-requests: write # open the PR
@@ -227,6 +226,10 @@ jobs:
     needs: release
     if: github.ref_name != github.event.repository.default_branch
     runs-on: ubuntu-latest
+    # Same deliberate nuget.org indexing wait as mark-api-shipped's gate when
+    # a bump is actually needed; skipped output is fast, but this must budget
+    # for the slow path (see that job's comment for the exact math).
+    timeout-minutes: 35
     permissions:
       contents: write      # create the propagation branch
       pull-requests: write # open the PR

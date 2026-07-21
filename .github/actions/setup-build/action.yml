@@ -1,0 +1,22 @@
+name: Setup build environment
+description: >-
+  Shared CI/release/docs preamble: installs the pinned .NET SDKs, restores the
+  NuGet package cache, and restores local dotnet tools (reportgenerator,
+  docfx). Checkout is intentionally not included here -- each workflow checks
+  out with its own options (fetch-depth, persist-credentials) before calling
+  this action.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-dotnet@v6
+
+    - uses: actions/cache@v6
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+        restore-keys: nuget-
+
+    - name: Restore local dotnet tools
+      shell: bash
+      run: dotnet tool restore

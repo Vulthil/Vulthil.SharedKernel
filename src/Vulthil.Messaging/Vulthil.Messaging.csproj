@@ -17,4 +17,10 @@
 	  <ProjectReference Include="..\Vulthil.Messaging.Abstractions\Vulthil.Messaging.Abstractions.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<!-- The RabbitMQ transport's bare-JSON compat receive path shares MessageContext's internal typed-context
+		     builder instead of duplicating the envelope-receive mapping. -->
+		<InternalsVisibleTo Include="Vulthil.Messaging.RabbitMq" />
+	</ItemGroup>
+
 </Project>

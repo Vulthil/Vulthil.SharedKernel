@@ -4,7 +4,10 @@ namespace Vulthil.Messaging.RabbitMq.Publishing;
 
 internal interface IInternalPublisher
 {
-    Task InternalPublishAsync<TMessage>(
+    /// <summary>
+    /// Publishes the already-serialized message body over the message's fanout/topic exchange.
+    /// </summary>
+    Task InternalPublishAsync(
         byte[] body,
         BasicProperties props,
         string routingKey,

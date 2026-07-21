@@ -101,4 +101,33 @@ public sealed class ConsumerHostedServiceTests : BaseUnitTestCase
         attempts.ShouldBe(2);
         transport.Verify(t => t.StartAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task MultipleRegisteredTransportsStartsOnlyTheLastRegisteredOne()
+    {
+        // Arrange — pins the "last registration wins" contract ResolveTransport documents: Vulthil.Messaging.TestHarness's
+        // UseTestHarness()/ReplaceTransportWithTestHarness() remove any prior ITransport registration before adding
+        // their own, so the in-memory transport is normally the only (and therefore last) one; if a transport is
+        // ever registered again afterward, the most recently registered ITransport must be the one that starts.
+        var services = new ServiceCollection();
+        var firstRegistered = new Mock<ITransport>();
+        firstRegistered.Setup(t => t.StartAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        var lastRegistered = new Mock<ITransport>();
+        lastRegistered.Setup(t => t.StartAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        services.AddSingleton(firstRegistered.Object);
+        services.AddSingleton(lastRegistered.Object);
+        var provider = services.BuildServiceProvider();
+
+        Use<IServiceProvider>(provider);
+        Use(provider.GetRequiredService<IServiceProviderIsService>());
+
+        // Act
+        await Target.StartAsync(CancellationToken);
+        await Target.ExecuteTask!;
+
+        // Assert
+        Target.ExecuteTask.Status.ShouldBe(TaskStatus.RanToCompletion);
+        lastRegistered.Verify(t => t.StartAsync(It.IsAny<CancellationToken>()), Times.Once);
+        firstRegistered.Verify(t => t.StartAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
 }

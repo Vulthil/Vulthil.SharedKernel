@@ -30,7 +30,6 @@ internal sealed class BrokerOutboxDispatcher(
             && method.IsGenericMethodDefinition
             && method.GetParameters().Length == 3);
 
-    private static readonly ConcurrentDictionary<string, Type> TypeCache = [];
     private static readonly ConcurrentDictionary<Type, MethodInfo> PublishByType = [];
     private static readonly ConcurrentDictionary<Type, MethodInfo> SendByType = [];
 
@@ -39,7 +38,7 @@ internal sealed class BrokerOutboxDispatcher(
 
     public async Task DispatchAsync(OutboxMessageData message, CancellationToken cancellationToken)
     {
-        var messageType = ResolveType(message.Type);
+        var messageType = OutboxMessageTypeResolver.Resolve(message.Type, "message");
         var payload = JsonSerializer.Deserialize(message.Content, messageType, messageConfigurationProvider.JsonSerializerOptions)!;
         var metadata = message.Metadata is null
             ? null
@@ -93,16 +92,4 @@ internal sealed class BrokerOutboxDispatcher(
             context.AddHeaders(headers);
         }
     }
-
-    private static Type ResolveType(string typeName) => TypeCache.GetOrAdd(typeName, static name =>
-    {
-        var type = Type.GetType(name)
-            ?? AppDomain.CurrentDomain.GetAssemblies()
-                .Select(assembly => assembly.GetType(name))
-                .FirstOrDefault(found => found is not null);
-
-        return type ?? throw new InvalidOperationException(
-            $"Unable to resolve the message type '{name}' for an outbox relay. " +
-            "Ensure the assembly that defines the type is loaded in the relay process.");
-    });
 }

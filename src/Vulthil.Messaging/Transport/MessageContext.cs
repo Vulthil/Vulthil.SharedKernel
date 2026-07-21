@@ -110,30 +110,76 @@ public record MessageContext : IMessageContext
             userHeaders[key] = HeaderValueNormalizer.Normalize(value);
         }
 
-        return new MessageContext<TMessage>
+        return BuildTyped(
+            message,
+            publisher,
+            sendEndpointProvider,
+            envelope.MessageId,
+            envelope.CorrelationId ?? string.Empty,
+            envelope.RequestId ?? envelope.CorrelationId,
+            routingKey,
+            userHeaders,
+            redelivered,
+            retryCount,
+            envelope.ConversationId,
+            envelope.InitiatorId,
+            ParseAddress(envelope.SourceAddress),
+            ParseAddress(envelope.DestinationAddress),
+            ParseAddress(envelope.ResponseAddress)
+                ?? (string.IsNullOrEmpty(replyToFallback) ? null : new Uri($"queue:{replyToFallback}")),
+            ParseAddress(envelope.FaultAddress),
+            envelope.SentTime,
+            envelope.ExpirationTime,
+            cancellationToken);
+    }
+
+    /// <summary>
+    /// Constructs a live typed <see cref="MessageContext{TMessage}"/> from already-resolved metadata. Shared by
+    /// <see cref="CreateFromEnvelope{TMessage}"/> (the standard envelope receive path) and the RabbitMQ transport's
+    /// bare-JSON compat path, which resolve these values from their own wire representations — a parsed
+    /// <see cref="MessageEnvelope"/> versus raw AMQP properties/headers — before delegating the final mapping here.
+    /// </summary>
+    internal static MessageContext<TMessage> BuildTyped<TMessage>(
+        TMessage message,
+        IPublisher? publisher,
+        ISendEndpointProvider? sendEndpointProvider,
+        string? messageId,
+        string? correlationId,
+        string? requestId,
+        string routingKey,
+        IReadOnlyDictionary<string, object?> headers,
+        bool redelivered,
+        int retryCount,
+        string? conversationId,
+        string? initiatorId,
+        Uri? sourceAddress,
+        Uri? destinationAddress,
+        Uri? responseAddress,
+        Uri? faultAddress,
+        DateTimeOffset? sentTime,
+        DateTimeOffset? expirationTime,
+        CancellationToken cancellationToken) => new MessageContext<TMessage>
         {
             Message = message,
             Publisher = publisher,
             SendEndpointProvider = sendEndpointProvider,
             CancellationToken = cancellationToken,
-            MessageId = envelope.MessageId,
-            CorrelationId = envelope.CorrelationId ?? string.Empty,
-            RequestId = envelope.RequestId ?? envelope.CorrelationId,
+            MessageId = messageId,
+            CorrelationId = correlationId,
+            RequestId = requestId,
             RoutingKey = routingKey,
-            Headers = userHeaders,
+            Headers = headers,
             Redelivered = redelivered,
             RetryCount = retryCount,
-            ConversationId = envelope.ConversationId,
-            InitiatorId = envelope.InitiatorId,
-            SourceAddress = ParseAddress(envelope.SourceAddress),
-            DestinationAddress = ParseAddress(envelope.DestinationAddress),
-            ResponseAddress = ParseAddress(envelope.ResponseAddress)
-                ?? (string.IsNullOrEmpty(replyToFallback) ? null : new Uri($"queue:{replyToFallback}")),
-            FaultAddress = ParseAddress(envelope.FaultAddress),
-            SentTime = envelope.SentTime,
-            ExpirationTime = envelope.ExpirationTime,
+            ConversationId = conversationId,
+            InitiatorId = initiatorId,
+            SourceAddress = sourceAddress,
+            DestinationAddress = destinationAddress,
+            ResponseAddress = responseAddress,
+            FaultAddress = faultAddress,
+            SentTime = sentTime,
+            ExpirationTime = expirationTime,
         };
-    }
 
     /// <summary>
     /// Auto-propagates correlation metadata (correlation, conversation, initiator) from this incoming context onto

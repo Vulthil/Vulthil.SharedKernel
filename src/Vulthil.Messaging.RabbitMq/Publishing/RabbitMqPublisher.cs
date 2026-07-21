@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
@@ -35,7 +34,7 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
     /// Channels come from a bounded pool — each leased channel is used non-concurrently and returned for reuse, or
     /// discarded if it faults.
     /// </remarks>
-    public async Task InternalPublishAsync<TMessage>(
+    public async Task InternalPublishAsync(
         byte[] body,
         BasicProperties props,
         string routingKey,
@@ -102,51 +101,25 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
            ?? messageConfiguration.RoutingKeyFormatter?.Invoke(message)
            ?? string.Empty;
 
-        var correlationId = publishContext.CorrelationId
-            ?? messageConfiguration.CorrelationIdFormatter?.Invoke(message)
-            ?? Guid.CreateVersion7().ToString();
-
-        var messageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString();
+        var ids = RabbitMqWireMessageBuilder.ResolveIds(message, publishContext, messageConfiguration);
         var exchange = messageConfiguration.Exchange;
-        var urn = messageConfiguration.Urn;
-        var urnString = urn.AbsoluteUri;
 
-        using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
-            $"{exchange} publish",
-            ActivityKind.Producer);
+        using var activity = RabbitMqWireMessageBuilder.StartProducerActivity(
+            $"{exchange} publish", "publish", exchange, routingKey, ids.UrnString, ids.MessageId, ids.CorrelationId);
 
-        if (activity is not null)
-        {
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingSystem, MessagingInstrumentation.SystemValue);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingOperation, "publish");
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingDestination, exchange);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingRoutingKey, routingKey);
-            activity.SetTag(MessagingInstrumentation.Tags.MessageType, urnString);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingMessageId, messageId);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, correlationId);
-        }
+        var properties = RabbitMqWireMessageBuilder.CreateBaseProperties(ids.UrnString, ids.MessageId, publishContext.Headers);
+        properties.ReplyTo = RabbitMqAddress.ResolveRoutingKey(publishContext.ResponseAddress);
+        properties.CorrelationId = ids.CorrelationId;
+        properties.Persistent = true;
 
-        var properties = new BasicProperties()
-        {
-            Type = urnString,
-            MessageId = messageId,
-            ReplyTo = RabbitMqAddress.ResolveRoutingKey(publishContext.ResponseAddress),
-            CorrelationId = correlationId,
-            ContentType = RabbitMqConstants.ContentType,
-            Headers = new Dictionary<string, object?>(publishContext.Headers),
-            Persistent = true,
-            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
-        };
+        var body = RabbitMqWireMessageBuilder.SerializeEnvelope(
+            message, publishContext, ids.MessageId, ids.CorrelationId, ids.Urn, _messageConfigurationProvider.JsonSerializerOptions);
 
-        var envelope = MessageEnvelopeFactory.Create(
-            message, publishContext, messageId, correlationId, urn, _messageConfigurationProvider.JsonSerializerOptions);
-        var body = JsonSerializer.SerializeToUtf8Bytes(envelope, _messageConfigurationProvider.JsonSerializerOptions);
-
-        MessagingLog.Publishing(_logger, urnString, exchange, routingKey, messageId);
+        MessagingLog.Publishing(_logger, ids.UrnString, exchange, routingKey, ids.MessageId);
 
         try
         {
-            await InternalPublishAsync<TMessage>(body, properties, routingKey, messageConfiguration, cancellationToken);
+            await InternalPublishAsync(body, properties, routingKey, messageConfiguration, cancellationToken);
             activity?.SetStatus(ActivityStatusCode.Ok);
         }
         catch (Exception ex)

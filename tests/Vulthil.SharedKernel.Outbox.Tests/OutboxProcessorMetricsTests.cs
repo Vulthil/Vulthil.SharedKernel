@@ -5,6 +5,16 @@ using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Outbox.Tests;
 
+/// <summary>
+/// Groups every test that measures the process-wide <see cref="Telemetry.Meter"/> counters within a narrow
+/// listening window, so xUnit never runs them concurrently with each other — a real <see cref="OutboxProcessor"/>
+/// dispatch anywhere else in the process (e.g. <see cref="OutboxProcessorTests"/>) increments the same static
+/// counters and would otherwise be misattributed to a concurrently-running measurement.
+/// </summary>
+[CollectionDefinition(nameof(OutboxTelemetryCollection))]
+public sealed class OutboxTelemetryCollection;
+
+[Collection(nameof(OutboxTelemetryCollection))]
 public sealed class OutboxProcessorMetricsTests : BaseUnitTestCase
 {
     private static readonly OutboxMessageData Message = new(

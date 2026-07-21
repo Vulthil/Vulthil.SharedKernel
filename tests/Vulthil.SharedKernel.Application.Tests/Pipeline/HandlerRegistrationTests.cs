@@ -116,6 +116,29 @@ public sealed class HandlerRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task MultipleBehaviorsExecuteInRegistrationOrderEndToEnd()
+    {
+        // Arrange
+        OrderTrackingBehaviors.ExecutionOrder.Clear();
+        var services = new ServiceCollection();
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly);
+            o.AddOpenPipelineHandler(typeof(FirstOrderTrackingBehavior<,>));
+            o.AddOpenPipelineHandler(typeof(SecondOrderTrackingBehavior<,>));
+        });
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<IHandler<PingCommand, Result<string>>>();
+
+        // Act
+        await handler.HandleAsync(new PingCommand("order"), CancellationToken);
+
+        // Assert
+        OrderTrackingBehaviors.ExecutionOrder.ShouldBe(["First-Before", "Second-Before", "Second-After", "First-After"]);
+    }
+
+    [Fact]
     public async Task BehaviorWithUnmatchedConstraintIsSkipped()
     {
         var services = new ServiceCollection();
@@ -245,6 +268,35 @@ public sealed class HandlerRegistrationTests : BaseUnitTestCase
             }
         });
         return services;
+    }
+
+    internal static class OrderTrackingBehaviors
+    {
+        public static List<string> ExecutionOrder { get; } = [];
+    }
+
+    internal sealed class FirstOrderTrackingBehavior<TRequest, TResponse> : IPipelineHandler<TRequest, TResponse>
+        where TRequest : IRequest<TResponse>
+    {
+        public async Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+        {
+            OrderTrackingBehaviors.ExecutionOrder.Add("First-Before");
+            var response = await next(cancellationToken);
+            OrderTrackingBehaviors.ExecutionOrder.Add("First-After");
+            return response;
+        }
+    }
+
+    internal sealed class SecondOrderTrackingBehavior<TRequest, TResponse> : IPipelineHandler<TRequest, TResponse>
+        where TRequest : IRequest<TResponse>
+    {
+        public async Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
+        {
+            OrderTrackingBehaviors.ExecutionOrder.Add("Second-Before");
+            var response = await next(cancellationToken);
+            OrderTrackingBehaviors.ExecutionOrder.Add("Second-After");
+            return response;
+        }
     }
 }
 

@@ -20,17 +20,19 @@ internal sealed class PipelineHandlerDecorator<TRequest, TResponse>(
     where TRequest : IRequest<TResponse>
 {
     private readonly IInnerHandler<TRequest, TResponse> _inner = inner;
-    private readonly IEnumerable<IPipelineHandler<TRequest, TResponse>> _behaviors = behaviors;
+    private readonly IPipelineHandler<TRequest, TResponse>[] _reversedBehaviors = behaviors.Reverse().ToArray();
 
     /// <inheritdoc />
     public Task<TResponse> HandleAsync(TRequest request, CancellationToken cancellationToken = default)
     {
         Task<TResponse> Handler(CancellationToken t) => _inner.HandleAsync(request, t);
 
-        var pipeline = _behaviors
-            .Reverse()
-            .Aggregate((PipelineDelegate<TResponse>)Handler,
-                (next, behavior) => t => behavior.HandleAsync(request, next, t));
+        PipelineDelegate<TResponse> pipeline = Handler;
+        foreach (var behavior in _reversedBehaviors)
+        {
+            var next = pipeline;
+            pipeline = t => behavior.HandleAsync(request, next, t);
+        }
 
         return pipeline(cancellationToken);
     }

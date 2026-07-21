@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 using Vulthil.SharedKernel.Application.Pipeline;
 using Vulthil.SharedKernel.Events;
@@ -63,5 +64,62 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
 
         // Assert
         stringBuilder.ToString().ShouldContain("Success");
+    }
+
+    [Fact]
+    public async Task MultiplePipelineHandlersExecuteInRegistrationOrderEndToEnd()
+    {
+        // Arrange
+        OrderedPipelineHandlers.ExecutionOrder.Clear();
+        var services = new ServiceCollection();
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(DomainEventPublisherTests).Assembly);
+            o.AddOpenDomainEventPipelineHandler(typeof(FirstOrderedPipelineHandler<>));
+            o.AddOpenDomainEventPipelineHandler(typeof(SecondOrderedPipelineHandler<>));
+        });
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var publisher = scope.ServiceProvider.GetRequiredService<IDomainEventPublisher>();
+
+        // Act
+        await publisher.PublishAsync(new OrderedEvent(), CancellationToken);
+
+        // Assert
+        OrderedPipelineHandlers.ExecutionOrder.ShouldBe(["First-Before", "Second-Before", "Second-After", "First-After"]);
+    }
+
+    internal sealed record OrderedEvent : IDomainEvent;
+
+    internal sealed class OrderedEventHandler : IDomainEventHandler<OrderedEvent>
+    {
+        public Task HandleAsync(OrderedEvent notification, CancellationToken cancellationToken = default) => Task.CompletedTask;
+    }
+
+    internal static class OrderedPipelineHandlers
+    {
+        public static List<string> ExecutionOrder { get; } = [];
+    }
+
+    internal sealed class FirstOrderedPipelineHandler<TDomainEvent> : IDomainEventPipelineHandler<TDomainEvent>
+        where TDomainEvent : IDomainEvent
+    {
+        public async Task HandleAsync(TDomainEvent domainEvent, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default)
+        {
+            OrderedPipelineHandlers.ExecutionOrder.Add("First-Before");
+            await next(cancellationToken);
+            OrderedPipelineHandlers.ExecutionOrder.Add("First-After");
+        }
+    }
+
+    internal sealed class SecondOrderedPipelineHandler<TDomainEvent> : IDomainEventPipelineHandler<TDomainEvent>
+        where TDomainEvent : IDomainEvent
+    {
+        public async Task HandleAsync(TDomainEvent domainEvent, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default)
+        {
+            OrderedPipelineHandlers.ExecutionOrder.Add("Second-Before");
+            await next(cancellationToken);
+            OrderedPipelineHandlers.ExecutionOrder.Add("Second-After");
+        }
     }
 }

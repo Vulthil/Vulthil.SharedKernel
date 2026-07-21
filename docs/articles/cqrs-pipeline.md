@@ -32,6 +32,8 @@ builder.Services.AddApplication(options =>
 });
 ```
 
+`AddApplication(Action<ApplicationOptions>)` is the single intended entry point for registering the application layer — it wires up handlers, validators, and pipeline behaviors together. The parameterless `AddApplication()`, `AddHandlers()`, and `AddFluentValidation()` overloads are obsolete: the first two always throw because no handler assemblies are registered, and the third silently registers no validators. Always configure through the action-based overload shown above.
+
 ## Defining Commands and Handlers
 
 ```csharp

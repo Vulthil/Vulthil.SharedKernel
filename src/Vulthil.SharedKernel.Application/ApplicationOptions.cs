@@ -11,11 +11,12 @@ namespace Vulthil.SharedKernel.Application;
 public class FluentValidationOptions
 {
     private readonly HashSet<Assembly> _fluentValidationAssemblies = [];
+
     /// <summary>
     /// Gets the assemblies registered for FluentValidation validator scanning.
     /// Validators discovered in these assemblies are registered automatically.
     /// </summary>
-    public IReadOnlyList<Assembly> FluentValidationAssemblies => _fluentValidationAssemblies.ToList().AsReadOnly();
+    public IReadOnlyList<Assembly> FluentValidationAssemblies { get; private set; } = [];
 
     /// <summary>
     /// Registers assemblies to scan for FluentValidation validators.
@@ -29,6 +30,7 @@ public class FluentValidationOptions
             _fluentValidationAssemblies.Add(item);
         }
 
+        FluentValidationAssemblies = _fluentValidationAssemblies.ToList().AsReadOnly();
         return this;
     }
 }
@@ -43,7 +45,7 @@ public class HandlerOptions
     /// Gets the assemblies registered for handler scanning.
     /// Request handlers and domain event handlers in these assemblies are registered automatically.
     /// </summary>
-    public IReadOnlyList<Assembly> HandlerAssemblies => _handlerAssemblies.ToList().AsReadOnly();
+    public IReadOnlyList<Assembly> HandlerAssemblies { get; private set; } = [];
     /// <summary>
     /// Gets the pipeline handler service descriptors registered via <see cref="AddOpenPipelineHandler"/> or <see cref="AddOpenDomainEventPipelineHandler"/>.
     /// </summary>
@@ -60,6 +62,7 @@ public class HandlerOptions
             _handlerAssemblies.Add(assembly);
         }
 
+        HandlerAssemblies = _handlerAssemblies.ToList().AsReadOnly();
         return this;
     }
 

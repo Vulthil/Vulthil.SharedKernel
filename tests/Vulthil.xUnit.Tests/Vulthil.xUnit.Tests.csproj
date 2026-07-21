@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Vulthil.TestRunner.props', '$(MSBuildThisFileDirectory)'))" />
+
+	<ItemGroup>
+		<!-- Only needed to close the generic constraints on TestDatabaseContainerFixture for the SanitizeDatabaseName
+		     tests; the container type is never started, so this project needs no Docker daemon. -->
+		<PackageReference Include="Testcontainers.PostgreSql" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<!-- This is the only project with InternalsVisibleTo access into Vulthil.xUnit (it tests that assembly
+		     directly), so Moq.AutoMock's WithKeyedService source generator fires twice for the same signature: once
+		     for this compilation, once already baked into Vulthil.xUnit.dll and now visible via InternalsVisibleTo -
+		     an unavoidable ambiguous-call clash (CS0121) that no other test project hits. Nothing here uses keyed
+		     services, so disabling just this generator (a switch Moq.AutoMock itself exposes) is side-effect-free. -->
+		<EnableMoqAutoMockerKeyedServicesGenerator>false</EnableMoqAutoMockerKeyedServicesGenerator>
+	</PropertyGroup>
+
+</Project>

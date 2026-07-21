@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Vulthil.TestRunner.props', '$(MSBuildThisFileDirectory)'))" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
+	</ItemGroup>
+
+</Project>

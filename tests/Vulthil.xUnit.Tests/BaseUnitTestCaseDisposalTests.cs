@@ -1,6 +1,4 @@
-using Vulthil.xUnit;
-
-namespace Vulthil.SharedKernel.Tests.Testing;
+namespace Vulthil.xUnit.Tests;
 
 public sealed class BaseUnitTestCaseDisposalTests : BaseUnitTestCase<BaseUnitTestCaseDisposalTests.DisposableTarget>
 {

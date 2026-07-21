@@ -57,6 +57,100 @@ public sealed class OutboxRetentionBackgroundServiceTests : BaseUnitTestCase
         Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
     }
 
+    [Fact]
+    public async Task TheSweepPassesACutoffComputedFromTheConfiguredRetentionPeriod()
+    {
+        // Arrange
+        var now = new DateTimeOffset(2026, 1, 15, 12, 0, 0, TimeSpan.Zero);
+        var retentionPeriod = TimeSpan.FromDays(3);
+        Use<TimeProvider>(new FixedTimeProvider(now));
+        Use<IOptions<OutboxProcessingOptions>>(Options.Create(new OutboxProcessingOptions
+        {
+            Retention = { SweepInterval = TimeSpan.FromSeconds(60), RetentionPeriod = retentionPeriod }
+        }));
+        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        var store = new RecordingRetentionStore([0]);
+        Use<IOutboxStore>(store);
+
+        // Act
+        await Target.StartAsync(CancellationToken);
+        await store.LastCallCompleted;
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        store.ObservedCutoffs.ShouldHaveSingleItem().ShouldBe(now - retentionPeriod);
+    }
+
+    [Fact]
+    public async Task TheSweepKeepsDeletingBatchesUntilFewerThanBatchSizeRowsRemain()
+    {
+        // Arrange
+        const int batchSize = 5;
+        Use<IOptions<OutboxProcessingOptions>>(Options.Create(new OutboxProcessingOptions
+        {
+            Retention = { SweepInterval = TimeSpan.FromSeconds(60), BatchSize = batchSize }
+        }));
+        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        var store = new RecordingRetentionStore([batchSize, batchSize, 2]);
+        Use<IOutboxStore>(store);
+
+        // Act
+        await Target.StartAsync(CancellationToken);
+        await store.LastCallCompleted;
+        await Target.StopAsync(CancellationToken);
+
+        // Assert
+        store.CallCount.ShouldBe(3);
+        store.ObservedBatchSizes.ShouldAllBe(size => size == batchSize);
+    }
+
+    private sealed class FixedTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => now;
+    }
+
+    /// <summary>Records every <see cref="DeleteProcessedAsync"/> call's cutoff/batch-size and replays a fixed result sequence.</summary>
+    private sealed class RecordingRetentionStore(IReadOnlyList<int> resultsInOrder) : IOutboxStore, IOutboxRetentionStore
+    {
+        private readonly TaskCompletionSource _lastCallCompleted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly List<DateTimeOffset> _observedCutoffs = [];
+        private readonly List<int> _observedBatchSizes = [];
+        private int _callCount;
+
+        public Task LastCallCompleted => _lastCallCompleted.Task;
+
+        public IReadOnlyList<DateTimeOffset> ObservedCutoffs => _observedCutoffs;
+
+        public IReadOnlyList<int> ObservedBatchSizes => _observedBatchSizes;
+
+        public int CallCount => _callCount;
+
+        public bool IsInTransaction => false;
+
+        public void AddOutboxMessage(OutboxMessage message)
+        {
+        }
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
+
+        public Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken) => Task.FromResult(0);
+
+        public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+        {
+            var index = Interlocked.Increment(ref _callCount) - 1;
+            _observedCutoffs.Add(olderThanUtc);
+            _observedBatchSizes.Add(batchSize);
+
+            var result = index < resultsInOrder.Count ? resultsInOrder[index] : resultsInOrder[^1];
+            if (index == resultsInOrder.Count - 1)
+            {
+                _lastCallCompleted.TrySetResult();
+            }
+
+            return Task.FromResult(result);
+        }
+    }
+
     private sealed class TimeoutThrowingRetentionStore : IOutboxStore, IOutboxRetentionStore
     {
         private readonly TaskCompletionSource _firstSweepAttempted = new(TaskCreationOptions.RunContinuationsAsynchronously);

@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Outbox.Tests;
@@ -87,6 +89,100 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         // Assert
         services.Count(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(OutboxBackgroundService)).ShouldBe(1);
         services.Count(descriptor => descriptor.ServiceType == typeof(OutboxProcessor)).ShouldBe(1);
+    }
+
+    [Fact]
+    public void EnableMetricsRegistersTheMeterProviderService()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddOutboxEngine(o => o.EnableMetrics = true);
+
+        // Assert
+        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(MeterProvider));
+    }
+
+    [Fact]
+    public void EnableMetricsDisabledSkipsMeterProviderRegistration()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddOutboxEngine(o => o.EnableMetrics = false);
+
+        // Assert
+        services.ShouldNotContain(descriptor => descriptor.ServiceType == typeof(MeterProvider));
+    }
+
+    [Fact]
+    public void EnableTracingRegistersTheTracerProviderService()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddOutboxEngine(o => o.EnableTracing = true);
+
+        // Assert
+        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(TracerProvider));
+    }
+
+    [Fact]
+    public void EnableTracingDisabledSkipsTracerProviderRegistration()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddOutboxEngine(o => o.EnableTracing = false);
+
+        // Assert
+        services.ShouldNotContain(descriptor => descriptor.ServiceType == typeof(TracerProvider));
+    }
+
+    [Fact]
+    public void RetentionEnabledRegistersTheRetentionBackgroundService()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddOutboxEngine(o => o.Retention.Enabled = true);
+
+        // Assert
+        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(OutboxRetentionBackgroundService));
+    }
+
+    [Fact]
+    public void RetentionDisabledDoesNotRegisterTheRetentionBackgroundService()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddOutboxEngine(o => o.Retention.Enabled = false);
+
+        // Assert
+        services.ShouldNotContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(OutboxRetentionBackgroundService));
+    }
+
+    [Fact]
+    public void RetentionEnabledWithAZeroRetentionPeriodFailsValidationAtStartup()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine(o =>
+        {
+            o.Retention.Enabled = true;
+            o.Retention.RetentionPeriod = TimeSpan.Zero;
+        });
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
     }
 
     private sealed class FakeOutboxStore<TContext> : IOutboxStore

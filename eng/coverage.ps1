@@ -28,7 +28,9 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 
 # A crashed prior run can leave generated solutions behind; with two .slnx
 # files at the root, the no-args `dotnet build` below refuses to pick one.
-Remove-Item -Path (Join-Path $repoRoot '.coverage-*.generated.slnx') -ErrorAction SilentlyContinue
+# -Force is required: on Linux, pwsh treats dot-prefixed files as hidden and
+# refuses to remove them otherwise.
+Remove-Item -Path (Join-Path $repoRoot '.coverage-*.generated.slnx') -Force -ErrorAction SilentlyContinue
 
 if (-not $NoBuild) {
     dotnet build -c Release
@@ -94,7 +96,13 @@ try {
     }
 }
 finally {
-    Remove-Item -Path $otherSolution, $integrationSolution -ErrorAction SilentlyContinue
+    # Raw unlink instead of Remove-Item: on Linux, pwsh maps the leading dot to
+    # the Hidden attribute and Remove-Item then refuses the file without -Force
+    # (the swallowed refusal left both files behind and broke the no-args
+    # `dotnet pack` that runs after this script in CI). File.Delete has no
+    # hidden-file gate and is a documented no-op when the file is absent.
+    [System.IO.File]::Delete($otherSolution)
+    [System.IO.File]::Delete($integrationSolution)
 }
 
 dotnet tool restore

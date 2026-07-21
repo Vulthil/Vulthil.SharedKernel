@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
@@ -10,23 +8,19 @@ public sealed class OutboxProcessingOptions
     /// <summary>
     /// Gets the base polling delay in seconds between outbox processing cycles. Default is 2.
     /// </summary>
-    [Range(1, 100)]
     public int OutboxProcessingDelaySeconds { get; set; } = 2;
     /// <summary>
     /// Gets the maximum back-off delay in seconds when no messages are found. Default is 60.
     /// </summary>
-    [Range(1, 300)]
     public int MaxDelaySeconds { get; set; } = 60;
     /// <summary>
     /// Gets the maximum number of outbox messages to process per cycle. Default is 10.
     /// </summary>
-    [Range(1, int.MaxValue)]
     public int BatchSize { get; set; } = 10;
     /// <summary>
     /// Gets the maximum number of delivery attempts before a message is dead-lettered — its <c>FailedOnUtc</c>
     /// is set and it is no longer relayed. Default is 3.
     /// </summary>
-    [Range(1, int.MaxValue)]
     public int MaxRetries { get; set; } = 3;
     /// <summary>
     /// Gets a value indicating whether messages within a batch should be published in parallel.
@@ -38,7 +32,6 @@ public sealed class OutboxProcessingOptions
     /// Gets the maximum number of messages dispatched concurrently when <see cref="EnableParallelPublishing"/> is
     /// enabled. Default is 4. Ignored when parallel publishing is disabled.
     /// </summary>
-    [Range(1, 100)]
     public int MaxDegreeOfParallelism { get; set; } = 4;
 
     /// <summary>

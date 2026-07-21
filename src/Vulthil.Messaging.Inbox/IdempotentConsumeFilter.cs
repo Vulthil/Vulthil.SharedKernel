@@ -24,6 +24,8 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
     ILogger<IdempotentConsumeFilter<TMessage>> logger) : IConsumeFilter<TMessage>
     where TMessage : notnull
 {
+    private static readonly string _messageType = typeof(TMessage).FullName ?? typeof(TMessage).Name;
+
     private readonly IIdempotencyStore _store = store;
     private readonly IInboxKeySelector<TMessage> _keySelector = keySelector;
     private readonly InboxOptions _options = options.Value;
@@ -31,7 +33,6 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
 
     public async Task ConsumeAsync(IMessageContext<TMessage> context, ConsumeDelegate<TMessage> next)
     {
-        var messageType = typeof(TMessage).FullName ?? typeof(TMessage).Name;
         var key = _keySelector.GetKey(context);
         key = string.IsNullOrEmpty(key) ? context.MessageId : key;
 
@@ -42,7 +43,7 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
                 throw new MissingIdempotencyKeyException(typeof(TMessage));
             }
 
-            InboxLog.MissingKeyAllowed(_logger, messageType);
+            InboxLog.MissingKeyAllowed(_logger, _messageType);
             InboxTelemetry.MissingKey.Add(1);
             await next(context);
             return;
@@ -56,7 +57,7 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
         }
         else
         {
-            InboxLog.DuplicateSkipped(_logger, messageType, key);
+            InboxLog.DuplicateSkipped(_logger, _messageType, key);
             InboxTelemetry.DuplicateSkipped.Add(1);
         }
     }

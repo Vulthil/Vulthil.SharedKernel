@@ -62,7 +62,21 @@ public static class OutboxEngineServiceCollectionExtensions
             .Validate(
                 o => o.MaxDelaySeconds >= o.OutboxProcessingDelaySeconds,
                 "MaxDelaySeconds must be greater than or equal to OutboxProcessingDelaySeconds.")
-            .ValidateDataAnnotations()
+            .Validate(
+                o => o.OutboxProcessingDelaySeconds is >= 1 and <= 100,
+                "OutboxProcessingDelaySeconds must be between 1 and 100.")
+            .Validate(
+                o => o.MaxDelaySeconds is >= 1 and <= 300,
+                "MaxDelaySeconds must be between 1 and 300.")
+            .Validate(
+                o => o.BatchSize >= 1,
+                "BatchSize must be at least 1.")
+            .Validate(
+                o => o.MaxRetries >= 1,
+                "MaxRetries must be at least 1.")
+            .Validate(
+                o => o.MaxDegreeOfParallelism is >= 1 and <= 100,
+                "MaxDegreeOfParallelism must be between 1 and 100.")
             .ValidateOnStart();
 
         var options = new OutboxProcessingOptions();

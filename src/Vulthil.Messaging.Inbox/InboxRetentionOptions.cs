@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Vulthil.Messaging.Inbox;
 
 /// <summary>
@@ -29,6 +27,5 @@ public sealed class InboxRetentionOptions
     /// Gets or sets the maximum number of markers deleted per batch within a sweep; a sweep keeps deleting batches
     /// until fewer than this many markers remain. Default is 1000.
     /// </summary>
-    [Range(1, int.MaxValue)]
     public int BatchSize { get; set; } = 1000;
 }

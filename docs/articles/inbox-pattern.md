@@ -139,6 +139,21 @@ builder.Services.AddCosmosInbox<AppDbContext>();
 
 The marker is a self-contained document keyed and partitioned by `MessageId` in its own container, so a duplicate insert conflicts and is treated as already-processed. Because Cosmos cannot commit the marker and the business write atomically, the store writes the marker **after** the consumer's own commit and the guarantee is **effectively-once** — keep your consumer's writes idempotent (deterministic ids / upserts) so a redelivery that races ahead of the marker is harmless.
 
+### Custom stores
+
+Implement `IIdempotencyStore` to back the inbox with a different persistence technology. Register your store, then
+call `AddInboxCore` to get the same retention sweep, metrics, and `TimeProvider` wiring that
+`AddRelationalInbox`/`AddCosmosInbox` give the first-party stores — there is no first-party-only registration path:
+
+```csharp
+builder.Services.TryAddScoped<IIdempotencyStore, MyCustomIdempotencyStore>();
+builder.Services.AddInboxCore(o => o.Retention.Enabled = true);
+```
+
+Implement `IInboxRetentionStore` too if your store should support the retention sweep. `AddInboxCore` registers the
+sweep whenever `Retention.Enabled` is set, and the sweep silently skips (after a one-time warning) if the
+registered store doesn't implement it.
+
 ## Typical Flow
 
 ```

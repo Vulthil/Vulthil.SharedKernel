@@ -15,9 +15,4 @@
 	  <ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Vulthil.Messaging.Inbox.Relational" />
-		<InternalsVisibleTo Include="Vulthil.Messaging.Inbox.Cosmos" />
-	</ItemGroup>
-
 </Project>

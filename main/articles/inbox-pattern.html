@@ -187,6 +187,16 @@ messaging.AddTransactionalConsumer&lt;OrderPlaced&gt;();
 <pre><code class="lang-csharp">builder.Services.AddCosmosInbox&lt;AppDbContext&gt;();
 </code></pre>
 <p>The marker is a self-contained document keyed and partitioned by <code>MessageId</code> in its own container, so a duplicate insert conflicts and is treated as already-processed. Because Cosmos cannot commit the marker and the business write atomically, the store writes the marker <strong>after</strong> the consumer's own commit and the guarantee is <strong>effectively-once</strong> — keep your consumer's writes idempotent (deterministic ids / upserts) so a redelivery that races ahead of the marker is harmless.</p>
+<h3 id="custom-stores">Custom stores</h3>
+<p>Implement <code>IIdempotencyStore</code> to back the inbox with a different persistence technology. Register your store, then
+call <code>AddInboxCore</code> to get the same retention sweep, metrics, and <code>TimeProvider</code> wiring that
+<code>AddRelationalInbox</code>/<code>AddCosmosInbox</code> give the first-party stores — there is no first-party-only registration path:</p>
+<pre><code class="lang-csharp">builder.Services.TryAddScoped&lt;IIdempotencyStore, MyCustomIdempotencyStore&gt;();
+builder.Services.AddInboxCore(o =&gt; o.Retention.Enabled = true);
+</code></pre>
+<p>Implement <code>IInboxRetentionStore</code> too if your store should support the retention sweep. <code>AddInboxCore</code> registers the
+sweep whenever <code>Retention.Enabled</code> is set, and the sweep silently skips (after a one-time warning) if the
+registered store doesn't implement it.</p>
 <h2 id="typical-flow">Typical Flow</h2>
 <pre><code>Broker delivers message (possibly a duplicate)
     ↓

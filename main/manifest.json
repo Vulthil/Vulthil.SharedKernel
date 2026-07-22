@@ -600,6 +600,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extension that registers the inbox infrastructure shared by every idempotency store.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxOptions.yml",
       "output": {
         ".html": {

@@ -1814,6 +1814,28 @@ references:
   fullName.vb: Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.AddIdempotentInbox(Of TMessage)(Vulthil.Messaging.IMessagingConfigurator, System.Func(Of Vulthil.Messaging.Abstractions.Consumers.IMessageContext(Of TMessage), String))
   nameWithType: InboxConfiguratorExtensions.AddIdempotentInbox<TMessage>(IMessagingConfigurator, Func<IMessageContext<TMessage>, string?>?)
   nameWithType.vb: InboxConfiguratorExtensions.AddIdempotentInbox(Of TMessage)(IMessagingConfigurator, Func(Of IMessageContext(Of TMessage), String))
+- uid: Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions
+  name: InboxCoreServiceCollectionExtensions
+  href: api/Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.html
+  commentId: T:Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions
+  fullName: Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions
+  nameWithType: InboxCoreServiceCollectionExtensions
+- uid: Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name: AddInboxCore(IServiceCollection, Action<InboxOptions>?)
+  href: api/Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.html#Vulthil_Messaging_Inbox_InboxCoreServiceCollectionExtensions_AddInboxCore_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_Messaging_Inbox_InboxOptions__
+  commentId: M:Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.Messaging.Inbox.InboxOptions})
+  name.vb: AddInboxCore(IServiceCollection, Action(Of InboxOptions))
+  fullName: Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action<Vulthil.Messaging.Inbox.InboxOptions>?)
+  fullName.vb: Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action(Of Vulthil.Messaging.Inbox.InboxOptions))
+  nameWithType: InboxCoreServiceCollectionExtensions.AddInboxCore(IServiceCollection, Action<InboxOptions>?)
+  nameWithType.vb: InboxCoreServiceCollectionExtensions.AddInboxCore(IServiceCollection, Action(Of InboxOptions))
+- uid: Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore*
+  name: AddInboxCore
+  href: api/Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.html#Vulthil_Messaging_Inbox_InboxCoreServiceCollectionExtensions_AddInboxCore_
+  commentId: Overload:Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore
+  nameWithType: InboxCoreServiceCollectionExtensions.AddInboxCore
 - uid: Vulthil.Messaging.Inbox.InboxOptions
   name: InboxOptions
   href: api/Vulthil.Messaging.Inbox.InboxOptions.html

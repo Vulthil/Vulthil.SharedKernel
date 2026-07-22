@@ -11,7 +11,7 @@ internal interface INotificationHandlerWrapper
         CancellationToken cancellationToken);
 }
 
-internal sealed record NotificationHandlerExecutor(object HandlerInstance, Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
+internal sealed record NotificationHandlerExecutor(Func<IDomainEvent, CancellationToken, Task> HandlerCallback);
 
 internal sealed class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper
     where TNotification : IDomainEvent
@@ -23,15 +23,19 @@ internal sealed class NotificationHandlerWrapper<TNotification> : INotificationH
     {
         var handlers = serviceFactory
             .GetServices<IDomainEventHandler<TNotification>>()
-            .Select(static x => new NotificationHandlerExecutor(x, (n, ct) => x.HandleAsync((TNotification)n, ct)));
+            .Select(static x => new NotificationHandlerExecutor((n, ct) => x.HandleAsync((TNotification)n, ct)));
 
         Task Handlers(CancellationToken t = default) => publish(handlers, domainEvent, t);
 
-        var h = serviceFactory
-            .GetServices<IDomainEventPipelineHandler<TNotification>>()
-            .Reverse()
-            .Aggregate((DomainEventPipelineDelegate)Handlers,
-                (next, pipeline) => (t) => pipeline.HandleAsync((TNotification)domainEvent, next, t));
+        var pipelineHandlers = serviceFactory.GetServices<IDomainEventPipelineHandler<TNotification>>().ToArray();
+
+        DomainEventPipelineDelegate h = Handlers;
+        for (var i = pipelineHandlers.Length - 1; i >= 0; i--)
+        {
+            var pipelineHandler = pipelineHandlers[i];
+            var next = h;
+            h = t => pipelineHandler.HandleAsync((TNotification)domainEvent, next, t);
+        }
 
         return h(cancellationToken);
     }

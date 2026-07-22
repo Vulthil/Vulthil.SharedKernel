@@ -48,8 +48,8 @@ Vulthil.SharedKernel.Application.HandlerOptions.HandlerOptions() -> void
 Vulthil.SharedKernel.Application.HandlerOptions.PipelineHandlers.get -> System.Collections.Generic.IReadOnlyList<Microsoft.Extensions.DependencyInjection.ServiceDescriptor!>!
 Vulthil.SharedKernel.Application.HandlerOptions.RegisterHandlerAssemblies(params System.Reflection.Assembly![]! assemblies) -> Vulthil.SharedKernel.Application.HandlerOptions!
 Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher
-Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(object! notification, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync<TNotification>(TNotification notification, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(object! notification, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync<TNotification>(TNotification notification, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 Vulthil.SharedKernel.Application.Messaging.ICommand
 Vulthil.SharedKernel.Application.Messaging.ICommand<TResponse>
 Vulthil.SharedKernel.Application.Messaging.ICommandHandler<TCommand, TResponse>

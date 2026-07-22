@@ -15,20 +15,19 @@ internal static partial class LoggingBehaviors
         where TRequest : IRequest<TResponse>
         where TResponse : Result
     {
+        private static readonly string _requestName = typeof(TRequest).Name;
         private readonly ILogger<RequestLoggingPipelineBehavior<TRequest, TResponse>> _logger = logger;
 
         /// <inheritdoc />
         public async Task<TResponse> HandleAsync(TRequest request, PipelineDelegate<TResponse> next, CancellationToken cancellationToken = default)
         {
-            var requestName = typeof(TRequest).Name;
-
-            LogProcessingRequest(_logger, requestName);
+            LogProcessingRequest(_logger, _requestName);
 
             var result = await next(cancellationToken);
 
             if (result.IsSuccess)
             {
-                LogCompletedRequest(_logger, requestName);
+                LogCompletedRequest(_logger, _requestName);
             }
             else
             {
@@ -37,7 +36,7 @@ internal static partial class LoggingBehaviors
                     ["Error"] = JsonSerializer.Serialize(result.Error, result.Error.GetType())
                 }))
                 {
-                    LogCompletedRequestWithError(_logger, requestName);
+                    LogCompletedRequestWithError(_logger, _requestName);
                 }
             }
 
@@ -58,18 +57,17 @@ internal static partial class LoggingBehaviors
         : IDomainEventPipelineHandler<TDomainEvent>
         where TDomainEvent : IDomainEvent
     {
+        private static readonly string _domainEventName = typeof(TDomainEvent).Name;
         private readonly ILogger<DomainEventLoggingPipelineBehavior<TDomainEvent>> _logger = logger;
 
         /// <inheritdoc />
         public async Task HandleAsync(TDomainEvent domainEvent, DomainEventPipelineDelegate next, CancellationToken cancellationToken = default)
         {
-            var domainEventName = typeof(TDomainEvent).Name;
-
-            LogProcessingEvent(_logger, domainEventName);
+            LogProcessingEvent(_logger, _domainEventName);
 
             await next(cancellationToken);
 
-            LogCompletedEvent(_logger, domainEventName);
+            LogCompletedEvent(_logger, _domainEventName);
         }
 
 

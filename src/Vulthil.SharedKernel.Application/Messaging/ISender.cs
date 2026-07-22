@@ -22,7 +22,7 @@ public interface ISender
 internal sealed class Sender(IServiceProvider serviceProvider) : ISender
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private static readonly ConcurrentDictionary<(Type RequestType, Type ResponseType), IRequestHandlerBase> _requestHandlers = new();
+    private static readonly ConcurrentDictionary<(Type RequestType, Type ResponseType), object> _requestHandlers = new();
 
     public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
@@ -31,8 +31,7 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
         var handler = (IRequestHandlerWrapper<TResponse>)_requestHandlers.GetOrAdd((request.GetType(), typeof(TResponse)), static key =>
         {
             var wrapperType = typeof(RequestHandlerWrapperResult<,>).MakeGenericType(key.RequestType, key.ResponseType);
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {key.RequestType}");
-            return (IRequestHandlerBase)wrapper;
+            return Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {key.RequestType}");
         });
 
         return handler.HandleAsync(request, _serviceProvider, cancellationToken);
@@ -41,23 +40,13 @@ internal sealed class Sender(IServiceProvider serviceProvider) : ISender
 internal class RequestHandlerWrapperResult<TRequest, TResponse> : IRequestHandlerWrapper<TResponse>
     where TRequest : IRequest<TResponse>
 {
-    public async Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
-        CancellationToken cancellationToken = default) =>
-        await HandleAsync((IRequest<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
-
     public Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default) =>
         serviceProvider.GetRequiredService<IHandler<TRequest, TResponse>>()
             .HandleAsync((TRequest)request, cancellationToken);
 }
 
-internal interface IRequestHandlerBase
-{
-    Task<object?> HandleAsync(object request, IServiceProvider serviceProvider,
-        CancellationToken cancellationToken = default);
-}
-
-internal interface IRequestHandlerWrapper<TResponse> : IRequestHandlerBase
+internal interface IRequestHandlerWrapper<TResponse>
 {
     Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default);

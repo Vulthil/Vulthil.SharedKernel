@@ -14,18 +14,21 @@ public static class DependencyInjection
 {
 
     /// <summary>
-    /// Registers application-layer services with default options.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddApplication(this IServiceCollection services) => services.AddApplication(new ApplicationOptions());
-
-    /// <summary>
     /// Registers application-layer services including handlers and FluentValidation validators.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="applicationOptionsAction">An action to configure application options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <remarks>
+    /// This is the host's application-composition entry point: call it once from the project that owns the
+    /// composition root, and register handler and validator assemblies from anywhere in the solution — including
+    /// assemblies owned by other projects — via <see cref="ApplicationOptions.RegisterHandlerAssemblies"/> and
+    /// <see cref="ApplicationOptions.RegisterFluentValidationAssemblies"/>. A project that does not own the host
+    /// (for example, an Infrastructure project's own registration extension) can instead call
+    /// <see cref="AddHandlers(IServiceCollection, Action{HandlerOptions})"/> and/or
+    /// <see cref="AddFluentValidation(IServiceCollection, Action{FluentValidationOptions})"/> directly to register
+    /// that project's own assemblies additively, without re-calling this method.
+    /// </remarks>
     public static IServiceCollection AddApplication(this IServiceCollection services, Action<ApplicationOptions> applicationOptionsAction)
     {
         var applicationOptions = new ApplicationOptions();
@@ -48,19 +51,19 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Registers FluentValidation validators with default options.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddFluentValidation(this IServiceCollection services) => services.AddFluentValidation(new FluentValidationOptions());
-
-
-    /// <summary>
     /// Registers FluentValidation validators from the configured assemblies.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="fluentValidationOptionsAction">An optional action to configure validation options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <remarks>
+    /// A supported modular entry point: call this from a project that does not own the host (for example, an
+    /// Infrastructure project's own registration extension) to additively register that project's own
+    /// FluentValidation validator assemblies without re-calling
+    /// <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>. Registration only scans the
+    /// assemblies configured in <paramref name="fluentValidationOptionsAction"/>, so calling this from multiple
+    /// independent modules composes additively instead of conflicting.
+    /// </remarks>
     public static IServiceCollection AddFluentValidation(this IServiceCollection services, Action<FluentValidationOptions> fluentValidationOptionsAction)
     {
         var fluentValidationOptions = new FluentValidationOptions();
@@ -85,18 +88,19 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Registers request handlers, domain event handlers, and pipeline handlers with default options.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddHandlers(this IServiceCollection services) => services.AddHandlers(new HandlerOptions());
-
-    /// <summary>
     /// Registers request handlers, domain event handlers, and pipeline handlers from the configured assemblies.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="handlerOptionsAction">An optional action to configure handler options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <remarks>
+    /// A supported modular entry point: call this from a project that does not own the host (for example, an
+    /// Infrastructure project's own registration extension) to additively register that project's own handler
+    /// assemblies without re-calling <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>.
+    /// Registration only scans the assemblies configured in <paramref name="handlerOptionsAction"/>, and the
+    /// shared <see cref="ISender"/>/<see cref="IDomainEventPublisher"/> registrations use <c>TryAddScoped</c>, so
+    /// calling this from multiple independent modules composes additively instead of conflicting.
+    /// </remarks>
     public static IServiceCollection AddHandlers(this IServiceCollection services, Action<HandlerOptions> handlerOptionsAction)
     {
         var handlerOptions = new HandlerOptions();
@@ -111,12 +115,19 @@ public static class DependencyInjection
     /// <param name="services">The service collection.</param>
     /// <param name="handlerOptions">The pre-configured handler options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <remarks>
+    /// The composition primitive both <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>
+    /// and <see cref="AddHandlers(IServiceCollection, Action{HandlerOptions})"/> delegate to. Safe to call from
+    /// multiple independent modules: registration only scans <see cref="HandlerOptions.HandlerAssemblies"/>, and
+    /// the shared <see cref="ISender"/>/<see cref="IDomainEventPublisher"/> registrations use
+    /// <c>TryAddScoped</c>, so calling it more than once composes additively instead of conflicting.
+    /// </remarks>
     /// <exception cref="InvalidOperationException">Thrown when no handler assemblies have been registered.</exception>
     public static IServiceCollection AddHandlers(this IServiceCollection services, HandlerOptions handlerOptions)
     {
         if (handlerOptions.HandlerAssemblies.Count == 0)
         {
-            throw new InvalidOperationException($"Must add atleast one assembly, by using the {nameof(HandlerOptions.RegisterHandlerAssemblies)} method.");
+            throw new InvalidOperationException($"Must add at least one assembly, by using the {nameof(HandlerOptions.RegisterHandlerAssemblies)} method.");
         }
 
         services.TryAddScoped<IDomainEventPublisher, DomainEventPublisher>();
@@ -135,8 +146,8 @@ public static class DependencyInjection
     /// <summary>
     /// Registers an open-generic request pipeline behavior. Behaviors registered through this method
     /// apply to every handler resolved after <see cref="IServiceProvider"/> construction — order of
-    /// registration relative to <see cref="AddHandlers(IServiceCollection)"/> is irrelevant because
-    /// behaviors are composed lazily at handler-resolution time.
+    /// registration relative to <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>
+    /// is irrelevant because behaviors are composed lazily at handler-resolution time.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="pipelineHandler">The open-generic type implementing <see cref="IPipelineHandler{TRequest, TResponse}"/>.</param>

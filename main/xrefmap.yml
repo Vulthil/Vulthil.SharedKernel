@@ -7553,12 +7553,6 @@ references:
   commentId: T:Vulthil.SharedKernel.Application.DependencyInjection
   fullName: Vulthil.SharedKernel.Application.DependencyInjection
   nameWithType: DependencyInjection
-- uid: Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name: AddApplication(IServiceCollection)
-  href: api/Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_
-  commentId: M:Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  fullName: Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  nameWithType: DependencyInjection.AddApplication(IServiceCollection)
 - uid: Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.SharedKernel.Application.ApplicationOptions})
   name: AddApplication(IServiceCollection, Action<ApplicationOptions>)
   href: api/Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_ApplicationOptions__
@@ -7581,12 +7575,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.DependencyInjection.AddApplication
   nameWithType: DependencyInjection.AddApplication
-- uid: Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name: AddFluentValidation(IServiceCollection)
-  href: api/Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddFluentValidation_Microsoft_Extensions_DependencyInjection_IServiceCollection_
-  commentId: M:Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  fullName: Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  nameWithType: DependencyInjection.AddFluentValidation(IServiceCollection)
 - uid: Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.SharedKernel.Application.FluentValidationOptions})
   name: AddFluentValidation(IServiceCollection, Action<FluentValidationOptions>)
   href: api/Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddFluentValidation_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_FluentValidationOptions__
@@ -7609,12 +7597,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation
   nameWithType: DependencyInjection.AddFluentValidation
-- uid: Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name: AddHandlers(IServiceCollection)
-  href: api/Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddHandlers_Microsoft_Extensions_DependencyInjection_IServiceCollection_
-  commentId: M:Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  fullName: Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  nameWithType: DependencyInjection.AddHandlers(IServiceCollection)
 - uid: Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.SharedKernel.Application.HandlerOptions})
   name: AddHandlers(IServiceCollection, Action<HandlerOptions>)
   href: api/Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddHandlers_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_HandlerOptions__

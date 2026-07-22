@@ -142,6 +142,24 @@
     options.AddTransactionalPipelineBehavior();
 });
 </code></pre>
+<h3 id="registering-from-multiple-assemblies">Registering from multiple assemblies</h3>
+<p><code>AddApplication(Action&lt;ApplicationOptions&gt;)</code> is the host's application-composition entry point. Call it once from the project that owns the composition root, and register handler and validator assemblies from anywhere in the solution — including assemblies owned by other projects:</p>
+<pre><code class="lang-csharp">builder.Services.AddApplication(options =&gt;
+{
+    options.RegisterHandlerAssemblies(typeof(Program).Assembly, typeof(SomeDomainType).Assembly);
+    options.RegisterFluentValidationAssemblies(typeof(Program).Assembly, typeof(SomeDomainType).Assembly);
+});
+</code></pre>
+<p>A project that does not own the host — for example, an Infrastructure project with its own <code>AddInfrastructure</code> extension — can instead call <code>AddHandlers(Action&lt;HandlerOptions&gt;)</code> and <code>AddFluentValidation(Action&lt;FluentValidationOptions&gt;)</code> directly, registering its own assemblies additively without re-calling <code>AddApplication</code>:</p>
+<pre><code class="lang-csharp">// In an Infrastructure project's own registration extension:
+public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+{
+    services.AddHandlers(o =&gt; o.RegisterHandlerAssemblies(typeof(AddInfrastructureExtensions).Assembly));
+    services.AddFluentValidation(o =&gt; o.RegisterFluentValidationAssemblies(typeof(AddInfrastructureExtensions).Assembly));
+    return services;
+}
+</code></pre>
+<p>Both entry points compose safely: <code>ISender</code> and <code>IDomainEventPublisher</code> are registered with <code>TryAddScoped</code>, so calling <code>AddHandlers</code> from more than one module never duplicates or conflicts with the host's own registration — each call only scans the assemblies it was given, and handlers discovered by every call resolve side by side. The same goes for validation types: a module's <code>AddFluentValidation</code> call registers only its own validators, additively alongside whatever the host or any other module already registered.</p>
 <h2 id="defining-commands-and-handlers">Defining Commands and Handlers</h2>
 <pre><code class="lang-csharp">public sealed record CreateUserCommand(string Email) : ICommand&lt;Result&lt;Guid&gt;&gt;;
 

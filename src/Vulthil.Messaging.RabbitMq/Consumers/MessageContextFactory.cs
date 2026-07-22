@@ -66,46 +66,20 @@ internal static class MessageContextFactory
     /// </summary>
     public static MessageContextSnapshot CreateSnapshot(BasicDeliverEventArgs ea)
     {
-        var context = BuildMetadata(ea);
+        var metadata = ExtractMetadata(ea);
         return new MessageContextSnapshot
         {
-            MessageId = context.MessageId,
-            RequestId = context.RequestId,
-            CorrelationId = context.CorrelationId,
-            ConversationId = context.ConversationId,
-            InitiatorId = context.InitiatorId,
-            SourceAddress = context.SourceAddress,
-            DestinationAddress = context.DestinationAddress,
-            ResponseAddress = context.ResponseAddress,
-            FaultAddress = context.FaultAddress,
-            RoutingKey = context.RoutingKey,
-            RetryCount = context.RetryCount,
-        };
-    }
-
-    private static MessageContext BuildMetadata(BasicDeliverEventArgs ea)
-    {
-        var props = ea.BasicProperties;
-        var headers = props.Headers ?? new Dictionary<string, object?>();
-        var sentTime = GetSentTime(props);
-        return new MessageContext
-        {
-            MessageId = props.MessageId,
-            CorrelationId = props.CorrelationId,
-            RequestId = props.CorrelationId,
-            RoutingKey = ea.RoutingKey,
-            Headers = AmqpHeaderValueNormalizer.Normalize(headers),
-            Redelivered = ea.Redelivered,
-            RetryCount = RabbitMqConstants.GetRetryCount(headers),
-            ConversationId = RabbitMqConstants.GetHeaderString(headers, "ConversationId"),
-            InitiatorId = RabbitMqConstants.GetHeaderString(headers, "InitiatorId"),
-            SourceAddress = RabbitMqConstants.GetHeaderUri(headers, "SourceAddress"),
-            DestinationAddress = RabbitMqConstants.GetHeaderUri(headers, "DestinationAddress"),
-            ResponseAddress = RabbitMqConstants.GetHeaderUri(headers, "ResponseAddress")
-                ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : new Uri($"queue:{props.ReplyTo}")),
-            FaultAddress = RabbitMqConstants.GetHeaderUri(headers, "FaultAddress"),
-            SentTime = sentTime,
-            ExpirationTime = RabbitMqConstants.TryParseExpiration(props.Expiration, sentTime)
+            MessageId = metadata.MessageId,
+            RequestId = metadata.RequestId,
+            CorrelationId = metadata.CorrelationId,
+            ConversationId = metadata.ConversationId,
+            InitiatorId = metadata.InitiatorId,
+            SourceAddress = metadata.SourceAddress,
+            DestinationAddress = metadata.DestinationAddress,
+            ResponseAddress = metadata.ResponseAddress,
+            FaultAddress = metadata.FaultAddress,
+            RoutingKey = metadata.RoutingKey,
+            RetryCount = metadata.RetryCount,
         };
     }
 
@@ -116,34 +90,77 @@ internal static class MessageContextFactory
         ISendEndpointProvider? sendEndpointProvider,
         CancellationToken cancellationToken)
     {
-        var props = ea.BasicProperties;
-        var headers = props.Headers ?? new Dictionary<string, object?>();
-        var sentTime = GetSentTime(props);
+        var metadata = ExtractMetadata(ea);
         return new MessageContext<TMessage>
         {
             Message = message,
             Publisher = publisher,
             SendEndpointProvider = sendEndpointProvider,
             CancellationToken = cancellationToken,
-            MessageId = props.MessageId,
-            CorrelationId = props.CorrelationId,
-            RequestId = props.CorrelationId,
-            RoutingKey = ea.RoutingKey,
-            Headers = AmqpHeaderValueNormalizer.Normalize(headers),
-            Redelivered = ea.Redelivered,
-            RetryCount = RabbitMqConstants.GetRetryCount(headers),
-            ConversationId = RabbitMqConstants.GetHeaderString(headers, "ConversationId"),
-            InitiatorId = RabbitMqConstants.GetHeaderString(headers, "InitiatorId"),
-            SourceAddress = RabbitMqConstants.GetHeaderUri(headers, "SourceAddress"),
-            DestinationAddress = RabbitMqConstants.GetHeaderUri(headers, "DestinationAddress"),
-            ResponseAddress = RabbitMqConstants.GetHeaderUri(headers, "ResponseAddress")
-                ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : new Uri($"queue:{props.ReplyTo}")),
-            FaultAddress = RabbitMqConstants.GetHeaderUri(headers, "FaultAddress"),
-            SentTime = sentTime,
-            ExpirationTime = RabbitMqConstants.TryParseExpiration(props.Expiration, sentTime)
+            MessageId = metadata.MessageId,
+            CorrelationId = metadata.CorrelationId,
+            RequestId = metadata.RequestId,
+            RoutingKey = metadata.RoutingKey,
+            Headers = metadata.Headers,
+            Redelivered = metadata.Redelivered,
+            RetryCount = metadata.RetryCount,
+            ConversationId = metadata.ConversationId,
+            InitiatorId = metadata.InitiatorId,
+            SourceAddress = metadata.SourceAddress,
+            DestinationAddress = metadata.DestinationAddress,
+            ResponseAddress = metadata.ResponseAddress,
+            FaultAddress = metadata.FaultAddress,
+            SentTime = metadata.SentTime,
+            ExpirationTime = metadata.ExpirationTime,
         };
+    }
+
+    /// <summary>
+    /// Extracts the transport metadata common to both the fault snapshot and the bare-JSON typed context from a
+    /// single AMQP delivery: the property/header paths, the response-address fallback to <c>ReplyTo</c>, and the
+    /// TTL anchored to the delivery's timestamp.
+    /// </summary>
+    private static DeliveryMetadata ExtractMetadata(BasicDeliverEventArgs ea)
+    {
+        var props = ea.BasicProperties;
+        var headers = props.Headers ?? new Dictionary<string, object?>();
+        var sentTime = GetSentTime(props);
+        return new DeliveryMetadata(
+            MessageId: props.MessageId,
+            CorrelationId: props.CorrelationId,
+            RequestId: props.CorrelationId,
+            RoutingKey: ea.RoutingKey,
+            Headers: AmqpHeaderValueNormalizer.Normalize(headers),
+            Redelivered: ea.Redelivered,
+            RetryCount: RabbitMqConstants.GetRetryCount(headers),
+            ConversationId: RabbitMqConstants.GetHeaderString(headers, "ConversationId"),
+            InitiatorId: RabbitMqConstants.GetHeaderString(headers, "InitiatorId"),
+            SourceAddress: RabbitMqConstants.GetHeaderUri(headers, "SourceAddress"),
+            DestinationAddress: RabbitMqConstants.GetHeaderUri(headers, "DestinationAddress"),
+            ResponseAddress: RabbitMqConstants.GetHeaderUri(headers, "ResponseAddress")
+                ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : new Uri($"queue:{props.ReplyTo}")),
+            FaultAddress: RabbitMqConstants.GetHeaderUri(headers, "FaultAddress"),
+            SentTime: sentTime,
+            ExpirationTime: RabbitMqConstants.TryParseExpiration(props.Expiration, sentTime));
     }
 
     private static DateTimeOffset? GetSentTime(IReadOnlyBasicProperties props)
         => props.Timestamp.UnixTime > 0 ? DateTimeOffset.FromUnixTimeSeconds(props.Timestamp.UnixTime) : null;
+
+    private readonly record struct DeliveryMetadata(
+        string? MessageId,
+        string? CorrelationId,
+        string? RequestId,
+        string RoutingKey,
+        IReadOnlyDictionary<string, object?> Headers,
+        bool Redelivered,
+        int RetryCount,
+        string? ConversationId,
+        string? InitiatorId,
+        Uri? SourceAddress,
+        Uri? DestinationAddress,
+        Uri? ResponseAddress,
+        Uri? FaultAddress,
+        DateTimeOffset? SentTime,
+        DateTimeOffset? ExpirationTime);
 }

@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
@@ -54,45 +52,20 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
         // are intentionally ignored on the send path — the destination queue name is authoritative.
         var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(type);
 
-        var correlationId = publishContext.CorrelationId
-            ?? messageConfiguration.CorrelationIdFormatter?.Invoke(message)
-            ?? Guid.CreateVersion7().ToString();
-        var messageId = publishContext.MessageId ?? Guid.CreateVersion7().ToString();
-        var urn = messageConfiguration.Urn;
-        var urnString = urn.AbsoluteUri;
+        var ids = RabbitMqWireMessageBuilder.ResolveIds(message, publishContext, messageConfiguration);
 
-        using var activity = MessagingInstrumentation.ActivitySource.StartActivity(
-            $"{_queueName} send",
-            ActivityKind.Producer);
+        using var activity = RabbitMqWireMessageBuilder.StartProducerActivity(
+            $"{_queueName} send", "send", _queueName, _queueName, ids.UrnString, ids.MessageId, ids.CorrelationId);
 
-        if (activity is not null)
-        {
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingSystem, MessagingInstrumentation.SystemValue);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingOperation, "send");
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingDestination, _queueName);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingRoutingKey, _queueName);
-            activity.SetTag(MessagingInstrumentation.Tags.MessageType, urnString);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingMessageId, messageId);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, correlationId);
-        }
+        var properties = RabbitMqWireMessageBuilder.CreateBaseProperties(ids.UrnString, ids.MessageId, publishContext.Headers);
+        properties.ReplyTo = RabbitMqAddress.ResolveRoutingKey(publishContext.ResponseAddress);
+        properties.CorrelationId = ids.CorrelationId;
+        properties.Persistent = true;
 
-        var properties = new BasicProperties
-        {
-            Type = urnString,
-            MessageId = messageId,
-            ReplyTo = RabbitMqAddress.ResolveRoutingKey(publishContext.ResponseAddress),
-            CorrelationId = correlationId,
-            ContentType = RabbitMqConstants.ContentType,
-            Headers = new Dictionary<string, object?>(publishContext.Headers),
-            Persistent = true,
-            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
-        };
+        var body = RabbitMqWireMessageBuilder.SerializeEnvelope(
+            message, publishContext, ids.MessageId, ids.CorrelationId, ids.Urn, _messageConfigurationProvider.JsonSerializerOptions);
 
-        var envelope = MessageEnvelopeFactory.Create(
-            message, publishContext, messageId, correlationId, urn, _messageConfigurationProvider.JsonSerializerOptions);
-        var body = JsonSerializer.SerializeToUtf8Bytes(envelope, _messageConfigurationProvider.JsonSerializerOptions);
-
-        MessagingLog.Sending(_logger, urnString, _queueName, messageId, correlationId);
+        MessagingLog.Sending(_logger, ids.UrnString, _queueName, ids.MessageId, ids.CorrelationId);
 
         try
         {

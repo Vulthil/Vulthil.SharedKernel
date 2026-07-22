@@ -42,7 +42,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
 
         _publisherMock = GetMock<IInternalPublisher>();
         _publisherMock
-            .Setup(p => p.InternalPublishAsync<It.IsAnyType>(
+            .Setup(p => p.InternalPublishAsync(
                 It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
@@ -82,7 +82,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         BasicProperties? capturedProps = null;
         byte[]? capturedBody = null;
         _publisherMock
-            .Setup(p => p.InternalPublishAsync<It.IsAnyType>(
+            .Setup(p => p.InternalPublishAsync(
                 It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
             .Callback((byte[] body, BasicProperties props, string _, MessageConfiguration _, CancellationToken _) =>
             {
@@ -134,7 +134,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         // Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
-        _publisherMock.Verify(p => p.InternalPublishAsync<It.IsAnyType>(
+        _publisherMock.Verify(p => p.InternalPublishAsync(
             It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
@@ -160,7 +160,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         // happened after readiness rather than being dropped.
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
-        _publisherMock.Verify(p => p.InternalPublishAsync<It.IsAnyType>(
+        _publisherMock.Verify(p => p.InternalPublishAsync(
             It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }

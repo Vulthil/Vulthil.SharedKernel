@@ -82,6 +82,16 @@ internal sealed class ConsumerHostedService : BackgroundService
         }
     }
 
+    /// <summary>
+    /// Resolves the transport to start, picking the <em>last</em> registered <see cref="ITransport"/> when more than
+    /// one is present. This mirrors the built-in container's own behavior for a singular (non-enumerable)
+    /// injection, so it is also what any other single-<see cref="ITransport"/> constructor dependency would
+    /// receive. <c>Vulthil.Messaging.TestHarness</c>'s <c>UseTestHarness()</c>/<c>ReplaceTransportWithTestHarness()</c>
+    /// depend on this: they remove any transport already registered and add their in-memory one, so calling them
+    /// after a broker transport (e.g. <c>UseRabbitMq</c>) leaves the in-memory transport both the only and the last
+    /// registration. Registering a transport again afterward (or registering two transports without an intervening
+    /// removal) makes the most recently added one win here, silently shadowing the other.
+    /// </summary>
     private ITransport ResolveTransport() =>
         _serviceProvider.GetServices<ITransport>().LastOrDefault()
             ?? throw new InvalidOperationException(NoTransportRegisteredMessage);

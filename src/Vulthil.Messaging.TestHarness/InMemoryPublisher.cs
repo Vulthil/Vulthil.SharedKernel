@@ -28,11 +28,11 @@ internal sealed class InMemoryPublisher : ITransportPublisher
         var context = new PublishContext();
         if (configureContext is not null)
         {
-            await configureContext(context);
+            await configureContext(context).ConfigureAwait(false);
         }
 
         var envelope = OutgoingEnvelope.Build(_provider, message, context);
         _harness.RecordPublished(message, envelope);
-        await _transport.DeliverAsync(envelope, cancellationToken);
+        await _transport.DeliverAsync(envelope, cancellationToken).ConfigureAwait(false);
     }
 }

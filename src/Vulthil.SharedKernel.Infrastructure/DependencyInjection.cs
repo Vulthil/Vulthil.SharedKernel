@@ -127,8 +127,9 @@ public static class DependencyInjection
     public static async Task EnsureCreatedAsync<TDbContext>(this IServiceProvider services)
         where TDbContext : DbContext
     {
-        await using var scope = services.CreateAsyncScope();
+        var scope = services.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
     }
 }

@@ -23,7 +23,7 @@ internal static partial class LoggingBehaviors
         {
             LogProcessingRequest(_logger, _requestName);
 
-            var result = await next(cancellationToken);
+            var result = await next(cancellationToken).ConfigureAwait(false);
 
             if (result.IsSuccess)
             {
@@ -65,7 +65,7 @@ internal static partial class LoggingBehaviors
         {
             LogProcessingEvent(_logger, _domainEventName);
 
-            await next(cancellationToken);
+            await next(cancellationToken).ConfigureAwait(false);
 
             LogCompletedEvent(_logger, _domainEventName);
         }

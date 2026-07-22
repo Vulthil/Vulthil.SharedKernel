@@ -45,11 +45,11 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
 
             InboxLog.MissingKeyAllowed(_logger, _messageType);
             InboxTelemetry.MissingKey.Add(1);
-            await next(context);
+            await next(context).ConfigureAwait(false);
             return;
         }
 
-        var processed = await _store.ProcessAsync(key, context, _ => next(context), context.CancellationToken);
+        var processed = await _store.ProcessAsync(key, context, _ => next(context), context.CancellationToken).ConfigureAwait(false);
 
         if (processed)
         {

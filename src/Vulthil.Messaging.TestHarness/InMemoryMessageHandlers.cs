@@ -35,7 +35,8 @@ internal static class InMemoryMessageHandlers
             Exception? lastError = null;
             for (var attempt = 0; attempt <= maxRetries; attempt++)
             {
-                await using var attemptScope = scopeFactory.CreateAsyncScope();
+                var attemptScope = scopeFactory.CreateAsyncScope();
+                await using var _ = attemptScope.ConfigureAwait(false);
                 var serviceProvider = attemptScope.ServiceProvider;
                 var consumer = serviceProvider.GetRequiredService<TConsumer>();
                 var context = InMemoryContext.Create(serviceProvider, (TMessage)message, envelope, cancellationToken, attempt);
@@ -44,11 +45,11 @@ internal static class InMemoryMessageHandlers
                 {
                     var pipeline = ConsumePipelineFactory.Build<TMessage>(serviceProvider, terminal: async c =>
                     {
-                        await consumer.ConsumeAsync(c, c.CancellationToken);
+                        await consumer.ConsumeAsync(c, c.CancellationToken).ConfigureAwait(false);
                         harness.RecordConsumed((TMessage)message, envelope);
                     });
 
-                    await pipeline(context);
+                    await pipeline(context).ConfigureAwait(false);
                     return null;
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
@@ -61,7 +62,7 @@ internal static class InMemoryMessageHandlers
                 }
             }
 
-            await PublishFaultAsync<TMessage>(scope, (TMessage)message, envelope, lastError!, maxRetries, cancellationToken);
+            await PublishFaultAsync(scope, (TMessage)message, envelope, lastError!, maxRetries, cancellationToken).ConfigureAwait(false);
             return null;
         });
 
@@ -85,12 +86,12 @@ internal static class InMemoryMessageHandlers
 
                 var pipeline = ConsumePipelineFactory.Build<TRequest>(scope, terminal: async c =>
                 {
-                    response = await consumer.ConsumeAsync(c, c.CancellationToken);
+                    response = await consumer.ConsumeAsync(c, c.CancellationToken).ConfigureAwait(false);
                     harness.RecordConsumed((TRequest)message, envelope);
                     produced = true;
                 });
 
-                await pipeline(context);
+                await pipeline(context).ConfigureAwait(false);
 
                 return (MessageEnvelope?)(produced
                     ? InMemoryReply.Build(provider.GetUrn(typeof(TResponse)), JsonSerializer.SerializeToElement(response, options), envelope)
@@ -138,7 +139,7 @@ internal static class InMemoryMessageHandlers
 
         var faultEnvelope = OutgoingEnvelope.Build(provider, fault, new PublishContext());
         harness.RecordPublished(fault, faultEnvelope);
-        await transport.DeliverAsync(faultEnvelope, cancellationToken);
+        await transport.DeliverAsync(faultEnvelope, cancellationToken).ConfigureAwait(false);
     }
 
     private static MessageContextSnapshot CreateSnapshot<TMessage>(MessageContext<TMessage> context)

@@ -40,14 +40,14 @@ internal sealed class InMemoryRequester : IRequester
         var context = new RequestContext();
         if (configureContext is not null)
         {
-            await configureContext(context);
+            await configureContext(context).ConfigureAwait(false);
         }
 
         var requestId = Guid.CreateVersion7().ToString();
         var envelope = OutgoingEnvelope.Build(_provider, message, context, requestId);
         _harness.RecordRequested(message, envelope);
 
-        var reply = await _transport.DeliverRequestAsync(envelope, cancellationToken);
+        var reply = await _transport.DeliverRequestAsync(envelope, cancellationToken).ConfigureAwait(false);
         return MapReply<TResponse>(reply);
     }
 

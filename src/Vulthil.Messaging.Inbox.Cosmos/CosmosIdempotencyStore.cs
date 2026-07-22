@@ -26,7 +26,7 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
         var markers = await dbContext.InboxMessages
             .Where(marker => marker.ProcessedOnUtc < olderThanUtc)
             .Take(batchSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (markers.Count == 0)
         {
@@ -34,7 +34,7 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
         }
 
         dbContext.InboxMessages.RemoveRange(markers);
-        await SaveRemovedMarkersAsync(cancellationToken);
+        await SaveRemovedMarkersAsync(cancellationToken).ConfigureAwait(false);
         return markers.Count;
     }
 
@@ -46,7 +46,7 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
     {
         try
         {
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (DbUpdateConcurrencyException exception)
         {
@@ -67,12 +67,12 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
         ArgumentException.ThrowIfNullOrEmpty(idempotencyKey);
         ArgumentNullException.ThrowIfNull(process);
 
-        if (await dbContext.InboxMessages.FindAsync([idempotencyKey], cancellationToken) is not null)
+        if (await dbContext.InboxMessages.FindAsync([idempotencyKey], cancellationToken).ConfigureAwait(false) is not null)
         {
             return false;
         }
 
-        await process(cancellationToken);
+        await process(cancellationToken).ConfigureAwait(false);
 
         dbContext.InboxMessages.Add(new InboxMessage
         {
@@ -82,7 +82,7 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
 
         try
         {
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return true;
         }
         catch (DbUpdateException exception) when (IsConflict(exception))

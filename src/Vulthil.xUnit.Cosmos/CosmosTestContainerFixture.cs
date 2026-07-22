@@ -84,23 +84,25 @@ public abstract class CosmosTestContainerFixture<TDbContext>(IMessageSink messag
     /// <inheritdoc />
     protected override async ValueTask InitializeAsync()
     {
-        await base.InitializeAsync();
-        await WaitForEmulatorAsync();
+        await base.InitializeAsync().ConfigureAwait(false);
+        await WaitForEmulatorAsync().ConfigureAwait(false);
     }
 
     private static async ValueTask EnsureDatabaseCreatedAsync(IServiceProvider serviceProvider)
     {
-        await using var scope = serviceProvider.CreateAsyncScope();
+        var scope = serviceProvider.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
     }
 
     private static async ValueTask RecreateDatabaseAsync(IServiceProvider serviceProvider)
     {
-        await using var scope = serviceProvider.CreateAsyncScope();
+        var scope = serviceProvider.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        await context.Database.EnsureDeletedAsync();
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.EnsureDeletedAsync().ConfigureAwait(false);
+        await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
     }
 
     private void ApplyCosmosOptions(DbContextOptionsBuilder options, string databaseName)
@@ -126,25 +128,27 @@ public abstract class CosmosTestContainerFixture<TDbContext>(IMessageSink messag
         {
             try
             {
-                await using var context = CreateProbeContext(DatabaseName);
-                await context.Database.EnsureCreatedAsync();
+                var context = CreateProbeContext(DatabaseName);
+                await using var _ = context.ConfigureAwait(false);
+                await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
                 return;
             }
             catch (CosmosException) when (attempt < MaxReadinessAttempts)
             {
-                await Task.Delay(TimeSpan.FromSeconds(ReadinessRetryDelaySeconds));
+                await Task.Delay(TimeSpan.FromSeconds(ReadinessRetryDelaySeconds)).ConfigureAwait(false);
             }
             catch (HttpRequestException) when (attempt < MaxReadinessAttempts)
             {
-                await Task.Delay(TimeSpan.FromSeconds(ReadinessRetryDelaySeconds));
+                await Task.Delay(TimeSpan.FromSeconds(ReadinessRetryDelaySeconds)).ConfigureAwait(false);
             }
         }
     }
 
     private async ValueTask DropDatabaseAsync(string databaseName)
     {
-        await using var context = CreateProbeContext(databaseName);
-        await context.Database.EnsureDeletedAsync();
+        var context = CreateProbeContext(databaseName);
+        await using var _ = context.ConfigureAwait(false);
+        await context.Database.EnsureDeletedAsync().ConfigureAwait(false);
     }
 
     private sealed class CosmosDatabaseScope(CosmosTestContainerFixture<TDbContext> fixture, string databaseName)
@@ -169,7 +173,7 @@ public abstract class CosmosTestContainerFixture<TDbContext>(IMessageSink messag
         {
             try
             {
-                await fixture.DropDatabaseAsync(databaseName);
+                await fixture.DropDatabaseAsync(databaseName).ConfigureAwait(false);
             }
             catch (Exception exception)
             {

@@ -11,6 +11,7 @@
 - When modifying a public member, make sure to check the Public.API files for the affected assembly and update them if necessary.
 - Do not ignore CS1591 warnings; analyze and add missing XML comments instead.
 - Comments inside method bodies must explain *why*, not *what*: a why-comment states a constraint, invariant, or rationale the code cannot express on its own (e.g. concurrency/ordering requirements, the reason for a workaround, a justification for otherwise-surprising deliberate behavior). Narration/what-comments — restating what the next line does, section-header comments, play-by-play commentary — are not allowed. For complex logic, prefer extracting it into a separate method with a descriptive name over adding a comment.
+- Library code under `src/` must call `ConfigureAwait(false)` on every `await` (including the implicit awaits in `await using`/`await foreach`) — `CA2007` is enforced as an error for `src/` only. Tests and samples are exempt and should not add it.
 
 ## Testing Guidelines
 - Prefer using the Vulthil.xUnit testing framework for tests.

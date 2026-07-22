@@ -32,7 +32,7 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
     /// </summary>
     public async ValueTask<IChannel> LeaseAsync(CancellationToken cancellationToken)
     {
-        await Capacity.WaitAsync(cancellationToken);
+        await Capacity.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             if (_idle.TryDequeue(out var pooled))
@@ -45,7 +45,7 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
                     publisherConfirmationsEnabled: true,
                     publisherConfirmationTrackingEnabled: true,
                     consumerDispatchConcurrency: 1),
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
         }
         catch
         {
@@ -66,7 +66,7 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
     {
         try
         {
-            await channel.DisposeAsync();
+            await channel.DisposeAsync().ConfigureAwait(false);
         }
         finally
         {
@@ -84,7 +84,7 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
 
         while (_idle.TryDequeue(out var channel))
         {
-            await channel.DisposeAsync();
+            await channel.DisposeAsync().ConfigureAwait(false);
         }
 
         if (_lazySemaphore.IsValueCreated)

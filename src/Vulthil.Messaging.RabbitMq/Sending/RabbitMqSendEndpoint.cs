@@ -45,7 +45,7 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
 
         var publishContext = new PublishContext();
         configureContext ??= (_ => ValueTask.CompletedTask);
-        await configureContext(publishContext);
+        await configureContext(publishContext).ConfigureAwait(false);
 
         var type = message.GetType();
         // MessageConfiguration<T>.CorrelationIdFormatter still applies; Exchange and RoutingKeyFormatter
@@ -69,7 +69,7 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
 
         try
         {
-            await _publisher.InternalSendAsync(body, properties, _queueName, cancellationToken);
+            await _publisher.InternalSendAsync(body, properties, _queueName, cancellationToken).ConfigureAwait(false);
             activity?.SetStatus(ActivityStatusCode.Ok);
         }
         catch (Exception ex)

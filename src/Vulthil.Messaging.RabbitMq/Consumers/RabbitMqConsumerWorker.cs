@@ -64,10 +64,10 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// </summary>
     private async Task OnChannelAsync(Func<ValueTask> channelOperation)
     {
-        await _channelGate.WaitAsync();
+        await _channelGate.WaitAsync().ConfigureAwait(false);
         try
         {
-            await channelOperation();
+            await channelOperation().ConfigureAwait(false);
         }
         finally
         {
@@ -97,7 +97,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             queue: _queueDefinition.Name,
             autoAck: false,
             consumer: consumer,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         MessagingLog.WorkerStarted(_logger, _queueDefinition.Name, _channelIndex, _queueDefinition.PrefetchCount, _queueDefinition.ConcurrencyLimit);
     }
@@ -111,7 +111,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// </remarks>
     private async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs ea)
     {
-        var prepared = await TryPrepareAsync(ea);
+        var prepared = await TryPrepareAsync(ea).ConfigureAwait(false);
         if (prepared is null)
         {
             return;
@@ -119,7 +119,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
         if (!_partitioned)
         {
-            await ProcessAsync(prepared, ea);
+            await ProcessAsync(prepared, ea).ConfigureAwait(false);
             return;
         }
 
@@ -164,7 +164,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         var pending = ResolvePendingHandlers(prepared.Plan, ea);
         if (pending.Count == 0)
         {
-            await AckAsync(ea);
+            await AckAsync(ea).ConfigureAwait(false);
             return;
         }
 
@@ -173,7 +173,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         while (true)
         {
             var attemptDelivery = round == baseRound ? ea : WithRetryCount(ea, round);
-            var failures = await DispatchRoundAsync(pending, prepared, attemptDelivery);
+            var failures = await DispatchRoundAsync(pending, prepared, attemptDelivery).ConfigureAwait(false);
             if (failures is null)
             {
                 return;
@@ -181,18 +181,18 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
             if (failures.Count == 0)
             {
-                await AckAsync(ea);
+                await AckAsync(ea).ConfigureAwait(false);
                 activity?.SetStatus(ActivityStatusCode.Ok);
                 return;
             }
 
             var (retryable, terminal) = PartitionFailures(failures, round);
-            await PublishTerminalFaultsAsync(terminal, prepared, ea, activity);
+            await PublishTerminalFaultsAsync(terminal, prepared, ea, activity).ConfigureAwait(false);
 
             if (retryable.Count == 0)
             {
                 activity?.SetStatus(ActivityStatusCode.Error, terminal[^1].Exception.Message);
-                await NackAsync(ea);
+                await NackAsync(ea).ConfigureAwait(false);
                 return;
             }
 
@@ -200,12 +200,12 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             if (!_partitioned && retryable.TrueForAll(static failure => !failure.Policy.InMemory))
             {
                 RecordRetryableFailures(retryable, activity);
-                await RepublishForRetryAsync(retryable, round, delay, ea);
-                await AckAsync(ea);
+                await RepublishForRetryAsync(retryable, round, delay, ea).ConfigureAwait(false);
+                await AckAsync(ea).ConfigureAwait(false);
                 return;
             }
 
-            if (!await TryDelayAsync(delay, ea.CancellationToken))
+            if (!await TryDelayAsync(delay, ea.CancellationToken).ConfigureAwait(false))
             {
                 return;
             }
@@ -251,13 +251,14 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private async Task<List<HandlerFailure>?> DispatchRoundAsync(List<MessageHandler> pending, PreparedDelivery prepared, BasicDeliverEventArgs ea)
     {
         var failures = new List<HandlerFailure>();
-        await using var scope = _serviceScopeFactory.CreateAsyncScope();
+        var scope = _serviceScopeFactory.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
 
         foreach (var handler in pending)
         {
             try
             {
-                await handler.DispatchAsync(scope.ServiceProvider, prepared.Message, ea, prepared.Envelope, _gatedPublisher, ea.CancellationToken);
+                await handler.DispatchAsync(scope.ServiceProvider, prepared.Message, ea, prepared.Envelope, _gatedPublisher, ea.CancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (ea.CancellationToken.IsCancellationRequested)
             {
@@ -315,7 +316,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         {
             MessagingLog.ConsumerFailed(_logger, failure.Exception, _queueDefinition.Name, failure.Handler.Identity, prepared.DiagnosticTypeName, ea.RoutingKey);
             activity?.AddException(failure.Exception);
-            await PublishFaultAsync(failure.Exception, ea, headers, prepared.Envelope, prepared.DiagnosticTypeName);
+            await PublishFaultAsync(failure.Exception, ea, headers, prepared.Envelope, prepared.DiagnosticTypeName).ConfigureAwait(false);
         }
     }
 
@@ -363,7 +364,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         props.Headers[RabbitMqConstants.RetryHandlersHeader] = RabbitMqConstants.SerializeRetryHandlerIdentities(retryable.Select(static failure => failure.Handler.Identity));
         props.Expiration = delay.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
 
-        await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body);
+        await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body).ConfigureAwait(false);
     }
 
     private static async Task<bool> TryDelayAsync(TimeSpan delay, CancellationToken cancellationToken)
@@ -375,7 +376,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
         try
         {
-            await Task.Delay(delay, cancellationToken);
+            await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
             return true;
         }
         catch (OperationCanceledException)
@@ -443,7 +444,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             };
 
-            await PublishThroughGateAsync(exchange, routingKey, false, faultProps, faultBody);
+            await PublishThroughGateAsync(exchange, routingKey, false, faultProps, faultBody).ConfigureAwait(false);
         }
         catch (Exception faultEx)
         {
@@ -501,7 +502,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         if (plan is null)
         {
             MessagingLog.NoExecutionPlan(_logger, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            await AckAsync(ea);
+            await AckAsync(ea).ConfigureAwait(false);
             return null;
         }
 
@@ -515,14 +516,14 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         catch (JsonException jsonEx)
         {
             MessagingLog.PoisonMessage(_logger, jsonEx, _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            await NackAsync(ea);
+            await NackAsync(ea).ConfigureAwait(false);
             return null;
         }
 
         if (message is null)
         {
             MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            await NackAsync(ea);
+            await NackAsync(ea).ConfigureAwait(false);
             return null;
         }
 
@@ -564,10 +565,10 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         {
             if (!string.IsNullOrEmpty(_consumerTag))
             {
-                await _channelGate.WaitAsync();
+                await _channelGate.WaitAsync().ConfigureAwait(false);
                 try
                 {
-                    await _channel.BasicCancelAsync(_consumerTag);
+                    await _channel.BasicCancelAsync(_consumerTag).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -578,10 +579,10 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             var pending = _inFlight.Values.ToArray();
             if (pending.Length > 0)
             {
-                await Task.WhenAll(pending).WaitAsync(TimeSpan.FromSeconds(30));
+                await Task.WhenAll(pending).WaitAsync(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
             }
 
-            await _channel.DisposeAsync();
+            await _channel.DisposeAsync().ConfigureAwait(false);
         }
         catch (ObjectDisposedException)
         {

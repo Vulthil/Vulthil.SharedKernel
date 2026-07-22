@@ -15,11 +15,11 @@ public static partial class ResultExtensions
     /// Asynchronously recovers from a failure by producing a success value from the error; successful results propagate unchanged.
     /// </summary>
     public static async Task<Result<T1>> RecoverAsync<T1>(this Result<T1> result, Func<Error, Task<T1>> recover) =>
-        result.IsSuccess ? result : Result.Success(await recover(result.Error));
+        result.IsSuccess ? result : Result.Success(await recover(result.Error).ConfigureAwait(false));
     /// <inheritdoc cref="Recover{T1}(Result{T1}, Func{Error, T1})"/>
     public static async Task<Result<T1>> RecoverAsync<T1>(this Task<Result<T1>> resultTask, Func<Error, T1> recover) =>
-        (await resultTask).Recover(recover);
+        (await resultTask.ConfigureAwait(false)).Recover(recover);
     /// <inheritdoc cref="RecoverAsync{T1}(Result{T1}, Func{Error, Task{T1}})"/>
     public static async Task<Result<T1>> RecoverAsync<T1>(this Task<Result<T1>> resultTask, Func<Error, Task<T1>> recover) =>
-        await (await resultTask).RecoverAsync(recover);
+        await (await resultTask.ConfigureAwait(false)).RecoverAsync(recover).ConfigureAwait(false);
 }

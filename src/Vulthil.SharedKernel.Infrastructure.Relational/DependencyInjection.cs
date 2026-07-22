@@ -30,12 +30,13 @@ public static class DependencyInjection
     public static async Task MigrateAsync<TDbContext>(this IServiceProvider services)
         where TDbContext : DbContext
     {
-        await using var scope = services.CreateAsyncScope();
+        var scope = services.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+        var pendingMigrations = await context.Database.GetPendingMigrationsAsync().ConfigureAwait(false);
         if (pendingMigrations.Any())
         {
-            await context.Database.MigrateAsync();
+            await context.Database.MigrateAsync().ConfigureAwait(false);
         }
     }
 }

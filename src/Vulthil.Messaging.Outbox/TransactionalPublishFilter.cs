@@ -37,13 +37,13 @@ internal sealed class TransactionalPublishFilter(
                     "establish the transaction instead.");
             }
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
             return;
         }
 
         outboxStore.AddOutboxMessage(CreateRow(context));
 
-        await outboxStore.SaveChangesAsync(context.CancellationToken);
+        await outboxStore.SaveChangesAsync(context.CancellationToken).ConfigureAwait(false);
     }
 
     private OutboxMessage CreateRow(PublishFilterContext context)

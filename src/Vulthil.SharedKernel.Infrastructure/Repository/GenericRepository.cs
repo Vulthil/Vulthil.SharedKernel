@@ -28,5 +28,5 @@ public abstract class GenericRepository<TDbContext, TEntity, TId>(TDbContext dbC
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The entity if found; otherwise, <see langword="null"/>.</returns>
     protected virtual async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken = default) =>
-        await DbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        await DbContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id, cancellationToken).ConfigureAwait(false);
 }

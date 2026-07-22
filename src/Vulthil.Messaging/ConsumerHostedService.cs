@@ -61,7 +61,7 @@ internal sealed class ConsumerHostedService : BackgroundService
         {
             try
             {
-                await ResolveTransport().StartAsync(stoppingToken);
+                await ResolveTransport().StartAsync(stoppingToken).ConfigureAwait(false);
                 return;
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
@@ -73,7 +73,7 @@ internal sealed class ConsumerHostedService : BackgroundService
                 ConsumerLog.TransportStartFailed(_logger, retryDelay.TotalSeconds, exception);
             }
 
-            if (!await TryDelayAsync(retryDelay, stoppingToken))
+            if (!await TryDelayAsync(retryDelay, stoppingToken).ConfigureAwait(false))
             {
                 return;
             }
@@ -100,7 +100,7 @@ internal sealed class ConsumerHostedService : BackgroundService
     {
         try
         {
-            await Task.Delay(delay, _timeProvider, stoppingToken);
+            await Task.Delay(delay, _timeProvider, stoppingToken).ConfigureAwait(false);
             return true;
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)

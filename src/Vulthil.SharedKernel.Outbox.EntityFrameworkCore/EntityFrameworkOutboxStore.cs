@@ -65,18 +65,18 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
             async token =>
             {
                 DbContext.ChangeTracker.Clear();
-                return await ProcessBatchCoreAsync(dispatch, token);
+                return await ProcessBatchCoreAsync(dispatch, token).ConfigureAwait(false);
             },
             cancellationToken);
     }
 
     private async Task<int> ProcessBatchCoreAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken)
     {
-        var transaction = await BeginTransactionAsync(cancellationToken);
+        var transaction = await BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
         try
         {
-            var messages = await FetchMessagesAsync(_options.BatchSize, _options.MaxRetries, cancellationToken);
+            var messages = await FetchMessagesAsync(_options.BatchSize, _options.MaxRetries, cancellationToken).ConfigureAwait(false);
 
             if (messages.Count == 0)
             {
@@ -89,7 +89,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
             if (_options.EnableParallelPublishing)
             {
                 using var throttle = new SemaphoreSlim(_options.MaxDegreeOfParallelism);
-                var outcomes = await Task.WhenAll(messages.Select(message => DispatchThrottledAsync(message, dispatch, throttle, cancellationToken)));
+                var outcomes = await Task.WhenAll(messages.Select(message => DispatchThrottledAsync(message, dispatch, throttle, cancellationToken))).ConfigureAwait(false);
                 foreach (var (id, error) in outcomes)
                 {
                     Record(successIds, failures, id, error);
@@ -99,16 +99,16 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
             {
                 foreach (var message in messages)
                 {
-                    var error = await dispatch(message, cancellationToken);
+                    var error = await dispatch(message, cancellationToken).ConfigureAwait(false);
                     Record(successIds, failures, message.Id, error);
                 }
             }
 
-            await UpdateMessagesAsync(successIds, failures, _options.MaxRetries, _timeProvider.GetUtcNow(), cancellationToken);
+            await UpdateMessagesAsync(successIds, failures, _options.MaxRetries, _timeProvider.GetUtcNow(), cancellationToken).ConfigureAwait(false);
 
             if (transaction is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
 
             return successIds.Count;
@@ -117,7 +117,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         {
             if (transaction is not null)
             {
-                await transaction.DisposeAsync();
+                await transaction.DisposeAsync().ConfigureAwait(false);
             }
         }
     }
@@ -140,10 +140,10 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         SemaphoreSlim throttle,
         CancellationToken cancellationToken)
     {
-        await throttle.WaitAsync(cancellationToken);
+        await throttle.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            return (message.Id, await dispatch(message, cancellationToken));
+            return (message.Id, await dispatch(message, cancellationToken).ConfigureAwait(false));
         }
         finally
         {
@@ -161,7 +161,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     {
         if (DbContext is IUnitOfWork unitOfWork)
         {
-            return await unitOfWork.BeginTransactionAsync(cancellationToken);
+            return await unitOfWork.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         }
 
         return null;
@@ -203,7 +203,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
 
         var errorsById = failures.ToDictionary(failure => failure.Id, failure => failure.Error);
         var ids = successIds.Concat(errorsById.Keys).ToList();
-        var messages = await OutboxMessages.Where(x => ids.Contains(x.Id)).ToArrayAsync(cancellationToken);
+        var messages = await OutboxMessages.Where(x => ids.Contains(x.Id)).ToArrayAsync(cancellationToken).ConfigureAwait(false);
 
         foreach (var message in messages)
         {
@@ -217,7 +217,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
             }
         }
 
-        await DbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private void RecordFailure(OutboxMessage message, string error, int maxRetries, DateTimeOffset processedOnUtc)
@@ -240,7 +240,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
                 || o.FailedOnUtc != null && o.FailedOnUtc < olderThanUtc)
             .OrderBy(o => o.OccurredOnUtc)
             .Take(batchSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (rows.Count == 0)
         {
@@ -248,7 +248,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         }
 
         OutboxMessages.RemoveRange(rows);
-        await DbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return rows.Count;
     }
 }

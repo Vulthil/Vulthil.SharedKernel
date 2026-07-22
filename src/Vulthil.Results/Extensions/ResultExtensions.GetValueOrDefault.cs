@@ -18,8 +18,8 @@ public static partial class ResultExtensions
 
     /// <inheritdoc cref="GetValueOrDefault{T1}(Result{T1})"/>
     public static async Task<T1?> GetValueOrDefaultAsync<T1>(this Task<Result<T1>> resultTask) =>
-        (await resultTask).GetValueOrDefault();
+        (await resultTask.ConfigureAwait(false)).GetValueOrDefault();
     /// <inheritdoc cref="GetValueOrDefault{T1}(Result{T1}, T1)"/>
     public static async Task<T1> GetValueOrDefaultAsync<T1>(this Task<Result<T1>> resultTask, T1 fallback) =>
-        (await resultTask).GetValueOrDefault(fallback);
+        (await resultTask.ConfigureAwait(false)).GetValueOrDefault(fallback);
 }

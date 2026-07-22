@@ -1,0 +1,6 @@
+# Policy: everything under src/ ships to NuGet as a library, so it must never capture the
+# caller's synchronization context. CA2007 is an error here (overriding the repo-wide default
+# in the root .editorconfig) so every await in shipped code calls ConfigureAwait(false).
+# tests/ and samples/ are consumers, not libraries, and stay exempt.
+[*.cs]
+dotnet_diagnostic.CA2007.severity = error

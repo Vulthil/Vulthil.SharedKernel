@@ -41,7 +41,7 @@ internal sealed class ResponseListener : IAsyncDisposable
             return _replyToQueueName;
         }
 
-        await EnsureStartedAsync(cancellationToken);
+        await EnsureStartedAsync(cancellationToken).ConfigureAwait(false);
         return _replyToQueueName;
     }
 
@@ -57,7 +57,7 @@ internal sealed class ResponseListener : IAsyncDisposable
             return;
         }
 
-        await _initLock.WaitAsync(cancellationToken);
+        await _initLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
 #pragma warning disable CA1508 // Double-check after acquiring the lock; another thread may have initialized.
@@ -67,14 +67,14 @@ internal sealed class ResponseListener : IAsyncDisposable
             }
 #pragma warning restore CA1508
 
-            var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+            var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
             var declareResult = await channel.QueueDeclareAsync(
                 queue: $"callback.{Guid.NewGuid():N}",
                 durable: false,
                 exclusive: true,
                 autoDelete: true,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
             _replyToQueueName = declareResult.QueueName;
 
@@ -85,7 +85,7 @@ internal sealed class ResponseListener : IAsyncDisposable
                 queue: _replyToQueueName,
                 autoAck: false,
                 consumer: consumer,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
             _channel = channel;
             MessagingLog.ResponseListenerStarted(_logger, _replyToQueueName);
@@ -110,7 +110,7 @@ internal sealed class ResponseListener : IAsyncDisposable
 
         if (_channel is not null)
         {
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            await _channel.BasicAckAsync(ea.DeliveryTag, false).ConfigureAwait(false);
         }
     }
 
@@ -118,7 +118,7 @@ internal sealed class ResponseListener : IAsyncDisposable
     {
         if (_channel is not null)
         {
-            await _channel.DisposeAsync();
+            await _channel.DisposeAsync().ConfigureAwait(false);
             _channel = null;
         }
 

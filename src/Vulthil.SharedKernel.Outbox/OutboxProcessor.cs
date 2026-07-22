@@ -29,12 +29,13 @@ internal sealed class OutboxProcessor(
 
             if (options.Value.EnableParallelPublishing)
             {
-                await using var scope = scopeFactory.CreateAsyncScope();
-                await DispatchInScopeAsync(scope.ServiceProvider, outboxMessage, cancellationToken);
+                var scope = scopeFactory.CreateAsyncScope();
+                await using var _ = scope.ConfigureAwait(false);
+                await DispatchInScopeAsync(scope.ServiceProvider, outboxMessage, cancellationToken).ConfigureAwait(false);
             }
             else
             {
-                await DispatchInScopeAsync(serviceProvider, outboxMessage, cancellationToken);
+                await DispatchInScopeAsync(serviceProvider, outboxMessage, cancellationToken).ConfigureAwait(false);
             }
 
             Telemetry.Relayed.Add(1);

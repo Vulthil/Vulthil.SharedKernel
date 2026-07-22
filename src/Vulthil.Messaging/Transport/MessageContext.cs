@@ -67,11 +67,11 @@ public record MessageContext : IMessageContext
     {
         ArgumentNullException.ThrowIfNull(destinationAddress);
         var provider = SendEndpointProvider ?? throw SnapshotContextError();
-        var endpoint = await provider.GetSendEndpointAsync(destinationAddress, CancellationToken);
+        var endpoint = await provider.GetSendEndpointAsync(destinationAddress, CancellationToken).ConfigureAwait(false);
         await endpoint.SendAsync(
             message,
             ctx => PropagateAndConfigureAsync(ctx, configure),
-            CancellationToken);
+            CancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ public record MessageContext : IMessageContext
 
         if (configure is not null)
         {
-            await configure(ctx);
+            await configure(ctx).ConfigureAwait(false);
         }
     }
 

@@ -59,7 +59,7 @@ internal sealed class RabbitMqRequester : IRequester
         ArgumentNullException.ThrowIfNull(message);
         var requestContext = new RequestContext();
         configureContext ??= (_ => ValueTask.CompletedTask);
-        await configureContext(requestContext);
+        await configureContext(requestContext).ConfigureAwait(false);
 
         var tcs = new TaskCompletionSource<Result<TResponse>>(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -88,7 +88,7 @@ internal sealed class RabbitMqRequester : IRequester
         // request timeout.
         try
         {
-            await _startupStatus.Ready.WaitAsync(linkedCts.Token);
+            await _startupStatus.Ready.WaitAsync(linkedCts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -105,7 +105,7 @@ internal sealed class RabbitMqRequester : IRequester
             return Result.Failure<TResponse>(Error.Failure("Messaging.Request.TransportUnavailable", $"The transport failed to start: {ex.Message}"));
         }
 
-        var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken);
+        var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken).ConfigureAwait(false);
         var replyTo = RabbitMqAddress.ResolveRoutingKey(requestContext.ResponseAddress) ?? replyQueue;
 
         using var activity = RabbitMqWireMessageBuilder.StartProducerActivity(
@@ -124,7 +124,7 @@ internal sealed class RabbitMqRequester : IRequester
             var body = RabbitMqWireMessageBuilder.SerializeEnvelope(
                 message, requestContext, ids.MessageId, ids.CorrelationId, ids.Urn, JsonOptions, requestId);
 
-            await _publisher.InternalPublishAsync(body, props, routingKey, messageConfiguration, cancellationToken);
+            await _publisher.InternalPublishAsync(body, props, routingKey, messageConfiguration, cancellationToken).ConfigureAwait(false);
 
             await using var ctRegistration = linkedCts.Token.Register(() =>
             {
@@ -137,9 +137,9 @@ internal sealed class RabbitMqRequester : IRequester
                 {
                     tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure("Messaging.Request.Cancelled", "Request was cancelled by user.")));
                 }
-            });
+            }).ConfigureAwait(false);
 
-            var result = await tcs.Task;
+            var result = await tcs.Task.ConfigureAwait(false);
             activity?.SetStatus(result.IsSuccess ? ActivityStatusCode.Ok : ActivityStatusCode.Error, result.IsSuccess ? null : result.Error.Description);
             MessagingLog.RequestCompleted(_logger, ids.UrnString, ids.CorrelationId, result.IsSuccess);
             return result;

@@ -40,7 +40,8 @@ internal sealed class InMemoryTransport : ITransport
     /// </summary>
     public async Task DeliverAsync(MessageEnvelope envelope, CancellationToken cancellationToken)
     {
-        await using var scope = _scopeFactory.CreateAsyncScope();
+        var scope = _scopeFactory.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
         var serviceProvider = scope.ServiceProvider;
 
         var plan = _registry.GetPlanByUrn(envelope.MessageType);
@@ -49,13 +50,13 @@ internal sealed class InMemoryTransport : ITransport
             var message = Deserialize(envelope, plan.MessageType.Type);
             foreach (var handler in plan.Handlers.Where(handler => handler.Kind == HandlerKind.Consumer))
             {
-                await handler.Dispatch(serviceProvider, message, envelope, cancellationToken);
+                await handler.Dispatch(serviceProvider, message, envelope, cancellationToken).ConfigureAwait(false);
             }
         }
 
         foreach (var stub in _harness.HandlersFor(envelope.MessageType))
         {
-            await stub(serviceProvider, envelope, cancellationToken);
+            await stub(serviceProvider, envelope, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -65,7 +66,8 @@ internal sealed class InMemoryTransport : ITransport
     /// </summary>
     public async Task<MessageEnvelope?> DeliverRequestAsync(MessageEnvelope envelope, CancellationToken cancellationToken)
     {
-        await using var scope = _scopeFactory.CreateAsyncScope();
+        var scope = _scopeFactory.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
         var serviceProvider = scope.ServiceProvider;
 
         var responder = _harness.ResponderFor(envelope.MessageType);
@@ -82,7 +84,7 @@ internal sealed class InMemoryTransport : ITransport
         }
 
         var message = Deserialize(envelope, plan.MessageType.Type);
-        return await handler.Dispatch(serviceProvider, message, envelope, cancellationToken);
+        return await handler.Dispatch(serviceProvider, message, envelope, cancellationToken).ConfigureAwait(false);
     }
 
     private object Deserialize(MessageEnvelope envelope, Type messageType)

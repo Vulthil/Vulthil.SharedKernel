@@ -10,7 +10,7 @@
 - When modifying a public member, make sure to update the XML Documentation and the corresponding docs in the docs folder and the README file if applicable.
 - When modifying a public member, make sure to check the Public.API files for the affected assembly and update them if necessary.
 - Do not ignore CS1591 warnings; analyze and add missing XML comments instead.
-- Do not add comments inside methods; for complex logic, consider extracting it into a separate method with a descriptive name instead of adding comments.
+- Comments inside method bodies must explain *why*, not *what*: a why-comment states a constraint, invariant, or rationale the code cannot express on its own (e.g. concurrency/ordering requirements, the reason for a workaround, a justification for otherwise-surprising deliberate behavior). Narration/what-comments — restating what the next line does, section-header comments, play-by-play commentary — are not allowed. For complex logic, prefer extracting it into a separate method with a descriptive name over adding a comment.
 
 ## Testing Guidelines
 - Prefer using the Vulthil.xUnit testing framework for tests.

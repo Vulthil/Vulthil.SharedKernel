@@ -75,7 +75,6 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
             var reqType = new MessageType(args[0]);
             var resType = args[1];
 
-            // Preservation of your original validation
             if (!_messagingOptions.RegisterRequestType(reqType))
             {
                 throw new InvalidOperationException($"Request '{reqType.Name}' is already handled elsewhere.");
@@ -168,10 +167,9 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
     /// </exception>
     internal void Build()
     {
-        // 1. Auto-subscribe any concrete TMessage from consumer registrations not yet subscribed.
-        // Routing keys are a Subscription-level concern, so auto-subscribed
-        // subscriptions get a null routing key (broker uses an empty pattern). For direct/topic exchanges that
-        // require a specific pattern, the caller must explicitly q.Subscribe<TConcrete>("pattern") first.
+        // Routing keys are a Subscription-level concern, so auto-subscribed subscriptions get a null routing
+        // key (broker uses an empty pattern). For direct/topic exchanges that require a specific pattern, the
+        // caller must explicitly q.Subscribe<TConcrete>("pattern") first.
         var concreteConsumerMessageTypes = _queueDefinition.Registrations
             .Select(r => r.MessageType)
             .Where(m => m.Type is { IsAbstract: false, IsInterface: false });
@@ -181,7 +179,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
             _queueDefinition.AddSubscription(new Subscription(messageType));
         }
 
-        // 2. Request consumers cannot be polymorphic — the response type is fixed and can't be selected
+        // Request consumers cannot be polymorphic — the response type is fixed and can't be selected
         // by the incoming concrete type.
         foreach (var rpc in _queueDefinition.Registrations.OfType<RequestConsumerRegistration>())
         {
@@ -194,7 +192,6 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
             }
         }
 
-        // 3. Every consumer must have at least one matching concrete subscription.
         var orphanConsumer = _queueDefinition.Registrations.FirstOrDefault(
             r => !_queueDefinition.Subscriptions.Any(s => r.MessageType.Type.IsAssignableFrom(s.MessageType.Type)));
         if (orphanConsumer is not null)
@@ -205,7 +202,6 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
                 "Call q.Subscribe<TConcrete>() or q.SubscribeAll<TInterface>(assembly) for at least one implementer.");
         }
 
-        // 4. Every subscription must have at least one matching consumer.
         var orphanSubscription = _queueDefinition.Subscriptions.FirstOrDefault(
             s => !_queueDefinition.Registrations.Any(r => r.MessageType.Type.IsAssignableFrom(s.MessageType.Type)));
         if (orphanSubscription is not null)

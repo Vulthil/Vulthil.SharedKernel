@@ -25,6 +25,8 @@ public static class DependencyInjectionExtensions
         Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
+        ArgumentNullException.ThrowIfNull(configurator);
+
         configurator.OnConfigured(c =>
         {
             if (c is not DatabaseInfrastructureConfigurator<TDbContext> { OutboxStoreCustomized: true })

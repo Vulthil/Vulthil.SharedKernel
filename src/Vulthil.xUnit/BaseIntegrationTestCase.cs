@@ -127,16 +127,16 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
             // that never touched Factory never built any host, so there is nothing to reset.
             if (_lazyFactory.IsValueCreated)
             {
-                await FactoryFixture.ResetAsync(_lazyFactory.Value.Services, CancellationToken);
+                await FactoryFixture.ResetAsync(_lazyFactory.Value.Services, CancellationToken).ConfigureAwait(false);
             }
         }
         finally
         {
-            await ResetScope();
+            await ResetScope().ConfigureAwait(false);
             _client?.Dispose();
             if (_lazyFactory.IsValueCreated && !ReferenceEquals(_lazyFactory.Value, FactoryFixture))
             {
-                await _lazyFactory.Value.DisposeAsync();
+                await _lazyFactory.Value.DisposeAsync().ConfigureAwait(false);
             }
         }
     }
@@ -155,14 +155,17 @@ public abstract class BaseIntegrationTestCase<TFactory, TEntryPoint> : IAsyncLif
             _scope = null;
         }
 
-        await (scope?.DisposeAsync() ?? ValueTask.CompletedTask);
+        if (scope is not null)
+        {
+            await scope.Value.DisposeAsync().ConfigureAwait(false);
+        }
     }
 
     /// <inheritdoc />
     public async ValueTask InitializeAsync()
     {
-        await Initialize();
-        await ResetScope();
+        await Initialize().ConfigureAwait(false);
+        await ResetScope().ConfigureAwait(false);
     }
 
     /// <summary>

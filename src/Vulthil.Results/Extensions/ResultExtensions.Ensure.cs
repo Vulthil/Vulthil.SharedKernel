@@ -28,12 +28,12 @@ public static partial class ResultExtensions
             return result;
         }
 
-        return await predicate(result.Value) ? result : Result.Failure<T1>(error);
+        return await predicate(result.Value).ConfigureAwait(false) ? result : Result.Failure<T1>(error);
     }
     /// <inheritdoc cref="Ensure{T1}(Result{T1}, Func{T1, bool}, Error)"/>
     public static async Task<Result<T1>> EnsureAsync<T1>(this Task<Result<T1>> resultTask, Func<T1, bool> predicate, Error error) =>
-        (await resultTask).Ensure(predicate, error);
+        (await resultTask.ConfigureAwait(false)).Ensure(predicate, error);
     /// <inheritdoc cref="EnsureAsync{T1}(Result{T1}, Func{T1, Task{bool}}, Error)"/>
     public static async Task<Result<T1>> EnsureAsync<T1>(this Task<Result<T1>> resultTask, Func<T1, Task<bool>> predicate, Error error) =>
-        await (await resultTask).EnsureAsync(predicate, error);
+        await (await resultTask.ConfigureAwait(false)).EnsureAsync(predicate, error).ConfigureAwait(false);
 }

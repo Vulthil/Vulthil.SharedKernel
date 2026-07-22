@@ -17,7 +17,7 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        await Dispose();
+        await Dispose().ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 
@@ -146,7 +146,7 @@ public abstract class BaseUnitTestCase<TTarget> : BaseUnitTestCase where TTarget
             switch (_lazyTarget.Value)
             {
                 case IAsyncDisposable asyncDisposable:
-                    await asyncDisposable.DisposeAsync();
+                    await asyncDisposable.DisposeAsync().ConfigureAwait(false);
                     break;
                 case IDisposable disposable:
                     disposable.Dispose();
@@ -154,7 +154,7 @@ public abstract class BaseUnitTestCase<TTarget> : BaseUnitTestCase where TTarget
             }
         }
 
-        await base.Dispose();
+        await base.Dispose().ConfigureAwait(false);
     }
 }
 

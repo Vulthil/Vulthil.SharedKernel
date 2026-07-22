@@ -24,7 +24,7 @@ internal sealed class FilteringPublisher(IServiceProvider serviceProvider, ITran
         var context = new PublishContext();
         if (configureContext is not null)
         {
-            await configureContext(context);
+            await configureContext(context).ConfigureAwait(false);
         }
 
         if (string.IsNullOrEmpty(context.MessageId))
@@ -52,6 +52,6 @@ internal sealed class FilteringPublisher(IServiceProvider serviceProvider, ITran
                 },
                 cancellationToken));
 
-        await pipeline(filterContext);
+        await pipeline(filterContext).ConfigureAwait(false);
     }
 }

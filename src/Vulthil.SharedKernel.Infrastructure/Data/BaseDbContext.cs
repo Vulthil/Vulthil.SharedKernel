@@ -41,7 +41,7 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
     }
 
     /// <inheritdoc />
-    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
+    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) =>
@@ -56,7 +56,7 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
         if (Database.CurrentTransaction is not null)
         {
             // Already inside a transaction (e.g. an outer filter opened it) — join it; the outer owns the commit.
-            return await operation(cancellationToken);
+            return await operation(cancellationToken).ConfigureAwait(false);
         }
 
         var strategy = Database.CreateExecutionStrategy();
@@ -64,19 +64,20 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
             async token =>
             {
                 ChangeTracker.Clear();
-                await using var transaction = await Database.BeginTransactionAsync(token);
-                var result = await operation(token);
+                var transaction = await Database.BeginTransactionAsync(token).ConfigureAwait(false);
+                await using var _ = transaction.ConfigureAwait(false);
+                var result = await operation(token).ConfigureAwait(false);
                 if (shouldCommit(result))
                 {
-                    await transaction.CommitAsync(token);
+                    await transaction.CommitAsync(token).ConfigureAwait(false);
                 }
                 else
                 {
-                    await transaction.RollbackAsync(token);
+                    await transaction.RollbackAsync(token).ConfigureAwait(false);
                 }
 
                 return result;
             },
-            cancellationToken);
+            cancellationToken).ConfigureAwait(false);
     }
 }

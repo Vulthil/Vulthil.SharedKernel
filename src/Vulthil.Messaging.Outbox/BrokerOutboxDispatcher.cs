@@ -55,14 +55,14 @@ internal sealed class BrokerOutboxDispatcher(
         {
             var address = new Uri(metadata?.DestinationAddress
                 ?? throw new InvalidOperationException("An outbox send message is missing its destination address."));
-            var endpoint = await sendEndpointProvider.GetSendEndpointAsync(address, cancellationToken);
+            var endpoint = await sendEndpointProvider.GetSendEndpointAsync(address, cancellationToken).ConfigureAwait(false);
             var send = SendByType.GetOrAdd(messageType, static type => SendMethod.MakeGenericMethod(type));
-            await (Task)send.Invoke(endpoint, [payload, configure, cancellationToken])!;
+            await ((Task)send.Invoke(endpoint, [payload, configure, cancellationToken])!).ConfigureAwait(false);
         }
         else
         {
             var publish = PublishByType.GetOrAdd(messageType, static type => PublishMethod.MakeGenericMethod(type));
-            await (Task)publish.Invoke(publisher, [payload, configure, cancellationToken])!;
+            await ((Task)publish.Invoke(publisher, [payload, configure, cancellationToken])!).ConfigureAwait(false);
         }
     }
 

@@ -27,7 +27,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
     /// </exception>
     protected override async Task<IDbTransaction?> BeginTransactionAsync(CancellationToken cancellationToken)
     {
-        var transaction = await base.BeginTransactionAsync(cancellationToken);
+        var transaction = await base.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
         return transaction ?? throw new InvalidOperationException(
             $"RelationalOutboxStore could not open a transaction because '{typeof(TContext).Name}' does not implement " +
@@ -45,7 +45,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
                 .Where(x => successIds.Contains(x.Id))
                 .ExecuteUpdateAsync(
                     setter => setter.SetProperty(o => o.ProcessedOnUtc, processedOnUtc),
-                    cancellationToken);
+                    cancellationToken).ConfigureAwait(false);
         }
 
         foreach (var failure in failures)
@@ -56,7 +56,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
                     setter => setter
                         .SetProperty(o => o.RetryCount, o => o.RetryCount + 1)
                         .SetProperty(o => o.Error, failure.Error),
-                    cancellationToken);
+                    cancellationToken).ConfigureAwait(false);
         }
 
         if (failures.Count > 0)
@@ -66,7 +66,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
             var deadLettered = await OutboxMessages
                 .Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries)
                 .Select(x => new { x.Id, x.RetryCount, x.Error })
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             if (deadLettered.Count > 0)
             {
@@ -74,7 +74,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
                     .Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries)
                     .ExecuteUpdateAsync(
                         setter => setter.SetProperty(o => o.FailedOnUtc, processedOnUtc),
-                        cancellationToken);
+                        cancellationToken).ConfigureAwait(false);
 
                 foreach (var item in deadLettered)
                 {
@@ -98,7 +98,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
             .OrderBy(o => o.OccurredOnUtc)
             .Take(batchSize)
             .Select(o => o.Id)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (ids.Count == 0)
         {
@@ -107,7 +107,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
 
         return await OutboxMessages
             .Where(o => ids.Contains(o.Id))
-            .ExecuteDeleteAsync(cancellationToken);
+            .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
     }
 }
 

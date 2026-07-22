@@ -28,9 +28,9 @@ internal sealed class OutboxRetentionBackgroundService(
             using var timer = new PeriodicTimer(_options.SweepInterval, timeProvider);
             do
             {
-                await SweepSafelyAsync(stoppingToken);
+                await SweepSafelyAsync(stoppingToken).ConfigureAwait(false);
             }
-            while (await timer.WaitForNextTickAsync(stoppingToken));
+            while (await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false));
         }
         catch (OperationCanceledException exception) when (stoppingToken.IsCancellationRequested)
         {
@@ -48,7 +48,7 @@ internal sealed class OutboxRetentionBackgroundService(
     {
         try
         {
-            await SweepAsync(cancellationToken);
+            await SweepAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
@@ -58,7 +58,8 @@ internal sealed class OutboxRetentionBackgroundService(
 
     private async Task SweepAsync(CancellationToken cancellationToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
+        var scope = scopeFactory.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
         if (scope.ServiceProvider.GetRequiredService<IOutboxStore>() is not IOutboxRetentionStore store)
         {
             if (!_loggedMissingRetentionStore)
@@ -76,7 +77,7 @@ internal sealed class OutboxRetentionBackgroundService(
         int deleted;
         do
         {
-            deleted = await store.DeleteProcessedAsync(cutoff, batchSize, cancellationToken);
+            deleted = await store.DeleteProcessedAsync(cutoff, batchSize, cancellationToken).ConfigureAwait(false);
             total += deleted;
         }
         while (deleted >= batchSize && !cancellationToken.IsCancellationRequested);

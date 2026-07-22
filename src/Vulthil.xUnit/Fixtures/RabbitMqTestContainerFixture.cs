@@ -48,7 +48,7 @@ public abstract class RabbitMqTestContainerFixture<TBuilderEntity, TContainerEnt
 
     private async Task ExecuteBrokerCommandAsync(params string[] command)
     {
-        ExecResult result = await Container.ExecAsync(command);
+        ExecResult result = await Container.ExecAsync(command).ConfigureAwait(false);
         if (result.ExitCode != 0)
         {
             throw new InvalidOperationException(
@@ -70,15 +70,15 @@ public abstract class RabbitMqTestContainerFixture<TBuilderEntity, TContainerEnt
 
         public async ValueTask InitializeAsync()
         {
-            await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "add_vhost", virtualHost);
-            await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "set_permissions", "-p", virtualHost, fixture.VirtualHostUsername, ".*", ".*", ".*");
+            await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "add_vhost", virtualHost).ConfigureAwait(false);
+            await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "set_permissions", "-p", virtualHost, fixture.VirtualHostUsername, ".*", ".*", ".*").ConfigureAwait(false);
         }
 
         public async ValueTask DisposeAsync()
         {
             try
             {
-                await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "delete_vhost", virtualHost);
+                await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "delete_vhost", virtualHost).ConfigureAwait(false);
             }
             catch (Exception exception)
             {

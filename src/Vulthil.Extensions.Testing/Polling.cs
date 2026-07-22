@@ -120,7 +120,7 @@ public static class Polling
         {
             do
             {
-                Result<T> result = await func(linkedCts.Token);
+                Result<T> result = await func(linkedCts.Token).ConfigureAwait(false);
 
                 if (result.IsSuccess)
                 {
@@ -129,7 +129,7 @@ public static class Polling
 
                 errors.Add(result.Error);
             }
-            while (await timer.WaitForNextTickAsync(linkedCts.Token));
+            while (await timer.WaitForNextTickAsync(linkedCts.Token).ConfigureAwait(false));
         }
         catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
         {
@@ -234,7 +234,7 @@ public static class Polling
         {
             do
             {
-                Result result = await func(linkedCts.Token);
+                Result result = await func(linkedCts.Token).ConfigureAwait(false);
 
                 if (result.IsSuccess)
                 {
@@ -243,7 +243,7 @@ public static class Polling
 
                 errors.Add(result.Error);
             }
-            while (await timer.WaitForNextTickAsync(linkedCts.Token));
+            while (await timer.WaitForNextTickAsync(linkedCts.Token).ConfigureAwait(false));
         }
         catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
         {

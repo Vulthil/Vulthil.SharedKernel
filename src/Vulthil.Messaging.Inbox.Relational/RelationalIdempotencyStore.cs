@@ -33,7 +33,7 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
             .OrderBy(marker => marker.ProcessedOnUtc)
             .Take(batchSize)
             .Select(marker => marker.MessageId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (keys.Count == 0)
         {
@@ -42,7 +42,7 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
 
         return await dbContext.InboxMessages
             .Where(marker => keys.Contains(marker.MessageId))
-            .ExecuteDeleteAsync(cancellationToken);
+            .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
@@ -57,34 +57,35 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
 
         var strategy = dbContext.Database.CreateExecutionStrategy();
         return strategy.ExecuteAsync(
-            async token => await ProcessInOwnTransactionAsync(idempotencyKey, process, token),
+            async token => await ProcessInOwnTransactionAsync(idempotencyKey, process, token).ConfigureAwait(false),
             cancellationToken);
     }
 
     private async Task<bool> ProcessInOwnTransactionAsync(string idempotencyKey, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
     {
         dbContext.ChangeTracker.Clear();
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+        var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using var _ = transaction.ConfigureAwait(false);
 
-        if (await HasProcessedAsync(idempotencyKey, cancellationToken))
+        if (await HasProcessedAsync(idempotencyKey, cancellationToken).ConfigureAwait(false))
         {
             return false;
         }
 
-        await process(cancellationToken);
+        await process(cancellationToken).ConfigureAwait(false);
         AddMarker(idempotencyKey);
 
         try
         {
-            await dbContext.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return true;
         }
         catch (DbUpdateException)
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
 
-            if (await HasProcessedAsync(idempotencyKey, cancellationToken))
+            if (await HasProcessedAsync(idempotencyKey, cancellationToken).ConfigureAwait(false))
             {
                 return false;
             }
@@ -95,14 +96,14 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
 
     private async Task<bool> ProcessInAmbientTransactionAsync(string idempotencyKey, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
     {
-        if (await HasProcessedAsync(idempotencyKey, cancellationToken))
+        if (await HasProcessedAsync(idempotencyKey, cancellationToken).ConfigureAwait(false))
         {
             return false;
         }
 
-        await process(cancellationToken);
+        await process(cancellationToken).ConfigureAwait(false);
         AddMarker(idempotencyKey);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return true;
     }
 

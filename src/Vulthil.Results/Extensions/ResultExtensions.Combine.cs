@@ -32,5 +32,5 @@ public static partial class ResultExtensions
     /// aggregating every failed result's error.
     /// </summary>
     public static async Task<Result> CombineAsync(this IEnumerable<Task<Result>> resultTasks) =>
-        (await Task.WhenAll(resultTasks)).Combine();
+        (await Task.WhenAll(resultTasks).ConfigureAwait(false)).Combine();
 }

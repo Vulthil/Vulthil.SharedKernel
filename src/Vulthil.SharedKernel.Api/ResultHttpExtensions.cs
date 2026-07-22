@@ -18,7 +18,7 @@ public static class ResultHttpExtensions
         ArgumentNullException.ThrowIfNull(resultTask);
         ArgumentNullException.ThrowIfNull(controller);
 
-        var result = await resultTask;
+        var result = await resultTask.ConfigureAwait(false);
         if (result.IsSuccess)
         {
             return controller.NoContent();
@@ -35,7 +35,7 @@ public static class ResultHttpExtensions
         ArgumentNullException.ThrowIfNull(resultTask);
         ArgumentNullException.ThrowIfNull(controller);
 
-        var result = await resultTask;
+        var result = await resultTask.ConfigureAwait(false);
         if (result.IsSuccess)
         {
             return controller.Ok(result.Value);

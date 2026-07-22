@@ -49,7 +49,7 @@ public static partial class ResultExtensions
     {
         if (result.IsSuccess)
         {
-            await onSuccess();
+            await onSuccess().ConfigureAwait(false);
             return;
         }
 
@@ -64,31 +64,31 @@ public static partial class ResultExtensions
             return;
         }
 
-        await onFailure(result.Error);
+        await onFailure(result.Error).ConfigureAwait(false);
     }
     /// <inheritdoc cref="MatchAsync(Result, Func{Task}, Action{Error})"/>
     public static async Task MatchAsync(this Result result, Func<Task> onSuccess, Func<Error, Task> onFailure)
     {
         if (result.IsSuccess)
         {
-            await onSuccess();
+            await onSuccess().ConfigureAwait(false);
             return;
         }
 
-        await onFailure(result.Error);
+        await onFailure(result.Error).ConfigureAwait(false);
     }
     /// <inheritdoc cref="MatchAsync(Result, Func{Task}, Action{Error})"/>
     public static async Task MatchAsync(this Task<Result> resultTask, Action onSuccess, Action<Error> onFailure) =>
-        (await resultTask).Match(onSuccess, onFailure);
+        (await resultTask.ConfigureAwait(false)).Match(onSuccess, onFailure);
     /// <inheritdoc cref="MatchAsync(Result, Func{Task}, Action{Error})"/>
     public static async Task MatchAsync(this Task<Result> resultTask, Func<Task> onSuccess, Action<Error> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync(Result, Func{Task}, Action{Error})"/>
     public static async Task MatchAsync(this Task<Result> resultTask, Action onSuccess, Func<Error, Task> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync(Result, Func{Task}, Action{Error})"/>
     public static async Task MatchAsync(this Task<Result> resultTask, Func<Task> onSuccess, Func<Error, Task> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <summary>
     /// Asynchronously invokes the success or failure action based on the result state, passing the value on success.
     /// </summary>
@@ -96,7 +96,7 @@ public static partial class ResultExtensions
     {
         if (result.IsSuccess)
         {
-            await onSuccess(result.Value);
+            await onSuccess(result.Value).ConfigureAwait(false);
             return;
         }
 
@@ -111,75 +111,75 @@ public static partial class ResultExtensions
             return;
         }
 
-        await onFailure(result.Error);
+        await onFailure(result.Error).ConfigureAwait(false);
     }
     /// <inheritdoc cref="MatchAsync{T1}(Result{T1}, Func{T1, Task}, Action{Error})"/>
     public static async Task MatchAsync<T1>(this Result<T1> result, Func<T1, Task> onSuccess, Func<Error, Task> onFailure)
     {
         if (result.IsSuccess)
         {
-            await onSuccess(result.Value);
+            await onSuccess(result.Value).ConfigureAwait(false);
             return;
         }
 
-        await onFailure(result.Error);
+        await onFailure(result.Error).ConfigureAwait(false);
     }
     /// <inheritdoc cref="MatchAsync{T1}(Result{T1}, Func{T1, Task}, Action{Error})"/>
     public static async Task MatchAsync<T1>(this Task<Result<T1>> resultTask, Action<T1> onSuccess, Action<Error> onFailure) =>
-        (await resultTask).Match(onSuccess, onFailure);
+        (await resultTask.ConfigureAwait(false)).Match(onSuccess, onFailure);
     /// <inheritdoc cref="MatchAsync{T1}(Result{T1}, Func{T1, Task}, Action{Error})"/>
     public static async Task MatchAsync<T1>(this Task<Result<T1>> resultTask, Func<T1, Task> onSuccess, Action<Error> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{T1}(Result{T1}, Func{T1, Task}, Action{Error})"/>
     public static async Task MatchAsync<T1>(this Task<Result<T1>> resultTask, Action<T1> onSuccess, Func<Error, Task> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{T1}(Result{T1}, Func{T1, Task}, Action{Error})"/>
     public static async Task MatchAsync<T1>(this Task<Result<T1>> resultTask, Func<T1, Task> onSuccess, Func<Error, Task> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <summary>
     /// Asynchronously returns a value produced by the success or failure function based on the result state.
     /// </summary>
     public static async Task<TOut> MatchAsync<TOut>(this Result result, Func<Task<TOut>> onSuccess, Func<Error, TOut> onFailure)
-        => result.IsSuccess ? await onSuccess() : onFailure(result.Error);
+        => result.IsSuccess ? await onSuccess().ConfigureAwait(false) : onFailure(result.Error);
     /// <inheritdoc cref="MatchAsync{TOut}(Result, Func{Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TOut>(this Result result, Func<TOut> onSuccess, Func<Error, Task<TOut>> onFailure)
-        => result.IsSuccess ? onSuccess() : await onFailure(result.Error);
+        => result.IsSuccess ? onSuccess() : await onFailure(result.Error).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TOut}(Result, Func{Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TOut>(this Result result, Func<Task<TOut>> onSuccess, Func<Error, Task<TOut>> onFailure)
-        => result.IsSuccess ? await onSuccess() : await onFailure(result.Error);
+        => result.IsSuccess ? await onSuccess().ConfigureAwait(false) : await onFailure(result.Error).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TOut}(Result, Func{Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TOut>(this Task<Result> resultTask, Func<TOut> onSuccess, Func<Error, TOut> onFailure) =>
-        (await resultTask).Match(onSuccess, onFailure);
+        (await resultTask.ConfigureAwait(false)).Match(onSuccess, onFailure);
     /// <inheritdoc cref="MatchAsync{TOut}(Result, Func{Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TOut>(this Task<Result> resultTask, Func<Task<TOut>> onSuccess, Func<Error, TOut> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TOut}(Result, Func{Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TOut>(this Task<Result> resultTask, Func<TOut> onSuccess, Func<Error, Task<TOut>> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TOut}(Result, Func{Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TOut>(this Task<Result> resultTask, Func<Task<TOut>> onSuccess, Func<Error, Task<TOut>> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <summary>
     /// Asynchronously returns a value produced by the success or failure function based on the result state, passing the value on success.
     /// </summary>
     public static async Task<TOut> MatchAsync<TIn, TOut>(this Result<TIn> result, Func<TIn, Task<TOut>> onSuccess, Func<Error, TOut> onFailure)
-        => result.IsSuccess ? await onSuccess(result.Value) : onFailure(result.Error);
+        => result.IsSuccess ? await onSuccess(result.Value).ConfigureAwait(false) : onFailure(result.Error);
     /// <inheritdoc cref="MatchAsync{TIn, TOut}(Result{TIn}, Func{TIn, Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TIn, TOut>(this Result<TIn> result, Func<TIn, TOut> onSuccess, Func<Error, Task<TOut>> onFailure)
-        => result.IsSuccess ? onSuccess(result.Value) : await onFailure(result.Error);
+        => result.IsSuccess ? onSuccess(result.Value) : await onFailure(result.Error).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TIn, TOut}(Result{TIn}, Func{TIn, Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TIn, TOut>(this Result<TIn> result, Func<TIn, Task<TOut>> onSuccess, Func<Error, Task<TOut>> onFailure)
-        => result.IsSuccess ? await onSuccess(result.Value) : await onFailure(result.Error);
+        => result.IsSuccess ? await onSuccess(result.Value).ConfigureAwait(false) : await onFailure(result.Error).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TIn, TOut}(Result{TIn}, Func{TIn, Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultTask, Func<TIn, TOut> onSuccess, Func<Error, TOut> onFailure) =>
-        (await resultTask).Match(onSuccess, onFailure);
+        (await resultTask.ConfigureAwait(false)).Match(onSuccess, onFailure);
     /// <inheritdoc cref="MatchAsync{TIn, TOut}(Result{TIn}, Func{TIn, Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultTask, Func<TIn, Task<TOut>> onSuccess, Func<Error, TOut> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TIn, TOut}(Result{TIn}, Func{TIn, Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultTask, Func<TIn, TOut> onSuccess, Func<Error, Task<TOut>> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
     /// <inheritdoc cref="MatchAsync{TIn, TOut}(Result{TIn}, Func{TIn, Task{TOut}}, Func{Error, TOut})"/>
     public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultTask, Func<TIn, Task<TOut>> onSuccess, Func<Error, Task<TOut>> onFailure) =>
-        await (await resultTask).MatchAsync(onSuccess, onFailure);
+        await (await resultTask.ConfigureAwait(false)).MatchAsync(onSuccess, onFailure).ConfigureAwait(false);
 }

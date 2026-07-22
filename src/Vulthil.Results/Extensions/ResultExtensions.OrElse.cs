@@ -18,10 +18,10 @@ public static partial class ResultExtensions
 
     /// <inheritdoc cref="Or(Result, Result)"/>
     public static async Task<Result> OrAsync(this Task<Result> resultTask, Result fallback) =>
-        (await resultTask).Or(fallback);
+        (await resultTask.ConfigureAwait(false)).Or(fallback);
     /// <inheritdoc cref="Or{T1}(Result{T1}, Result{T1})"/>
     public static async Task<Result<T1>> OrAsync<T1>(this Task<Result<T1>> resultTask, Result<T1> fallback) =>
-        (await resultTask).Or(fallback);
+        (await resultTask.ConfigureAwait(false)).Or(fallback);
 
     /// <summary>
     /// Returns the original result when it is successful; otherwise invokes the fallback factory with the error to produce a replacement result.
@@ -38,22 +38,22 @@ public static partial class ResultExtensions
     /// Asynchronously returns the original result when it is successful; otherwise invokes the fallback factory with the error to produce a replacement result.
     /// </summary>
     public static async Task<Result> OrElseAsync(this Result result, Func<Error, Task<Result>> fallback) =>
-        result.IsSuccess ? result : await fallback(result.Error);
+        result.IsSuccess ? result : await fallback(result.Error).ConfigureAwait(false);
     /// <inheritdoc cref="OrElseAsync(Result, Func{Error, Task{Result}})"/>
     public static async Task<Result> OrElseAsync(this Task<Result> resultTask, Func<Error, Result> fallback) =>
-        (await resultTask).OrElse(fallback);
+        (await resultTask.ConfigureAwait(false)).OrElse(fallback);
     /// <inheritdoc cref="OrElseAsync(Result, Func{Error, Task{Result}})"/>
     public static async Task<Result> OrElseAsync(this Task<Result> resultTask, Func<Error, Task<Result>> fallback) =>
-        await (await resultTask).OrElseAsync(fallback);
+        await (await resultTask.ConfigureAwait(false)).OrElseAsync(fallback).ConfigureAwait(false);
     /// <summary>
     /// Asynchronously returns the original typed result when it is successful; otherwise invokes the fallback factory with the error to produce a replacement result.
     /// </summary>
     public static async Task<Result<T1>> OrElseAsync<T1>(this Result<T1> result, Func<Error, Task<Result<T1>>> fallback) =>
-        result.IsSuccess ? result : await fallback(result.Error);
+        result.IsSuccess ? result : await fallback(result.Error).ConfigureAwait(false);
     /// <inheritdoc cref="OrElseAsync{T1}(Result{T1}, Func{Error, Task{Result{T1}}})"/>
     public static async Task<Result<T1>> OrElseAsync<T1>(this Task<Result<T1>> resultTask, Func<Error, Result<T1>> fallback) =>
-        (await resultTask).OrElse(fallback);
+        (await resultTask.ConfigureAwait(false)).OrElse(fallback);
     /// <inheritdoc cref="OrElseAsync{T1}(Result{T1}, Func{Error, Task{Result{T1}}})"/>
     public static async Task<Result<T1>> OrElseAsync<T1>(this Task<Result<T1>> resultTask, Func<Error, Task<Result<T1>>> fallback) =>
-        await (await resultTask).OrElseAsync(fallback);
+        await (await resultTask.ConfigureAwait(false)).OrElseAsync(fallback).ConfigureAwait(false);
 }

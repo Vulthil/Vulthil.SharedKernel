@@ -91,12 +91,12 @@ internal sealed class OutboxBackgroundService(
 
         if (previous is not null)
         {
-            await previous.CancelAsync();
+            await previous.CancelAsync().ConfigureAwait(false);
         }
 
         if (previousExecuteTask is { IsCompleted: false })
         {
-            await previousExecuteTask.WaitAsync(cancellationToken);
+            await previousExecuteTask.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
 
         lock (_lifecycleGate)
@@ -133,7 +133,7 @@ internal sealed class OutboxBackgroundService(
 
         try
         {
-            await cancellation;
+            await cancellation.ConfigureAwait(false);
         }
         finally
         {
@@ -169,7 +169,7 @@ internal sealed class OutboxBackgroundService(
     {
         try
         {
-            await ProcessUntilStoppedAsync(stoppingToken);
+            await ProcessUntilStoppedAsync(stoppingToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException ex) when (stoppingToken.IsCancellationRequested)
         {
@@ -184,7 +184,7 @@ internal sealed class OutboxBackgroundService(
 
     private async Task ProcessUntilStoppedAsync(CancellationToken stoppingToken)
     {
-        if (!await TryWaitForRelayGatesAsync(stoppingToken))
+        if (!await TryWaitForRelayGatesAsync(stoppingToken).ConfigureAwait(false))
         {
             return;
         }
@@ -200,13 +200,14 @@ internal sealed class OutboxBackgroundService(
                 if (currentDelayMs > 0)
                 {
                     // Wake early when a transaction commits (low latency); the timeout keeps the poll as a backstop.
-                    await signal.WaitAsync(TimeSpan.FromMilliseconds(currentDelayMs), stoppingToken);
+                    await signal.WaitAsync(TimeSpan.FromMilliseconds(currentDelayMs), stoppingToken).ConfigureAwait(false);
                 }
 
-                await using var scope = serviceScopeFactory.CreateAsyncScope();
+                var scope = serviceScopeFactory.CreateAsyncScope();
+                await using var _ = scope.ConfigureAwait(false);
                 var outboxProcessor = scope.ServiceProvider.GetRequiredService<OutboxProcessor>();
 
-                var processedCount = await outboxProcessor.ExecuteAsync(stoppingToken);
+                var processedCount = await outboxProcessor.ExecuteAsync(stoppingToken).ConfigureAwait(false);
 
                 currentDelayMs = processedCount switch
                 {
@@ -238,7 +239,7 @@ internal sealed class OutboxBackgroundService(
         {
             try
             {
-                await gate.WaitUntilReadyAsync(stoppingToken);
+                await gate.WaitUntilReadyAsync(stoppingToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {

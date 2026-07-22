@@ -21,7 +21,7 @@ public static class HttpResponseMessageExtensions
         ArgumentNullException.ThrowIfNull(response);
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken) ?? throw new InvalidOperationException("Response content is empty or could not be deserialized.");
+        var result = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken).ConfigureAwait(false) ?? throw new InvalidOperationException("Response content is empty or could not be deserialized.");
 
         return result;
     }

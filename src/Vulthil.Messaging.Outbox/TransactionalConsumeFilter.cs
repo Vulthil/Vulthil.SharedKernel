@@ -17,7 +17,7 @@ internal sealed class TransactionalConsumeFilter<TMessage>(IUnitOfWork unitOfWor
         unitOfWork.ExecuteInTransactionAsync(
             async _ =>
             {
-                await next(context);
+                await next(context).ConfigureAwait(false);
                 return true;
             },
             context.CancellationToken);

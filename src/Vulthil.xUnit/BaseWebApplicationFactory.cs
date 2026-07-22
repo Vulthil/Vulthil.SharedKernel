@@ -235,10 +235,10 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         {
             return;
         }
-        await ConfigureContainers();
-        await AcquireHostContainers();
+        await ConfigureContainers().ConfigureAwait(false);
+        await AcquireHostContainers().ConfigureAwait(false);
 
-        await Parallel.ForEachAsync(_containers, (container, ct) => container.InitializeAsync());
+        await Parallel.ForEachAsync(_containers, (container, ct) => container.InitializeAsync()).ConfigureAwait(false);
         _initialized = true;
     }
 
@@ -250,7 +250,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         }
 
         var consumedContainers = _containerHost.Containers.Where(ShouldUseContainer).ToList();
-        await Parallel.ForEachAsync(consumedContainers, async (container, ct) => await _containerHost.EnsureStartedAsync(container));
+        await Parallel.ForEachAsync(consumedContainers, async (container, ct) => await _containerHost.EnsureStartedAsync(container).ConfigureAwait(false)).ConfigureAwait(false);
 
         var scopeId = CreateScopeId();
         foreach (var container in consumedContainers)
@@ -275,16 +275,17 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
         // Stop the application host(s) first so graceful shutdown still has its infrastructure, then tear down
         // factory-owned containers and per-factory scopes. Containers owned by a ContainerHost outlive the factory.
-        await base.DisposeAsync();
+        await base.DisposeAsync().ConfigureAwait(false);
 
-        await Parallel.ForEachAsync(_containers, (container, ct) => container.DisposeAsync());
+        await Parallel.ForEachAsync(_containers, (container, ct) => container.DisposeAsync()).ConfigureAwait(false);
     }
 
     async Task ITestHostMigrator.PrepareAsync(IServiceProvider serviceProvider)
     {
-        await using var scope = serviceProvider.CreateAsyncScope();
-        await Parallel.ForEachAsync(DatabaseContainers, (container, ct) => container.MigrateDatabase(scope.ServiceProvider));
-        await Parallel.ForEachAsync(StartupResources, (resource, ct) => resource.InitializeAsync(serviceProvider));
+        var scope = serviceProvider.CreateAsyncScope();
+        await using var _ = scope.ConfigureAwait(false);
+        await Parallel.ForEachAsync(DatabaseContainers, (container, ct) => container.MigrateDatabase(scope.ServiceProvider)).ConfigureAwait(false);
+        await Parallel.ForEachAsync(StartupResources, (resource, ct) => resource.InitializeAsync(serviceProvider)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -306,12 +307,12 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         {
             using var stopCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             stopCts.CancelAfter(RestartTimeout);
-            await service.StopAsync(stopCts.Token);
+            await service.StopAsync(stopCts.Token).ConfigureAwait(false);
         }
 
         try
         {
-            await ResetResourcesAsync(hostServices);
+            await ResetResourcesAsync(hostServices).ConfigureAwait(false);
         }
         finally
         {
@@ -319,7 +320,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
             {
                 using var startCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 startCts.CancelAfter(RestartTimeout);
-                await service.StartAsync(startCts.Token);
+                await service.StartAsync(startCts.Token).ConfigureAwait(false);
             }
         }
     }
@@ -345,7 +346,7 @@ internal sealed class TestMigrationHostedService(ITestHostMigrator migrator, ISe
             return;
         }
 
-        await migrator.PrepareAsync(serviceProvider);
+        await migrator.PrepareAsync(serviceProvider).ConfigureAwait(false);
         _completed = true;
     }
 

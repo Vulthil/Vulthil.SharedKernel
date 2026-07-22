@@ -66,7 +66,7 @@ public abstract class ContainerHost(IMessageSink messageSink) : IAsyncLifetime
             return;
         }
 
-        await ConfigureContainers();
+        await ConfigureContainers().ConfigureAwait(false);
         _configured = true;
     }
 
@@ -115,6 +115,6 @@ public abstract class ContainerHost(IMessageSink messageSink) : IAsyncLifetime
                 }
 
                 await pair.Key.DisposeAsync().ConfigureAwait(false);
-            });
+            }).ConfigureAwait(false);
     }
 }

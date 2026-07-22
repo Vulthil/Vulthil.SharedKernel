@@ -40,7 +40,7 @@ internal static class MessageHandlerFactory
                     sp,
                     terminal: c => consumer.ConsumeAsync(c, c.CancellationToken));
 
-                await pipeline(context);
+                await pipeline(context).ConfigureAwait(false);
             }
         };
 
@@ -79,11 +79,11 @@ internal static class MessageHandlerFactory
                         sp,
                         terminal: async c =>
                         {
-                            response = await consumer.ConsumeAsync(c, c.CancellationToken);
+                            response = await consumer.ConsumeAsync(c, c.CancellationToken).ConfigureAwait(false);
                             responseProduced = true;
                         });
 
-                    await pipeline(context);
+                    await pipeline(context).ConfigureAwait(false);
 
                     reply = responseProduced
                         ? BuildReply(provider.GetUrn(typeof(TResponse)), JsonSerializer.SerializeToElement(response, jsonOptions), ea, envelope)
@@ -100,7 +100,7 @@ internal static class MessageHandlerFactory
                     reply = BuildFaultReply(exception.Message, exception.GetType().FullName ?? "Unknown", exception.StackTrace, jsonOptions, ea, envelope);
                 }
 
-                await SendResponseAsync(ea, reply, publishAsync, jsonOptions);
+                await SendResponseAsync(ea, reply, publishAsync, jsonOptions).ConfigureAwait(false);
             }
         };
 
@@ -148,6 +148,6 @@ internal static class MessageHandlerFactory
             ContentType = RabbitMqConstants.ContentType,
         };
 
-        await publishAsync(string.Empty, ea.BasicProperties.ReplyTo, true, replyProps, body);
+        await publishAsync(string.Empty, ea.BasicProperties.ReplyTo, true, replyProps, body).ConfigureAwait(false);
     }
 }

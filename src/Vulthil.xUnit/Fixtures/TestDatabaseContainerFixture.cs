@@ -150,12 +150,15 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     {
         ArgumentException.ThrowIfNullOrEmpty(commandText);
 
-        await using var connection = await OpenConnectionAsync();
-        await using var command = connection.CreateCommand();
+        var connection = await OpenConnectionAsync().ConfigureAwait(false);
+        await using var connectionDisposer = connection.ConfigureAwait(false);
+
+        var command = connection.CreateCommand();
+        await using var commandDisposer = command.ConfigureAwait(false);
 #pragma warning disable CA2100 // DDL against the test container; identifiers are sanitized and cannot be parameterized.
         command.CommandText = commandText;
 #pragma warning restore CA2100
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -201,7 +204,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
         {
             if (databaseName is not null)
             {
-                await fixture.CreateDatabaseAsync(databaseName);
+                await fixture.CreateDatabaseAsync(databaseName).ConfigureAwait(false);
             }
         }
 
@@ -214,7 +217,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
             try
             {
-                await fixture.DropDatabaseAsync(databaseName);
+                await fixture.DropDatabaseAsync(databaseName).ConfigureAwait(false);
             }
             catch (DbException exception)
             {
@@ -234,7 +237,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
             for (var attempt = 1; attempt <= MaxMigrationAttempts; attempt++)
             {
-                if (!(await dbContext.Database.GetPendingMigrationsAsync()).Any())
+                if (!(await dbContext.Database.GetPendingMigrationsAsync().ConfigureAwait(false)).Any())
                 {
                     _hasBeenMigrated = true;
                     return;
@@ -242,13 +245,13 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
                 try
                 {
-                    await dbContext.Database.MigrateAsync();
+                    await dbContext.Database.MigrateAsync().ConfigureAwait(false);
                     _hasBeenMigrated = true;
                     return;
                 }
                 catch when (attempt < MaxMigrationAttempts)
                 {
-                    await Task.Delay(MigrationRetryDelayMilliseconds);
+                    await Task.Delay(MigrationRetryDelayMilliseconds).ConfigureAwait(false);
                 }
             }
 
@@ -263,10 +266,11 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 return;
             }
 
-            await EnsureRespawnerInitialized();
+            await EnsureRespawnerInitialized().ConfigureAwait(false);
 
-            await using var connection = await OpenScopedConnectionAsync();
-            await _respawner!.ResetAsync(connection);
+            var connection = await OpenScopedConnectionAsync().ConfigureAwait(false);
+            await using var _ = connection.ConfigureAwait(false);
+            await _respawner!.ResetAsync(connection).ConfigureAwait(false);
         }
 
         private async ValueTask EnsureRespawnerInitialized()
@@ -276,13 +280,14 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 return;
             }
 
-            await using var connection = await OpenScopedConnectionAsync();
+            var connection = await OpenScopedConnectionAsync().ConfigureAwait(false);
+            await using var _ = connection.ConfigureAwait(false);
             _respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
             {
                 DbAdapter = fixture.DbAdapter,
                 WithReseed = true,
                 TablesToIgnore = ["__EFMigrationsHistory"],
-            });
+            }).ConfigureAwait(false);
         }
 
         private async Task<DbConnection> OpenScopedConnectionAsync()
@@ -294,12 +299,12 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
             try
             {
                 connection.ConnectionString = connectionString;
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
                 return connection;
             }
             catch
             {
-                await connection.DisposeAsync();
+                await connection.DisposeAsync().ConfigureAwait(false);
                 throw;
             }
         }

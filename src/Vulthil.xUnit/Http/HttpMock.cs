@@ -64,7 +64,7 @@ internal sealed class HttpMock : IHttpMock
 
     private async Task<HttpResponseMessage> HandleAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var body = request.Content is null ? null : await request.Content.ReadAsStringAsync(cancellationToken);
+        var body = request.Content is null ? null : await request.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         MockRule? matched;
         lock (_gate)
@@ -85,7 +85,7 @@ internal sealed class HttpMock : IHttpMock
             };
         }
 
-        return await matched.RespondAsync(request, cancellationToken);
+        return await matched.RespondAsync(request, cancellationToken).ConfigureAwait(false);
     }
 
     private static Regex BuildPathRegex(string pathPattern)

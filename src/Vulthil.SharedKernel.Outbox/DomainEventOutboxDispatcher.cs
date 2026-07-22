@@ -20,7 +20,7 @@ internal sealed class DomainEventOutboxDispatcher(IDomainEventPublisher domainEv
         var messageType = GetOrAddMessageType(message.Type);
         var domainEvent = JsonSerializer.Deserialize(message.Content, messageType)!;
 
-        await domainEventPublisher.PublishAsync(domainEvent, cancellationToken);
+        await domainEventPublisher.PublishAsync(domainEvent, cancellationToken).ConfigureAwait(false);
     }
 
     private static Type GetOrAddMessageType(string typeName) => _typeCache.GetOrAdd(typeName, static t =>

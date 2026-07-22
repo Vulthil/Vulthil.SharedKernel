@@ -25,7 +25,7 @@ internal sealed class LoggingConsumeFilter<TMessage>(
         var startTimestamp = Stopwatch.GetTimestamp();
         try
         {
-            await next(context);
+            await next(context).ConfigureAwait(false);
             var elapsedMs = (long)Stopwatch.GetElapsedTime(startTimestamp).TotalMilliseconds;
             FilterLog.Consumed(_logger, messageType, context.MessageId, elapsedMs);
         }

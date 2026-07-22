@@ -50,15 +50,15 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             MessagingLog.BusStarting(_logger, queues.Count);
 
             var typeCaches = BuildTypeCaches(queues);
-            await SetupTopology(queues, typeCaches, cancellationToken);
-            await StartConsumersAsync(queues, typeCaches, cancellationToken);
+            await SetupTopology(queues, typeCaches, cancellationToken).ConfigureAwait(false);
+            await StartConsumersAsync(queues, typeCaches, cancellationToken).ConfigureAwait(false);
 
             MessagingLog.BusStarted(_logger);
             _startupStatus.MarkStarted();
         }
         catch (Exception)
         {
-            await DisposeWorkersAsync();
+            await DisposeWorkersAsync().ConfigureAwait(false);
             throw;
         }
     }
@@ -109,8 +109,8 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                     consumerDispatchConcurrency: dispatchConcurrency
                 );
 
-                var channel = await _connection.CreateChannelAsync(options, cancellationToken);
-                await channel.BasicQosAsync(0, queue.PrefetchCount, false, cancellationToken);
+                var channel = await _connection.CreateChannelAsync(options, cancellationToken).ConfigureAwait(false);
+                await channel.BasicQosAsync(0, queue.PrefetchCount, false, cancellationToken).ConfigureAwait(false);
 
                 var worker = new RabbitMqConsumerWorker(
                     _serviceScopeFactory,
@@ -125,7 +125,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 _workers.Add(worker);
             }
         }
-        await Task.WhenAll(_workers.Select(worker => worker.StartAsync(cancellationToken)));
+        await Task.WhenAll(_workers.Select(worker => worker.StartAsync(cancellationToken))).ConfigureAwait(false);
     }
 
     /// <remarks>
@@ -135,18 +135,18 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     /// </remarks>
     private async Task SetupTopology(IReadOnlyCollection<QueueDefinition> queues, Dictionary<string, MessageTypeCache> typeCaches, CancellationToken cancellationToken)
     {
-        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         await channel.ExchangeDeclareAsync(
             exchange: _messageConfigurationProvider.FaultExchangeName,
             type: ExchangeType.Topic,
             durable: true,
             autoDelete: false,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         foreach (var queue in queues)
         {
-            await SetupQueueTopology(queue, typeCaches[queue.Name], channel, cancellationToken);
+            await SetupQueueTopology(queue, typeCaches[queue.Name], channel, cancellationToken).ConfigureAwait(false);
             MessagingLog.QueueDeclared(_logger, queue.Name, queue.Registrations.Count);
         }
     }
@@ -166,7 +166,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             durable: queue.ExchangeDurable,
             autoDelete: queue.ExchangeAutoDelete,
             arguments: queue.ExchangeArguments,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         var args = new Dictionary<string, object?>();
         if (queue.IsQuorum)
@@ -184,9 +184,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             var dlx = queue.DeadLetter.ExchangeName ?? $"{queue.Name}.Error";
             var dlq = queue.DeadLetter.QueueName ?? $"{queue.Name}.Error";
 
-            await channel.ExchangeDeclareAsync(dlx, ExchangeType.Fanout, true, cancellationToken: cancellationToken);
-            await channel.QueueDeclareAsync(dlq, true, false, false, arguments: new Dictionary<string, object?> { ["x-queue-type"] = "quorum" }, cancellationToken: cancellationToken);
-            await channel.QueueBindAsync(dlq, dlx, "#", cancellationToken: cancellationToken);
+            await channel.ExchangeDeclareAsync(dlx, ExchangeType.Fanout, true, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await channel.QueueDeclareAsync(dlq, true, false, false, arguments: new Dictionary<string, object?> { ["x-queue-type"] = "quorum" }, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await channel.QueueBindAsync(dlq, dlx, "#", cancellationToken: cancellationToken).ConfigureAwait(false);
 
             args.Add("x-dead-letter-exchange", dlx);
         }
@@ -202,9 +202,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 ["x-queue-type"] = "quorum",
             };
 
-            await channel.ExchangeDeclareAsync(retryExchange, ExchangeType.Topic, true, cancellationToken: cancellationToken);
-            await channel.QueueDeclareAsync(retryQueue, true, false, false, retryArgs, cancellationToken: cancellationToken);
-            await channel.QueueBindAsync(retryQueue, retryExchange, "#", cancellationToken: cancellationToken);
+            await channel.ExchangeDeclareAsync(retryExchange, ExchangeType.Topic, true, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await channel.QueueDeclareAsync(retryQueue, true, false, false, retryArgs, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await channel.QueueBindAsync(retryQueue, retryExchange, "#", cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         await channel.QueueDeclareAsync(
@@ -213,13 +213,13 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             exclusive: !queue.IsQuorum && queue.Exclusive,
             autoDelete: queue.AutoDelete,
             arguments: args,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         await channel.QueueBindAsync(
             queue: queue.Name,
             exchange: queue.Name,
             routingKey: string.Empty,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         foreach (var subscription in queue.Subscriptions)
         {
@@ -232,13 +232,13 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 durable: messageConfig.Durable,
                 autoDelete: messageConfig.AutoDelete,
                 arguments: messageConfig.Arguments,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
             await channel.ExchangeBindAsync(
                 destination: queue.Name,
                 source: exchangeName,
                 routingKey: subscription.RoutingKey ?? string.Empty,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -275,7 +275,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeWorkersAsync();
+        await DisposeWorkersAsync().ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 
@@ -283,7 +283,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     {
         foreach (var worker in _workers)
         {
-            await worker.DisposeAsync();
+            await worker.DisposeAsync().ConfigureAwait(false);
         }
 
         _workers.Clear();

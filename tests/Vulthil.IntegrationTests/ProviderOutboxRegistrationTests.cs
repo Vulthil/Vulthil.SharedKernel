@@ -170,6 +170,19 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
         OutboxStoreDescriptor(builder).ImplementationType.ShouldBe(typeof(CustomOutboxStore));
     }
 
+    [Fact]
+    public void UseCosmosDbThrowsWhenConfiguratorIsNull()
+    {
+        // Arrange
+        IDatabaseInfrastructureConfigurator<RegistrationProbeDbContext> configurator = null!;
+
+        // Act
+        var act = () => configurator.UseCosmosDb(ConnectionStringKey);
+
+        // Assert
+        Should.Throw<ArgumentNullException>(act);
+    }
+
     private static HostApplicationBuilder NewBuilder(string connectionString)
     {
         var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());

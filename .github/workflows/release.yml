@@ -126,13 +126,21 @@ jobs:
     runs-on: ubuntu-latest
     # Budgeted for the deliberate nuget.org indexing wait below (up to ~20
     # minutes of polling plus a 60s grace sleep) on top of the PR open/
-    # approve/merge steps, not just the promotion script itself.
-    timeout-minutes: 35
+    # approve/merge steps, plus ~10 min headroom for the suppression refresh
+    # step's own `dotnet pack` per suppression-owning project.
+    timeout-minutes: 45
     permissions:
       contents: write      # create the promotion branch
       pull-requests: write # open the PR
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Full history: the suppression refresh below runs `dotnet pack`,
+          # and Nerdbank.GitVersioning's shallow-clone warning would become a
+          # build failure under this repo's repo-wide TreatWarningsAsErrors.
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-build
 
       - name: Promote unshipped public API
         run: python3 eng/mark_api_shipped.py --version ${{ needs.release.outputs.version }}
@@ -172,6 +180,16 @@ jobs:
           echo "::error::nuget.org did not index $PACKAGE_ID $VERSION within ~20 minutes. This PR's build will fail with NU1102 until indexing completes -- re-run the failed check once nuget.org catches up."
           exit 1
 
+      # Runs after the baseline bump above and after nuget.org has indexed the
+      # new baseline version (regeneration below restores that baseline
+      # package), so its changes land in the same commit as the rest of this
+      # PR. Prune-only: this only ever removes entries that ApiCompat no
+      # longer needs against the new baseline; if regenerating would ADD an
+      # entry anywhere, it fails the job instead of writing anything, since
+      # that means a real API break needs a human suppression decision.
+      - name: Refresh compatibility suppressions for the new baseline
+        run: python3 eng/refresh_compat_suppressions.py
+
       - name: Open public API promotion PR
         id: cpr
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
@@ -182,6 +200,7 @@ jobs:
           token: ${{ secrets.AUTOMATION_TOKEN }}
           add-paths: |
             src/**/PublicAPI.*.txt
+            src/**/CompatibilitySuppressions.xml
             Directory.Build.props
           branch: chore/mark-api-shipped-${{ needs.release.outputs.version }}
           delete-branch: true
@@ -192,6 +211,8 @@ jobs:
             Promotes the unshipped public API surface to shipped for **v${{ needs.release.outputs.version }}** and bumps `PackageValidationBaselineVersion` to match.
 
             Each `PublicAPI.Unshipped.txt` was folded into its sibling `PublicAPI.Shipped.txt` and reset to the `#nullable enable` header. Merge this so the next development cycle starts from a clean unshipped surface and package validation compares against the release that just shipped.
+
+            Any `CompatibilitySuppressions.xml` entry the new baseline no longer needs was pruned (or the file removed, if none remain) in the same commit.
 
       # Hands-off promotion, mirroring the dependabot auto-approve-and-merge flow.
       # Approve with GITHUB_TOKEN (the github-actions[bot] identity) so the review
@@ -228,8 +249,9 @@ jobs:
     runs-on: ubuntu-latest
     # Same deliberate nuget.org indexing wait as mark-api-shipped's gate when
     # a bump is actually needed; skipped output is fast, but this must budget
-    # for the slow path (see that job's comment for the exact math).
-    timeout-minutes: 35
+    # for the slow path (see that job's comment for the exact math), plus the
+    # same suppression-refresh `dotnet pack` headroom when a bump does happen.
+    timeout-minutes: 45
     permissions:
       contents: write      # create the propagation branch
       pull-requests: write # open the PR
@@ -237,6 +259,10 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: main
+          # Full history: see mark-api-shipped's checkout comment -- the
+          # suppression refresh below runs `dotnet pack`, which needs it for
+          # Nerdbank.GitVersioning under this repo's TreatWarningsAsErrors.
+          fetch-depth: 0
 
       - name: Compute propagated baseline
         id: propagate
@@ -276,6 +302,19 @@ jobs:
           echo "::error::nuget.org did not index $PACKAGE_ID $VERSION within ~20 minutes. This PR's build will fail with NU1102 until indexing completes -- re-run the failed check once nuget.org catches up."
           exit 1
 
+      # Only set up the .NET SDK / NuGet cache when there's actually a bump to
+      # refresh suppressions against -- skipped along with everything below
+      # when propagate_baseline.py found nothing to do.
+      - if: steps.propagate.outputs.bumped == 'true'
+        uses: ./.github/actions/setup-build
+
+      # See mark-api-shipped's identically-named step: same script, same
+      # prune-only contract. Gated the same as everything else in this job so
+      # the refresh never runs when the bump itself was skipped.
+      - name: Refresh compatibility suppressions for the new baseline
+        if: steps.propagate.outputs.bumped == 'true'
+        run: python3 eng/refresh_compat_suppressions.py
+
       - name: Open baseline propagation PR
         id: cpr
         if: steps.propagate.outputs.bumped == 'true'
@@ -285,7 +324,9 @@ jobs:
           # the default GITHUB_TOKEN, pushes from a workflow do not trigger CI.
           # Enforced by the "Require automation token" step above -- no fallback.
           token: ${{ secrets.AUTOMATION_TOKEN }}
-          add-paths: Directory.Build.props
+          add-paths: |
+            Directory.Build.props
+            src/**/CompatibilitySuppressions.xml
           branch: chore/baseline-${{ needs.release.outputs.version }}-to-main
           delete-branch: true
           commit-message: "chore: validate packages against the ${{ needs.release.outputs.version }} baseline"
@@ -293,6 +334,8 @@ jobs:
           labels: automated
           body: |
             **${{ github.ref_name }}** released **v${{ needs.release.outputs.version }}**. This raises main's `PackageValidationBaselineVersion` to match, so main keeps validating its packages against the newest release it must stay compatible with.
+
+            Any `CompatibilitySuppressions.xml` entry the new baseline no longer needs was pruned (or the file removed, if none remain) in the same commit.
 
       - name: Approve the propagation PR
         if: steps.cpr.outputs.pull-request-number

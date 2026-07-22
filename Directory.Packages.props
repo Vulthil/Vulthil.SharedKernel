@@ -4,14 +4,15 @@
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <PropertyGroup>
-    <FrameworkVersion>10.0.9</FrameworkVersion>
-    <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.17</FrameworkVersion>
+    <FrameworkVersion>10.0.10</FrameworkVersion>
+    <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.18</FrameworkVersion>
     <AspireVersion>13.4.6</AspireVersion>
-    <!-- GHSA-v5pm-xwqc-g5wc: Microsoft.AspNetCore.OpenApi 10.0.9 (net10.0) pulls in the vulnerable
-         Microsoft.OpenApi 2.0.0. net9.0's Microsoft.AspNetCore.OpenApi 9.0.17 already depends on the
-         unaffected 1.x line, so only override the net10.0 leg; remove once AspNetCore.OpenApi bumps its own
-         floor past 2.7.5. -->
-    <MicrosoftOpenApiVersion>2.9.0</MicrosoftOpenApiVersion>
+    <!-- GHSA-v5pm-xwqc-g5wc: Microsoft.AspNetCore.OpenApi 10.0.10 (net10.0) still floors at the vulnerable
+         Microsoft.OpenApi 2.0.0. net9.0's Microsoft.AspNetCore.OpenApi 9.0.18 floors at the unaffected
+         1.6.17, so only override the net10.0 leg; remove once AspNetCore.OpenApi bumps its own floor past
+         2.7.5. Hand-managed: dependabot ignores Microsoft.OpenApi entirely because it flattens these
+         conditional legs to one value, forcing 2.x onto net9.0 (see .github/dependabot.yml). -->
+    <MicrosoftOpenApiVersion>2.11.0</MicrosoftOpenApiVersion>
     <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">1.6.17</MicrosoftOpenApiVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -33,18 +34,18 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(FrameworkVersion)" />
     <!-- MySQL: Aspire/Pomelo integration on net9; the Microting fork (a Pomelo fork) fills the EF Core 10 / net10 gap until the official Pomelo/Aspire packages ship it. -->
     <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="$(AspireVersion)" />
-    <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.9" />
+    <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.10" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.7.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.7.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.8.0" />
     <!-- Scoped to the Aspire DCP integration-test project only (via eng/coverage.ps1's

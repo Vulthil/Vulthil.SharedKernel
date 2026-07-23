@@ -37,6 +37,11 @@
     <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.10" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
+    <!-- The in-box Microsoft.Extensions.* packages are deliberately literal, NOT $(FrameworkVersion):
+         the Aspire 13.x client integrations shipped in src (Aspire.RabbitMQ.Client and the three EF
+         provider integrations) floor them at >= 10.0.8 on BOTH TFMs, so a 9.x net9.0 leg is an NU1605
+         downgrade error. Http.Resilience and ServiceDiscovery version on their own out-of-band minor
+         cadence. -->
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.10" />

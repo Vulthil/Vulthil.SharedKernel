@@ -80,7 +80,7 @@ public sealed class PublishFilterTests : BaseUnitTestCase
         var entry = recorder.Entries.ShouldHaveSingleItem();
         entry.Kind.ShouldBe(PublishKind.Send);
         entry.DestinationAddress.ShouldNotBeNull();
-        entry.DestinationAddress!.ToString().ShouldContain("pings");
+        entry.DestinationAddress.ToString().ShouldContain("pings");
     }
 
     private static IHost BuildHost(Action<IMessagingConfigurator> configureFilters)

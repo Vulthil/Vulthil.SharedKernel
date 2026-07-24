@@ -101,7 +101,7 @@ public sealed class ProblemDetailsOperationTransformerTests : BaseUnitTestCase
         var schema = Assert.IsType<OpenApiSchema>(operation.Responses!["500"].Content![ProblemJsonMediaType].Schema);
         Assert.Equal(JsonSchemaType.Object, schema.Type);
         Assert.Contains("detail", schema.Properties!.Keys);
-        Assert.Contains("status", schema.Properties!.Keys);
+        Assert.Contains("status", schema.Properties.Keys);
     }
 #else
     [Fact]

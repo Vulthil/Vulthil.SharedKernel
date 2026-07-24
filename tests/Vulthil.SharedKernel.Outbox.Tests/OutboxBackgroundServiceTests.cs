@@ -61,7 +61,7 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
         await Target.ExecuteTask!;
 
         // Assert
-        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+        Target.ExecuteTask.Status.ShouldBe(TaskStatus.RanToCompletion);
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
 
         // Assert
         await Target.ExecuteTask!;
-        Target.ExecuteTask!.Status.ShouldBe(TaskStatus.RanToCompletion);
+        Target.ExecuteTask.Status.ShouldBe(TaskStatus.RanToCompletion);
     }
 
     [Fact]
@@ -247,7 +247,7 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
 
         // Assert
         capturedDelay.ShouldNotBeNull();
-        capturedDelay!.Value.ShouldBeGreaterThanOrEqualTo(TimeSpan.FromSeconds(baseDelaySeconds));
+        capturedDelay.Value.ShouldBeGreaterThanOrEqualTo(TimeSpan.FromSeconds(baseDelaySeconds));
     }
 
     [Fact]

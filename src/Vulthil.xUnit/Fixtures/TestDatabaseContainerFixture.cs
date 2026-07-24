@@ -266,18 +266,18 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 return;
             }
 
-            await EnsureRespawnerInitialized().ConfigureAwait(false);
+            var respawner = await GetOrCreateRespawnerAsync().ConfigureAwait(false);
 
             var connection = await OpenScopedConnectionAsync().ConfigureAwait(false);
             await using var _ = connection.ConfigureAwait(false);
-            await _respawner!.ResetAsync(connection).ConfigureAwait(false);
+            await respawner.ResetAsync(connection).ConfigureAwait(false);
         }
 
-        private async ValueTask EnsureRespawnerInitialized()
+        private async ValueTask<Respawner> GetOrCreateRespawnerAsync()
         {
             if (_respawner is not null)
             {
-                return;
+                return _respawner;
             }
 
             var connection = await OpenScopedConnectionAsync().ConfigureAwait(false);
@@ -288,6 +288,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 WithReseed = true,
                 TablesToIgnore = ["__EFMigrationsHistory"],
             }).ConfigureAwait(false);
+            return _respawner;
         }
 
         private async Task<DbConnection> OpenScopedConnectionAsync()

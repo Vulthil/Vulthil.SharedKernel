@@ -52,7 +52,7 @@ public sealed class RabbitMqBusRetryDiagnosticsTests : BaseUnitTestCase
             queue.ConfigureQueue(definition =>
             {
                 definition.DefaultRetryPolicy!.IgnoreExceptions.Add("Does.Not.Exist.Exception, Nowhere");
-                definition.DefaultRetryPolicy!.IgnoreExceptions.Add(typeof(InvalidOperationException).AssemblyQualifiedName!);
+                definition.DefaultRetryPolicy.IgnoreExceptions.Add(typeof(InvalidOperationException).AssemblyQualifiedName!);
             });
         }));
         Use(provider);

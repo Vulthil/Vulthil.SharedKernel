@@ -119,12 +119,13 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
 
         var worker = CreateInstance<RabbitMqConsumerWorker>();
         await worker.StartAsync(CancellationToken);
+        capturedConsumer.ShouldNotBeNull();
 
         using var cancelledSource = new CancellationTokenSource();
         await cancelledSource.CancelAsync();
 
         // Act
-        await capturedConsumer!.HandleBasicDeliverAsync(
+        await capturedConsumer.HandleBasicDeliverAsync(
             "consumer-tag",
             1,
             false,

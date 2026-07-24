@@ -152,7 +152,7 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicati
         // Assert
         var def = options.MessageConfigurations[typeof(TestMessage).FullName!];
         def.RoutingKeyFormatter.ShouldNotBeNull();
-        def.RoutingKeyFormatter!(testMessage).ShouldBe("route.test-123");
+        def.RoutingKeyFormatter(testMessage).ShouldBe("route.test-123");
     }
 
     [Fact]

@@ -67,7 +67,7 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
             Times.Once);
         capturedConfigure.ShouldNotBeNull();
         var appliedContext = new PublishContext();
-        await capturedConfigure!(appliedContext);
+        await capturedConfigure(appliedContext);
         appliedContext.MessageId.ShouldBe("stable-message-id");
         appliedContext.CorrelationId.ShouldBe("correlation-1");
         appliedContext.RoutingKey.ShouldBe("routing-key-1");
@@ -115,7 +115,7 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
             Times.Once);
         capturedConfigure.ShouldNotBeNull();
         var appliedContext = new PublishContext();
-        await capturedConfigure!(appliedContext);
+        await capturedConfigure(appliedContext);
         appliedContext.MessageId.ShouldBe("stable-send-id");
         appliedContext.Headers["tenant"].ShouldBe("acme");
     }

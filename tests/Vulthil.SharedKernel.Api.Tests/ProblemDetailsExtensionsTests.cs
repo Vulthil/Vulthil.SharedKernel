@@ -160,7 +160,7 @@ public sealed class ProblemDetailsExtensionsTests : BaseUnitTestCase
         customize.Invoke(context);
 
         // Assert
-        Assert.Equal(activity!.Id, problemDetails.Extensions["traceId"]);
+        Assert.Equal(activity.Id, problemDetails.Extensions["traceId"]);
     }
 
     private static Action<ProblemDetailsContext> CreateComposedCustomization()

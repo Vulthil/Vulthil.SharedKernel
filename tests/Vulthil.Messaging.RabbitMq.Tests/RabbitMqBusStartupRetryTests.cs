@@ -64,7 +64,8 @@ public sealed class RabbitMqBusStartupRetryTests : BaseUnitTestCase
         await Should.ThrowAsync<InvalidOperationException>(() => Target.StartAsync(CancellationToken));
         await Target.StartAsync(CancellationToken);
 
-        await _capturedConsumer!.HandleBasicDeliverAsync(
+        _capturedConsumer.ShouldNotBeNull();
+        await _capturedConsumer.HandleBasicDeliverAsync(
             "consumer-tag",
             1,
             false,

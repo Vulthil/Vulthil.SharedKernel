@@ -32,6 +32,14 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 # refuses to remove them otherwise.
 Remove-Item -Path (Join-Path $repoRoot '.coverage-*.generated.slnx') -Force -ErrorAction SilentlyContinue
 
+# Coverage files are GUID-named per test module (see the dotnet test calls
+# below), so reruns add files instead of overwriting them -- without this
+# sweep, reportgenerator would merge stale reports from prior runs into this
+# run's report. Deletes what the -reports glob at the bottom matches.
+Get-ChildItem -Path $repoRoot -Recurse -Directory -Filter 'TestResults' -ErrorAction SilentlyContinue |
+    Get-ChildItem -Filter '*.cobertura.xml' -File |
+    Remove-Item -Force
+
 if (-not $NoBuild) {
     dotnet build -c Release
 }
@@ -84,12 +92,22 @@ $integrationSolution = Join-Path $repoRoot '.coverage-integration.generated.slnx
 try {
     New-GeneratedSolution -ProjectPaths $otherProjects -OutFile $otherSolution
 
-    dotnet test $otherSolution -c Release --no-build -- --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
+    # No --coverage-output on either invocation: dotnet test hands every test
+    # module the same value, and since CodeCoverage 18.9 (Testing.Platform
+    # 2.3) a relative filename resolves against the shared
+    # <repo root>/TestResults instead of the module's own results directory,
+    # so parallel modules race on a single file -- IOException on Windows,
+    # silent last-writer-wins under-reporting on Linux. That resolution change
+    # is intentional (microsoft/testfx#7265, confirmed in
+    # microsoft/codecoverage#226), so don't pin the package back; the option
+    # also has no per-module placeholder support. The default GUID filenames
+    # are unique per module, keeping the parallel writes disjoint.
+    dotnet test $otherSolution -c Release --no-build -- --coverage --coverage-output-format cobertura
 
     if ($integrationTestProjects.Count -gt 0) {
         New-GeneratedSolution -ProjectPaths $integrationTestProjects -OutFile $integrationSolution
 
-        dotnet test $integrationSolution -c Release --no-build -- --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml --retry-failed-tests 1
+        dotnet test $integrationSolution -c Release --no-build -- --coverage --coverage-output-format cobertura --retry-failed-tests 1
     }
     else {
         Write-Warning "No project matched tests/MessagingIntegrationTests/**/*.Tests.csproj -- skipping the isolated retried run."
@@ -107,7 +125,7 @@ finally {
 
 dotnet tool restore
 
-dotnet reportgenerator -reports:"**/TestResults/coverage.cobertura.xml" -targetdir:"./CoverageReport" -reporttypes:"Html;Badges"
+dotnet reportgenerator -reports:"**/TestResults/*.cobertura.xml" -targetdir:"./CoverageReport" -reporttypes:"Html;Badges"
 
 $reportPath = Join-Path $PWD "CoverageReport" "index.html"
 Write-Host "Coverage report: $reportPath"

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IConsumeFilter&lt;TMessage&gt; | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IConsumeFilter&lt;TMessage&gt; | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="A filter in the consume pipeline. Filters wrap the consumer invocation, allowing cross-cutting concerns (logging, validation, scoped resource management, telemetry, etc.) to be composed without modifying transport or consumer code.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Abstractions_Consumers_IConsumeFilter_1.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter`1">
+
+
+
+  <h1 id="Vulthil_Messaging_Abstractions_Consumers_IConsumeFilter_1" data-uid="Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter`1" class="text-break">
+Interface IConsumeFilter&lt;TMessage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IConsumeFilter.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.Abstractions.html">Abstractions</a>.<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.html">Consumers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.Abstractions.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>A filter in the consume pipeline. Filters wrap the consumer invocation, allowing
+cross-cutting concerns (logging, validation, scoped resource management, telemetry, etc.)
+to be composed without modifying transport or consumer code.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IConsumeFilter&lt;TMessage&gt; where TMessage : notnull</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd><p>The message type the filter applies to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="Vulthil_Messaging_Abstractions_Consumers_IConsumeFilter_1_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Filters are composed in registration order: the first registered filter is the
+outermost. A filter may short-circuit the pipeline by not invoking the
+<code>next</code> delegate, e.g. to reject a message based on a validation rule.
+Filters are resolved per delivery from the same scope as the consumer, so they may
+depend on scoped services (e.g. <code>DbContext</code>, scoped <code>ILogger&lt;T&gt;</code>).</p>
+</div>
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_Messaging_Abstractions_Consumers_IConsumeFilter_1_ConsumeAsync_" data-uid="Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter`1.ConsumeAsync*"></a>
+
+  <h3 id="Vulthil_Messaging_Abstractions_Consumers_IConsumeFilter_1_ConsumeAsync_Vulthil_Messaging_Abstractions_Consumers_IMessageContext__0__Vulthil_Messaging_Abstractions_Consumers_ConsumeDelegate__0__" data-uid="Vulthil.Messaging.Abstractions.Consumers.IConsumeFilter`1.ConsumeAsync(Vulthil.Messaging.Abstractions.Consumers.IMessageContext{`0},Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate{`0})">
+  ConsumeAsync(IMessageContext&lt;TMessage&gt;, ConsumeDelegate&lt;TMessage&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IConsumeFilter.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Processes the message, optionally invoking <code class="paramref">next</code> to continue the pipeline.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task ConsumeAsync(IMessageContext&lt;TMessage&gt; context, ConsumeDelegate&lt;TMessage&gt; next)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.html">IMessageContext</a>&lt;TMessage&gt;</dt>
+    <dd><p>The message context.</p>
+</dd>
+    <dt><code>next</code> <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate-1.html">ConsumeDelegate</a>&lt;TMessage&gt;</dt>
+    <dd><p>The next stage of the pipeline. The terminal stage invokes the consumer.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd><p>A task representing the asynchronous operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Abstractions/Consumers/IConsumeFilter.cs/#L25" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -33,3 +33,5 @@ Vulthil.Messaging.Inbox.InboxRetentionOptions.RetentionPeriod.set -> void
 Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval.get -> System.TimeSpan
 Vulthil.Messaging.Inbox.InboxRetentionOptions.SweepInterval.set -> void
 Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions
+Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions
+static Vulthil.Messaging.Inbox.InboxCoreServiceCollectionExtensions.AddInboxCore(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.Messaging.Inbox.InboxOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

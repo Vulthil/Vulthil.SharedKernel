@@ -115,3 +115,4 @@ Vulthil.xUnit.IResettableResource
 Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
 Vulthil.xUnit.IStartupResource
 Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.BaseUnitTestCase<TTarget>.Dispose() -> System.Threading.Tasks.ValueTask

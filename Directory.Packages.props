@@ -55,7 +55,7 @@
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.9.0" />
     <!-- Scoped to the Aspire DCP integration-test project only (via eng/coverage.ps1's
          split test invocation); retrying failed unit-suite tests would mask real flake. -->
-    <PackageVersion Include="Microsoft.Testing.Extensions.Retry" Version="2.3.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.Retry" Version="2.3.3" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.301" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.91" />
     <PackageVersion Include="Moq.AutoMock" Version="4.0.2" />
@@ -65,7 +65,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
-    <PackageVersion Include="ReportGenerator" Version="5.5.10" />
+    <PackageVersion Include="ReportGenerator" Version="5.5.11" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Scalar.Aspire" Version="0.11.11" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />

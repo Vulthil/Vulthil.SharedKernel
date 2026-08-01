@@ -29,8 +29,10 @@ jobs:
 
       - uses: ./.github/actions/setup-build
 
-      # PublicRelease=true forces nbgv to emit a stable version (no prerelease
-      # suffix) regardless of branch, so a release can be cut from any branch.
+      # PublicRelease=true makes nbgv drop the non-public -g<sha> suffix, so the
+      # published version comes straight from the dispatched branch's
+      # version.json: stable on main and servicing branches, -preview.N on a
+      # preview train branch. A release can therefore be cut from any branch.
       - name: Build
         run: dotnet build -c Release -p:PublicRelease=true
 
@@ -69,6 +71,9 @@ jobs:
 
       # Uses gh release create directly instead of a third-party release action
       # -- one less individual-maintainer action holding contents: write.
+      # --prerelease on versions with a prerelease tag keeps a preview train
+      # release from being marked "Latest", which must always stay on the
+      # newest stable release.
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,7 +83,8 @@ jobs:
             --repo "${{ github.repository }}" \
             --title "v${{ steps.version.outputs.version }}" \
             --notes-file CHANGES.md \
-            --target "${{ github.sha }}"
+            --target "${{ github.sha }}" \
+            ${{ contains(steps.version.outputs.version, '-') && '--prerelease' || '' }}
 
       - name: Publish to GitHub Packages
         run: |
@@ -107,8 +113,12 @@ jobs:
 
   # Publish the released version as the default (stable) documentation. Reuses
   # docs.yml so the gh-pages layout and version manifest stay in one place.
+  # Skipped for prerelease versions: make_default must never point the site
+  # root at a preview, and the rolling "main"-slug docs already serve
+  # prerelease consumers.
   docs:
     needs: release
+    if: ${{ !contains(needs.release.outputs.version, '-') }}
     permissions:
       contents: write
     uses: ./.github/workflows/docs.yml
@@ -121,8 +131,14 @@ jobs:
   # for the result. A fresh checkout keeps the working tree free of build output
   # so only the API files land in the PR. Direct pushes to main are blocked by
   # the branch ruleset, so this mirrors version-bump.yml and goes through a PR.
+  # Skipped for prerelease versions: the PublicAPI freeze and the
+  # PackageValidationBaselineVersion bump are stable-release rituals -- a
+  # preview's new surface stays in Unshipped until it ships in a stable
+  # release, and packages must keep validating against the latest stable
+  # baseline, never a preview.
   mark-api-shipped:
     needs: release
+    if: ${{ !contains(needs.release.outputs.version, '-') }}
     runs-on: ubuntu-latest
     # Budgeted for the deliberate nuget.org indexing wait below (up to ~20
     # minutes of polling plus a 60s grace sleep) on top of the PR open/
@@ -243,9 +259,12 @@ jobs:
   # Never run the reverse (bumping a servicing branch's baseline to a newer
   # minor from main) -- that would validate the servicing branch's packages
   # against APIs it doesn't have yet and flag them all as removals.
+  # Also skipped for prerelease versions: eng/propagate_baseline.py only ever
+  # raises, and a preview (e.g. 1.3.0-preview.N) out-ranks the latest stable,
+  # so it would poison main into validating against a non-stable baseline.
   propagate-baseline-to-main:
     needs: release
-    if: github.ref_name != github.event.repository.default_branch
+    if: ${{ github.ref_name != github.event.repository.default_branch && !contains(needs.release.outputs.version, '-') }}
     runs-on: ubuntu-latest
     # Same deliberate nuget.org indexing wait as mark-api-shipped's gate when
     # a bump is actually needed; skipped output is fast, but this must budget

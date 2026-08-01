@@ -20,7 +20,9 @@ public record MessageConfiguration
 
     private static Uri DefaultUrnFromFullName(string fullName)
     {
-        var lastDot = fullName.LastIndexOf('.');
+        // The span overload is ordinal by construction on every TFM; string.LastIndexOf(char)
+        // trips CA1307 on net11.0+, which adds a LastIndexOf(char, StringComparison) overload.
+        var lastDot = fullName.AsSpan().LastIndexOf('.');
         return lastDot < 0
             ? new($"urn:message:{fullName}")
             : new($"urn:message:{fullName[..lastDot]}:{fullName[(lastDot + 1)..]}");

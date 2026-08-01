@@ -1,6 +1,15 @@
 <Project>
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
+	<!-- .NET 11 preview train: shipped packages multi-target net11.0 ahead of GA so early
+	     adopters can validate against the previews. Scoped to src only; tests and samples
+	     keep the stable TFMs from the root Directory.Build.props, so the net11.0 assets are
+	     compile/analyzer/ApiCompat-validated but not yet test-executed. Folded into the root
+	     TargetFrameworks (and this override removed) at .NET 11 GA. -->
+	<PropertyGroup>
+		<TargetFrameworks>net9.0;net10.0;net11.0</TargetFrameworks>
+	</PropertyGroup>
+
 	<!-- Package icon -->
 	<PropertyGroup>
 		<PackageIcon>Vulthil.SharedKernel.png</PackageIcon>

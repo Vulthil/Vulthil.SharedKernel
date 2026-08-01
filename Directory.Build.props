@@ -55,7 +55,12 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<AnalysisLevel>latest</AnalysisLevel>
+		<!-- Pinned to the .NET 10 rule set while this branch builds with the .NET 11
+		     preview SDK: "latest" would enable the preview SDK's new-by-default rules,
+		     which become errors under TreatWarningsAsErrors and would force source
+		     changes that diverge from main. Restore "latest" at .NET 11 GA, when main
+		     itself adopts the new SDK and its rules. -->
+		<AnalysisLevel>10.0</AnalysisLevel>
 		<AnalysisMode>All</AnalysisMode>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>

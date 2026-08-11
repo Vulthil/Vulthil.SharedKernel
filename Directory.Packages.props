@@ -69,7 +69,7 @@
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Scalar.Aspire" Version="0.11.13" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.31.0.145097" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.32.0.713" />
     <PackageVersion Include="Testcontainers" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.CosmosDb" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.MySql" Version="4.13.0" />

@@ -76,9 +76,9 @@
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.13.0" />
     <PackageVersion Include="Testcontainers.XunitV3" Version="4.13.0" />
-    <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
-    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
+    <PackageVersion Include="xunit.analyzers" Version="2.0.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.0" />
   </ItemGroup>
   <!-- GHSA-2m69-gcr7-jv3q: high-severity advisory on the native SQLitePCLRaw.lib.e_sqlite3, pulled transitively by
        Microsoft.EntityFrameworkCore.Sqlite — referenced only by the relational in-memory test projects, so the

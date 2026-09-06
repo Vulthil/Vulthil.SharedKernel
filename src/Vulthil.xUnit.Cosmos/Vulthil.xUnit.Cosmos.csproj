@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" VersionOverride="$(EfCoreMinimumVersion)" />
 		<PackageReference Include="Testcontainers.CosmosDb" />
 	</ItemGroup>
 

@@ -4,9 +4,30 @@
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <PropertyGroup>
+    <!-- The oldest supported TFM's servicing-train version. The net9.0 FrameworkVersion leg and the
+         EF consumer floor below both derive from it, so the hand-managed lockstep train bump moves
+         the EF floor automatically (the .NET train ships ASP.NET Core and EF patches in lockstep).
+         When net9.0 is dropped, repoint the floor at the then-oldest train and revisit the floored
+         set. -->
+    <Net9FrameworkVersion>9.0.19</Net9FrameworkVersion>
     <FrameworkVersion>10.0.11</FrameworkVersion>
-    <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.19</FrameworkVersion>
+    <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">$(Net9FrameworkVersion)</FrameworkVersion>
     <AspireVersion>13.4.6</AspireVersion>
+    <!-- Consumer opt-up EF floor for the non-provider src packages, applied via VersionOverride on
+         their EF Core PackageReference items: they compile against the EF 9 line (EF Core 9 targets
+         net8.0, so it is referenceable from every TFM we ship) and their published dependency groups
+         floor there, so consumers can keep EF Core 9 on net10+ (e.g. with the official Pomelo
+         provider) or opt up to a newer EF themselves. The floor must equal the compile version AND
+         the compiled assembly must run on every EF version the floor admits; it rides the oldest
+         TFM's servicing train via $(Net9FrameworkVersion), so the lockstep train bump moves it, and
+         it crosses an EF major only when the oldest TFM is dropped. The train, EF ids included, is
+         dependabot-ignored and hand-managed (see .github/dependabot.yml).
+         Not every non-provider package qualifies: Vulthil.SharedKernel.Infrastructure.Relational
+         stays on $(FrameworkVersion) because its compiled ExecuteUpdate setter calls are
+         EF-major-coupled (EF Core 10 removed SetPropertyCalls without a type forward). Provider
+         packages also stay on $(FrameworkVersion) because their Aspire EF integrations floor EF at
+         the current train. -->
+    <EfCoreMinimumVersion>$(Net9FrameworkVersion)</EfCoreMinimumVersion>
     <!-- Hand-managed per-TFM version for Vulthil.SharedKernel.Api's direct Microsoft.OpenApi usage
          (ProblemDetailsOperationTransformer): 2.x on net10.0, 1.6.17 on net9.0 — the model types moved
          namespace between 1.x and 2.x, so the legs cannot converge while net9.0 is supported. No longer

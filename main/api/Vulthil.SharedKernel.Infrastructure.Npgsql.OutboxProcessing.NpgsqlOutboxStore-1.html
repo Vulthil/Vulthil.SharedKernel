@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class NpgsqlOutboxStore&lt;TContext&gt; | Vulthil.SharedKernel ">
       
-      <meta name="description" content="PostgreSQL-optimized outbox store that fetches messages with SELECT ... FOR UPDATE SKIP LOCKED so multiple processors can drain distinct rows concurrently. The fetch SQL is composed from the model&#39;s mapped table and column names, so custom identifiers (a naming convention, ToTable, or HasColumnName) are supported, and the composed query carries an explicit outer ORDER BY so dispatch order is deterministic.">
+      <meta name="description" content="PostgreSQL-optimized outbox store that fetches messages with SELECT ... FOR UPDATE SKIP LOCKED so multiple processors can drain distinct rows concurrently. The statement is composed by  from the model&#39;s mapped table and column names, so custom identifiers (a naming convention, ToTable, or HasColumnName) are supported.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_NpgsqlOutboxStore_1" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1" class="text-break">
-Class NpgsqlOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L20"><i class="bi bi-code-slash"></i></a>
+Class NpgsqlOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -98,9 +98,9 @@ Class NpgsqlOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary"
   </div>
 
   <div class="markdown summary"><p>PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple
-processors can drain distinct rows concurrently. The fetch SQL is composed from the model's mapped table and
-column names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported,
-and the composed query carries an explicit outer <code>ORDER BY</code> so dispatch order is deterministic.</p>
+processors can drain distinct rows concurrently. The statement is composed by
+<a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_System_String_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)</a> from the model's mapped table and
+column names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -141,6 +141,9 @@ and the composed query carries an explicit outer <code>ORDER BY</code> so dispat
     <dd>
     <div>
       <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_BeginTransactionAsync_System_Threading_CancellationToken_">RelationalOutboxStore&lt;TContext&gt;.BeginTransactionAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_System_String_System_Int32_System_Int32_System_Threading_CancellationToken_">RelationalOutboxStore&lt;TContext&gt;.FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_">RelationalOutboxStore&lt;TContext&gt;.UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, DateTimeOffset, CancellationToken)</a>
@@ -212,13 +215,13 @@ and the composed query carries an explicit outer <code>ORDER BY</code> so dispat
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_NpgsqlOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})">
   NpgsqlOutboxStore(TContext, TimeProvider, IOptions&lt;OutboxProcessingOptions&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple
-processors can drain distinct rows concurrently. The fetch SQL is composed from the model's mapped table and
-column names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported,
-and the composed query carries an explicit outer <code>ORDER BY</code> so dispatch order is deterministic.</p>
+processors can drain distinct rows concurrently. The statement is composed by
+<a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_System_String_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)</a> from the model's mapped table and
+column names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -255,7 +258,7 @@ and the composed query carries an explicit outer <code>ORDER BY</code> so dispat
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_NpgsqlOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1.FetchMessagesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
   FetchMessagesAsync(int, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Fetches a batch of unprocessed messages. Providers override this to add row-level locking
@@ -301,7 +304,7 @@ and the composed query carries an explicit outer <code>ORDER BY</code> so dispat
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L20" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/OutboxProcessing/NpgsqlOutboxStore.cs/#L16" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -96,7 +96,7 @@
 <h2 id="pattern">Pattern</h2>
 <ul>
 <li>Pull this package in transitively via the provider package (<code>Vulthil.SharedKernel.Infrastructure.Npgsql</code>, <code>…MySql</code>, etc.); it is rarely referenced directly from application code</li>
-<li>Derive provider-specific outbox stores from <code>RelationalOutboxStore&lt;TContext&gt;</code> to add row-level locking or other provider-specific tuning</li>
+<li>Derive provider-specific outbox stores from <code>RelationalOutboxStore&lt;TContext&gt;</code>; pass your dialect's row-locking clause to <code>FetchMessagesWithRowLockAsync</code>, or override the fetch for other provider-specific tuning</li>
 <li>Apply migrations during startup rather than at build time so deployments stay reproducible</li>
 </ul>
 <h2 id="usage">Usage</h2>
@@ -112,20 +112,18 @@ app.Run();
 <p><code>MigrateAsync</code> checks for pending migrations and only invokes <code>Database.MigrateAsync()</code> when at least one is pending, so it is safe to call on every startup.</p>
 <h3 id="reusing-the-relational-outbox-store">Reusing the relational outbox store</h3>
 <p>Provider packages wire <code>RelationalOutboxStore&lt;TContext&gt;</code> (or a subclass of it) automatically through their own <code>Use*</code> extension. The base class records relay outcomes with set-based <code>ExecuteUpdate</code> calls, deletes retention batches by key, and requires the relay batch to run inside a transaction — it throws at relay time if <code>TContext</code> does not implement <code>IUnitOfWork</code> (derive from <code>BaseDbContext</code>), because without a transaction provider row-locking such as <code>FOR UPDATE SKIP LOCKED</code> would release immediately after the fetch and concurrent relay instances could double-dispatch.</p>
-<p>If you are authoring a new provider, inherit from <code>RelationalOutboxStore&lt;TContext&gt;</code> and override the fetch to add provider-specific row locking:</p>
+<p>If you are authoring a new provider, inherit from <code>RelationalOutboxStore&lt;TContext&gt;</code> and override the fetch. <code>FetchMessagesWithRowLockAsync</code> composes the <code>SELECT … ORDER BY … LIMIT</code> statement from the model's mapped table and column names (so renamed identifiers keep working) and appends the row-locking clause you pass — this is exactly what the Npgsql and MySQL stores do:</p>
 <pre><code class="lang-csharp">public sealed class MyProviderOutboxStore&lt;TContext&gt;(
     TContext dbContext, TimeProvider timeProvider, IOptions&lt;OutboxProcessingOptions&gt; options)
     : RelationalOutboxStore&lt;TContext&gt;(dbContext, timeProvider, options)
     where TContext : DbContext, ISaveOutboxMessages
 {
     protected override Task&lt;List&lt;OutboxMessageData&gt;&gt; FetchMessagesAsync(
-        int batchSize, int maxRetries, CancellationToken cancellationToken)
-    {
-        // Add provider-specific FOR UPDATE SKIP LOCKED or equivalent here.
-        return base.FetchMessagesAsync(batchSize, maxRetries, cancellationToken);
-    }
+        int batchSize, int maxRetries, CancellationToken cancellationToken) =&gt;
+        FetchMessagesWithRowLockAsync(&quot;FOR UPDATE SKIP LOCKED&quot;, batchSize, maxRetries, cancellationToken);
 }
 </code></pre>
+<p>A dialect that cannot express its lock this way, or that pages with something other than <code>LIMIT</code>, overrides <code>FetchMessagesAsync</code> with its own query instead.</p>
 <h3 id="commit-time-relay-trigger">Commit-time relay trigger</h3>
 <p><code>AddRelationalOutboxCommitTrigger()</code> registers a transaction interceptor (<code>OutboxCommitInterceptor</code>) that wakes the outbox relay when an explicit database transaction commits, so captured messages relay promptly instead of waiting for the next poll. Provider <code>Use*</code> extensions register it automatically when outbox processing is enabled.</p>
 

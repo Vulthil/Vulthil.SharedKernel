@@ -157,11 +157,13 @@ Class CosmosOutboxModelBuilderExtensions  <a class="header-action link-secondary
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Cosmos_CosmosOutboxModelBuilderExtensions_ApplyCosmosOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.CosmosOutboxModelBuilderExtensions.ApplyCosmosOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)">
   ApplyCosmosOutbox(ModelBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/CosmosOutboxModelBuilderExtensions.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/CosmosOutboxModelBuilderExtensions.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Applies the Cosmos DB <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessage.html">OutboxMessage</a> entity configuration. Consumers targeting Cosmos DB can
-further customize container and partition settings in their own <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext">DbContext</a>.</p>
+  <div class="markdown level1 summary"><p>Applies the <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessage.html">OutboxMessage</a> mapping for Cosmos DB. Cosmos DB needs no provider-specific column
+types or indexes, so this is the provider-agnostic mapping
+(<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxModelBuilderExtensions_ApplyOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_">ApplyOutbox(ModelBuilder)</a>); consumers can further customize container and
+partition settings in their own <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext">DbContext</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

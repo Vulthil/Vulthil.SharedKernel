@@ -97,8 +97,10 @@ Classes
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html">RelationalOutboxStore&lt;TContext&gt;</a></dt>
       <dd><p>Outbox store for relational database providers. Records processed and failed messages with set-based
-<code>ExecuteUpdate</code> calls instead of materializing rows. Provider packages (e.g. Npgsql, MySQL) inherit from this
-class and override <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesAsync(int, int, CancellationToken)</a> to add row-level locking.</p>
+<code>ExecuteUpdate</code> calls instead of materializing rows, and composes the row-locking fetch statement that
+provider packages (e.g. Npgsql, MySQL) opt into by overriding
+<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesAsync(int, int, CancellationToken)</a> with a call to
+<a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_System_String_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)</a> and their dialect's lock clause.</p>
 </dd>
     </dl>
 

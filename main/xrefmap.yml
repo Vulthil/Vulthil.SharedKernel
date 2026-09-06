@@ -9016,6 +9016,24 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).DeleteProcessedAsync
   nameWithType: RelationalOutboxStore<TContext>.DeleteProcessedAsync
   nameWithType.vb: RelationalOutboxStore(Of TContext).DeleteProcessedAsync
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.FetchMessagesWithRowLockAsync(System.String,System.Int32,System.Int32,System.Threading.CancellationToken)
+  name: FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_System_String_System_Int32_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.FetchMessagesWithRowLockAsync(System.String,System.Int32,System.Int32,System.Threading.CancellationToken)
+  name.vb: FetchMessagesWithRowLockAsync(String, Integer, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.FetchMessagesWithRowLockAsync(string, int, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).FetchMessagesWithRowLockAsync(String, Integer, Integer, System.Threading.CancellationToken)
+  nameWithType: RelationalOutboxStore<TContext>.FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)
+  nameWithType.vb: RelationalOutboxStore(Of TContext).FetchMessagesWithRowLockAsync(String, Integer, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.FetchMessagesWithRowLockAsync*
+  name: FetchMessagesWithRowLockAsync
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.FetchMessagesWithRowLockAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.FetchMessagesWithRowLockAsync
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).FetchMessagesWithRowLockAsync
+  nameWithType: RelationalOutboxStore<TContext>.FetchMessagesWithRowLockAsync
+  nameWithType.vb: RelationalOutboxStore(Of TContext).FetchMessagesWithRowLockAsync
 - uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.DateTimeOffset,System.Threading.CancellationToken)
   name: UpdateMessagesAsync(IReadOnlyList<Guid>, IReadOnlyList<OutboxMessageFailure>, int, DateTimeOffset, CancellationToken)
   href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_

@@ -2430,7 +2430,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently. The fetch SQL is composed from the model's mapped table and\ncolumn names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported,\nand the composed query carries an explicit outer <code>ORDER BY</code> so dispatch order is deterministic.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently. The statement is composed by\n<xref href=\"Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore%601.FetchMessagesWithRowLockAsync(System.String%2cSystem.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> from the model's mapped table and\ncolumn names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2500,7 +2500,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently. The fetch SQL is composed from the model's mapped table and\ncolumn names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported,\nand the composed query carries an explicit outer <code>ORDER BY</code> so dispatch order is deterministic.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.yml\" sourcestartlinenumber=\"1\">PostgreSQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple\nprocessors can drain distinct rows concurrently. The statement is composed by\n<xref href=\"Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore%601.FetchMessagesWithRowLockAsync(System.String%2cSystem.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> from the model's mapped table and\ncolumn names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2556,7 +2556,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Outbox store for relational database providers. Records processed and failed messages with set-based\n<code>ExecuteUpdate</code> calls instead of materializing rows. Provider packages (e.g. Npgsql, MySQL) inherit from this\nclass and override <xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.FetchMessagesAsync(System.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> to add row-level locking.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Outbox store for relational database providers. Records processed and failed messages with set-based\n<code>ExecuteUpdate</code> calls instead of materializing rows, and composes the row-locking fetch statement that\nprovider packages (e.g. Npgsql, MySQL) opt into by overriding\n<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.FetchMessagesAsync(System.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> with a call to\n<xref href=\"Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore%601.FetchMessagesWithRowLockAsync(System.String%2cSystem.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> and their dialect's lock clause.</p>\n"
     },
     {
       "type": "ManagedReference",

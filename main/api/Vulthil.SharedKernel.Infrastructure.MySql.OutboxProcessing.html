@@ -97,9 +97,9 @@ Classes
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.html">MySqlOutboxStore&lt;TContext&gt;</a></dt>
       <dd><p>MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple
-processors can drain distinct rows concurrently. The fetch SQL is composed from the model's mapped table and
-column names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported,
-and the composed query carries an explicit outer <code>ORDER BY</code> so dispatch order is deterministic.</p>
+processors can drain distinct rows concurrently. The statement is composed by
+<a class="xref" href="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_System_String_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)</a> from the model's mapped table and
+column names, so custom identifiers (a naming convention, <code>ToTable</code>, or <code>HasColumnName</code>) are supported.</p>
 </dd>
     </dl>
 

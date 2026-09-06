@@ -121,9 +121,10 @@ The sweep deletes rows whose `ProcessedOnUtc` **or** `FailedOnUtc` is older than
 
 The relay engine talks to the database through an EF-free `IOutboxStore` (in `Vulthil.SharedKernel.Outbox`). The EF
 implementation lives in `Vulthil.SharedKernel.Outbox.EntityFrameworkCore` (`EntityFrameworkOutboxStore<TContext>`),
-and each provider supplies a subclass with its row-locking fetch — `RelationalOutboxStore<TContext>` (the
-`ExecuteUpdate` base), `NpgsqlOutboxStore<TContext>` / `MySqlOutboxStore<TContext>` (`FOR UPDATE SKIP LOCKED`), and
-`CosmosOutboxStore<TContext>` (best-effort, no transaction). A provider's `UseNpgsql`/`UseMySql`/`UseCosmosDb`
+and each provider supplies a subclass — `RelationalOutboxStore<TContext>` (the `ExecuteUpdate` base, which also
+composes the row-locking fetch from the model's mapped identifiers), `NpgsqlOutboxStore<TContext>` /
+`MySqlOutboxStore<TContext>` (which pass it `FOR UPDATE SKIP LOCKED`), and `CosmosOutboxStore<TContext>`
+(best-effort, no transaction). A provider's `UseNpgsql`/`UseMySql`/`UseCosmosDb`
 selects the store; you can supply your own by implementing `IOutboxStore` (or deriving from the EF base) and
 registering it with `UseOutboxStore<TStore>()`:
 

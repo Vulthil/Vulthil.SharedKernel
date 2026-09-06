@@ -24,6 +24,7 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
 
     private readonly QueueDefinition _queue = new(QueueName);
     private readonly List<CapturedPublish> _publishes = [];
+    private readonly FakeTimeProvider _timeProvider = new();
     private readonly Mock<IChannel> _channel;
 
     private IAsyncBasicConsumer? _capturedConsumer;
@@ -39,6 +40,7 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
         Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
         Use<ILogger<RabbitMqConsumerWorker>>(NullLogger<RabbitMqConsumerWorker>.Instance);
         Use(_queue);
+        Use<TimeProvider>(_timeProvider);
         Use(0);
         Use(false);
 
@@ -97,7 +99,12 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
         return worker;
     }
 
-    private Task DeliverAsync<TMessage>(TMessage message, IDictionary<string, object?>? headers = null, string? replyTo = null, string? correlationId = null)
+    private Task DeliverAsync<TMessage>(
+        TMessage message,
+        IDictionary<string, object?>? headers = null,
+        string? replyTo = null,
+        string? correlationId = null,
+        CancellationToken? cancellationToken = null)
         where TMessage : notnull
         => _capturedConsumer!.HandleBasicDeliverAsync(
             "consumer-tag",
@@ -113,7 +120,7 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
                 CorrelationId = correlationId,
             },
             JsonSerializer.SerializeToUtf8Bytes(message),
-            CancellationToken);
+            cancellationToken ?? CancellationToken);
 
     [Fact]
     public async Task PolymorphicConsumersRetryPolicyAppliesToConcreteMessages()
@@ -315,6 +322,62 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
         reply.RoutingKey.ShouldBe("reply-q");
         var envelope = JsonSerializer.Deserialize<MessageEnvelope>(reply.Body)!;
         envelope.MessageType.ShouldBe(RpcFault.UrnUri);
+    }
+
+    [Fact]
+    public async Task InMemoryRetryWaitsForTheWholeIntervalBeforeRedispatching()
+    {
+        // Arrange
+        var failing = new FailingConsumer { FailuresBeforeSuccess = 1 };
+        Use(failing);
+        RegisterConsumer<FailingConsumer, OrderMessage>(BuildPolicy(r =>
+        {
+            r.SetIntervals(TimeSpan.FromSeconds(5));
+            r.InMemory();
+        }));
+        await StartWorkerAsync();
+
+        // Act
+        var delivery = DeliverAsync(new OrderMessage("order-6"));
+        _timeProvider.Advance(TimeSpan.FromSeconds(4));
+        var attemptsBeforeInterval = failing.Attempts;
+        var settledBeforeInterval = delivery.IsCompleted;
+        _timeProvider.Advance(TimeSpan.FromSeconds(1));
+        await delivery.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        attemptsBeforeInterval.ShouldBe(1);
+        settledBeforeInterval.ShouldBeFalse();
+        failing.Attempts.ShouldBe(2);
+        _ackCount.ShouldBe(1);
+        _nackCount.ShouldBe(0);
+        _publishes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task InMemoryRetryCancelledDuringTheDelayLeavesTheDeliveryUnsettled()
+    {
+        // Arrange
+        var failing = new FailingConsumer { FailuresBeforeSuccess = int.MaxValue };
+        Use(failing);
+        RegisterConsumer<FailingConsumer, OrderMessage>(BuildPolicy(r =>
+        {
+            r.SetIntervals(TimeSpan.FromSeconds(5));
+            r.InMemory();
+        }));
+        await StartWorkerAsync();
+        using var shutdown = new CancellationTokenSource();
+
+        // Act
+        var delivery = DeliverAsync(new OrderMessage("order-7"), cancellationToken: shutdown.Token);
+        await shutdown.CancelAsync();
+        await delivery.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        failing.Attempts.ShouldBe(1);
+        _ackCount.ShouldBe(0);
+        _nackCount.ShouldBe(0);
+        _publishes.ShouldBeEmpty();
     }
 
     private sealed record CapturedPublish(string Exchange, string RoutingKey, BasicProperties Properties, byte[] Body);

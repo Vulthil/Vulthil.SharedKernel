@@ -5,14 +5,17 @@ namespace Vulthil.Messaging.Tests;
 
 public sealed class ConsumerHostedServiceTests : BaseUnitTestCase
 {
+    private static readonly TimeSpan InitialRetryDelay = TimeSpan.FromSeconds(1);
+
     private readonly Lazy<ConsumerHostedService> _lazyTarget;
+    private readonly TimerAwareFakeTimeProvider _timeProvider = new();
 
     private ConsumerHostedService Target => _lazyTarget.Value;
 
     public ConsumerHostedServiceTests()
     {
         _lazyTarget = new(CreateInstance<ConsumerHostedService>);
-        Use<TimeProvider>(TimeProvider.System);
+        Use<TimeProvider>(_timeProvider);
     }
 
     private void UseTransportProvider(Func<IServiceProvider, ITransport> transportFactory)
@@ -55,10 +58,13 @@ public sealed class ConsumerHostedServiceTests : BaseUnitTestCase
 
         // Act
         await Target.StartAsync(CancellationToken);
-        await Target.ExecuteTask!;
+        var executeTask = Target.ExecuteTask!;
+        await _timeProvider.TimerCreated.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+        _timeProvider.Advance(InitialRetryDelay);
+        await executeTask.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
 
         // Assert
-        Target.ExecuteTask.Status.ShouldBe(TaskStatus.RanToCompletion);
+        executeTask.Status.ShouldBe(TaskStatus.RanToCompletion);
         transport.Verify(t => t.StartAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
     }
 
@@ -94,10 +100,13 @@ public sealed class ConsumerHostedServiceTests : BaseUnitTestCase
 
         // Act — merely constructing the target must not throw, and starting it must reach the retry loop.
         await Target.StartAsync(CancellationToken);
-        await Target.ExecuteTask!;
+        var executeTask = Target.ExecuteTask!;
+        await _timeProvider.TimerCreated.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+        _timeProvider.Advance(InitialRetryDelay);
+        await executeTask.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
 
         // Assert
-        Target.ExecuteTask.Status.ShouldBe(TaskStatus.RanToCompletion);
+        executeTask.Status.ShouldBe(TaskStatus.RanToCompletion);
         attempts.ShouldBe(2);
         transport.Verify(t => t.StartAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -129,5 +138,24 @@ public sealed class ConsumerHostedServiceTests : BaseUnitTestCase
         Target.ExecuteTask.Status.ShouldBe(TaskStatus.RanToCompletion);
         lastRegistered.Verify(t => t.StartAsync(It.IsAny<CancellationToken>()), Times.Once);
         firstRegistered.Verify(t => t.StartAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    /// <summary>
+    /// A fake clock that reports when the service under test registers its first timer. The generic host runs
+    /// <c>BackgroundService.ExecuteAsync</c> on the thread pool, so the retry delay is not yet pending when
+    /// <c>StartAsync</c> returns; advancing the clock before the timer exists would leave the delay waiting forever.
+    /// </summary>
+    private sealed class TimerAwareFakeTimeProvider : FakeTimeProvider
+    {
+        private readonly TaskCompletionSource _timerCreated = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task TimerCreated => _timerCreated.Task;
+
+        public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
+        {
+            var timer = base.CreateTimer(callback, state, dueTime, period);
+            _timerCreated.TrySetResult();
+            return timer;
+        }
     }
 }

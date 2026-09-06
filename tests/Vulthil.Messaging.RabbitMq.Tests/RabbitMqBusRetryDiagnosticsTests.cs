@@ -35,6 +35,7 @@ public sealed class RabbitMqBusRetryDiagnosticsTests : BaseUnitTestCase
             .ReturnsAsync(channel.Object);
 
         Use(new RabbitMqBusStartupStatus());
+        Use<TimeProvider>(new FakeTimeProvider());
         Use<ILoggerFactory>(NullLoggerFactory.Instance);
         Use<ILogger<RabbitMqBus>>(_logger);
     }

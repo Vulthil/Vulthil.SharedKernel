@@ -9,6 +9,7 @@
 		<PackageReference Include="Shouldly" />
 		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 		<PackageReference Include="Moq.AutoMock" />
+		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
 		<PackageReference Include="xunit.v3.mtp-v2" />
 		<PackageReference Include="xunit.analyzers">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,6 +24,7 @@
 	<ItemGroup>
 		<Using Include="Shouldly" />
 		<Using Include="Xunit" />
+		<Using Include="Microsoft.Extensions.Time.Testing" />
 		<Using Include="Moq" />
 		<Using Include="Moq.AutoMock" />
 	</ItemGroup>

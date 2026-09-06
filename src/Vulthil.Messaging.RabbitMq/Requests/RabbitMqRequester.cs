@@ -25,6 +25,7 @@ internal sealed class RabbitMqRequester : IRequester
     // RabbitMqBusStartupStatus is registered once per RabbitMQ transport and is unambiguous — RabbitMqBus's own
     // WaitUntilReadyAsync implementation wraps this exact same signal for external callers.
     private readonly RabbitMqBusStartupStatus _startupStatus;
+    private readonly TimeProvider _timeProvider;
     private readonly ILogger<RabbitMqRequester> _logger;
 
     public RabbitMqRequester(
@@ -32,12 +33,14 @@ internal sealed class RabbitMqRequester : IRequester
         ResponseListener listener,
         IMessageConfigurationProvider messageConfigurationProvider,
         RabbitMqBusStartupStatus startupStatus,
+        TimeProvider timeProvider,
         ILogger<RabbitMqRequester> logger)
     {
         _publisher = publisher;
         _listener = listener;
         _messageConfigurationProvider = messageConfigurationProvider;
         _startupStatus = startupStatus;
+        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -64,7 +67,7 @@ internal sealed class RabbitMqRequester : IRequester
         var tcs = new TaskCompletionSource<Result<TResponse>>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         var timeout = requestContext.Timeout ?? _messageConfigurationProvider.DefaultTimeout;
-        using var timeoutCts = new CancellationTokenSource(timeout);
+        using var timeoutCts = new CancellationTokenSource(timeout, _timeProvider);
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
         var type = message.GetType();

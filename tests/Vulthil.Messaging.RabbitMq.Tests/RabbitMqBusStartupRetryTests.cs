@@ -29,6 +29,7 @@ public sealed class RabbitMqBusStartupRetryTests : BaseUnitTestCase
             .ReturnsAsync("consumer-tag");
 
         Use(new RabbitMqBusStartupStatus());
+        Use<TimeProvider>(new FakeTimeProvider());
         Use<ILoggerFactory>(NullLoggerFactory.Instance);
         Use<ILogger<RabbitMqBus>>(NullLogger<RabbitMqBus>.Instance);
         Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));

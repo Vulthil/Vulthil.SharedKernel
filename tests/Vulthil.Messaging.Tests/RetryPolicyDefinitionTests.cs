@@ -86,4 +86,19 @@ public sealed class RetryPolicyDefinitionTests : BaseUnitTestCase<RetryPolicyDef
         // Act & Assert
         Target.GetDelay(0).ShouldBe(TimeSpan.Zero);
     }
+
+    [Fact]
+    public void GetDelayWithJitterStaysWithinTheJitterBandAroundTheInterval()
+    {
+        // Arrange
+        Target.Intervals.Add(TimeSpan.FromSeconds(10));
+        Target.JitterFactor = 0.5;
+
+        // Act
+        var delays = Enumerable.Range(0, 200).Select(_ => Target.GetDelay(0)).ToList();
+
+        // Assert
+        delays.ShouldAllBe(delay => delay >= TimeSpan.FromSeconds(5) && delay <= TimeSpan.FromSeconds(15));
+        delays.Distinct().Count().ShouldBeGreaterThan(1);
+    }
 }

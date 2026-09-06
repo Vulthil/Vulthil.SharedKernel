@@ -1,37 +1,51 @@
-using System.Diagnostics;
 using System.Text.Json;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.Messaging.Transport;
+using Vulthil.Results;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
 public sealed class RabbitMqRequesterTests : BaseUnitTestCase
 {
+    private const string ReplyQueue = "callback.test";
+
+    private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(30);
+
     private readonly Lazy<RabbitMqRequester> _lazyTarget;
-    private readonly Mock<IInternalPublisher> _publisherMock;
     private readonly RabbitMqBusStartupStatus _startupStatus = new();
+    private readonly FakeTimeProvider _timeProvider = new();
+    private readonly IMessageConfigurationProvider _provider = TestProviders.Build();
+    private readonly List<CapturedRequest> _published = [];
+    private readonly TaskCompletionSource _firstPublish = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    private IAsyncBasicConsumer? _replyConsumer;
 
     private RabbitMqRequester Target => _lazyTarget.Value;
 
     public RabbitMqRequesterTests()
     {
-        Use(TestProviders.Build());
+        Use(_provider);
         Use(_startupStatus);
+        Use<TimeProvider>(_timeProvider);
 
         var channelMock = GetMock<IChannel>();
         channelMock
             .Setup(c => c.QueueDeclareAsync(
                 It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<IDictionary<string, object?>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new QueueDeclareOk("callback.test", 0, 0));
+            .ReturnsAsync(new QueueDeclareOk(ReplyQueue, 0, 0));
         channelMock
             .Setup(c => c.BasicConsumeAsync(
                 It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<IDictionary<string, object?>>(), It.IsAny<IAsyncBasicConsumer>(), It.IsAny<CancellationToken>()))
+            .Callback((string _, bool _, string _, bool _, bool _, IDictionary<string, object?> _, IAsyncBasicConsumer consumer, CancellationToken _) =>
+                _replyConsumer = consumer)
             .ReturnsAsync("consumer-tag");
 
         GetMock<IConnection>()
@@ -40,13 +54,48 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
 
         Use(CreateInstance<ResponseListener>());
 
-        _publisherMock = GetMock<IInternalPublisher>();
-        _publisherMock
+        GetMock<IInternalPublisher>()
             .Setup(p => p.InternalPublishAsync(
                 It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
+            .Callback((byte[] body, BasicProperties props, string _, MessageConfiguration _, CancellationToken _) =>
+            {
+                _published.Add(new CapturedRequest(props, body));
+                _firstPublish.TrySetResult();
+            })
             .Returns(Task.CompletedTask);
 
         _lazyTarget = new Lazy<RabbitMqRequester>(CreateInstance<RabbitMqRequester>);
+    }
+
+    private Task<Result<TimeoutResponse>> SendRequestAsync(Action<IRequestContext>? configure = null)
+        => Target.RequestAsync<TimeoutRequest, TimeoutResponse>(
+            new TimeoutRequest("ping"),
+            context =>
+            {
+                context.SetTimeout(RequestTimeout);
+                configure?.Invoke(context);
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken);
+
+    private Task DeliverReplyAsync(string requestId, TimeoutResponse reply)
+    {
+        var envelope = new MessageEnvelope
+        {
+            RequestId = requestId,
+            MessageType = _provider.GetUrn(typeof(TimeoutResponse)),
+            Message = JsonSerializer.SerializeToElement(reply, _provider.JsonSerializerOptions),
+        };
+
+        return _replyConsumer!.HandleBasicDeliverAsync(
+            "consumer-tag",
+            1,
+            false,
+            string.Empty,
+            ReplyQueue,
+            new BasicProperties { CorrelationId = requestId },
+            JsonSerializer.SerializeToUtf8Bytes(envelope, _provider.JsonSerializerOptions),
+            CancellationToken);
     }
 
     [Fact]
@@ -54,23 +103,37 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
     {
         // Arrange
         _startupStatus.MarkStarted();
-        var stopwatch = Stopwatch.StartNew();
 
         // Act
-        var result = await Target.RequestAsync<TimeoutRequest, TimeoutResponse>(
-            new TimeoutRequest("ping"),
-            context =>
-            {
-                context.SetTimeout(TimeSpan.FromMilliseconds(200));
-                return ValueTask.CompletedTask;
-            },
-            CancellationToken);
-        stopwatch.Stop();
+        var pending = SendRequestAsync();
+        _timeProvider.Advance(RequestTimeout - TimeSpan.FromSeconds(1));
+        var settledBeforeTimeout = pending.IsCompleted;
+        _timeProvider.Advance(TimeSpan.FromSeconds(1));
+        var result = await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
 
         // Assert
+        settledBeforeTimeout.ShouldBeFalse();
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
-        stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(5));
+        result.Error.Description.ShouldBe("Request timed out after 30s");
+    }
+
+    [Fact]
+    public async Task RequestAsyncCompletesWithTheReplyCorrelatedOnTheRequestId()
+    {
+        // Arrange
+        _startupStatus.MarkStarted();
+        var reply = new TimeoutResponse("pong");
+
+        // Act
+        var pending = SendRequestAsync();
+        var requestId = _published.Single().Properties.CorrelationId!;
+        await DeliverReplyAsync(requestId, reply);
+        var result = await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBe(reply);
     }
 
     [Fact]
@@ -79,40 +142,22 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         // Arrange
         _startupStatus.MarkStarted();
         const string businessCorrelationId = "order-42";
-        BasicProperties? capturedProps = null;
-        byte[]? capturedBody = null;
-        _publisherMock
-            .Setup(p => p.InternalPublishAsync(
-                It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
-            .Callback((byte[] body, BasicProperties props, string _, MessageConfiguration _, CancellationToken _) =>
-            {
-                capturedBody = body;
-                capturedProps = props;
-            })
-            .Returns(Task.CompletedTask);
 
         // Act
-        var result = await Target.RequestAsync<TimeoutRequest, TimeoutResponse>(
-            new TimeoutRequest("ping"),
-            context =>
-            {
-                context.SetCorrelationId(businessCorrelationId);
-                context.SetTimeout(TimeSpan.FromMilliseconds(200));
-                return ValueTask.CompletedTask;
-            },
-            CancellationToken);
+        var pending = SendRequestAsync(context => context.SetCorrelationId(businessCorrelationId));
+        _timeProvider.Advance(RequestTimeout);
+        var result = await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
 
         // Assert
         result.IsFailure.ShouldBeTrue();
-        capturedProps.ShouldNotBeNull();
-        capturedProps.CorrelationId.ShouldNotBe(businessCorrelationId);
-        Guid.TryParse(capturedProps.CorrelationId, out _).ShouldBeTrue();
+        var request = _published.ShouldHaveSingleItem();
+        request.Properties.CorrelationId.ShouldNotBe(businessCorrelationId);
+        Guid.TryParse(request.Properties.CorrelationId, out _).ShouldBeTrue();
 
-        capturedBody.ShouldNotBeNull();
-        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(capturedBody);
+        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(request.Body);
         envelope.ShouldNotBeNull();
         envelope.CorrelationId.ShouldBe(businessCorrelationId);
-        envelope.RequestId.ShouldBe(capturedProps.CorrelationId);
+        envelope.RequestId.ShouldBe(request.Properties.CorrelationId);
     }
 
     [Fact]
@@ -122,48 +167,39 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         // otherwise it would be sent before the responder's queue and bindings exist and expire unanswered.
 
         // Act
-        var result = await Target.RequestAsync<TimeoutRequest, TimeoutResponse>(
-            new TimeoutRequest("ping"),
-            context =>
-            {
-                context.SetTimeout(TimeSpan.FromMilliseconds(200));
-                return ValueTask.CompletedTask;
-            },
-            CancellationToken);
+        var pending = SendRequestAsync();
+        _timeProvider.Advance(RequestTimeout);
+        var result = await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
 
         // Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
-        _publisherMock.Verify(p => p.InternalPublishAsync(
-            It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()),
-            Times.Never);
+        result.Error.Description.ShouldContain("waiting for the transport to start");
+        _published.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task RequestAsyncPublishesOnceTheBusBecomesReady()
     {
         // Arrange: readiness arrives while the request is already waiting.
-        var pending = Target.RequestAsync<TimeoutRequest, TimeoutResponse>(
-            new TimeoutRequest("ping"),
-            context =>
-            {
-                context.SetTimeout(TimeSpan.FromSeconds(1));
-                return ValueTask.CompletedTask;
-            },
-            CancellationToken);
+        var pending = SendRequestAsync();
+        var publishedBeforeReady = _published.Count;
 
         // Act
         _startupStatus.MarkStarted();
-        var result = await pending;
+        await _firstPublish.Task.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+        _timeProvider.Advance(RequestTimeout);
+        var result = await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
 
         // Assert: the request was published and then timed out waiting for a response, proving the publish
         // happened after readiness rather than being dropped.
+        publishedBeforeReady.ShouldBe(0);
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
-        _publisherMock.Verify(p => p.InternalPublishAsync(
-            It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()),
-            Times.Once);
+        _published.ShouldHaveSingleItem();
     }
+
+    private sealed record CapturedRequest(BasicProperties Properties, byte[] Body);
 
     private sealed record TimeoutRequest(string Value);
 

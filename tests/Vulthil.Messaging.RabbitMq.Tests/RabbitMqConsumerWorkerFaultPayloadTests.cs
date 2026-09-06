@@ -88,6 +88,7 @@ public sealed class RabbitMqConsumerWorkerFaultPayloadTests : BaseUnitTestCase
         Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
         Use<ILogger<RabbitMqConsumerWorker>>(NullLogger<RabbitMqConsumerWorker>.Instance);
         Use(queue);
+        Use<TimeProvider>(new FakeTimeProvider());
         Use(0);
         Use(false);
 

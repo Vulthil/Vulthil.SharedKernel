@@ -16,12 +16,15 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 
 internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 {
+    private static readonly TimeSpan DrainTimeout = TimeSpan.FromSeconds(30);
+
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly QueueDefinition _queueDefinition;
     private readonly IChannel _channel;
     private readonly MessageTypeCache _typeCache;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<RabbitMqConsumerWorker> _logger;
+    private readonly TimeProvider _timeProvider;
     private readonly int _channelIndex;
     private readonly bool _partitioned;
     private readonly ConcurrentDictionary<ulong, Task> _inFlight = new();
@@ -44,6 +47,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         MessageTypeCache messageTypeCache,
         IMessageConfigurationProvider messageConfigurationProvider,
         ILogger<RabbitMqConsumerWorker> logger,
+        TimeProvider timeProvider,
         int channelIndex,
         bool partitioned)
     {
@@ -53,6 +57,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         _typeCache = messageTypeCache;
         _messageConfigurationProvider = messageConfigurationProvider;
         _logger = logger;
+        _timeProvider = timeProvider;
         _channelIndex = channelIndex;
         _partitioned = partitioned;
         _gatedPublisher = PublishThroughGateAsync;
@@ -367,7 +372,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body).ConfigureAwait(false);
     }
 
-    private static async Task<bool> TryDelayAsync(TimeSpan delay, CancellationToken cancellationToken)
+    private async Task<bool> TryDelayAsync(TimeSpan delay, CancellationToken cancellationToken)
     {
         if (delay <= TimeSpan.Zero)
         {
@@ -376,7 +381,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
         try
         {
-            await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(delay, _timeProvider, cancellationToken).ConfigureAwait(false);
             return true;
         }
         catch (OperationCanceledException)
@@ -579,7 +584,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             var pending = _inFlight.Values.ToArray();
             if (pending.Length > 0)
             {
-                await Task.WhenAll(pending).WaitAsync(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+                await Task.WhenAll(pending).WaitAsync(DrainTimeout, _timeProvider).ConfigureAwait(false);
             }
 
             await _channel.DisposeAsync().ConfigureAwait(false);

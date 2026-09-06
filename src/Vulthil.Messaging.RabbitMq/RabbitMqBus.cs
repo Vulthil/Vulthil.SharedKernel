@@ -16,6 +16,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     private readonly RabbitMqBusStartupStatus _startupStatus;
     private readonly ILogger<RabbitMqBus> _logger;
     private readonly ILoggerFactory _loggerFactory;
+    private readonly TimeProvider _timeProvider;
     private readonly List<RabbitMqConsumerWorker> _workers = [];
 
     public RabbitMqBus(
@@ -24,7 +25,8 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         IMessageConfigurationProvider messageConfigurationProvider,
         RabbitMqBusStartupStatus startupStatus,
         ILogger<RabbitMqBus> logger,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        TimeProvider timeProvider)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _connection = connection;
@@ -32,6 +34,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         _startupStatus = startupStatus;
         _logger = logger;
         _loggerFactory = loggerFactory;
+        _timeProvider = timeProvider;
     }
 
     /// <remarks>
@@ -119,6 +122,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                     typeCache,
                     _messageConfigurationProvider,
                     workerLogger,
+                    _timeProvider,
                     i,
                     partitioned);
 

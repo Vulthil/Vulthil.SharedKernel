@@ -10,6 +10,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- Deliberately NOT floored at $(EfCoreMinimumVersion): this package's set-based ExecuteUpdate
+		     setter calls are binary-coupled to the EF Core major they compile against (EF Core 10
+		     replaced SetPropertyCalls with UpdateSettersBuilder without a type forward, so an
+		     EF-9-compiled assembly throws TypeLoadException on an EF Core 10 runtime). The published
+		     floor must equal the compile version, so this package tracks $(FrameworkVersion). -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
 	</ItemGroup>

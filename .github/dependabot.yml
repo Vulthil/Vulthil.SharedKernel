@@ -36,7 +36,10 @@ updates:
       # definition it resolves, tearing the legs apart (PR #378 moved the net9.0 leg to 9.0.19 and
       # left net10.0 at 10.0.10) — or, as with Microsoft.OpenApi above, forcing one TFM's major onto
       # the other. The train is hand-managed as a single lockstep bump of both legs (see #355);
-      # NuGetAudit still fails CI on advisories.
+      # NuGetAudit still fails CI on advisories. The EF ignore also protects the consumer floor:
+      # EfCoreMinimumVersion in Directory.Packages.props derives from the train's net9.0 leg
+      # ($(Net9FrameworkVersion)), so the lockstep bump moves the floor automatically and only a
+      # deliberate edit can move it across an EF major.
       - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
       - dependency-name: "Microsoft.AspNetCore.OpenApi"
       - dependency-name: "Microsoft.EntityFrameworkCore*"

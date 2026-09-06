@@ -1,1 +1,2 @@
 #nullable enable
+Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.FetchMessagesWithRowLockAsync(string! rowLockClause, int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!

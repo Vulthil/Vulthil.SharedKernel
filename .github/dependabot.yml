@@ -22,12 +22,13 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 25
     ignore:
-      # Microsoft.OpenApi is pinned per-TFM in Directory.Packages.props (2.x patched line for net10.0
-      # per GHSA-v5pm-xwqc-g5wc; 1.6.17 for net9.0, matching Microsoft.AspNetCore.OpenApi 9.x's own
-      # floor — ASP.NET Core 9 does not consume the 2.x line). Dependabot flattens conditional MSBuild
-      # property definitions to a single value, which would force 2.x onto the net9.0 leg, so the pin
-      # is hand-managed and ALL updates are ignored here; NuGetAudit still fails CI on advisories.
-      # Drop this rule together with the pin once Microsoft.AspNetCore.OpenApi's floor passes 2.7.5.
+      # Microsoft.OpenApi is versioned per-TFM in Directory.Packages.props for
+      # Vulthil.SharedKernel.Api's direct use of its types (2.x on net10.0; 1.6.17 on net9.0 — ASP.NET
+      # Core 9 does not consume the 2.x line and the model types' namespace differs between the lines).
+      # Dependabot flattens conditional MSBuild property definitions to a single value, which would
+      # force 2.x onto the net9.0 leg, so the version is hand-managed and ALL updates are ignored
+      # here; NuGetAudit still fails CI on advisories. This rule lives as long as the TFM-conditional
+      # MicrosoftOpenApiVersion property does.
       - dependency-name: "Microsoft.OpenApi"
       # The .NET servicing train (ASP.NET Core + EF Core) versions from the TFM-conditional
       # FrameworkVersion property in Directory.Packages.props (10.0.x on net10.0, 9.0.x on net9.0).

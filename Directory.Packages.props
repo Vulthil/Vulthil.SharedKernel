@@ -7,11 +7,13 @@
     <FrameworkVersion>10.0.11</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.19</FrameworkVersion>
     <AspireVersion>13.4.6</AspireVersion>
-    <!-- GHSA-v5pm-xwqc-g5wc: Microsoft.AspNetCore.OpenApi 10.0.10 (net10.0) still floors at the vulnerable
-         Microsoft.OpenApi 2.0.0. net9.0's Microsoft.AspNetCore.OpenApi 9.0.18 floors at the unaffected
-         1.6.17, so only override the net10.0 leg; remove once AspNetCore.OpenApi bumps its own floor past
-         2.7.5. Hand-managed: dependabot ignores Microsoft.OpenApi entirely because it flattens these
-         conditional legs to one value, forcing 2.x onto net9.0 (see .github/dependabot.yml). -->
+    <!-- Hand-managed per-TFM version for Vulthil.SharedKernel.Api's direct Microsoft.OpenApi usage
+         (ProblemDetailsOperationTransformer): 2.x on net10.0, 1.6.17 on net9.0 — the model types moved
+         namespace between 1.x and 2.x, so the legs cannot converge while net9.0 is supported. No longer
+         an advisory pin: since Microsoft.AspNetCore.OpenApi 10.0.11 its own floor is the patched 2.7.5
+         (GHSA-v5pm-xwqc-g5wc), so projects without direct usage rely on the transitive version instead.
+         Dependabot ignores this package because it flattens these conditional legs to one value, forcing
+         2.x onto net9.0 (see .github/dependabot.yml). -->
     <MicrosoftOpenApiVersion>2.11.0</MicrosoftOpenApiVersion>
     <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">1.6.17</MicrosoftOpenApiVersion>
   </PropertyGroup>

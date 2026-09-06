@@ -8,7 +8,9 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-		<!-- GHSA-v5pm-xwqc-g5wc: pin the transitive Microsoft.OpenApi dependency to the patched version. -->
+		<!-- Declared directly (not left transitive) because ProblemDetailsOperationTransformer uses
+		     Microsoft.OpenApi types; the version is the TFM-conditional central pin — see
+		     Directory.Packages.props. -->
 		<PackageReference Include="Microsoft.OpenApi" />
 	</ItemGroup>
 

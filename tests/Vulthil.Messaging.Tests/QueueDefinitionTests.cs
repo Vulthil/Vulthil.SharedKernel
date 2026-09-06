@@ -55,24 +55,20 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
     [Fact]
     public void QueueDefinitionShouldAllowModifyingProperties()
     {
-        // Arrange
-#pragma warning disable IDE0017
+        // Arrange & Act
         var queue = new QueueDefinition("TestQueue")
         {
+            Name = "NewQueueName",
+            ConcurrencyLimit = 5,
+            PrefetchCount = 10,
+            IsQuorum = false,
+            Durable = false,
+            AutoDelete = true,
+            Exclusive = true,
+            ExchangeType = MessagingExchangeType.Direct,
+            ExchangeDurable = false,
+            ExchangeAutoDelete = true,
         };
-#pragma warning restore IDE0017
-
-        // Act
-        queue.Name = "NewQueueName";
-        queue.ConcurrencyLimit = 5;
-        queue.PrefetchCount = 10;
-        queue.IsQuorum = false;
-        queue.Durable = false;
-        queue.AutoDelete = true;
-        queue.Exclusive = true;
-        queue.ExchangeType = MessagingExchangeType.Direct;
-        queue.ExchangeDurable = false;
-        queue.ExchangeAutoDelete = true;
 
         // Assert
         queue.Name.ShouldBe("NewQueueName");

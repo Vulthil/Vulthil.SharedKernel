@@ -1,0 +1,10 @@
+#nullable enable
+static Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep<TStore>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! name, System.Func<System.IServiceProvider!, Vulthil.Extensions.Retention.RetentionSweepSettings!>! settings, System.Func<TStore, Vulthil.Extensions.Retention.RetentionSweepDeleter?>! deleter) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+virtual Vulthil.Extensions.Retention.RetentionSweepDeleter.Invoke(System.DateTimeOffset olderThanUtc, int batchSize, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+Vulthil.Extensions.Retention.RetentionSweepDeleter
+Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions
+Vulthil.Extensions.Retention.RetentionSweepSettings
+Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize.get -> int
+Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod.get -> System.TimeSpan
+Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionSweepSettings(System.TimeSpan retentionPeriod, System.TimeSpan sweepInterval, int batchSize) -> void
+Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval.get -> System.TimeSpan

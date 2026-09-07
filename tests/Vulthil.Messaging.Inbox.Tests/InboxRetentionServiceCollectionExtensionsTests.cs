@@ -55,7 +55,7 @@ public sealed class InboxRetentionServiceCollectionExtensionsTests : BaseUnitTes
         services.AddInboxRetention(o => o.Retention.Enabled = true);
 
         // Assert
-        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(InboxRetentionBackgroundService));
+        services.ShouldContain(descriptor => RetentionSweepDescriptors.IsInboxRetentionSweep(descriptor));
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public sealed class InboxRetentionServiceCollectionExtensionsTests : BaseUnitTes
         services.AddInboxRetention(o => o.Retention.Enabled = false);
 
         // Assert
-        services.ShouldNotContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(InboxRetentionBackgroundService));
+        services.ShouldNotContain(descriptor => RetentionSweepDescriptors.IsInboxRetentionSweep(descriptor));
     }
 
     [Fact]

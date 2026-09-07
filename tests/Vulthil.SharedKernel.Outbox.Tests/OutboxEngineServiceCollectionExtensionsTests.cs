@@ -153,7 +153,7 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         services.AddOutboxEngine(o => o.Retention.Enabled = true);
 
         // Assert
-        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(OutboxRetentionBackgroundService));
+        services.ShouldContain(descriptor => IsOutboxRetentionSweep(descriptor));
     }
 
     [Fact]
@@ -166,7 +166,73 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         services.AddOutboxEngine(o => o.Retention.Enabled = false);
 
         // Assert
-        services.ShouldNotContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(OutboxRetentionBackgroundService));
+        services.ShouldNotContain(descriptor => IsOutboxRetentionSweep(descriptor));
+    }
+
+    [Fact]
+    public async Task TheRetentionSweepDeletesThroughTheRegisteredOutboxStore()
+    {
+        // Arrange
+        var now = new DateTimeOffset(2026, 1, 15, 12, 0, 0, TimeSpan.Zero);
+        var retentionPeriod = TimeSpan.FromDays(3);
+        var store = new RecordingRetentionStore();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddSingleton<TimeProvider>(new FakeTimeProvider(now));
+        services.AddOutboxEngine(o =>
+        {
+            o.EnableTracing = false;
+            o.EnableMetrics = false;
+            o.Retention.Enabled = true;
+            o.Retention.RetentionPeriod = retentionPeriod;
+        });
+        services.AddScoped<IOutboxStore>(_ => store);
+        await using var provider = services.BuildServiceProvider();
+        var sweep = (IHostedService)services.Single(IsOutboxRetentionSweep).ImplementationFactory!(provider);
+
+        // Act
+        await sweep.StartAsync(CancellationToken);
+        await store.FirstDelete.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+        await sweep.StopAsync(CancellationToken);
+
+        // Assert
+        store.ObservedCutoffs.ShouldHaveSingleItem().ShouldBe(now - retentionPeriod);
+    }
+
+    /// <summary>
+    /// The sweep's hosted service type lives in Vulthil.Extensions.Retention and is internal there, so it is recognised
+    /// by the shape of its factory registration: a hosted service built for the outbox store type.
+    /// </summary>
+    private static bool IsOutboxRetentionSweep(ServiceDescriptor descriptor) =>
+        descriptor.ServiceType == typeof(IHostedService)
+        && descriptor.ImplementationFactory?.GetType().GenericTypeArguments is [_, { IsGenericType: true } sweepType]
+        && sweepType.GetGenericArguments()[0] == typeof(IOutboxStore);
+
+    private sealed class RecordingRetentionStore : IOutboxStore, IOutboxRetentionStore
+    {
+        private readonly TaskCompletionSource _firstDelete = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly List<DateTimeOffset> _observedCutoffs = [];
+
+        public Task FirstDelete => _firstDelete.Task;
+
+        public IReadOnlyList<DateTimeOffset> ObservedCutoffs => _observedCutoffs;
+
+        public bool IsInTransaction => false;
+
+        public void AddOutboxMessage(OutboxMessage message)
+        {
+        }
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
+
+        public Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken) => Task.FromResult(0);
+
+        public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+        {
+            _observedCutoffs.Add(olderThanUtc);
+            _firstDelete.TrySetResult();
+            return Task.FromResult(0);
+        }
     }
 
     [Fact]

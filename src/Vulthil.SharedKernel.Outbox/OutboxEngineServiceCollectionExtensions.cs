@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Vulthil.Extensions.Retention;
 
 namespace Vulthil.SharedKernel.Outbox;
 
@@ -106,9 +108,17 @@ public static class OutboxEngineServiceCollectionExtensions
 
         if (options.Retention.Enabled)
         {
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, OutboxRetentionBackgroundService>());
+            services.AddRetentionSweep<IOutboxStore>(
+                "Outbox",
+                static provider => ToSweepSettings(provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value.Retention),
+                static store => store is IOutboxRetentionStore retentionStore
+                    ? new RetentionSweepDeleter(retentionStore.DeleteProcessedAsync)
+                    : null);
         }
 
         return services;
     }
+
+    private static RetentionSweepSettings ToSweepSettings(OutboxRetentionOptions retention) =>
+        new(retention.RetentionPeriod, retention.SweepInterval, retention.BatchSize);
 }

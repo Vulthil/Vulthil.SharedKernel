@@ -74,7 +74,7 @@ public sealed class InboxCoreServiceCollectionExtensionsTests : BaseUnitTestCase
         services.AddInboxCore(o => o.Retention.Enabled = true);
 
         // Assert
-        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(InboxRetentionBackgroundService));
+        services.ShouldContain(descriptor => RetentionSweepDescriptors.IsInboxRetentionSweep(descriptor));
     }
 
     [Fact]
@@ -87,7 +87,36 @@ public sealed class InboxCoreServiceCollectionExtensionsTests : BaseUnitTestCase
         services.AddInboxCore(o => o.Retention.Enabled = false);
 
         // Assert
-        services.ShouldNotContain(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(InboxRetentionBackgroundService));
+        services.ShouldNotContain(descriptor => RetentionSweepDescriptors.IsInboxRetentionSweep(descriptor));
+    }
+
+    [Fact]
+    public async Task TheRetentionSweepDeletesThroughTheRegisteredIdempotencyStore()
+    {
+        // Arrange
+        var now = new DateTimeOffset(2026, 1, 15, 12, 0, 0, TimeSpan.Zero);
+        var retentionPeriod = TimeSpan.FromDays(3);
+        var store = new RecordingRetentionStore();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddSingleton<TimeProvider>(new FakeTimeProvider(now));
+        services.AddScoped<IIdempotencyStore>(_ => store);
+        services.AddInboxCore(o =>
+        {
+            o.EnableMetrics = false;
+            o.Retention.Enabled = true;
+            o.Retention.RetentionPeriod = retentionPeriod;
+        });
+        await using var provider = services.BuildServiceProvider();
+        var sweep = (IHostedService)services.Single(RetentionSweepDescriptors.IsInboxRetentionSweep).ImplementationFactory!(provider);
+
+        // Act
+        await sweep.StartAsync(CancellationToken);
+        await store.FirstDelete.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+        await sweep.StopAsync(CancellationToken);
+
+        // Assert
+        store.ObservedCutoffs.ShouldHaveSingleItem().ShouldBe(now - retentionPeriod);
     }
 
     [Fact]
@@ -118,5 +147,24 @@ public sealed class InboxCoreServiceCollectionExtensionsTests : BaseUnitTestCase
         public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken) => Task.FromResult(false);
 
         public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken) => Task.FromResult(0);
+    }
+
+    private sealed class RecordingRetentionStore : IIdempotencyStore, IInboxRetentionStore
+    {
+        private readonly TaskCompletionSource _firstDelete = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly List<DateTimeOffset> _observedCutoffs = [];
+
+        public Task FirstDelete => _firstDelete.Task;
+
+        public IReadOnlyList<DateTimeOffset> ObservedCutoffs => _observedCutoffs;
+
+        public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken) => Task.FromResult(false);
+
+        public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+        {
+            _observedCutoffs.Add(olderThanUtc);
+            _firstDelete.TrySetResult();
+            return Task.FromResult(0);
+        }
     }
 }

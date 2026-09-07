@@ -28,6 +28,7 @@ Focused usage guidance for each package in `src`. Pick the page that matches the
 ## Hosting
 
 - [Vulthil.Extensions.Hosting](vulthil-extensions-hosting.md) – `IRestartableHostedService`, the marker for hosted services that can be paused and resumed cleanly.
+- [Vulthil.Extensions.Retention](vulthil-extensions-retention.md) – `AddRetentionSweep`, one hosted retention sweep for any store that can delete entries older than a cutoff; the outbox and inbox run theirs through it.
 
 ## Messaging
 

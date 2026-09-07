@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Vulthil.Extensions.Hosting\Vulthil.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\Vulthil.Extensions.Retention\Vulthil.Extensions.Retention.csproj" />
 		<ProjectReference Include="..\Vulthil.SharedKernel.Application\Vulthil.SharedKernel.Application.csproj" />
 	</ItemGroup>
 

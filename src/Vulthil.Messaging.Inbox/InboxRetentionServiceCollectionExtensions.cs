@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+using Vulthil.Extensions.Retention;
 
 namespace Vulthil.Messaging.Inbox;
 
@@ -53,9 +55,17 @@ public static class InboxRetentionServiceCollectionExtensions
 
         if (options.Retention.Enabled)
         {
-            services.AddHostedService<InboxRetentionBackgroundService>();
+            services.AddRetentionSweep<IIdempotencyStore>(
+                "Inbox",
+                static provider => ToSweepSettings(provider.GetRequiredService<IOptions<InboxOptions>>().Value.Retention),
+                static store => store is IInboxRetentionStore retentionStore
+                    ? new RetentionSweepDeleter(retentionStore.DeleteProcessedAsync)
+                    : null);
         }
 
         return services;
     }
+
+    private static RetentionSweepSettings ToSweepSettings(InboxRetentionOptions retention) =>
+        new(retention.RetentionPeriod, retention.SweepInterval, retention.BatchSize);
 }

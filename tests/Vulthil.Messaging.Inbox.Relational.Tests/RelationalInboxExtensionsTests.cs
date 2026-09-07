@@ -67,9 +67,9 @@ public sealed class RelationalInboxExtensionsTests : BaseUnitTestCase
     [Fact]
     public void RetentionEnabledRegistersAHostedService()
     {
-        // Arrange — InboxRetentionBackgroundService is internal to Vulthil.Messaging.Inbox and not visible here, so
-        // metrics (the only other IHostedService source reachable from AddRelationalInbox) are turned off to isolate
-        // the retention gate.
+        // Arrange — the retention sweep's hosted service type is internal to Vulthil.Extensions.Retention and not
+        // visible here, so metrics (the only other IHostedService source reachable from AddRelationalInbox) are
+        // turned off to isolate the retention gate.
         var services = new ServiceCollection();
 
         // Act

@@ -75,6 +75,7 @@ Adopt only what you need — every package is independently versioned and focuse
 | Package | NuGet | Description |
 |---|---|---|
 | **Vulthil.Extensions.Hosting** | [![NuGet](https://img.shields.io/nuget/v/Vulthil.Extensions.Hosting)](https://www.nuget.org/packages/Vulthil.Extensions.Hosting) | Hosting abstractions, including `IRestartableHostedService`. |
+| **Vulthil.Extensions.Retention** | [![NuGet](https://img.shields.io/nuget/v/Vulthil.Extensions.Retention)](https://www.nuget.org/packages/Vulthil.Extensions.Retention) | One retention sweep for any store that can delete entries older than a cutoff; runs the outbox and inbox retention. |
 | **Vulthil.Extensions.Testing** | [![NuGet](https://img.shields.io/nuget/v/Vulthil.Extensions.Testing)](https://www.nuget.org/packages/Vulthil.Extensions.Testing) | Testing helpers such as polling utilities for eventual consistency. |
 | **Vulthil.xUnit** | [![NuGet](https://img.shields.io/nuget/v/Vulthil.xUnit)](https://www.nuget.org/packages/Vulthil.xUnit) | xUnit base classes with Testcontainers, Respawn, and AutoMocker. |
 | **Vulthil.xUnit.Cosmos** | [![NuGet](https://img.shields.io/nuget/v/Vulthil.xUnit.Cosmos)](https://www.nuget.org/packages/Vulthil.xUnit.Cosmos) | Cosmos DB emulator fixture for xUnit integration tests. |

@@ -61,6 +61,7 @@
   <Folder Name="/src/">
     <File Path="src/Directory.Build.props" />
     <Project Path="src/Vulthil.Extensions.Hosting/Vulthil.Extensions.Hosting.csproj" />
+    <Project Path="src/Vulthil.Extensions.Retention/Vulthil.Extensions.Retention.csproj" />
     <Project Path="src/Vulthil.Results/Vulthil.Results.csproj" />
   </Folder>
   <Folder Name="/src/SharedKernel/">
@@ -96,6 +97,7 @@
     <Project Path="src/Vulthil.xUnit/Vulthil.xUnit.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Vulthil.Extensions.Retention.Tests/Vulthil.Extensions.Retention.Tests.csproj" />
     <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/SharedKernel/">

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Retention sweep for Vulthil — one hosted service that periodically deletes a store's old entries in bounded batches. Vulthil.SharedKernel.Outbox and Vulthil.Messaging.Inbox run their retention through it, and any store that can delete entries older than a cutoff can register its own sweep.</Description>
+		<PackageTags>retention;cleanup;purge;sweep;background-service;hosted-service;outbox;inbox</PackageTags>
+		<!-- First release of this package: no version has shipped to nuget.org yet, so there is no baseline to validate
+		     against. Remove once the first release that includes Vulthil.Extensions.Retention is out, so the repo-wide
+		     PackageValidationBaselineVersion applies to it too. -->
+		<DisablePackageBaselineValidation>true</DisablePackageBaselineValidation>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+	</ItemGroup>
+
+</Project>

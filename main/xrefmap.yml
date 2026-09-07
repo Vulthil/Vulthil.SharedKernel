@@ -13,6 +13,104 @@ references:
   commentId: T:Vulthil.Extensions.Hosting.IRestartableHostedService
   fullName: Vulthil.Extensions.Hosting.IRestartableHostedService
   nameWithType: IRestartableHostedService
+- uid: Vulthil.Extensions.Retention
+  name: Vulthil.Extensions.Retention
+  href: api/Vulthil.Extensions.Retention.html
+  commentId: N:Vulthil.Extensions.Retention
+  fullName: Vulthil.Extensions.Retention
+  nameWithType: Vulthil.Extensions.Retention
+- uid: Vulthil.Extensions.Retention.RetentionSweepDeleter
+  name: RetentionSweepDeleter
+  href: api/Vulthil.Extensions.Retention.RetentionSweepDeleter.html
+  commentId: T:Vulthil.Extensions.Retention.RetentionSweepDeleter
+  fullName: Vulthil.Extensions.Retention.RetentionSweepDeleter
+  nameWithType: RetentionSweepDeleter
+- uid: Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions
+  name: RetentionSweepServiceCollectionExtensions
+  href: api/Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.html
+  commentId: T:Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions
+  fullName: Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions
+  nameWithType: RetentionSweepServiceCollectionExtensions
+- uid: Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep*
+  name: AddRetentionSweep
+  href: api/Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.html#Vulthil_Extensions_Retention_RetentionSweepServiceCollectionExtensions_AddRetentionSweep_
+  commentId: Overload:Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep
+  nameWithType: RetentionSweepServiceCollectionExtensions.AddRetentionSweep
+- uid: Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Func{System.IServiceProvider,Vulthil.Extensions.Retention.RetentionSweepSettings},System.Func{``0,Vulthil.Extensions.Retention.RetentionSweepDeleter})
+  name: AddRetentionSweep<TStore>(IServiceCollection, string, Func<IServiceProvider, RetentionSweepSettings>, Func<TStore, RetentionSweepDeleter?>)
+  href: api/Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.html#Vulthil_Extensions_Retention_RetentionSweepServiceCollectionExtensions_AddRetentionSweep__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_System_Func_System_IServiceProvider_Vulthil_Extensions_Retention_RetentionSweepSettings__System_Func___0_Vulthil_Extensions_Retention_RetentionSweepDeleter__
+  commentId: M:Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Func{System.IServiceProvider,Vulthil.Extensions.Retention.RetentionSweepSettings},System.Func{``0,Vulthil.Extensions.Retention.RetentionSweepDeleter})
+  name.vb: AddRetentionSweep(Of TStore)(IServiceCollection, String, Func(Of IServiceProvider, RetentionSweepSettings), Func(Of TStore, RetentionSweepDeleter))
+  fullName: Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep<TStore>(Microsoft.Extensions.DependencyInjection.IServiceCollection, string, System.Func<System.IServiceProvider, Vulthil.Extensions.Retention.RetentionSweepSettings>, System.Func<TStore, Vulthil.Extensions.Retention.RetentionSweepDeleter?>)
+  fullName.vb: Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep(Of TStore)(Microsoft.Extensions.DependencyInjection.IServiceCollection, String, System.Func(Of System.IServiceProvider, Vulthil.Extensions.Retention.RetentionSweepSettings), System.Func(Of TStore, Vulthil.Extensions.Retention.RetentionSweepDeleter))
+  nameWithType: RetentionSweepServiceCollectionExtensions.AddRetentionSweep<TStore>(IServiceCollection, string, Func<IServiceProvider, RetentionSweepSettings>, Func<TStore, RetentionSweepDeleter?>)
+  nameWithType.vb: RetentionSweepServiceCollectionExtensions.AddRetentionSweep(Of TStore)(IServiceCollection, String, Func(Of IServiceProvider, RetentionSweepSettings), Func(Of TStore, RetentionSweepDeleter))
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings
+  name: RetentionSweepSettings
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html
+  commentId: T:Vulthil.Extensions.Retention.RetentionSweepSettings
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings
+  nameWithType: RetentionSweepSettings
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.#ctor(System.TimeSpan,System.TimeSpan,System.Int32)
+  name: RetentionSweepSettings(TimeSpan, TimeSpan, int)
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings__ctor_System_TimeSpan_System_TimeSpan_System_Int32_
+  commentId: M:Vulthil.Extensions.Retention.RetentionSweepSettings.#ctor(System.TimeSpan,System.TimeSpan,System.Int32)
+  name.vb: New(TimeSpan, TimeSpan, Integer)
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionSweepSettings(System.TimeSpan, System.TimeSpan, int)
+  fullName.vb: Vulthil.Extensions.Retention.RetentionSweepSettings.New(System.TimeSpan, System.TimeSpan, Integer)
+  nameWithType: RetentionSweepSettings.RetentionSweepSettings(TimeSpan, TimeSpan, int)
+  nameWithType.vb: RetentionSweepSettings.New(TimeSpan, TimeSpan, Integer)
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.#ctor*
+  name: RetentionSweepSettings
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings__ctor_
+  commentId: Overload:Vulthil.Extensions.Retention.RetentionSweepSettings.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionSweepSettings
+  fullName.vb: Vulthil.Extensions.Retention.RetentionSweepSettings.New
+  nameWithType: RetentionSweepSettings.RetentionSweepSettings
+  nameWithType.vb: RetentionSweepSettings.New
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize
+  name: BatchSize
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings_BatchSize
+  commentId: P:Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize
+  nameWithType: RetentionSweepSettings.BatchSize
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize*
+  name: BatchSize
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings_BatchSize_
+  commentId: Overload:Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize
+  nameWithType: RetentionSweepSettings.BatchSize
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod
+  name: RetentionPeriod
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings_RetentionPeriod
+  commentId: P:Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod
+  nameWithType: RetentionSweepSettings.RetentionPeriod
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod*
+  name: RetentionPeriod
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings_RetentionPeriod_
+  commentId: Overload:Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod
+  nameWithType: RetentionSweepSettings.RetentionPeriod
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval
+  name: SweepInterval
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings_SweepInterval
+  commentId: P:Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval
+  nameWithType: RetentionSweepSettings.SweepInterval
+- uid: Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval*
+  name: SweepInterval
+  href: api/Vulthil.Extensions.Retention.RetentionSweepSettings.html#Vulthil_Extensions_Retention_RetentionSweepSettings_SweepInterval_
+  commentId: Overload:Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval
+  nameWithType: RetentionSweepSettings.SweepInterval
 - uid: Vulthil.Extensions.Testing
   name: Vulthil.Extensions.Testing
   href: api/Vulthil.Extensions.Testing.html

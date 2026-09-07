@@ -40,6 +40,62 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Retention.RetentionSweepDeleter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Retention.RetentionSweepDeleter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Retention.RetentionSweepDeleter",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Retention.RetentionSweepDeleter.yml\" sourcestartlinenumber=\"1\">Deletes up to <code class=\"paramref\">batchSize</code> entries that became eligible for retention before\n<code class=\"paramref\">olderThanUtc</code> and returns how many were deleted. A store exposes its own delete operation in this\nshape so the sweep registered by\n<xref href=\"Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.AddRetentionSweep%60%601(Microsoft.Extensions.DependencyInjection.IServiceCollection%2cSystem.String%2cSystem.Func%7bSystem.IServiceProvider%2cVulthil.Extensions.Retention.RetentionSweepSettings%7d%2cSystem.Func%7b%60%600%2cVulthil.Extensions.Retention.RetentionSweepDeleter%7d)\" data-throw-if-not-resolved=\"false\"></xref> can drive it without knowing the\nstore's type.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Retention.RetentionSweepServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extension that registers a retention sweep for a store.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Retention.RetentionSweepSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Retention.RetentionSweepSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Retention.RetentionSweepSettings",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Retention.RetentionSweepSettings.yml\" sourcestartlinenumber=\"1\">How a retention sweep runs: a sweep starts on host start and then every <xref href=\"Vulthil.Extensions.Retention.RetentionSweepSettings.SweepInterval\" data-throw-if-not-resolved=\"false\"></xref>, deletes\nentries older than <xref href=\"Vulthil.Extensions.Retention.RetentionSweepSettings.RetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref>, and does so in batches of <xref href=\"Vulthil.Extensions.Retention.RetentionSweepSettings.BatchSize\" data-throw-if-not-resolved=\"false\"></xref> until fewer\nthan a full batch remain. Callers validate these values on their own options before registering the sweep.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Retention.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Retention.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Retention",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Extensions.Testing.HttpResponseMessageExtensions.yml",
       "output": {
         ".html": {
@@ -3450,6 +3506,16 @@
       "output": {
         ".html": {
           "relative_path": "articles/packages/vulthil-extensions-hosting.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/packages/vulthil-extensions-retention.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/packages/vulthil-extensions-retention.html"
         }
       },
       "version": ""

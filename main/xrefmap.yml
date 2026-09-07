@@ -11285,6 +11285,15 @@ references:
   fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext)
   nameWithType: CosmosTestContainerFixture<TDbContext>
   nameWithType.vb: CosmosTestContainerFixture(Of TDbContext)
+- uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor
+  name: CosmosTestContainerFixture()
+  href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor
+  commentId: M:Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor
+  name.vb: New()
+  fullName: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture()
+  fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).New()
+  nameWithType: CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture()
+  nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).New()
 - uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor(Xunit.Sdk.IMessageSink)
   name: CosmosTestContainerFixture(IMessageSink)
   href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor_Xunit_Sdk_IMessageSink_
@@ -11444,6 +11453,15 @@ references:
   commentId: T:Vulthil.xUnit.Fixtures.ContainerHost
   fullName: Vulthil.xUnit.Fixtures.ContainerHost
   nameWithType: ContainerHost
+- uid: Vulthil.xUnit.Fixtures.ContainerHost.#ctor
+  name: ContainerHost()
+  href: api/Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost__ctor
+  commentId: M:Vulthil.xUnit.Fixtures.ContainerHost.#ctor
+  name.vb: New()
+  fullName: Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost()
+  fullName.vb: Vulthil.xUnit.Fixtures.ContainerHost.New()
+  nameWithType: ContainerHost.ContainerHost()
+  nameWithType.vb: ContainerHost.New()
 - uid: Vulthil.xUnit.Fixtures.ContainerHost.#ctor(Xunit.Sdk.IMessageSink)
   name: ContainerHost(IMessageSink)
   href: api/Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost__ctor_Xunit_Sdk_IMessageSink_
@@ -11476,6 +11494,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.xUnit.Fixtures.ContainerHost.AddContainer
   nameWithType: ContainerHost.AddContainer
+- uid: Vulthil.xUnit.Fixtures.ContainerHost.AddContainer``1
+  name: AddContainer<TContainer>()
+  href: api/Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost_AddContainer__1
+  commentId: M:Vulthil.xUnit.Fixtures.ContainerHost.AddContainer``1
+  name.vb: AddContainer(Of TContainer)()
+  fullName: Vulthil.xUnit.Fixtures.ContainerHost.AddContainer<TContainer>()
+  fullName.vb: Vulthil.xUnit.Fixtures.ContainerHost.AddContainer(Of TContainer)()
+  nameWithType: ContainerHost.AddContainer<TContainer>()
+  nameWithType.vb: ContainerHost.AddContainer(Of TContainer)()
 - uid: Vulthil.xUnit.Fixtures.ContainerHost.ConfigureContainers
   name: ConfigureContainers()
   href: api/Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost_ConfigureContainers
@@ -11668,6 +11695,15 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity)
   nameWithType: RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>
   nameWithType.vb: RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity)
+- uid: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor
+  name: RabbitMqTestContainerFixture()
+  href: api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.html#Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor
+  commentId: M:Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor
+  name.vb: New()
+  fullName: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture()
+  fullName.vb: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
+  nameWithType: RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture()
+  nameWithType.vb: RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)
   name: RabbitMqTestContainerFixture(IMessageSink)
   href: api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.html#Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor_Xunit_Sdk_IMessageSink_
@@ -11749,6 +11785,15 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity)
   nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>
   nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity)
+- uid: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor
+  name: TestContainerFixtureWithConnectionString()
+  href: api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html#Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2__ctor
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor
+  name.vb: New()
+  fullName: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString()
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).New()
+  nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString()
+  nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor(Xunit.Sdk.IMessageSink)
   name: TestContainerFixtureWithConnectionString(IMessageSink)
   href: api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html#Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2__ctor_Xunit_Sdk_IMessageSink_
@@ -11829,6 +11874,15 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixture(Of TBuilderEntity, TContainerEntity)
   nameWithType: TestContainerFixture<TBuilderEntity, TContainerEntity>
   nameWithType.vb: TestContainerFixture(Of TBuilderEntity, TContainerEntity)
+- uid: Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor
+  name: TestContainerFixture()
+  href: api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.html#Vulthil_xUnit_Fixtures_TestContainerFixture_2__ctor
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor
+  name.vb: New()
+  fullName: Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture()
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
+  nameWithType: TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture()
+  nameWithType.vb: TestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)
   name: TestContainerFixture(IMessageSink)
   href: api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.html#Vulthil_xUnit_Fixtures_TestContainerFixture_2__ctor_Xunit_Sdk_IMessageSink_
@@ -11909,6 +11963,15 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity)
   nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
   nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity)
+- uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor
+  name: TestDatabaseContainerFixture()
+  href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3__ctor
+  commentId: M:Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor
+  name.vb: New()
+  fullName: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture()
+  fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).New()
+  nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture()
+  nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor(Xunit.Sdk.IMessageSink)
   name: TestDatabaseContainerFixture(IMessageSink)
   href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3__ctor_Xunit_Sdk_IMessageSink_

@@ -202,9 +202,10 @@ and always before the auto-mocker's own instances.</p>
 <li><code>TestContainerFixtureWithConnectionString&lt;TBuilderEntity, TContainerEntity&gt;</code> – adds a connection string that is injected into the host's configuration under <code>ConnectionStrings:{ConnectionStringKey}</code> (<code>ITestContainerWithConnectionString</code>). Give <code>ConnectionStringKey</code> the bare name (e.g. <code>&quot;AppDb&quot;</code>); the factory adds the <code>ConnectionStrings:</code> prefix.</li>
 <li><code>TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;</code> – adds EF Core migrations and Respawn-based data reset between tests (<code>ITestDatabaseContainer</code>).</li>
 </ul>
+<p>None of them needs constructor parameters: Testcontainers' own log output is forwarded to xUnit's diagnostic messages (visible with <code>diagnosticMessages</code> enabled). Each base class also keeps a constructor that takes an explicit <code>IMessageSink</code> for routing that output elsewhere.</p>
 <p>A database fixture overrides <code>Configure()</code> to build the container and supplies the Respawn <code>DbAdapter</code>, the ADO.NET <code>DbProviderFactory</code>, and the configuration key its connection string is bound to:</p>
-<pre><code class="lang-csharp">internal sealed class PostgresTestContainer(IMessageSink messageSink)
-    : TestDatabaseContainerFixture&lt;AppDbContext, PostgreSqlBuilder, PostgreSqlContainer&gt;(messageSink)
+<pre><code class="lang-csharp">internal sealed class PostgresTestContainer
+    : TestDatabaseContainerFixture&lt;AppDbContext, PostgreSqlBuilder, PostgreSqlContainer&gt;
 {
     private readonly PostgreSqlBuilder _builder = new PostgreSqlBuilder(&quot;postgres:18.1&quot;)
         .WithPassword(&quot;app&quot;);
@@ -217,8 +218,8 @@ and always before the auto-mocker's own instances.</p>
 }
 </code></pre>
 <p>A message broker uses <code>RabbitMqTestContainerFixture</code> (which adds virtual-host-per-scope isolation when shared through a <code>ContainerHost</code>); any other non-database dependency uses <code>TestContainerFixtureWithConnectionString</code> directly. Both just provide the container configuration and connection string:</p>
-<pre><code class="lang-csharp">public sealed class RabbitMqTestContainer(IMessageSink messageSink)
-    : RabbitMqTestContainerFixture&lt;RabbitMqBuilder, RabbitMqContainer&gt;(messageSink)
+<pre><code class="lang-csharp">public sealed class RabbitMqTestContainer
+    : RabbitMqTestContainerFixture&lt;RabbitMqBuilder, RabbitMqContainer&gt;
 {
     private readonly RabbitMqBuilder _builder = new RabbitMqBuilder(&quot;rabbitmq:4-management&quot;)
         .WithUsername(&quot;guest&quot;)
@@ -235,10 +236,10 @@ and always before the auto-mocker's own instances.</p>
 <p><code>BaseWebApplicationFactory&lt;TEntryPoint&gt;</code> owns the test containers and serves as the xUnit fixture, so a single derived class acts as both the factory and the fixture. Register containers with <code>AddContainer</code> (in the constructor or by overriding <code>ConfigureContainers</code>); their connection strings are injected into the host and EF Core migrations are ensured during host startup:</p>
 <pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
 {
-    public AppWebFactory(IMessageSink messageSink)
+    public AppWebFactory()
     {
-        AddContainer(new PostgresTestContainer(messageSink));
-        AddContainer(new RabbitMqTestContainer(messageSink));
+        AddContainer(new PostgresTestContainer());
+        AddContainer(new RabbitMqTestContainer());
     }
 
     // ConfigureWebHost is sealed; override ConfigureCustomWebHost for extra host setup.
@@ -254,17 +255,17 @@ and always before the auto-mocker's own instances.</p>
 <p>Migrations run from a startup initializer placed at the front of the host's hosted-service list, so the schema exists <strong>before the application's own background services start</strong> (e.g. an outbox processor that polls the database immediately). It applies only migrations that are still pending and tolerates a concurrent migrator, so an application that already migrates itself on startup (for example <code>app.MigrateAsync()</code> in <code>Program.cs</code>) keeps ownership — the factory sees the schema is up to date and does nothing. Apps that don't self-migrate get migrated by the factory automatically. No test-only environment or production-code changes are required.</p>
 <h3 id="sharing-containers-across-the-assembly-containerhost">Sharing containers across the assembly (ContainerHost)</h3>
 <p>With factory-owned containers, the cost model is <em>containers × test classes</em>: twenty test classes with seven containers each means 140 container starts. A <code>ContainerHost</code> inverts that — the containers are registered <strong>once</strong>, on an assembly-level fixture, and every factory consumes them through a per-factory <strong>scope</strong>:</p>
-<pre><code class="lang-csharp">public sealed class AppContainerHost(IMessageSink messageSink) : ContainerHost(messageSink)
+<pre><code class="lang-csharp">public sealed class AppContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
     {
-        AddContainer(new PostgresTestContainer(MessageSink));
-        AddContainer(new RabbitMqTestContainer(MessageSink));
+        AddContainer&lt;PostgresTestContainer&gt;();
+        AddContainer&lt;RabbitMqTestContainer&gt;();
         return Task.CompletedTask;
     }
 }
 
-[assembly: AssemblyFixture(typeof(AppContainerHost))]
+[assembly: AssemblyFixture&lt;AppContainerHost&gt;]
 
 // The factory consumes every container registered on the host.
 public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebApplicationFactory&lt;Program&gt;(containerHost);
@@ -283,9 +284,9 @@ public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebAppli
 <p>For a service that calls an external API through an <code>HttpClient</code> from <code>IHttpClientFactory</code>, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both <strong>typed</strong> clients (<code>AddHttpClient&lt;TClient, ...&gt;()</code>) and <strong>named</strong> clients (<code>AddHttpClient(&quot;name&quot;)</code>) are supported; for typed clients the implementation type does not need to be accessible:</p>
 <pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
 {
-    public AppWebFactory(IMessageSink messageSink)
+    public AppWebFactory()
     {
-        AddContainer(new PostgresTestContainer(messageSink));
+        AddContainer(new PostgresTestContainer());
         AddHttpMock&lt;IWeatherClient&gt;();   // typed:  AddHttpClient&lt;IWeatherClient, WeatherClient&gt;()
         AddHttpMock(&quot;inventory&quot;);        // named:  AddHttpClient(&quot;inventory&quot;)
     }

@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1" class="text-break">
-Class CosmosTestContainerFixture&lt;TDbContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L31"><i class="bi bi-code-slash"></i></a>
+Class CosmosTestContainerFixture&lt;TDbContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -227,18 +227,40 @@ and the best-effort scope teardown use a bare <a class="xref" href="https://lear
 
   <a id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor*"></a>
 
-  <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor_Xunit_Sdk_IMessageSink_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor(Xunit.Sdk.IMessageSink)">
-  CosmosTestContainerFixture(IMessageSink)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor">
+  CosmosTestContainerFixture()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Fixture that starts the Azure Cosmos DB Linux emulator in a container and registers
-<code class="typeparamref">TDbContext</code> in the test host pointed at it. Connectivity goes through the container's own
-<span class="xref">Testcontainers.CosmosDb.CosmosDbContainer.HttpClient</span>, whose handler rewrites every request to the mapped emulator endpoint,
-so no certificate or endpoint plumbing is needed. When owned by a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a>, every consuming
-factory works in its own emulator database, so parallel test classes never share data; data is reset between
-tests by recreating that database. Derived classes only supply the configuration key (and optionally pin the
-emulator image via <code>Configure</code>).</p>
+  <div class="markdown level1 summary"><p>Initializes a fixture whose emulator logs are forwarded to the current test context's diagnostic messages,
+so no <span class="xref">Xunit.Sdk.IMessageSink</span> has to be injected.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected CosmosTestContainerFixture()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor*"></a>
+
+  <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor_Xunit_Sdk_IMessageSink_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor(Xunit.Sdk.IMessageSink)">
+  CosmosTestContainerFixture(IMessageSink)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a fixture that reports emulator logs through an explicitly supplied xUnit diagnostic message sink.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -260,13 +282,6 @@ emulator image via <code>Configure</code>).</p>
 
 
 
-  <h4 class="section" id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor_Xunit_Sdk_IMessageSink__remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>The database is created and reset through the application's own <code class="typeparamref">TDbContext</code> resolved from the
-test host's service provider — so a context whose constructor takes more than its options works without extra
-plumbing. It is created once during host startup through <a class="xref" href="Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_System_IServiceProvider_">InitializeAsync(IServiceProvider)</a> and
-recreated after each test through <a class="xref" href="Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_">ResetAsync(IServiceProvider)</a>. Only the emulator readiness probe
-and the best-effort scope teardown use a bare <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext">DbContext</a>, because neither needs the model.</p>
-</div>
 
 
 
@@ -279,7 +294,7 @@ and the best-effort scope teardown use a bare <a class="xref" href="https://lear
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_ConnectionString" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ConnectionString">
   ConnectionString
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L69"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the connection string used to communicate with the containerized service.</p>
@@ -311,7 +326,7 @@ and the best-effort scope teardown use a bare <a class="xref" href="https://lear
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_DatabaseName" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.DatabaseName">
   DatabaseName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the name of the emulator database used when this fixture is consumed without a scope; scopes append
@@ -348,7 +363,7 @@ their scope identifier to it. Defaults to <code>test-db</code>.</p>
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_Configure" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.Configure">
   Configure()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the emulator container. The default uses the <code>vnext</code> emulator image; override to pin a
@@ -382,7 +397,7 @@ specific image or tune the builder.</p>
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_ConfigureServices_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
   ConfigureServices(IServiceCollection)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers <code class="typeparamref">TDbContext</code> in the test host, pointed at the emulator's default database.
@@ -416,7 +431,7 @@ Invoked through the container extension point when this fixture is consumed with
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_CreateScope_System_String_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.CreateScope(System.String)">
   CreateScope(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a scope backed by its own database inside the shared emulator, named after
@@ -457,7 +472,7 @@ deleted (best-effort) when disposed; the emulator container keeps running for ot
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_InitializeAsync" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.InitializeAsync">
   InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Called immediately after the class has been created, before it is used.</p>
@@ -489,7 +504,7 @@ deleted (best-effort) when disposed; the emulator container keeps running for ot
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_InitializeAsync_System_IServiceProvider_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.InitializeAsync(System.IServiceProvider)">
   InitializeAsync(IServiceProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Performs the resource's one-time startup setup.</p>
@@ -528,7 +543,7 @@ deleted (best-effort) when disposed; the emulator container keeps running for ot
 
   <h3 id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_ResetAsync_System_IServiceProvider_" data-uid="Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.ResetAsync(System.IServiceProvider)">
   ResetAsync(IServiceProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Drops and recreates the default database after each test, giving every test a clean slate. The
@@ -569,7 +584,7 @@ constructor dependencies — come from the test host rather than being construct
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L31" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit.Cosmos/CosmosTestContainerFixture.cs/#L30" class="edit-link">Edit this page</a>
         </div>
 
 

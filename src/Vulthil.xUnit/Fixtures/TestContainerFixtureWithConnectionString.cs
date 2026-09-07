@@ -14,6 +14,15 @@ public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, T
     where TContainerEntity : IContainer
 {
     /// <summary>
+    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
+    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// </summary>
+    protected TestContainerFixtureWithConnectionString()
+        : this(TestContextMessageSink.Instance)
+    {
+    }
+
+    /// <summary>
     /// Gets the connection string used to communicate with the containerized service.
     /// </summary>
     public abstract string ConnectionString { get; }

@@ -29,6 +29,15 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     private DatabaseScope DefaultScope => _defaultScope ??= new DatabaseScope(this, ConnectionString, databaseName: null);
 
     /// <summary>
+    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
+    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// </summary>
+    protected TestDatabaseContainerFixture()
+        : this(TestContextMessageSink.Instance)
+    {
+    }
+
+    /// <summary>
     /// Gets the Respawn database adapter matching the container's database engine.
     /// </summary>
     protected abstract IDbAdapter DbAdapter { get; }

@@ -11,8 +11,7 @@ Azure Cosmos DB emulator fixture for `Vulthil.xUnit`: starts the Cosmos emulator
 ## Usage
 
 ```csharp
-internal sealed class CosmosTestContainer(IMessageSink messageSink)
-    : CosmosTestContainerFixture<MyCosmosDbContext>(messageSink)
+internal sealed class CosmosTestContainer : CosmosTestContainerFixture<MyCosmosDbContext>
 {
     public override string ConnectionStringKey => "cosmosdb";
 }

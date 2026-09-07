@@ -115,6 +115,32 @@ public sealed class ContainerHostTests : BaseUnitTestCase<ContainerHostTests.Tes
         failing.DisposeCount.ShouldBe(1);
     }
 
+    [Fact]
+    public async Task AHostCreatedWithoutAMessageSinkReportsThroughTheTestContext()
+    {
+        // Arrange
+        await using var host = new SinklessContainerHost();
+
+        // Act
+        var messageSink = host.ExposedMessageSink;
+
+        // Assert
+        messageSink.ShouldBeSameAs(TestContextMessageSink.Instance);
+    }
+
+    [Fact]
+    public async Task AddContainerByTypeCreatesAndRegistersTheContainer()
+    {
+        // Arrange
+        await using var host = new TypeRegisteringContainerHost();
+
+        // Act
+        await host.InitializeAsync();
+
+        // Assert
+        host.Containers.ShouldHaveSingleItem().ShouldBeOfType<FakeTestContainer>();
+    }
+
     public sealed class TestableContainerHost(IMessageSink messageSink) : ContainerHost(messageSink)
     {
         private readonly List<ITestContainer> _pendingContainers = [];
@@ -135,8 +161,27 @@ public sealed class ContainerHostTests : BaseUnitTestCase<ContainerHostTests.Tes
         }
     }
 
-    public sealed class FakeTestContainer(Func<ValueTask>? onInitialize = null) : ITestContainer
+    public sealed class SinklessContainerHost : ContainerHost
     {
+        public IMessageSink ExposedMessageSink => MessageSink;
+    }
+
+    public sealed class TypeRegisteringContainerHost : ContainerHost
+    {
+        protected override Task ConfigureContainers()
+        {
+            AddContainer<FakeTestContainer>();
+            return Task.CompletedTask;
+        }
+    }
+
+    public sealed class FakeTestContainer(Func<ValueTask>? onInitialize) : ITestContainer
+    {
+        public FakeTestContainer()
+            : this(onInitialize: null)
+        {
+        }
+
         public int InitializeCount { get; private set; }
 
         public int DisposeCount { get; private set; }

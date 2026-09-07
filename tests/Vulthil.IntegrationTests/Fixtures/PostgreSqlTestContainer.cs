@@ -5,11 +5,10 @@ using Testcontainers.PostgreSql;
 using Vulthil.TestHost;
 using Vulthil.TestHost.Data;
 using Vulthil.xUnit.Fixtures;
-using Xunit.Sdk;
 
 namespace Vulthil.IntegrationTests.Fixtures;
 
-internal sealed class PostgreSqlTestContainer(IMessageSink messageSink) : TestDatabaseContainerFixture<TestHostDbContext, PostgreSqlBuilder, PostgreSqlContainer>(messageSink)
+internal sealed class PostgreSqlTestContainer : TestDatabaseContainerFixture<TestHostDbContext, PostgreSqlBuilder, PostgreSqlContainer>
 {
     private readonly PostgreSqlBuilder _builder = new PostgreSqlBuilder("postgres:18.1")
         .WithPassword("vulthil");

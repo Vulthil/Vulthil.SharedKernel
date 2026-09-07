@@ -17,6 +17,15 @@ public abstract class TestContainerFixture<TBuilderEntity, TContainerEntity>(IMe
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer
 {
+    /// <summary>
+    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
+    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// </summary>
+    protected TestContainerFixture()
+        : this(TestContextMessageSink.Instance)
+    {
+    }
+
     /// <inheritdoc />
     public virtual void ConfigureWebHost(IWebHostBuilder builder)
     {

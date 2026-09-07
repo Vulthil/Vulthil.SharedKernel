@@ -1,8 +1,7 @@
 using Vulthil.xUnit.Fixtures;
 using WebApi.Tests.Fixtures;
-using Xunit.Sdk;
 
-[assembly: AssemblyFixture(typeof(AppContainerHost))]
+[assembly: AssemblyFixture<AppContainerHost>]
 
 namespace WebApi.Tests.Fixtures;
 
@@ -11,12 +10,12 @@ namespace WebApi.Tests.Fixtures;
 /// whole test run. Factories consume them through per-class scopes (a uniquely named database and a virtual host),
 /// so test classes run in parallel against shared containers without interfering.
 /// </summary>
-public sealed class AppContainerHost(IMessageSink messageSink) : ContainerHost(messageSink)
+public sealed class AppContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
     {
-        AddContainer(new PostgreSqlTestContainer(MessageSink));
-        AddContainer(new RabbitMqTestContainer(MessageSink));
+        AddContainer<PostgreSqlTestContainer>();
+        AddContainer<RabbitMqTestContainer>();
         return Task.CompletedTask;
     }
 }

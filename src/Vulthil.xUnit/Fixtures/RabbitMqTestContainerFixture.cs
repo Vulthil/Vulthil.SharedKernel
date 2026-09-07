@@ -19,6 +19,15 @@ public abstract class RabbitMqTestContainerFixture<TBuilderEntity, TContainerEnt
     where TContainerEntity : IContainer
 {
     /// <summary>
+    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
+    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// </summary>
+    protected RabbitMqTestContainerFixture()
+        : this(TestContextMessageSink.Instance)
+    {
+    }
+
+    /// <summary>
     /// Gets the broker username that is granted full permissions on each scope's virtual host. Must match the
     /// username the container was configured with; defaults to <c>guest</c>.
     /// </summary>

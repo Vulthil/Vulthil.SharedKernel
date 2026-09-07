@@ -1,1 +1,7 @@
 #nullable enable
+Vulthil.xUnit.Fixtures.ContainerHost.AddContainer<TContainer>() -> void
+Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost() -> void
+Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture() -> void
+Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture() -> void
+Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString() -> void
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture() -> void

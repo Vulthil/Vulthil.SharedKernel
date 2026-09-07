@@ -3,7 +3,6 @@ using MySqlConnector;
 using Respawn;
 using Testcontainers.MySql;
 using Vulthil.xUnit.Fixtures;
-using Xunit.Sdk;
 
 namespace Vulthil.IntegrationTests.Fixtures;
 
@@ -11,7 +10,7 @@ namespace Vulthil.IntegrationTests.Fixtures;
 /// Shared MySQL server for the provider outbox tests. Runs as root so per-class scope views can create and drop
 /// their own databases on the shared server, mirroring the PostgreSQL fixture.
 /// </summary>
-internal sealed class MySqlTestContainer(IMessageSink messageSink) : TestDatabaseContainerFixture<MySqlOutboxDbContext, MySqlBuilder, MySqlContainer>(messageSink)
+internal sealed class MySqlTestContainer : TestDatabaseContainerFixture<MySqlOutboxDbContext, MySqlBuilder, MySqlContainer>
 {
     public const string ConnectionStringKeyName = "mysql";
 

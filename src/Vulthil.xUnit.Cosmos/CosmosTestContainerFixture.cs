@@ -27,14 +27,30 @@ namespace Vulthil.xUnit.Cosmos;
 /// and the best-effort scope teardown use a bare <see cref="DbContext"/>, because neither needs the model.
 /// </remarks>
 /// <typeparam name="TDbContext">The Cosmos-mapped <see cref="DbContext"/> to register against the emulator.</typeparam>
-/// <param name="messageSink">The xUnit diagnostic message sink.</param>
-public abstract class CosmosTestContainerFixture<TDbContext>(IMessageSink messageSink)
-    : TestContainerFixtureWithConnectionString<CosmosDbBuilder, CosmosDbContainer>(messageSink), IStartupResource, IResettableResource
+public abstract class CosmosTestContainerFixture<TDbContext>
+    : TestContainerFixtureWithConnectionString<CosmosDbBuilder, CosmosDbContainer>, IStartupResource, IResettableResource
     where TDbContext : DbContext
 {
     private const string DefaultCosmosDbImage = "mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-latest";
     private const int MaxReadinessAttempts = 60;
     private const int ReadinessRetryDelaySeconds = 1;
+
+    /// <summary>
+    /// Initializes a fixture whose emulator logs are forwarded to the current test context's diagnostic messages,
+    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// </summary>
+    protected CosmosTestContainerFixture()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a fixture that reports emulator logs through an explicitly supplied xUnit diagnostic message sink.
+    /// </summary>
+    /// <param name="messageSink">The xUnit diagnostic message sink.</param>
+    protected CosmosTestContainerFixture(IMessageSink messageSink)
+        : base(messageSink)
+    {
+    }
 
     /// <summary>
     /// Gets the name of the emulator database used when this fixture is consumed without a scope; scopes append

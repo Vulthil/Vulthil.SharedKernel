@@ -60,7 +60,18 @@ public abstract class ContainerHost(IMessageSink messageSink) : IAsyncLifetime
     }
 
     /// <summary>
-    /// Override to register shared containers by calling <see cref="AddContainer"/>.
+    /// Creates a <typeparamref name="TContainer"/> through its parameterless constructor and registers it on this
+    /// host, so a derived host can list its containers by type. Call from the constructor or from
+    /// <see cref="ConfigureContainers"/>.
+    /// </summary>
+    /// <typeparam name="TContainer">The container type to create; it needs a public parameterless constructor.</typeparam>
+    protected void AddContainer<TContainer>()
+        where TContainer : ITestContainer, new()
+        => AddContainer(new TContainer());
+
+    /// <summary>
+    /// Override to register shared containers by calling <see cref="AddContainer(ITestContainer)"/> or
+    /// <see cref="AddContainer{TContainer}"/>.
     /// </summary>
     /// <returns>A task representing the asynchronous registration work.</returns>
     protected virtual Task ConfigureContainers() => Task.CompletedTask;

@@ -14,8 +14,8 @@ public sealed class AppContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
     {
-        AddContainer(new PostgreSqlTestContainer());
-        AddContainer(new RabbitMqTestContainer());
+        AddContainer<PostgreSqlTestContainer>();
+        AddContainer<RabbitMqTestContainer>();
         return Task.CompletedTask;
     }
 }

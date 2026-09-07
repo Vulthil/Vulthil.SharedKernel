@@ -1,4 +1,5 @@
 #nullable enable
+Vulthil.xUnit.Fixtures.ContainerHost.AddContainer<TContainer>() -> void
 Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost() -> void
 Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture() -> void
 Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture() -> void

@@ -15,11 +15,9 @@ public sealed class IntegrationTestContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
     {
-#pragma warning disable CA2000 // Ownership transfers to the host; containers are disposed at assembly end.
-        AddContainer(new PostgreSqlTestContainer());
-        AddContainer(new MySqlTestContainer());
-        AddContainer(new CosmosTestContainer());
-#pragma warning restore CA2000
+        AddContainer<PostgreSqlTestContainer>();
+        AddContainer<MySqlTestContainer>();
+        AddContainer<CosmosTestContainer>();
         return Task.CompletedTask;
     }
 }

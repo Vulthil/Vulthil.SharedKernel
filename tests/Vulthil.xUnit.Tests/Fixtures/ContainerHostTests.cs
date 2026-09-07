@@ -115,6 +115,19 @@ public sealed class ContainerHostTests : BaseUnitTestCase<ContainerHostTests.Tes
         failing.DisposeCount.ShouldBe(1);
     }
 
+    [Fact]
+    public async Task AHostCreatedWithoutAMessageSinkReportsThroughTheTestContext()
+    {
+        // Arrange
+        await using var host = new SinklessContainerHost();
+
+        // Act
+        var messageSink = host.ExposedMessageSink;
+
+        // Assert
+        messageSink.ShouldBeSameAs(TestContextMessageSink.Instance);
+    }
+
     public sealed class TestableContainerHost(IMessageSink messageSink) : ContainerHost(messageSink)
     {
         private readonly List<ITestContainer> _pendingContainers = [];
@@ -133,6 +146,11 @@ public sealed class ContainerHostTests : BaseUnitTestCase<ContainerHostTests.Tes
 
             return Task.CompletedTask;
         }
+    }
+
+    public sealed class SinklessContainerHost : ContainerHost
+    {
+        public IMessageSink ExposedMessageSink => MessageSink;
     }
 
     public sealed class FakeTestContainer(Func<ValueTask>? onInitialize = null) : ITestContainer

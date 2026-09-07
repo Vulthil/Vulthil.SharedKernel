@@ -9,7 +9,7 @@ namespace Vulthil.xUnit.Fixtures;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Register a derived host with <c>[assembly: AssemblyFixture(typeof(MyContainerHost))]</c> and accept it in the
+/// Register a derived host with <c>[assembly: AssemblyFixture&lt;MyContainerHost&gt;]</c> and accept it in the
 /// constructor of a <see cref="BaseWebApplicationFactory{TEntryPoint}"/>-derived class fixture. The factory consumes
 /// every container registered here through a per-factory scope view (see <see cref="ITestContainerScopeProvider"/>),
 /// so parallel test classes share the running containers without sharing state.
@@ -28,7 +28,18 @@ public abstract class ContainerHost(IMessageSink messageSink) : IAsyncLifetime
     private bool _configured;
 
     /// <summary>
-    /// Gets the xUnit diagnostic message sink, for passing to container fixtures created by the host.
+    /// Initializes a host that needs nothing injected: container fixtures created through their parameterless
+    /// constructors report through the current test context's diagnostic messages instead of an injected sink.
+    /// </summary>
+    protected ContainerHost()
+        : this(TestContextMessageSink.Instance)
+    {
+    }
+
+    /// <summary>
+    /// Gets the xUnit diagnostic message sink for container fixtures that take an explicit sink. For a host created
+    /// through the parameterless constructor this forwards to the current test context's diagnostic messages, which
+    /// is also what the fixtures' parameterless constructors use.
     /// </summary>
     protected IMessageSink MessageSink { get; } = messageSink;
 

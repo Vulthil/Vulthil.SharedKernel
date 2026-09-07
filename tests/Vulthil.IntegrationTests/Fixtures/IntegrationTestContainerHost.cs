@@ -1,8 +1,7 @@
 using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.xUnit.Fixtures;
-using Xunit.Sdk;
 
-[assembly: AssemblyFixture(typeof(IntegrationTestContainerHost))]
+[assembly: AssemblyFixture<IntegrationTestContainerHost>]
 
 namespace Vulthil.IntegrationTests.Fixtures;
 
@@ -12,14 +11,14 @@ namespace Vulthil.IntegrationTests.Fixtures;
 /// in parallel against shared containers without interfering. Containers start lazily, so a filtered run only pays
 /// for what its factories consume.
 /// </summary>
-public sealed class IntegrationTestContainerHost(IMessageSink messageSink) : ContainerHost(messageSink)
+public sealed class IntegrationTestContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
     {
 #pragma warning disable CA2000 // Ownership transfers to the host; containers are disposed at assembly end.
-        AddContainer(new PostgreSqlTestContainer(MessageSink));
-        AddContainer(new MySqlTestContainer(MessageSink));
-        AddContainer(new CosmosTestContainer(MessageSink));
+        AddContainer(new PostgreSqlTestContainer());
+        AddContainer(new MySqlTestContainer());
+        AddContainer(new CosmosTestContainer());
 #pragma warning restore CA2000
         return Task.CompletedTask;
     }

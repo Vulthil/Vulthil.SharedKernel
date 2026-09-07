@@ -5,11 +5,10 @@ using ServiceDefaults;
 using Testcontainers.PostgreSql;
 using Vulthil.xUnit.Fixtures;
 using WebApi.Infrastructure.Data;
-using Xunit.Sdk;
 
 namespace WebApi.Tests.Fixtures;
 
-internal sealed class PostgreSqlTestContainer(IMessageSink messageSink) : TestDatabaseContainerFixture<WebApiDbContext, PostgreSqlBuilder, PostgreSqlContainer>(messageSink)
+internal sealed class PostgreSqlTestContainer : TestDatabaseContainerFixture<WebApiDbContext, PostgreSqlBuilder, PostgreSqlContainer>
 {
     private readonly PostgreSqlBuilder _builder = new PostgreSqlBuilder("postgres:18.1")
         .WithPassword("webapi");

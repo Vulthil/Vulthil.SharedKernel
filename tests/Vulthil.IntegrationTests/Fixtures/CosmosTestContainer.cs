@@ -1,11 +1,10 @@
 using Testcontainers.CosmosDb;
 using Vulthil.TestHost;
 using Vulthil.xUnit.Cosmos;
-using Xunit.Sdk;
 
 namespace Vulthil.IntegrationTests.Fixtures;
 
-internal sealed class CosmosTestContainer(IMessageSink messageSink) : CosmosTestContainerFixture<CosmosProbeDbContext>(messageSink)
+internal sealed class CosmosTestContainer : CosmosTestContainerFixture<CosmosProbeDbContext>
 {
     private const string CosmosDbImage = "mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-latest";
 

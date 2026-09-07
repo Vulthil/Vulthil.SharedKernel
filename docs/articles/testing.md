@@ -118,11 +118,13 @@ Key features:
 - `TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>` – adds a connection string that is injected into the host's configuration under `ConnectionStrings:{ConnectionStringKey}` (`ITestContainerWithConnectionString`). Give `ConnectionStringKey` the bare name (e.g. `"AppDb"`); the factory adds the `ConnectionStrings:` prefix.
 - `TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>` – adds EF Core migrations and Respawn-based data reset between tests (`ITestDatabaseContainer`).
 
+None of them needs constructor parameters: Testcontainers' own log output is forwarded to xUnit's diagnostic messages (visible with `diagnosticMessages` enabled). Each base class also keeps a constructor that takes an explicit `IMessageSink` for routing that output elsewhere.
+
 A database fixture overrides `Configure()` to build the container and supplies the Respawn `DbAdapter`, the ADO.NET `DbProviderFactory`, and the configuration key its connection string is bound to:
 
 ```csharp
-internal sealed class PostgresTestContainer(IMessageSink messageSink)
-    : TestDatabaseContainerFixture<AppDbContext, PostgreSqlBuilder, PostgreSqlContainer>(messageSink)
+internal sealed class PostgresTestContainer
+    : TestDatabaseContainerFixture<AppDbContext, PostgreSqlBuilder, PostgreSqlContainer>
 {
     private readonly PostgreSqlBuilder _builder = new PostgreSqlBuilder("postgres:18.1")
         .WithPassword("app");
@@ -138,8 +140,8 @@ internal sealed class PostgresTestContainer(IMessageSink messageSink)
 A message broker uses `RabbitMqTestContainerFixture` (which adds virtual-host-per-scope isolation when shared through a `ContainerHost`); any other non-database dependency uses `TestContainerFixtureWithConnectionString` directly. Both just provide the container configuration and connection string:
 
 ```csharp
-public sealed class RabbitMqTestContainer(IMessageSink messageSink)
-    : RabbitMqTestContainerFixture<RabbitMqBuilder, RabbitMqContainer>(messageSink)
+public sealed class RabbitMqTestContainer
+    : RabbitMqTestContainerFixture<RabbitMqBuilder, RabbitMqContainer>
 {
     private readonly RabbitMqBuilder _builder = new RabbitMqBuilder("rabbitmq:4-management")
         .WithUsername("guest")
@@ -161,10 +163,10 @@ Containers are registered on the factory with `AddContainer` (see below), which 
 ```csharp
 public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
 {
-    public AppWebFactory(IMessageSink messageSink)
+    public AppWebFactory()
     {
-        AddContainer(new PostgresTestContainer(messageSink));
-        AddContainer(new RabbitMqTestContainer(messageSink));
+        AddContainer(new PostgresTestContainer());
+        AddContainer(new RabbitMqTestContainer());
     }
 
     // ConfigureWebHost is sealed; override ConfigureCustomWebHost for extra host setup.
@@ -185,17 +187,17 @@ Migrations run from a startup initializer placed at the front of the host's host
 With factory-owned containers, the cost model is *containers × test classes*: twenty test classes with seven containers each means 140 container starts. A `ContainerHost` inverts that — the containers are registered **once**, on an assembly-level fixture, and every factory consumes them through a per-factory **scope**:
 
 ```csharp
-public sealed class AppContainerHost(IMessageSink messageSink) : ContainerHost(messageSink)
+public sealed class AppContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
     {
-        AddContainer(new PostgresTestContainer(MessageSink));
-        AddContainer(new RabbitMqTestContainer(MessageSink));
+        AddContainer(new PostgresTestContainer());
+        AddContainer(new RabbitMqTestContainer());
         return Task.CompletedTask;
     }
 }
 
-[assembly: AssemblyFixture(typeof(AppContainerHost))]
+[assembly: AssemblyFixture<AppContainerHost>]
 
 // The factory consumes every container registered on the host.
 public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost);
@@ -219,9 +221,9 @@ For a service that calls an external API through an `HttpClient` from `IHttpClie
 ```csharp
 public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
 {
-    public AppWebFactory(IMessageSink messageSink)
+    public AppWebFactory()
     {
-        AddContainer(new PostgresTestContainer(messageSink));
+        AddContainer(new PostgresTestContainer());
         AddHttpMock<IWeatherClient>();   // typed:  AddHttpClient<IWeatherClient, WeatherClient>()
         AddHttpMock("inventory");        // named:  AddHttpClient("inventory")
     }

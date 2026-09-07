@@ -1,1 +1,2 @@
 #nullable enable
+Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture() -> void

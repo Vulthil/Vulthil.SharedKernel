@@ -133,13 +133,13 @@ internal static class MessageContextFactory
             Headers: AmqpHeaderValueNormalizer.Normalize(headers),
             Redelivered: ea.Redelivered,
             RetryCount: RabbitMqConstants.GetRetryCount(headers),
-            ConversationId: RabbitMqConstants.GetHeaderString(headers, "ConversationId"),
-            InitiatorId: RabbitMqConstants.GetHeaderString(headers, "InitiatorId"),
-            SourceAddress: RabbitMqConstants.GetHeaderUri(headers, "SourceAddress"),
-            DestinationAddress: RabbitMqConstants.GetHeaderUri(headers, "DestinationAddress"),
-            ResponseAddress: RabbitMqConstants.GetHeaderUri(headers, "ResponseAddress")
-                ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : new Uri($"queue:{props.ReplyTo}")),
-            FaultAddress: RabbitMqConstants.GetHeaderUri(headers, "FaultAddress"),
+            ConversationId: RabbitMqConstants.GetHeaderString(headers, MessageHeaders.ConversationId),
+            InitiatorId: RabbitMqConstants.GetHeaderString(headers, MessageHeaders.InitiatorId),
+            SourceAddress: RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.SourceAddress),
+            DestinationAddress: RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.DestinationAddress),
+            ResponseAddress: RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.ResponseAddress)
+                ?? (string.IsNullOrEmpty(props.ReplyTo) ? null : MessageAddress.Queue(props.ReplyTo)),
+            FaultAddress: RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.FaultAddress),
             SentTime: sentTime,
             ExpirationTime: RabbitMqConstants.TryParseExpiration(props.Expiration, sentTime));
     }

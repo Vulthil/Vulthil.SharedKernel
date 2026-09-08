@@ -9,16 +9,6 @@ namespace Vulthil.Messaging.Transport;
 /// </summary>
 public static class MessageEnvelopeFactory
 {
-    private static readonly HashSet<string> PromotedHeaderKeys = new(StringComparer.Ordinal)
-    {
-        "ConversationId",
-        "InitiatorId",
-        "SourceAddress",
-        "DestinationAddress",
-        "ResponseAddress",
-        "FaultAddress",
-    };
-
     /// <summary>
     /// Builds a <see cref="MessageEnvelope"/> from the resolved publish state for a single outgoing message.
     /// </summary>
@@ -45,7 +35,7 @@ public static class MessageEnvelopeFactory
         Dictionary<string, object?>? userHeaders = null;
         foreach (var (key, value) in publishContext.Headers)
         {
-            if (PromotedHeaderKeys.Contains(key))
+            if (MessageHeaders.IsReserved(key))
             {
                 continue;
             }

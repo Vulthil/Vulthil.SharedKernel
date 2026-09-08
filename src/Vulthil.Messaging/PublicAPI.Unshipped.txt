@@ -1,1 +1,14 @@
 #nullable enable
+const Vulthil.Messaging.Transport.MessageHeaders.ConversationId = "ConversationId" -> string!
+const Vulthil.Messaging.Transport.MessageHeaders.DestinationAddress = "DestinationAddress" -> string!
+const Vulthil.Messaging.Transport.MessageHeaders.FaultAddress = "FaultAddress" -> string!
+const Vulthil.Messaging.Transport.MessageHeaders.InitiatorId = "InitiatorId" -> string!
+const Vulthil.Messaging.Transport.MessageHeaders.ResponseAddress = "ResponseAddress" -> string!
+const Vulthil.Messaging.Transport.MessageHeaders.SourceAddress = "SourceAddress" -> string!
+static Vulthil.Messaging.Transport.MessageAddress.Parse(string? value) -> System.Uri?
+static Vulthil.Messaging.Transport.MessageAddress.Queue(string! queueName) -> System.Uri!
+static Vulthil.Messaging.Transport.MessageAddress.QueueName(System.Uri! address) -> string?
+static Vulthil.Messaging.Transport.MessageAddress.ToHeaderValue(System.Uri! address) -> string!
+static Vulthil.Messaging.Transport.MessageHeaders.IsReserved(string! key) -> bool
+Vulthil.Messaging.Transport.MessageAddress
+Vulthil.Messaging.Transport.MessageHeaders

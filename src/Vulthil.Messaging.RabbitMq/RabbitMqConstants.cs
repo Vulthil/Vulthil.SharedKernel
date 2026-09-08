@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq;
 
@@ -90,16 +91,6 @@ internal static class RabbitMqConstants
         return value?.ToString();
     }
 
-    public static Uri? GetHeaderUri(IDictionary<string, object?> headers, string key)
-    {
-        var str = GetHeaderString(headers, key);
-        if (string.IsNullOrWhiteSpace(str))
-        {
-            return null;
-        }
-
-        return Uri.TryCreate(str, UriKind.Absolute, out var uri)
-            ? uri
-            : new Uri($"queue:{str}");
-    }
+    public static Uri? GetHeaderUri(IDictionary<string, object?> headers, string key) =>
+        MessageAddress.Parse(GetHeaderString(headers, key));
 }

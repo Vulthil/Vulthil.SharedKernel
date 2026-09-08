@@ -21,17 +21,17 @@ public class PublishContext : IPublishContext
     /// <summary>Gets the message identifier, or <see langword="null"/> if none was set.</summary>
     public string? MessageId { get; private set; }
     /// <summary>Gets the conversation identifier, or <see langword="null"/> if none was set.</summary>
-    public string? ConversationId { get => _headers.TryGetValue("ConversationId", out var value) && value is string conversationId ? conversationId : null; private set => _headers["ConversationId"] = value; }
+    public string? ConversationId { get => GetString(MessageHeaders.ConversationId); private set => _headers[MessageHeaders.ConversationId] = value; }
     /// <summary>Gets the identifier of the message that initiated this chain, or <see langword="null"/> if none was set.</summary>
-    public string? InitiatorId { get => _headers.TryGetValue("InitiatorId", out var value) && value is string initiatorId ? initiatorId : null; private set => _headers["InitiatorId"] = value; }
+    public string? InitiatorId { get => GetString(MessageHeaders.InitiatorId); private set => _headers[MessageHeaders.InitiatorId] = value; }
     /// <summary>Gets or sets the address of the endpoint that produced the message; stamped by the transport.</summary>
-    public Uri? SourceAddress { get => MapStringToUri("SourceAddress"); set => _headers["SourceAddress"] = MapUriToString(value); }
+    public Uri? SourceAddress { get => GetAddress(MessageHeaders.SourceAddress); set => SetAddress(MessageHeaders.SourceAddress, value); }
     /// <summary>Gets or sets the address of the endpoint the message is sent to; stamped by the transport.</summary>
-    public Uri? DestinationAddress { get => MapStringToUri("DestinationAddress"); set => _headers["DestinationAddress"] = MapUriToString(value); }
+    public Uri? DestinationAddress { get => GetAddress(MessageHeaders.DestinationAddress); set => SetAddress(MessageHeaders.DestinationAddress, value); }
     /// <summary>Gets the address where replies should be sent, or <see langword="null"/> if none was set.</summary>
-    public Uri? ResponseAddress { get => MapStringToUri("ResponseAddress"); private set => _headers["ResponseAddress"] = MapUriToString(value); }
+    public Uri? ResponseAddress { get => GetAddress(MessageHeaders.ResponseAddress); private set => SetAddress(MessageHeaders.ResponseAddress, value); }
     /// <summary>Gets the address where fault notifications should be sent, or <see langword="null"/> if none was set.</summary>
-    public Uri? FaultAddress { get => MapStringToUri("FaultAddress"); private set => _headers["FaultAddress"] = MapUriToString(value); }
+    public Uri? FaultAddress { get => GetAddress(MessageHeaders.FaultAddress); private set => SetAddress(MessageHeaders.FaultAddress, value); }
 
     /// <inheritdoc />
     public void AddHeader(string key, object? value) => _headers[key] = value;
@@ -58,23 +58,9 @@ public class PublishContext : IPublishContext
     /// <inheritdoc />
     public void SetFaultAddress(Uri faultAddress) => FaultAddress = faultAddress;
 
-    private static string? MapUriToString(Uri? uri)
-    {
-        if (uri is null)
-        {
-            return null;
-        }
+    private string? GetString(string key) => _headers.TryGetValue(key, out var value) && value is string stored ? stored : null;
 
-        return uri.Scheme == "queue" ? uri.LocalPath.TrimStart('/') : uri.ToString();
-    }
+    private Uri? GetAddress(string key) => MessageAddress.Parse(GetString(key));
 
-    private Uri? MapStringToUri(string key)
-    {
-        if (!_headers.TryGetValue(key, out var value) || value is not string stored || string.IsNullOrWhiteSpace(stored))
-        {
-            return null;
-        }
-
-        return Uri.TryCreate(stored, UriKind.Absolute, out var uri) ? uri : new Uri($"queue:{stored}");
-    }
+    private void SetAddress(string key, Uri? address) => _headers[key] = address is null ? null : MessageAddress.ToHeaderValue(address);
 }

@@ -468,7 +468,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         string faultExchangeName,
         string messageTypeName)
     {
-        var faultAddress = RabbitMqConstants.GetHeaderUri(headers, "FaultAddress");
+        var faultAddress = RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.FaultAddress);
         return faultAddress is null
             ? (faultExchangeName, messageTypeName)
             : (string.Empty, RabbitMqAddress.ResolveRoutingKey(faultAddress) ?? string.Empty);

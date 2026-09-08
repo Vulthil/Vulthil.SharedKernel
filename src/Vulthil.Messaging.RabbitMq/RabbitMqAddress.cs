@@ -1,3 +1,5 @@
+using Vulthil.Messaging.Transport;
+
 namespace Vulthil.Messaging.RabbitMq;
 
 /// <summary>
@@ -6,9 +8,10 @@ namespace Vulthil.Messaging.RabbitMq;
 internal static class RabbitMqAddress
 {
     /// <summary>
-    /// Maps an address URI to the routing key used to reach it: the queue name for <c>queue:</c> and
-    /// AMQP (<c>rabbitmq:</c>/<c>amqp:</c>/<c>amqps:</c>) URIs, or the full string for anything else.
-    /// Returns <see langword="null"/> when <paramref name="uri"/> is <see langword="null"/>.
+    /// Maps an address URI to the routing key used to reach it: the queue name for <c>queue:</c> URIs (per
+    /// <see cref="MessageAddress.QueueName"/>) and for AMQP (<c>rabbitmq:</c>/<c>amqp:</c>/<c>amqps:</c>) URIs, or
+    /// the full string for anything else. Returns <see langword="null"/> when <paramref name="uri"/> is
+    /// <see langword="null"/>.
     /// </summary>
     /// <param name="uri">The address URI to resolve, or <see langword="null"/>.</param>
     /// <returns>The routing key, or <see langword="null"/> when <paramref name="uri"/> is <see langword="null"/>.</returns>
@@ -19,16 +22,9 @@ internal static class RabbitMqAddress
             return null;
         }
 
-        if (uri.Scheme == "queue")
-        {
-            return uri.LocalPath.TrimStart('/');
-        }
-
-        if (uri.Scheme == "rabbitmq" || uri.Scheme == "amqp" || uri.Scheme == "amqps")
-        {
-            return uri.AbsolutePath.TrimStart('/');
-        }
-
-        return uri.ToString();
+        return MessageAddress.QueueName(uri)
+            ?? (IsAmqpScheme(uri.Scheme) ? uri.AbsolutePath.TrimStart('/') : uri.ToString());
     }
+
+    private static bool IsAmqpScheme(string scheme) => scheme is "rabbitmq" or "amqp" or "amqps";
 }

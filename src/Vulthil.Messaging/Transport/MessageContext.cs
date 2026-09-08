@@ -125,11 +125,11 @@ public record MessageContext : IMessageContext
             RetryCount = retryCount,
             ConversationId = envelope.ConversationId,
             InitiatorId = envelope.InitiatorId,
-            SourceAddress = ParseAddress(envelope.SourceAddress),
-            DestinationAddress = ParseAddress(envelope.DestinationAddress),
-            ResponseAddress = ParseAddress(envelope.ResponseAddress)
-                ?? (string.IsNullOrEmpty(replyToFallback) ? null : new Uri($"queue:{replyToFallback}")),
-            FaultAddress = ParseAddress(envelope.FaultAddress),
+            SourceAddress = MessageAddress.Parse(envelope.SourceAddress),
+            DestinationAddress = MessageAddress.Parse(envelope.DestinationAddress),
+            ResponseAddress = MessageAddress.Parse(envelope.ResponseAddress)
+                ?? (string.IsNullOrEmpty(replyToFallback) ? null : MessageAddress.Queue(replyToFallback)),
+            FaultAddress = MessageAddress.Parse(envelope.FaultAddress),
             SentTime = envelope.SentTime,
             ExpirationTime = envelope.ExpirationTime,
         };
@@ -166,17 +166,6 @@ public record MessageContext : IMessageContext
 
     private static InvalidOperationException SnapshotContextError() =>
         new("This message context is a snapshot (e.g. a fault envelope) and is not bound to a live transport.");
-
-    private static Uri? ParseAddress(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return null;
-        }
-        return Uri.TryCreate(value, UriKind.Absolute, out var uri)
-            ? uri
-            : new Uri($"queue:{value}");
-    }
 }
 
 /// <summary>

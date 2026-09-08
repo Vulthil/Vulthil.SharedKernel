@@ -109,6 +109,14 @@ enforce request-consumer uniqueness without inspecting the opaque <code class="t
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Transport.MessageAddress.html">MessageAddress</a></dt>
+      <dd><p>The address rules every producer and consumer path shares: how an address carried as a string (an envelope field,
+a header value, a reply-to queue) becomes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a>, how a <code>queue:</code> address names its queue, and how
+an address is written into a header. A bare name denotes a queue; applying that rule on both sides is what lets a
+reply-to queue name, a header value and a <code>queue:</code> URI all denote the same destination.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Transport.MessageContext.html">MessageContext</a></dt>
       <dd><p>Transport-agnostic <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html">IMessageContext</a> implementation describing a delivered message and the
 transport services that back its <a class="xref" href="Vulthil.Messaging.Transport.MessageContext.html#Vulthil_Messaging_Transport_MessageContext_PublishAsync__1___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__">PublishAsync&lt;TMessage&gt;(TMessage, Func&lt;IPublishContext, ValueTask&gt;?)</a> and <a class="xref" href="Vulthil.Messaging.Transport.MessageContext.html#Vulthil_Messaging_Transport_MessageContext_SendAsync__1_System_Uri___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__">SendAsync&lt;TMessage&gt;(Uri, TMessage, Func&lt;IPublishContext, ValueTask&gt;?)</a>
@@ -150,6 +158,13 @@ bare-JSON receive path), fans a polymorphic registration out across every matchi
 dedupes handlers, rejects a second request consumer for the same message type on the same queue, and attaches
 the partition specification read from <a class="xref" href="Vulthil.Messaging.IMessageConfigurationProvider.html#Vulthil_Messaging_IMessageConfigurationProvider_GetPartition_System_Type_">GetPartition(Type)</a>. A transport
 drives it by supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> that builds its own delivery closures.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Transport.MessageHeaders.html">MessageHeaders</a></dt>
+      <dd><p>The reserved header keys under which a <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a> carries the metadata that
+<a class="xref" href="Vulthil.Messaging.Transport.MessageEnvelopeFactory.html">MessageEnvelopeFactory</a> promotes to typed <a class="xref" href="Vulthil.Messaging.Transport.MessageEnvelope.html">MessageEnvelope</a> fields and that a transport
+reads back on the consume side. A custom header must not use one of these keys.</p>
 </dd>
     </dl>
     <dl class="jumplist">

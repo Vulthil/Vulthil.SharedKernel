@@ -1356,6 +1356,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageAddress.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageAddress.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageAddress",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageAddress.yml\" sourcestartlinenumber=\"1\">The address rules every producer and consumer path shares: how an address carried as a string (an envelope field,\na header value, a reply-to queue) becomes a <xref href=\"System.Uri\" data-throw-if-not-resolved=\"false\"></xref>, how a <code>queue:</code> address names its queue, and how\nan address is written into a header. A bare name denotes a queue; applying that rule on both sides is what lets a\nreply-to queue name, a header value and a <code>queue:</code> URI all denote the same destination.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Transport.MessageContext-1.yml",
       "output": {
         ".html": {
@@ -1437,6 +1451,20 @@
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>",
       "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageExecutionRegistry-1.yml\" sourcestartlinenumber=\"1\">Transport-agnostic registry that turns <xref href=\"Vulthil.Messaging.Queues.QueueDefinition\" data-throw-if-not-resolved=\"false\"></xref> registrations into per-message-type\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionPlan%601\" data-throw-if-not-resolved=\"false\"></xref> instances. It keys plans by wire URN (and CLR full name for the\nbare-JSON receive path), fans a polymorphic registration out across every matching concrete subscription,\ndedupes handlers, rejects a second request consumer for the same message type on the same queue, and attaches\nthe partition specification read from <xref href=\"Vulthil.Messaging.IMessageConfigurationProvider.GetPartition(System.Type)\" data-throw-if-not-resolved=\"false\"></xref>. A transport\ndrives it by supplying an <xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> that builds its own delivery closures.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageHeaders.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageHeaders.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageHeaders",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageHeaders.yml\" sourcestartlinenumber=\"1\">The reserved header keys under which a <xref href=\"Vulthil.Messaging.Transport.PublishContext\" data-throw-if-not-resolved=\"false\"></xref> carries the metadata that\n<xref href=\"Vulthil.Messaging.Transport.MessageEnvelopeFactory\" data-throw-if-not-resolved=\"false\"></xref> promotes to typed <xref href=\"Vulthil.Messaging.Transport.MessageEnvelope\" data-throw-if-not-resolved=\"false\"></xref> fields and that a transport\nreads back on the consume side. A custom header must not use one of these keys.</p>\n"
     },
     {
       "type": "ManagedReference",

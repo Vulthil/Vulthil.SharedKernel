@@ -143,6 +143,17 @@ are loaded from <code>IConfiguration</code> before the configurator action runs,
 can be configured entirely via <code>appsettings.json</code>. Code calls merge on top of the
 loaded values, with code winning on conflict. See
 <a href="../messaging.html#configuration-driven-setup">Messaging — Configuration-driven Setup</a>.</p>
+<h3 id="addresses-and-reserved-headers">Addresses and reserved headers</h3>
+<p>Addresses (<code>SendAsync</code> destinations, response and fault addresses) are URIs; a bare name denotes a queue. The rules
+live in <code>Vulthil.Messaging.Transport.MessageAddress</code>, which every producer and consumer path shares:
+<code>MessageAddress.Queue(&quot;order-commands&quot;)</code> builds a <code>queue:</code> address, <code>MessageAddress.Parse</code> turns a stored or wire value
+back into one (a bare name becomes <code>queue:&lt;name&gt;</code>), and <code>MessageAddress.QueueName</code> reads the name out of a <code>queue:</code>
+address. Transport authors use the same three calls, so a reply-to queue name, a header value and a <code>queue:</code> URI always
+denote the same destination.</p>
+<p>The metadata a publish context carries (<code>ConversationId</code>, <code>InitiatorId</code>, <code>SourceAddress</code>, <code>DestinationAddress</code>,
+<code>ResponseAddress</code>, <code>FaultAddress</code>) travels under reserved header keys that the envelope promotes to typed fields. The
+names are the constants on <code>Vulthil.Messaging.Transport.MessageHeaders</code>, and <code>MessageHeaders.IsReserved(key)</code> tells
+whether a key is one of them — a custom header must not reuse these keys.</p>
 
 </article>
 

@@ -9,8 +9,8 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 
 public sealed class PolymorphicDispatchTests : BaseUnitTestCase
 {
-    private readonly Lazy<MessageTypeCache> _lazyTarget;
-    private MessageTypeCache Target => _lazyTarget.Value;
+    private readonly Lazy<QueueDispatchPlans> _lazyTarget;
+    private QueueDispatchPlans Target => _lazyTarget.Value;
 
     public PolymorphicDispatchTests()
     {
@@ -18,7 +18,7 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
         Use<IEnumerable<IConsumeFilter<OrderPlaced>>>([]);
         Use<IEnumerable<IConsumeFilter<IOrder>>>([]);
         Use<IEnumerable<IConsumeFilter<IOrderEvent>>>([]);
-        _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
+        _lazyTarget = new Lazy<QueueDispatchPlans>(CreateInstance<QueueDispatchPlans>);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public sealed class PolymorphicDispatchTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(OrderEventInterfaceConsumer)),
             MessageType = new MessageType(typeof(IOrderEvent)),
         });
-        Target.RegisterQueue(queue);
+        Use(queue);
 
         var plan = Target.GetPlan(typeof(OrderPlaced).FullName!);
         plan.ShouldNotBeNull();

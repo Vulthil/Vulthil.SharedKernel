@@ -1,38 +1,156 @@
-using System.Collections.Concurrent;
-using System.Reflection;
+using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.TestHarness;
 
 /// <summary>
-/// In-memory implementation of <see cref="IMessageHandlerFactory{THandler}"/>. Binds the open-generic
-/// <see cref="InMemoryMessageHandlers"/> builders to concrete type arguments via cached typed delegates, so the
-/// reflection cost is paid once per consumer/message shape — the same pattern the RabbitMQ transport uses.
+/// Builds the <see cref="InMemoryHandler"/> dispatch closures of the in-memory transport. The base class binds each
+/// registration's CLR types to these methods, so the closures are written once with the consumer and message types
+/// statically known.
 /// </summary>
-internal sealed class InMemoryHandlerFactory : IMessageHandlerFactory<InMemoryHandler>
+internal sealed class InMemoryHandlerFactory : MessageHandlerFactory<InMemoryHandler>
 {
-    private static readonly MethodInfo _consumerMethod = typeof(InMemoryMessageHandlers)
-        .GetMethod(nameof(InMemoryMessageHandlers.ForConsumer), BindingFlags.Public | BindingFlags.Static)
-        ?? throw new InvalidOperationException($"{nameof(InMemoryMessageHandlers)}.{nameof(InMemoryMessageHandlers.ForConsumer)} not found.");
-    private static readonly MethodInfo _requestMethod = typeof(InMemoryMessageHandlers)
-        .GetMethod(nameof(InMemoryMessageHandlers.ForRequestConsumer), BindingFlags.Public | BindingFlags.Static)
-        ?? throw new InvalidOperationException($"{nameof(InMemoryMessageHandlers)}.{nameof(InMemoryMessageHandlers.ForRequestConsumer)} not found.");
+    /// <summary>
+    /// Builds a handler for a one-way <see cref="IConsumer{TMessage}"/>. A throwing consumer is retried in-process
+    /// per <paramref name="retryPolicy"/> — the registration's effective policy (per-consumer, or the queue default),
+    /// resolved by the registry — with a fresh scope per attempt, mirroring the broker transport but without the real
+    /// back-off delays. Retries are per handler: another consumer of the same message runs its own closure, so one
+    /// consumer's failure never re-runs a consumer that already succeeded. Once the attempts are exhausted a
+    /// <see cref="Fault{TMessage}"/> is published and the delivery completes normally, so the originating
+    /// publish/send succeeds just as it would against a real broker.
+    /// </summary>
+    protected override InMemoryHandler CreateConsumerHandler<TConsumer, TMessage>(RetryPolicyDefinition? retryPolicy)
+        => new(HandlerKind.Consumer, async (scope, message, envelope, cancellationToken) =>
+        {
+            var scopeFactory = scope.GetRequiredService<IServiceScopeFactory>();
+            var harness = scope.GetRequiredService<TestHarness>();
+            var maxRetries = Math.Max(0, retryPolicy?.MaxRetryCount ?? 0);
+            var ignoredExceptions = retryPolicy?.GetIgnoredExceptionTypes();
 
-    private readonly ConcurrentDictionary<(Type Consumer, Type Message), Func<RetryPolicyDefinition?, InMemoryHandler>> _consumerCache = new();
-    private readonly ConcurrentDictionary<(Type Consumer, Type Request, Type Response), Func<InMemoryHandler>> _requestCache = new();
+            Exception? lastError = null;
+            for (var attempt = 0; attempt <= maxRetries; attempt++)
+            {
+                var attemptScope = scopeFactory.CreateAsyncScope();
+                await using var _ = attemptScope.ConfigureAwait(false);
+                var serviceProvider = attemptScope.ServiceProvider;
+                var consumer = serviceProvider.GetRequiredService<TConsumer>();
+                var context = InMemoryContext.Create(serviceProvider, (TMessage)message, envelope, cancellationToken, attempt);
 
-    public HandlerEntry<InMemoryHandler> ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
+                try
+                {
+                    var pipeline = ConsumePipelineFactory.Build<TMessage>(serviceProvider, terminal: async c =>
+                    {
+                        await consumer.ConsumeAsync(c, c.CancellationToken).ConfigureAwait(false);
+                        harness.RecordConsumed((TMessage)message, envelope);
+                    });
+
+                    await pipeline(context).ConfigureAwait(false);
+                    return null;
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    lastError = ex;
+                    if (ignoredExceptions is not null && ignoredExceptions.Contains(ex.GetType()))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            await PublishFaultAsync(scope, (TMessage)message, envelope, lastError!, maxRetries, cancellationToken).ConfigureAwait(false);
+            return null;
+        });
+
+    /// <summary>Builds a handler for a request/reply <see cref="IRequestConsumer{TRequest, TResponse}"/>.</summary>
+    protected override InMemoryHandler CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(RetryPolicyDefinition? retryPolicy)
+        => new(HandlerKind.RequestConsumer, async (scope, message, envelope, ct) =>
+        {
+            var consumer = scope.GetRequiredService<TConsumer>();
+            var provider = scope.GetRequiredService<IMessageConfigurationProvider>();
+            var harness = scope.GetRequiredService<TestHarness>();
+            var options = provider.JsonSerializerOptions;
+            var context = InMemoryContext.Create(scope, (TRequest)message, envelope, ct);
+
+            try
+            {
+                TResponse response = default!;
+                var produced = false;
+
+                var pipeline = ConsumePipelineFactory.Build<TRequest>(scope, terminal: async c =>
+                {
+                    response = await consumer.ConsumeAsync(c, c.CancellationToken).ConfigureAwait(false);
+                    harness.RecordConsumed((TRequest)message, envelope);
+                    produced = true;
+                });
+
+                await pipeline(context).ConfigureAwait(false);
+
+                return (MessageEnvelope?)(produced
+                    ? InMemoryReply.Build(provider.GetUrn(typeof(TResponse)), JsonSerializer.SerializeToElement(response, options), envelope)
+                    : InMemoryReply.BuildFault(
+                        "Consume pipeline did not produce a response (a filter likely short-circuited the chain).",
+                        typeof(InvalidOperationException).FullName!,
+                        stackTrace: null,
+                        options,
+                        envelope));
+            }
+            catch (Exception ex)
+            {
+                return InMemoryReply.BuildFault(ex, options, envelope);
+            }
+        });
+
+    /// <summary>
+    /// Publishes a <see cref="Fault{TMessage}"/> for a terminally-failed one-way delivery, mirroring the broker
+    /// transport: the fault is captured (so tests can assert it) and delivered in-process to any consumer bound to
+    /// it. Best-effort — it never disrupts completing the original delivery.
+    /// </summary>
+    private static async Task PublishFaultAsync<TMessage>(
+        IServiceProvider scope,
+        TMessage message,
+        MessageEnvelope envelope,
+        Exception error,
+        int retryCount,
+        CancellationToken cancellationToken)
+        where TMessage : notnull
     {
-        var factory = _consumerCache.GetOrAdd((consumerType, messageType), static key =>
-            _consumerMethod.MakeGenericMethod(key.Consumer, key.Message).CreateDelegate<Func<RetryPolicyDefinition?, InMemoryHandler>>());
-        return new HandlerEntry<InMemoryHandler>(factory(retryPolicy), HandlerKind.Consumer);
+        var provider = scope.GetRequiredService<IMessageConfigurationProvider>();
+        var transport = scope.GetRequiredService<InMemoryTransport>();
+        var harness = scope.GetRequiredService<TestHarness>();
+        var context = InMemoryContext.Create(scope, message, envelope, cancellationToken, retryCount);
+
+        var fault = new Fault<TMessage>
+        {
+            Message = message,
+            ExceptionMessage = error.Message,
+            StackTrace = error.StackTrace,
+            ExceptionType = error.GetType().FullName ?? "Unknown",
+            FaultedAt = DateTimeOffset.UtcNow,
+            OriginalContext = CreateSnapshot(context),
+        };
+
+        var faultEnvelope = OutgoingEnvelope.Build(provider, fault, new PublishContext());
+        harness.RecordPublished(fault, faultEnvelope);
+        await transport.DeliverAsync(faultEnvelope, cancellationToken).ConfigureAwait(false);
     }
 
-    public HandlerEntry<InMemoryHandler> ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)
-    {
-        var factory = _requestCache.GetOrAdd((consumerType, requestType, responseType), static key =>
-            _requestMethod.MakeGenericMethod(key.Consumer, key.Request, key.Response).CreateDelegate<Func<InMemoryHandler>>());
-        return new HandlerEntry<InMemoryHandler>(factory(), HandlerKind.RequestConsumer);
-    }
+    private static MessageContextSnapshot CreateSnapshot<TMessage>(MessageContext<TMessage> context)
+        where TMessage : notnull
+        => new()
+        {
+            MessageId = context.MessageId,
+            RequestId = context.RequestId,
+            CorrelationId = context.CorrelationId,
+            ConversationId = context.ConversationId,
+            InitiatorId = context.InitiatorId,
+            SourceAddress = context.SourceAddress,
+            DestinationAddress = context.DestinationAddress,
+            ResponseAddress = context.ResponseAddress,
+            FaultAddress = context.FaultAddress,
+            RoutingKey = context.RoutingKey,
+            RetryCount = context.RetryCount,
+        };
 }

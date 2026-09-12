@@ -21,7 +21,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly QueueDefinition _queueDefinition;
     private readonly IChannel _channel;
-    private readonly MessageTypeCache _typeCache;
+    private readonly QueueDispatchPlans _plans;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<RabbitMqConsumerWorker> _logger;
     private readonly TimeProvider _timeProvider;
@@ -44,22 +44,21 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         IServiceScopeFactory serviceScopeFactory,
         QueueDefinition queue,
         IChannel channel,
-        MessageTypeCache messageTypeCache,
+        QueueDispatchPlans plans,
         IMessageConfigurationProvider messageConfigurationProvider,
         ILogger<RabbitMqConsumerWorker> logger,
         TimeProvider timeProvider,
-        int channelIndex,
-        bool partitioned)
+        int channelIndex)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _queueDefinition = queue;
         _channel = channel;
-        _typeCache = messageTypeCache;
+        _plans = plans;
         _messageConfigurationProvider = messageConfigurationProvider;
         _logger = logger;
         _timeProvider = timeProvider;
         _channelIndex = channelIndex;
-        _partitioned = partitioned;
+        _partitioned = plans.IsPartitioned;
         _gatedPublisher = PublishThroughGateAsync;
     }
 
@@ -129,12 +128,12 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
 
         Task work;
-        if (prepared.Plan.IsPartitioned)
+        if (prepared.Plan.Partition is { } partition)
         {
-            var key = prepared.Plan.PartitionKeyExtractor!(prepared.Message, ea, prepared.Envelope);
+            var key = partition.ExtractKey(prepared.Message, ea, prepared.Envelope);
             work = string.IsNullOrEmpty(key)
                 ? ProcessAsync(prepared, ea)
-                : prepared.Plan.Partitioner!.RunSequentialAsync(key, () => ProcessAsync(prepared, ea));
+                : partition.Partitioner.RunSequentialAsync(key, () => ProcessAsync(prepared, ea));
         }
         else
         {
@@ -499,8 +498,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         var envelope = TryParseEnvelope(ea.Body, _jsonOptions);
 
         var plan = envelope is not null
-            ? _typeCache.GetPlanByUrn(envelope.MessageType)
-            : _typeCache.GetPlan(bareTypeName);
+            ? _plans.GetPlanByUrn(envelope.MessageType)
+            : _plans.GetPlan(bareTypeName);
 
         var diagnosticTypeName = envelope?.MessageType.AbsoluteUri ?? bareTypeName;
 

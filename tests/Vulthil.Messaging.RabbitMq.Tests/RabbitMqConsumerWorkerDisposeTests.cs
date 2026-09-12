@@ -32,8 +32,9 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(BlockingConsumer)),
             MessageType = new MessageType(typeof(OrderMessage)),
         });
+        _queue.AddSubscription(new Subscription(new MessageType(typeof(PartitionedMarker))));
 
-        Use(TestProviders.Build());
+        Use(TestProviders.Build(messaging => messaging.UsePartitioner<PartitionedMarker>(1, context => context.Message.Key)));
         Use<IEnumerable<IConsumeFilter<OrderMessage>>>([]);
         Use(_consumer);
         Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
@@ -41,7 +42,6 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
         Use<TimeProvider>(_timeProvider);
         Use(_queue);
         Use(0);
-        Use(true);
 
         _channel = GetMock<IChannel>();
         _channel
@@ -59,9 +59,7 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
 
     private async Task<RabbitMqConsumerWorker> StartWorkerAsync()
     {
-        var typeCache = CreateInstance<MessageTypeCache>();
-        typeCache.RegisterQueue(_queue);
-        Use(typeCache);
+        Use(CreateInstance<QueueDispatchPlans>());
 
         var worker = CreateInstance<RabbitMqConsumerWorker>();
         await worker.StartAsync(CancellationToken);
@@ -136,6 +134,9 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
     }
 
     public sealed record OrderMessage(string Id);
+
+    /// <summary>Partitioned type subscribed on the queue so the worker runs in partitioned mode while <see cref="OrderMessage"/> itself stays unlaned.</summary>
+    public sealed record PartitionedMarker(string Key);
 
     public sealed class BlockingConsumer : IConsumer<OrderMessage>
     {

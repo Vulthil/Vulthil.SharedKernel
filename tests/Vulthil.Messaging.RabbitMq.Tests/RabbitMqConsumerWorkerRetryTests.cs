@@ -42,7 +42,6 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
         Use(_queue);
         Use<TimeProvider>(_timeProvider);
         Use(0);
-        Use(false);
 
         _channel = GetMock<IChannel>();
         _channel
@@ -90,9 +89,7 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
 
     private async Task<RabbitMqConsumerWorker> StartWorkerAsync()
     {
-        var typeCache = CreateInstance<MessageTypeCache>();
-        typeCache.RegisterQueue(_queue);
-        Use(typeCache);
+        Use(CreateInstance<QueueDispatchPlans>());
 
         var worker = CreateInstance<RabbitMqConsumerWorker>();
         await worker.StartAsync(CancellationToken);

@@ -101,35 +101,7 @@ public sealed class RabbitMqBusDispatchScopingTests : BaseUnitTestCase
         betaHits.ShouldBe(1);
     }
 
-    [Fact]
-    public void BuildTypeCachesScopesUrnPlanLookupsToTheOwningQueue()
-    {
-        // Arrange
-        var provider = TestProviders.Build(cfg =>
-        {
-            cfg.ConfigureQueue("alpha", queue => queue.AddConsumer<AlphaConsumer>());
-            cfg.ConfigureQueue("beta", queue =>
-            {
-                queue.AddConsumer<BetaConsumer>();
-                queue.AddConsumer<BetaOnlyConsumer>();
-            });
-        });
-        Use(provider);
-        var sharedEventUrn = provider.GetUrn(typeof(SharedEvent));
-        var betaOnlyEventUrn = provider.GetUrn(typeof(BetaOnlyEvent));
-
-        // Act
-        var typeCaches = Target.BuildTypeCaches(provider.QueueDefinitions);
-
-        // Assert
-        typeCaches["alpha"].GetPlanByUrn(sharedEventUrn)!.Handlers.ShouldHaveSingleItem();
-        typeCaches["beta"].GetPlanByUrn(sharedEventUrn)!.Handlers.ShouldHaveSingleItem();
-        typeCaches["alpha"].GetPlanByUrn(betaOnlyEventUrn).ShouldBeNull();
-        typeCaches["beta"].GetPlanByUrn(betaOnlyEventUrn).ShouldNotBeNull();
-    }
-
     internal sealed record SharedEvent(string Value);
-    internal sealed record BetaOnlyEvent(string Value);
 
     private sealed class AlphaConsumer(Action onConsume) : IConsumer<SharedEvent>
     {
@@ -147,11 +119,5 @@ public sealed class RabbitMqBusDispatchScopingTests : BaseUnitTestCase
             onConsume();
             return Task.CompletedTask;
         }
-    }
-
-    private sealed class BetaOnlyConsumer : IConsumer<BetaOnlyEvent>
-    {
-        public Task ConsumeAsync(IMessageContext<BetaOnlyEvent> messageContext, CancellationToken cancellationToken = default)
-            => Task.CompletedTask;
     }
 }

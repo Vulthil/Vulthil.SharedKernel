@@ -11,16 +11,16 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 
 public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
 {
-    private readonly Lazy<MessageTypeCache> _lazyTarget;
+    private readonly Lazy<QueueDispatchPlans> _lazyTarget;
     private readonly RecordingGatedPublisher _publisher = new();
-    private MessageTypeCache Target => _lazyTarget.Value;
+    private QueueDispatchPlans Target => _lazyTarget.Value;
 
     public ConsumeFilterPipelineTests()
     {
         Use(TestProviders.Build());
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
-        _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
+        _lazyTarget = new Lazy<QueueDispatchPlans>(CreateInstance<QueueDispatchPlans>);
     }
 
     private static BasicDeliverEventArgs CreateDeliverEventArgs(string routingKey = "#", string? replyTo = null, string? correlationId = null)
@@ -101,7 +101,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(RecordingConsumer)),
             MessageType = new MessageType(typeof(TestMessage)),
         });
-        Target.RegisterQueue(queue);
+        Use(queue);
 
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
@@ -130,7 +130,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(RecordingConsumer)),
             MessageType = new MessageType(typeof(TestMessage)),
         });
-        Target.RegisterQueue(queue);
+        Use(queue);
 
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
@@ -157,7 +157,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             ConsumerType = new ConsumerType(typeof(RecordingConsumer)),
             MessageType = new MessageType(typeof(TestMessage)),
         });
-        Target.RegisterQueue(queue);
+        Use(queue);
 
         var handler = Target.GetPlan(new MessageType(typeof(TestMessage)).Name)!.Handlers[0];
 
@@ -185,7 +185,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             MessageType = new MessageType(typeof(TestRequest)),
             ResponseType = typeof(TestResponse),
         });
-        Target.RegisterQueue(queue);
+        Use(queue);
 
         var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 
@@ -224,7 +224,7 @@ public sealed class ConsumeFilterPipelineTests : BaseUnitTestCase
             MessageType = new MessageType(typeof(TestRequest)),
             ResponseType = typeof(TestResponse),
         });
-        Target.RegisterQueue(queue);
+        Use(queue);
 
         var handler = Target.GetPlan(new MessageType(typeof(TestRequest)).Name)!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
 

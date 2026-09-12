@@ -90,11 +90,8 @@ public sealed class RabbitMqConsumerWorkerFaultPayloadTests : BaseUnitTestCase
         Use(queue);
         Use<TimeProvider>(new FakeTimeProvider());
         Use(0);
-        Use(false);
 
-        var typeCache = CreateInstance<MessageTypeCache>();
-        typeCache.RegisterQueue(queue);
-        Use(typeCache);
+        Use(CreateInstance<QueueDispatchPlans>());
 
         IAsyncBasicConsumer? capturedConsumer = null;
         var channel = GetMock<IChannel>();

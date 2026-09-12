@@ -9,17 +9,17 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
 
-public sealed class MessageTypeCacheTests : BaseUnitTestCase
+public sealed class QueueDispatchPlansTests : BaseUnitTestCase
 {
-    private readonly Lazy<MessageTypeCache> _lazyTarget;
+    private readonly Lazy<QueueDispatchPlans> _lazyTarget;
     private readonly IServiceProvider _serviceProvider;
     private readonly RecordingGatedPublisher _publisher = new();
 
-    private MessageTypeCache Target => _lazyTarget.Value;
+    private QueueDispatchPlans Target => _lazyTarget.Value;
 
-    public MessageTypeCacheTests()
+    public QueueDispatchPlansTests()
     {
-        _lazyTarget = new Lazy<MessageTypeCache>(CreateInstance<MessageTypeCache>);
+        _lazyTarget = new Lazy<QueueDispatchPlans>(CreateInstance<QueueDispatchPlans>);
         Use(TestProviders.Build());
 
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
@@ -44,11 +44,34 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             ReadOnlyMemory<byte>.Empty);
     }
 
+    private static QueueDefinition QueueConsuming<TConsumer, TMessage>()
+        where TConsumer : class, IConsumer<TMessage>
+        where TMessage : notnull
+    {
+        var queue = new QueueDefinition("TestQueue");
+        queue.AddConsumer(new ConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(TConsumer)),
+            MessageType = new MessageType(typeof(TMessage)),
+        });
+        return queue;
+    }
+
+    private static RequestConsumerRegistration RequestRegistration<TConsumer>()
+        where TConsumer : class, IRequestConsumer<TestRequest, TestResponse>
+        => new()
+        {
+            ConsumerType = new ConsumerType(typeof(TConsumer)),
+            MessageType = new MessageType(typeof(TestRequest)),
+            ResponseType = typeof(TestResponse),
+        };
+
     #region Test Messages and Consumers
 
     internal sealed record TestMessage(string Content);
     internal sealed record TestRequest(string Query);
     internal sealed record TestResponse(string Result);
+    internal sealed record OtherMessage(string Content);
 
     private sealed class TestMessageConsumer : IConsumer<TestMessage>
     {
@@ -59,6 +82,12 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
             ReceivedMessages.Add(messageContext.Message);
             return Task.CompletedTask;
         }
+    }
+
+    private sealed class OtherMessageConsumer : IConsumer<OtherMessage>
+    {
+        public Task ConsumeAsync(IMessageContext<OtherMessage> messageContext, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
     }
 
     private sealed class ThrowingRequestConsumer : IRequestConsumer<TestRequest, TestResponse>
@@ -83,51 +112,52 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     #endregion
 
     [Fact]
-    public void RegisterQueueShouldRegisterStandardConsumers()
+    public void PlansIncludeTheQueuesStandardConsumers()
     {
         // Arrange
-        var consumer = new ConsumerType(typeof(TestMessageConsumer));
-        var messageType = new MessageType(typeof(TestMessage));
-        var registration = new ConsumerRegistration
-        {
-            ConsumerType = consumer,
-            MessageType = messageType,
-        };
-        var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(registration);
+        Use(QueueConsuming<TestMessageConsumer, TestMessage>());
 
         // Act
-        Target.RegisterQueue(queue);
+        var plan = Target.GetPlan(new MessageType(typeof(TestMessage)).Name);
 
         // Assert
-        var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
         plan.Handlers.ShouldHaveSingleItem();
         plan.Handlers[0].Kind.ShouldBe(HandlerKind.Consumer);
     }
 
     [Fact]
-    public void RegisterQueueShouldRegisterRequestConsumers()
+    public void PlansIncludeTheQueuesRequestConsumers()
     {
         // Arrange
-        var consumer = new ConsumerType(typeof(TestRequestConsumer));
-        var messageType = new MessageType(typeof(TestRequest));
-        var registration = new RequestConsumerRegistration
-        {
-            ConsumerType = consumer,
-            MessageType = messageType,
-            ResponseType = typeof(TestResponse),
-        };
         var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(registration);
+        queue.AddConsumer(RequestRegistration<TestRequestConsumer>());
+        Use(queue);
 
         // Act
-        Target.RegisterQueue(queue);
+        var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
 
         // Assert
-        var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
         plan.Handlers.ShouldContain(h => h.Kind == HandlerKind.RequestConsumer);
+    }
+
+    [Fact]
+    public void GetPlanByUrnResolvesTheSamePlanAsTheFullNameLookup()
+    {
+        // Arrange
+        var provider = TestProviders.Build();
+        Use(provider);
+        Use(QueueConsuming<TestMessageConsumer, TestMessage>());
+
+        // Act
+        var byUrn = Target.GetPlanByUrn(provider.GetUrn(typeof(TestMessage)));
+        var byFullName = Target.GetPlan(typeof(TestMessage).FullName!);
+
+        // Assert
+        byUrn.ShouldNotBeNull();
+        byUrn.ShouldBeSameAs(byFullName);
+        byUrn.MessageType.Type.ShouldBe(typeof(TestMessage));
     }
 
     [Fact]
@@ -136,19 +166,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         // Arrange
         var consumerInstance = new TestMessageConsumer();
         Use(consumerInstance);
+        Use(QueueConsuming<TestMessageConsumer, TestMessage>());
 
-        var consumer = new ConsumerType(typeof(TestMessageConsumer));
-        var messageType = new MessageType(typeof(TestMessage));
-        var registration = new ConsumerRegistration
-        {
-            ConsumerType = consumer,
-            MessageType = messageType,
-        };
-        var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(registration);
-        Target.RegisterQueue(queue);
-
-        var plan = Target.GetPlan(messageType.Name);
+        var plan = Target.GetPlan(new MessageType(typeof(TestMessage)).Name);
         var handler = plan!.Handlers[0];
         var testMessage = new TestMessage("Hello, World!");
 
@@ -168,19 +188,11 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var consumerInstance = new TestRequestConsumer();
         Use(consumerInstance);
 
-        var consumer = new ConsumerType(typeof(TestRequestConsumer));
-        var messageType = new MessageType(typeof(TestRequest));
-        var registration = new RequestConsumerRegistration
-        {
-            ConsumerType = consumer,
-            MessageType = messageType,
-            ResponseType = typeof(TestResponse),
-        };
         var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(registration);
-        Target.RegisterQueue(queue);
+        queue.AddConsumer(RequestRegistration<TestRequestConsumer>());
+        Use(queue);
 
-        var plan = Target.GetPlan(messageType.Name);
+        var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
         var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
         var testRequest = new TestRequest("Find users");
         var deliveryArgs = CreateDeliverEventArgs(replyTo: "reply.queue", correlationId: "corr-1");
@@ -212,16 +224,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         // Arrange
         UseReal<ThrowingRequestConsumer>();
 
-        var registration = new RequestConsumerRegistration
-        {
-            ConsumerType = new ConsumerType(typeof(ThrowingRequestConsumer)),
-            MessageType = new MessageType(typeof(TestRequest)),
-            ResponseType = typeof(TestResponse),
-        };
-
         var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(registration);
-        Target.RegisterQueue(queue);
+        queue.AddConsumer(RequestRegistration<ThrowingRequestConsumer>());
+        Use(queue);
 
         var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
         var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
@@ -249,6 +254,9 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     [Fact]
     public void GetPlanShouldReturnNullForUnregisteredMessageType()
     {
+        // Arrange
+        Use(QueueConsuming<TestMessageConsumer, TestMessage>());
+
         // Act
         var plan = Target.GetPlan("NonExistentMessage");
 
@@ -257,7 +265,7 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void RegisterQueueShouldDedupeIdenticalRegistrationsIntoOneHandler()
+    public void PlansDedupeIdenticalRegistrationsIntoOneHandler()
     {
         // Arrange
         var consumer = new ConsumerType(typeof(TestMessageConsumer));
@@ -269,51 +277,117 @@ public sealed class MessageTypeCacheTests : BaseUnitTestCase
         var queue = new QueueDefinition("TestQueue");
         queue.AddConsumer(registration1);
         queue.AddConsumer(registration2);
+        Use(queue);
 
         // Act
-        Target.RegisterQueue(queue);
+        var plan = Target.GetPlan(messageType.Name);
 
         // Assert
-        var plan = Target.GetPlan(messageType.Name);
         plan.ShouldNotBeNull();
         plan.Handlers.ShouldHaveSingleItem();
         plan.Handlers[0].Kind.ShouldBe(HandlerKind.Consumer);
     }
 
     [Fact]
-    public void RegisterQueueShouldRejectSecondRequestConsumerForSameMessageType()
+    public void ConstructionRejectsASecondRequestConsumerForTheSameMessageType()
     {
         // Arrange
-        var first = new RequestConsumerRegistration
-        {
-            ConsumerType = new ConsumerType(typeof(TestRequestConsumer)),
-            MessageType = new MessageType(typeof(TestRequest)),
-            ResponseType = typeof(TestResponse),
-        };
-        var second = new RequestConsumerRegistration
-        {
-            ConsumerType = new ConsumerType(typeof(ThrowingRequestConsumer)),
-            MessageType = new MessageType(typeof(TestRequest)),
-            ResponseType = typeof(TestResponse),
-        };
-
         var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(first);
-        queue.AddConsumer(second);
+        queue.AddConsumer(RequestRegistration<TestRequestConsumer>());
+        queue.AddConsumer(RequestRegistration<ThrowingRequestConsumer>());
+        Use(queue);
 
         // Act & Assert
-        var ex = Should.Throw<InvalidOperationException>(() => Target.RegisterQueue(queue));
+        var ex = Should.Throw<InvalidOperationException>(() => _ = Target);
         ex.Message.ShouldContain("request consumer");
         ex.Message.ShouldContain("TestQueue");
     }
 
     [Fact]
-    public void HandlerFromFactoryShouldCarryKind()
+    public void IsPartitionedIsFalseWhenNoConsumedTypeIsPartitioned()
     {
         // Arrange
-        var handler = MessageHandlerFactory.ForRequestConsumer<TestRequestConsumer, TestRequest, TestResponse>(retryPolicy: null);
+        Use(QueueConsuming<TestMessageConsumer, TestMessage>());
 
         // Act & Assert
-        handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
+        Target.IsPartitioned.ShouldBeFalse();
+        Target.GetPlan(typeof(TestMessage).FullName!)!.Partition.ShouldBeNull();
+    }
+
+    [Fact]
+    public void IsPartitionedIsTrueWhenAConsumedTypeIsPartitioned()
+    {
+        // Arrange
+        Use(TestProviders.Build(messaging => messaging.UsePartitioner<TestMessage>(2, context => context.Message.Content)));
+        Use(QueueConsuming<TestMessageConsumer, TestMessage>());
+
+        // Act & Assert
+        Target.IsPartitioned.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void PartitionedPlanExtractsTheKeyFromTheDeliveredMessage()
+    {
+        // Arrange
+        Use(TestProviders.Build(messaging => messaging.UsePartitioner<TestMessage>(2, context => context.Message.Content)));
+        var queue = QueueConsuming<TestMessageConsumer, TestMessage>();
+        queue.AddConsumer(new ConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(OtherMessageConsumer)),
+            MessageType = new MessageType(typeof(OtherMessage)),
+        });
+        Use(queue);
+
+        // Act
+        var partition = Target.GetPlan(typeof(TestMessage).FullName!)!.Partition;
+        var unpartitioned = Target.GetPlan(typeof(OtherMessage).FullName!)!.Partition;
+
+        // Assert
+        partition.ShouldNotBeNull();
+        partition.Partitioner.PartitionCount.ShouldBe(2);
+        partition.ExtractKey(new TestMessage("customer-42"), CreateDeliverEventArgs(), null).ShouldBe("customer-42");
+        unpartitioned.ShouldBeNull();
+    }
+
+    [Fact]
+    public void PlansForOneQueueDoNotSeeAnotherQueuesHandlers()
+    {
+        // Arrange
+        var provider = TestProviders.Build(messaging =>
+        {
+            messaging.ConfigureQueue("alpha", queue => queue.AddConsumer<TestMessageConsumer>());
+            messaging.ConfigureQueue("beta", queue =>
+            {
+                queue.AddConsumer<TestMessageConsumer>();
+                queue.AddConsumer<OtherMessageConsumer>();
+            });
+        });
+        var sharedUrn = provider.GetUrn(typeof(TestMessage));
+        var betaOnlyUrn = provider.GetUrn(typeof(OtherMessage));
+
+        // Act
+        var alpha = new QueueDispatchPlans(provider, provider.QueueDefinitions.Single(queue => queue.Name == "alpha"));
+        var beta = new QueueDispatchPlans(provider, provider.QueueDefinitions.Single(queue => queue.Name == "beta"));
+
+        // Assert
+        alpha.GetPlanByUrn(sharedUrn)!.Handlers.ShouldHaveSingleItem();
+        beta.GetPlanByUrn(sharedUrn)!.Handlers.ShouldHaveSingleItem();
+        alpha.GetPlanByUrn(betaOnlyUrn).ShouldBeNull();
+        beta.GetPlanByUrn(betaOnlyUrn).ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void HandlerFromFactoryCarriesItsKind()
+    {
+        // Arrange
+        var factory = new RabbitMqHandlerFactory();
+
+        // Act
+        var entry = factory.ForRequestConsumer(typeof(TestRequestConsumer), typeof(TestRequest), typeof(TestResponse), retryPolicy: null);
+
+        // Assert
+        entry.Kind.ShouldBe(HandlerKind.RequestConsumer);
+        entry.Handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
+        entry.Handler.Identity.ShouldBe($"{typeof(TestRequestConsumer).FullName}:{typeof(TestRequest).FullName}");
     }
 }

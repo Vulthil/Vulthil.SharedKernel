@@ -84,3 +84,12 @@ The metadata a publish context carries (`ConversationId`, `InitiatorId`, `Source
 `ResponseAddress`, `FaultAddress`) travels under reserved header keys that the envelope promotes to typed fields. The
 names are the constants on `Vulthil.Messaging.Transport.MessageHeaders`, and `MessageHeaders.IsReserved(key)` tells
 whether a key is one of them — a custom header must not reuse these keys.
+
+### Transport handler factories
+
+A transport turns each consumer registration into its own dispatch handler through an `IMessageHandlerFactory<THandler>`.
+Derive from `Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>` and override its two generic methods
+(`CreateConsumerHandler<TConsumer, TMessage>` and `CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>`): the base
+class binds every registration's CLR types to those overrides, caches the binding per consumer/message shape, and pairs each
+handler with its `HandlerKind`, so the closure is written once with the types statically known. See
+[Messaging — Writing a Custom Transport](../messaging.md#writing-a-custom-transport).

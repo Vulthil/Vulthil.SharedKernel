@@ -906,7 +906,7 @@ A transport is the glue between the broker and these primitives:
 | Concern | Primitive |
 |---|---|
 | Lifetime | `ITransport.StartAsync` — declare topology, then start consuming |
-| Execution plans | `MessageExecutionRegistry<THandler>` + your `IMessageHandlerFactory<THandler>` |
+| Execution plans | `MessageExecutionRegistry<THandler>` + your `MessageHandlerFactory<THandler>` |
 | Wire format | `MessageEnvelope` + `MessageEnvelopeFactory.Create` |
 | Receive context | `MessageContext.CreateFromEnvelope` |
 | Filter pipeline | `ConsumePipelineFactory.Build` |
@@ -914,24 +914,18 @@ A transport is the glue between the broker and these primitives:
 
 ### 1. Build execution plans
 
-Choose a `THandler` type for your transport's dispatch closure, then implement
-`IMessageHandlerFactory<THandler>` to turn each registration into one. The factory is where the
-message type is statically known, so it is also where you compose the filter pipeline and build
-the receive context:
+Choose a `THandler` type for your transport's dispatch closure, then derive from
+`MessageHandlerFactory<THandler>` and override its two generic methods. The consumer and message
+types are statically known there, so that is where you compose the filter pipeline and build the
+receive context. The base class binds each registration's CLR types to your overrides (cached per
+consumer/message shape) and pairs every handler with its `HandlerKind`:
 
 ```csharp
 public delegate Task Dispatch(IServiceProvider scope, object message, MessageEnvelope envelope, CancellationToken ct);
 
-internal sealed class MyHandlerFactory : IMessageHandlerFactory<Dispatch>
+internal sealed class MyHandlerFactory : MessageHandlerFactory<Dispatch>
 {
-    public HandlerEntry<Dispatch> ForConsumer(Type consumer, Type message, RetryPolicyDefinition? retry)
-        => new(BuildConsumer(consumer, message), HandlerKind.Consumer);
-
-    public HandlerEntry<Dispatch> ForRequestConsumer(Type consumer, Type request, Type response, RetryPolicyDefinition? retry)
-        => new(BuildRequestConsumer(consumer, request, response), HandlerKind.RequestConsumer);
-
-    // Bound generically (e.g. via reflection) so TMessage is known here:
-    private static Dispatch Consumer<TConsumer, TMessage>() where TConsumer : class, IConsumer<TMessage> where TMessage : notnull
+    protected override Dispatch CreateConsumerHandler<TConsumer, TMessage>(RetryPolicyDefinition? retryPolicy)
         => async (scope, message, envelope, ct) =>
         {
             var consumer = scope.GetRequiredService<TConsumer>();
@@ -943,8 +937,19 @@ internal sealed class MyHandlerFactory : IMessageHandlerFactory<Dispatch>
             var pipeline = ConsumePipelineFactory.Build<TMessage>(scope, c => consumer.ConsumeAsync(c, c.CancellationToken));
             await pipeline(context);
         };
+
+    protected override Dispatch CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(RetryPolicyDefinition? retryPolicy)
+        => async (scope, message, envelope, ct) =>
+        {
+            // Run the consumer through the pipeline as above, then publish the reply envelope (step 4).
+        };
 }
 ```
+
+`retryPolicy` is the registration's effective policy (its own, or the queue default); it is always
+`null` for request consumers, which reply with an RPC fault instead of retrying. Implement
+`IMessageHandlerFactory<THandler>` directly instead when your handlers are not built from
+open-generic methods — the registry accepts either.
 
 Let `MessageExecutionRegistry<THandler>` assemble the per-message-type plans from the configured
 queues — it handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness

@@ -6,7 +6,7 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 
 /// <summary>
 /// Transport-internal record describing how to invoke a single consumer or request consumer
-/// for a delivered message. Built once at registration time by <see cref="MessageHandlerFactory"/>;
+/// for a delivered message. Built once at registration time by <see cref="RabbitMqHandlerFactory"/>;
 /// the dispatch closure captures the typed consumer/message parameters so the worker can invoke
 /// it without further reflection.
 /// </summary>

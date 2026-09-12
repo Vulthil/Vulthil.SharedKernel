@@ -154,6 +154,13 @@ denote the same destination.</p>
 <code>ResponseAddress</code>, <code>FaultAddress</code>) travels under reserved header keys that the envelope promotes to typed fields. The
 names are the constants on <code>Vulthil.Messaging.Transport.MessageHeaders</code>, and <code>MessageHeaders.IsReserved(key)</code> tells
 whether a key is one of them — a custom header must not reuse these keys.</p>
+<h3 id="transport-handler-factories">Transport handler factories</h3>
+<p>A transport turns each consumer registration into its own dispatch handler through an <code>IMessageHandlerFactory&lt;THandler&gt;</code>.
+Derive from <code>Vulthil.Messaging.Transport.MessageHandlerFactory&lt;THandler&gt;</code> and override its two generic methods
+(<code>CreateConsumerHandler&lt;TConsumer, TMessage&gt;</code> and <code>CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;</code>): the base
+class binds every registration's CLR types to those overrides, caches the binding per consumer/message shape, and pairs each
+handler with its <code>HandlerKind</code>, so the closure is written once with the types statically known. See
+<a href="../messaging.html#writing-a-custom-transport">Messaging — Writing a Custom Transport</a>.</p>
 
 </article>
 

@@ -1454,6 +1454,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.yml\" sourcestartlinenumber=\"1\">Base <xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> for a transport that builds its dispatch handlers in\nopen-generic methods. Override <xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateConsumerHandler%60%602(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref> and\n<xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateRequestConsumerHandler%60%603(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref>: the consumer and message types\nare statically known there, so the receive context and the consume pipeline compose with full typing. This\nclass binds the CLR types of each registration to those overrides through generic binders cached per\nconsumer/message shape — the reflection cost is paid once per shape — and pairs every handler with the\n<xref href=\"Vulthil.Messaging.Transport.HandlerKind\" data-throw-if-not-resolved=\"false\"></xref> of the registration it was built for. Implement\n<xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> directly instead when handlers are not built generically.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Transport.MessageHeaders.yml",
       "output": {
         ".html": {

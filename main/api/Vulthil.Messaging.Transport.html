@@ -161,6 +161,18 @@ drives it by supplying an <a class="xref" href="Vulthil.Messaging.Transport.IMes
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Transport.MessageHandlerFactory-1.html">MessageHandlerFactory&lt;THandler&gt;</a></dt>
+      <dd><p>Base <a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> for a transport that builds its dispatch handlers in
+open-generic methods. Override <a class="xref" href="Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateConsumerHandler__2_Vulthil_Messaging_Queues_RetryPolicyDefinition_">CreateConsumerHandler&lt;TConsumer, TMessage&gt;(RetryPolicyDefinition?)</a> and
+<a class="xref" href="Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateRequestConsumerHandler__3_Vulthil_Messaging_Queues_RetryPolicyDefinition_">CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;(RetryPolicyDefinition?)</a>: the consumer and message types
+are statically known there, so the receive context and the consume pipeline compose with full typing. This
+class binds the CLR types of each registration to those overrides through generic binders cached per
+consumer/message shape — the reflection cost is paid once per shape — and pairs every handler with the
+<a class="xref" href="Vulthil.Messaging.Transport.HandlerKind.html">HandlerKind</a> of the registration it was built for. Implement
+<a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> directly instead when handlers are not built generically.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Transport.MessageHeaders.html">MessageHeaders</a></dt>
       <dd><p>The reserved header keys under which a <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a> carries the metadata that
 <a class="xref" href="Vulthil.Messaging.Transport.MessageEnvelopeFactory.html">MessageEnvelopeFactory</a> promotes to typed <a class="xref" href="Vulthil.Messaging.Transport.MessageEnvelope.html">MessageEnvelope</a> fields and that a transport

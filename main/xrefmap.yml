@@ -4890,6 +4890,87 @@ references:
   fullName.vb: Vulthil.Messaging.Transport.MessageExecutionRegistry(Of THandler).RegisterQueue
   nameWithType: MessageExecutionRegistry<THandler>.RegisterQueue
   nameWithType.vb: MessageExecutionRegistry(Of THandler).RegisterQueue
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1
+  name: MessageHandlerFactory<THandler>
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html
+  commentId: T:Vulthil.Messaging.Transport.MessageHandlerFactory`1
+  name.vb: MessageHandlerFactory(Of THandler)
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler)
+  nameWithType: MessageHandlerFactory<THandler>
+  nameWithType.vb: MessageHandlerFactory(Of THandler)
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateConsumerHandler*
+  name: CreateConsumerHandler
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateConsumerHandler_
+  commentId: Overload:Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateConsumerHandler
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.CreateConsumerHandler
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).CreateConsumerHandler
+  nameWithType: MessageHandlerFactory<THandler>.CreateConsumerHandler
+  nameWithType.vb: MessageHandlerFactory(Of THandler).CreateConsumerHandler
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateConsumerHandler``2(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name: CreateConsumerHandler<TConsumer, TMessage>(RetryPolicyDefinition?)
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateConsumerHandler__2_Vulthil_Messaging_Queues_RetryPolicyDefinition_
+  commentId: M:Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateConsumerHandler``2(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name.vb: CreateConsumerHandler(Of TConsumer, TMessage)(RetryPolicyDefinition)
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.CreateConsumerHandler<TConsumer, TMessage>(Vulthil.Messaging.Queues.RetryPolicyDefinition?)
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).CreateConsumerHandler(Of TConsumer, TMessage)(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  nameWithType: MessageHandlerFactory<THandler>.CreateConsumerHandler<TConsumer, TMessage>(RetryPolicyDefinition?)
+  nameWithType.vb: MessageHandlerFactory(Of THandler).CreateConsumerHandler(Of TConsumer, TMessage)(RetryPolicyDefinition)
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateRequestConsumerHandler*
+  name: CreateRequestConsumerHandler
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateRequestConsumerHandler_
+  commentId: Overload:Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateRequestConsumerHandler
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.CreateRequestConsumerHandler
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).CreateRequestConsumerHandler
+  nameWithType: MessageHandlerFactory<THandler>.CreateRequestConsumerHandler
+  nameWithType.vb: MessageHandlerFactory(Of THandler).CreateRequestConsumerHandler
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateRequestConsumerHandler``3(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name: CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(RetryPolicyDefinition?)
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateRequestConsumerHandler__3_Vulthil_Messaging_Queues_RetryPolicyDefinition_
+  commentId: M:Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateRequestConsumerHandler``3(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name.vb: CreateRequestConsumerHandler(Of TConsumer, TRequest, TResponse)(RetryPolicyDefinition)
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(Vulthil.Messaging.Queues.RetryPolicyDefinition?)
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).CreateRequestConsumerHandler(Of TConsumer, TRequest, TResponse)(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  nameWithType: MessageHandlerFactory<THandler>.CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(RetryPolicyDefinition?)
+  nameWithType.vb: MessageHandlerFactory(Of THandler).CreateRequestConsumerHandler(Of TConsumer, TRequest, TResponse)(RetryPolicyDefinition)
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForConsumer(System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name: ForConsumer(Type, Type, RetryPolicyDefinition?)
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_ForConsumer_System_Type_System_Type_Vulthil_Messaging_Queues_RetryPolicyDefinition_
+  commentId: M:Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForConsumer(System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name.vb: ForConsumer(Type, Type, RetryPolicyDefinition)
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForConsumer(System.Type, System.Type, Vulthil.Messaging.Queues.RetryPolicyDefinition?)
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).ForConsumer(System.Type, System.Type, Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  nameWithType: MessageHandlerFactory<THandler>.ForConsumer(Type, Type, RetryPolicyDefinition?)
+  nameWithType.vb: MessageHandlerFactory(Of THandler).ForConsumer(Type, Type, RetryPolicyDefinition)
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForConsumer*
+  name: ForConsumer
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_ForConsumer_
+  commentId: Overload:Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForConsumer
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForConsumer
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).ForConsumer
+  nameWithType: MessageHandlerFactory<THandler>.ForConsumer
+  nameWithType.vb: MessageHandlerFactory(Of THandler).ForConsumer
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForRequestConsumer(System.Type,System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name: ForRequestConsumer(Type, Type, Type, RetryPolicyDefinition?)
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_ForRequestConsumer_System_Type_System_Type_System_Type_Vulthil_Messaging_Queues_RetryPolicyDefinition_
+  commentId: M:Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForRequestConsumer(System.Type,System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name.vb: ForRequestConsumer(Type, Type, Type, RetryPolicyDefinition)
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForRequestConsumer(System.Type, System.Type, System.Type, Vulthil.Messaging.Queues.RetryPolicyDefinition?)
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).ForRequestConsumer(System.Type, System.Type, System.Type, Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  nameWithType: MessageHandlerFactory<THandler>.ForRequestConsumer(Type, Type, Type, RetryPolicyDefinition?)
+  nameWithType.vb: MessageHandlerFactory(Of THandler).ForRequestConsumer(Type, Type, Type, RetryPolicyDefinition)
+- uid: Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForRequestConsumer*
+  name: ForRequestConsumer
+  href: api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_ForRequestConsumer_
+  commentId: Overload:Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForRequestConsumer
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForRequestConsumer
+  fullName.vb: Vulthil.Messaging.Transport.MessageHandlerFactory(Of THandler).ForRequestConsumer
+  nameWithType: MessageHandlerFactory<THandler>.ForRequestConsumer
+  nameWithType.vb: MessageHandlerFactory(Of THandler).ForRequestConsumer
 - uid: Vulthil.Messaging.Transport.MessageHeaders
   name: MessageHeaders
   href: api/Vulthil.Messaging.Transport.MessageHeaders.html

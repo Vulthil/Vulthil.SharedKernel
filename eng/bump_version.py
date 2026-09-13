@@ -12,13 +12,17 @@ Bump types:
     major   1.4.2 -> 2.0.0
     minor   1.4.2 -> 1.5.0
     patch   1.4.2 -> 1.4.3
+    stable  2.0.0-preview.{height} -> 2.0.0   (closes a preview line; a no-op on a stable version)
+
+Every bump type drops a prerelease tag, so a preview line (e.g. 2.0.0-preview.{height}) is
+closed with "stable" and moved on with the usual major/minor/patch afterwards.
 """
 import json
 import os
 import sys
 
 VERSION_FILE = "version.json"
-VALID_BUMPS = ("major", "minor", "patch")
+VALID_BUMPS = ("major", "minor", "patch", "stable")
 
 
 def next_version(raw, bump_type):
@@ -32,6 +36,8 @@ def next_version(raw, bump_type):
         return f"{major + 1}.0.0"
     if bump_type == "minor":
         return f"{major}.{minor + 1}.0"
+    if bump_type == "stable":
+        return f"{major}.{minor}.{patch}"
     return f"{major}.{minor}.{patch + 1}"
 
 

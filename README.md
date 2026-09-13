@@ -26,6 +26,9 @@ foundations for building maintainable .NET applications. Each package is focused
 single concern — from result primitives and domain abstractions to messaging and test
 infrastructure — so you can adopt only what you need.
 
+> **Version lines.** `main` is the 2.0 preview line: its packages build as `2.0.0-preview.N` and may
+> contain breaking changes until 2.0.0 ships. 1.2.0 is the latest stable release.
+
 ## Packages
 
 Adopt only what you need — every package is independently versioned and focused on a single concern.

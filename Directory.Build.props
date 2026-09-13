@@ -22,7 +22,9 @@
 	<!-- NuGet package validation -->
 	<PropertyGroup Condition="'$(IsPackable)' != 'false'">
 		<EnablePackageValidation>true</EnablePackageValidation>
-		<!-- Bumped by eng/mark_api_shipped.py to the version just released. -->
+		<!-- Bumped by eng/mark_api_shipped.py to the version just released. While main is a preview line
+		     (2.0.0-preview.N) this stays at the latest STABLE release: every intentional break is recorded in the
+		     owning project's CompatibilitySuppressions.xml (IsBaselineSuppression) until the stable release folds it. -->
 		<PackageValidationBaselineVersion>1.2.0</PackageValidationBaselineVersion>
 	</PropertyGroup>
 

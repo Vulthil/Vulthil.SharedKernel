@@ -1,5 +1,8 @@
 {
-  "version": "1.2.0",
+  "version": "2.0.0-preview.{height}",
+  "nuGetPackageVersion": {
+    "semVer": 2
+  },
   "release": {
     "firstUnstableTag": "preview"
   },

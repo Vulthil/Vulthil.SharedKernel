@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       bump_type:
-        description: 'Type of bump'
+        description: 'Type of bump (stable closes a preview line: 2.0.0-preview.{height} -> 2.0.0)'
         required: true
         default: 'minor'
         type: choice
@@ -12,6 +12,7 @@ on:
           - major
           - minor
           - patch
+          - stable
 
 jobs:
   bump:

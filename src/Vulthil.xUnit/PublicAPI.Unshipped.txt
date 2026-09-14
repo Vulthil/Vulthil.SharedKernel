@@ -1,7 +1,52 @@
 #nullable enable
 Vulthil.xUnit.Fixtures.ContainerHost.AddContainer<TContainer>() -> void
-Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost() -> void
-Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture() -> void
-Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture() -> void
-Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString() -> void
-Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture() -> void
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase(TFactory! factory, Xunit.ITestOutputHelper? testOutputHelper = null) -> void
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Client.get -> System.Net.Http.HttpClient!
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Factory.get -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.FactoryFixture.get -> TFactory!
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock(string! name) -> Vulthil.xUnit.Http.IHttpMock!
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope() -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices.get -> System.IServiceProvider!
+*REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper.get -> Xunit.ITestOutputHelper?
+*REMOVED*Vulthil.xUnit.BaseUnitTestCase.InitializeAsync() -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> void
+*REMOVED*Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory() -> void
+*REMOVED*Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ContainersWithConnectionStrings.get -> System.Collections.Generic.IEnumerable<Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString!>!
+*REMOVED*Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.DatabaseContainers.get -> System.Collections.Generic.IEnumerable<Vulthil.xUnit.Fixtures.ITestDatabaseContainer!>!
+*REMOVED*Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost(Xunit.Sdk.IMessageSink! messageSink) -> void
+*REMOVED*Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+*REMOVED*Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+*REMOVED*Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink! messageSink) -> void
+*REMOVED*Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+*REMOVED*static Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CancellationToken.get -> System.Threading.CancellationToken
+*REMOVED*virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CreateFactory() -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+*REMOVED*virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+*REMOVED*virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize() -> System.Threading.Tasks.ValueTask
+*REMOVED*virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers() -> System.Threading.Tasks.Task!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.BaseIntegrationTestCase(Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint!>! factory, Xunit.ITestOutputHelper? testOutputHelper = null) -> void
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Client.get -> System.Net.Http.HttpClient!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ConfigureTestCaseServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Factory.get -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.FactoryFixture.get -> Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint!>!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.HttpMock(string! name) -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.HttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScope() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ScopedServices.get -> System.IServiceProvider!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.TestOutputHelper.get -> Xunit.ITestOutputHelper?
+Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost(Xunit.Sdk.IMessageSink? messageSink = null) -> void
+Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(Xunit.Sdk.IMessageSink? messageSink = null) -> void
+Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(Xunit.Sdk.IMessageSink? messageSink = null) -> void
+Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink? messageSink = null) -> void
+Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink? messageSink = null) -> void
+override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Dispose() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.GetMock<TMock>() -> Moq.Mock<TMock!>!
+override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Use<TService>(TService service) -> void
+override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseReal<TService>() -> void
+override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseRealFor<TService, TImplementation>() -> void
+virtual Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.CreateFactory() -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+virtual Vulthil.xUnit.BaseUnitTestCase.InitializeAsync() -> System.Threading.Tasks.ValueTask

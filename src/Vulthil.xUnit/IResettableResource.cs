@@ -7,7 +7,7 @@ namespace Vulthil.xUnit;
 /// reset via Respawn, or an HTTP mock whose configured responses and captured requests are cleared.
 /// </summary>
 /// <remarks>
-/// <see cref="BaseIntegrationTestCase{TFactory, TEntryPoint}"/> resets every registered resettable resource after each test.
+/// <see cref="BaseIntegrationTestCase{TEntryPoint}"/> resets every registered resettable resource after each test.
 /// </remarks>
 public interface IResettableResource
 {

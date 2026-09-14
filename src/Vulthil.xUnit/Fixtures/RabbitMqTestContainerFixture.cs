@@ -13,17 +13,21 @@ namespace Vulthil.xUnit.Fixtures;
 /// appended to the AMQP connection string), so parallel test classes never see each other's exchanges, queues or
 /// messages. Derived classes only configure the container and supply the connection string and key.
 /// </summary>
-public abstract class RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
-    : TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>(messageSink)
+public abstract class RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>
+    : TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer
 {
     /// <summary>
-    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
-    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// Initializes the fixture. Broker logs go to <paramref name="messageSink"/> when one is given, otherwise to the
+    /// current test context's diagnostic messages, so nothing has to be injected.
     /// </summary>
-    protected RabbitMqTestContainerFixture()
-        : this(TestContextMessageSink.Instance)
+    /// <param name="messageSink">
+    /// The xUnit diagnostic message sink for broker logs, or <see langword="null"/> to use the current test
+    /// context's diagnostic messages.
+    /// </param>
+    protected RabbitMqTestContainerFixture(IMessageSink? messageSink = null)
+        : base(messageSink)
     {
     }
 

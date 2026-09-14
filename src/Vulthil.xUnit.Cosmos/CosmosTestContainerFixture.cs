@@ -36,18 +36,14 @@ public abstract class CosmosTestContainerFixture<TDbContext>
     private const int ReadinessRetryDelaySeconds = 1;
 
     /// <summary>
-    /// Initializes a fixture whose emulator logs are forwarded to the current test context's diagnostic messages,
-    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// Initializes the fixture. Emulator logs go to <paramref name="messageSink"/> when one is given, otherwise to
+    /// the current test context's diagnostic messages, so nothing has to be injected.
     /// </summary>
-    protected CosmosTestContainerFixture()
-    {
-    }
-
-    /// <summary>
-    /// Initializes a fixture that reports emulator logs through an explicitly supplied xUnit diagnostic message sink.
-    /// </summary>
-    /// <param name="messageSink">The xUnit diagnostic message sink.</param>
-    protected CosmosTestContainerFixture(IMessageSink messageSink)
+    /// <param name="messageSink">
+    /// The xUnit diagnostic message sink for emulator logs, or <see langword="null"/> to use the current test
+    /// context's diagnostic messages.
+    /// </param>
+    protected CosmosTestContainerFixture(IMessageSink? messageSink = null)
         : base(messageSink)
     {
     }

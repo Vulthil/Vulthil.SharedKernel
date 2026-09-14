@@ -14,7 +14,7 @@ namespace Vulthil.IntegrationTests;
 /// such a container, and covers the base store's failure recording and retention paths on a non-relational provider.
 /// </summary>
 public sealed class CosmosOutboxIntegrationTests(CosmosWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
+    : BaseIntegrationTestCase<Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
 {
     [Fact]
     public async Task RelayFetchesDispatchesAndMarksCapturedMessagesOnAStockContainer()

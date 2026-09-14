@@ -6,7 +6,7 @@ using Vulthil.xUnit;
 namespace Vulthil.IntegrationTests;
 
 public sealed class CosmosTestContainerTests(CosmosWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
+    : BaseIntegrationTestCase<Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
 {
     [Fact]
     public async Task ContainerStartsWithAnEmptyDatabase()

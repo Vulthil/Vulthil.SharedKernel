@@ -1,2 +1,3 @@
 #nullable enable
-Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture() -> void
+*REMOVED*Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
+Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(Xunit.Sdk.IMessageSink? messageSink = null) -> void

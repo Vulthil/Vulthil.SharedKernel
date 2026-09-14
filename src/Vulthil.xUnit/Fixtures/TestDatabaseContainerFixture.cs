@@ -17,8 +17,8 @@ namespace Vulthil.xUnit.Fixtures;
 /// tests. When owned by a <see cref="ContainerHost"/>, <see cref="CreateScope"/> gives every consuming factory its own
 /// uniquely named database on the shared server, so parallel test classes never see each other's data.
 /// </summary>
-public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
-    : DbContainerFixture<TBuilderEntity, TContainerEntity>(messageSink), ITestDatabaseContainer, ITestContainerScopeProvider
+public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
+    : DbContainerFixture<TBuilderEntity, TContainerEntity>, ITestDatabaseContainer, ITestContainerScopeProvider
     where TDbContext : DbContext
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer, IDatabaseContainer
@@ -29,11 +29,15 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     private DatabaseScope DefaultScope => _defaultScope ??= new DatabaseScope(this, ConnectionString, databaseName: null);
 
     /// <summary>
-    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
-    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// Initializes the fixture. Container logs go to <paramref name="messageSink"/> when one is given, otherwise to
+    /// the current test context's diagnostic messages, so nothing has to be injected.
     /// </summary>
-    protected TestDatabaseContainerFixture()
-        : this(TestContextMessageSink.Instance)
+    /// <param name="messageSink">
+    /// The xUnit diagnostic message sink for container logs, or <see langword="null"/> to use the current test
+    /// context's diagnostic messages.
+    /// </param>
+    protected TestDatabaseContainerFixture(IMessageSink? messageSink = null)
+        : base(messageSink ?? TestContextMessageSink.Instance)
     {
     }
 

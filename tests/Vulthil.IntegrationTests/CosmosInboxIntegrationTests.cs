@@ -13,7 +13,7 @@ namespace Vulthil.IntegrationTests;
 /// and a duplicate delivery for the same key is skipped — giving effectively-once processing.
 /// </summary>
 public sealed class CosmosInboxIntegrationTests(CosmosWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase<CosmosWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
+    : BaseIntegrationTestCase<Program>(factory, testOutputHelper), IClassFixture<CosmosWebApplicationFactory>
 {
     private static readonly IMessageContext _messageContext = Mock.Of<IMessageContext>();
 

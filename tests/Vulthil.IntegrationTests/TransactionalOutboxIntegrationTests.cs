@@ -14,7 +14,7 @@ using Vulthil.xUnit;
 namespace Vulthil.IntegrationTests;
 
 public sealed class TransactionalOutboxIntegrationTests(TestHarnessWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase<TestHarnessWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<TestHarnessWebApplicationFactory>
+    : BaseIntegrationTestCase<Program>(factory, testOutputHelper), IClassFixture<TestHarnessWebApplicationFactory>
 {
     private ITestHarness Harness => Factory.Services.GetRequiredService<ITestHarness>();
     private IRequester Requester => Factory.Services.GetRequiredService<IRequester>();

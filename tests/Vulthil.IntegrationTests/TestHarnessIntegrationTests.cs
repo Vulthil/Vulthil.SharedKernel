@@ -8,7 +8,7 @@ using Vulthil.xUnit;
 namespace Vulthil.IntegrationTests;
 
 public sealed class TestHarnessIntegrationTests(TestHarnessWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase<TestHarnessWebApplicationFactory, Program>(factory, testOutputHelper), IClassFixture<TestHarnessWebApplicationFactory>
+    : BaseIntegrationTestCase<Program>(factory, testOutputHelper), IClassFixture<TestHarnessWebApplicationFactory>
 {
     private ITestHarness Harness => Factory.Services.GetRequiredService<ITestHarness>();
     private IPublisher Publisher => ScopedServices.GetRequiredService<IPublisher>();

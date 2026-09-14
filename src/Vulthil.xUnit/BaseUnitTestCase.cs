@@ -39,7 +39,7 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     }
 
     /// <inheritdoc />
-    public ValueTask InitializeAsync() => Initialize();
+    public virtual ValueTask InitializeAsync() => Initialize();
 
     /// <summary>
     /// Override to perform custom async initialization before each test.

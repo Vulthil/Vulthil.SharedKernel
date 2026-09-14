@@ -8,17 +8,21 @@ namespace Vulthil.xUnit.Fixtures;
 /// <summary>
 /// Fixture that wraps a Testcontainers container and exposes a connection string for integration test configuration.
 /// </summary>
-public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
-    : TestContainerFixture<TBuilderEntity, TContainerEntity>(messageSink), ITestContainerWithConnectionString
+public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>
+    : TestContainerFixture<TBuilderEntity, TContainerEntity>, ITestContainerWithConnectionString
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer
 {
     /// <summary>
-    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
-    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// Initializes the fixture. Container logs go to <paramref name="messageSink"/> when one is given, otherwise to
+    /// the current test context's diagnostic messages, so nothing has to be injected.
     /// </summary>
-    protected TestContainerFixtureWithConnectionString()
-        : this(TestContextMessageSink.Instance)
+    /// <param name="messageSink">
+    /// The xUnit diagnostic message sink for container logs, or <see langword="null"/> to use the current test
+    /// context's diagnostic messages.
+    /// </param>
+    protected TestContainerFixtureWithConnectionString(IMessageSink? messageSink = null)
+        : base(messageSink)
     {
     }
 

@@ -5,14 +5,16 @@ using Vulthil.xUnit;
 namespace Vulthil.IntegrationTests;
 
 /// <summary>
-/// Covers the reset-routing fix in <see cref="BaseIntegrationTestCase{TFactory, TEntryPoint}"/>: overriding
-/// <c>CreateFactory()</c> to run a test on a <c>WithWebHostBuilder(...)</c>-derived factory must reset that derived
-/// host, never the class fixture's own (separate, otherwise-unused) host.
+/// Covers the reset routing in <see cref="BaseIntegrationTestCase{TEntryPoint}"/>: overriding <c>CreateFactory()</c>
+/// to run a test on a <c>WithWebHostBuilder(...)</c>-derived factory must reset that derived host, never the class
+/// fixture's own (separate, otherwise-unused) host.
 /// </summary>
 public sealed class FixtureResetRoutingTests(RestartProbeWebApplicationFactory factory)
-    : BaseIntegrationTestCase<RestartProbeWebApplicationFactory, Program>(factory), IClassFixture<RestartProbeWebApplicationFactory>
+    : BaseIntegrationTestCase<Program>(factory), IClassFixture<RestartProbeWebApplicationFactory>
 {
     private bool _disposedOnce;
+
+    private RestartProbeWebApplicationFactory ProbeFactory => (RestartProbeWebApplicationFactory)FactoryFixture;
 
     protected override WebApplicationFactory<Program> CreateFactory() => FactoryFixture.WithWebHostBuilder(_ => { });
 
@@ -32,13 +34,13 @@ public sealed class FixtureResetRoutingTests(RestartProbeWebApplicationFactory f
         // Exactly two "start" events total is the key signal: the pre-fix code additionally built (and
         // auto-started) FactoryFixture's own, otherwise-unused host as a side effect of resetting through it
         // directly instead of the host this test actually ran on.
-        var events = FactoryFixture.Events.ToArray();
+        var events = ProbeFactory.Events.ToArray();
         events.Take(3).ShouldBe(["start", "stop", "start"]);
         events.Count(e => e == "start").ShouldBe(2);
     }
 
     /// <inheritdoc />
-    public override async ValueTask DisposeAsync()
+    protected override async ValueTask Dispose()
     {
         if (_disposedOnce)
         {
@@ -46,6 +48,6 @@ public sealed class FixtureResetRoutingTests(RestartProbeWebApplicationFactory f
         }
 
         _disposedOnce = true;
-        await base.DisposeAsync();
+        await base.Dispose();
     }
 }

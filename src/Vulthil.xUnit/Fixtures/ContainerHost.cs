@@ -20,28 +20,29 @@ namespace Vulthil.xUnit.Fixtures;
 /// simultaneously; this host is safe for that concurrency.
 /// </para>
 /// </remarks>
-/// <param name="messageSink">The xUnit diagnostic message sink, forwarded to container fixtures.</param>
-public abstract class ContainerHost(IMessageSink messageSink) : IAsyncLifetime
+public abstract class ContainerHost : IAsyncLifetime
 {
     private readonly HashSet<ITestContainer> _containers = [];
     private readonly ConcurrentDictionary<ITestContainer, Lazy<Task>> _startedContainers = new();
     private bool _configured;
 
     /// <summary>
-    /// Initializes a host that needs nothing injected: container fixtures created through their parameterless
-    /// constructors report through the current test context's diagnostic messages instead of an injected sink.
+    /// Initializes the host. Container fixtures that take a sink report through <paramref name="messageSink"/>;
+    /// when none is given, they report through the current test context's diagnostic messages instead, so nothing
+    /// has to be injected.
     /// </summary>
-    protected ContainerHost()
-        : this(TestContextMessageSink.Instance)
-    {
-    }
+    /// <param name="messageSink">
+    /// The xUnit diagnostic message sink to forward to container fixtures, or <see langword="null"/> to use the
+    /// current test context's diagnostic messages.
+    /// </param>
+    protected ContainerHost(IMessageSink? messageSink = null)
+        => MessageSink = messageSink ?? TestContextMessageSink.Instance;
 
     /// <summary>
-    /// Gets the xUnit diagnostic message sink for container fixtures that take an explicit sink. For a host created
-    /// through the parameterless constructor this forwards to the current test context's diagnostic messages, which
-    /// is also what the fixtures' parameterless constructors use.
+    /// Gets the xUnit diagnostic message sink for container fixtures that take an explicit sink: the one given to
+    /// the constructor, or the current test context's diagnostic messages when none was.
     /// </summary>
-    protected IMessageSink MessageSink { get; } = messageSink;
+    protected IMessageSink MessageSink { get; }
 
     /// <summary>
     /// Gets the containers registered on this host.

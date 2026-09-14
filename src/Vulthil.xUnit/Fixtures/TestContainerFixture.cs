@@ -12,17 +12,21 @@ namespace Vulthil.xUnit.Fixtures;
 /// <summary>
 /// Base fixture that wraps a Testcontainers container as an <see cref="ITestContainer"/> for use in <see cref="BaseWebApplicationFactory{TEntryPoint}"/>.
 /// </summary>
-public abstract class TestContainerFixture<TBuilderEntity, TContainerEntity>(IMessageSink messageSink)
-    : ContainerFixture<TBuilderEntity, TContainerEntity>(messageSink), ITestContainer, ITestContainerScopeProvider
+public abstract class TestContainerFixture<TBuilderEntity, TContainerEntity>
+    : ContainerFixture<TBuilderEntity, TContainerEntity>, ITestContainer, ITestContainerScopeProvider
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer
 {
     /// <summary>
-    /// Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
-    /// so no <see cref="IMessageSink"/> has to be injected.
+    /// Initializes the fixture. Container logs go to <paramref name="messageSink"/> when one is given, otherwise to
+    /// the current test context's diagnostic messages, so nothing has to be injected.
     /// </summary>
-    protected TestContainerFixture()
-        : this(TestContextMessageSink.Instance)
+    /// <param name="messageSink">
+    /// The xUnit diagnostic message sink for container logs, or <see langword="null"/> to use the current test
+    /// context's diagnostic messages.
+    /// </param>
+    protected TestContainerFixture(IMessageSink? messageSink = null)
+        : base(messageSink ?? TestContextMessageSink.Instance)
     {
     }
 

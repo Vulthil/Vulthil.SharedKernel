@@ -95,8 +95,13 @@
 Classes
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-2.html">BaseIntegrationTestCase&lt;TFactory, TEntryPoint&gt;</a></dt>
-      <dd><p>Base class for integration tests that use a <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a> with container-based infrastructure.</p>
+      <dt><a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-1.html">BaseIntegrationTestCase&lt;TEntryPoint&gt;</a></dt>
+      <dd><p>Base class for integration tests that run against a <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a> with
+container-based infrastructure. Builds on <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html">BaseUnitTestCase</a>, so a test registers doubles the same way
+a unit test does: any service registered on the test case — <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Use__1___0_">Use&lt;TService&gt;(TService)</a>,
+<a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_GetMock__1">GetMock&lt;TMock&gt;()</a>, <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_UseReal__1">UseReal&lt;TService&gt;()</a> or
+<a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_UseRealFor__2">UseRealFor&lt;TService, TImplementation&gt;()</a> — before the host is first touched replaces
+that service in a per-test copy of the host, so an external dependency is mocked with one line.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -111,8 +116,9 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a></dt>
-      <dd><p>Abstract <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1">WebApplicationFactory&lt;TEntryPoint&gt;</a> that manages a set of test containers,
-injects their connection strings into the test host, and ensures EF Core migrations are applied during host startup.</p>
+      <dd><p>Abstract <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1">WebApplicationFactory&lt;TEntryPoint&gt;</a> that consumes the shared containers of a
+<a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a> through per-factory scopes, injects their connection strings into the test host, and
+ensures EF Core migrations are applied during host startup.</p>
 </dd>
     </dl>
     <h3 id="interfaces">

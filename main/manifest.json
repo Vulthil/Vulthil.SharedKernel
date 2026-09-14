@@ -3106,17 +3106,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.xUnit.BaseIntegrationTestCase-2.yml",
+      "source_relative_path": "api/Vulthil.xUnit.BaseIntegrationTestCase-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Vulthil.xUnit.BaseIntegrationTestCase-2.html"
+          "relative_path": "api/Vulthil.xUnit.BaseIntegrationTestCase-1.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>",
-      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseIntegrationTestCase-2.yml\" sourcestartlinenumber=\"1\">Base class for integration tests that use a <xref href=\"Vulthil.xUnit.BaseWebApplicationFactory%601\" data-throw-if-not-resolved=\"false\"></xref> with container-based infrastructure.</p>\n"
+      "Title": "Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseIntegrationTestCase-1.yml\" sourcestartlinenumber=\"1\">Base class for integration tests that run against a <xref href=\"Vulthil.xUnit.BaseWebApplicationFactory%601\" data-throw-if-not-resolved=\"false\"></xref> with\ncontainer-based infrastructure. Builds on <xref href=\"Vulthil.xUnit.BaseUnitTestCase\" data-throw-if-not-resolved=\"false\"></xref>, so a test registers doubles the same way\na unit test does: any service registered on the test case — <xref href=\"Vulthil.xUnit.BaseUnitTestCase.Use%60%601(%60%600)\" data-throw-if-not-resolved=\"false\"></xref>,\n<xref href=\"Vulthil.xUnit.BaseUnitTestCase.GetMock%60%601\" data-throw-if-not-resolved=\"false\"></xref>, <xref href=\"Vulthil.xUnit.BaseUnitTestCase.UseReal%60%601\" data-throw-if-not-resolved=\"false\"></xref> or\n<xref href=\"Vulthil.xUnit.BaseUnitTestCase.UseRealFor%60%602\" data-throw-if-not-resolved=\"false\"></xref> — before the host is first touched replaces\nthat service in a per-test copy of the host, so an external dependency is mocked with one line.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3158,7 +3158,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>",
-      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseWebApplicationFactory-1.yml\" sourcestartlinenumber=\"1\">Abstract <xref href=\"Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601\" data-throw-if-not-resolved=\"false\"></xref> that manages a set of test containers,\ninjects their connection strings into the test host, and ensures EF Core migrations are applied during host startup.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.BaseWebApplicationFactory-1.yml\" sourcestartlinenumber=\"1\">Abstract <xref href=\"Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601\" data-throw-if-not-resolved=\"false\"></xref> that consumes the shared containers of a\n<xref href=\"Vulthil.xUnit.Fixtures.ContainerHost\" data-throw-if-not-resolved=\"false\"></xref> through per-factory scopes, injects their connection strings into the test host, and\nensures EF Core migrations are applied during host startup.</p>\n"
     },
     {
       "type": "ManagedReference",

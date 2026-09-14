@@ -10825,248 +10825,303 @@ references:
   commentId: N:Vulthil.xUnit
   fullName: Vulthil.xUnit
   nameWithType: Vulthil.xUnit
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2
-  name: BaseIntegrationTestCase<TFactory, TEntryPoint>
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html
-  commentId: T:Vulthil.xUnit.BaseIntegrationTestCase`2
-  name.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint)
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint)
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint)
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.#ctor(`0,Xunit.ITestOutputHelper)
-  name: BaseIntegrationTestCase(TFactory, ITestOutputHelper?)
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2__ctor__0_Xunit_ITestOutputHelper_
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.#ctor(`0,Xunit.ITestOutputHelper)
-  name.vb: New(TFactory, ITestOutputHelper)
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase(TFactory, Xunit.ITestOutputHelper?)
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).New(TFactory, Xunit.ITestOutputHelper)
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase(TFactory, ITestOutputHelper?)
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).New(TFactory, ITestOutputHelper)
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.#ctor*
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1
+  name: BaseIntegrationTestCase<TEntryPoint>
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html
+  commentId: T:Vulthil.xUnit.BaseIntegrationTestCase`1
+  name.vb: BaseIntegrationTestCase(Of TEntryPoint)
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint)
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint)
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.#ctor(Vulthil.xUnit.BaseWebApplicationFactory{`0},Xunit.ITestOutputHelper)
+  name: BaseIntegrationTestCase(BaseWebApplicationFactory<TEntryPoint>, ITestOutputHelper?)
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1__ctor_Vulthil_xUnit_BaseWebApplicationFactory__0__Xunit_ITestOutputHelper_
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.#ctor(Vulthil.xUnit.BaseWebApplicationFactory{`0},Xunit.ITestOutputHelper)
+  name.vb: New(BaseWebApplicationFactory(Of TEntryPoint), ITestOutputHelper)
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.BaseIntegrationTestCase(Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>, Xunit.ITestOutputHelper?)
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).New(Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint), Xunit.ITestOutputHelper)
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.BaseIntegrationTestCase(BaseWebApplicationFactory<TEntryPoint>, ITestOutputHelper?)
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).New(BaseWebApplicationFactory(Of TEntryPoint), ITestOutputHelper)
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.#ctor*
   name: BaseIntegrationTestCase
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2__ctor_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.#ctor
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1__ctor_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.#ctor
   isSpec: "True"
   name.vb: New
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).New
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.BaseIntegrationTestCase
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).New
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.CancellationToken
-  name: CancellationToken
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_CancellationToken
-  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`2.CancellationToken
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CancellationToken
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).CancellationToken
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.CancellationToken
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).CancellationToken
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.CancellationToken*
-  name: CancellationToken
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_CancellationToken_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.CancellationToken
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CancellationToken
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).CancellationToken
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.CancellationToken
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).CancellationToken
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.Client
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.BaseIntegrationTestCase
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).New
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.BaseIntegrationTestCase
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).New
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Client
   name: Client
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_Client
-  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`2.Client
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Client
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).Client
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.Client
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).Client
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.Client*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Client
+  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`1.Client
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Client
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Client
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Client
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Client
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Client*
   name: Client
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_Client_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.Client
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Client_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.Client
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Client
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).Client
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.Client
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).Client
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.CreateFactory
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Client
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Client
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Client
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Client
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ConfigureTestCaseServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  name: ConfigureTestCaseServices(IServiceCollection)
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ConfigureTestCaseServices_Microsoft_Extensions_DependencyInjection_IServiceCollection_
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.ConfigureTestCaseServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ConfigureTestCaseServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ConfigureTestCaseServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ConfigureTestCaseServices(IServiceCollection)
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ConfigureTestCaseServices(IServiceCollection)
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ConfigureTestCaseServices*
+  name: ConfigureTestCaseServices
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ConfigureTestCaseServices_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.ConfigureTestCaseServices
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ConfigureTestCaseServices
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ConfigureTestCaseServices
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ConfigureTestCaseServices
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ConfigureTestCaseServices
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.CreateFactory
   name: CreateFactory()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_CreateFactory
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.CreateFactory
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CreateFactory()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).CreateFactory()
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.CreateFactory()
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).CreateFactory()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.CreateFactory*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_CreateFactory
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.CreateFactory
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.CreateFactory()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).CreateFactory()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.CreateFactory()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).CreateFactory()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.CreateFactory*
   name: CreateFactory
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_CreateFactory_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.CreateFactory
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_CreateFactory_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.CreateFactory
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.CreateFactory
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).CreateFactory
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.CreateFactory
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).CreateFactory
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.DisposeAsync
-  name: DisposeAsync()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_DisposeAsync
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.DisposeAsync
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).DisposeAsync()
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync()
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).DisposeAsync()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.DisposeAsync*
-  name: DisposeAsync
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_DisposeAsync_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.DisposeAsync
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.CreateFactory
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).CreateFactory
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.CreateFactory
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).CreateFactory
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose
+  name: Dispose()
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Dispose
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Dispose()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Dispose()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Dispose()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Dispose()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose*
+  name: Dispose
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Dispose_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).DisposeAsync
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).DisposeAsync
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.Factory
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Dispose
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Dispose
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Dispose
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Dispose
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Factory
   name: Factory
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_Factory
-  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`2.Factory
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Factory
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).Factory
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.Factory
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).Factory
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.Factory*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Factory
+  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`1.Factory
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Factory
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Factory
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Factory
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Factory
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Factory*
   name: Factory
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_Factory_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.Factory
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Factory_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.Factory
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Factory
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).Factory
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.Factory
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).Factory
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.FactoryFixture
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Factory
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Factory
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Factory
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Factory
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.FactoryFixture
   name: FactoryFixture
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_FactoryFixture
-  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`2.FactoryFixture
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.FactoryFixture
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).FactoryFixture
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.FactoryFixture
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).FactoryFixture
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.FactoryFixture*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_FactoryFixture
+  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`1.FactoryFixture
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.FactoryFixture
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).FactoryFixture
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.FactoryFixture
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).FactoryFixture
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.FactoryFixture*
   name: FactoryFixture
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_FactoryFixture_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.FactoryFixture
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_FactoryFixture_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.FactoryFixture
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.FactoryFixture
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).FactoryFixture
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.FactoryFixture
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).FactoryFixture
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.HttpMock(System.String)
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.FactoryFixture
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).FactoryFixture
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.FactoryFixture
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).FactoryFixture
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.GetMock*
+  name: GetMock
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_GetMock_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.GetMock
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.GetMock
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).GetMock
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.GetMock
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).GetMock
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.GetMock``1
+  name: GetMock<TMock>()
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_GetMock__1
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.GetMock``1
+  name.vb: GetMock(Of TMock)()
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.GetMock<TMock>()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).GetMock(Of TMock)()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.GetMock<TMock>()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).GetMock(Of TMock)()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock(System.String)
   name: HttpMock(string)
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_HttpMock_System_String_
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.HttpMock(System.String)
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_HttpMock_System_String_
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock(System.String)
   name.vb: HttpMock(String)
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock(string)
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).HttpMock(String)
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock(string)
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).HttpMock(String)
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.HttpMock*
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.HttpMock(string)
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).HttpMock(String)
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.HttpMock(string)
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).HttpMock(String)
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock*
   name: HttpMock
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_HttpMock_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.HttpMock
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_HttpMock_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).HttpMock
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).HttpMock
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.HttpMock``1
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.HttpMock
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).HttpMock
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.HttpMock
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).HttpMock
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock``1
   name: HttpMock<TClient>()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_HttpMock__1
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.HttpMock``1
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_HttpMock__1
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock``1
   name.vb: HttpMock(Of TClient)()
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock<TClient>()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).HttpMock(Of TClient)()
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.HttpMock<TClient>()
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).HttpMock(Of TClient)()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.Initialize
-  name: Initialize()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_Initialize
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.Initialize
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).Initialize()
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize()
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).Initialize()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.Initialize*
-  name: Initialize
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_Initialize_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.Initialize
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).Initialize
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).Initialize
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.InitializeAsync
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.HttpMock<TClient>()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).HttpMock(Of TClient)()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.HttpMock<TClient>()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).HttpMock(Of TClient)()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync
   name: InitializeAsync()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_InitializeAsync
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.InitializeAsync
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.InitializeAsync()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).InitializeAsync()
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.InitializeAsync()
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).InitializeAsync()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.InitializeAsync*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_InitializeAsync
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.InitializeAsync()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.InitializeAsync()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync*
   name: InitializeAsync
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_InitializeAsync_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.InitializeAsync
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_InitializeAsync_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.InitializeAsync
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).InitializeAsync
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.InitializeAsync
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).InitializeAsync
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.ResetScope
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.InitializeAsync
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.InitializeAsync
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope
   name: ResetScope()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_ResetScope
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`2.ResetScope
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).ResetScope()
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope()
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).ResetScope()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.ResetScope*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScope
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScope()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ResetScope()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ResetScope()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ResetScope()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope*
   name: ResetScope
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_ResetScope_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.ResetScope
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScope_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).ResetScope
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).ResetScope
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.ScopedServices
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScope
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ResetScope
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ResetScope
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ResetScope
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ScopedServices
   name: ScopedServices
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_ScopedServices
-  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`2.ScopedServices
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).ScopedServices
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).ScopedServices
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.ScopedServices*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ScopedServices
+  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`1.ScopedServices
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ScopedServices
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ScopedServices
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ScopedServices
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ScopedServices
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ScopedServices*
   name: ScopedServices
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_ScopedServices_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.ScopedServices
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ScopedServices_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.ScopedServices
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).ScopedServices
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).ScopedServices
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.TestOutputHelper
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ScopedServices
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ScopedServices
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ScopedServices
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ScopedServices
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.TestOutputHelper
   name: TestOutputHelper
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_TestOutputHelper
-  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`2.TestOutputHelper
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).TestOutputHelper
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).TestOutputHelper
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`2.TestOutputHelper*
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_TestOutputHelper
+  commentId: P:Vulthil.xUnit.BaseIntegrationTestCase`1.TestOutputHelper
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.TestOutputHelper
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).TestOutputHelper
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.TestOutputHelper
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).TestOutputHelper
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.TestOutputHelper*
   name: TestOutputHelper
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-2.html#Vulthil_xUnit_BaseIntegrationTestCase_2_TestOutputHelper_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`2.TestOutputHelper
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_TestOutputHelper_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.TestOutputHelper
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TFactory, TEntryPoint).TestOutputHelper
-  nameWithType: BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper
-  nameWithType.vb: BaseIntegrationTestCase(Of TFactory, TEntryPoint).TestOutputHelper
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.TestOutputHelper
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).TestOutputHelper
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.TestOutputHelper
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).TestOutputHelper
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Use*
+  name: Use
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Use_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.Use
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Use
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Use
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Use
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Use
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.UseReal*
+  name: UseReal
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_UseReal_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.UseReal
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseReal
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).UseReal
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.UseReal
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).UseReal
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.UseRealFor*
+  name: UseRealFor
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_UseRealFor_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.UseRealFor
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseRealFor
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).UseRealFor
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.UseRealFor
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).UseRealFor
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.UseRealFor``2
+  name: UseRealFor<TService, TImplementation>()
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_UseRealFor__2
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.UseRealFor``2
+  name.vb: UseRealFor(Of TService, TImplementation)()
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseRealFor<TService, TImplementation>()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).UseRealFor(Of TService, TImplementation)()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.UseRealFor<TService, TImplementation>()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).UseRealFor(Of TService, TImplementation)()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.UseReal``1
+  name: UseReal<TService>()
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_UseReal__1
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.UseReal``1
+  name.vb: UseReal(Of TService)()
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseReal<TService>()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).UseReal(Of TService)()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.UseReal<TService>()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).UseReal(Of TService)()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Use``1(``0)
+  name: Use<TService>(TService)
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Use__1___0_
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.Use``1(``0)
+  name.vb: Use(Of TService)(TService)
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Use<TService>(TService)
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Use(Of TService)(TService)
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Use<TService>(TService)
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Use(Of TService)(TService)
 - uid: Vulthil.xUnit.BaseUnitTestCase
   name: BaseUnitTestCase
   href: api/Vulthil.xUnit.BaseUnitTestCase.html
@@ -11319,15 +11374,6 @@ references:
   fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint)
   nameWithType: BaseWebApplicationFactory<TEntryPoint>
   nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint)
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor
-  name: BaseWebApplicationFactory()
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1__ctor
-  commentId: M:Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor
-  name.vb: New()
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory()
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).New()
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory()
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).New()
 - uid: Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor(Vulthil.xUnit.Fixtures.ContainerHost)
   name: BaseWebApplicationFactory(ContainerHost)
   href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1__ctor_Vulthil_xUnit_Fixtures_ContainerHost_
@@ -11347,23 +11393,6 @@ references:
   fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).New
   nameWithType: BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory
   nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).New
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer)
-  name: AddContainer(ITestContainer)
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_AddContainer_Vulthil_xUnit_Fixtures_ITestContainer_
-  commentId: M:Vulthil.xUnit.BaseWebApplicationFactory`1.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer)
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer)
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).AddContainer(Vulthil.xUnit.Fixtures.ITestContainer)
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.AddContainer(ITestContainer)
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).AddContainer(ITestContainer)
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.AddContainer*
-  name: AddContainer
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_AddContainer_
-  commentId: Overload:Vulthil.xUnit.BaseWebApplicationFactory`1.AddContainer
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.AddContainer
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).AddContainer
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.AddContainer
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).AddContainer
 - uid: Vulthil.xUnit.BaseWebApplicationFactory`1.AddHttpMock(System.String)
   name: AddHttpMock(string)
   href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_AddHttpMock_System_String_
@@ -11391,23 +11420,6 @@ references:
   fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).AddHttpMock(Of TClient)()
   nameWithType: BaseWebApplicationFactory<TEntryPoint>.AddHttpMock<TClient>()
   nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).AddHttpMock(Of TClient)()
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureContainers
-  name: ConfigureContainers()
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_ConfigureContainers
-  commentId: M:Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureContainers
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers()
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).ConfigureContainers()
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers()
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).ConfigureContainers()
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureContainers*
-  name: ConfigureContainers
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_ConfigureContainers_
-  commentId: Overload:Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureContainers
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).ConfigureContainers
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).ConfigureContainers
 - uid: Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureCustomWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
   name: ConfigureCustomWebHost(IWebHostBuilder)
   href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_ConfigureCustomWebHost_Microsoft_AspNetCore_Hosting_IWebHostBuilder_
@@ -11442,23 +11454,6 @@ references:
   fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).ConfigureWebHost
   nameWithType: BaseWebApplicationFactory<TEntryPoint>.ConfigureWebHost
   nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).ConfigureWebHost
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.ContainersWithConnectionStrings
-  name: ContainersWithConnectionStrings
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_ContainersWithConnectionStrings
-  commentId: P:Vulthil.xUnit.BaseWebApplicationFactory`1.ContainersWithConnectionStrings
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ContainersWithConnectionStrings
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).ContainersWithConnectionStrings
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.ContainersWithConnectionStrings
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).ContainersWithConnectionStrings
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.ContainersWithConnectionStrings*
-  name: ContainersWithConnectionStrings
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_ContainersWithConnectionStrings_
-  commentId: Overload:Vulthil.xUnit.BaseWebApplicationFactory`1.ContainersWithConnectionStrings
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ContainersWithConnectionStrings
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).ContainersWithConnectionStrings
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.ContainersWithConnectionStrings
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).ContainersWithConnectionStrings
 - uid: Vulthil.xUnit.BaseWebApplicationFactory`1.CreateScopeId
   name: CreateScopeId()
   href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_CreateScopeId
@@ -11476,23 +11471,6 @@ references:
   fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).CreateScopeId
   nameWithType: BaseWebApplicationFactory<TEntryPoint>.CreateScopeId
   nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).CreateScopeId
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.DatabaseContainers
-  name: DatabaseContainers
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_DatabaseContainers
-  commentId: P:Vulthil.xUnit.BaseWebApplicationFactory`1.DatabaseContainers
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.DatabaseContainers
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).DatabaseContainers
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.DatabaseContainers
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).DatabaseContainers
-- uid: Vulthil.xUnit.BaseWebApplicationFactory`1.DatabaseContainers*
-  name: DatabaseContainers
-  href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_DatabaseContainers_
-  commentId: Overload:Vulthil.xUnit.BaseWebApplicationFactory`1.DatabaseContainers
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.DatabaseContainers
-  fullName.vb: Vulthil.xUnit.BaseWebApplicationFactory(Of TEntryPoint).DatabaseContainers
-  nameWithType: BaseWebApplicationFactory<TEntryPoint>.DatabaseContainers
-  nameWithType.vb: BaseWebApplicationFactory(Of TEntryPoint).DatabaseContainers
 - uid: Vulthil.xUnit.BaseWebApplicationFactory`1.DisposeAsync
   name: DisposeAsync()
   href: api/Vulthil.xUnit.BaseWebApplicationFactory-1.html#Vulthil_xUnit_BaseWebApplicationFactory_1_DisposeAsync
@@ -11586,23 +11564,14 @@ references:
   fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext)
   nameWithType: CosmosTestContainerFixture<TDbContext>
   nameWithType.vb: CosmosTestContainerFixture(Of TDbContext)
-- uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor
-  name: CosmosTestContainerFixture()
-  href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor
-  commentId: M:Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor
-  name.vb: New()
-  fullName: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture()
-  fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).New()
-  nameWithType: CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture()
-  nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).New()
 - uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor(Xunit.Sdk.IMessageSink)
-  name: CosmosTestContainerFixture(IMessageSink)
+  name: CosmosTestContainerFixture(IMessageSink?)
   href: api/Vulthil.xUnit.Cosmos.CosmosTestContainerFixture-1.html#Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1__ctor_Xunit_Sdk_IMessageSink_
   commentId: M:Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor(Xunit.Sdk.IMessageSink)
   name.vb: New(IMessageSink)
-  fullName: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(Xunit.Sdk.IMessageSink)
+  fullName: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(Xunit.Sdk.IMessageSink?)
   fullName.vb: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture(Of TDbContext).New(Xunit.Sdk.IMessageSink)
-  nameWithType: CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(IMessageSink)
+  nameWithType: CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(IMessageSink?)
   nameWithType.vb: CosmosTestContainerFixture(Of TDbContext).New(IMessageSink)
 - uid: Vulthil.xUnit.Cosmos.CosmosTestContainerFixture`1.#ctor*
   name: CosmosTestContainerFixture
@@ -11754,23 +11723,14 @@ references:
   commentId: T:Vulthil.xUnit.Fixtures.ContainerHost
   fullName: Vulthil.xUnit.Fixtures.ContainerHost
   nameWithType: ContainerHost
-- uid: Vulthil.xUnit.Fixtures.ContainerHost.#ctor
-  name: ContainerHost()
-  href: api/Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost__ctor
-  commentId: M:Vulthil.xUnit.Fixtures.ContainerHost.#ctor
-  name.vb: New()
-  fullName: Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost()
-  fullName.vb: Vulthil.xUnit.Fixtures.ContainerHost.New()
-  nameWithType: ContainerHost.ContainerHost()
-  nameWithType.vb: ContainerHost.New()
 - uid: Vulthil.xUnit.Fixtures.ContainerHost.#ctor(Xunit.Sdk.IMessageSink)
-  name: ContainerHost(IMessageSink)
+  name: ContainerHost(IMessageSink?)
   href: api/Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost__ctor_Xunit_Sdk_IMessageSink_
   commentId: M:Vulthil.xUnit.Fixtures.ContainerHost.#ctor(Xunit.Sdk.IMessageSink)
   name.vb: New(IMessageSink)
-  fullName: Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost(Xunit.Sdk.IMessageSink)
+  fullName: Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost(Xunit.Sdk.IMessageSink?)
   fullName.vb: Vulthil.xUnit.Fixtures.ContainerHost.New(Xunit.Sdk.IMessageSink)
-  nameWithType: ContainerHost.ContainerHost(IMessageSink)
+  nameWithType: ContainerHost.ContainerHost(IMessageSink?)
   nameWithType.vb: ContainerHost.New(IMessageSink)
 - uid: Vulthil.xUnit.Fixtures.ContainerHost.#ctor*
   name: ContainerHost
@@ -11996,23 +11956,14 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity)
   nameWithType: RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>
   nameWithType.vb: RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity)
-- uid: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor
-  name: RabbitMqTestContainerFixture()
-  href: api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.html#Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor
-  commentId: M:Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor
-  name.vb: New()
-  fullName: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture()
-  fullName.vb: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
-  nameWithType: RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture()
-  nameWithType.vb: RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)
-  name: RabbitMqTestContainerFixture(IMessageSink)
+  name: RabbitMqTestContainerFixture(IMessageSink?)
   href: api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.html#Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor_Xunit_Sdk_IMessageSink_
   commentId: M:Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)
   name.vb: New(IMessageSink)
-  fullName: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(Xunit.Sdk.IMessageSink)
+  fullName: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(Xunit.Sdk.IMessageSink?)
   fullName.vb: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity).New(Xunit.Sdk.IMessageSink)
-  nameWithType: RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(IMessageSink)
+  nameWithType: RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>.RabbitMqTestContainerFixture(IMessageSink?)
   nameWithType.vb: RabbitMqTestContainerFixture(Of TBuilderEntity, TContainerEntity).New(IMessageSink)
 - uid: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor*
   name: RabbitMqTestContainerFixture
@@ -12086,23 +12037,14 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity)
   nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>
   nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity)
-- uid: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor
-  name: TestContainerFixtureWithConnectionString()
-  href: api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html#Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2__ctor
-  commentId: M:Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor
-  name.vb: New()
-  fullName: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString()
-  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).New()
-  nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString()
-  nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor(Xunit.Sdk.IMessageSink)
-  name: TestContainerFixtureWithConnectionString(IMessageSink)
+  name: TestContainerFixtureWithConnectionString(IMessageSink?)
   href: api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html#Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2__ctor_Xunit_Sdk_IMessageSink_
   commentId: M:Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor(Xunit.Sdk.IMessageSink)
   name.vb: New(IMessageSink)
-  fullName: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink?)
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).New(Xunit.Sdk.IMessageSink)
-  nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(IMessageSink)
+  nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(IMessageSink?)
   nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).New(IMessageSink)
 - uid: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.#ctor*
   name: TestContainerFixtureWithConnectionString
@@ -12175,23 +12117,14 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixture(Of TBuilderEntity, TContainerEntity)
   nameWithType: TestContainerFixture<TBuilderEntity, TContainerEntity>
   nameWithType.vb: TestContainerFixture(Of TBuilderEntity, TContainerEntity)
-- uid: Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor
-  name: TestContainerFixture()
-  href: api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.html#Vulthil_xUnit_Fixtures_TestContainerFixture_2__ctor
-  commentId: M:Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor
-  name.vb: New()
-  fullName: Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture()
-  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
-  nameWithType: TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture()
-  nameWithType.vb: TestContainerFixture(Of TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)
-  name: TestContainerFixture(IMessageSink)
+  name: TestContainerFixture(IMessageSink?)
   href: api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.html#Vulthil_xUnit_Fixtures_TestContainerFixture_2__ctor_Xunit_Sdk_IMessageSink_
   commentId: M:Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)
   name.vb: New(IMessageSink)
-  fullName: Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(Xunit.Sdk.IMessageSink)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(Xunit.Sdk.IMessageSink?)
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixture(Of TBuilderEntity, TContainerEntity).New(Xunit.Sdk.IMessageSink)
-  nameWithType: TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(IMessageSink)
+  nameWithType: TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(IMessageSink?)
   nameWithType.vb: TestContainerFixture(Of TBuilderEntity, TContainerEntity).New(IMessageSink)
 - uid: Vulthil.xUnit.Fixtures.TestContainerFixture`2.#ctor*
   name: TestContainerFixture
@@ -12264,23 +12197,14 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity)
   nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
   nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity)
-- uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor
-  name: TestDatabaseContainerFixture()
-  href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3__ctor
-  commentId: M:Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor
-  name.vb: New()
-  fullName: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture()
-  fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).New()
-  nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture()
-  nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).New()
 - uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor(Xunit.Sdk.IMessageSink)
-  name: TestDatabaseContainerFixture(IMessageSink)
+  name: TestDatabaseContainerFixture(IMessageSink?)
   href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3__ctor_Xunit_Sdk_IMessageSink_
   commentId: M:Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor(Xunit.Sdk.IMessageSink)
   name.vb: New(IMessageSink)
-  fullName: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink)
+  fullName: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink?)
   fullName.vb: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).New(Xunit.Sdk.IMessageSink)
-  nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(IMessageSink)
+  nameWithType: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(IMessageSink?)
   nameWithType.vb: TestDatabaseContainerFixture(Of TDbContext, TBuilderEntity, TContainerEntity).New(IMessageSink)
 - uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3.#ctor*
   name: TestDatabaseContainerFixture

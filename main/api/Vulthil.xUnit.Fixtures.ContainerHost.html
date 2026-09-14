@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Fixtures_ContainerHost" data-uid="Vulthil.xUnit.Fixtures.ContainerHost" class="text-break">
-Class ContainerHost  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L24"><i class="bi bi-code-slash"></i></a>
+Class ContainerHost  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -183,52 +183,26 @@ simultaneously; this host is safe for that concurrency.
 
   <a id="Vulthil_xUnit_Fixtures_ContainerHost__ctor_" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.#ctor*"></a>
 
-  <h3 id="Vulthil_xUnit_Fixtures_ContainerHost__ctor" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.#ctor">
-  ContainerHost()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L34"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Initializes a host that needs nothing injected: container fixtures created through their parameterless
-constructors report through the current test context's diagnostic messages instead of an injected sink.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ContainerHost()</code></pre>
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Vulthil_xUnit_Fixtures_ContainerHost__ctor_" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.#ctor*"></a>
-
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost__ctor_Xunit_Sdk_IMessageSink_" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.#ctor(Xunit.Sdk.IMessageSink)">
-  ContainerHost(IMessageSink)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  ContainerHost(IMessageSink?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Assembly-level fixture that owns a set of shared test containers, so heavyweight infrastructure (database servers,
-message brokers, emulators) starts at most once per test run instead of once per test class.</p>
+  <div class="markdown level1 summary"><p>Initializes the host. Container fixtures that take a sink report through <code class="paramref">messageSink</code>;
+when none is given, they report through the current test context's diagnostic messages instead, so nothing
+has to be injected.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ContainerHost(IMessageSink messageSink)</code></pre>
+    <pre><code class="lang-csharp hljs">protected ContainerHost(IMessageSink? messageSink = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>messageSink</code> <span class="xref">IMessageSink</span></dt>
-    <dd><p>The xUnit diagnostic message sink, forwarded to container fixtures.</p>
+    <dd><p>The xUnit diagnostic message sink to forward to container fixtures, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to use the
+current test context's diagnostic messages.</p>
 </dd>
   </dl>
 
@@ -239,19 +213,6 @@ message brokers, emulators) starts at most once per test run instead of once per
 
 
 
-  <h4 class="section" id="Vulthil_xUnit_Fixtures_ContainerHost__ctor_Xunit_Sdk_IMessageSink__remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>
-Register a derived host with <code>[assembly: AssemblyFixture&lt;MyContainerHost&gt;]</code> and accept it in the
-constructor of a <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a>-derived class fixture. The factory consumes
-every container registered here through a per-factory scope view (see <a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.html">ITestContainerScopeProvider</a>),
-so parallel test classes share the running containers without sharing state.
-</p>
-<p>
-Containers start lazily on first use and concurrent consumers share a single startup task, so a filtered test run
-only pays for the containers its factories actually consume. Assembly fixtures are used from many tests
-simultaneously; this host is safe for that concurrency.
-</p>
-</div>
 
 
 
@@ -264,7 +225,7 @@ simultaneously; this host is safe for that concurrency.
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_Containers" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.Containers">
   Containers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the containers registered on this host.</p>
@@ -296,12 +257,11 @@ simultaneously; this host is safe for that concurrency.
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_MessageSink" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.MessageSink">
   MessageSink
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets the xUnit diagnostic message sink for container fixtures that take an explicit sink. For a host created
-through the parameterless constructor this forwards to the current test context's diagnostic messages, which
-is also what the fixtures' parameterless constructors use.</p>
+  <div class="markdown level1 summary"><p>Gets the xUnit diagnostic message sink for container fixtures that take an explicit sink: the one given to
+the constructor, or the current test context's diagnostic messages when none was.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -334,7 +294,7 @@ is also what the fixtures' parameterless constructors use.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_AddContainer_Vulthil_xUnit_Fixtures_ITestContainer_" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer)">
   AddContainer(ITestContainer)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a shared test container on this host. Call from the constructor or from
@@ -368,7 +328,7 @@ is also what the fixtures' parameterless constructors use.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_AddContainer__1" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.AddContainer``1">
   AddContainer&lt;TContainer&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L69"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a <code class="typeparamref">TContainer</code> through its parameterless constructor and registers it on this
@@ -403,7 +363,7 @@ host, so a derived host can list its containers by type. Call from the construct
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_ConfigureContainers" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.ConfigureContainers">
   ConfigureContainers()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Override to register shared containers by calling <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost_AddContainer_Vulthil_xUnit_Fixtures_ITestContainer_">AddContainer(ITestContainer)</a> or
@@ -437,7 +397,7 @@ host, so a derived host can list its containers by type. Call from the construct
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_DisposeAsync" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.DisposeAsync">
   DisposeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Disposes every container that was started. Invoked once by xUnit after the last test in the assembly.</p>
@@ -470,7 +430,7 @@ host, so a derived host can list its containers by type. Call from the construct
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_EnsureStartedAsync_Vulthil_xUnit_Fixtures_ITestContainer_" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.EnsureStartedAsync(Vulthil.xUnit.Fixtures.ITestContainer)">
   EnsureStartedAsync(ITestContainer)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L103"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Starts the given container if it has not been started yet. Thread-safe: concurrent callers share a single
@@ -516,7 +476,7 @@ startup task, and a failed startup is observed by every consumer instead of bein
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_InitializeAsync" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.InitializeAsync">
   InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers the configured containers. Invoked once by xUnit before the fixture is handed to its first consumer;
@@ -550,7 +510,7 @@ containers themselves start lazily through <a class="xref" href="Vulthil.xUnit.F
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L24" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L23" class="edit-link">Edit this page</a>
         </div>
 
 

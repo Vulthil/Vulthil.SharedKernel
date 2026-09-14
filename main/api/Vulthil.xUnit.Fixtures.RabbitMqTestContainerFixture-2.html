@@ -219,54 +219,26 @@ messages. Derived classes only configure the container and supply the connection
 
   <a id="Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor_" data-uid="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor*"></a>
 
-  <h3 id="Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor" data-uid="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor">
-  RabbitMqTestContainerFixture()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L25"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Initializes a fixture whose container logs are forwarded to the current test context's diagnostic messages,
-so no <span class="xref">Xunit.Sdk.IMessageSink</span> has to be injected.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected RabbitMqTestContainerFixture()</code></pre>
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor_" data-uid="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor*"></a>
-
   <h3 id="Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2__ctor_Xunit_Sdk_IMessageSink_" data-uid="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.#ctor(Xunit.Sdk.IMessageSink)">
-  RabbitMqTestContainerFixture(IMessageSink)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  RabbitMqTestContainerFixture(IMessageSink?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Fixture that wraps a RabbitMQ broker container. When owned by a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a>, every consuming
-factory gets its own virtual host on the shared broker (created via <code>rabbitmqctl</code> inside the container and
-appended to the AMQP connection string), so parallel test classes never see each other's exchanges, queues or
-messages. Derived classes only configure the container and supply the connection string and key.</p>
+  <div class="markdown level1 summary"><p>Initializes the fixture. Broker logs go to <code class="paramref">messageSink</code> when one is given, otherwise to the
+current test context's diagnostic messages, so nothing has to be injected.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected RabbitMqTestContainerFixture(IMessageSink messageSink)</code></pre>
+    <pre><code class="lang-csharp hljs">protected RabbitMqTestContainerFixture(IMessageSink? messageSink = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>messageSink</code> <span class="xref">IMessageSink</span></dt>
-    <dd></dd>
+    <dd><p>The xUnit diagnostic message sink for broker logs, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to use the current test
+context's diagnostic messages.</p>
+</dd>
   </dl>
 
 
@@ -288,7 +260,7 @@ messages. Derived classes only configure the container and supply the connection
 
   <h3 id="Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2_VirtualHostUsername" data-uid="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.VirtualHostUsername">
   VirtualHostUsername
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the broker username that is granted full permissions on each scope's virtual host. Must match the
@@ -325,7 +297,7 @@ username the container was configured with; defaults to <code>guest</code>.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2_BuildScopedConnectionString_System_String_" data-uid="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.BuildScopedConnectionString(System.String)">
   BuildScopedConnectionString(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds the connection string targeting <code class="paramref">virtualHost</code> by appending it to the AMQP URI
@@ -366,7 +338,7 @@ Override when the connection string is not URI-shaped.</p>
 
   <h3 id="Vulthil_xUnit_Fixtures_RabbitMqTestContainerFixture_2_CreateScope_System_String_" data-uid="Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2.CreateScope(System.String)">
   CreateScope(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/RabbitMqTestContainerFixture.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a scope backed by its own virtual host on this broker, named after <code class="paramref">scopeId</code>. The

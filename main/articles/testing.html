@@ -175,25 +175,45 @@ test; only a synchronous <code>IDisposable</code> is covered, so an <code>IAsync
 and always before the auto-mocker's own instances.</p>
 <h2 id="integration-tests">Integration Tests</h2>
 <h3 id="baseintegrationtestcase">BaseIntegrationTestCase</h3>
-<p><code>BaseIntegrationTestCase&lt;TFactory, TEntryPoint&gt;</code> boots a real <code>WebApplicationFactory</code> backed by test containers. The factory is supplied as the xUnit fixture, so its containers start once for the scope and are shared across the tests in it:</p>
+<p><code>BaseIntegrationTestCase&lt;TEntryPoint&gt;</code> boots a real <code>WebApplicationFactory</code> backed by test containers. It builds on
+<code>BaseUnitTestCase</code>, so the cancellation token, the <code>Initialize()</code>/<code>Dispose()</code> hooks and the auto-mocker vocabulary
+(<code>Use</code>, <code>GetMock</code>, <code>UseReal</code>) are the same in both kinds of test. The factory is supplied as the xUnit fixture, so its
+containers start once for the scope and are shared across the tests in it:</p>
 <pre><code class="lang-csharp">public sealed class UsersEndpointTests(AppWebFactory factory)
-    : BaseIntegrationTestCase&lt;AppWebFactory, Program&gt;(factory), IClassFixture&lt;AppWebFactory&gt;
+    : BaseIntegrationTestCase&lt;Program&gt;(factory), IClassFixture&lt;AppWebFactory&gt;
 {
     [Fact]
     public async Task CreateUser_Returns201()
     {
-        var response = await Client.PostAsJsonAsync(&quot;/users&quot;, new { Email = &quot;a@b.com&quot; });
+        var response = await Client.PostAsJsonAsync(&quot;/users&quot;, new { Email = &quot;a@b.com&quot; }, CancellationToken);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 }
 </code></pre>
-<p>Use <code>IClassFixture&lt;AppWebFactory&gt;</code> so each test class gets its own factory. By default that also means its own containers; back the factory with a <a href="#sharing-containers-across-the-assembly-containerhost"><code>ContainerHost</code></a> to start each container only once for the whole assembly while keeping per-class isolation. Tests within a class share the factory's single test host and reset state between runs.</p>
+<p>Use <code>IClassFixture&lt;AppWebFactory&gt;</code> so each test class gets its own factory and, through the factory's
+<a href="#sharing-containers-across-the-assembly-containerhost"><code>ContainerHost</code></a>, its own isolated scope inside the shared
+containers. Tests within a class share the factory's single test host and reset state between runs.</p>
 <p>Key features:</p>
 <ul>
 <li><strong>Scoped services</strong> – <code>ScopedServices</code> gives you a fresh DI scope per test.</li>
-<li><strong>Automatic database reset</strong> – the database is reset with Respawn after each test, so tests sharing a factory start from a clean state. Hosted services implementing <code>IRestartableHostedService</code> (from <code>Vulthil.Extensions.Hosting</code>) are stopped around the reset and restarted afterwards, so a database-polling relay such as the outbox background service never contends with it.</li>
-<li><strong>Log capture</strong> – application logs are routed to the currently running test automatically (via <code>TestContext</code>). The <code>ITestOutputHelper</code> constructor parameter is for writing test output directly.</li>
-<li><strong>One host per class</strong> – all tests in a class run against the fixture's test host. Override <code>CreateFactory()</code> (e.g. <code>FactoryFixture.WithWebHostBuilder(...)</code>) when a class needs per-test host configuration; derived factories are disposed after each test.</li>
+<li><strong>Mocking an application service</strong> – register a double on the test case before the first use of <code>Factory</code>,
+<code>Client</code> or <code>ScopedServices</code> — <code>GetMock&lt;IWeatherClient&gt;()</code>, <code>Use&lt;IWeatherClient&gt;(stub)</code> or <code>UseReal&lt;...&gt;()</code> — and
+the test runs on a per-test copy of the host with that service replaced. Register under the type the application
+resolves (<code>Use&lt;IWeatherClient&gt;(stub)</code>, not <code>Use(stub)</code>). A test that registers nothing runs on the shared host;
+registering after the host is built throws, so a test never silently runs against the real service. Outbound HTTP
+has its own mock, see <a href="#mocking-outbound-http-dependencies">below</a>.</li>
+<li><strong>Automatic database reset</strong> – the database is reset with Respawn after each test, so tests sharing a factory
+start from a clean state. Hosted services implementing <code>IRestartableHostedService</code> (from
+<code>Vulthil.Extensions.Hosting</code>) are stopped around the reset and restarted afterwards, so a database-polling relay such
+as the outbox background service never contends with it. Every stop, reset and restart step is bounded by its own
+30-second timeout rather than the test's cancellation token, a failing step never skips the remaining ones, and all
+failures are reported together — a test that timed out still leaves a clean fixture for the next one.</li>
+<li><strong>Log capture</strong> – application logs are routed to the currently running test automatically (via <code>TestContext</code>). The
+<code>ITestOutputHelper</code> constructor parameter is for writing test output directly.</li>
+<li><strong>One host per class</strong> – all tests in a class run against the fixture's test host. Override <code>CreateFactory()</code>
+(e.g. <code>FactoryFixture.WithWebHostBuilder(...)</code>) when a class needs other per-test host configuration; call
+<code>ConfigureTestCaseServices</code> from that builder's <code>ConfigureTestServices</code> to keep the registered doubles. Derived
+factories are disposed after each test.</li>
 </ul>
 <h3 id="test-containers">Test Containers</h3>
 <p><code>Vulthil.xUnit</code> ships fixture base classes (in the <code>Vulthil.xUnit.Fixtures</code> namespace) that wrap <a href="https://testcontainers.com/">Testcontainers</a> containers so you can spin up databases, message brokers, and other dependencies as Docker containers. There are three levels, depending on what the container needs to expose:</p>
@@ -202,7 +222,8 @@ and always before the auto-mocker's own instances.</p>
 <li><code>TestContainerFixtureWithConnectionString&lt;TBuilderEntity, TContainerEntity&gt;</code> – adds a connection string that is injected into the host's configuration under <code>ConnectionStrings:{ConnectionStringKey}</code> (<code>ITestContainerWithConnectionString</code>). Give <code>ConnectionStringKey</code> the bare name (e.g. <code>&quot;AppDb&quot;</code>); the factory adds the <code>ConnectionStrings:</code> prefix.</li>
 <li><code>TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;</code> – adds EF Core migrations and Respawn-based data reset between tests (<code>ITestDatabaseContainer</code>).</li>
 </ul>
-<p>None of them needs constructor parameters: Testcontainers' own log output is forwarded to xUnit's diagnostic messages (visible with <code>diagnosticMessages</code> enabled). Each base class also keeps a constructor that takes an explicit <code>IMessageSink</code> for routing that output elsewhere.</p>
+<p>None of them needs constructor arguments. Pass an <code>IMessageSink</code> to route Testcontainers' own log output somewhere
+specific; without one it is forwarded to xUnit's diagnostic messages (visible with <code>diagnosticMessages</code> enabled).</p>
 <p>A database fixture overrides <code>Configure()</code> to build the container and supplies the Respawn <code>DbAdapter</code>, the ADO.NET <code>DbProviderFactory</code>, and the configuration key its connection string is bound to:</p>
 <pre><code class="lang-csharp">internal sealed class PostgresTestContainer
     : TestDatabaseContainerFixture&lt;AppDbContext, PostgreSqlBuilder, PostgreSqlContainer&gt;
@@ -217,7 +238,7 @@ and always before the auto-mocker's own instances.</p>
     public override string ConnectionStringKey =&gt; &quot;AppDb&quot;;
 }
 </code></pre>
-<p>A message broker uses <code>RabbitMqTestContainerFixture</code> (which adds virtual-host-per-scope isolation when shared through a <code>ContainerHost</code>); any other non-database dependency uses <code>TestContainerFixtureWithConnectionString</code> directly. Both just provide the container configuration and connection string:</p>
+<p>A message broker uses <code>RabbitMqTestContainerFixture</code> (which adds virtual-host-per-scope isolation); any other non-database dependency uses <code>TestContainerFixtureWithConnectionString</code> directly. Both just provide the container configuration and connection string:</p>
 <pre><code class="lang-csharp">public sealed class RabbitMqTestContainer
     : RabbitMqTestContainerFixture&lt;RabbitMqBuilder, RabbitMqContainer&gt;
 {
@@ -231,30 +252,24 @@ and always before the auto-mocker's own instances.</p>
     public override string ConnectionString =&gt; Container.GetConnectionString();
 }
 </code></pre>
-<p>Containers are registered on the factory with <code>AddContainer</code> (see below), which starts each one once per factory and shares it across the tests in that fixture's scope — or registered once on a <a href="#sharing-containers-across-the-assembly-containerhost"><code>ContainerHost</code></a> and shared by every factory in the assembly. Database containers are migrated during host startup and reset with Respawn between tests.</p>
+<p>Containers are registered once on a <a href="#sharing-containers-across-the-assembly-containerhost"><code>ContainerHost</code></a> and consumed by every factory in the assembly through an isolated per-class scope. Database containers are migrated during host startup and reset with Respawn between tests.</p>
 <h3 id="webapplicationfactory">WebApplicationFactory</h3>
-<p><code>BaseWebApplicationFactory&lt;TEntryPoint&gt;</code> owns the test containers and serves as the xUnit fixture, so a single derived class acts as both the factory and the fixture. Register containers with <code>AddContainer</code> (in the constructor or by overriding <code>ConfigureContainers</code>); their connection strings are injected into the host and EF Core migrations are ensured during host startup:</p>
-<pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
+<p><code>BaseWebApplicationFactory&lt;TEntryPoint&gt;</code> consumes the containers of a <code>ContainerHost</code> and serves as the xUnit fixture, so a single derived class acts as both the factory and the fixture. It injects the connection strings of the containers it consumes into the host and ensures EF Core migrations run during host startup:</p>
+<pre><code class="lang-csharp">public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebApplicationFactory&lt;Program&gt;(containerHost)
 {
-    public AppWebFactory()
-    {
-        AddContainer(new PostgresTestContainer());
-        AddContainer(new RabbitMqTestContainer());
-    }
-
     // ConfigureWebHost is sealed; override ConfigureCustomWebHost for extra host setup.
     protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =&gt;
         {
-            // Replace real services with test doubles
+            // Replace real services with test doubles for every test in the class
         });
     }
 }
 </code></pre>
 <p>Migrations run from a startup initializer placed at the front of the host's hosted-service list, so the schema exists <strong>before the application's own background services start</strong> (e.g. an outbox processor that polls the database immediately). It applies only migrations that are still pending and tolerates a concurrent migrator, so an application that already migrates itself on startup (for example <code>app.MigrateAsync()</code> in <code>Program.cs</code>) keeps ownership — the factory sees the schema is up to date and does nothing. Apps that don't self-migrate get migrated by the factory automatically. No test-only environment or production-code changes are required.</p>
 <h3 id="sharing-containers-across-the-assembly-containerhost">Sharing containers across the assembly (ContainerHost)</h3>
-<p>With factory-owned containers, the cost model is <em>containers × test classes</em>: twenty test classes with seven containers each means 140 container starts. A <code>ContainerHost</code> inverts that — the containers are registered <strong>once</strong>, on an assembly-level fixture, and every factory consumes them through a per-factory <strong>scope</strong>:</p>
+<p>Containers are registered <strong>once</strong>, on an assembly-level <code>ContainerHost</code> fixture, and every factory consumes them through a per-factory <strong>scope</strong> — so twenty test classes share one PostgreSQL server and one broker instead of starting twenty of each:</p>
 <pre><code class="lang-csharp">public sealed class AppContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
@@ -277,16 +292,15 @@ public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebAppli
 <li><code>CosmosTestContainerFixture</code> (in the <code>Vulthil.xUnit.Cosmos</code> package) starts one Cosmos emulator and gives each scope its own <strong>emulator database</strong>, recreated between tests. It provisions and resets each database through your <code>DbContext</code> resolved from the test host's DI container — so a context whose constructor takes more than its options just works — while a bare <code>DbContext</code> is used only to probe the emulator for readiness and to drop a scope's database on teardown.</li>
 <li>Any other <code>TestContainerFixtureWithConnectionString</code> returns a pass-through scope by default — consumers share the container's namespace; override <code>CreateScope</code> only when the service offers some other isolation unit.</li>
 <li>Containers start <strong>lazily</strong> on first use: a filtered run only pays for the containers its factories actually consume, and concurrent factories share one startup task per container.</li>
-<li>A factory that should not consume every host container overrides <code>ShouldUseContainer</code> (e.g. a factory that swaps the broker for the in-memory test harness consumes only the database container). Factory-owned <code>AddContainer</code> registrations work alongside host scopes.</li>
+<li>A factory that should not consume every host container overrides <code>ShouldUseContainer</code> (e.g. a factory that swaps the broker for the in-memory test harness consumes only the database container).</li>
 </ul>
 <p>The scope identifier defaults to the factory type name plus a random suffix (override <code>CreateScopeId()</code> to change it), so two classes using the same factory type still get distinct databases and virtual hosts.</p>
 <h3 id="mocking-outbound-http-dependencies">Mocking outbound HTTP dependencies</h3>
 <p>For a service that calls an external API through an <code>HttpClient</code> from <code>IHttpClientFactory</code>, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both <strong>typed</strong> clients (<code>AddHttpClient&lt;TClient, ...&gt;()</code>) and <strong>named</strong> clients (<code>AddHttpClient(&quot;name&quot;)</code>) are supported; for typed clients the implementation type does not need to be accessible:</p>
 <pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
 {
-    public AppWebFactory()
+    public AppWebFactory(AppContainerHost containerHost) : base(containerHost)
     {
-        AddContainer(new PostgresTestContainer());
         AddHttpMock&lt;IWeatherClient&gt;();   // typed:  AddHttpClient&lt;IWeatherClient, WeatherClient&gt;()
         AddHttpMock(&quot;inventory&quot;);        // named:  AddHttpClient(&quot;inventory&quot;)
     }
@@ -354,9 +368,9 @@ matching <code>CapturedMessage&lt;T&gt;</code> items — <code>.Message</code> i
 <code>IHost</code> kept in a field — leaves an earlier test's captured messages visible to the next one. Call <code>Clear()</code> from
 your per-test setup hook so each test starts from an empty capture log:</p>
 <pre><code class="lang-csharp">public sealed class OrdersTests(AppWebFactory factory)
-    : BaseIntegrationTestCase&lt;AppWebFactory, Program&gt;(factory), IClassFixture&lt;AppWebFactory&gt;
+    : BaseIntegrationTestCase&lt;Program&gt;(factory), IClassFixture&lt;AppWebFactory&gt;
 {
-    public override ValueTask Initialize()
+    protected override ValueTask Initialize()
     {
         Factory.Services.GetRequiredService&lt;ITestHarness&gt;().Clear();
         return base.Initialize();
@@ -382,7 +396,7 @@ a request consumer that throws surfaces as a <code>Messaging.Request.Failure</co
 <p>To exercise the production composition root without a broker, call <code>ReplaceTransportWithTestHarness()</code> from the
 test host's service hook (for example a <code>WebApplicationFactory</code>). It swaps the registered transport for the
 harness and leaves the rest of the application untouched — production code is not modified for tests:</p>
-<pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
+<pre><code class="lang-csharp">public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebApplicationFactory&lt;Program&gt;(containerHost)
 {
     protected override void ConfigureCustomWebHost(IWebHostBuilder builder)
         =&gt; builder.ConfigureServices(services =&gt; services.ReplaceTransportWithTestHarness());

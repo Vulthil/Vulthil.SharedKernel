@@ -377,3 +377,14 @@ FodyWeavers.xsd
 
 # DocFX generated output
 docs/_site/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
+
+# Claude Code personal settings (per-user MCP approvals and permissions) are never shared.
+.claude/settings.local.json
+
+# graft's Claude Code hook and status-line shims embed the installing machine's global npm path (an upstream
+# graft issue is open); `graft init` regenerates them per clone, so they stay local.
+.claude/helpers/graft-hooks.cjs
+.claude/helpers/graft-statusline.cjs

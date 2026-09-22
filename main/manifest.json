@@ -2420,20 +2420,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.yml\" sourcestartlinenumber=\"1\">Fluent configurator for database infrastructure including outbox processing. The DbContext itself\nis registered by provider-specific extensions (e.g. <code>UseNpgsql</code>) via the <xref href=\"Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator%601.OnConfigured(System.Action%7bVulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator%7b%600%7d%7d)\" data-throw-if-not-resolved=\"false\"></xref>\nhook, not by this class.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.DependencyInjection.yml",
       "output": {
         ".html": {
@@ -3765,6 +3751,16 @@
         },
         ".json": {
           "relative_path": "articles/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/transactional-messaging.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/transactional-messaging.html"
         }
       },
       "version": ""

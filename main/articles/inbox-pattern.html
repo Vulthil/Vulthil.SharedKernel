@@ -171,6 +171,9 @@ package <code>Vulthil.Messaging.Inbox.EntityFrameworkCore</code>, so you impleme
 </code></pre>
 <pre><code class="lang-csharp">builder.Services.AddRelationalInbox&lt;AppDbContext&gt;();
 </code></pre>
+<p><code>InboxMessage</code> is annotated so that <code>MessageId</code> is a bounded (256 characters) primary key by convention;
+<code>ApplyRelationalInbox()</code> applies that same mapping explicitly in <code>OnModelCreating</code>, which is where any customization
+of the table belongs (design-time tooling only sees the model built in code).</p>
 <p>The consumer and the store must share the same scoped <code>DbContext</code> instance (the default with <code>AddDbContext</code>), so the consumer's writes and the marker enlist in the same transaction. The consumer keeps calling <code>SaveChanges</code> as usual — the store owns the transaction, not <code>SaveChanges</code>. Add an EF Core migration for the <code>InboxMessage</code> table as you would for any entity.</p>
 <h3 id="filter-registration-order">Filter Registration Order</h3>
 <p><code>IConsumeFilter&lt;TMessage&gt;</code> instances compose in plain DI registration order — the first one resolved becomes the outermost — and nothing enforces a particular order between the inbox and other transactional filters, such as <code>Vulthil.Messaging.Outbox</code>'s transactional consumer filter. Register the idempotency filter <strong>before</strong> (outside) a transactional consumer filter:</p>
@@ -213,7 +216,7 @@ marker recorded + transaction committed  (atomic)
 </code></pre>
 <p>The filter hands the consumer invocation to <code>IIdempotencyStore.ProcessAsync</code>, which owns the whole unit. The relational store runs it inside <code>Database.CreateExecutionStrategy().ExecuteAsync</code>, so it works <strong>whether or not EF Core retries are enabled</strong> — there is no need to disable retries (e.g. <code>DisableRetry</code>). Under a retrying execution strategy a transient fault re-runs the unit — consumer included — on a cleared change tracker, which is consistent with at-least-once redelivery and the requirement that consumers be idempotent.</p>
 <h2 id="relationship-to-the-outbox">Relationship to the Outbox</h2>
-<p>The <a href="outbox-pattern.html">outbox</a> protects the <strong>producer</strong> side (write-atomicity of an event with the business change); the inbox protects the <strong>consumer</strong> side (duplicate-delivery). They are complementary: a producer-side outbox publishing at-least-once with a stable message id, plus a consumer-side inbox keyed on that id, gives end-to-end effectively-once delivery.</p>
+<p>The <a href="outbox-pattern.html">outbox</a> protects the <strong>producer</strong> side (write-atomicity of an event with the business change); the inbox protects the <strong>consumer</strong> side (duplicate-delivery). They are complementary: a producer-side outbox publishing at-least-once with a stable message id, plus a consumer-side inbox keyed on that id, gives end-to-end effectively-once delivery. The complete wiring for both sides is in <a href="transactional-messaging.html">Transactional Messaging</a>.</p>
 <h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Consumers whose side effects are not naturally idempotent (creating records, sending notifications, charging payments).</li>

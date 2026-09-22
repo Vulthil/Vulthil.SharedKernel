@@ -99,7 +99,8 @@ provider-specific stores.</p>
 </ul>
 <h2 id="pattern">Pattern</h2>
 <p>Implement <code>ISaveInboxMessages</code> on your <code>DbContext</code> <strong>once</strong>; the provider-specific entity configuration and store
-come from the store package. This mirrors how <code>Microsoft.EntityFrameworkCore</code> is the base for
+come from the store package. <code>InboxMessage</code> is annotated (<code>[Key]</code> and <code>[MaxLength(256)]</code> on <code>MessageId</code>) so it maps
+validly by convention; the store packages add the provider-specific layout on top. This mirrors how <code>Microsoft.EntityFrameworkCore</code> is the base for
 <code>Microsoft.EntityFrameworkCore.Relational</code> / <code>.Cosmos</code>.</p>
 <pre><code class="lang-csharp">public sealed class AppDbContext(DbContextOptions&lt;AppDbContext&gt; options) : DbContext(options), ISaveInboxMessages
 {

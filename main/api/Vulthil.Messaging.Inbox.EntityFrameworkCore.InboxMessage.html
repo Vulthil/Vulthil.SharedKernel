@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage" data-uid="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage" class="text-break">
-Class InboxMessage  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class InboxMessage  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -158,6 +158,12 @@ relational and Cosmos idempotency stores.</p>
 
 
 
+  <h2 id="Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>The entity is valid by convention alone: <a class="xref" href="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.html#Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage_MessageId">MessageId</a> is annotated as the bounded primary key, so a
+context that exposes the set without calling a store package's <code>Apply*Inbox</code> extension still builds a
+working model. The extensions add the provider-specific layout on top (for Cosmos, the dedicated container and
+partition key).</p>
+</div>
 
 
   <h2 class="section" id="properties">Properties
@@ -168,7 +174,7 @@ relational and Cosmos idempotency stores.</p>
 
   <h3 id="Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage_MessageId" data-uid="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.MessageId">
   MessageId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the idempotency key of the processed message. This is the primary key and is unique per processed message.</p>
@@ -176,7 +182,9 @@ relational and Cosmos idempotency stores.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public required string MessageId { get; init; }</code></pre>
+    <pre><code class="lang-csharp hljs">[Key]
+[MaxLength(256)]
+public required string MessageId { get; init; }</code></pre>
   </div>
 
 
@@ -200,7 +208,7 @@ relational and Cosmos idempotency stores.</p>
 
   <h3 id="Vulthil_Messaging_Inbox_EntityFrameworkCore_InboxMessage_ProcessedOnUtc" data-uid="Vulthil.Messaging.Inbox.EntityFrameworkCore.InboxMessage.ProcessedOnUtc">
   ProcessedOnUtc
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the UTC timestamp at which the message was processed.</p>
@@ -232,7 +240,7 @@ relational and Cosmos idempotency stores.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox.EntityFrameworkCore/InboxMessage.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

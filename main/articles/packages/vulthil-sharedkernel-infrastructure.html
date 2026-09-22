@@ -127,6 +127,9 @@ the DI wiring (<code>EnableOutboxProcessing</code>).</p>
         o.MaxRetries = 3;
     }));
 </code></pre>
+<p><code>UseOutboxStore&lt;TStore&gt;()</code> selects a custom <code>IOutboxStore</code>. The provider extensions propose theirs through
+<code>UseDefaultOutboxStore&lt;TStore&gt;()</code>, which only applies when nothing was selected, so the explicit selection wins in
+any order. The full outbox-plus-inbox wiring is in <a href="../transactional-messaging.html">Transactional Messaging</a>.</p>
 <p>Only one outbox-enabled <code>DbContext</code> is supported per host: the relay and retention background services resolve a
 single <code>IOutboxStore</code>, so a second <code>EnableOutboxProcessing()</code> call (on a different <code>DbContext</code>) throws an
 <code>InvalidOperationException</code> at startup instead of silently leaving the first context's messages unrelayed.</p>

@@ -114,7 +114,9 @@ separate store with a different (effectively-once) mechanism.</p>
 </code></pre>
 <pre><code class="lang-csharp">builder.Services.AddRelationalInbox&lt;AppDbContext&gt;();
 </code></pre>
-<p>The consumer and the store must resolve the same scoped <code>DbContext</code> instance (the default with <code>AddDbContext</code>).
+<p><code>InboxMessage</code> maps validly by convention (<code>MessageId</code> is an annotated 256-character key); <code>ApplyRelationalInbox()</code>
+makes that mapping explicit in <code>OnModelCreating</code>, where any table customization belongs.
+The consumer and the store must resolve the same scoped <code>DbContext</code> instance (the default with <code>AddDbContext</code>).
 Add an EF Core migration for the <code>InboxMessage</code> table as you would for any entity. See the
 <a href="../inbox-pattern.html">Inbox Pattern</a> article
 for details.</p>

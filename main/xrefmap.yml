@@ -8648,137 +8648,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Infrastructure.Data.DbContextTransactionWrapper.RollbackAsync
   nameWithType: DbContextTransactionWrapper.RollbackAsync
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1
-  name: DatabaseInfrastructureConfigurator<TDbContext>
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html
-  commentId: T:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1
-  name.vb: DatabaseInfrastructureConfigurator(Of TDbContext)
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext)
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext)
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.EnableOutboxProcessing(System.Action{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name: EnableOutboxProcessing(Action<OutboxProcessingOptions>?)
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_EnableOutboxProcessing_System_Action_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.EnableOutboxProcessing(System.Action{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name.vb: EnableOutboxProcessing(Action(Of OutboxProcessingOptions))
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.EnableOutboxProcessing(System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>?)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).EnableOutboxProcessing(System.Action(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions))
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.EnableOutboxProcessing(Action<OutboxProcessingOptions>?)
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).EnableOutboxProcessing(Action(Of OutboxProcessingOptions))
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.EnableOutboxProcessing*
-  name: EnableOutboxProcessing
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_EnableOutboxProcessing_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.EnableOutboxProcessing
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.EnableOutboxProcessing
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).EnableOutboxProcessing
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.EnableOutboxProcessing
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).EnableOutboxProcessing
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.HostApplicationBuilder
-  name: HostApplicationBuilder
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_HostApplicationBuilder
-  commentId: P:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.HostApplicationBuilder
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.HostApplicationBuilder
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).HostApplicationBuilder
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.HostApplicationBuilder
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).HostApplicationBuilder
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.HostApplicationBuilder*
-  name: HostApplicationBuilder
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_HostApplicationBuilder_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.HostApplicationBuilder
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.HostApplicationBuilder
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).HostApplicationBuilder
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.HostApplicationBuilder
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).HostApplicationBuilder
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OnConfigured(System.Action{Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{`0}})
-  name: OnConfigured(Action<IDatabaseInfrastructureConfigurator<TDbContext>>)
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OnConfigured_System_Action_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator__0___
-  commentId: M:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OnConfigured(System.Action{Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{`0}})
-  name.vb: OnConfigured(Action(Of IDatabaseInfrastructureConfigurator(Of TDbContext)))
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OnConfigured(System.Action<Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OnConfigured(System.Action(Of Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext)))
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OnConfigured(Action<IDatabaseInfrastructureConfigurator<TDbContext>>)
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OnConfigured(Action(Of IDatabaseInfrastructureConfigurator(Of TDbContext)))
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OnConfigured*
-  name: OnConfigured
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OnConfigured_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OnConfigured
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OnConfigured
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OnConfigured
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OnConfigured
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OnConfigured
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxOptionsAction
-  name: OutboxOptionsAction
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxOptionsAction
-  commentId: P:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxOptionsAction
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxOptionsAction
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxOptionsAction
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxOptionsAction
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxOptionsAction
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxOptionsAction*
-  name: OutboxOptionsAction
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxOptionsAction_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxOptionsAction
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxOptionsAction
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxOptionsAction
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxOptionsAction
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxOptionsAction
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxProcessingEnabled
-  name: OutboxProcessingEnabled
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxProcessingEnabled
-  commentId: P:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxProcessingEnabled
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxProcessingEnabled*
-  name: OutboxProcessingEnabled
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxProcessingEnabled_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxProcessingEnabled
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized
-  name: OutboxStoreCustomized
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxStoreCustomized
-  commentId: P:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized*
-  name: OutboxStoreCustomized
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_OutboxStoreCustomized_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.OutboxStoreCustomized
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).OutboxStoreCustomized
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.UseOutboxStore*
-  name: UseOutboxStore
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_UseOutboxStore_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.UseOutboxStore
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).UseOutboxStore
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).UseOutboxStore
-- uid: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.UseOutboxStore``1
-  name: UseOutboxStore<TStore>()
-  href: api/Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_DatabaseInfrastructureConfigurator_1_UseOutboxStore__1
-  commentId: M:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1.UseOutboxStore``1
-  name.vb: UseOutboxStore(Of TStore)()
-  fullName: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore<TStore>()
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator(Of TDbContext).UseOutboxStore(Of TStore)()
-  nameWithType: DatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore<TStore>()
-  nameWithType.vb: DatabaseInfrastructureConfigurator(Of TDbContext).UseOutboxStore(Of TStore)()
 - uid: Vulthil.SharedKernel.Infrastructure.DependencyInjection
   name: DependencyInjection
   href: api/Vulthil.SharedKernel.Infrastructure.DependencyInjection.html
@@ -8914,6 +8783,24 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
   nameWithType: IDatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled
   nameWithType.vb: IDatabaseInfrastructureConfigurator(Of TDbContext).OutboxProcessingEnabled
+- uid: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseDefaultOutboxStore*
+  name: UseDefaultOutboxStore
+  href: api/Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseDefaultOutboxStore_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseDefaultOutboxStore
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.UseDefaultOutboxStore
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext).UseDefaultOutboxStore
+  nameWithType: IDatabaseInfrastructureConfigurator<TDbContext>.UseDefaultOutboxStore
+  nameWithType.vb: IDatabaseInfrastructureConfigurator(Of TDbContext).UseDefaultOutboxStore
+- uid: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseDefaultOutboxStore``1
+  name: UseDefaultOutboxStore<TStore>()
+  href: api/Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseDefaultOutboxStore__1
+  commentId: M:Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseDefaultOutboxStore``1
+  name.vb: UseDefaultOutboxStore(Of TStore)()
+  fullName: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.UseDefaultOutboxStore<TStore>()
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext).UseDefaultOutboxStore(Of TStore)()
+  nameWithType: IDatabaseInfrastructureConfigurator<TDbContext>.UseDefaultOutboxStore<TStore>()
+  nameWithType.vb: IDatabaseInfrastructureConfigurator(Of TDbContext).UseDefaultOutboxStore(Of TStore)()
 - uid: Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseOutboxStore*
   name: UseOutboxStore
   href: api/Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator-1.html#Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator_1_UseOutboxStore_

@@ -133,6 +133,11 @@ within a batch is not preserved at all. Consumers that need ordering must not re
 }
 </code></pre>
 <p><code>BaseDbContext</code> owns the <code>OutboxMessages</code> <code>DbSet</code>; apply the provider-optimized mapping in <code>OnModelCreating</code> by calling your provider's extension — <code>ApplyNpgsqlOutbox()</code>, <code>ApplyMySqlOutbox()</code>, or <code>ApplyCosmosOutbox()</code> (as shown above). The agnostic <code>ApplyOutbox()</code> is available for custom providers.</p>
+<p>If the provider call is missing, the entity is still mapped by convention (<code>BaseDbContext</code> exposes the <code>DbSet</code> and
+<code>Id</code> is a conventional key), so the relay works — but without the provider's column types and pending-message index.
+The mapping deliberately stays in <code>OnModelCreating</code> rather than being applied by the host registration: design-time
+tooling (<code>dotnet ef migrations add</code>, a design-time factory) builds the context without the host's services, and EF
+Core 9+ refuses to migrate a model with pending changes, so the model must be complete in code.</p>
 <p>Because the <code>DbSet</code> lives on the base class, EF Core's convention discovery puts the <code>OutboxMessage</code> entity into
 <strong>every</strong> derived context's model — and its migrations — even when outbox processing is never enabled for that
 context. A context that will never use the outbox can opt out with <code>modelBuilder.Ignore&lt;OutboxMessage&gt;()</code> in its
@@ -255,6 +260,9 @@ registering it with <code>UseOutboxStore&lt;TStore&gt;()</code>:</p>
         o.BatchSize = 50;
     });
 </code></pre>
+<p>The provider extensions propose their store with <code>UseDefaultOutboxStore&lt;TStore&gt;()</code>, which only takes effect when no
+store was selected, so <code>UseOutboxStore</code> wins wherever it sits in the chain. A custom provider package should call the
+same method instead of overwriting the application's selection.</p>
 <h2 id="one-outbox-multiple-sinks">One outbox, multiple sinks</h2>
 <p>The relay engine is sink-agnostic: each <code>OutboxMessage</code> carries an <code>OutboxDestination</code> discriminator, and the
 <code>OutboxProcessor</code> routes it to the registered <code>IOutboxDispatcher</code> whose <code>Handles(destination)</code> is true. The
@@ -274,6 +282,7 @@ builder.AddMessaging(messaging =&gt;
     messaging.AddTransactionalOutbox();
 });
 </code></pre>
+<p>For the complete producer-plus-consumer wiring in one place, see <a href="transactional-messaging.html">Transactional Messaging</a>.</p>
 <p>Capture is relational-only (it enlists in the ambient transaction); the relay works on any provider. It is built on
 the general publish/send <strong>filter pipeline</strong> (<code>IPublishFilter</code>, registered via <code>AddPublishFilter&lt;T&gt;()</code>), which is the
 publish-side counterpart to consume filters and can host other cross-cutting concerns.</p>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Transactional Messaging | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Transactional Messaging | Vulthil.SharedKernel ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/transactional-messaging.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="transactional-messaging">Transactional Messaging</h1>
+
+<p>The <a href="outbox-pattern.html">outbox</a> protects the producer side and the <a href="inbox-pattern.html">inbox</a> protects the consumer
+side. Together they give end-to-end effectively-once delivery: a message captured in the outbox carries a stable
+message id from capture through relay, and the inbox deduplicates on that id. This page is the complete wiring for
+both, in one place; the pattern articles explain the guarantees.</p>
+<h2 id="the-four-seams">The four seams</h2>
+<p>Enabling both touches four seams. Each is a separate module with its own entry point, and that is deliberate:</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Entry point</th>
+<th>Call</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Database + outbox engine</td>
+<td><code>IHostApplicationBuilder</code></td>
+<td><code>AddDbContext&lt;AppDbContext&gt;(db =&gt; db.UseNpgsql(&quot;Default&quot;).EnableOutboxProcessing())</code></td>
+<td><code>Vulthil.SharedKernel.Infrastructure</code> + <code>.Npgsql</code></td>
+</tr>
+<tr>
+<td>Inbox store</td>
+<td><code>IServiceCollection</code></td>
+<td><code>AddRelationalInbox&lt;AppDbContext&gt;()</code></td>
+<td><code>Vulthil.Messaging.Inbox.Relational</code></td>
+</tr>
+<tr>
+<td>Message pipeline</td>
+<td><code>IMessagingConfigurator</code></td>
+<td><code>AddIdempotentInbox&lt;T&gt;()</code>, <code>AddTransactionalOutbox()</code>, <code>AddTransactionalConsumer&lt;T&gt;()</code></td>
+<td><code>Vulthil.Messaging.Inbox</code>, <code>Vulthil.Messaging.Outbox</code></td>
+</tr>
+<tr>
+<td>Schema</td>
+<td><code>ModelBuilder</code></td>
+<td><code>ApplyNpgsqlOutbox()</code>, <code>ApplyRelationalInbox()</code></td>
+<td>the provider packages</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The database registration is a <strong>host-level</strong> decision, so it lives on the host builder.</li>
+<li>The inbox store is a <strong>module-level</strong> registration on <code>IServiceCollection</code>, so the project that owns the
+<code>DbContext</code> can register it without owning the host's composition root. It deliberately does not depend on the
+SharedKernel database configurator, so it also serves a <code>DbContext</code> registered with plain <code>AddDbContext</code>.</li>
+<li>Idempotency and transactional consumption are <strong>per-message-type</strong> opt-ins, so they belong on the messaging
+configurator, next to the consumers they guard.</li>
+<li>The schema stays <strong>in code</strong>, in <code>OnModelCreating</code>, so the design-time model (<code>dotnet ef migrations add</code>, a
+design-time factory) and the runtime model are identical. A mapping applied from the host's service registrations
+would be invisible to a design-time factory, and EF Core 9+ refuses to migrate a model with pending changes.</li>
+</ul>
+<h2 id="1-the-dbcontext">1. The <code>DbContext</code></h2>
+<p>Derive from <code>BaseDbContext</code> (outbox set, <code>IUnitOfWork</code>), implement <code>ISaveInboxMessages</code> (inbox set), and apply both
+mappings:</p>
+<pre><code class="lang-csharp">public sealed class AppDbContext(DbContextOptions&lt;AppDbContext&gt; options)
+    : BaseDbContext(options), ISaveInboxMessages
+{
+    protected override Assembly? ConfigurationAssembly =&gt; typeof(AppDbContext).Assembly;
+
+    public DbSet&lt;Order&gt; Orders =&gt; Set&lt;Order&gt;();
+    public DbSet&lt;InboxMessage&gt; InboxMessages =&gt; Set&lt;InboxMessage&gt;();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyNpgsqlOutbox();
+        modelBuilder.ApplyRelationalInbox();
+    }
+}
+</code></pre>
+<p>Both entities are valid by convention alone — <code>OutboxMessage.Id</code> is a conventional key and <code>InboxMessage.MessageId</code>
+is annotated as a bounded key — so a missing <code>Apply*</code> call does not break the model. What the calls add is the
+provider-optimized layout: for PostgreSQL a <code>jsonb</code> content column and a filtered index over the pending rows, for
+MySQL a <code>longtext</code> column and a composite pending index, for Cosmos the dedicated inbox container and partition key.
+Without them the relay and the inbox still work, only on the conventional table.</p>
+<h2 id="2-the-host">2. The host</h2>
+<pre><code class="lang-csharp">var builder = WebApplication.CreateBuilder(args);
+
+// Database with the outbox engine (Vulthil.SharedKernel.Infrastructure + .Npgsql).
+builder.AddDbContext&lt;AppDbContext&gt;(db =&gt; db
+    .UseNpgsql(&quot;Default&quot;)
+    .EnableOutboxProcessing(o =&gt; o.Retention.Enabled = true));
+
+// Inbox store on the same context (Vulthil.Messaging.Inbox.Relational).
+builder.Services.AddRelationalInbox&lt;AppDbContext&gt;(o =&gt; o.Retention.Enabled = true);
+
+// Messaging (Vulthil.Messaging.RabbitMq, .Inbox, .Outbox).
+builder.AddMessaging(messaging =&gt;
+{
+    messaging.ConfigureQueue(&quot;orders&quot;, queue =&gt; queue.AddConsumer&lt;OrderPlacedConsumer&gt;());
+
+    messaging.AddIdempotentInbox&lt;OrderPlaced&gt;(context =&gt; context.Message.OrderId.ToString());
+    messaging.AddTransactionalConsumer&lt;OrderPlaced&gt;();
+    messaging.AddTransactionalOutbox();
+
+    messaging.UseRabbitMq(&quot;RabbitMq&quot;);
+});
+
+var app = builder.Build();
+await app.MigrateAsync&lt;AppDbContext&gt;();
+</code></pre>
+<p>Two orderings matter, both inside <code>AddMessaging</code>:</p>
+<ul>
+<li>Register <code>AddIdempotentInbox&lt;T&gt;()</code> <strong>before</strong> <code>AddTransactionalConsumer&lt;T&gt;()</code>, so the inbox owns the transaction
+and the transactional consumer joins it (see <a href="inbox-pattern.html#filter-registration-order">filter registration order</a>).</li>
+<li>Register any publish filter that must observe every outgoing message <strong>before</strong> <code>AddTransactionalOutbox()</code>,
+because capture short-circuits the publish pipeline (see <a href="outbox-pattern.html#transactional-bus-publish-outbox">the bus outbox</a>).</li>
+</ul>
+<p>Everything else is order-independent: <code>UseNpgsql</code>, <code>EnableOutboxProcessing</code>, and <code>UseOutboxStore</code> may be chained in
+any order, and <code>AddRelationalInbox</code> may run before or after <code>AddDbContext</code>.</p>
+<h2 id="3-the-schema">3. The schema</h2>
+<p>Add one migration for both tables and apply it on startup, as above:</p>
+<pre><code class="lang-bash">dotnet ef migrations add TransactionalMessaging
+</code></pre>
+<p>Cosmos has no migrations — call <code>EnsureCreatedAsync&lt;AppDbContext&gt;()</code> instead.</p>
+<h2 id="provider-variants">Provider variants</h2>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Database registration</th>
+<th>Outbox mapping</th>
+<th>Inbox store</th>
+<th>Inbox mapping</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PostgreSQL</td>
+<td><code>UseNpgsql</code></td>
+<td><code>ApplyNpgsqlOutbox()</code></td>
+<td><code>AddRelationalInbox&lt;T&gt;()</code></td>
+<td><code>ApplyRelationalInbox()</code></td>
+</tr>
+<tr>
+<td>MySQL</td>
+<td><code>UseMySql</code></td>
+<td><code>ApplyMySqlOutbox()</code></td>
+<td><code>AddRelationalInbox&lt;T&gt;()</code></td>
+<td><code>ApplyRelationalInbox()</code></td>
+</tr>
+<tr>
+<td>Cosmos DB</td>
+<td><code>UseCosmosDb</code></td>
+<td><code>ApplyCosmosOutbox()</code></td>
+<td><code>AddCosmosInbox&lt;T&gt;()</code></td>
+<td><code>ApplyCosmosInbox()</code></td>
+</tr>
+</tbody>
+</table>
+<p>On Cosmos the inbox is effectively-once and the outbox relay runs without a transaction; the pattern articles list
+the guarantee per store.</p>
+<h2 id="what-happens-at-runtime">What happens at runtime</h2>
+<ol>
+<li>A transactional command (<code>ITransactionalCommand&lt;T&gt;</code> with <code>AddTransactionalPipelineBehavior()</code>), or a consumer
+under the inbox or transactional filter, opens a transaction.</li>
+<li>Domain events raised during <code>SaveChanges</code> and messages published through the bus are captured as <code>OutboxMessage</code>
+rows in that transaction.</li>
+<li>On commit the relay wakes and publishes the rows to the broker, carrying the stable message id.</li>
+<li>On the consumer side the inbox filter checks the id, runs the consumer inside a transaction, and commits the
+marker together with the consumer's writes. A redelivery finds the marker and is skipped.</li>
+</ol>
+<p>The <code>samples/WebApi</code> project wires exactly this against PostgreSQL and RabbitMQ.</p>
+<h2 id="custom-stores">Custom stores</h2>
+<ul>
+<li><strong>Outbox</strong>: register your own <code>IOutboxStore</code> with <code>UseOutboxStore&lt;TStore&gt;()</code>. The provider extensions propose
+their store through <code>UseDefaultOutboxStore&lt;TStore&gt;()</code>, which only applies when nothing was selected, so your
+selection wins in any order. A custom provider package should use the same call.</li>
+<li><strong>Inbox</strong>: register your <code>IIdempotencyStore</code> and call <code>AddInboxCore()</code>; see
+<a href="inbox-pattern.html#custom-stores">custom stores</a>.</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/docs/articles/transactional-messaging.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -10,6 +10,8 @@ Conceptual documentation and guides for **Vulthil.SharedKernel**.
 - [CQRS & Pipeline Behaviors](cqrs-pipeline.md) – commands, queries, and cross-cutting concerns
 - [Messaging](messaging.md) – asynchronous messaging with queues and consumers
 - [Outbox Pattern](outbox-pattern.md) – reliable domain event delivery
+- [Inbox Pattern](inbox-pattern.md) – idempotent consumers
+- [Transactional Messaging](transactional-messaging.md) – outbox and inbox wired end-to-end
 - [Testing](testing.md) – unit and integration testing infrastructure
 
 ## Package Reference

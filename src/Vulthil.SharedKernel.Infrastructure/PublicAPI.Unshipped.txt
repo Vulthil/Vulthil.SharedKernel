@@ -3,3 +3,12 @@
 *REMOVED*Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.DbContext.get -> TDbContext!
 *REMOVED*Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GenericRepository(TDbContext! dbContext) -> void
 *REMOVED*virtual Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GetByIdAsync(TId! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TEntity?>!
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.EnableOutboxProcessing(System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>? optionsAction = null) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.HostApplicationBuilder.get -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OnConfigured(System.Action<Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!>! action) -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxOptionsAction.get -> System.Action<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>?
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxProcessingEnabled.get -> bool
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.OutboxStoreCustomized.get -> bool
+*REMOVED*Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator<TDbContext>.UseOutboxStore<TStore>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!
+Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>.UseDefaultOutboxStore<TStore>() -> Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext!>!

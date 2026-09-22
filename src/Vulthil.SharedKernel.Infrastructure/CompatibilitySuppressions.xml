@@ -3,7 +3,7 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3</Target>
+    <Target>T:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1</Target>
     <Left>lib/net10.0/Vulthil.SharedKernel.Infrastructure.dll</Left>
     <Right>lib/net10.0/Vulthil.SharedKernel.Infrastructure.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -11,6 +11,34 @@
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Infrastructure.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Infrastructure.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Vulthil.SharedKernel.Infrastructure.DatabaseInfrastructureConfigurator`1</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Infrastructure.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Infrastructure.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Infrastructure.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Infrastructure.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseDefaultOutboxStore``1</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Infrastructure.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Infrastructure.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator`1.UseDefaultOutboxStore``1</Target>
     <Left>lib/net9.0/Vulthil.SharedKernel.Infrastructure.dll</Left>
     <Right>lib/net9.0/Vulthil.SharedKernel.Infrastructure.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>

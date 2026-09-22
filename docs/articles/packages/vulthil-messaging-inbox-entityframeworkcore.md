@@ -15,7 +15,8 @@ You normally don't reference this directly. Install a store, which brings this t
 ## Pattern
 
 Implement `ISaveInboxMessages` on your `DbContext` **once**; the provider-specific entity configuration and store
-come from the store package. This mirrors how `Microsoft.EntityFrameworkCore` is the base for
+come from the store package. `InboxMessage` is annotated (`[Key]` and `[MaxLength(256)]` on `MessageId`) so it maps
+validly by convention; the store packages add the provider-specific layout on top. This mirrors how `Microsoft.EntityFrameworkCore` is the base for
 `Microsoft.EntityFrameworkCore.Relational` / `.Cosmos`.
 
 ```csharp

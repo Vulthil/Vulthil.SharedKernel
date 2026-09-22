@@ -34,6 +34,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 builder.Services.AddRelationalInbox<AppDbContext>();
 ```
 
+`InboxMessage` maps validly by convention (`MessageId` is an annotated 256-character key); `ApplyRelationalInbox()`
+makes that mapping explicit in `OnModelCreating`, where any table customization belongs.
 The consumer and the store must resolve the same scoped `DbContext` instance (the default with `AddDbContext`).
 Add an EF Core migration for the `InboxMessage` table as you would for any entity. See the
 [Inbox Pattern](../inbox-pattern.md) article

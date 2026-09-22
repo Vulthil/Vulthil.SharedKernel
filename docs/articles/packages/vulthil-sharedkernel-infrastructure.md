@@ -49,6 +49,10 @@ builder.AddDbContext<AppDbContext>(config => config
     }));
 ```
 
+`UseOutboxStore<TStore>()` selects a custom `IOutboxStore`. The provider extensions propose theirs through
+`UseDefaultOutboxStore<TStore>()`, which only applies when nothing was selected, so the explicit selection wins in
+any order. The full outbox-plus-inbox wiring is in [Transactional Messaging](../transactional-messaging.md).
+
 Only one outbox-enabled `DbContext` is supported per host: the relay and retention background services resolve a
 single `IOutboxStore`, so a second `EnableOutboxProcessing()` call (on a different `DbContext`) throws an
 `InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed.

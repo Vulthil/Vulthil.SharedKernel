@@ -59,6 +59,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 
 `BaseDbContext` owns the `OutboxMessages` `DbSet`; apply the provider-optimized mapping in `OnModelCreating` by calling your provider's extension — `ApplyNpgsqlOutbox()`, `ApplyMySqlOutbox()`, or `ApplyCosmosOutbox()` (as shown above). The agnostic `ApplyOutbox()` is available for custom providers.
 
+If the provider call is missing, the entity is still mapped by convention (`BaseDbContext` exposes the `DbSet` and
+`Id` is a conventional key), so the relay works — but without the provider's column types and pending-message index.
+The mapping deliberately stays in `OnModelCreating` rather than being applied by the host registration: design-time
+tooling (`dotnet ef migrations add`, a design-time factory) builds the context without the host's services, and EF
+Core 9+ refuses to migrate a model with pending changes, so the model must be complete in code.
+
 Because the `DbSet` lives on the base class, EF Core's convention discovery puts the `OutboxMessage` entity into
 **every** derived context's model — and its migrations — even when outbox processing is never enabled for that
 context. A context that will never use the outbox can opt out with `modelBuilder.Ignore<OutboxMessage>()` in its
@@ -138,6 +144,10 @@ config
     });
 ```
 
+The provider extensions propose their store with `UseDefaultOutboxStore<TStore>()`, which only takes effect when no
+store was selected, so `UseOutboxStore` wins wherever it sits in the chain. A custom provider package should call the
+same method instead of overwriting the application's selection.
+
 ## One outbox, multiple sinks
 
 The relay engine is sink-agnostic: each `OutboxMessage` carries an `OutboxDestination` discriminator, and the
@@ -162,6 +172,8 @@ builder.AddMessaging(messaging =>
     messaging.AddTransactionalOutbox();
 });
 ```
+
+For the complete producer-plus-consumer wiring in one place, see [Transactional Messaging](transactional-messaging.md).
 
 Capture is relational-only (it enlists in the ambient transaction); the relay works on any provider. It is built on
 the general publish/send **filter pipeline** (`IPublishFilter`, registered via `AddPublishFilter<T>()`), which is the

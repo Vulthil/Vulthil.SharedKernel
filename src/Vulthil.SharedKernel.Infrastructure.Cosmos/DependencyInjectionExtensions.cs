@@ -27,13 +27,10 @@ public static class DependencyInjectionExtensions
     {
         ArgumentNullException.ThrowIfNull(configurator);
 
+        configurator.UseDefaultOutboxStore<CosmosOutboxStore<TDbContext>>();
+
         configurator.OnConfigured(c =>
         {
-            if (c is not DatabaseInfrastructureConfigurator<TDbContext> { OutboxStoreCustomized: true })
-            {
-                c.UseOutboxStore<CosmosOutboxStore<TDbContext>>();
-            }
-
             c.HostApplicationBuilder.AddCosmosDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
         });
         return configurator;

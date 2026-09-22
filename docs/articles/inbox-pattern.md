@@ -109,6 +109,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 builder.Services.AddRelationalInbox<AppDbContext>();
 ```
 
+`InboxMessage` is annotated so that `MessageId` is a bounded (256 characters) primary key by convention;
+`ApplyRelationalInbox()` applies that same mapping explicitly in `OnModelCreating`, which is where any customization
+of the table belongs (design-time tooling only sees the model built in code).
+
 The consumer and the store must share the same scoped `DbContext` instance (the default with `AddDbContext`), so the consumer's writes and the marker enlist in the same transaction. The consumer keeps calling `SaveChanges` as usual — the store owns the transaction, not `SaveChanges`. Add an EF Core migration for the `InboxMessage` table as you would for any entity.
 
 ### Filter Registration Order
@@ -175,7 +179,7 @@ The filter hands the consumer invocation to `IIdempotencyStore.ProcessAsync`, wh
 
 ## Relationship to the Outbox
 
-The [outbox](outbox-pattern.md) protects the **producer** side (write-atomicity of an event with the business change); the inbox protects the **consumer** side (duplicate-delivery). They are complementary: a producer-side outbox publishing at-least-once with a stable message id, plus a consumer-side inbox keyed on that id, gives end-to-end effectively-once delivery.
+The [outbox](outbox-pattern.md) protects the **producer** side (write-atomicity of an event with the business change); the inbox protects the **consumer** side (duplicate-delivery). They are complementary: a producer-side outbox publishing at-least-once with a stable message id, plus a consumer-side inbox keyed on that id, gives end-to-end effectively-once delivery. The complete wiring for both sides is in [Transactional Messaging](transactional-messaging.md).
 
 ## When to Use
 

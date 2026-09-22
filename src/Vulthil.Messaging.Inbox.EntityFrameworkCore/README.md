@@ -12,4 +12,5 @@ You normally don't reference this directly — install a store instead:
 - **`Vulthil.Messaging.Inbox.Cosmos`** — Azure Cosmos DB, effectively-once.
 
 Both bring this package transitively. Implement `ISaveInboxMessages` on your `DbContext` once; the store and the
-provider-specific entity configuration come from the store package.
+provider-specific entity configuration come from the store package. `InboxMessage` is annotated so it maps validly
+by convention (`MessageId` is a 256-character primary key).

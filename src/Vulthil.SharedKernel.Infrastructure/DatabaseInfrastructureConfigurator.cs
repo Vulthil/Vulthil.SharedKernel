@@ -12,31 +12,28 @@ namespace Vulthil.SharedKernel.Infrastructure;
 /// is registered by provider-specific extensions (e.g. <c>UseNpgsql</c>) via the <see cref="OnConfigured"/>
 /// hook, not by this class.
 /// </summary>
-public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseInfrastructureConfigurator<TDbContext>
+internal sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseInfrastructureConfigurator<TDbContext>
     where TDbContext : DbContext
 {
+    private readonly List<Action<IDatabaseInfrastructureConfigurator<TDbContext>>> _configuredCallbacks = [];
+    private bool _outboxStoreSelected;
+
     /// <inheritdoc />
     public bool OutboxProcessingEnabled { get; private set; }
+
     /// <summary>
-    /// Gets the outbox processing options configuration action, or <see langword="null"/> if not set.
+    /// Gets the outbox processing options configuration action, or <see langword="null"/> if outbox processing was
+    /// not enabled.
     /// </summary>
     public Action<OutboxProcessingOptions>? OutboxOptionsAction { get; private set; }
-    /// <summary>
-    /// Gets a value indicating whether an outbox store was explicitly selected via
-    /// <see cref="UseOutboxStore{TStore}"/> while the configurator chain executed. Provider extensions read this
-    /// inside an <see cref="OnConfigured"/> callback to apply their store only as a default, so a store the user
-    /// chose is never overwritten regardless of chaining order.
-    /// </summary>
-    public bool OutboxStoreCustomized { get; private set; }
+
     /// <summary>
     /// Gets the outbox store type used by outbox processing. Defaults to the open generic
     /// <see cref="EntityFrameworkOutboxStore{TContext}"/> (closed over the context type at registration); a provider
-    /// supplies a closed store type via <see cref="UseOutboxStore{TStore}"/>.
+    /// proposes a closed store type via <see cref="UseDefaultOutboxStore{TStore}"/> and the application overrides
+    /// both via <see cref="UseOutboxStore{TStore}"/>.
     /// </summary>
-    internal Type OutboxStoreType { get; private set; } = typeof(EntityFrameworkOutboxStore<>);
-
-    private readonly List<Action<IDatabaseInfrastructureConfigurator<TDbContext>>> _configuredCallbacks = [];
-    private bool _runningConfiguredCallbacks;
+    public Type OutboxStoreType { get; private set; } = typeof(EntityFrameworkOutboxStore<>);
 
     /// <inheritdoc />
     public IHostApplicationBuilder HostApplicationBuilder { get; }
@@ -47,7 +44,7 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     /// should adopt this lifetime so they cannot outlive (or be outlived by) the context they depend on.
     /// Falls back to <see cref="ServiceLifetime.Scoped"/> if the DbContext has not yet been registered.
     /// </summary>
-    internal ServiceLifetime DbContextLifetime
+    public ServiceLifetime DbContextLifetime
         => DependencyInjection.FindLifetime(HostApplicationBuilder.Services, typeof(TDbContext));
 
     /// <summary>
@@ -59,13 +56,10 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     /// the root provider, and vice versa). Falls back to <see cref="ServiceLifetime.Scoped"/> if the
     /// options have not yet been registered.
     /// </summary>
-    internal ServiceLifetime DbContextOptionsLifetime
+    public ServiceLifetime DbContextOptionsLifetime
         => DependencyInjection.FindLifetime(HostApplicationBuilder.Services, typeof(DbContextOptions<TDbContext>));
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DatabaseInfrastructureConfigurator{TDbContext}"/> class.
-    /// </summary>
-    internal DatabaseInfrastructureConfigurator(IHostApplicationBuilder hostApplicationBuilder)
+    public DatabaseInfrastructureConfigurator(IHostApplicationBuilder hostApplicationBuilder)
     {
         HostApplicationBuilder = hostApplicationBuilder;
     }
@@ -74,7 +68,7 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     public IDatabaseInfrastructureConfigurator<TDbContext> EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null)
     {
         OutboxProcessingEnabled = true;
-        OutboxOptionsAction = optionsAction ??= (o) => { };
+        OutboxOptionsAction = optionsAction ?? (static _ => { });
 
         return this;
     }
@@ -84,9 +78,18 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
         where TStore : class, IOutboxStore
     {
         OutboxStoreType = typeof(TStore);
-        if (!_runningConfiguredCallbacks)
+        _outboxStoreSelected = true;
+
+        return this;
+    }
+
+    /// <inheritdoc/>
+    public IDatabaseInfrastructureConfigurator<TDbContext> UseDefaultOutboxStore<TStore>()
+        where TStore : class, IOutboxStore
+    {
+        if (!_outboxStoreSelected)
         {
-            OutboxStoreCustomized = true;
+            OutboxStoreType = typeof(TStore);
         }
 
         return this;
@@ -107,19 +110,11 @@ public sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabaseIn
     /// DbContext options. The configuration uses <see cref="DbContextOptionsLifetime"/> so it matches
     /// the lifetime EF Core has chosen for the options themselves.
     /// </summary>
-    internal void FinalizeConfiguration()
+    public void FinalizeConfiguration()
     {
-        _runningConfiguredCallbacks = true;
-        try
+        foreach (var callback in _configuredCallbacks)
         {
-            foreach (var callback in _configuredCallbacks)
-            {
-                callback(this);
-            }
-        }
-        finally
-        {
-            _runningConfiguredCallbacks = false;
+            callback(this);
         }
 
         if (OutboxProcessingEnabled)

@@ -42,13 +42,10 @@ public static class DependencyInjectionExtensions
     {
         ArgumentNullException.ThrowIfNull(configurator);
 
+        configurator.UseDefaultOutboxStore<NpgsqlOutboxStore<TDbContext>>();
+
         configurator.OnConfigured(c =>
         {
-            if (c is not DatabaseInfrastructureConfigurator<TDbContext> { OutboxStoreCustomized: true })
-            {
-                c.UseOutboxStore<NpgsqlOutboxStore<TDbContext>>();
-            }
-
             c.HostApplicationBuilder.AddNpgsqlDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
 
             if (c.OutboxProcessingEnabled)

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class MessageHandlerFactory&lt;THandler&gt; | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Base  for a transport that builds its dispatch handlers in open-generic methods. Override  and : the consumer and message types are statically known there, so the receive context and the consume pipeline compose with full typing. This class binds the CLR types of each registration to those overrides through generic binders cached per consumer/message shape — the reflection cost is paid once per shape — and pairs every handler with the  of the registration it was built for. Implement  directly instead when handlers are not built generically.">
+      <meta name="description" content="Base  for a transport that builds its dispatch handlers in open-generic methods. Override  and : the consumer and message types are statically known there, so the receive context and the consume pipeline compose with full typing. This class binds the CLR types of each registration to those overrides through generic binders cached per consumer/message shape, so the reflection cost is paid once per shape. Implement  directly instead when handlers are not built generically.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Transport_MessageHandlerFactory_1" data-uid="Vulthil.Messaging.Transport.MessageHandlerFactory`1" class="text-break">
-Class MessageHandlerFactory&lt;THandler&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L18"><i class="bi bi-code-slash"></i></a>
+Class MessageHandlerFactory&lt;THandler&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -102,8 +102,7 @@ open-generic methods. Override <a class="xref" href="Vulthil.Messaging.Transport
 <a class="xref" href="Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateRequestConsumerHandler__3_Vulthil_Messaging_Queues_RetryPolicyDefinition_">CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;(RetryPolicyDefinition?)</a>: the consumer and message types
 are statically known there, so the receive context and the consume pipeline compose with full typing. This
 class binds the CLR types of each registration to those overrides through generic binders cached per
-consumer/message shape — the reflection cost is paid once per shape — and pairs every handler with the
-<a class="xref" href="Vulthil.Messaging.Transport.HandlerKind.html">HandlerKind</a> of the registration it was built for. Implement
+consumer/message shape, so the reflection cost is paid once per shape. Implement
 <a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> directly instead when handlers are not built generically.</p>
 </div>
   <div class="markdown conceptual"></div>
@@ -183,7 +182,7 @@ consumer/message shape — the reflection cost is paid once per shape — and pa
 
   <h3 id="Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateConsumerHandler__2_Vulthil_Messaging_Queues_RetryPolicyDefinition_" data-uid="Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateConsumerHandler``2(Vulthil.Messaging.Queues.RetryPolicyDefinition)">
   CreateConsumerHandler&lt;TConsumer, TMessage&gt;(RetryPolicyDefinition?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds the handler for a one-way <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IConsumer-1.html">IConsumer&lt;TMessage&gt;</a> registration. Called once per registration
@@ -233,7 +232,7 @@ first failure.</p>
 
   <h3 id="Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateRequestConsumerHandler__3_Vulthil_Messaging_Queues_RetryPolicyDefinition_" data-uid="Vulthil.Messaging.Transport.MessageHandlerFactory`1.CreateRequestConsumerHandler``3(Vulthil.Messaging.Queues.RetryPolicyDefinition)">
   CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;(RetryPolicyDefinition?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds the handler for a request/reply <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IRequestConsumer-2.html">IRequestConsumer&lt;TRequest, TResponse&gt;</a> registration.
@@ -286,7 +285,7 @@ consumer replies with an RPC fault instead of retrying.</p>
 
   <h3 id="Vulthil_Messaging_Transport_MessageHandlerFactory_1_ForConsumer_System_Type_System_Type_Vulthil_Messaging_Queues_RetryPolicyDefinition_" data-uid="Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForConsumer(System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)">
   ForConsumer(Type, Type, RetryPolicyDefinition?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds a handler for a one-way consumer.</p>
@@ -294,7 +293,7 @@ consumer replies with an RPC fault instead of retrying.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public HandlerEntry&lt;THandler&gt; ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)</code></pre>
+    <pre><code class="lang-csharp hljs">public THandler ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -312,8 +311,8 @@ consumer replies with an RPC fault instead of retrying.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.Messaging.Transport.HandlerEntry-1.html">HandlerEntry</a>&lt;THandler&gt;</dt>
-    <dd><p>The handler paired with <a class="xref" href="Vulthil.Messaging.Transport.HandlerKind.html#Vulthil_Messaging_Transport_HandlerKind_Consumer">Consumer</a>.</p>
+    <dt><span class="xref">THandler</span></dt>
+    <dd><p>The handler that runs the consumer for a delivered message.</p>
 </dd>
   </dl>
 
@@ -337,7 +336,7 @@ consumer replies with an RPC fault instead of retrying.</p>
 
   <h3 id="Vulthil_Messaging_Transport_MessageHandlerFactory_1_ForRequestConsumer_System_Type_System_Type_System_Type_Vulthil_Messaging_Queues_RetryPolicyDefinition_" data-uid="Vulthil.Messaging.Transport.MessageHandlerFactory`1.ForRequestConsumer(System.Type,System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)">
   ForRequestConsumer(Type, Type, Type, RetryPolicyDefinition?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds a handler for a request/reply consumer.</p>
@@ -345,7 +344,7 @@ consumer replies with an RPC fault instead of retrying.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public HandlerEntry&lt;THandler&gt; ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)</code></pre>
+    <pre><code class="lang-csharp hljs">public THandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -366,8 +365,8 @@ consumer replies with an RPC fault instead of retrying.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.Messaging.Transport.HandlerEntry-1.html">HandlerEntry</a>&lt;THandler&gt;</dt>
-    <dd><p>The handler paired with <a class="xref" href="Vulthil.Messaging.Transport.HandlerKind.html#Vulthil_Messaging_Transport_HandlerKind_RequestConsumer">RequestConsumer</a>.</p>
+    <dt><span class="xref">THandler</span></dt>
+    <dd><p>The handler that runs the request consumer for a delivered request and replies.</p>
 </dd>
   </dl>
 
@@ -391,7 +390,7 @@ consumer replies with an RPC fault instead of retrying.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L18" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/MessageHandlerFactory.cs/#L17" class="edit-link">Edit this page</a>
         </div>
 
 

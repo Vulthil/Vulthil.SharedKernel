@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Delegate PipelineDelegate&lt;TResponse&gt; | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Represents the next step in the request pipeline.">
+      <meta name="description" content="Represents the next step in the request pipeline. The token is required so a behavior cannot drop the caller&#39;s cancellation by accident: pass the token it received (or one linked to it) to keep cancellation flowing to the handler.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Application_Pipeline_PipelineDelegate_1" data-uid="Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate`1" class="text-break">
-Delegate PipelineDelegate&lt;TResponse&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Delegate PipelineDelegate&lt;TResponse&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,14 @@ Delegate PipelineDelegate&lt;TResponse&gt;  <a class="header-action link-seconda
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Application.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Represents the next step in the request pipeline.</p>
+  <div class="markdown summary"><p>Represents the next step in the request pipeline. The token is required so a behavior cannot drop the
+caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation
+flowing to the handler.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public delegate Task&lt;TResponse&gt; PipelineDelegate&lt;TResponse&gt;(CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">public delegate Task&lt;TResponse&gt; PipelineDelegate&lt;TResponse&gt;(CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -115,7 +117,7 @@ Delegate PipelineDelegate&lt;TResponse&gt;  <a class="header-action link-seconda
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResponse&gt;</dt>
-    <dd>Represents the next step in the request pipeline.</dd>
+    <dd>Represents the next step in the request pipeline. The token is required so a behavior cannot drop the caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation flowing to the handler.</dd>
   </dl>
 
   <h4 class="section">Type Parameters</h4>
@@ -145,7 +147,7 @@ Delegate PipelineDelegate&lt;TResponse&gt;  <a class="header-action link-seconda
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

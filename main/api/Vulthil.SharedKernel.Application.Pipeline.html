@@ -109,12 +109,16 @@ Delegates
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate.html">DomainEventPipelineDelegate</a></dt>
-      <dd><p>Represents the next step in the domain event pipeline.</p>
+      <dd><p>Represents the next step in the domain event pipeline. The token is required so a behavior cannot drop the
+caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation
+flowing to the handlers.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate-1.html">PipelineDelegate&lt;TResponse&gt;</a></dt>
-      <dd><p>Represents the next step in the request pipeline.</p>
+      <dd><p>Represents the next step in the request pipeline. The token is required so a behavior cannot drop the
+caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation
+flowing to the handler.</p>
 </dd>
     </dl>
 

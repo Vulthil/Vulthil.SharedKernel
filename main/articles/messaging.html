@@ -872,7 +872,7 @@ alone — the RabbitMQ transport uses nothing more.</p>
 <code>MessageHandlerFactory&lt;THandler&gt;</code> and override its two generic methods. The consumer and message
 types are statically known there, so that is where you compose the filter pipeline and build the
 receive context. The base class binds each registration's CLR types to your overrides (cached per
-consumer/message shape) and pairs every handler with its <code>HandlerKind</code>:</p>
+consumer/message shape):</p>
 <pre><code class="lang-csharp">public delegate Task Dispatch(IServiceProvider scope, object message, MessageEnvelope envelope, CancellationToken ct);
 
 internal sealed class MyHandlerFactory : MessageHandlerFactory&lt;Dispatch&gt;

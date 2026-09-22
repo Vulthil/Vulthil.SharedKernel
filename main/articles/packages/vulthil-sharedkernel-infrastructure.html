@@ -130,14 +130,6 @@ the DI wiring (<code>EnableOutboxProcessing</code>).</p>
 <p>Only one outbox-enabled <code>DbContext</code> is supported per host: the relay and retention background services resolve a
 single <code>IOutboxStore</code>, so a second <code>EnableOutboxProcessing()</code> call (on a different <code>DbContext</code>) throws an
 <code>InvalidOperationException</code> at startup instead of silently leaving the first context's messages unrelayed.</p>
-<h3 id="generic-repository">Generic repository</h3>
-<pre><code class="lang-csharp">public sealed class UserRepository(AppDbContext db)
-    : GenericRepository&lt;AppDbContext, User, UserId&gt;(db)
-{
-    public Task&lt;User?&gt; GetByEmailAsync(string email, CancellationToken ct) =&gt;
-        DbContext.Users.FirstOrDefaultAsync(u =&gt; u.Email == email, ct);
-}
-</code></pre>
 <h3 id="database-initialization">Database initialization</h3>
 <pre><code class="lang-csharp">// Apply pending migrations on startup
 await app.MigrateAsync&lt;AppDbContext&gt;();

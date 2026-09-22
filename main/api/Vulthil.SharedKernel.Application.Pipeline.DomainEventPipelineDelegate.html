@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Delegate DomainEventPipelineDelegate | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Represents the next step in the domain event pipeline.">
+      <meta name="description" content="Represents the next step in the domain event pipeline. The token is required so a behavior cannot drop the caller&#39;s cancellation by accident: pass the token it received (or one linked to it) to keep cancellation flowing to the handlers.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Application_Pipeline_DomainEventPipelineDelegate" data-uid="Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate" class="text-break">
-Delegate DomainEventPipelineDelegate  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L35"><i class="bi bi-code-slash"></i></a>
+Delegate DomainEventPipelineDelegate  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,14 @@ Delegate DomainEventPipelineDelegate  <a class="header-action link-secondary" ti
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Application.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Represents the next step in the domain event pipeline.</p>
+  <div class="markdown summary"><p>Represents the next step in the domain event pipeline. The token is required so a behavior cannot drop the
+caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation
+flowing to the handlers.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public delegate Task DomainEventPipelineDelegate(CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">public delegate Task DomainEventPipelineDelegate(CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -115,7 +117,7 @@ Delegate DomainEventPipelineDelegate  <a class="header-action link-secondary" ti
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
-    <dd>Represents the next step in the domain event pipeline.</dd>
+    <dd>Represents the next step in the domain event pipeline. The token is required so a behavior cannot drop the caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation flowing to the handlers.</dd>
   </dl>
 
 
@@ -139,7 +141,7 @@ Delegate DomainEventPipelineDelegate  <a class="header-action link-secondary" ti
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L35" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Pipeline/IPipelineHandler.cs/#L39" class="edit-link">Edit this page</a>
         </div>
 
 

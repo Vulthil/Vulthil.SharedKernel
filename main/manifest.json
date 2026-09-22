@@ -1272,20 +1272,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.Messaging.Transport.HandlerEntry-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.Messaging.Transport.HandlerEntry-1.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.Messaging.Transport.HandlerEntry<THandler>",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.HandlerEntry-1.yml\" sourcestartlinenumber=\"1\">Pairs a transport-specific dispatch handler with the consumer contract it implements. Returned by\n<xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> so <xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref> can\nenforce request-consumer uniqueness without inspecting the opaque <code class=\"typeparamref\">THandler</code> value.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Transport.HandlerKind.yml",
       "output": {
         ".html": {
@@ -1310,7 +1296,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.IMessageHandlerFactory-1.yml\" sourcestartlinenumber=\"1\">Builds transport-specific dispatch handlers from the open-generic consumer/message type pairs collected\nduring registration. A transport implements this to bind a registration to its own delivery closure;\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref> calls it while assembling execution plans.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.IMessageHandlerFactory-1.yml\" sourcestartlinenumber=\"1\">Builds transport-specific dispatch handlers from the open-generic consumer/message type pairs collected\nduring registration. A transport implements this to bind a registration to its own delivery closure;\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref> calls it while assembling execution plans and already knows\nwhich consumer contract each registration implements, so the handler itself carries no such tag.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1464,7 +1450,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.yml\" sourcestartlinenumber=\"1\">Base <xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> for a transport that builds its dispatch handlers in\nopen-generic methods. Override <xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateConsumerHandler%60%602(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref> and\n<xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateRequestConsumerHandler%60%603(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref>: the consumer and message types\nare statically known there, so the receive context and the consume pipeline compose with full typing. This\nclass binds the CLR types of each registration to those overrides through generic binders cached per\nconsumer/message shape — the reflection cost is paid once per shape — and pairs every handler with the\n<xref href=\"Vulthil.Messaging.Transport.HandlerKind\" data-throw-if-not-resolved=\"false\"></xref> of the registration it was built for. Implement\n<xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> directly instead when handlers are not built generically.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.yml\" sourcestartlinenumber=\"1\">Base <xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> for a transport that builds its dispatch handlers in\nopen-generic methods. Override <xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateConsumerHandler%60%602(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref> and\n<xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateRequestConsumerHandler%60%603(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref>: the consumer and message types\nare statically known there, so the receive context and the consume pipeline compose with full typing. This\nclass binds the CLR types of each registration to those overrides through generic binders cached per\nconsumer/message shape, so the reflection cost is paid once per shape. Implement\n<xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> directly instead when handlers are not built generically.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1549,20 +1535,6 @@
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.PublishKind",
       "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishKind.yml\" sourcestartlinenumber=\"1\">Identifies whether an outgoing message is being broadcast over an exchange (publish) or delivered to a single\naddressable destination (send).</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.Messaging.Transport.PublishPipelineFactory.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.Messaging.Transport.PublishPipelineFactory.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.Messaging.Transport.PublishPipelineFactory",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishPipelineFactory.yml\" sourcestartlinenumber=\"1\">Composes the registered <xref href=\"Vulthil.Messaging.Transport.IPublishFilter\" data-throw-if-not-resolved=\"false\"></xref> instances around a terminal delegate (the transport send).\nThe filtering publisher/send-endpoint call this in their publish path to wrap the transport with the configured\nmiddleware.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2192,7 +2164,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate.yml\" sourcestartlinenumber=\"1\">Represents the next step in the domain event pipeline.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate.yml\" sourcestartlinenumber=\"1\">Represents the next step in the domain event pipeline. The token is required so a behavior cannot drop the\ncaller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation\nflowing to the handlers.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2234,7 +2206,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate-1.yml\" sourcestartlinenumber=\"1\">Represents the next step in the request pipeline.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate-1.yml\" sourcestartlinenumber=\"1\">Represents the next step in the request pipeline. The token is required so a behavior cannot drop the\ncaller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation\nflowing to the handler.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2696,34 +2668,6 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Infrastructure.Relational",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.yml\" sourcestartlinenumber=\"1\">Base repository providing common data access operations for aggregate roots.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.SharedKernel.Infrastructure.Repository.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.SharedKernel.Infrastructure.Repository",
       "Summary": null
     },
     {

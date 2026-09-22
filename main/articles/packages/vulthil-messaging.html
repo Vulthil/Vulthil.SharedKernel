@@ -158,8 +158,7 @@ whether a key is one of them — a custom header must not reuse these keys.</p>
 <p>A transport turns each consumer registration into its own dispatch handler through an <code>IMessageHandlerFactory&lt;THandler&gt;</code>.
 Derive from <code>Vulthil.Messaging.Transport.MessageHandlerFactory&lt;THandler&gt;</code> and override its two generic methods
 (<code>CreateConsumerHandler&lt;TConsumer, TMessage&gt;</code> and <code>CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;</code>): the base
-class binds every registration's CLR types to those overrides, caches the binding per consumer/message shape, and pairs each
-handler with its <code>HandlerKind</code>, so the closure is written once with the types statically known. See
+class binds every registration's CLR types to those overrides, caches the binding per consumer/message shape, so the closure is written once with the types statically known. See
 <a href="../messaging.html#writing-a-custom-transport">Messaging — Writing a Custom Transport</a>.</p>
 
 </article>

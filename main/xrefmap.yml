@@ -3872,68 +3872,6 @@ references:
   fullName.vb: Vulthil.Messaging.Transport.ConsumePipelineFactory.Build(Of TMessage)(System.IServiceProvider, Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate(Of TMessage))
   nameWithType: ConsumePipelineFactory.Build<TMessage>(IServiceProvider, ConsumeDelegate<TMessage>)
   nameWithType.vb: ConsumePipelineFactory.Build(Of TMessage)(IServiceProvider, ConsumeDelegate(Of TMessage))
-- uid: Vulthil.Messaging.Transport.HandlerEntry`1
-  name: HandlerEntry<THandler>
-  href: api/Vulthil.Messaging.Transport.HandlerEntry-1.html
-  commentId: T:Vulthil.Messaging.Transport.HandlerEntry`1
-  name.vb: HandlerEntry(Of THandler)
-  fullName: Vulthil.Messaging.Transport.HandlerEntry<THandler>
-  fullName.vb: Vulthil.Messaging.Transport.HandlerEntry(Of THandler)
-  nameWithType: HandlerEntry<THandler>
-  nameWithType.vb: HandlerEntry(Of THandler)
-- uid: Vulthil.Messaging.Transport.HandlerEntry`1.#ctor(`0,Vulthil.Messaging.Transport.HandlerKind)
-  name: HandlerEntry(THandler, HandlerKind)
-  href: api/Vulthil.Messaging.Transport.HandlerEntry-1.html#Vulthil_Messaging_Transport_HandlerEntry_1__ctor__0_Vulthil_Messaging_Transport_HandlerKind_
-  commentId: M:Vulthil.Messaging.Transport.HandlerEntry`1.#ctor(`0,Vulthil.Messaging.Transport.HandlerKind)
-  name.vb: New(THandler, HandlerKind)
-  fullName: Vulthil.Messaging.Transport.HandlerEntry<THandler>.HandlerEntry(THandler, Vulthil.Messaging.Transport.HandlerKind)
-  fullName.vb: Vulthil.Messaging.Transport.HandlerEntry(Of THandler).New(THandler, Vulthil.Messaging.Transport.HandlerKind)
-  nameWithType: HandlerEntry<THandler>.HandlerEntry(THandler, HandlerKind)
-  nameWithType.vb: HandlerEntry(Of THandler).New(THandler, HandlerKind)
-- uid: Vulthil.Messaging.Transport.HandlerEntry`1.#ctor*
-  name: HandlerEntry
-  href: api/Vulthil.Messaging.Transport.HandlerEntry-1.html#Vulthil_Messaging_Transport_HandlerEntry_1__ctor_
-  commentId: Overload:Vulthil.Messaging.Transport.HandlerEntry`1.#ctor
-  isSpec: "True"
-  name.vb: New
-  fullName: Vulthil.Messaging.Transport.HandlerEntry<THandler>.HandlerEntry
-  fullName.vb: Vulthil.Messaging.Transport.HandlerEntry(Of THandler).New
-  nameWithType: HandlerEntry<THandler>.HandlerEntry
-  nameWithType.vb: HandlerEntry(Of THandler).New
-- uid: Vulthil.Messaging.Transport.HandlerEntry`1.Handler
-  name: Handler
-  href: api/Vulthil.Messaging.Transport.HandlerEntry-1.html#Vulthil_Messaging_Transport_HandlerEntry_1_Handler
-  commentId: P:Vulthil.Messaging.Transport.HandlerEntry`1.Handler
-  fullName: Vulthil.Messaging.Transport.HandlerEntry<THandler>.Handler
-  fullName.vb: Vulthil.Messaging.Transport.HandlerEntry(Of THandler).Handler
-  nameWithType: HandlerEntry<THandler>.Handler
-  nameWithType.vb: HandlerEntry(Of THandler).Handler
-- uid: Vulthil.Messaging.Transport.HandlerEntry`1.Handler*
-  name: Handler
-  href: api/Vulthil.Messaging.Transport.HandlerEntry-1.html#Vulthil_Messaging_Transport_HandlerEntry_1_Handler_
-  commentId: Overload:Vulthil.Messaging.Transport.HandlerEntry`1.Handler
-  isSpec: "True"
-  fullName: Vulthil.Messaging.Transport.HandlerEntry<THandler>.Handler
-  fullName.vb: Vulthil.Messaging.Transport.HandlerEntry(Of THandler).Handler
-  nameWithType: HandlerEntry<THandler>.Handler
-  nameWithType.vb: HandlerEntry(Of THandler).Handler
-- uid: Vulthil.Messaging.Transport.HandlerEntry`1.Kind
-  name: Kind
-  href: api/Vulthil.Messaging.Transport.HandlerEntry-1.html#Vulthil_Messaging_Transport_HandlerEntry_1_Kind
-  commentId: P:Vulthil.Messaging.Transport.HandlerEntry`1.Kind
-  fullName: Vulthil.Messaging.Transport.HandlerEntry<THandler>.Kind
-  fullName.vb: Vulthil.Messaging.Transport.HandlerEntry(Of THandler).Kind
-  nameWithType: HandlerEntry<THandler>.Kind
-  nameWithType.vb: HandlerEntry(Of THandler).Kind
-- uid: Vulthil.Messaging.Transport.HandlerEntry`1.Kind*
-  name: Kind
-  href: api/Vulthil.Messaging.Transport.HandlerEntry-1.html#Vulthil_Messaging_Transport_HandlerEntry_1_Kind_
-  commentId: Overload:Vulthil.Messaging.Transport.HandlerEntry`1.Kind
-  isSpec: "True"
-  fullName: Vulthil.Messaging.Transport.HandlerEntry<THandler>.Kind
-  fullName.vb: Vulthil.Messaging.Transport.HandlerEntry(Of THandler).Kind
-  nameWithType: HandlerEntry<THandler>.Kind
-  nameWithType.vb: HandlerEntry(Of THandler).Kind
 - uid: Vulthil.Messaging.Transport.HandlerKind
   name: HandlerKind
   href: api/Vulthil.Messaging.Transport.HandlerKind.html
@@ -5430,25 +5368,6 @@ references:
   commentId: F:Vulthil.Messaging.Transport.PublishKind.Send
   fullName: Vulthil.Messaging.Transport.PublishKind.Send
   nameWithType: PublishKind.Send
-- uid: Vulthil.Messaging.Transport.PublishPipelineFactory
-  name: PublishPipelineFactory
-  href: api/Vulthil.Messaging.Transport.PublishPipelineFactory.html
-  commentId: T:Vulthil.Messaging.Transport.PublishPipelineFactory
-  fullName: Vulthil.Messaging.Transport.PublishPipelineFactory
-  nameWithType: PublishPipelineFactory
-- uid: Vulthil.Messaging.Transport.PublishPipelineFactory.Build(System.IServiceProvider,Vulthil.Messaging.Transport.PublishFilterDelegate)
-  name: Build(IServiceProvider, PublishFilterDelegate)
-  href: api/Vulthil.Messaging.Transport.PublishPipelineFactory.html#Vulthil_Messaging_Transport_PublishPipelineFactory_Build_System_IServiceProvider_Vulthil_Messaging_Transport_PublishFilterDelegate_
-  commentId: M:Vulthil.Messaging.Transport.PublishPipelineFactory.Build(System.IServiceProvider,Vulthil.Messaging.Transport.PublishFilterDelegate)
-  fullName: Vulthil.Messaging.Transport.PublishPipelineFactory.Build(System.IServiceProvider, Vulthil.Messaging.Transport.PublishFilterDelegate)
-  nameWithType: PublishPipelineFactory.Build(IServiceProvider, PublishFilterDelegate)
-- uid: Vulthil.Messaging.Transport.PublishPipelineFactory.Build*
-  name: Build
-  href: api/Vulthil.Messaging.Transport.PublishPipelineFactory.html#Vulthil_Messaging_Transport_PublishPipelineFactory_Build_
-  commentId: Overload:Vulthil.Messaging.Transport.PublishPipelineFactory.Build
-  isSpec: "True"
-  fullName: Vulthil.Messaging.Transport.PublishPipelineFactory.Build
-  nameWithType: PublishPipelineFactory.Build
 - uid: Vulthil.Messaging.Transport.RequestContext
   name: RequestContext
   href: api/Vulthil.Messaging.Transport.RequestContext.html
@@ -9372,74 +9291,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Infrastructure.Relational.RelationalOutboxServiceCollectionExtensions.AddRelationalOutboxCommitTrigger
   nameWithType: RelationalOutboxServiceCollectionExtensions.AddRelationalOutboxCommitTrigger
-- uid: Vulthil.SharedKernel.Infrastructure.Repository
-  name: Vulthil.SharedKernel.Infrastructure.Repository
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.html
-  commentId: N:Vulthil.SharedKernel.Infrastructure.Repository
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository
-  nameWithType: Vulthil.SharedKernel.Infrastructure.Repository
-- uid: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3
-  name: GenericRepository<TDbContext, TEntity, TId>
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html
-  commentId: T:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3
-  name.vb: GenericRepository(Of TDbContext, TEntity, TId)
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository(Of TDbContext, TEntity, TId)
-  nameWithType: GenericRepository<TDbContext, TEntity, TId>
-  nameWithType.vb: GenericRepository(Of TDbContext, TEntity, TId)
-- uid: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.#ctor(`0)
-  name: GenericRepository(TDbContext)
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html#Vulthil_SharedKernel_Infrastructure_Repository_GenericRepository_3__ctor__0_
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.#ctor(`0)
-  name.vb: New(TDbContext)
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GenericRepository(TDbContext)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository(Of TDbContext, TEntity, TId).New(TDbContext)
-  nameWithType: GenericRepository<TDbContext, TEntity, TId>.GenericRepository(TDbContext)
-  nameWithType.vb: GenericRepository(Of TDbContext, TEntity, TId).New(TDbContext)
-- uid: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.#ctor*
-  name: GenericRepository
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html#Vulthil_SharedKernel_Infrastructure_Repository_GenericRepository_3__ctor_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.#ctor
-  isSpec: "True"
-  name.vb: New
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GenericRepository
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository(Of TDbContext, TEntity, TId).New
-  nameWithType: GenericRepository<TDbContext, TEntity, TId>.GenericRepository
-  nameWithType.vb: GenericRepository(Of TDbContext, TEntity, TId).New
-- uid: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.DbContext
-  name: DbContext
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html#Vulthil_SharedKernel_Infrastructure_Repository_GenericRepository_3_DbContext
-  commentId: P:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.DbContext
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.DbContext
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository(Of TDbContext, TEntity, TId).DbContext
-  nameWithType: GenericRepository<TDbContext, TEntity, TId>.DbContext
-  nameWithType.vb: GenericRepository(Of TDbContext, TEntity, TId).DbContext
-- uid: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.DbContext*
-  name: DbContext
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html#Vulthil_SharedKernel_Infrastructure_Repository_GenericRepository_3_DbContext_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.DbContext
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.DbContext
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository(Of TDbContext, TEntity, TId).DbContext
-  nameWithType: GenericRepository<TDbContext, TEntity, TId>.DbContext
-  nameWithType.vb: GenericRepository(Of TDbContext, TEntity, TId).DbContext
-- uid: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.GetByIdAsync(`2,System.Threading.CancellationToken)
-  name: GetByIdAsync(TId, CancellationToken)
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html#Vulthil_SharedKernel_Infrastructure_Repository_GenericRepository_3_GetByIdAsync__2_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.GetByIdAsync(`2,System.Threading.CancellationToken)
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GetByIdAsync(TId, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository(Of TDbContext, TEntity, TId).GetByIdAsync(TId, System.Threading.CancellationToken)
-  nameWithType: GenericRepository<TDbContext, TEntity, TId>.GetByIdAsync(TId, CancellationToken)
-  nameWithType.vb: GenericRepository(Of TDbContext, TEntity, TId).GetByIdAsync(TId, CancellationToken)
-- uid: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.GetByIdAsync*
-  name: GetByIdAsync
-  href: api/Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository-3.html#Vulthil_SharedKernel_Infrastructure_Repository_GenericRepository_3_GetByIdAsync_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository`3.GetByIdAsync
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GetByIdAsync
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository(Of TDbContext, TEntity, TId).GetByIdAsync
-  nameWithType: GenericRepository<TDbContext, TEntity, TId>.GetByIdAsync
-  nameWithType.vb: GenericRepository(Of TDbContext, TEntity, TId).GetByIdAsync
 - uid: Vulthil.SharedKernel.Outbox
   name: Vulthil.SharedKernel.Outbox
   href: api/Vulthil.SharedKernel.Outbox.html

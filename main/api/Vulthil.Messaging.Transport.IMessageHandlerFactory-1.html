@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IMessageHandlerFactory&lt;THandler&gt; | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Builds transport-specific dispatch handlers from the open-generic consumer/message type pairs collected during registration. A transport implements this to bind a registration to its own delivery closure;  calls it while assembling execution plans.">
+      <meta name="description" content="Builds transport-specific dispatch handlers from the open-generic consumer/message type pairs collected during registration. A transport implements this to bind a registration to its own delivery closure;  calls it while assembling execution plans and already knows which consumer contract each registration implements, so the handler itself carries no such tag.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Transport_IMessageHandlerFactory_1" data-uid="Vulthil.Messaging.Transport.IMessageHandlerFactory`1" class="text-break">
-Interface IMessageHandlerFactory&lt;THandler&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Interface IMessageHandlerFactory&lt;THandler&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -99,12 +99,13 @@ Interface IMessageHandlerFactory&lt;THandler&gt;  <a class="header-action link-s
 
   <div class="markdown summary"><p>Builds transport-specific dispatch handlers from the open-generic consumer/message type pairs collected
 during registration. A transport implements this to bind a registration to its own delivery closure;
-<a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionRegistry-1.html">MessageExecutionRegistry&lt;THandler&gt;</a> calls it while assembling execution plans.</p>
+<a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionRegistry-1.html">MessageExecutionRegistry&lt;THandler&gt;</a> calls it while assembling execution plans and already knows
+which consumer contract each registration implements, so the handler itself carries no such tag.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IMessageHandlerFactory&lt;THandler&gt; where THandler : notnull</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IMessageHandlerFactory&lt;out THandler&gt; where THandler : notnull</code></pre>
   </div>
 
 
@@ -140,7 +141,7 @@ during registration. A transport implements this to bind a registration to its o
 
   <h3 id="Vulthil_Messaging_Transport_IMessageHandlerFactory_1_ForConsumer_System_Type_System_Type_Vulthil_Messaging_Queues_RetryPolicyDefinition_" data-uid="Vulthil.Messaging.Transport.IMessageHandlerFactory`1.ForConsumer(System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)">
   ForConsumer(Type, Type, RetryPolicyDefinition?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds a handler for a one-way consumer.</p>
@@ -148,7 +149,7 @@ during registration. A transport implements this to bind a registration to its o
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">HandlerEntry&lt;THandler&gt; ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)</code></pre>
+    <pre><code class="lang-csharp hljs">THandler ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -166,8 +167,8 @@ during registration. A transport implements this to bind a registration to its o
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.Messaging.Transport.HandlerEntry-1.html">HandlerEntry</a>&lt;THandler&gt;</dt>
-    <dd><p>The handler paired with <a class="xref" href="Vulthil.Messaging.Transport.HandlerKind.html#Vulthil_Messaging_Transport_HandlerKind_Consumer">Consumer</a>.</p>
+    <dt><span class="xref">THandler</span></dt>
+    <dd><p>The handler that runs the consumer for a delivered message.</p>
 </dd>
   </dl>
 
@@ -185,7 +186,7 @@ during registration. A transport implements this to bind a registration to its o
 
   <h3 id="Vulthil_Messaging_Transport_IMessageHandlerFactory_1_ForRequestConsumer_System_Type_System_Type_System_Type_Vulthil_Messaging_Queues_RetryPolicyDefinition_" data-uid="Vulthil.Messaging.Transport.IMessageHandlerFactory`1.ForRequestConsumer(System.Type,System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)">
   ForRequestConsumer(Type, Type, Type, RetryPolicyDefinition?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Builds a handler for a request/reply consumer.</p>
@@ -193,7 +194,7 @@ during registration. A transport implements this to bind a registration to its o
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">HandlerEntry&lt;THandler&gt; ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)</code></pre>
+    <pre><code class="lang-csharp hljs">THandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -214,8 +215,8 @@ during registration. A transport implements this to bind a registration to its o
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.Messaging.Transport.HandlerEntry-1.html">HandlerEntry</a>&lt;THandler&gt;</dt>
-    <dd><p>The handler paired with <a class="xref" href="Vulthil.Messaging.Transport.HandlerKind.html#Vulthil_Messaging_Transport_HandlerKind_RequestConsumer">RequestConsumer</a>.</p>
+    <dt><span class="xref">THandler</span></dt>
+    <dd><p>The handler that runs the request consumer for a delivered request and replies.</p>
 </dd>
   </dl>
 
@@ -233,7 +234,7 @@ during registration. A transport implements this to bind a registration to its o
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/IMessageHandlerFactory.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

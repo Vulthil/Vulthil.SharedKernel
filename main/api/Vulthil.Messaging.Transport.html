@@ -102,13 +102,6 @@ with the configured middleware.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.Messaging.Transport.HandlerEntry-1.html">HandlerEntry&lt;THandler&gt;</a></dt>
-      <dd><p>Pairs a transport-specific dispatch handler with the consumer contract it implements. Returned by
-<a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> so <a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionRegistry-1.html">MessageExecutionRegistry&lt;THandler&gt;</a> can
-enforce request-consumer uniqueness without inspecting the opaque <code class="typeparamref">THandler</code> value.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Transport.MessageAddress.html">MessageAddress</a></dt>
       <dd><p>The address rules every producer and consumer path shares: how an address carried as a string (an envelope field,
 a header value, a reply-to queue) becomes a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a>, how a <code>queue:</code> address names its queue, and how
@@ -167,8 +160,7 @@ open-generic methods. Override <a class="xref" href="Vulthil.Messaging.Transport
 <a class="xref" href="Vulthil.Messaging.Transport.MessageHandlerFactory-1.html#Vulthil_Messaging_Transport_MessageHandlerFactory_1_CreateRequestConsumerHandler__3_Vulthil_Messaging_Queues_RetryPolicyDefinition_">CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;(RetryPolicyDefinition?)</a>: the consumer and message types
 are statically known there, so the receive context and the consume pipeline compose with full typing. This
 class binds the CLR types of each registration to those overrides through generic binders cached per
-consumer/message shape — the reflection cost is paid once per shape — and pairs every handler with the
-<a class="xref" href="Vulthil.Messaging.Transport.HandlerKind.html">HandlerKind</a> of the registration it was built for. Implement
+consumer/message shape, so the reflection cost is paid once per shape. Implement
 <a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a> directly instead when handlers are not built generically.</p>
 </dd>
     </dl>
@@ -204,13 +196,6 @@ registers its publisher and send-endpoint provider under <a class="xref" href="V
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.Messaging.Transport.PublishPipelineFactory.html">PublishPipelineFactory</a></dt>
-      <dd><p>Composes the registered <a class="xref" href="Vulthil.Messaging.Transport.IPublishFilter.html">IPublishFilter</a> instances around a terminal delegate (the transport send).
-The filtering publisher/send-endpoint call this in their publish path to wrap the transport with the configured
-middleware.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Transport.RequestContext.html">RequestContext</a></dt>
       <dd><p>A <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a> for request/reply: adds the per-request timeout. A transport creates one,
 passes it to the caller's <code>configure</code> callback as <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IRequestContext.html">IRequestContext</a>, then reads
@@ -231,7 +216,8 @@ Interfaces
       <dt><a class="xref" href="Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html">IMessageHandlerFactory&lt;THandler&gt;</a></dt>
       <dd><p>Builds transport-specific dispatch handlers from the open-generic consumer/message type pairs collected
 during registration. A transport implements this to bind a registration to its own delivery closure;
-<a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionRegistry-1.html">MessageExecutionRegistry&lt;THandler&gt;</a> calls it while assembling execution plans.</p>
+<a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionRegistry-1.html">MessageExecutionRegistry&lt;THandler&gt;</a> calls it while assembling execution plans and already knows
+which consumer contract each registration implements, so the handler itself carries no such tag.</p>
 </dd>
     </dl>
     <dl class="jumplist">

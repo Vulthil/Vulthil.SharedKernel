@@ -231,6 +231,68 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
         OutboxStoreDescriptor(builder).ImplementationType.ShouldBe(typeof(EntityFrameworkOutboxStore<RegistrationProbeDbContext>));
     }
 
+    [Theory]
+    [InlineData("Select,Provider,Enable")]
+    [InlineData("Select,Enable,Provider")]
+    [InlineData("Provider,Select,Enable")]
+    [InlineData("Provider,Enable,Select")]
+    [InlineData("Enable,Select,Provider")]
+    [InlineData("Enable,Provider,Select")]
+    public void AUserStoreWinsInEveryChainOrder(string chain)
+    {
+        // Arrange
+        var builder = NewBuilder(NpgsqlConnectionString);
+
+        // Act
+        builder.AddDbContext<RegistrationProbeDbContext>(database => ApplyChain(database, chain));
+
+        // Assert
+        OutboxStoreDescriptor(builder).ImplementationType.ShouldBe(typeof(CustomOutboxStore));
+    }
+
+    [Theory]
+    [InlineData("Provider,Enable")]
+    [InlineData("Enable,Provider")]
+    public void TheProviderStoreIsTheDefaultInEveryChainOrder(string chain)
+    {
+        // Arrange
+        var builder = NewBuilder(NpgsqlConnectionString);
+
+        // Act
+        builder.AddDbContext<RegistrationProbeDbContext>(database => ApplyChain(database, chain));
+
+        // Assert
+        OutboxStoreDescriptor(builder).ImplementationType.ShouldBe(typeof(NpgsqlOutboxStore<RegistrationProbeDbContext>));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void AUserStoreSelectedInsideAnOnConfiguredCallbackWinsWhereverTheCallbackIsRegistered(bool callbackBeforeProvider)
+    {
+        // Arrange
+        var builder = NewBuilder(NpgsqlConnectionString);
+
+        // Act
+        builder.AddDbContext<RegistrationProbeDbContext>(database =>
+        {
+            if (callbackBeforeProvider)
+            {
+                database.OnConfigured(c => c.UseOutboxStore<CustomOutboxStore>());
+            }
+
+            database.UseNpgsql(ConnectionStringKey).EnableOutboxProcessing();
+
+            if (!callbackBeforeProvider)
+            {
+                database.OnConfigured(c => c.UseOutboxStore<CustomOutboxStore>());
+            }
+        });
+
+        // Assert
+        OutboxStoreDescriptor(builder).ImplementationType.ShouldBe(typeof(CustomOutboxStore));
+    }
+
     [Fact]
     public void UseCosmosDbThrowsWhenConfiguratorIsNull()
     {
@@ -257,6 +319,20 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
 
     private static ServiceDescriptor OutboxStoreDescriptor(HostApplicationBuilder builder) =>
         builder.Services.Single(descriptor => descriptor.ServiceType == typeof(IOutboxStore));
+
+    private static void ApplyChain(IDatabaseInfrastructureConfigurator<RegistrationProbeDbContext> database, string chain)
+    {
+        foreach (var step in chain.Split(','))
+        {
+            _ = step switch
+            {
+                "Provider" => database.UseNpgsql(ConnectionStringKey),
+                "Enable" => database.EnableOutboxProcessing(),
+                "Select" => database.UseOutboxStore<CustomOutboxStore>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(chain), step, "Unknown chain step."),
+            };
+        }
+    }
 
     internal sealed class RegistrationProbeDbContext(DbContextOptions<RegistrationProbeDbContext> options) : BaseDbContext(options)
     {

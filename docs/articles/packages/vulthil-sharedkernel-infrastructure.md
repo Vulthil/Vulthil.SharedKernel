@@ -53,17 +53,6 @@ Only one outbox-enabled `DbContext` is supported per host: the relay and retenti
 single `IOutboxStore`, so a second `EnableOutboxProcessing()` call (on a different `DbContext`) throws an
 `InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed.
 
-### Generic repository
-
-```csharp
-public sealed class UserRepository(AppDbContext db)
-    : GenericRepository<AppDbContext, User, UserId>(db)
-{
-    public Task<User?> GetByEmailAsync(string email, CancellationToken ct) =>
-        DbContext.Users.FirstOrDefaultAsync(u => u.Email == email, ct);
-}
-```
-
 ### Database initialization
 
 ```csharp

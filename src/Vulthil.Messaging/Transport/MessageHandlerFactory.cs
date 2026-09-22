@@ -10,8 +10,7 @@ namespace Vulthil.Messaging.Transport;
 /// <see cref="CreateRequestConsumerHandler{TConsumer, TRequest, TResponse}"/>: the consumer and message types
 /// are statically known there, so the receive context and the consume pipeline compose with full typing. This
 /// class binds the CLR types of each registration to those overrides through generic binders cached per
-/// consumer/message shape — the reflection cost is paid once per shape — and pairs every handler with the
-/// <see cref="HandlerKind"/> of the registration it was built for. Implement
+/// consumer/message shape, so the reflection cost is paid once per shape. Implement
 /// <see cref="IMessageHandlerFactory{THandler}"/> directly instead when handlers are not built generically.
 /// </summary>
 /// <typeparam name="THandler">The transport-specific handler type stored in execution plans.</typeparam>
@@ -23,7 +22,7 @@ public abstract class MessageHandlerFactory<THandler> : IMessageHandlerFactory<T
 
     /// <inheritdoc />
     /// <exception cref="ArgumentException"><paramref name="consumerType"/> does not implement <c>IConsumer&lt;TMessage&gt;</c> for <paramref name="messageType"/>.</exception>
-    public HandlerEntry<THandler> ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
+    public THandler ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
     {
         ArgumentNullException.ThrowIfNull(consumerType);
         ArgumentNullException.ThrowIfNull(messageType);
@@ -31,12 +30,12 @@ public abstract class MessageHandlerFactory<THandler> : IMessageHandlerFactory<T
         var binder = _consumerBinders.GetOrAdd(
             (consumerType, messageType),
             static key => Binder.Create(typeof(MessageHandlerFactory<>.ConsumerBinder<,>), key.Consumer, key.Message));
-        return new HandlerEntry<THandler>(binder.Build(this, retryPolicy), HandlerKind.Consumer);
+        return binder.Build(this, retryPolicy);
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentException"><paramref name="consumerType"/> does not implement <c>IRequestConsumer&lt;TRequest, TResponse&gt;</c> for <paramref name="requestType"/> and <paramref name="responseType"/>.</exception>
-    public HandlerEntry<THandler> ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)
+    public THandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)
     {
         ArgumentNullException.ThrowIfNull(consumerType);
         ArgumentNullException.ThrowIfNull(requestType);
@@ -45,7 +44,7 @@ public abstract class MessageHandlerFactory<THandler> : IMessageHandlerFactory<T
         var binder = _requestConsumerBinders.GetOrAdd(
             (consumerType, requestType, responseType),
             static key => Binder.Create(typeof(MessageHandlerFactory<>.RequestConsumerBinder<,,>), key.Consumer, key.Request, key.Response));
-        return new HandlerEntry<THandler>(binder.Build(this, retryPolicy), HandlerKind.RequestConsumer);
+        return binder.Build(this, retryPolicy);
     }
 
     /// <summary>

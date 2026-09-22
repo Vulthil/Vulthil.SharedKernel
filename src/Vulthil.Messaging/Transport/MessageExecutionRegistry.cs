@@ -73,18 +73,18 @@ public sealed class MessageExecutionRegistry<THandler>
                     continue;
                 }
 
-                var entry = registration is RequestConsumerRegistration rpc
-                    ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType, retryPolicy: null)
-                    : _handlerFactory.ForConsumer(registration.ConsumerType.Type, registration.MessageType.Type, registration.RetryPolicy ?? queue.DefaultRetryPolicy);
-
-                if (entry.Kind == HandlerKind.RequestConsumer && !_requestConsumerKeys.Add((queue.Name, plan.Urn)))
+                if (registration is RequestConsumerRegistration && !_requestConsumerKeys.Add((queue.Name, plan.Urn)))
                 {
                     throw new InvalidOperationException(
                         $"Queue '{queue.Name}' already has a request consumer registered for message type '{subscription.Name}'. " +
                         "A message type can have at most one request consumer per queue, since multiple responses would be ambiguous.");
                 }
 
-                plan.Handlers.Add(entry.Handler);
+                var handler = registration is RequestConsumerRegistration rpc
+                    ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType, retryPolicy: null)
+                    : _handlerFactory.ForConsumer(registration.ConsumerType.Type, registration.MessageType.Type, registration.RetryPolicy ?? queue.DefaultRetryPolicy);
+
+                plan.Handlers.Add(handler);
             }
         }
     }

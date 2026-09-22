@@ -14,7 +14,27 @@ static Vulthil.Messaging.Transport.MessageAddress.ToHeaderValue(System.Uri! addr
 static Vulthil.Messaging.Transport.MessageHeaders.IsReserved(string! key) -> bool
 Vulthil.Messaging.Transport.MessageAddress
 Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>
-Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
-Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
 Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.MessageHandlerFactory() -> void
 Vulthil.Messaging.Transport.MessageHeaders
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.<Clone>$() -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.Deconstruct(out THandler Handler, out Vulthil.Messaging.Transport.HandlerKind Kind) -> void
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.Equals(Vulthil.Messaging.Transport.HandlerEntry<THandler>? other) -> bool
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.Handler.get -> THandler
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.Handler.init -> void
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.HandlerEntry(THandler Handler, Vulthil.Messaging.Transport.HandlerKind Kind) -> void
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.Kind.get -> Vulthil.Messaging.Transport.HandlerKind
+*REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.Kind.init -> void
+*REMOVED*Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
+*REMOVED*Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
+*REMOVED*Vulthil.Messaging.Transport.PublishPipelineFactory
+*REMOVED*override Vulthil.Messaging.Transport.HandlerEntry<THandler>.Equals(object? obj) -> bool
+*REMOVED*override Vulthil.Messaging.Transport.HandlerEntry<THandler>.GetHashCode() -> int
+*REMOVED*override Vulthil.Messaging.Transport.HandlerEntry<THandler>.ToString() -> string!
+*REMOVED*static Vulthil.Messaging.Transport.HandlerEntry<THandler>.operator !=(Vulthil.Messaging.Transport.HandlerEntry<THandler>? left, Vulthil.Messaging.Transport.HandlerEntry<THandler>? right) -> bool
+*REMOVED*static Vulthil.Messaging.Transport.HandlerEntry<THandler>.operator ==(Vulthil.Messaging.Transport.HandlerEntry<THandler>? left, Vulthil.Messaging.Transport.HandlerEntry<THandler>? right) -> bool
+*REMOVED*static Vulthil.Messaging.Transport.PublishPipelineFactory.Build(System.IServiceProvider! serviceProvider, Vulthil.Messaging.Transport.PublishFilterDelegate! terminal) -> Vulthil.Messaging.Transport.PublishFilterDelegate!
+Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
+Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
+Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
+Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler

@@ -1,1 +1,5 @@
 #nullable enable
+*REMOVED*Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>
+*REMOVED*Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.DbContext.get -> TDbContext!
+*REMOVED*Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GenericRepository(TDbContext! dbContext) -> void
+*REMOVED*virtual Vulthil.SharedKernel.Infrastructure.Repository.GenericRepository<TDbContext, TEntity, TId>.GetByIdAsync(TId! id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TEntity?>!

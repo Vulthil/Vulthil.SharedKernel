@@ -918,7 +918,7 @@ Choose a `THandler` type for your transport's dispatch closure, then derive from
 `MessageHandlerFactory<THandler>` and override its two generic methods. The consumer and message
 types are statically known there, so that is where you compose the filter pipeline and build the
 receive context. The base class binds each registration's CLR types to your overrides (cached per
-consumer/message shape) and pairs every handler with its `HandlerKind`:
+consumer/message shape):
 
 ```csharp
 public delegate Task Dispatch(IServiceProvider scope, object message, MessageEnvelope envelope, CancellationToken ct);

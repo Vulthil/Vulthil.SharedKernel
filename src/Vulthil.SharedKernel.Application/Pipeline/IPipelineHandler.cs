@@ -4,11 +4,13 @@ using Vulthil.SharedKernel.Events;
 namespace Vulthil.SharedKernel.Application.Pipeline;
 
 /// <summary>
-/// Represents the next step in the request pipeline.
+/// Represents the next step in the request pipeline. The token is required so a behavior cannot drop the
+/// caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation
+/// flowing to the handler.
 /// </summary>
 /// <typeparam name="TResponse">The type of response produced by the pipeline.</typeparam>
 /// <param name="cancellationToken">A token to observe for cancellation.</param>
-public delegate Task<TResponse> PipelineDelegate<TResponse>(CancellationToken cancellationToken = default);
+public delegate Task<TResponse> PipelineDelegate<TResponse>(CancellationToken cancellationToken);
 
 /// <summary>
 /// Defines a pipeline handler that wraps request processing with cross-cutting behavior.
@@ -29,10 +31,12 @@ public interface IPipelineHandler<in TRequest, TResponse>
 }
 
 /// <summary>
-/// Represents the next step in the domain event pipeline.
+/// Represents the next step in the domain event pipeline. The token is required so a behavior cannot drop the
+/// caller's cancellation by accident: pass the token it received (or one linked to it) to keep cancellation
+/// flowing to the handlers.
 /// </summary>
 /// <param name="cancellationToken">A token to observe for cancellation.</param>
-public delegate Task DomainEventPipelineDelegate(CancellationToken cancellationToken = default);
+public delegate Task DomainEventPipelineDelegate(CancellationToken cancellationToken);
 
 /// <summary>
 /// Defines a pipeline handler that wraps domain event processing with cross-cutting behavior.

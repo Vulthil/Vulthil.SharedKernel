@@ -5,9 +5,11 @@ namespace Vulthil.Messaging.Transport;
 /// <summary>
 /// Composes the registered <see cref="IPublishFilter"/> instances around a terminal delegate (the transport send).
 /// The filtering publisher/send-endpoint call this in their publish path to wrap the transport with the configured
-/// middleware.
+/// middleware. Internal on purpose: consumers extend the publish path by registering an <see cref="IPublishFilter"/>,
+/// and a transport never composes this pipeline itself — the filtering wrappers registered by
+/// <c>AddPublishFiltering</c> do.
 /// </summary>
-public static class PublishPipelineFactory
+internal static class PublishPipelineFactory
 {
     /// <summary>
     /// Composes the registered <see cref="IPublishFilter"/> instances around <paramref name="terminal"/>. The first

@@ -44,28 +44,26 @@ public sealed class MessageHandlerFactoryTests : BaseUnitTestCase<MessageHandler
         var policy = new RetryPolicyDefinition { MaxRetryCount = 3 };
 
         // Act
-        var entry = Target.ForConsumer(typeof(OrderConsumer), typeof(OrderEvent), policy);
+        var handler = Target.ForConsumer(typeof(OrderConsumer), typeof(OrderEvent), policy);
 
         // Assert
-        entry.Kind.ShouldBe(HandlerKind.Consumer);
-        entry.Handler.ConsumerType.ShouldBe(typeof(OrderConsumer));
-        entry.Handler.MessageType.ShouldBe(typeof(OrderEvent));
-        entry.Handler.ResponseType.ShouldBeNull();
-        entry.Handler.RetryPolicy.ShouldBeSameAs(policy);
+        handler.ConsumerType.ShouldBe(typeof(OrderConsumer));
+        handler.MessageType.ShouldBe(typeof(OrderEvent));
+        handler.ResponseType.ShouldBeNull();
+        handler.RetryPolicy.ShouldBeSameAs(policy);
     }
 
     [Fact]
     public void ForRequestConsumerBindsTheRequestAndResponseTypes()
     {
         // Act
-        var entry = Target.ForRequestConsumer(typeof(PingConsumer), typeof(Ping), typeof(Pong), retryPolicy: null);
+        var handler = Target.ForRequestConsumer(typeof(PingConsumer), typeof(Ping), typeof(Pong), retryPolicy: null);
 
         // Assert
-        entry.Kind.ShouldBe(HandlerKind.RequestConsumer);
-        entry.Handler.ConsumerType.ShouldBe(typeof(PingConsumer));
-        entry.Handler.MessageType.ShouldBe(typeof(Ping));
-        entry.Handler.ResponseType.ShouldBe(typeof(Pong));
-        entry.Handler.RetryPolicy.ShouldBeNull();
+        handler.ConsumerType.ShouldBe(typeof(PingConsumer));
+        handler.MessageType.ShouldBe(typeof(Ping));
+        handler.ResponseType.ShouldBe(typeof(Pong));
+        handler.RetryPolicy.ShouldBeNull();
     }
 
     [Fact]
@@ -80,9 +78,9 @@ public sealed class MessageHandlerFactoryTests : BaseUnitTestCase<MessageHandler
         var second = Target.ForConsumer(typeof(OrderConsumer), typeof(OrderEvent), secondPolicy);
 
         // Assert
-        first.Handler.ShouldNotBeSameAs(second.Handler);
-        first.Handler.RetryPolicy.ShouldBeSameAs(firstPolicy);
-        second.Handler.RetryPolicy.ShouldBeSameAs(secondPolicy);
+        first.ShouldNotBeSameAs(second);
+        first.RetryPolicy.ShouldBeSameAs(firstPolicy);
+        second.RetryPolicy.ShouldBeSameAs(secondPolicy);
     }
 
     [Fact]

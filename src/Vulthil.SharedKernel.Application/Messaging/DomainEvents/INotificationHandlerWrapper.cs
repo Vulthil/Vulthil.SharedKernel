@@ -25,7 +25,7 @@ internal sealed class NotificationHandlerWrapper<TNotification> : INotificationH
             .GetServices<IDomainEventHandler<TNotification>>()
             .Select(static x => new NotificationHandlerExecutor((n, ct) => x.HandleAsync((TNotification)n, ct)));
 
-        Task Handlers(CancellationToken t = default) => publish(handlers, domainEvent, t);
+        Task Handlers(CancellationToken t) => publish(handlers, domainEvent, t);
 
         var pipelineHandlers = serviceFactory.GetServices<IDomainEventPipelineHandler<TNotification>>().ToArray();
 

@@ -11,11 +11,11 @@ public sealed record FakeHandler(string Label, RetryPolicyDefinition? RetryPolic
 /// <summary>A fake factory that labels handlers by their registration shape, so tests can assert what was built.</summary>
 public sealed class FakeHandlerFactory : IMessageHandlerFactory<FakeHandler>
 {
-    public HandlerEntry<FakeHandler> ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
-        => new(new FakeHandler($"consumer:{consumerType.Name}:{messageType.Name}", retryPolicy), HandlerKind.Consumer);
+    public FakeHandler ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
+        => new($"consumer:{consumerType.Name}:{messageType.Name}", retryPolicy);
 
-    public HandlerEntry<FakeHandler> ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)
-        => new(new FakeHandler($"request:{consumerType.Name}:{requestType.Name}", retryPolicy), HandlerKind.RequestConsumer);
+    public FakeHandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)
+        => new($"request:{consumerType.Name}:{requestType.Name}", retryPolicy);
 }
 
 public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExecutionRegistry<FakeHandler>>

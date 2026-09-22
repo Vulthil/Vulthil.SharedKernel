@@ -383,11 +383,10 @@ public sealed class QueueDispatchPlansTests : BaseUnitTestCase
         var factory = new RabbitMqHandlerFactory();
 
         // Act
-        var entry = factory.ForRequestConsumer(typeof(TestRequestConsumer), typeof(TestRequest), typeof(TestResponse), retryPolicy: null);
+        var handler = factory.ForRequestConsumer(typeof(TestRequestConsumer), typeof(TestRequest), typeof(TestResponse), retryPolicy: null);
 
         // Assert
-        entry.Kind.ShouldBe(HandlerKind.RequestConsumer);
-        entry.Handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
-        entry.Handler.Identity.ShouldBe($"{typeof(TestRequestConsumer).FullName}:{typeof(TestRequest).FullName}");
+        handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
+        handler.Identity.ShouldBe($"{typeof(TestRequestConsumer).FullName}:{typeof(TestRequest).FullName}");
     }
 }

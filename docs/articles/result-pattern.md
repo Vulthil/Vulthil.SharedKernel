@@ -27,6 +27,7 @@ var validation = new ValidationError([
     Error.Validation("Email.Required", "Email is required"),
     Error.Validation("Name.TooLong", "Name exceeds 100 characters")
 ]);
+Result invalidCommand = Result.ValidationFailure(validation);
 Result<User> invalid = Result.ValidationFailure<User>(validation);
 ```
 
@@ -65,7 +66,7 @@ public static class UserErrors
 
 ## Functional Extensions
 
-The library ships extension methods that let you compose operations without manual `if`/`else` branching. Thirteen
+The library ships extension methods that let you compose operations without manual `if`/`else` branching. Fourteen
 concepts cover the railway; each exists for `Result` and `Result<T>` where it has a meaning, and each has async forms:
 
 | Concept | Purpose | `Result` | `Result<T>` | Async form |

@@ -25,6 +25,11 @@ Result<int> typed = Result.Success(42);
 // Failure
 Error error = Error.NotFound("User.NotFound", "User was not found");
 Result<User> failed = Result.Failure<User>(error);
+
+// Validation failure, with or without a value type
+var validation = new ValidationError([Error.Validation("Email.Required", "Email is required")]);
+Result invalid = Result.ValidationFailure(validation);
+Result<User> invalidUser = Result.ValidationFailure<User>(validation);
 ```
 
 ### Defining domain errors

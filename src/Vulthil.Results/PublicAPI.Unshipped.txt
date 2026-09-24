@@ -1,1 +1,13 @@
 #nullable enable
+static Vulthil.Results.Error.Forbidden(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Error.Unauthorized(string! code, string! description) -> Vulthil.Results.Error!
+static Vulthil.Results.Result.ValidationFailure(Vulthil.Results.ValidationError! error) -> Vulthil.Results.Result!
+static Vulthil.Results.ResultExtensions.Combine<T>(params Vulthil.Results.Result<T>![]! results) -> Vulthil.Results.Result<System.Collections.Generic.IReadOnlyList<T>!>!
+static Vulthil.Results.ResultExtensions.Combine<T>(this System.Collections.Generic.IEnumerable<Vulthil.Results.Result<T>!>! results) -> Vulthil.Results.Result<System.Collections.Generic.IReadOnlyList<T>!>!
+static Vulthil.Results.ResultExtensions.CombineAsync(params System.Threading.Tasks.Task<Vulthil.Results.Result!>![]! resultTasks) -> System.Threading.Tasks.Task<Vulthil.Results.Result!>!
+static Vulthil.Results.ResultExtensions.CombineAsync<T>(this System.Collections.Generic.IEnumerable<System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!>! resultTasks) -> System.Threading.Tasks.Task<Vulthil.Results.Result<System.Collections.Generic.IReadOnlyList<T>!>!>!
+static Vulthil.Results.ResultExtensions.CombineAsync<T>(params System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>![]! resultTasks) -> System.Threading.Tasks.Task<Vulthil.Results.Result<System.Collections.Generic.IReadOnlyList<T>!>!>!
+static Vulthil.Results.ResultExtensions.ZipAsync<T1, T2>(this Vulthil.Results.Result<T1>! first, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>! secondTask) -> System.Threading.Tasks.Task<Vulthil.Results.Result<(T1, T2)>!>!
+static Vulthil.Results.ResultExtensions.ZipAsync<T1, T2, TOut>(this Vulthil.Results.Result<T1>! first, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>! secondTask, System.Func<T1, T2, TOut>! selector) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TOut>!>!
+Vulthil.Results.ErrorType.Forbidden = 6 -> Vulthil.Results.ErrorType
+Vulthil.Results.ErrorType.Unauthorized = 5 -> Vulthil.Results.ErrorType

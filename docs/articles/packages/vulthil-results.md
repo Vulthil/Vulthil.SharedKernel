@@ -25,6 +25,11 @@ Result<int> typed = Result.Success(42);
 // Failure
 Error error = Error.NotFound("User.NotFound", "User was not found");
 Result<User> failed = Result.Failure<User>(error);
+
+// Validation failure, with or without a value type
+var validation = new ValidationError([Error.Validation("Email.Required", "Email is required")]);
+Result invalid = Result.ValidationFailure(validation);
+Result<User> invalidUser = Result.ValidationFailure<User>(validation);
 ```
 
 ### Defining domain errors
@@ -39,6 +44,9 @@ public static class UserErrors
         Error.Conflict("User.EmailTaken", "Email is already in use");
 }
 ```
+
+Factories: `Failure`, `Validation`, `Problem`, `NotFound`, `Conflict`, `Unauthorized`, `Forbidden`. Each carries an
+`ErrorType` that the API layer maps to an HTTP status.
 
 ### Chaining with Bind, Map, Tap, and Match
 
@@ -59,6 +67,14 @@ Result<User> user = await GetUser(userId)
 string message = result.Match(
     onSuccess: () => "OK",
     onFailure: error => error.Description);
+```
+
+### Aggregating results
+
+```csharp
+Result combined = ResultExtensions.Combine(CheckName(), CheckEmail());   // Result
+Result<IReadOnlyList<Item>> items = ids.Select(LoadItem).Combine();      // typed: collects the values
+Result<(User, Order)> pair = GetUser(userId).Zip(GetOrder(orderId));     // exactly two
 ```
 
 ### Converting nullable values

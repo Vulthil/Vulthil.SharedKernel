@@ -15,6 +15,8 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         { Error.Conflict("Entity.Conflict", "Entity already exists"), StatusCodes.Status409Conflict },
         { Error.Problem("Entity.Problem", "Entity is in a bad state"), StatusCodes.Status400BadRequest },
         { Error.Failure("Entity.Failure", "Something went wrong"), StatusCodes.Status500InternalServerError },
+        { Error.Unauthorized("Entity.Unauthorized", "Caller is not authenticated"), StatusCodes.Status401Unauthorized },
+        { Error.Forbidden("Entity.Forbidden", "Caller may not access the entity"), StatusCodes.Status403Forbidden },
     };
 
     [Theory]

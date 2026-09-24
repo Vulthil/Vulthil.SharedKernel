@@ -76,6 +76,12 @@ public class Result
     /// <summary>
     /// Creates a failed result from a validation error.
     /// </summary>
+    /// <param name="error">The validation error.</param>
+    /// <returns>A failed <see cref="Result"/>.</returns>
+    public static Result ValidationFailure(ValidationError error) => Failure(error);
+    /// <summary>
+    /// Creates a failed result of the specified value type from a validation error.
+    /// </summary>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <param name="error">The validation error.</param>
     /// <returns>A failed <see cref="Result{TValue}"/>.</returns>

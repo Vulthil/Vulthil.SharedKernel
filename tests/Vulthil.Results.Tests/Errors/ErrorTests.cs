@@ -38,6 +38,8 @@ public sealed class ErrorTests : BaseUnitTestCase
         { Error.Conflict("C", "D"), ("C", "D"), ErrorType.Conflict },
         { Error.Failure("C", "D"), ("C", "D"), ErrorType.Failure },
         { Error.Validation("C", "D"), ("C", "D"), ErrorType.Validation },
+        { Error.Unauthorized("C", "D"), ("C", "D"), ErrorType.Unauthorized },
+        { Error.Forbidden("C", "D"), ("C", "D"), ErrorType.Forbidden },
         { new ValidationError([Error.NullValue]), ("Validation.General", "One or more validation errors occurred"), ErrorType.Validation },
     };
 

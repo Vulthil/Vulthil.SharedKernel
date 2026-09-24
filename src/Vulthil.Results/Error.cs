@@ -77,6 +77,20 @@ public record Error
     /// <param name="description">The error description.</param>
     /// <returns>A new <see cref="Error"/> with <see cref="ErrorType.Conflict"/> classification.</returns>
     public static Error Conflict(string code, string description) => new(code, description, ErrorType.Conflict);
+    /// <summary>
+    /// Creates an unauthorized error: the caller is not authenticated, or its credentials are missing or invalid.
+    /// </summary>
+    /// <param name="code">The error code.</param>
+    /// <param name="description">The error description.</param>
+    /// <returns>A new <see cref="Error"/> with <see cref="ErrorType.Unauthorized"/> classification.</returns>
+    public static Error Unauthorized(string code, string description) => new(code, description, ErrorType.Unauthorized);
+    /// <summary>
+    /// Creates a forbidden error: the caller is authenticated but not allowed to perform the operation.
+    /// </summary>
+    /// <param name="code">The error code.</param>
+    /// <param name="description">The error description.</param>
+    /// <returns>A new <see cref="Error"/> with <see cref="ErrorType.Forbidden"/> classification.</returns>
+    public static Error Forbidden(string code, string description) => new(code, description, ErrorType.Forbidden);
 }
 
 
@@ -174,4 +188,12 @@ public enum ErrorType
     /// HTTP 409 Conflict.
     /// </summary>
     Conflict = 4,
+    /// <summary>
+    /// The caller is not authenticated, or its credentials are missing or invalid. Maps to HTTP 401 Unauthorized.
+    /// </summary>
+    Unauthorized = 5,
+    /// <summary>
+    /// The caller is authenticated but is not allowed to perform the operation. Maps to HTTP 403 Forbidden.
+    /// </summary>
+    Forbidden = 6,
 }

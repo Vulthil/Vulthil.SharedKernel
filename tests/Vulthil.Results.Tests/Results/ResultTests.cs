@@ -107,6 +107,22 @@ public sealed class ResultTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void ResultShouldReturnValidationErrorWithoutValue()
+    {
+        // Arrange
+        var validationError = new ValidationError([Error.NullValue]);
+
+        // Act
+        var result = Result.ValidationFailure(validationError);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBeOfType<ValidationError>()
+            .Errors.ShouldHaveSingleItem()
+            .ShouldBe(Error.NullValue);
+    }
+
+    [Fact]
     public void ResultShouldReturnValidationError()
     {
         var validationError = new ValidationError([Error.NullValue]);

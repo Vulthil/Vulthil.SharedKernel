@@ -24,11 +24,17 @@ public static partial class ResultExtensions
     public static async Task<Result<(T1, T2)>> ZipAsync<T1, T2>(this Task<Result<T1>> firstTask, Result<T2> second) =>
         (await firstTask.ConfigureAwait(false)).Zip(second);
     /// <inheritdoc cref="Zip{T1, T2}(Result{T1}, Result{T2})"/>
+    public static async Task<Result<(T1, T2)>> ZipAsync<T1, T2>(this Result<T1> first, Task<Result<T2>> secondTask) =>
+        first.Zip(await secondTask.ConfigureAwait(false));
+    /// <inheritdoc cref="Zip{T1, T2}(Result{T1}, Result{T2})"/>
     public static async Task<Result<(T1, T2)>> ZipAsync<T1, T2>(this Task<Result<T1>> firstTask, Task<Result<T2>> secondTask) =>
         (await firstTask.ConfigureAwait(false)).Zip(await secondTask.ConfigureAwait(false));
     /// <inheritdoc cref="Zip{T1, T2, TOut}(Result{T1}, Result{T2}, Func{T1, T2, TOut})"/>
     public static async Task<Result<TOut>> ZipAsync<T1, T2, TOut>(this Task<Result<T1>> firstTask, Result<T2> second, Func<T1, T2, TOut> selector) =>
         (await firstTask.ConfigureAwait(false)).Zip(second, selector);
+    /// <inheritdoc cref="Zip{T1, T2, TOut}(Result{T1}, Result{T2}, Func{T1, T2, TOut})"/>
+    public static async Task<Result<TOut>> ZipAsync<T1, T2, TOut>(this Result<T1> first, Task<Result<T2>> secondTask, Func<T1, T2, TOut> selector) =>
+        first.Zip(await secondTask.ConfigureAwait(false), selector);
     /// <inheritdoc cref="Zip{T1, T2, TOut}(Result{T1}, Result{T2}, Func{T1, T2, TOut})"/>
     public static async Task<Result<TOut>> ZipAsync<T1, T2, TOut>(this Task<Result<T1>> firstTask, Task<Result<T2>> secondTask, Func<T1, T2, TOut> selector) =>
         (await firstTask.ConfigureAwait(false)).Zip(await secondTask.ConfigureAwait(false), selector);

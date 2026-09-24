@@ -40,6 +40,9 @@ public static class UserErrors
 }
 ```
 
+Factories: `Failure`, `Validation`, `Problem`, `NotFound`, `Conflict`, `Unauthorized`, `Forbidden`. Each carries an
+`ErrorType` that the API layer maps to an HTTP status.
+
 ### Chaining with Bind, Map, Tap, and Match
 
 ```csharp
@@ -59,6 +62,14 @@ Result<User> user = await GetUser(userId)
 string message = result.Match(
     onSuccess: () => "OK",
     onFailure: error => error.Description);
+```
+
+### Aggregating results
+
+```csharp
+Result combined = ResultExtensions.Combine(CheckName(), CheckEmail());   // Result
+Result<IReadOnlyList<Item>> items = ids.Select(LoadItem).Combine();      // typed: collects the values
+Result<(User, Order)> pair = GetUser(userId).Zip(GetOrder(orderId));     // exactly two
 ```
 
 ### Converting nullable values

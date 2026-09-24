@@ -40,6 +40,8 @@ Result<User> invalid = Result.ValidationFailure<User>(validation);
 | `NotFound` | `Error.NotFound(...)` | 404 Not Found | The requested resource doesn't exist |
 | `Problem` | `Error.Problem(...)` | 400 Bad Request | Client-addressable business-rule violation; full error detail is returned |
 | `Conflict` | `Error.Conflict(...)` | 409 Conflict | The request conflicts with current state |
+| `Unauthorized` | `Error.Unauthorized(...)` | 401 Unauthorized | The caller is not authenticated (missing or invalid credentials) |
+| `Forbidden` | `Error.Forbidden(...)` | 403 Forbidden | The caller is authenticated but not allowed to perform the operation |
 | `Validation` | `Error.Validation(...)` / `ValidationError` | 400 Bad Request | Input validation failure; `ValidationError.Errors` carries the per-field details |
 
 `Error.Validation` mints the *inner* errors of a `ValidationError` (this is what `ValidationPipelineBehavior` uses for
@@ -63,7 +65,29 @@ public static class UserErrors
 
 ## Functional Extensions
 
-The library ships extension methods that let you compose operations without manual `if`/`else` branching.
+The library ships extension methods that let you compose operations without manual `if`/`else` branching. Thirteen
+concepts cover the railway; each exists for `Result` and `Result<T>` where it has a meaning, and each has async forms:
+
+| Concept | Purpose | `Result` | `Result<T>` | Async form |
+|---|---|---|---|---|
+| `Bind` | Chain into an operation that itself returns a result | ✓ | ✓ | `BindAsync` |
+| `Map` | Transform the success value (or produce one from a `Result`) | ✓ | ✓ | `MapAsync` |
+| `MapError` | Transform the error of a failure | ✓ | ✓ | `MapErrorAsync` |
+| `Ensure` | Fail with the given error when a predicate over the value is false | – | ✓ | `EnsureAsync` |
+| `Tap` | Run a side effect on success, keep the result | ✓ | ✓ | `TapAsync` |
+| `TapError` | Run a side effect on failure, keep the result | ✓ | ✓ | `TapErrorAsync` |
+| `Match` | Fold success and failure into one value or action | ✓ | ✓ | `MatchAsync` |
+| `Or` | Replace a failure with a ready fallback result | ✓ | ✓ | `OrAsync` |
+| `OrElse` | Replace a failure with a result produced from the error | ✓ | ✓ | `OrElseAsync` |
+| `Recover` | Replace a failure with a success value produced from the error | – | ✓ | `RecoverAsync` |
+| `GetValueOrDefault` | Leave the railway: the value, or a default/fallback on failure | – | ✓ | `GetValueOrDefaultAsync` |
+| `ToResult` | Enter the railway: a nullable becomes success or the given error | – | ✓ (from `T?`) | `ToResultAsync` |
+| `Zip` | Combine exactly two typed results into a tuple or a projection | – | ✓ | `ZipAsync` |
+| `Combine` | Aggregate many results; the typed form collects the values | ✓ | ✓ | `CombineAsync` |
+
+Every async form accepts a `Task<Result>`/`Task<Result<T>>` source, an async lambda, or both, so a chain needs a single
+`await` at the end. `Ensure` and `Recover` exist only for `Result<T>`: both are defined over the success value, so they
+have no meaning without one.
 
 ### Bind – chain dependent operations
 
@@ -96,11 +120,51 @@ string message = result.Match(
     onFailure: error => $"Error: {error.Description}");
 ```
 
+### Ensure – guard the value
+
+```csharp
+Result<Order> result = GetOrder(id)
+    .Ensure(order => order.Total > 0, OrderErrors.Empty);
+```
+
+A failing predicate turns the success into the given error; a failure passes through without evaluating the predicate.
+
+### MapError / TapError – work on the failure side
+
+```csharp
+Result<User> result = await FindUser(id)
+    .TapErrorAsync(error => logger.LogWarning("Lookup failed: {Code}", error.Code))
+    .MapErrorAsync(error => UserErrors.LookupFailed);
+```
+
+### Or / OrElse / Recover – fall back
+
+```csharp
+Result<Settings> withDefault = LoadUserSettings(id)
+    .Or(Result.Success(Settings.Default));            // a ready fallback result
+
+Result<Settings> fromTenant = LoadUserSettings(id)
+    .OrElse(error => LoadTenantSettings(tenantId));   // a fallback result computed from the error
+
+Result<Settings> recovered = LoadUserSettings(id)
+    .Recover(error => Settings.Default);              // always a success value
+```
+
+### GetValueOrDefault / ToResult – leave and enter the railway
+
+```csharp
+User? user = await repository.GetByIdAsync(id);
+Result<User> found = user.ToResult(UserErrors.NotFound);   // null becomes the given error
+
+int count = CountItems(cart).GetValueOrDefault(0);         // the value, or the fallback on failure
+```
+
 All extensions have synchronous and asynchronous overloads so they compose naturally with `Task<Result<T>>`.
 
 ### Combine / Zip – aggregate multiple results
 
-`Combine` (a sequence of `Result`) and `Zip` (exactly two `Result<T>`) both follow the same aggregation rule:
+`Combine` (a sequence of `Result`, or a sequence of `Result<T>` collected into one `Result<IReadOnlyList<T>>`) and
+`Zip` (exactly two `Result<T>`) both follow the same aggregation rule:
 
 - **All succeed** → success.
 - **Exactly one fails** → that failure's **original error** propagates unwrapped. Combining a single `NotFound`
@@ -115,7 +179,12 @@ Result combined = ResultExtensions.Combine(CheckName(), CheckEmail(), CheckAge()
 
 Result<(User, Order)> zipped = GetUser(userId).Zip(GetOrder(orderId));
 // same rule: a single failure propagates as-is; two failures aggregate into a ValidationError.
+
+Result<IReadOnlyList<Item>> items = ids.Select(LoadItem).Combine();
+// typed: success carries every value in source order; failures follow the same rule.
 ```
+
+`CombineAsync` awaits a sequence (or `params`) of result tasks; `ZipAsync` accepts either side, or both, as a task.
 
 ## Sharp Edges
 

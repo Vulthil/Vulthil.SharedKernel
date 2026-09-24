@@ -1,6 +1,11 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.Results;
 using Vulthil.xUnit;
@@ -104,9 +109,10 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var httpResult = result.ToIResult();
 
         // Assert
-        var validationProblem = Assert.IsType<ValidationProblem>(httpResult.Result);
-        Assert.Equal(StatusCodes.Status400BadRequest, validationProblem.StatusCode);
-        Assert.Contains("Entity.Field", validationProblem.ProblemDetails.Errors.Keys);
+        var problemResult = Assert.IsType<ProblemHttpResult>(httpResult.Result);
+        Assert.Equal(StatusCodes.Status400BadRequest, problemResult.StatusCode);
+        var validationProblem = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
+        Assert.Contains("Entity.Field", validationProblem.Errors.Keys);
     }
 
     [Theory]
@@ -393,8 +399,10 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var httpResult = result.ToCreatedAtRouteHttpResult("GetThing");
 
         // Assert
-        var validationProblem = Assert.IsType<ValidationProblem>(httpResult.Result);
-        Assert.Contains("Entity.Field", validationProblem.ProblemDetails.Errors.Keys);
+        var problemResult = Assert.IsType<ProblemHttpResult>(httpResult.Result);
+        Assert.Equal(StatusCodes.Status400BadRequest, problemResult.StatusCode);
+        var validationProblem = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
+        Assert.Contains("Entity.Field", validationProblem.Errors.Keys);
     }
 
     [Fact]
@@ -405,6 +413,140 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => result.ToCreatedAtRouteHttpResult());
+    }
+
+    [Fact]
+    public void ErrorToIResultOnValidationErrorReturnsTheSameValidationProblemBodyAsAFailedResult()
+    {
+        // Arrange
+        var validationError = new ValidationError([Error.Validation("Entity.Field", "Field is required")]);
+
+        // Act
+        var fromError = validationError.ToIResult();
+        var fromResult = Assert.IsType<ProblemHttpResult>(Result.Failure<string>(validationError).ToIResult().Result);
+
+        // Assert
+        var errorBody = Assert.IsType<HttpValidationProblemDetails>(fromError.ProblemDetails);
+        var resultBody = Assert.IsType<HttpValidationProblemDetails>(fromResult.ProblemDetails);
+        Assert.Equal(StatusCodes.Status400BadRequest, fromError.StatusCode);
+        Assert.Equal(resultBody.Errors, errorBody.Errors);
+        Assert.Equal(resultBody.Detail, errorBody.Detail);
+        Assert.Equal(resultBody.Title, errorBody.Title);
+    }
+
+    [Fact]
+    public void ValidationProblemBodyKeepsTheStandardTitleAndCarriesTheDescriptionAsDetail()
+    {
+        // Arrange
+        var validationError = new ValidationError([Error.Validation("Entity.Field", "Field is required")]);
+
+        // Act
+        var problemResult = validationError.ToIResult();
+
+        // Assert
+        var body = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
+        Assert.Equal("One or more validation errors occurred.", body.Title);
+        Assert.Equal(validationError.Description, body.Detail);
+        Assert.Equal(["Field is required"], body.Errors["Entity.Field"]);
+    }
+
+    public static TheoryData<ErrorType, int, Type> DeclaredErrorMetadata => new()
+    {
+        { ErrorType.Validation, StatusCodes.Status400BadRequest, typeof(HttpValidationProblemDetails) },
+        { ErrorType.Problem, StatusCodes.Status400BadRequest, typeof(ProblemDetails) },
+        { ErrorType.NotFound, StatusCodes.Status404NotFound, typeof(ProblemDetails) },
+        { ErrorType.Conflict, StatusCodes.Status409Conflict, typeof(ProblemDetails) },
+        { ErrorType.Unauthorized, StatusCodes.Status401Unauthorized, typeof(ProblemDetails) },
+        { ErrorType.Forbidden, StatusCodes.Status403Forbidden, typeof(ProblemDetails) },
+        { ErrorType.Failure, StatusCodes.Status500InternalServerError, typeof(ProblemDetails) },
+    };
+
+    [Theory]
+    [MemberData(nameof(DeclaredErrorMetadata))]
+    public void ProducesErrorAttributeDocumentsTheRuntimeStatusAndProblemSchema(ErrorType errorType, int expectedStatus, Type expectedType)
+    {
+        // Act
+        var attribute = new ProducesErrorAttribute(errorType);
+
+        // Assert
+        Assert.Equal(errorType, attribute.ErrorType);
+        Assert.Equal(expectedStatus, attribute.StatusCode);
+        Assert.Equal(expectedType, attribute.Type);
+        var contentTypes = new MediaTypeCollection();
+        ((IApiResponseMetadataProvider)attribute).SetContentTypes(contentTypes);
+        Assert.Contains("application/problem+json", contentTypes);
+    }
+
+    [Fact]
+    public void ProducesErrorAttributeDocumentsTheSameStatusTheRuntimeMappingUses()
+    {
+        // Arrange
+        var error = Error.Forbidden("Entity.Forbidden", "Caller may not access the entity");
+
+        // Act
+        var attribute = new ProducesErrorAttribute(error.Type);
+        var runtime = error.ToIResult();
+
+        // Assert
+        Assert.Equal(runtime.StatusCode, attribute.StatusCode);
+    }
+
+    [Fact]
+    public void ProducesErrorsAddsOneDeclarationPerDistinctErrorType()
+    {
+        // Arrange
+        var builder = new RecordingConventionBuilder();
+
+        // Act
+        builder.ProducesErrors(ErrorType.NotFound, ErrorType.Conflict, ErrorType.NotFound);
+
+        // Assert
+        var declared = builder.BuildMetadata().OfType<ProducesErrorAttribute>().Select(attribute => attribute.ErrorType).ToArray();
+        Assert.Equal(new[] { ErrorType.NotFound, ErrorType.Conflict }, declared);
+    }
+
+    [Fact]
+    public void ProducesErrorsReturnsTheSameBuilderForChaining()
+    {
+        // Arrange
+        var builder = new RecordingConventionBuilder();
+
+        // Act
+        var returned = builder.ProducesErrors(ErrorType.NotFound);
+
+        // Assert
+        Assert.Same(builder, returned);
+    }
+
+    [Fact]
+    public void ProducesErrorsThrowsOnNullBuilder()
+    {
+        // Arrange
+        RecordingConventionBuilder builder = null!;
+
+        // Act
+        var act = () => builder.ProducesErrors(ErrorType.NotFound);
+
+        // Assert
+        Assert.Throws<ArgumentNullException>(act);
+    }
+
+    private sealed class RecordingConventionBuilder : IEndpointConventionBuilder
+    {
+        private readonly List<Action<EndpointBuilder>> _conventions = [];
+
+        public void Add(Action<EndpointBuilder> convention) => _conventions.Add(convention);
+
+        public IReadOnlyList<object> BuildMetadata()
+        {
+            var endpointBuilder = new RouteEndpointBuilder(requestDelegate: null, RoutePatternFactory.Parse("/"), order: 0);
+            foreach (var convention in _conventions)
+            {
+                convention(endpointBuilder);
+            }
+
+            return [.. endpointBuilder.Metadata];
+        }
     }
 
     private static TestController CreateController()

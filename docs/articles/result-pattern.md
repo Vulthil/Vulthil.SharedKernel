@@ -211,15 +211,17 @@ deferred to a future major version.
 `Vulthil.SharedKernel.Api` provides helpers that turn a `Result` into the correct HTTP response with typed results for OpenAPI documentation:
 
 ```csharp
-// Minimal API endpoint – returns Results<Ok<UserDto>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>
+// Minimal API endpoint – returns Results<Ok<UserDto>, ProblemHttpResult>; the errors it can produce are declared once
 app.MapGet("/users/{id:guid}", async (Guid id, ISender sender) =>
 {
     var result = await sender.SendAsync(new GetUserQuery(id));
     return result.ToIResult();
-});
+})
+.ProducesErrors(ErrorType.NotFound);
 
 // Controller-based endpoint with typed results
-public async Task<Results<Ok<UserDto>, ValidationProblem, NotFound, Conflict, ProblemHttpResult>> Get(Guid id)
+[ProducesError(ErrorType.NotFound)]
+public async Task<Results<Ok<UserDto>, ProblemHttpResult>> Get(Guid id)
 {
     var result = await _sender.SendAsync(new GetUserQuery(id));
     return result.ToIResult();
@@ -234,12 +236,23 @@ public async Task<IActionResult> Get(Guid id)
 ```
 
 Success maps to `200 Ok<T>` (`Result<T>`), `204 NoContent` (non-generic `Result`), or `201 CreatedAtRoute<T>`
-via `ToCreatedAtRouteHttpResult`. Every failure returns an RFC 7807 problem body with the status from the
-[table above](#error-classifications): `detail` carries the error's `Description`, and the error's `Code`
-appears as a key in the problem `extensions` (mapped to the description). `Validation` failures return a
-validation problem whose per-field `errors` dictionary is built from the `ValidationError`'s inner errors. The
-minimal-API and MVC paths produce the same status and detail for the same error.
+via `ToCreatedAtRouteHttpResult`. Every failure returns one `ProblemHttpResult`: an RFC 7807 problem body with the
+status from the [table above](#error-classifications) and the error's `Description` as `detail`. For a
+`Validation` error the body is an `HttpValidationProblemDetails` whose per-field `errors` dictionary is built from
+the `ValidationError`'s inner errors; for every other error type the error's `Code` appears as a key in the problem
+`extensions` (mapped to the description). A failed result and a bare `error.ToIResult()` produce the same body, and
+the minimal-API and MVC paths produce the same status and detail for the same error.
 
-One nuance of the typed union: at runtime `NotFound` and `Conflict` errors surface as a `ProblemHttpResult`
-carrying 404/409 **with that problem body** — the `NotFound`/`Conflict` members of the union exist so OpenAPI
-documents those status codes, not as the results actually returned.
+### Documenting the errors an endpoint can produce
+
+Which errors an endpoint can return depends on the handler behind it, so the type system cannot document them.
+The typed unions therefore contain only what is always true — the success member and `ProblemHttpResult` — and
+the endpoint declares its errors once, in error terms, never as status codes:
+
+- Minimal APIs: `.ProducesErrors(ErrorType.NotFound, ErrorType.Conflict)` on the route or route group.
+- Controllers (or a minimal API lambda): `[ProducesError(ErrorType.NotFound)]`, one attribute per error type.
+
+Both emit standard response metadata (`ProducesErrorAttribute` is a `ProducesResponseTypeAttribute`), so OpenAPI
+documents exactly the declared problem responses — with the status and body schema taken from the same mapping the
+runtime uses — plus a `500` on every operation, because an unclassified `Failure` is always possible. An endpoint
+that declares nothing documents its success response and `500` only.

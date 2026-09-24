@@ -108,10 +108,13 @@ public static class ResultHttpExtensions
     }
 
     /// <summary>
-    /// Converts a <see cref="Result{T}"/> to a typed <see cref="IResult"/> for minimal API and controller endpoints,
-    /// returning distinct HTTP result types for OpenAPI documentation generation.
+    /// Converts a <see cref="Result{T}"/> to a typed <see cref="IResult"/>: <c>201 Created</c> with the value and a
+    /// <c>Location</c> for the named route on success, otherwise the problem response for the error (see
+    /// <see cref="CustomResults.Problem"/>). The success member documents itself for OpenAPI; declare the error types the
+    /// endpoint can produce with <see cref="ProducesErrorsExtensions.ProducesErrors{TBuilder}"/> or
+    /// <see cref="ProducesErrorAttribute"/> so exactly those problem responses are documented.
     /// </summary>
-    public static Results<CreatedAtRoute<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToCreatedAtRouteHttpResult<T>(this Result<T> result, string? routeName = null, Func<T, object?>? routeValueFactory = null)
+    public static Results<CreatedAtRoute<T>, ProblemHttpResult> ToCreatedAtRouteHttpResult<T>(this Result<T> result, string? routeName = null, Func<T, object?>? routeValueFactory = null)
     {
         ArgumentNullException.ThrowIfNull(result);
 
@@ -120,14 +123,17 @@ public static class ResultHttpExtensions
             return TypedResults.CreatedAtRoute(result.Value, routeName, routeValueFactory != null ? routeValueFactory(result.Value) : null);
         }
 
-        return MapError<CreatedAtRoute<T>>(result.Error);
+        return CustomResults.Problem(result.Error);
     }
 
     /// <summary>
-    /// Converts a <see cref="Result{T}"/> to a typed <see cref="IResult"/> for minimal API and controller endpoints,
-    /// returning distinct HTTP result types for OpenAPI documentation generation.
+    /// Converts a <see cref="Result{T}"/> to a typed <see cref="IResult"/>: <c>200 OK</c> with the value on success,
+    /// otherwise the problem response for the error (see <see cref="CustomResults.Problem"/>). The success member
+    /// documents itself for OpenAPI; declare the error types the endpoint can produce with
+    /// <see cref="ProducesErrorsExtensions.ProducesErrors{TBuilder}"/> or <see cref="ProducesErrorAttribute"/> so exactly
+    /// those problem responses are documented.
     /// </summary>
-    public static Results<Ok<T>, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToIResult<T>(this Result<T> result)
+    public static Results<Ok<T>, ProblemHttpResult> ToIResult<T>(this Result<T> result)
     {
         ArgumentNullException.ThrowIfNull(result);
 
@@ -136,14 +142,17 @@ public static class ResultHttpExtensions
             return TypedResults.Ok(result.Value);
         }
 
-        return MapError<Ok<T>>(result.Error);
+        return CustomResults.Problem(result.Error);
     }
 
     /// <summary>
-    /// Converts a <see cref="Result"/> to a typed <see cref="IResult"/> for minimal API and controller endpoints,
-    /// returning distinct HTTP result types for OpenAPI documentation generation.
+    /// Converts a <see cref="Result"/> to a typed <see cref="IResult"/>: <c>204 No Content</c> on success, otherwise the
+    /// problem response for the error (see <see cref="CustomResults.Problem"/>). The success member documents itself for
+    /// OpenAPI; declare the error types the endpoint can produce with
+    /// <see cref="ProducesErrorsExtensions.ProducesErrors{TBuilder}"/> or <see cref="ProducesErrorAttribute"/> so exactly
+    /// those problem responses are documented.
     /// </summary>
-    public static Results<NoContent, ValidationProblem, NotFound, Conflict, ProblemHttpResult> ToIResult(this Result result)
+    public static Results<NoContent, ProblemHttpResult> ToIResult(this Result result)
     {
         ArgumentNullException.ThrowIfNull(result);
 
@@ -152,11 +161,12 @@ public static class ResultHttpExtensions
             return TypedResults.NoContent();
         }
 
-        return MapError<NoContent>(result.Error);
+        return CustomResults.Problem(result.Error);
     }
 
     /// <summary>
-    /// Converts an <see cref="Error"/> to a <see cref="ProblemHttpResult"/> problem response for minimal API endpoints.
+    /// Converts an <see cref="Error"/> to the same <see cref="ProblemHttpResult"/> problem response a failed result
+    /// produces (see <see cref="CustomResults.Problem"/>).
     /// </summary>
     public static ProblemHttpResult ToIResult(this Error error) => CustomResults.Problem(error);
 
@@ -180,19 +190,6 @@ public static class ResultHttpExtensions
             StatusCode = statusCode
         };
     }
-
-    private static Results<TSuccess, ValidationProblem, NotFound, Conflict, ProblemHttpResult> MapError<TSuccess>(Error error)
-        where TSuccess : IResult
-    {
-        if (error.Type != ErrorType.Validation)
-        {
-            return CustomResults.Problem(error);
-        }
-
-        var errors = CustomResults.GetErrorsDictionary(error);
-
-        return TypedResults.ValidationProblem(errors, error.Description);
-    }
 }
 
 /// <summary>
@@ -201,7 +198,12 @@ public static class ResultHttpExtensions
 public static class CustomResults
 {
     /// <summary>
-    /// Creates a <see cref="ProblemHttpResult"/> from an <see cref="Error"/>, mapping the error type to the appropriate HTTP status code.
+    /// Creates the RFC 7807 problem response for an <see cref="Error"/>, with the status code mapped from its
+    /// <see cref="ErrorType"/> and the description as <c>detail</c>. A <see cref="ErrorType.Validation"/> error produces
+    /// an <see cref="HttpValidationProblemDetails"/> body whose <c>errors</c> map lists each inner error by code; every
+    /// other error type produces a <see cref="ProblemDetails"/> body carrying the error code as an extension. Every
+    /// failure path of the typed-result extensions goes through this method, so a failed result and a bare error yield
+    /// the same response.
     /// </summary>
     /// <param name="error">The error to convert.</param>
     /// <returns>A <see cref="ProblemHttpResult"/> representing the problem response.</returns>
@@ -210,10 +212,20 @@ public static class CustomResults
         ArgumentNullException.ThrowIfNull(error);
 
         var errors = GetErrorsDictionary(error);
+        var statusCode = GetStatusCode(error.Type);
+
+        if (error.Type == ErrorType.Validation)
+        {
+            return TypedResults.Problem(new HttpValidationProblemDetails(errors)
+            {
+                Detail = error.Description,
+                Status = statusCode,
+            });
+        }
 
         return TypedResults.Problem(
             detail: error.Description,
-            statusCode: GetStatusCode(error.Type),
+            statusCode: statusCode,
             extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value));
     }
 

@@ -129,6 +129,7 @@ var validation = new ValidationError([
     Error.Validation(&quot;Email.Required&quot;, &quot;Email is required&quot;),
     Error.Validation(&quot;Name.TooLong&quot;, &quot;Name exceeds 100 characters&quot;)
 ]);
+Result invalidCommand = Result.ValidationFailure(validation);
 Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
 </code></pre>
 <h2 id="error-classifications">Error Classifications</h2>
@@ -168,6 +169,18 @@ Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
 <td>The request conflicts with current state</td>
 </tr>
 <tr>
+<td><code>Unauthorized</code></td>
+<td><code>Error.Unauthorized(...)</code></td>
+<td>401 Unauthorized</td>
+<td>The caller is not authenticated (missing or invalid credentials)</td>
+</tr>
+<tr>
+<td><code>Forbidden</code></td>
+<td><code>Error.Forbidden(...)</code></td>
+<td>403 Forbidden</td>
+<td>The caller is authenticated but not allowed to perform the operation</td>
+</tr>
+<tr>
 <td><code>Validation</code></td>
 <td><code>Error.Validation(...)</code> / <code>ValidationError</code></td>
 <td>400 Bad Request</td>
@@ -190,7 +203,122 @@ classification from <code>Validation</code>, not a supertype of it.</p>
 }
 </code></pre>
 <h2 id="functional-extensions">Functional Extensions</h2>
-<p>The library ships extension methods that let you compose operations without manual <code>if</code>/<code>else</code> branching.</p>
+<p>The library ships extension methods that let you compose operations without manual <code>if</code>/<code>else</code> branching. Fourteen
+concepts cover the railway; each exists for <code>Result</code> and <code>Result&lt;T&gt;</code> where it has a meaning, and each has async forms:</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Purpose</th>
+<th><code>Result</code></th>
+<th><code>Result&lt;T&gt;</code></th>
+<th>Async form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Bind</code></td>
+<td>Chain into an operation that itself returns a result</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>BindAsync</code></td>
+</tr>
+<tr>
+<td><code>Map</code></td>
+<td>Transform the success value (or produce one from a <code>Result</code>)</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>MapAsync</code></td>
+</tr>
+<tr>
+<td><code>MapError</code></td>
+<td>Transform the error of a failure</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>MapErrorAsync</code></td>
+</tr>
+<tr>
+<td><code>Ensure</code></td>
+<td>Fail with the given error when a predicate over the value is false</td>
+<td>–</td>
+<td>✓</td>
+<td><code>EnsureAsync</code></td>
+</tr>
+<tr>
+<td><code>Tap</code></td>
+<td>Run a side effect on success, keep the result</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>TapAsync</code></td>
+</tr>
+<tr>
+<td><code>TapError</code></td>
+<td>Run a side effect on failure, keep the result</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>TapErrorAsync</code></td>
+</tr>
+<tr>
+<td><code>Match</code></td>
+<td>Fold success and failure into one value or action</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>MatchAsync</code></td>
+</tr>
+<tr>
+<td><code>Or</code></td>
+<td>Replace a failure with a ready fallback result</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>OrAsync</code></td>
+</tr>
+<tr>
+<td><code>OrElse</code></td>
+<td>Replace a failure with a result produced from the error</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>OrElseAsync</code></td>
+</tr>
+<tr>
+<td><code>Recover</code></td>
+<td>Replace a failure with a success value produced from the error</td>
+<td>–</td>
+<td>✓</td>
+<td><code>RecoverAsync</code></td>
+</tr>
+<tr>
+<td><code>GetValueOrDefault</code></td>
+<td>Leave the railway: the value, or a default/fallback on failure</td>
+<td>–</td>
+<td>✓</td>
+<td><code>GetValueOrDefaultAsync</code></td>
+</tr>
+<tr>
+<td><code>ToResult</code></td>
+<td>Enter the railway: a nullable becomes success or the given error</td>
+<td>–</td>
+<td>✓ (from <code>T?</code>)</td>
+<td><code>ToResultAsync</code></td>
+</tr>
+<tr>
+<td><code>Zip</code></td>
+<td>Combine exactly two typed results into a tuple or a projection</td>
+<td>–</td>
+<td>✓</td>
+<td><code>ZipAsync</code></td>
+</tr>
+<tr>
+<td><code>Combine</code></td>
+<td>Aggregate many results; the typed form collects the values</td>
+<td>✓</td>
+<td>✓</td>
+<td><code>CombineAsync</code></td>
+</tr>
+</tbody>
+</table>
+<p>Every async form accepts a <code>Task&lt;Result&gt;</code>/<code>Task&lt;Result&lt;T&gt;&gt;</code> source, an async lambda, or both, so a chain needs a single
+<code>await</code> at the end. <code>Ensure</code> and <code>Recover</code> exist only for <code>Result&lt;T&gt;</code>: both are defined over the success value, so they
+have no meaning without one.</p>
 <h3 id="bind--chain-dependent-operations">Bind – chain dependent operations</h3>
 <pre><code class="lang-csharp">Result&lt;Order&gt; result = await GetUser(userId)
     .BindAsync(user =&gt; CreateOrder(user));
@@ -209,9 +337,36 @@ classification from <code>Validation</code>, not a supertype of it.</p>
     onSuccess: user =&gt; $&quot;Welcome, {user.Name}&quot;,
     onFailure: error =&gt; $&quot;Error: {error.Description}&quot;);
 </code></pre>
+<h3 id="ensure--guard-the-value">Ensure – guard the value</h3>
+<pre><code class="lang-csharp">Result&lt;Order&gt; result = GetOrder(id)
+    .Ensure(order =&gt; order.Total &gt; 0, OrderErrors.Empty);
+</code></pre>
+<p>A failing predicate turns the success into the given error; a failure passes through without evaluating the predicate.</p>
+<h3 id="maperror--taperror--work-on-the-failure-side">MapError / TapError – work on the failure side</h3>
+<pre><code class="lang-csharp">Result&lt;User&gt; result = await FindUser(id)
+    .TapErrorAsync(error =&gt; logger.LogWarning(&quot;Lookup failed: {Code}&quot;, error.Code))
+    .MapErrorAsync(error =&gt; UserErrors.LookupFailed);
+</code></pre>
+<h3 id="or--orelse--recover--fall-back">Or / OrElse / Recover – fall back</h3>
+<pre><code class="lang-csharp">Result&lt;Settings&gt; withDefault = LoadUserSettings(id)
+    .Or(Result.Success(Settings.Default));            // a ready fallback result
+
+Result&lt;Settings&gt; fromTenant = LoadUserSettings(id)
+    .OrElse(error =&gt; LoadTenantSettings(tenantId));   // a fallback result computed from the error
+
+Result&lt;Settings&gt; recovered = LoadUserSettings(id)
+    .Recover(error =&gt; Settings.Default);              // always a success value
+</code></pre>
+<h3 id="getvalueordefault--toresult--leave-and-enter-the-railway">GetValueOrDefault / ToResult – leave and enter the railway</h3>
+<pre><code class="lang-csharp">User? user = await repository.GetByIdAsync(id);
+Result&lt;User&gt; found = user.ToResult(UserErrors.NotFound);   // null becomes the given error
+
+int count = CountItems(cart).GetValueOrDefault(0);         // the value, or the fallback on failure
+</code></pre>
 <p>All extensions have synchronous and asynchronous overloads so they compose naturally with <code>Task&lt;Result&lt;T&gt;&gt;</code>.</p>
 <h3 id="combine--zip--aggregate-multiple-results">Combine / Zip – aggregate multiple results</h3>
-<p><code>Combine</code> (a sequence of <code>Result</code>) and <code>Zip</code> (exactly two <code>Result&lt;T&gt;</code>) both follow the same aggregation rule:</p>
+<p><code>Combine</code> (a sequence of <code>Result</code>, or a sequence of <code>Result&lt;T&gt;</code> collected into one <code>Result&lt;IReadOnlyList&lt;T&gt;&gt;</code>) and
+<code>Zip</code> (exactly two <code>Result&lt;T&gt;</code>) both follow the same aggregation rule:</p>
 <ul>
 <li><strong>All succeed</strong> → success.</li>
 <li><strong>Exactly one fails</strong> → that failure's <strong>original error</strong> propagates unwrapped. Combining a single <code>NotFound</code>
@@ -225,7 +380,11 @@ every failed error in order.</li>
 
 Result&lt;(User, Order)&gt; zipped = GetUser(userId).Zip(GetOrder(orderId));
 // same rule: a single failure propagates as-is; two failures aggregate into a ValidationError.
+
+Result&lt;IReadOnlyList&lt;Item&gt;&gt; items = ids.Select(LoadItem).Combine();
+// typed: success carries every value in source order; failures follow the same rule.
 </code></pre>
+<p><code>CombineAsync</code> awaits a sequence (or <code>params</code>) of result tasks; <code>ZipAsync</code> accepts either side, or both, as a task.</p>
 <h2 id="sharp-edges">Sharp Edges</h2>
 <p>A few behaviors are easy to trip over. They are intentional for now; genuinely breaking fixes (marked below) are
 deferred to a future major version.</p>

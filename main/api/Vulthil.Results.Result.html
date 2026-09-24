@@ -555,12 +555,51 @@ Returns <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_N
 
   <a id="Vulthil_Results_Result_ValidationFailure_" data-uid="Vulthil.Results.Result.ValidationFailure*"></a>
 
-  <h3 id="Vulthil_Results_Result_ValidationFailure__1_Vulthil_Results_ValidationError_" data-uid="Vulthil.Results.Result.ValidationFailure``1(Vulthil.Results.ValidationError)">
-  ValidationFailure&lt;TValue&gt;(ValidationError)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_Results_Result_ValidationFailure_Vulthil_Results_ValidationError_" data-uid="Vulthil.Results.Result.ValidationFailure(Vulthil.Results.ValidationError)">
+  ValidationFailure(ValidationError)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a failed result from a validation error.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Result ValidationFailure(ValidationError error)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>error</code> <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a></dt>
+    <dd><p>The validation error.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Results.Result.html">Result</a></dt>
+    <dd><p>A failed <a class="xref" href="Vulthil.Results.Result.html">Result</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Results_Result_ValidationFailure_" data-uid="Vulthil.Results.Result.ValidationFailure*"></a>
+
+  <h3 id="Vulthil_Results_Result_ValidationFailure__1_Vulthil_Results_ValidationError_" data-uid="Vulthil.Results.Result.ValidationFailure``1(Vulthil.Results.ValidationError)">
+  ValidationFailure&lt;TValue&gt;(ValidationError)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Result.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a failed result of the specified value type from a validation error.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

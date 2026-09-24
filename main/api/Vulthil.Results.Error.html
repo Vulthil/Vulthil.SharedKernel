@@ -468,6 +468,48 @@ and problem-detail responses in the API layer.</p>
 
 
 
+  <a id="Vulthil_Results_Error_Forbidden_" data-uid="Vulthil.Results.Error.Forbidden*"></a>
+
+  <h3 id="Vulthil_Results_Error_Forbidden_System_String_System_String_" data-uid="Vulthil.Results.Error.Forbidden(System.String,System.String)">
+  Forbidden(string, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a forbidden error: the caller is authenticated but not allowed to perform the operation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Error Forbidden(string code, string description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The error code.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The error description.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Results.Error.html">Error</a></dt>
+    <dd><p>A new <a class="xref" href="Vulthil.Results.Error.html">Error</a> with <a class="xref" href="Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Forbidden">Forbidden</a> classification.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Vulthil_Results_Error_NotFound_" data-uid="Vulthil.Results.Error.NotFound*"></a>
 
   <h3 id="Vulthil_Results_Error_NotFound_System_String_System_String_" data-uid="Vulthil.Results.Error.NotFound(System.String,System.String)">
@@ -539,6 +581,48 @@ and problem-detail responses in the API layer.</p>
   <dl class="parameters">
     <dt><a class="xref" href="Vulthil.Results.Error.html">Error</a></dt>
     <dd><p>A new <a class="xref" href="Vulthil.Results.Error.html">Error</a> with <a class="xref" href="Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Problem">Problem</a> classification.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Results_Error_Unauthorized_" data-uid="Vulthil.Results.Error.Unauthorized*"></a>
+
+  <h3 id="Vulthil_Results_Error_Unauthorized_System_String_System_String_" data-uid="Vulthil.Results.Error.Unauthorized(System.String,System.String)">
+  Unauthorized(string, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates an unauthorized error: the caller is not authenticated, or its credentials are missing or invalid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Error Unauthorized(string code, string description)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The error code.</p>
+</dd>
+    <dt><code>description</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The error description.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Results.Error.html">Error</a></dt>
+    <dd><p>A new <a class="xref" href="Vulthil.Results.Error.html">Error</a> with <a class="xref" href="Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Unauthorized">Unauthorized</a> classification.</p>
 </dd>
   </dl>
 

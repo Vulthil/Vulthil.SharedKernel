@@ -90,7 +90,7 @@
 
 
   <h1 id="Vulthil_Results_ErrorType" data-uid="Vulthil.Results.ErrorType" class="text-break">
-Enum ErrorType  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L150"><i class="bi bi-code-slash"></i></a>
+Enum ErrorType  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L164"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -128,6 +128,10 @@ HTTP 409 Conflict.</p>
   <dd><p>An unclassified or unexpected failure with no more specific meaning. Maps to HTTP 500 Internal Server Error.
 This is the default classification produced by <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_Failure_System_String_System_String_">Failure(string, string)</a>.</p>
 </dd>
+    <dt id="Vulthil_Results_ErrorType_Forbidden"><code>Forbidden = 6</code></dt>
+  
+  <dd><p>The caller is authenticated but is not allowed to perform the operation. Maps to HTTP 403 Forbidden.</p>
+</dd>
     <dt id="Vulthil_Results_ErrorType_NotFound"><code>NotFound = 3</code></dt>
   
   <dd><p>The requested resource does not exist. Maps to HTTP 404 Not Found.</p>
@@ -136,6 +140,10 @@ This is the default classification produced by <a class="xref" href="Vulthil.Res
   
   <dd><p>A client-addressable business-rule violation the caller can act on (distinct from a plain validation
 failure). Maps to HTTP 400 Bad Request with the error's full detail in the problem response.</p>
+</dd>
+    <dt id="Vulthil_Results_ErrorType_Unauthorized"><code>Unauthorized = 5</code></dt>
+  
+  <dd><p>The caller is not authenticated, or its credentials are missing or invalid. Maps to HTTP 401 Unauthorized.</p>
 </dd>
     <dt id="Vulthil_Results_ErrorType_Validation"><code>Validation = 1</code></dt>
   
@@ -150,7 +158,7 @@ Maps to HTTP 400 Bad Request as a validation-problem response with per-field det
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L150" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L164" class="edit-link">Edit this page</a>
         </div>
 
 

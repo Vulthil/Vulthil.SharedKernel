@@ -5566,6 +5566,22 @@ references:
   isSpec: "True"
   fullName: Vulthil.Results.Error.Failure
   nameWithType: Error.Failure
+- uid: Vulthil.Results.Error.Forbidden(System.String,System.String)
+  name: Forbidden(string, string)
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Forbidden_System_String_System_String_
+  commentId: M:Vulthil.Results.Error.Forbidden(System.String,System.String)
+  name.vb: Forbidden(String, String)
+  fullName: Vulthil.Results.Error.Forbidden(string, string)
+  fullName.vb: Vulthil.Results.Error.Forbidden(String, String)
+  nameWithType: Error.Forbidden(string, string)
+  nameWithType.vb: Error.Forbidden(String, String)
+- uid: Vulthil.Results.Error.Forbidden*
+  name: Forbidden
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Forbidden_
+  commentId: Overload:Vulthil.Results.Error.Forbidden
+  isSpec: "True"
+  fullName: Vulthil.Results.Error.Forbidden
+  nameWithType: Error.Forbidden
 - uid: Vulthil.Results.Error.None
   name: None
   href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_None
@@ -5623,6 +5639,22 @@ references:
   isSpec: "True"
   fullName: Vulthil.Results.Error.Type
   nameWithType: Error.Type
+- uid: Vulthil.Results.Error.Unauthorized(System.String,System.String)
+  name: Unauthorized(string, string)
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Unauthorized_System_String_System_String_
+  commentId: M:Vulthil.Results.Error.Unauthorized(System.String,System.String)
+  name.vb: Unauthorized(String, String)
+  fullName: Vulthil.Results.Error.Unauthorized(string, string)
+  fullName.vb: Vulthil.Results.Error.Unauthorized(String, String)
+  nameWithType: Error.Unauthorized(string, string)
+  nameWithType.vb: Error.Unauthorized(String, String)
+- uid: Vulthil.Results.Error.Unauthorized*
+  name: Unauthorized
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Unauthorized_
+  commentId: Overload:Vulthil.Results.Error.Unauthorized
+  isSpec: "True"
+  fullName: Vulthil.Results.Error.Unauthorized
+  nameWithType: Error.Unauthorized
 - uid: Vulthil.Results.Error.Validation(System.String,System.String)
   name: Validation(string, string)
   href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Validation_System_String_System_String_
@@ -5657,6 +5689,12 @@ references:
   commentId: F:Vulthil.Results.ErrorType.Failure
   fullName: Vulthil.Results.ErrorType.Failure
   nameWithType: ErrorType.Failure
+- uid: Vulthil.Results.ErrorType.Forbidden
+  name: Forbidden
+  href: api/Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Forbidden
+  commentId: F:Vulthil.Results.ErrorType.Forbidden
+  fullName: Vulthil.Results.ErrorType.Forbidden
+  nameWithType: ErrorType.Forbidden
 - uid: Vulthil.Results.ErrorType.NotFound
   name: NotFound
   href: api/Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_NotFound
@@ -5669,6 +5707,12 @@ references:
   commentId: F:Vulthil.Results.ErrorType.Problem
   fullName: Vulthil.Results.ErrorType.Problem
   nameWithType: ErrorType.Problem
+- uid: Vulthil.Results.ErrorType.Unauthorized
+  name: Unauthorized
+  href: api/Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Unauthorized
+  commentId: F:Vulthil.Results.ErrorType.Unauthorized
+  fullName: Vulthil.Results.ErrorType.Unauthorized
+  nameWithType: ErrorType.Unauthorized
 - uid: Vulthil.Results.ErrorType.Validation
   name: Validation
   href: api/Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Validation
@@ -5783,6 +5827,12 @@ references:
   fullName.vb: Vulthil.Results.Result.Success(Of TValue)(TValue)
   nameWithType: Result.Success<TValue>(TValue)
   nameWithType.vb: Result.Success(Of TValue)(TValue)
+- uid: Vulthil.Results.Result.ValidationFailure(Vulthil.Results.ValidationError)
+  name: ValidationFailure(ValidationError)
+  href: api/Vulthil.Results.Result.html#Vulthil_Results_Result_ValidationFailure_Vulthil_Results_ValidationError_
+  commentId: M:Vulthil.Results.Result.ValidationFailure(Vulthil.Results.ValidationError)
+  fullName: Vulthil.Results.Result.ValidationFailure(Vulthil.Results.ValidationError)
+  nameWithType: Result.ValidationFailure(ValidationError)
 - uid: Vulthil.Results.Result.ValidationFailure*
   name: ValidationFailure
   href: api/Vulthil.Results.Result.html#Vulthil_Results_Result_ValidationFailure_
@@ -5997,6 +6047,15 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.CombineAsync(System.Collections.Generic.IEnumerable(Of System.Threading.Tasks.Task(Of Vulthil.Results.Result)))
   nameWithType: ResultExtensions.CombineAsync(IEnumerable<Task<Result>>)
   nameWithType.vb: ResultExtensions.CombineAsync(IEnumerable(Of Task(Of Result)))
+- uid: Vulthil.Results.ResultExtensions.CombineAsync(System.Threading.Tasks.Task{Vulthil.Results.Result}[])
+  name: CombineAsync(params Task<Result>[])
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_CombineAsync_System_Threading_Tasks_Task_Vulthil_Results_Result____
+  commentId: M:Vulthil.Results.ResultExtensions.CombineAsync(System.Threading.Tasks.Task{Vulthil.Results.Result}[])
+  name.vb: CombineAsync(ParamArray Task(Of Result)())
+  fullName: Vulthil.Results.ResultExtensions.CombineAsync(params System.Threading.Tasks.Task<Vulthil.Results.Result>[])
+  fullName.vb: Vulthil.Results.ResultExtensions.CombineAsync(ParamArray System.Threading.Tasks.Task(Of Vulthil.Results.Result)())
+  nameWithType: ResultExtensions.CombineAsync(params Task<Result>[])
+  nameWithType.vb: ResultExtensions.CombineAsync(ParamArray Task(Of Result)())
 - uid: Vulthil.Results.ResultExtensions.CombineAsync*
   name: CombineAsync
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_CombineAsync_
@@ -6004,6 +6063,42 @@ references:
   isSpec: "True"
   fullName: Vulthil.Results.ResultExtensions.CombineAsync
   nameWithType: ResultExtensions.CombineAsync
+- uid: Vulthil.Results.ResultExtensions.CombineAsync``1(System.Collections.Generic.IEnumerable{System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}})
+  name: CombineAsync<T>(IEnumerable<Task<Result<T>>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_CombineAsync__1_System_Collections_Generic_IEnumerable_System_Threading_Tasks_Task_Vulthil_Results_Result___0____
+  commentId: M:Vulthil.Results.ResultExtensions.CombineAsync``1(System.Collections.Generic.IEnumerable{System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}})
+  name.vb: CombineAsync(Of T)(IEnumerable(Of Task(Of Result(Of T))))
+  fullName: Vulthil.Results.ResultExtensions.CombineAsync<T>(System.Collections.Generic.IEnumerable<System.Threading.Tasks.Task<Vulthil.Results.Result<T>>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.CombineAsync(Of T)(System.Collections.Generic.IEnumerable(Of System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T))))
+  nameWithType: ResultExtensions.CombineAsync<T>(IEnumerable<Task<Result<T>>>)
+  nameWithType.vb: ResultExtensions.CombineAsync(Of T)(IEnumerable(Of Task(Of Result(Of T))))
+- uid: Vulthil.Results.ResultExtensions.CombineAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}[])
+  name: CombineAsync<T>(params Task<Result<T>>[])
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_CombineAsync__1_System_Threading_Tasks_Task_Vulthil_Results_Result___0_____
+  commentId: M:Vulthil.Results.ResultExtensions.CombineAsync``1(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}[])
+  name.vb: CombineAsync(Of T)(ParamArray Task(Of Result(Of T))())
+  fullName: Vulthil.Results.ResultExtensions.CombineAsync<T>(params System.Threading.Tasks.Task<Vulthil.Results.Result<T>>[])
+  fullName.vb: Vulthil.Results.ResultExtensions.CombineAsync(Of T)(ParamArray System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T))())
+  nameWithType: ResultExtensions.CombineAsync<T>(params Task<Result<T>>[])
+  nameWithType.vb: ResultExtensions.CombineAsync(Of T)(ParamArray Task(Of Result(Of T))())
+- uid: Vulthil.Results.ResultExtensions.Combine``1(System.Collections.Generic.IEnumerable{Vulthil.Results.Result{``0}})
+  name: Combine<T>(IEnumerable<Result<T>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Combine__1_System_Collections_Generic_IEnumerable_Vulthil_Results_Result___0___
+  commentId: M:Vulthil.Results.ResultExtensions.Combine``1(System.Collections.Generic.IEnumerable{Vulthil.Results.Result{``0}})
+  name.vb: Combine(Of T)(IEnumerable(Of Result(Of T)))
+  fullName: Vulthil.Results.ResultExtensions.Combine<T>(System.Collections.Generic.IEnumerable<Vulthil.Results.Result<T>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.Combine(Of T)(System.Collections.Generic.IEnumerable(Of Vulthil.Results.Result(Of T)))
+  nameWithType: ResultExtensions.Combine<T>(IEnumerable<Result<T>>)
+  nameWithType.vb: ResultExtensions.Combine(Of T)(IEnumerable(Of Result(Of T)))
+- uid: Vulthil.Results.ResultExtensions.Combine``1(Vulthil.Results.Result{``0}[])
+  name: Combine<T>(params Result<T>[])
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Combine__1_Vulthil_Results_Result___0____
+  commentId: M:Vulthil.Results.ResultExtensions.Combine``1(Vulthil.Results.Result{``0}[])
+  name.vb: Combine(Of T)(ParamArray Result(Of T)())
+  fullName: Vulthil.Results.ResultExtensions.Combine<T>(params Vulthil.Results.Result<T>[])
+  fullName.vb: Vulthil.Results.ResultExtensions.Combine(Of T)(ParamArray Vulthil.Results.Result(Of T)())
+  nameWithType: ResultExtensions.Combine<T>(params Result<T>[])
+  nameWithType.vb: ResultExtensions.Combine(Of T)(ParamArray Result(Of T)())
 - uid: Vulthil.Results.ResultExtensions.Ensure*
   name: Ensure
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Ensure_
@@ -7048,6 +7143,15 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), Vulthil.Results.Result(Of T2))
   nameWithType: ResultExtensions.ZipAsync<T1, T2>(Task<Result<T1>>, Result<T2>)
   nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2)(Task(Of Result(Of T1)), Result(Of T2))
+- uid: Vulthil.Results.ResultExtensions.ZipAsync``2(Vulthil.Results.Result{``0},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}})
+  name: ZipAsync<T1, T2>(Result<T1>, Task<Result<T2>>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync__2_Vulthil_Results_Result___0__System_Threading_Tasks_Task_Vulthil_Results_Result___1___
+  commentId: M:Vulthil.Results.ResultExtensions.ZipAsync``2(Vulthil.Results.Result{``0},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}})
+  name.vb: ZipAsync(Of T1, T2)(Result(Of T1), Task(Of Result(Of T2)))
+  fullName: Vulthil.Results.ResultExtensions.ZipAsync<T1, T2>(Vulthil.Results.Result<T1>, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>>)
+  fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2)(Vulthil.Results.Result(Of T1), System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T2)))
+  nameWithType: ResultExtensions.ZipAsync<T1, T2>(Result<T1>, Task<Result<T2>>)
+  nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2)(Result(Of T1), Task(Of Result(Of T2)))
 - uid: Vulthil.Results.ResultExtensions.ZipAsync``3(System.Threading.Tasks.Task{Vulthil.Results.Result{``0}},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}},System.Func{``0,``1,``2})
   name: ZipAsync<T1, T2, TOut>(Task<Result<T1>>, Task<Result<T2>>, Func<T1, T2, TOut>)
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync__3_System_Threading_Tasks_Task_Vulthil_Results_Result___0___System_Threading_Tasks_Task_Vulthil_Results_Result___1___System_Func___0___1___2__
@@ -7066,6 +7170,15 @@ references:
   fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2, TOut)(System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T1)), Vulthil.Results.Result(Of T2), System.Func(Of T1, T2, TOut))
   nameWithType: ResultExtensions.ZipAsync<T1, T2, TOut>(Task<Result<T1>>, Result<T2>, Func<T1, T2, TOut>)
   nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2, TOut)(Task(Of Result(Of T1)), Result(Of T2), Func(Of T1, T2, TOut))
+- uid: Vulthil.Results.ResultExtensions.ZipAsync``3(Vulthil.Results.Result{``0},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}},System.Func{``0,``1,``2})
+  name: ZipAsync<T1, T2, TOut>(Result<T1>, Task<Result<T2>>, Func<T1, T2, TOut>)
+  href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ZipAsync__3_Vulthil_Results_Result___0__System_Threading_Tasks_Task_Vulthil_Results_Result___1___System_Func___0___1___2__
+  commentId: M:Vulthil.Results.ResultExtensions.ZipAsync``3(Vulthil.Results.Result{``0},System.Threading.Tasks.Task{Vulthil.Results.Result{``1}},System.Func{``0,``1,``2})
+  name.vb: ZipAsync(Of T1, T2, TOut)(Result(Of T1), Task(Of Result(Of T2)), Func(Of T1, T2, TOut))
+  fullName: Vulthil.Results.ResultExtensions.ZipAsync<T1, T2, TOut>(Vulthil.Results.Result<T1>, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>>, System.Func<T1, T2, TOut>)
+  fullName.vb: Vulthil.Results.ResultExtensions.ZipAsync(Of T1, T2, TOut)(Vulthil.Results.Result(Of T1), System.Threading.Tasks.Task(Of Vulthil.Results.Result(Of T2)), System.Func(Of T1, T2, TOut))
+  nameWithType: ResultExtensions.ZipAsync<T1, T2, TOut>(Result<T1>, Task<Result<T2>>, Func<T1, T2, TOut>)
+  nameWithType.vb: ResultExtensions.ZipAsync(Of T1, T2, TOut)(Result(Of T1), Task(Of Result(Of T2)), Func(Of T1, T2, TOut))
 - uid: Vulthil.Results.ResultExtensions.Zip``2(Vulthil.Results.Result{``0},Vulthil.Results.Result{``1})
   name: Zip<T1, T2>(Result<T1>, Result<T2>)
   href: api/Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_Zip__2_Vulthil_Results_Result___0__Vulthil_Results_Result___1__

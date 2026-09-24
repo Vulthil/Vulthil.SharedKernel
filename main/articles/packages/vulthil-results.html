@@ -108,6 +108,11 @@ Result&lt;int&gt; typed = Result.Success(42);
 // Failure
 Error error = Error.NotFound(&quot;User.NotFound&quot;, &quot;User was not found&quot;);
 Result&lt;User&gt; failed = Result.Failure&lt;User&gt;(error);
+
+// Validation failure, with or without a value type
+var validation = new ValidationError([Error.Validation(&quot;Email.Required&quot;, &quot;Email is required&quot;)]);
+Result invalid = Result.ValidationFailure(validation);
+Result&lt;User&gt; invalidUser = Result.ValidationFailure&lt;User&gt;(validation);
 </code></pre>
 <h3 id="defining-domain-errors">Defining domain errors</h3>
 <pre><code class="lang-csharp">public static class UserErrors
@@ -119,6 +124,8 @@ Result&lt;User&gt; failed = Result.Failure&lt;User&gt;(error);
         Error.Conflict(&quot;User.EmailTaken&quot;, &quot;Email is already in use&quot;);
 }
 </code></pre>
+<p>Factories: <code>Failure</code>, <code>Validation</code>, <code>Problem</code>, <code>NotFound</code>, <code>Conflict</code>, <code>Unauthorized</code>, <code>Forbidden</code>. Each carries an
+<code>ErrorType</code> that the API layer maps to an HTTP status.</p>
 <h3 id="chaining-with-bind-map-tap-and-match">Chaining with Bind, Map, Tap, and Match</h3>
 <pre><code class="lang-csharp">// Bind chains operations that return Result
 Result&lt;Order&gt; order = await GetUser(userId)
@@ -136,6 +143,11 @@ Result&lt;User&gt; user = await GetUser(userId)
 string message = result.Match(
     onSuccess: () =&gt; &quot;OK&quot;,
     onFailure: error =&gt; error.Description);
+</code></pre>
+<h3 id="aggregating-results">Aggregating results</h3>
+<pre><code class="lang-csharp">Result combined = ResultExtensions.Combine(CheckName(), CheckEmail());   // Result
+Result&lt;IReadOnlyList&lt;Item&gt;&gt; items = ids.Select(LoadItem).Combine();      // typed: collects the values
+Result&lt;(User, Order)&gt; pair = GetUser(userId).Zip(GetOrder(orderId));     // exactly two
 </code></pre>
 <h3 id="converting-nullable-values">Converting nullable values</h3>
 <pre><code class="lang-csharp">User? user = await repository.GetByIdAsync(id);

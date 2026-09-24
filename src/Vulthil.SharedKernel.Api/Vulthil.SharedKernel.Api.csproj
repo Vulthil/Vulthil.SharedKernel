@@ -7,11 +7,9 @@
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<!-- ProblemDetailsOperationTransformer uses Microsoft.OpenApi types through this package's own per-TFM
+		     dependency (2.x on net10.0, 1.6.x on net9.0), so Microsoft.OpenApi is not referenced directly. -->
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-		<!-- Declared directly (not left transitive) because ProblemDetailsOperationTransformer uses
-		     Microsoft.OpenApi types; the version is the TFM-conditional central pin — see
-		     Directory.Packages.props. -->
-		<PackageReference Include="Microsoft.OpenApi" />
 	</ItemGroup>
 
 	<ItemGroup>

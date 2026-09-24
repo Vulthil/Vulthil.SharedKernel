@@ -1,10 +1,10 @@
 name: Setup build environment
 description: >-
   Shared CI/release/docs preamble: installs the pinned .NET SDKs, restores the
-  NuGet package cache, and restores local dotnet tools (reportgenerator,
-  docfx). Checkout is intentionally not included here -- each workflow checks
-  out with its own options (fetch-depth, persist-credentials) before calling
-  this action.
+  NuGet package cache and the Aspire CLI bundle cache, and restores local
+  dotnet tools (reportgenerator, docfx). Checkout is intentionally not
+  included here -- each workflow checks out with its own options
+  (fetch-depth, persist-credentials) before calling this action.
 
 runs:
   using: composite
@@ -16,6 +16,16 @@ runs:
         path: ~/.nuget/packages
         key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
         restore-keys: nuget-
+
+    # The AppHost projects resolve DCP and the dashboard from the Aspire CLI bundle
+    # (AspireUseCliBundle); the build downloads it (~300 MB) into ~/.aspire when it is
+    # missing. The bundle version follows Aspire.AppHost.Sdk in global.json, hence the key.
+    - uses: actions/cache@v6
+      with:
+        path: |
+          ~/.aspire/versions
+          ~/.aspire/bundle
+        key: aspire-bundle-${{ runner.os }}-${{ hashFiles('global.json') }}
 
     - name: Restore local dotnet tools
       shell: bash

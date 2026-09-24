@@ -5,6 +5,14 @@
 		<UserSecretsId>dd0fe63f-1e88-4f71-abce-d1ba93af2054</UserSecretsId>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<!-- DCP and the dashboard come from the Aspire CLI bundle, which the build prepares through dnx when the
+		     machine has none; the CLI version follows Aspire.AppHost.Sdk in global.json, so no Aspire CLI install
+		     is required anywhere, CI included. -->
+		<AspireUseCliBundle>true</AspireUseCliBundle>
+		<AspireCliInvocationMode>DnxPinned</AspireCliInvocationMode>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" />

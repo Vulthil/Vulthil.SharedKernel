@@ -19,11 +19,11 @@ public sealed class DeclaredErrorsOpenApiDocumentTests : BaseUnitTestCase
     public async Task DeclaredErrorsAreDocumentedAndUndeclaredOnesAreNot()
     {
         // Arrange
-        await using var app = await StartHostAsync(app =>
+        await using var app = await StartHostAsync(host =>
         {
-            app.MapGet("/declared", () => Result.Success(1).ToIResult())
+            host.MapGet("/declared", () => Result.Success(1).ToIResult())
                 .ProducesErrors(ErrorType.NotFound, ErrorType.Validation);
-            app.MapGet("/bare", () => Result.Success(1).ToIResult());
+            host.MapGet("/bare", () => Result.Success(1).ToIResult());
         });
 
         // Act
@@ -38,8 +38,8 @@ public sealed class DeclaredErrorsOpenApiDocumentTests : BaseUnitTestCase
     public async Task AnAttributeOnTheHandlerDocumentsTheDeclaredError()
     {
         // Arrange
-        await using var app = await StartHostAsync(app =>
-            app.MapDelete("/attributed", [ProducesError(ErrorType.Conflict)] () => Result.Success().ToIResult()));
+        await using var app = await StartHostAsync(host =>
+            host.MapDelete("/attributed", [ProducesError(ErrorType.Conflict)] () => Result.Success().ToIResult()));
 
         // Act
         using var document = await ReadDocumentAsync(app);
@@ -52,8 +52,8 @@ public sealed class DeclaredErrorsOpenApiDocumentTests : BaseUnitTestCase
     public async Task DeclaredErrorsAreDocumentedAsProblemJson()
     {
         // Arrange
-        await using var app = await StartHostAsync(app =>
-            app.MapGet("/declared", () => Result.Success(1).ToIResult()).ProducesErrors(ErrorType.NotFound));
+        await using var app = await StartHostAsync(host =>
+            host.MapGet("/declared", () => Result.Success(1).ToIResult()).ProducesErrors(ErrorType.NotFound));
 
         // Act
         using var document = await ReadDocumentAsync(app);

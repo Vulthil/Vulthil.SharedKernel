@@ -364,16 +364,19 @@ error type.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToCreatedAtRouteHttpResult__1_Vulthil_Results_Result___0__System_String_System_Func___0_System_Object__" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToCreatedAtRouteHttpResult``1(Vulthil.Results.Result{``0},System.String,System.Func{``0,System.Object})">
   ToCreatedAtRouteHttpResult&lt;T&gt;(Result&lt;T&gt;, string?, Func&lt;T, object?&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L117"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a> for minimal API and controller endpoints,
-returning distinct HTTP result types for OpenAPI documentation generation.</p>
+  <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a>: <code>201 Created</code> with the value and a
+<code>Location</code> for the named route on success, otherwise the problem response for the error (see
+<a class="xref" href="Vulthil.SharedKernel.Api.CustomResults.html#Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_">Problem(Error)</a>). The success member documents itself for OpenAPI; declare the error types the
+endpoint can produce with <a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html#Vulthil_SharedKernel_Api_ProducesErrorsExtensions_ProducesErrors__1___0_Vulthil_Results_ErrorType___">ProducesErrors&lt;TBuilder&gt;(TBuilder, params ErrorType[])</a> or
+<a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorAttribute.html">ProducesErrorAttribute</a> so exactly those problem responses are documented.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Results&lt;CreatedAtRoute&lt;T&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt; ToCreatedAtRouteHttpResult&lt;T&gt;(this Result&lt;T&gt; result, string? routeName = null, Func&lt;T, object?&gt;? routeValueFactory = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Results&lt;CreatedAtRoute&lt;T&gt;, ProblemHttpResult&gt; ToCreatedAtRouteHttpResult&lt;T&gt;(this Result&lt;T&gt; result, string? routeName = null, Func&lt;T, object?&gt;? routeValueFactory = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -388,7 +391,7 @@ returning distinct HTTP result types for OpenAPI documentation generation.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.results-5">Results</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.createdatroute-1">CreatedAtRoute</a>&lt;T&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.validationproblem">ValidationProblem</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.notfound">NotFound</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.conflict">Conflict</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a>&gt;</dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.results-2">Results</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.createdatroute-1">CreatedAtRoute</a>&lt;T&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -411,10 +414,11 @@ returning distinct HTTP result types for OpenAPI documentation generation.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToIResult_Vulthil_Results_Error_" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToIResult(Vulthil.Results.Error)">
   ToIResult(Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L171"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Converts an <a class="xref" href="Vulthil.Results.Error.html">Error</a> to a <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a> problem response for minimal API endpoints.</p>
+  <div class="markdown level1 summary"><p>Converts an <a class="xref" href="Vulthil.Results.Error.html">Error</a> to the same <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a> problem response a failed result
+produces (see <a class="xref" href="Vulthil.SharedKernel.Api.CustomResults.html#Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_">Problem(Error)</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -448,16 +452,19 @@ returning distinct HTTP result types for OpenAPI documentation generation.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToIResult_Vulthil_Results_Result_" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToIResult(Vulthil.Results.Result)">
   ToIResult(Result)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L155"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result.html">Result</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a> for minimal API and controller endpoints,
-returning distinct HTTP result types for OpenAPI documentation generation.</p>
+  <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result.html">Result</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a>: <code>204 No Content</code> on success, otherwise the
+problem response for the error (see <a class="xref" href="Vulthil.SharedKernel.Api.CustomResults.html#Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_">Problem(Error)</a>). The success member documents itself for
+OpenAPI; declare the error types the endpoint can produce with
+<a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html#Vulthil_SharedKernel_Api_ProducesErrorsExtensions_ProducesErrors__1___0_Vulthil_Results_ErrorType___">ProducesErrors&lt;TBuilder&gt;(TBuilder, params ErrorType[])</a> or <a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorAttribute.html">ProducesErrorAttribute</a> so exactly
+those problem responses are documented.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Results&lt;NoContent, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt; ToIResult(this Result result)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Results&lt;NoContent, ProblemHttpResult&gt; ToIResult(this Result result)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -468,7 +475,7 @@ returning distinct HTTP result types for OpenAPI documentation generation.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.results-5">Results</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.nocontent">NoContent</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.validationproblem">ValidationProblem</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.notfound">NotFound</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.conflict">Conflict</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a>&gt;</dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.results-2">Results</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.nocontent">NoContent</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -486,16 +493,19 @@ returning distinct HTTP result types for OpenAPI documentation generation.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToIResult__1_Vulthil_Results_Result___0__" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToIResult``1(Vulthil.Results.Result{``0})">
   ToIResult&lt;T&gt;(Result&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L136"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a> for minimal API and controller endpoints,
-returning distinct HTTP result types for OpenAPI documentation generation.</p>
+  <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a>: <code>200 OK</code> with the value on success,
+otherwise the problem response for the error (see <a class="xref" href="Vulthil.SharedKernel.Api.CustomResults.html#Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_">Problem(Error)</a>). The success member
+documents itself for OpenAPI; declare the error types the endpoint can produce with
+<a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html#Vulthil_SharedKernel_Api_ProducesErrorsExtensions_ProducesErrors__1___0_Vulthil_Results_ErrorType___">ProducesErrors&lt;TBuilder&gt;(TBuilder, params ErrorType[])</a> or <a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorAttribute.html">ProducesErrorAttribute</a> so exactly
+those problem responses are documented.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Results&lt;Ok&lt;T&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt; ToIResult&lt;T&gt;(this Result&lt;T&gt; result)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Results&lt;Ok&lt;T&gt;, ProblemHttpResult&gt; ToIResult&lt;T&gt;(this Result&lt;T&gt; result)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -506,7 +516,7 @@ returning distinct HTTP result types for OpenAPI documentation generation.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.results-5">Results</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.ok-1">Ok</a>&lt;T&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.validationproblem">ValidationProblem</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.notfound">NotFound</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.conflict">Conflict</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a>&gt;</dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.results-2">Results</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.ok-1">Ok</a>&lt;T&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a>&gt;</dt>
     <dd></dd>
   </dl>
 

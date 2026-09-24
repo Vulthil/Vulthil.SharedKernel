@@ -121,6 +121,20 @@ covering handled failures, uncaught exceptions, and bare error status codes.</p>
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorAttribute.html">ProducesErrorAttribute</a></dt>
+      <dd><p>Declares that an endpoint or controller action can fail with the given <a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorAttribute.html#Vulthil_SharedKernel_Api_ProducesErrorAttribute_ErrorType">ErrorType</a>, so OpenAPI documents
+the matching problem response. The status code and body schema come from the same mapping the result extensions
+use at runtime (<a class="xref" href="Vulthil.SharedKernel.Api.CustomResults.html">CustomResults</a>), so endpoint code names the errors it can produce and never a status
+code. Apply one attribute per error type; a <code>500</code> response is documented on every operation without a
+declaration, because an unclassified failure is always possible.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html">ProducesErrorsExtensions</a></dt>
+      <dd><p>Endpoint-convention extensions that declare which <a class="xref" href="Vulthil.Results.ErrorType.html">ErrorType</a>s an endpoint can fail with.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Api.ResultHttpExtensions.html">ResultHttpExtensions</a></dt>
       <dd><p>Provides extension methods for converting <a class="xref" href="Vulthil.Results.Result.html">Result</a> values to HTTP responses.</p>
 </dd>

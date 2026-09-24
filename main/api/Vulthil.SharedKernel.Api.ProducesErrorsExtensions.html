@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class CustomResults | Vulthil.SharedKernel </title>
+      <title>Class ProducesErrorsExtensions | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class CustomResults | Vulthil.SharedKernel ">
+      <meta name="title" content="Class ProducesErrorsExtensions | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Provides factory methods for creating problem-detail HTTP responses from  values.">
+      <meta name="description" content="Endpoint-convention extensions that declare which s an endpoint can fail with.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Api_CustomResults.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Api.CustomResults%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Api_ProducesErrorsExtensions.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Api.ProducesErrorsExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,12 +84,12 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.SharedKernel.Api.CustomResults">
+        <article data-uid="Vulthil.SharedKernel.Api.ProducesErrorsExtensions">
 
 
 
-  <h1 id="Vulthil_SharedKernel_Api_CustomResults" data-uid="Vulthil.SharedKernel.Api.CustomResults" class="text-break">
-Class CustomResults  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_SharedKernel_Api_ProducesErrorsExtensions" data-uid="Vulthil.SharedKernel.Api.ProducesErrorsExtensions" class="text-break">
+Class ProducesErrorsExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProducesErrorsExtensions.cs/#L9"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,12 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Api.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Provides factory methods for creating problem-detail HTTP responses from <a class="xref" href="Vulthil.Results.Error.html">Error</a> values.</p>
+  <div class="markdown summary"><p>Endpoint-convention extensions that declare which <a class="xref" href="Vulthil.Results.ErrorType.html">ErrorType</a>s an endpoint can fail with.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static class CustomResults</code></pre>
+    <pre><code class="lang-csharp hljs">public static class ProducesErrorsExtensions</code></pre>
   </div>
 
 
@@ -112,7 +112,7 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><span class="xref">CustomResults</span></div>
+      <div><span class="xref">ProducesErrorsExtensions</span></div>
     </dd>
   </dl>
 
@@ -153,40 +153,47 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
 </h2>
 
 
-  <a id="Vulthil_SharedKernel_Api_CustomResults_Problem_" data-uid="Vulthil.SharedKernel.Api.CustomResults.Problem*"></a>
+  <a id="Vulthil_SharedKernel_Api_ProducesErrorsExtensions_ProducesErrors_" data-uid="Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_" data-uid="Vulthil.SharedKernel.Api.CustomResults.Problem(Vulthil.Results.Error)">
-  Problem(Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Api_ProducesErrorsExtensions_ProducesErrors__1___0_Vulthil_Results_ErrorType___" data-uid="Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors``1(``0,Vulthil.Results.ErrorType[])">
+  ProducesErrors&lt;TBuilder&gt;(TBuilder, params ErrorType[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProducesErrorsExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Creates the RFC 7807 problem response for an <a class="xref" href="Vulthil.Results.Error.html">Error</a>, with the status code mapped from its
-<a class="xref" href="Vulthil.Results.ErrorType.html">ErrorType</a> and the description as <code>detail</code>. A <a class="xref" href="Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Validation">Validation</a> error produces
-an <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpvalidationproblemdetails">HttpValidationProblemDetails</a> body whose <code>errors</code> map lists each inner error by code; every
-other error type produces a <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.problemdetails">ProblemDetails</a> body carrying the error code as an extension. Every
-failure path of the typed-result extensions goes through this method, so a failed result and a bare error yield
-the same response.</p>
+  <div class="markdown level1 summary"><p>Declares the error classifications the endpoint (or every endpoint in a group) can fail with, so OpenAPI
+documents exactly those problem responses and no others. The status code and body schema per error type come
+from the same mapping the result extensions use at runtime; a <code>500</code> response is documented on every
+operation without a declaration. Repeated error types are declared once.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ProblemHttpResult Problem(Error error)</code></pre>
+    <pre><code class="lang-csharp hljs">public static TBuilder ProducesErrors&lt;TBuilder&gt;(this TBuilder builder, params ErrorType[] errorTypes) where TBuilder : IEndpointConventionBuilder</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>error</code> <a class="xref" href="Vulthil.Results.Error.html">Error</a></dt>
-    <dd><p>The error to convert.</p>
+    <dt><code>builder</code> <span class="xref">TBuilder</span></dt>
+    <dd><p>The endpoint or group builder.</p>
+</dd>
+    <dt><code>errorTypes</code> <a class="xref" href="Vulthil.Results.ErrorType.html">ErrorType</a>[]</dt>
+    <dd><p>The error classifications the endpoint can produce.</p>
 </dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a></dt>
-    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a> representing the problem response.</p>
+    <dt><span class="xref">TBuilder</span></dt>
+    <dd><p>The same builder, for chaining.</p>
 </dd>
   </dl>
 
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TBuilder</code></dt>
+    <dd><p>The endpoint convention builder type.</p>
+</dd>
+  </dl>
 
 
 
@@ -201,7 +208,7 @@ the same response.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L198" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ProducesErrorsExtensions.cs/#L9" class="edit-link">Edit this page</a>
         </div>
 
 

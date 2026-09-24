@@ -1776,6 +1776,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.ProducesErrorAttribute",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.yml\" sourcestartlinenumber=\"1\">Declares that an endpoint or controller action can fail with the given <xref href=\"Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType\" data-throw-if-not-resolved=\"false\"></xref>, so OpenAPI documents\nthe matching problem response. The status code and body schema come from the same mapping the result extensions\nuse at runtime (<xref href=\"Vulthil.SharedKernel.Api.CustomResults\" data-throw-if-not-resolved=\"false\"></xref>), so endpoint code names the errors it can produce and never a status\ncode. Apply one attribute per error type; a <code>500</code> response is documented on every operation without a\ndeclaration, because an unclassified failure is always possible.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Api.ProducesErrorsExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Api.ProducesErrorsExtensions",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Api.ProducesErrorsExtensions.yml\" sourcestartlinenumber=\"1\">Endpoint-convention extensions that declare which <xref href=\"Vulthil.Results.ErrorType\" data-throw-if-not-resolved=\"false\"></xref>s an endpoint can fail with.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Api.ResultHttpExtensions.yml",
       "output": {
         ".html": {

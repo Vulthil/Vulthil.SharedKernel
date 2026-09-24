@@ -7530,6 +7530,66 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Api.ProblemDetailsExtensions.UseProblemDetailsHandling
   nameWithType: ProblemDetailsExtensions.UseProblemDetailsHandling
+- uid: Vulthil.SharedKernel.Api.ProducesErrorAttribute
+  name: ProducesErrorAttribute
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.html
+  commentId: T:Vulthil.SharedKernel.Api.ProducesErrorAttribute
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorAttribute
+  nameWithType: ProducesErrorAttribute
+- uid: Vulthil.SharedKernel.Api.ProducesErrorAttribute.#ctor(Vulthil.Results.ErrorType)
+  name: ProducesErrorAttribute(ErrorType)
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.html#Vulthil_SharedKernel_Api_ProducesErrorAttribute__ctor_Vulthil_Results_ErrorType_
+  commentId: M:Vulthil.SharedKernel.Api.ProducesErrorAttribute.#ctor(Vulthil.Results.ErrorType)
+  name.vb: New(ErrorType)
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorAttribute.ProducesErrorAttribute(Vulthil.Results.ErrorType)
+  fullName.vb: Vulthil.SharedKernel.Api.ProducesErrorAttribute.New(Vulthil.Results.ErrorType)
+  nameWithType: ProducesErrorAttribute.ProducesErrorAttribute(ErrorType)
+  nameWithType.vb: ProducesErrorAttribute.New(ErrorType)
+- uid: Vulthil.SharedKernel.Api.ProducesErrorAttribute.#ctor*
+  name: ProducesErrorAttribute
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.html#Vulthil_SharedKernel_Api_ProducesErrorAttribute__ctor_
+  commentId: Overload:Vulthil.SharedKernel.Api.ProducesErrorAttribute.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorAttribute.ProducesErrorAttribute
+  fullName.vb: Vulthil.SharedKernel.Api.ProducesErrorAttribute.New
+  nameWithType: ProducesErrorAttribute.ProducesErrorAttribute
+  nameWithType.vb: ProducesErrorAttribute.New
+- uid: Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType
+  name: ErrorType
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.html#Vulthil_SharedKernel_Api_ProducesErrorAttribute_ErrorType
+  commentId: P:Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType
+  nameWithType: ProducesErrorAttribute.ErrorType
+- uid: Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType*
+  name: ErrorType
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorAttribute.html#Vulthil_SharedKernel_Api_ProducesErrorAttribute_ErrorType_
+  commentId: Overload:Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType
+  nameWithType: ProducesErrorAttribute.ErrorType
+- uid: Vulthil.SharedKernel.Api.ProducesErrorsExtensions
+  name: ProducesErrorsExtensions
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html
+  commentId: T:Vulthil.SharedKernel.Api.ProducesErrorsExtensions
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorsExtensions
+  nameWithType: ProducesErrorsExtensions
+- uid: Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors*
+  name: ProducesErrors
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html#Vulthil_SharedKernel_Api_ProducesErrorsExtensions_ProducesErrors_
+  commentId: Overload:Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors
+  nameWithType: ProducesErrorsExtensions.ProducesErrors
+- uid: Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors``1(``0,Vulthil.Results.ErrorType[])
+  name: ProducesErrors<TBuilder>(TBuilder, params ErrorType[])
+  href: api/Vulthil.SharedKernel.Api.ProducesErrorsExtensions.html#Vulthil_SharedKernel_Api_ProducesErrorsExtensions_ProducesErrors__1___0_Vulthil_Results_ErrorType___
+  commentId: M:Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors``1(``0,Vulthil.Results.ErrorType[])
+  name.vb: ProducesErrors(Of TBuilder)(TBuilder, ParamArray ErrorType())
+  fullName: Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors<TBuilder>(TBuilder, params Vulthil.Results.ErrorType[])
+  fullName.vb: Vulthil.SharedKernel.Api.ProducesErrorsExtensions.ProducesErrors(Of TBuilder)(TBuilder, ParamArray Vulthil.Results.ErrorType())
+  nameWithType: ProducesErrorsExtensions.ProducesErrors<TBuilder>(TBuilder, params ErrorType[])
+  nameWithType.vb: ProducesErrorsExtensions.ProducesErrors(Of TBuilder)(TBuilder, ParamArray ErrorType())
 - uid: Vulthil.SharedKernel.Api.ResultHttpExtensions
   name: ResultHttpExtensions
   href: api/Vulthil.SharedKernel.Api.ResultHttpExtensions.html

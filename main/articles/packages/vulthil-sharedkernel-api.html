@@ -109,11 +109,16 @@
         {
             var result = await sender.SendAsync(new GetUserQuery(id));
             return result.ToIResult();
-        });
+        })
+        .ProducesErrors(ErrorType.NotFound);
     }
 }
 </code></pre>
-<p><code>ToIResult()</code> returns <code>Results&lt;Ok&lt;T&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;</code>, so OpenAPI automatically documents all possible response types. At runtime every failure — including <code>NotFound</code> and <code>Conflict</code> — is returned as a problem response (RFC 7807) with the status mapped from the <code>ErrorType</code> and the error's description as <code>detail</code>; the <code>NotFound</code>/<code>Conflict</code> union members exist for the OpenAPI documentation. See <a href="../result-pattern.html#mapping-to-http-responses">Result Pattern — Mapping to HTTP Responses</a>.</p>
+<p><code>ToIResult()</code> returns <code>Results&lt;Ok&lt;T&gt;, ProblemHttpResult&gt;</code>: the success member documents itself, and every failure is
+returned as one problem response (RFC 7807) with the status mapped from the <code>ErrorType</code> and the error's description
+as <code>detail</code>. Declare the errors an endpoint can produce with <code>ProducesErrors(...)</code> (or <code>[ProducesError(...)]</code>), in
+error terms, and OpenAPI documents exactly those problem responses plus a <code>500</code> on every operation. See
+<a href="../result-pattern.html#mapping-to-http-responses">Result Pattern — Mapping to HTTP Responses</a>.</p>
 <h3 id="registration-and-mapping">Registration and mapping</h3>
 <pre><code class="lang-csharp">// In Program.cs
 builder.Services.AddEndpoints(typeof(Program).Assembly);
@@ -129,17 +134,19 @@ app.MapOpenApiEndpoints();
 <pre><code class="lang-csharp">public sealed class UsersController(ISender sender) : BaseController
 {
     [HttpGet(&quot;{id:guid}&quot;)]
-    public async Task&lt;Results&lt;Ok&lt;UserDto&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;&gt; Get(Guid id)
+    [ProducesError(ErrorType.NotFound)]
+    public async Task&lt;Results&lt;Ok&lt;UserDto&gt;, ProblemHttpResult&gt;&gt; Get(Guid id)
     {
         var result = await sender.SendAsync(new GetUserQuery(id));
         return result.ToIResult();
     }
 }
 </code></pre>
-<p>Or use <code>IActionResult</code> with model-state error translation:</p>
+<p>Or use <code>IActionResult</code> with model-state error translation; <code>[ProducesError]</code> documents the problem responses here too:</p>
 <pre><code class="lang-csharp">public sealed class UsersController(ISender sender) : BaseController
 {
     [HttpGet(&quot;{id:guid}&quot;)]
+    [ProducesError(ErrorType.NotFound)]
     public async Task&lt;IActionResult&gt; Get(Guid id)
     {
         var result = await sender.SendAsync(new GetUserQuery(id));

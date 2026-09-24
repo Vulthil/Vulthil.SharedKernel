@@ -405,15 +405,17 @@ treated as &quot;no error&quot; just because its field values match.</li>
 </ul>
 <h2 id="mapping-to-http-responses">Mapping to HTTP Responses</h2>
 <p><code>Vulthil.SharedKernel.Api</code> provides helpers that turn a <code>Result</code> into the correct HTTP response with typed results for OpenAPI documentation:</p>
-<pre><code class="lang-csharp">// Minimal API endpoint – returns Results&lt;Ok&lt;UserDto&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;
+<pre><code class="lang-csharp">// Minimal API endpoint – returns Results&lt;Ok&lt;UserDto&gt;, ProblemHttpResult&gt;; the errors it can produce are declared once
 app.MapGet(&quot;/users/{id:guid}&quot;, async (Guid id, ISender sender) =&gt;
 {
     var result = await sender.SendAsync(new GetUserQuery(id));
     return result.ToIResult();
-});
+})
+.ProducesErrors(ErrorType.NotFound);
 
 // Controller-based endpoint with typed results
-public async Task&lt;Results&lt;Ok&lt;UserDto&gt;, ValidationProblem, NotFound, Conflict, ProblemHttpResult&gt;&gt; Get(Guid id)
+[ProducesError(ErrorType.NotFound)]
+public async Task&lt;Results&lt;Ok&lt;UserDto&gt;, ProblemHttpResult&gt;&gt; Get(Guid id)
 {
     var result = await _sender.SendAsync(new GetUserQuery(id));
     return result.ToIResult();
@@ -427,14 +429,24 @@ public async Task&lt;IActionResult&gt; Get(Guid id)
 }
 </code></pre>
 <p>Success maps to <code>200 Ok&lt;T&gt;</code> (<code>Result&lt;T&gt;</code>), <code>204 NoContent</code> (non-generic <code>Result</code>), or <code>201 CreatedAtRoute&lt;T&gt;</code>
-via <code>ToCreatedAtRouteHttpResult</code>. Every failure returns an RFC 7807 problem body with the status from the
-<a href="#error-classifications">table above</a>: <code>detail</code> carries the error's <code>Description</code>, and the error's <code>Code</code>
-appears as a key in the problem <code>extensions</code> (mapped to the description). <code>Validation</code> failures return a
-validation problem whose per-field <code>errors</code> dictionary is built from the <code>ValidationError</code>'s inner errors. The
-minimal-API and MVC paths produce the same status and detail for the same error.</p>
-<p>One nuance of the typed union: at runtime <code>NotFound</code> and <code>Conflict</code> errors surface as a <code>ProblemHttpResult</code>
-carrying 404/409 <strong>with that problem body</strong> — the <code>NotFound</code>/<code>Conflict</code> members of the union exist so OpenAPI
-documents those status codes, not as the results actually returned.</p>
+via <code>ToCreatedAtRouteHttpResult</code>. Every failure returns one <code>ProblemHttpResult</code>: an RFC 7807 problem body with the
+status from the <a href="#error-classifications">table above</a> and the error's <code>Description</code> as <code>detail</code>. For a
+<code>Validation</code> error the body is an <code>HttpValidationProblemDetails</code> whose per-field <code>errors</code> dictionary is built from
+the <code>ValidationError</code>'s inner errors; for every other error type the error's <code>Code</code> appears as a key in the problem
+<code>extensions</code> (mapped to the description). A failed result and a bare <code>error.ToIResult()</code> produce the same body, and
+the minimal-API and MVC paths produce the same status and detail for the same error.</p>
+<h3 id="documenting-the-errors-an-endpoint-can-produce">Documenting the errors an endpoint can produce</h3>
+<p>Which errors an endpoint can return depends on the handler behind it, so the type system cannot document them.
+The typed unions therefore contain only what is always true — the success member and <code>ProblemHttpResult</code> — and
+the endpoint declares its errors once, in error terms, never as status codes:</p>
+<ul>
+<li>Minimal APIs: <code>.ProducesErrors(ErrorType.NotFound, ErrorType.Conflict)</code> on the route or route group.</li>
+<li>Controllers (or a minimal API lambda): <code>[ProducesError(ErrorType.NotFound)]</code>, one attribute per error type.</li>
+</ul>
+<p>Both emit standard response metadata (<code>ProducesErrorAttribute</code> is a <code>ProducesResponseTypeAttribute</code>), so OpenAPI
+documents exactly the declared problem responses — with the status and body schema taken from the same mapping the
+runtime uses — plus a <code>500</code> on every operation, because an unclassified <code>Failure</code> is always possible. An endpoint
+that declares nothing documents its success response and <code>500</code> only.</p>
 
 </article>
 

@@ -5,6 +5,14 @@
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<!-- DCP and the dashboard come from the Aspire CLI bundle, which the build prepares through dnx when the
+		     machine has none; the CLI version follows Aspire.AppHost.Sdk in global.json, so no Aspire CLI install
+		     is required anywhere, CI included. -->
+		<AspireUseCliBundle>true</AspireUseCliBundle>
+		<AspireCliInvocationMode>DnxPinned</AspireCliInvocationMode>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />

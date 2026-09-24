@@ -17,7 +17,8 @@ public static class GetById
                 var result = await sender.HandleAsync(query, cancellationToken);
                 return result.ToIResult();
             })
-            .WithName("GetMainEntity");
+            .WithName("GetMainEntity")
+            .ProducesErrors(ErrorType.NotFound);
         }
     }
 }

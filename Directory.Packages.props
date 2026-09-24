@@ -9,10 +9,10 @@
          the EF floor automatically (the .NET train ships ASP.NET Core and EF patches in lockstep).
          When net9.0 is dropped, repoint the floor at the then-oldest train and revisit the floored
          set. -->
-    <Net9FrameworkVersion>9.0.19</Net9FrameworkVersion>
-    <FrameworkVersion>10.0.11</FrameworkVersion>
+    <Net9FrameworkVersion>9.0.20</Net9FrameworkVersion>
+    <FrameworkVersion>10.0.12</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">$(Net9FrameworkVersion)</FrameworkVersion>
-    <AspireVersion>13.4.6</AspireVersion>
+    <AspireVersion>13.5.4</AspireVersion>
     <!-- Consumer opt-up EF floor for the non-provider src packages, applied via VersionOverride on
          their EF Core PackageReference items: they compile against the EF 9 line (EF Core 9 targets
          net8.0, so it is referenceable from every TFM we ship) and their published dependency groups
@@ -28,15 +28,6 @@
          packages also stay on $(FrameworkVersion) because their Aspire EF integrations floor EF at
          the current train. -->
     <EfCoreMinimumVersion>$(Net9FrameworkVersion)</EfCoreMinimumVersion>
-    <!-- Hand-managed per-TFM version for Vulthil.SharedKernel.Api's direct Microsoft.OpenApi usage
-         (ProblemDetailsOperationTransformer): 2.x on net10.0, 1.6.17 on net9.0 — the model types moved
-         namespace between 1.x and 2.x, so the legs cannot converge while net9.0 is supported. No longer
-         an advisory pin: since Microsoft.AspNetCore.OpenApi 10.0.11 its own floor is the patched 2.7.5
-         (GHSA-v5pm-xwqc-g5wc), so projects without direct usage rely on the transitive version instead.
-         Dependabot ignores this package because it flattens these conditional legs to one value, forcing
-         2.x onto net9.0 (see .github/dependabot.yml). -->
-    <MicrosoftOpenApiVersion>2.11.0</MicrosoftOpenApiVersion>
-    <MicrosoftOpenApiVersion Condition="'$(TargetFramework)' == 'net9.0'">1.6.17</MicrosoftOpenApiVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
@@ -50,14 +41,13 @@
     <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.3" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="$(MicrosoftOpenApiVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(FrameworkVersion)" />
     <!-- MySQL: Aspire/Pomelo integration on net9; the Microting fork (a Pomelo fork) fills the EF Core 10 / net10 gap until the official Pomelo/Aspire packages ship it. -->
     <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="$(AspireVersion)" />
-    <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.11" />
+    <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.12" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
     <!-- The in-box Microsoft.Extensions.* packages are deliberately literal, NOT $(FrameworkVersion):
@@ -65,43 +55,43 @@
          provider integrations) floor them at >= 10.0.8 on BOTH TFMs, so a 9.x net9.0 leg is an NU1605
          downgrade error. Http.Resilience and ServiceDiscovery version on their own out-of-band minor
          cadence. -->
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.9.0" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.9.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.10.0" />
+    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.10.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2" />
     <!-- Scoped to the Aspire DCP integration-test project only (via eng/coverage.ps1's
          split test invocation); retrying failed unit-suite tests would mask real flake. -->
-    <PackageVersion Include="Microsoft.Testing.Extensions.Retry" Version="2.3.3" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.Retry" Version="2.4.1" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.401" />
-    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.91" />
-    <PackageVersion Include="Moq.AutoMock" Version="4.0.2" />
-    <PackageVersion Include="OpenTelemetry.Api" Version="1.17.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.17.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.17.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.94" />
+    <PackageVersion Include="Moq.AutoMock" Version="4.0.3" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.19.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.19.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.19.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.19.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.19.0" />
     <PackageVersion Include="ReportGenerator" Version="5.5.11" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
-    <PackageVersion Include="Scalar.Aspire" Version="0.11.13" />
+    <PackageVersion Include="Scalar.Aspire" Version="0.11.25" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.32.0.713" />
-    <PackageVersion Include="Testcontainers" Version="4.14.0" />
-    <PackageVersion Include="Testcontainers.CosmosDb" Version="4.14.0" />
-    <PackageVersion Include="Testcontainers.MySql" Version="4.14.0" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
-    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.14.0" />
-    <PackageVersion Include="Testcontainers.XunitV3" Version="4.14.0" />
-    <PackageVersion Include="xunit.analyzers" Version="2.0.0" />
-    <PackageVersion Include="xunit.v3" Version="4.0.0" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.34.0.3385" />
+    <PackageVersion Include="Testcontainers" Version="4.15.0" />
+    <PackageVersion Include="Testcontainers.CosmosDb" Version="4.15.0" />
+    <PackageVersion Include="Testcontainers.MySql" Version="4.15.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.15.0" />
+    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.15.0" />
+    <PackageVersion Include="Testcontainers.XunitV3" Version="4.15.0" />
+    <PackageVersion Include="xunit.analyzers" Version="2.1.0" />
+    <PackageVersion Include="xunit.v3" Version="4.0.1" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.1" />
   </ItemGroup>
 </Project>

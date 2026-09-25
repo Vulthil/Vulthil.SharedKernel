@@ -35,7 +35,7 @@ jobs:
           fetch-depth: 0
 
       - name: Create backport PRs
-        uses: korthout/backport-action@2e830a1d0b8269505846ddd407a70876913ad1f8 # v4
+        uses: korthout/backport-action@6b65649031ac6d18ffdfd0c0820e9436f3fde22b # v4
         with:
           # AUTOMATION_TOKEN (a PAT/App token) lets the required `build` check
           # run on the created PR; pushes made with the default GITHUB_TOKEN do

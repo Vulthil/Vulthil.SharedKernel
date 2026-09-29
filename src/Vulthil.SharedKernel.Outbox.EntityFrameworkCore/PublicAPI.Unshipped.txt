@@ -1,1 +1,8 @@
 #nullable enable
+*REMOVED*Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! outboxProcessingOptions, Vulthil.SharedKernel.Outbox.IOutboxSignal! signal) -> void
+Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! outboxProcessingOptions, Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup! relayWakeup) -> void
+Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup
+Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.OutboxRelayWakeup(Vulthil.SharedKernel.Outbox.IOutboxSignal! signal) -> void
+Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionCommitted(Microsoft.EntityFrameworkCore.DbContext! context) -> void
+Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionRolledBack(Microsoft.EntityFrameworkCore.DbContext! context) -> void
+Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionStarted(Microsoft.EntityFrameworkCore.DbContext! context) -> void

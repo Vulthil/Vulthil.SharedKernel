@@ -11,9 +11,11 @@ namespace Vulthil.SharedKernel.Infrastructure.Relational;
 public static class RelationalOutboxServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers the relational transaction-commit interceptor that wakes the outbox relay as soon as a transaction
-    /// commits (low-latency delivery), keeping the periodic poll as the correctness backstop. Relational provider
-    /// packages call this when outbox processing is enabled.
+    /// Registers the relational transaction interceptor that reports every transaction to
+    /// <see cref="OutboxRelayWakeup"/>, so the outbox relay wakes as soon as a transaction that saved outbox rows
+    /// commits (low-latency delivery) while a commit that saved none, such as the relay's own batch, never wakes it.
+    /// The periodic poll remains the correctness backstop. Relational provider packages call this when outbox
+    /// processing is enabled.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <returns>The same service collection, for chaining.</returns>
@@ -21,6 +23,7 @@ public static class RelationalOutboxServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.TryAddSingleton<OutboxRelayWakeup>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxInterceptor, OutboxCommitInterceptor>());
 
         return services;

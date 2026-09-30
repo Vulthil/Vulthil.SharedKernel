@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
@@ -85,7 +84,7 @@ public sealed class RabbitMqConsumerWorkerFaultPayloadTests : BaseUnitTestCase
         Use(provider);
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use(new ThrowingConsumer());
-        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        Use(new DeliveryDispatcher(new AutoMockerServiceScopeFactory(AutoMocker), NullLogger<DeliveryDispatcher>.Instance));
         Use<ILogger<RabbitMqConsumerWorker>>(NullLogger<RabbitMqConsumerWorker>.Instance);
         Use(queue);
         Use<TimeProvider>(new FakeTimeProvider());

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
@@ -12,8 +11,6 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 public sealed class QueueDispatchPlansTests : BaseUnitTestCase
 {
     private readonly Lazy<QueueDispatchPlans> _lazyTarget;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly RecordingGatedPublisher _publisher = new();
 
     private QueueDispatchPlans Target => _lazyTarget.Value;
 
@@ -24,25 +21,17 @@ public sealed class QueueDispatchPlansTests : BaseUnitTestCase
 
         Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
-        _serviceProvider = AutoMocker;
     }
 
-    private static BasicDeliverEventArgs CreateDeliverEventArgs(string routingKey = "#", string? replyTo = null, string? correlationId = null)
-    {
-        return new BasicDeliverEventArgs(
+    private static BasicDeliverEventArgs CreateDeliverEventArgs()
+        => new(
             "consumer-tag",
             1,
             false,
             "test-exchange",
-            routingKey,
-            new BasicProperties
-            {
-                ReplyTo = replyTo,
-                CorrelationId = correlationId,
-                Headers = new Dictionary<string, object?>()
-            },
+            "#",
+            new BasicProperties { Headers = new Dictionary<string, object?>() },
             ReadOnlyMemory<byte>.Empty);
-    }
 
     private static QueueDefinition QueueConsuming<TConsumer, TMessage>()
         where TConsumer : class, IConsumer<TMessage>
@@ -56,6 +45,15 @@ public sealed class QueueDispatchPlansTests : BaseUnitTestCase
         });
         return queue;
     }
+
+    private static ConsumerRegistration Registration<TConsumer, TMessage>()
+        where TConsumer : class, IConsumer<TMessage>
+        where TMessage : notnull
+        => new()
+        {
+            ConsumerType = new ConsumerType(typeof(TConsumer)),
+            MessageType = new MessageType(typeof(TMessage)),
+        };
 
     private static RequestConsumerRegistration RequestRegistration<TConsumer>()
         where TConsumer : class, IRequestConsumer<TestRequest, TestResponse>
@@ -73,15 +71,34 @@ public sealed class QueueDispatchPlansTests : BaseUnitTestCase
     internal sealed record TestResponse(string Result);
     internal sealed record OtherMessage(string Content);
 
+    internal interface IOrderEvent;
+
+    internal interface IOrder : IOrderEvent;
+
+    internal sealed record OrderPlaced(string OrderId) : IOrder;
+
     private sealed class TestMessageConsumer : IConsumer<TestMessage>
     {
-        public List<TestMessage> ReceivedMessages { get; } = [];
-
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
-        {
-            ReceivedMessages.Add(messageContext.Message);
-            return Task.CompletedTask;
-        }
+            => Task.CompletedTask;
+    }
+
+    private sealed class OrderPlacedConsumer : IConsumer<OrderPlaced>
+    {
+        public Task ConsumeAsync(IMessageContext<OrderPlaced> messageContext, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
+    }
+
+    private sealed class OrderConsumer : IConsumer<IOrder>
+    {
+        public Task ConsumeAsync(IMessageContext<IOrder> messageContext, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
+    }
+
+    private sealed class OrderEventConsumer : IConsumer<IOrderEvent>
+    {
+        public Task ConsumeAsync(IMessageContext<IOrderEvent> messageContext, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
     }
 
     private sealed class OtherMessageConsumer : IConsumer<OtherMessage>
@@ -100,13 +117,8 @@ public sealed class QueueDispatchPlansTests : BaseUnitTestCase
 
     private sealed class TestRequestConsumer : IRequestConsumer<TestRequest, TestResponse>
     {
-        public List<TestRequest> ReceivedRequests { get; } = [];
-
         public Task<TestResponse> ConsumeAsync(IMessageContext<TestRequest> messageContext, CancellationToken cancellationToken = default)
-        {
-            ReceivedRequests.Add(messageContext.Message);
-            return Task.FromResult(new TestResponse($"Processed: {messageContext.Message.Query}"));
-        }
+            => Task.FromResult(new TestResponse($"Processed: {messageContext.Message.Query}"));
     }
 
     #endregion
@@ -158,97 +170,6 @@ public sealed class QueueDispatchPlansTests : BaseUnitTestCase
         byUrn.ShouldNotBeNull();
         byUrn.ShouldBeSameAs(byFullName);
         byUrn.MessageType.Type.ShouldBe(typeof(TestMessage));
-    }
-
-    [Fact]
-    public async Task CompiledHandlerShouldCallConsumerWithCorrectMessage()
-    {
-        // Arrange
-        var consumerInstance = new TestMessageConsumer();
-        Use(consumerInstance);
-        Use(QueueConsuming<TestMessageConsumer, TestMessage>());
-
-        var plan = Target.GetPlan(new MessageType(typeof(TestMessage)).Name);
-        var handler = plan!.Handlers[0];
-        var testMessage = new TestMessage("Hello, World!");
-
-        // Act
-        await handler.DispatchAsync(_serviceProvider, testMessage, CreateDeliverEventArgs(), null, _publisher.PublishAsync, CancellationToken.None);
-
-        // Assert
-        consumerInstance.ReceivedMessages.ShouldHaveSingleItem();
-        consumerInstance.ReceivedMessages[0].Content.ShouldBe("Hello, World!");
-        _publisher.Published.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public async Task CompiledRpcHandlerShouldCallConsumerAndPublishResponse()
-    {
-        // Arrange
-        var consumerInstance = new TestRequestConsumer();
-        Use(consumerInstance);
-
-        var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(RequestRegistration<TestRequestConsumer>());
-        Use(queue);
-
-        var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
-        var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
-        var testRequest = new TestRequest("Find users");
-        var deliveryArgs = CreateDeliverEventArgs(replyTo: "reply.queue", correlationId: "corr-1");
-
-        // Act
-        await handler.DispatchAsync(_serviceProvider, testRequest, deliveryArgs, null, _publisher.PublishAsync, CancellationToken.None);
-
-        // Assert
-        consumerInstance.ReceivedRequests.ShouldHaveSingleItem();
-        consumerInstance.ReceivedRequests[0].Query.ShouldBe("Find users");
-        var published = _publisher.Published.ShouldHaveSingleItem();
-        published.Exchange.ShouldBe(string.Empty);
-        published.RoutingKey.ShouldBe("reply.queue");
-        published.Properties.CorrelationId.ShouldBe("corr-1");
-
-        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(published.Body.Span);
-        envelope.ShouldNotBeNull();
-        envelope.MessageType.ShouldBe(new MessageConfiguration(typeof(TestResponse).FullName!).Urn);
-        envelope.RequestId.ShouldBe("corr-1");
-
-        var response = envelope.Message.Deserialize<TestResponse>();
-        response.ShouldNotBeNull();
-        response.Result.ShouldBe("Processed: Find users");
-    }
-
-    [Fact]
-    public async Task CompiledRpcHandlerShouldPublishFailureWhenConsumerThrows()
-    {
-        // Arrange
-        UseReal<ThrowingRequestConsumer>();
-
-        var queue = new QueueDefinition("TestQueue");
-        queue.AddConsumer(RequestRegistration<ThrowingRequestConsumer>());
-        Use(queue);
-
-        var plan = Target.GetPlan(new MessageType(typeof(TestRequest)).Name);
-        var handler = plan!.Handlers.Single(h => h.Kind == HandlerKind.RequestConsumer);
-
-        // Act
-        await handler.DispatchAsync(
-            _serviceProvider,
-            new TestRequest("throw"),
-            CreateDeliverEventArgs(replyTo: "reply.queue"),
-            null,
-            _publisher.PublishAsync,
-            CancellationToken.None);
-
-        // Assert
-        var published = _publisher.Published.ShouldHaveSingleItem();
-        var envelope = JsonSerializer.Deserialize<MessageEnvelope>(published.Body.Span);
-        envelope.ShouldNotBeNull();
-        envelope.MessageType.ShouldBe(RpcFault.UrnUri);
-
-        var fault = envelope.Message.Deserialize<RpcFault>();
-        fault.ShouldNotBeNull();
-        fault.Message.ShouldContain("failed to process request");
     }
 
     [Fact]
@@ -377,16 +298,25 @@ public sealed class QueueDispatchPlansTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void HandlerFromFactoryCarriesItsKind()
+    public void AConcreteMessagesPlanHoldsEveryConsumerRegisteredForATypeItIsAssignableTo()
     {
         // Arrange
-        var factory = new RabbitMqHandlerFactory();
+        var queue = new QueueDefinition("orders");
+        queue.AddSubscription(new Subscription(new MessageType(typeof(OrderPlaced))));
+        queue.AddConsumer(Registration<OrderPlacedConsumer, OrderPlaced>());
+        queue.AddConsumer(Registration<OrderConsumer, IOrder>());
+        queue.AddConsumer(Registration<OrderEventConsumer, IOrderEvent>());
+        Use(queue);
 
         // Act
-        var handler = factory.ForRequestConsumer(typeof(TestRequestConsumer), typeof(TestRequest), typeof(TestResponse), retryPolicy: null);
+        var plan = Target.GetPlan(typeof(OrderPlaced).FullName!);
 
         // Assert
-        handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
-        handler.Identity.ShouldBe($"{typeof(TestRequestConsumer).FullName}:{typeof(TestRequest).FullName}");
+        plan.ShouldNotBeNull().Handlers.Select(handler => handler.Identity).ShouldBe(
+        [
+            $"{typeof(OrderPlacedConsumer).FullName}:{typeof(OrderPlaced).FullName}",
+            $"{typeof(OrderConsumer).FullName}:{typeof(IOrder).FullName}",
+            $"{typeof(OrderEventConsumer).FullName}:{typeof(IOrderEvent).FullName}",
+        ], ignoreOrder: true);
     }
 }

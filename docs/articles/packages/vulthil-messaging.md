@@ -92,7 +92,8 @@ re-run only the consumers that failed, every attempt runs in its own DI scope, e
 policy and publishes its `Fault<T>` once it has failed for good, and a request consumer runs once and replies. A
 transport builds its plans with `MessageExecutionRegistry<DeliveryHandler>` and `DeliveryHandlerFactory`, implements
 `IDeliveryPort` for each delivery (the receive context, the retry wait, and the fault and reply routes), and applies the
-`DeliverySettlement` the dispatcher returns. `AddMessaging` registers the dispatcher.
+`DeliverySettlement` the dispatcher returns. `AddMessaging` registers the dispatcher. The RabbitMQ transport and the
+test harness both run on it.
 
 A transport that needs its own handler type can instead derive from `MessageHandlerFactory<THandler>` and override its
 two generic methods (`CreateConsumerHandler<TConsumer, TMessage>` and

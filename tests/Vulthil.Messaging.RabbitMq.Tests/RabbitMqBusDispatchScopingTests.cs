@@ -1,11 +1,11 @@
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -36,7 +36,7 @@ public sealed class RabbitMqBusDispatchScopingTests : BaseUnitTestCase
         Use<TimeProvider>(new FakeTimeProvider());
         Use<ILoggerFactory>(NullLoggerFactory.Instance);
         Use<ILogger<RabbitMqBus>>(NullLogger<RabbitMqBus>.Instance);
-        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        Use(new DeliveryDispatcher(new AutoMockerServiceScopeFactory(AutoMocker), NullLogger<DeliveryDispatcher>.Instance));
         Use<IEnumerable<IConsumeFilter<SharedEvent>>>([]);
 
         _lazyTarget = new(CreateInstance<RabbitMqBus>);

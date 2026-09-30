@@ -4,6 +4,7 @@ using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -48,6 +49,7 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
         Use(new RabbitMqBusStartupStatus());
         Use<TimeProvider>(new FakeTimeProvider());
         Use<ILoggerFactory>(NullLoggerFactory.Instance);
+        UseReal<DeliveryDispatcher>();
         Use<ILogger<RabbitMqBus>>(NullLogger<RabbitMqBus>.Instance);
 
         _lazyTarget = new(CreateInstance<RabbitMqBus>);

@@ -15,9 +15,10 @@ queue configuration that a real transport would.
 
 - Dispatch is synchronous: when a publish/send/request call returns, every consumer it triggered has run — no polling
 - A one-way consumer's exception does **not** propagate to the publisher/sender: the consumer is retried per its
-  resolved retry policy (attempts run back-to-back, without the configured delays), then a `Fault<T>` is published
-  and captured — assert it via `Published<Fault<TMessage>>()`. A request consumer's exception becomes a failed
-  `Result<TResponse>` on the requesting side
+  resolved retry policy, in rounds that re-run only the consumers that failed (attempts run back-to-back, without
+  the configured delays), then a `Fault<T>` is published and captured — assert it via
+  `Published<Fault<TMessage>>()`. As on the broker, the fault never reaches an `IConsumer<Fault<TMessage>>`. A
+  request consumer's exception becomes a failed `Result<TResponse>` on the requesting side
 - Keep assertions on `ITestHarness` deterministic and explicit; `Clear()` between phases
 
 ## Usage

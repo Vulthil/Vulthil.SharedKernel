@@ -283,9 +283,20 @@ so assertions need no polling.
 
 Two fidelity limits to keep in mind: the harness dispatches each produced message **once** to all matching
 consumers (a real broker delivers a distinct copy per subscribed queue), and partition lanes are not simulated
-(dispatch is inline and ordered by call). Retries run back-to-back without the configured delays; a one-way
-consumer that exhausts them publishes a `Fault<T>` — observable via `Published<Fault<TMessage>>()` — while the
-publish call itself completes normally.
+(dispatch is inline and ordered by call).
+
+The harness runs each delivery through the core `DeliveryDispatcher`, the same delivery rules a custom transport
+gets (see [Writing a Custom Transport](messaging.md#writing-a-custom-transport)):
+
+- Consumers of one message retry in rounds: each round re-runs only the consumers that failed, so a consumer that
+  completed never runs twice. Retries run back-to-back, without the configured delays.
+- Every attempt gets its own DI scope.
+- A one-way consumer that has failed for good publishes a `Fault<T>`, while the publish call itself completes
+  normally. The fault is observable via `Published<Fault<TMessage>>()` and runs any `Handle<Fault<TMessage>>`
+  stub, but, as on the broker, it never reaches a registered `IConsumer<Fault<TMessage>>`.
+- When the caller's cancellation token ends a delivery, a publish or send throws `OperationCanceledException` and
+  a request returns a `Messaging.Request.Cancelled` failure. A consumer's own `OperationCanceledException` is an
+  ordinary failure and is retried.
 
 ### Composing a harness (unit/component tests)
 

@@ -15,13 +15,13 @@ public sealed class ResponseListenerTests : BaseUnitTestCase
     private const string DeclaredReplyQueue = "callback.test";
     private const ulong DeliveryTag = 7;
 
-    private static readonly Uri _responseUrn = new("urn:message:Vulthil.Messaging.RabbitMq.Tests:PricingReply");
     private static readonly PricingReply _reply = new("sku-1", 9.5m);
 
     private readonly Lazy<ResponseListener> _lazyTarget;
     private readonly Mock<IChannel> _channel = new();
     private readonly CapturingLogger _logger = new();
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly Uri _responseUrn;
     private readonly List<QueueDeclaration> _declaredQueues = [];
     private readonly List<Consumption> _consumptions = [];
 
@@ -33,6 +33,7 @@ public sealed class ResponseListenerTests : BaseUnitTestCase
     {
         var provider = TestProviders.Build();
         _jsonOptions = provider.JsonSerializerOptions;
+        _responseUrn = provider.GetUrn(typeof(PricingReply));
         Use(provider);
         Use<ILogger<ResponseListener>>(_logger);
 
@@ -146,7 +147,7 @@ public sealed class ResponseListenerTests : BaseUnitTestCase
         // Arrange
         var completion = new TaskCompletionSource<Result<PricingReply>>();
         await Target.GetReplyToQueueNameAsync(CancellationToken);
-        Target.RegisterWaiter("req-1", completion, _responseUrn);
+        Target.RegisterWaiter("req-1", completion);
 
         // Act
         await DeliverReplyAsync("req-1");
@@ -192,7 +193,7 @@ public sealed class ResponseListenerTests : BaseUnitTestCase
         // Arrange
         var completion = new TaskCompletionSource<Result<PricingReply>>();
         await Target.GetReplyToQueueNameAsync(CancellationToken);
-        Target.RegisterWaiter("req-1", completion, _responseUrn);
+        Target.RegisterWaiter("req-1", completion);
         Target.RemoveWaiter("req-1");
 
         // Act

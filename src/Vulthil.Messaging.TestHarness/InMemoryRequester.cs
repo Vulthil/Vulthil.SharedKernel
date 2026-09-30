@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Transport;
 using Vulthil.Results;
@@ -7,8 +6,8 @@ namespace Vulthil.Messaging.TestHarness;
 
 /// <summary>
 /// In-memory <see cref="IRequester"/>: captures the request, dispatches it to a registered responder or request
-/// consumer, and maps the reply envelope to a <see cref="Result{TResponse}"/> the same way a broker transport
-/// does — the response payload on success, an <see cref="RpcFault"/> on failure.
+/// consumer, and reads the reply envelope into a <see cref="Result{TResponse}"/> with <see cref="RpcReply"/>, exactly
+/// as a broker transport does — the response payload on success, an <see cref="RpcFault"/> on failure.
 /// </summary>
 internal sealed class InMemoryRequester : IRequester
 {
@@ -53,30 +52,9 @@ internal sealed class InMemoryRequester : IRequester
 
     private Result<TResponse> MapReply<TResponse>(MessageEnvelope? reply)
         where TResponse : notnull
-    {
-        if (reply is null)
-        {
-            return Result.Failure<TResponse>(Error.Failure(
-                "Messaging.Request.Timeout",
-                "Request timed out — no consumer or responder is registered for the request type."));
-        }
-
-        var options = _provider.JsonSerializerOptions;
-
-        if (reply.MessageType == _provider.GetUrn(typeof(TResponse)))
-        {
-            var value = reply.Message.Deserialize<TResponse>(options);
-            return value is not null
-                ? Result.Success(value)
-                : Result.Failure<TResponse>(Error.Failure("Messaging.Request.Deserialize", "Inner message deserialization failed."));
-        }
-
-        if (reply.MessageType == RpcFault.UrnUri)
-        {
-            var fault = reply.Message.Deserialize<RpcFault>(options);
-            return Result.Failure<TResponse>(Error.Failure("Messaging.Request.Failure", fault?.Message ?? "Unknown remote error"));
-        }
-
-        return Result.Failure<TResponse>(Error.Failure("Messaging.Request.Deserialize", $"Unexpected reply message type '{reply.MessageType}'."));
-    }
+        => reply is null
+            ? Result.Failure<TResponse>(Error.Failure(
+                RequestErrorCodes.Timeout,
+                "Request timed out — no consumer or responder is registered for the request type."))
+            : RpcReply.ToResult<TResponse>(reply, _provider);
 }

@@ -1,1 +1,8 @@
 #nullable enable
+const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Cancelled = "Messaging.Request.Cancelled" -> string!
+const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Deserialize = "Messaging.Request.Deserialize" -> string!
+const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Failure = "Messaging.Request.Failure" -> string!
+const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Publish = "Messaging.Request.Publish" -> string!
+const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Timeout = "Messaging.Request.Timeout" -> string!
+const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.TransportUnavailable = "Messaging.Request.TransportUnavailable" -> string!
+Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes

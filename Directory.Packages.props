@@ -12,7 +12,7 @@
     <Net9FrameworkVersion>9.0.20</Net9FrameworkVersion>
     <FrameworkVersion>10.0.12</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">$(Net9FrameworkVersion)</FrameworkVersion>
-    <AspireVersion>13.5.4</AspireVersion>
+    <AspireVersion>13.6.0</AspireVersion>
     <!-- Consumer opt-up EF floor for the non-provider src packages, applied via VersionOverride on
          their EF Core PackageReference items: they compile against the EF 9 line (EF Core 9 targets
          net8.0, so it is referenceable from every TFM we ship) and their published dependency groups

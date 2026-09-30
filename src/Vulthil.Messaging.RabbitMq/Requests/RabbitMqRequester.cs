@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Publishers;
@@ -122,7 +121,11 @@ internal sealed class RabbitMqRequester : IRequester
             var props = RabbitMqWireMessageBuilder.CreateBaseProperties(ids.UrnString, ids.MessageId, requestContext.Headers);
             props.CorrelationId = requestId;
             props.ReplyTo = replyTo;
-            props.Expiration = timeout.TotalMilliseconds.ToString("F0", CultureInfo.InvariantCulture);
+            // A request that waits for its reply indefinitely must not expire in the queue before a responder takes it.
+            if (timeout != Timeout.InfiniteTimeSpan)
+            {
+                props.Expiration = RabbitMqConstants.FormatExpiration(timeout);
+            }
 
             var body = RabbitMqWireMessageBuilder.SerializeEnvelope(
                 message, requestContext, ids.MessageId, ids.CorrelationId, ids.Urn, JsonOptions, requestId);

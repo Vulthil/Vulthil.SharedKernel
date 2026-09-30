@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -366,7 +365,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         props.Headers ??= new Dictionary<string, object?>();
         props.Headers[RabbitMqConstants.RetryCountHeader] = round + 1;
         props.Headers[RabbitMqConstants.RetryHandlersHeader] = RabbitMqConstants.SerializeRetryHandlerIdentities(retryable.Select(static failure => failure.Handler.Identity));
-        props.Expiration = delay.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
+        props.Expiration = RabbitMqConstants.FormatExpiration(delay);
 
         await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body).ConfigureAwait(false);
     }

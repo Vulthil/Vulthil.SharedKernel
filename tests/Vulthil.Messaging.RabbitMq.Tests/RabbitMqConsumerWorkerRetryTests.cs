@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -231,6 +232,46 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
 
         var listed = republish.Properties.Headers![RetryHandlersHeader].ShouldBeOfType<string>();
         listed.ShouldBe(JsonSerializer.Serialize(new[] { HandlerIdentity(typeof(FailingConsumer), typeof(OrderMessage)) }));
+    }
+
+    [Theory]
+    [InlineData(1500.5d, "1501")]
+    [InlineData(0.25d, "1")]
+    public async Task DelayedRetryStampsAFractionalDelayAsWholeMillisecondsRoundedUp(double intervalMilliseconds, string expectedExpiration)
+    {
+        // Arrange
+        Use(new FailingConsumer { FailuresBeforeSuccess = int.MaxValue });
+        RegisterConsumer<FailingConsumer, OrderMessage>(BuildPolicy(r => r.SetIntervals(TimeSpan.FromMilliseconds(intervalMilliseconds))));
+        await StartWorkerAsync();
+
+        // Act
+        await DeliverAsync(new OrderMessage("order-fractional"));
+
+        // Assert
+        var republish = _publishes.ShouldHaveSingleItem();
+        republish.Exchange.ShouldBe(RetryExchange);
+        republish.Properties.Expiration.ShouldBe(expectedExpiration);
+    }
+
+    [Fact]
+    public async Task DelayedRetryWithTheDocumentedJitteredPolicyStampsAWholeMillisecondTtl()
+    {
+        // Arrange
+        Use(new FailingConsumer { FailuresBeforeSuccess = int.MaxValue });
+        RegisterConsumer<FailingConsumer, OrderMessage>(BuildPolicy(r =>
+        {
+            r.Exponential(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30));
+            r.UseJitter(0.2);
+        }));
+        await StartWorkerAsync();
+
+        // Act
+        await DeliverAsync(new OrderMessage("order-jittered"));
+
+        // Assert
+        var expiration = _publishes.ShouldHaveSingleItem().Properties.Expiration.ShouldNotBeNull();
+        long.TryParse(expiration, NumberStyles.None, CultureInfo.InvariantCulture, out var milliseconds).ShouldBeTrue();
+        milliseconds.ShouldBeInRange(800L, 1200L);
     }
 
     [Fact]

@@ -137,6 +137,39 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task RequestAsyncStampsAFractionalTimeoutAsAWholeMillisecondTtlRoundedUp()
+    {
+        // Arrange
+        _startupStatus.MarkStarted();
+
+        // Act
+        var pending = SendRequestAsync(context => context.SetTimeout(TimeSpan.FromMilliseconds(1500.25)));
+        var request = _published.ShouldHaveSingleItem();
+        await DeliverReplyAsync(request.Properties.CorrelationId!, new TimeoutResponse("pong"));
+        await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        request.Properties.Expiration.ShouldBe("1501");
+    }
+
+    [Fact]
+    public async Task RequestAsyncWithAnInfiniteTimeoutStampsNoTtl()
+    {
+        // Arrange
+        _startupStatus.MarkStarted();
+
+        // Act
+        var pending = SendRequestAsync(context => context.SetTimeout(Timeout.InfiniteTimeSpan));
+        var request = _published.ShouldHaveSingleItem();
+        await DeliverReplyAsync(request.Properties.CorrelationId!, new TimeoutResponse("pong"));
+        var result = await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        request.Properties.Expiration.ShouldBeNull();
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task RequestAsyncCorrelatesOnAFreshRequestIdDistinctFromBusinessCorrelationId()
     {
         // Arrange

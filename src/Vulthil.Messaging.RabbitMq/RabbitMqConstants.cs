@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using Vulthil.Messaging.Transport;
@@ -58,6 +59,15 @@ internal static class RabbitMqConstants
     /// </summary>
     public static string SerializeRetryHandlerIdentities(IEnumerable<string> identities)
         => JsonSerializer.Serialize(identities);
+
+    /// <summary>
+    /// Formats <paramref name="delay"/> as a per-message AMQP TTL (the <c>expiration</c> property). The broker
+    /// accepts only a whole, non-negative number of milliseconds and closes the channel on any other value, so a
+    /// fractional delay (such as a jittered retry interval) rounds up to the next whole millisecond and a negative
+    /// delay counts as zero. <see cref="TryParseExpiration"/> reads the value back.
+    /// </summary>
+    public static string FormatExpiration(TimeSpan delay)
+        => ((long)Math.Ceiling(Math.Max(0d, delay.TotalMilliseconds))).ToString(CultureInfo.InvariantCulture);
 
     /// <summary>
     /// Maps a per-message AMQP TTL to an absolute expiration instant. The TTL is relative to when the message

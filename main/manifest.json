@@ -1287,6 +1287,76 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.DeliveryDispatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.DeliveryDispatcher.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.DeliveryDispatcher",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.DeliveryDispatcher.yml\" sourcestartlinenumber=\"1\">Runs one delivered message through its handlers with the delivery rules every transport shares:</p>\n<ul><li>Handlers run in rounds, one after another in plan order. The first round runs every handler it is\ngiven; each later round runs only the handlers that failed in the round before, so a handler that completed never\nruns again.</li><li>Every attempt runs in its own service scope, so one handler's scoped state never reaches\nanother's.</li><li>A failed handler retries under its own policy until its budget runs out or it throws an exception\nits policy ignores. Then it has failed for good, and its fault is published at once.</li><li>Handlers retrying in the same round share one wait: the longest back-off any of their policies asks\nfor. The wait runs in-process, unless the port can redeliver later and no retrying policy is in-memory; then the\ndelivery goes back to the broker (see <xref href=\"Vulthil.Messaging.Transport.DeliverySettlement.RedeliverLater\" data-throw-if-not-resolved=\"false\"></xref>).</li><li>A request consumer runs once and answers with its response or an <xref href=\"Vulthil.Messaging.Transport.RpcFault\" data-throw-if-not-resolved=\"false\"></xref>; it never\nretries and never publishes a fault.</li><li>When <xref href=\"Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken\" data-throw-if-not-resolved=\"false\"></xref> ends the delivery, the dispatcher stops without a\nfault or a reply for the interrupted attempt (see <xref href=\"Vulthil.Messaging.Transport.DeliverySettlement.Abandon\" data-throw-if-not-resolved=\"false\"></xref>).</li></ul>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.DeliveryHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.DeliveryHandler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.DeliveryHandler",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.DeliveryHandler.yml\" sourcestartlinenumber=\"1\">One registered consumer or request consumer, as a <xref href=\"Vulthil.Messaging.Transport.DeliveryDispatcher\" data-throw-if-not-resolved=\"false\"></xref> runs it for a delivered message.\n<xref href=\"Vulthil.Messaging.Transport.DeliveryHandlerFactory\" data-throw-if-not-resolved=\"false\"></xref> builds one per registration; a transport keeps them in a\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref> and hands a plan's handlers to the dispatcher.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.DeliveryHandlerFactory",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.yml\" sourcestartlinenumber=\"1\">Builds the <xref href=\"Vulthil.Messaging.Transport.DeliveryHandler\" data-throw-if-not-resolved=\"false\"></xref> for each consumer registration, so a transport's\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionRegistry%601\" data-throw-if-not-resolved=\"false\"></xref> holds handlers a <xref href=\"Vulthil.Messaging.Transport.DeliveryDispatcher\" data-throw-if-not-resolved=\"false\"></xref> can run. Each\nattempt resolves the consumer from the attempt's scope, builds the receive context through the\n<xref href=\"Vulthil.Messaging.Transport.IDeliveryPort\" data-throw-if-not-resolved=\"false\"></xref>, and runs the consume pipeline; a request consumer's attempt then sends its\n<xref href=\"Vulthil.Messaging.Transport.RpcReply\" data-throw-if-not-resolved=\"false\"></xref> through the port.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.DeliveryOutcome.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.DeliveryOutcome.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.DeliveryOutcome",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.DeliveryOutcome.yml\" sourcestartlinenumber=\"1\">How a <xref href=\"Vulthil.Messaging.Transport.DeliveryDispatcher\" data-throw-if-not-resolved=\"false\"></xref> finished a delivery: the settlement the transport must apply, and what\nhappened on the way there.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.DeliverySettlement.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.DeliverySettlement.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.DeliverySettlement",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.DeliverySettlement.yml\" sourcestartlinenumber=\"1\">How a transport must settle a delivery once a <xref href=\"Vulthil.Messaging.Transport.DeliveryDispatcher\" data-throw-if-not-resolved=\"false\"></xref> has run it.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Transport.HandlerKind.yml",
       "output": {
         ".html": {
@@ -1298,6 +1368,20 @@
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.HandlerKind",
       "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.HandlerKind.yml\" sourcestartlinenumber=\"1\">Classifies a dispatch handler by its consumer contract.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.IDeliveryPort.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.IDeliveryPort.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.IDeliveryPort",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.IDeliveryPort.yml\" sourcestartlinenumber=\"1\">What a transport provides for one delivered message so a <xref href=\"Vulthil.Messaging.Transport.DeliveryDispatcher\" data-throw-if-not-resolved=\"false\"></xref> can run it: the receive\ncontext, the in-process retry wait, and the routes for faults and replies. The dispatcher decides everything else —\nwhich handlers run in which round, each handler's retries, and when a handler has failed for good — and returns the\nsettlement for the transport to apply (see <xref href=\"Vulthil.Messaging.Transport.DeliveryOutcome\" data-throw-if-not-resolved=\"false\"></xref>). Create one port per delivery.</p>\n"
     },
     {
       "type": "ManagedReference",

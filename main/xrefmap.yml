@@ -3914,6 +3914,244 @@ references:
   fullName.vb: Vulthil.Messaging.Transport.ConsumePipelineFactory.Build(Of TMessage)(System.IServiceProvider, Vulthil.Messaging.Abstractions.Consumers.ConsumeDelegate(Of TMessage))
   nameWithType: ConsumePipelineFactory.Build<TMessage>(IServiceProvider, ConsumeDelegate<TMessage>)
   nameWithType.vb: ConsumePipelineFactory.Build(Of TMessage)(IServiceProvider, ConsumeDelegate(Of TMessage))
+- uid: Vulthil.Messaging.Transport.DeliveryDispatcher
+  name: DeliveryDispatcher
+  href: api/Vulthil.Messaging.Transport.DeliveryDispatcher.html
+  commentId: T:Vulthil.Messaging.Transport.DeliveryDispatcher
+  fullName: Vulthil.Messaging.Transport.DeliveryDispatcher
+  nameWithType: DeliveryDispatcher
+- uid: Vulthil.Messaging.Transport.DeliveryDispatcher.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Logging.ILogger{Vulthil.Messaging.Transport.DeliveryDispatcher})
+  name: DeliveryDispatcher(IServiceScopeFactory, ILogger<DeliveryDispatcher>)
+  href: api/Vulthil.Messaging.Transport.DeliveryDispatcher.html#Vulthil_Messaging_Transport_DeliveryDispatcher__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Logging_ILogger_Vulthil_Messaging_Transport_DeliveryDispatcher__
+  commentId: M:Vulthil.Messaging.Transport.DeliveryDispatcher.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Logging.ILogger{Vulthil.Messaging.Transport.DeliveryDispatcher})
+  name.vb: New(IServiceScopeFactory, ILogger(Of DeliveryDispatcher))
+  fullName: Vulthil.Messaging.Transport.DeliveryDispatcher.DeliveryDispatcher(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Logging.ILogger<Vulthil.Messaging.Transport.DeliveryDispatcher>)
+  fullName.vb: Vulthil.Messaging.Transport.DeliveryDispatcher.New(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Logging.ILogger(Of Vulthil.Messaging.Transport.DeliveryDispatcher))
+  nameWithType: DeliveryDispatcher.DeliveryDispatcher(IServiceScopeFactory, ILogger<DeliveryDispatcher>)
+  nameWithType.vb: DeliveryDispatcher.New(IServiceScopeFactory, ILogger(Of DeliveryDispatcher))
+- uid: Vulthil.Messaging.Transport.DeliveryDispatcher.#ctor*
+  name: DeliveryDispatcher
+  href: api/Vulthil.Messaging.Transport.DeliveryDispatcher.html#Vulthil_Messaging_Transport_DeliveryDispatcher__ctor_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryDispatcher.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.Messaging.Transport.DeliveryDispatcher.DeliveryDispatcher
+  fullName.vb: Vulthil.Messaging.Transport.DeliveryDispatcher.New
+  nameWithType: DeliveryDispatcher.DeliveryDispatcher
+  nameWithType.vb: DeliveryDispatcher.New
+- uid: Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync(System.Collections.Generic.IReadOnlyCollection{Vulthil.Messaging.Transport.DeliveryHandler},System.Object,Vulthil.Messaging.Transport.IDeliveryPort)
+  name: DispatchAsync(IReadOnlyCollection<DeliveryHandler>, object, IDeliveryPort)
+  href: api/Vulthil.Messaging.Transport.DeliveryDispatcher.html#Vulthil_Messaging_Transport_DeliveryDispatcher_DispatchAsync_System_Collections_Generic_IReadOnlyCollection_Vulthil_Messaging_Transport_DeliveryHandler__System_Object_Vulthil_Messaging_Transport_IDeliveryPort_
+  commentId: M:Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync(System.Collections.Generic.IReadOnlyCollection{Vulthil.Messaging.Transport.DeliveryHandler},System.Object,Vulthil.Messaging.Transport.IDeliveryPort)
+  name.vb: DispatchAsync(IReadOnlyCollection(Of DeliveryHandler), Object, IDeliveryPort)
+  fullName: Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync(System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Transport.DeliveryHandler>, object, Vulthil.Messaging.Transport.IDeliveryPort)
+  fullName.vb: Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync(System.Collections.Generic.IReadOnlyCollection(Of Vulthil.Messaging.Transport.DeliveryHandler), Object, Vulthil.Messaging.Transport.IDeliveryPort)
+  nameWithType: DeliveryDispatcher.DispatchAsync(IReadOnlyCollection<DeliveryHandler>, object, IDeliveryPort)
+  nameWithType.vb: DeliveryDispatcher.DispatchAsync(IReadOnlyCollection(Of DeliveryHandler), Object, IDeliveryPort)
+- uid: Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync*
+  name: DispatchAsync
+  href: api/Vulthil.Messaging.Transport.DeliveryDispatcher.html#Vulthil_Messaging_Transport_DeliveryDispatcher_DispatchAsync_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync
+  nameWithType: DeliveryDispatcher.DispatchAsync
+- uid: Vulthil.Messaging.Transport.DeliveryHandler
+  name: DeliveryHandler
+  href: api/Vulthil.Messaging.Transport.DeliveryHandler.html
+  commentId: T:Vulthil.Messaging.Transport.DeliveryHandler
+  fullName: Vulthil.Messaging.Transport.DeliveryHandler
+  nameWithType: DeliveryHandler
+- uid: Vulthil.Messaging.Transport.DeliveryHandler.Identity
+  name: Identity
+  href: api/Vulthil.Messaging.Transport.DeliveryHandler.html#Vulthil_Messaging_Transport_DeliveryHandler_Identity
+  commentId: P:Vulthil.Messaging.Transport.DeliveryHandler.Identity
+  fullName: Vulthil.Messaging.Transport.DeliveryHandler.Identity
+  nameWithType: DeliveryHandler.Identity
+- uid: Vulthil.Messaging.Transport.DeliveryHandler.Identity*
+  name: Identity
+  href: api/Vulthil.Messaging.Transport.DeliveryHandler.html#Vulthil_Messaging_Transport_DeliveryHandler_Identity_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryHandler.Identity
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryHandler.Identity
+  nameWithType: DeliveryHandler.Identity
+- uid: Vulthil.Messaging.Transport.DeliveryHandler.Kind
+  name: Kind
+  href: api/Vulthil.Messaging.Transport.DeliveryHandler.html#Vulthil_Messaging_Transport_DeliveryHandler_Kind
+  commentId: P:Vulthil.Messaging.Transport.DeliveryHandler.Kind
+  fullName: Vulthil.Messaging.Transport.DeliveryHandler.Kind
+  nameWithType: DeliveryHandler.Kind
+- uid: Vulthil.Messaging.Transport.DeliveryHandler.Kind*
+  name: Kind
+  href: api/Vulthil.Messaging.Transport.DeliveryHandler.html#Vulthil_Messaging_Transport_DeliveryHandler_Kind_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryHandler.Kind
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryHandler.Kind
+  nameWithType: DeliveryHandler.Kind
+- uid: Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy
+  name: RetryPolicy
+  href: api/Vulthil.Messaging.Transport.DeliveryHandler.html#Vulthil_Messaging_Transport_DeliveryHandler_RetryPolicy
+  commentId: P:Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy
+  fullName: Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy
+  nameWithType: DeliveryHandler.RetryPolicy
+- uid: Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy*
+  name: RetryPolicy
+  href: api/Vulthil.Messaging.Transport.DeliveryHandler.html#Vulthil_Messaging_Transport_DeliveryHandler_RetryPolicy_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy
+  nameWithType: DeliveryHandler.RetryPolicy
+- uid: Vulthil.Messaging.Transport.DeliveryHandlerFactory
+  name: DeliveryHandlerFactory
+  href: api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.html
+  commentId: T:Vulthil.Messaging.Transport.DeliveryHandlerFactory
+  fullName: Vulthil.Messaging.Transport.DeliveryHandlerFactory
+  nameWithType: DeliveryHandlerFactory
+- uid: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateConsumerHandler*
+  name: CreateConsumerHandler
+  href: api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.html#Vulthil_Messaging_Transport_DeliveryHandlerFactory_CreateConsumerHandler_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateConsumerHandler
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateConsumerHandler
+  nameWithType: DeliveryHandlerFactory.CreateConsumerHandler
+- uid: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateConsumerHandler``2(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name: CreateConsumerHandler<TConsumer, TMessage>(RetryPolicyDefinition?)
+  href: api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.html#Vulthil_Messaging_Transport_DeliveryHandlerFactory_CreateConsumerHandler__2_Vulthil_Messaging_Queues_RetryPolicyDefinition_
+  commentId: M:Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateConsumerHandler``2(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name.vb: CreateConsumerHandler(Of TConsumer, TMessage)(RetryPolicyDefinition)
+  fullName: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateConsumerHandler<TConsumer, TMessage>(Vulthil.Messaging.Queues.RetryPolicyDefinition?)
+  fullName.vb: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateConsumerHandler(Of TConsumer, TMessage)(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  nameWithType: DeliveryHandlerFactory.CreateConsumerHandler<TConsumer, TMessage>(RetryPolicyDefinition?)
+  nameWithType.vb: DeliveryHandlerFactory.CreateConsumerHandler(Of TConsumer, TMessage)(RetryPolicyDefinition)
+- uid: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateRequestConsumerHandler*
+  name: CreateRequestConsumerHandler
+  href: api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.html#Vulthil_Messaging_Transport_DeliveryHandlerFactory_CreateRequestConsumerHandler_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateRequestConsumerHandler
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateRequestConsumerHandler
+  nameWithType: DeliveryHandlerFactory.CreateRequestConsumerHandler
+- uid: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateRequestConsumerHandler``3(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name: CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(RetryPolicyDefinition?)
+  href: api/Vulthil.Messaging.Transport.DeliveryHandlerFactory.html#Vulthil_Messaging_Transport_DeliveryHandlerFactory_CreateRequestConsumerHandler__3_Vulthil_Messaging_Queues_RetryPolicyDefinition_
+  commentId: M:Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateRequestConsumerHandler``3(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name.vb: CreateRequestConsumerHandler(Of TConsumer, TRequest, TResponse)(RetryPolicyDefinition)
+  fullName: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(Vulthil.Messaging.Queues.RetryPolicyDefinition?)
+  fullName.vb: Vulthil.Messaging.Transport.DeliveryHandlerFactory.CreateRequestConsumerHandler(Of TConsumer, TRequest, TResponse)(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  nameWithType: DeliveryHandlerFactory.CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(RetryPolicyDefinition?)
+  nameWithType.vb: DeliveryHandlerFactory.CreateRequestConsumerHandler(Of TConsumer, TRequest, TResponse)(RetryPolicyDefinition)
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome
+  name: DeliveryOutcome
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html
+  commentId: T:Vulthil.Messaging.Transport.DeliveryOutcome
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome
+  nameWithType: DeliveryOutcome
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.Consumed
+  name: Consumed
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_Consumed
+  commentId: P:Vulthil.Messaging.Transport.DeliveryOutcome.Consumed
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.Consumed
+  nameWithType: DeliveryOutcome.Consumed
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.Consumed*
+  name: Consumed
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_Consumed_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryOutcome.Consumed
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.Consumed
+  nameWithType: DeliveryOutcome.Consumed
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.Failures
+  name: Failures
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_Failures
+  commentId: P:Vulthil.Messaging.Transport.DeliveryOutcome.Failures
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.Failures
+  nameWithType: DeliveryOutcome.Failures
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.Failures*
+  name: Failures
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_Failures_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryOutcome.Failures
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.Failures
+  nameWithType: DeliveryOutcome.Failures
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay
+  name: RedeliveryDelay
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryDelay
+  commentId: P:Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay
+  nameWithType: DeliveryOutcome.RedeliveryDelay
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay*
+  name: RedeliveryDelay
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryDelay_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay
+  nameWithType: DeliveryOutcome.RedeliveryDelay
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities
+  name: RedeliveryHandlerIdentities
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryHandlerIdentities
+  commentId: P:Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities
+  nameWithType: DeliveryOutcome.RedeliveryHandlerIdentities
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities*
+  name: RedeliveryHandlerIdentities
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryHandlerIdentities_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities
+  nameWithType: DeliveryOutcome.RedeliveryHandlerIdentities
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount
+  name: RedeliveryRetryCount
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryRetryCount
+  commentId: P:Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount
+  nameWithType: DeliveryOutcome.RedeliveryRetryCount
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount*
+  name: RedeliveryRetryCount
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryRetryCount_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount
+  nameWithType: DeliveryOutcome.RedeliveryRetryCount
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.Settlement
+  name: Settlement
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_Settlement
+  commentId: P:Vulthil.Messaging.Transport.DeliveryOutcome.Settlement
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.Settlement
+  nameWithType: DeliveryOutcome.Settlement
+- uid: Vulthil.Messaging.Transport.DeliveryOutcome.Settlement*
+  name: Settlement
+  href: api/Vulthil.Messaging.Transport.DeliveryOutcome.html#Vulthil_Messaging_Transport_DeliveryOutcome_Settlement_
+  commentId: Overload:Vulthil.Messaging.Transport.DeliveryOutcome.Settlement
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.DeliveryOutcome.Settlement
+  nameWithType: DeliveryOutcome.Settlement
+- uid: Vulthil.Messaging.Transport.DeliverySettlement
+  name: DeliverySettlement
+  href: api/Vulthil.Messaging.Transport.DeliverySettlement.html
+  commentId: T:Vulthil.Messaging.Transport.DeliverySettlement
+  fullName: Vulthil.Messaging.Transport.DeliverySettlement
+  nameWithType: DeliverySettlement
+- uid: Vulthil.Messaging.Transport.DeliverySettlement.Abandon
+  name: Abandon
+  href: api/Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_Abandon
+  commentId: F:Vulthil.Messaging.Transport.DeliverySettlement.Abandon
+  fullName: Vulthil.Messaging.Transport.DeliverySettlement.Abandon
+  nameWithType: DeliverySettlement.Abandon
+- uid: Vulthil.Messaging.Transport.DeliverySettlement.Acknowledge
+  name: Acknowledge
+  href: api/Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_Acknowledge
+  commentId: F:Vulthil.Messaging.Transport.DeliverySettlement.Acknowledge
+  fullName: Vulthil.Messaging.Transport.DeliverySettlement.Acknowledge
+  nameWithType: DeliverySettlement.Acknowledge
+- uid: Vulthil.Messaging.Transport.DeliverySettlement.DeadLetter
+  name: DeadLetter
+  href: api/Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_DeadLetter
+  commentId: F:Vulthil.Messaging.Transport.DeliverySettlement.DeadLetter
+  fullName: Vulthil.Messaging.Transport.DeliverySettlement.DeadLetter
+  nameWithType: DeliverySettlement.DeadLetter
+- uid: Vulthil.Messaging.Transport.DeliverySettlement.RedeliverLater
+  name: RedeliverLater
+  href: api/Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_RedeliverLater
+  commentId: F:Vulthil.Messaging.Transport.DeliverySettlement.RedeliverLater
+  fullName: Vulthil.Messaging.Transport.DeliverySettlement.RedeliverLater
+  nameWithType: DeliverySettlement.RedeliverLater
 - uid: Vulthil.Messaging.Transport.HandlerKind
   name: HandlerKind
   href: api/Vulthil.Messaging.Transport.HandlerKind.html
@@ -3932,6 +4170,109 @@ references:
   commentId: F:Vulthil.Messaging.Transport.HandlerKind.RequestConsumer
   fullName: Vulthil.Messaging.Transport.HandlerKind.RequestConsumer
   nameWithType: HandlerKind.RequestConsumer
+- uid: Vulthil.Messaging.Transport.IDeliveryPort
+  name: IDeliveryPort
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html
+  commentId: T:Vulthil.Messaging.Transport.IDeliveryPort
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort
+  nameWithType: IDeliveryPort
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.CanRedeliverLater
+  name: CanRedeliverLater
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_CanRedeliverLater
+  commentId: P:Vulthil.Messaging.Transport.IDeliveryPort.CanRedeliverLater
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.CanRedeliverLater
+  nameWithType: IDeliveryPort.CanRedeliverLater
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.CanRedeliverLater*
+  name: CanRedeliverLater
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_CanRedeliverLater_
+  commentId: Overload:Vulthil.Messaging.Transport.IDeliveryPort.CanRedeliverLater
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.CanRedeliverLater
+  nameWithType: IDeliveryPort.CanRedeliverLater
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken
+  name: CancellationToken
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_CancellationToken
+  commentId: P:Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken
+  nameWithType: IDeliveryPort.CancellationToken
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken*
+  name: CancellationToken
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_CancellationToken_
+  commentId: Overload:Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken
+  nameWithType: IDeliveryPort.CancellationToken
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.CreateContext*
+  name: CreateContext
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_CreateContext_
+  commentId: Overload:Vulthil.Messaging.Transport.IDeliveryPort.CreateContext
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.CreateContext
+  nameWithType: IDeliveryPort.CreateContext
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.CreateContext``1(``0,System.IServiceProvider,System.Int32)
+  name: CreateContext<TMessage>(TMessage, IServiceProvider, int)
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_CreateContext__1___0_System_IServiceProvider_System_Int32_
+  commentId: M:Vulthil.Messaging.Transport.IDeliveryPort.CreateContext``1(``0,System.IServiceProvider,System.Int32)
+  name.vb: CreateContext(Of TMessage)(TMessage, IServiceProvider, Integer)
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.CreateContext<TMessage>(TMessage, System.IServiceProvider, int)
+  fullName.vb: Vulthil.Messaging.Transport.IDeliveryPort.CreateContext(Of TMessage)(TMessage, System.IServiceProvider, Integer)
+  nameWithType: IDeliveryPort.CreateContext<TMessage>(TMessage, IServiceProvider, int)
+  nameWithType.vb: IDeliveryPort.CreateContext(Of TMessage)(TMessage, IServiceProvider, Integer)
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync*
+  name: PublishFaultAsync
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_PublishFaultAsync_
+  commentId: Overload:Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync
+  nameWithType: IDeliveryPort.PublishFaultAsync
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync``1(Vulthil.Messaging.Abstractions.Consumers.Fault{``0})
+  name: PublishFaultAsync<TMessage>(Fault<TMessage>)
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_PublishFaultAsync__1_Vulthil_Messaging_Abstractions_Consumers_Fault___0__
+  commentId: M:Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync``1(Vulthil.Messaging.Abstractions.Consumers.Fault{``0})
+  name.vb: PublishFaultAsync(Of TMessage)(Fault(Of TMessage))
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync<TMessage>(Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>)
+  fullName.vb: Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync(Of TMessage)(Vulthil.Messaging.Abstractions.Consumers.Fault(Of TMessage))
+  nameWithType: IDeliveryPort.PublishFaultAsync<TMessage>(Fault<TMessage>)
+  nameWithType.vb: IDeliveryPort.PublishFaultAsync(Of TMessage)(Fault(Of TMessage))
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.RetryCount
+  name: RetryCount
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_RetryCount
+  commentId: P:Vulthil.Messaging.Transport.IDeliveryPort.RetryCount
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.RetryCount
+  nameWithType: IDeliveryPort.RetryCount
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.RetryCount*
+  name: RetryCount
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_RetryCount_
+  commentId: Overload:Vulthil.Messaging.Transport.IDeliveryPort.RetryCount
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.RetryCount
+  nameWithType: IDeliveryPort.RetryCount
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync(Vulthil.Messaging.Transport.MessageEnvelope)
+  name: SendReplyAsync(MessageEnvelope)
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_SendReplyAsync_Vulthil_Messaging_Transport_MessageEnvelope_
+  commentId: M:Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync(Vulthil.Messaging.Transport.MessageEnvelope)
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync(Vulthil.Messaging.Transport.MessageEnvelope)
+  nameWithType: IDeliveryPort.SendReplyAsync(MessageEnvelope)
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync*
+  name: SendReplyAsync
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_SendReplyAsync_
+  commentId: Overload:Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync
+  nameWithType: IDeliveryPort.SendReplyAsync
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync(System.TimeSpan)
+  name: WaitBeforeRetryAsync(TimeSpan)
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_WaitBeforeRetryAsync_System_TimeSpan_
+  commentId: M:Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync(System.TimeSpan)
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync(System.TimeSpan)
+  nameWithType: IDeliveryPort.WaitBeforeRetryAsync(TimeSpan)
+- uid: Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync*
+  name: WaitBeforeRetryAsync
+  href: api/Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_WaitBeforeRetryAsync_
+  commentId: Overload:Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync
+  nameWithType: IDeliveryPort.WaitBeforeRetryAsync
 - uid: Vulthil.Messaging.Transport.IMessageHandlerFactory`1
   name: IMessageHandlerFactory<THandler>
   href: api/Vulthil.Messaging.Transport.IMessageHandlerFactory-1.html

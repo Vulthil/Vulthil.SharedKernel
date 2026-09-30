@@ -338,9 +338,20 @@ synchronous — by the time a publish/send/request call returns, every consumer 
 so assertions need no polling.</p>
 <p>Two fidelity limits to keep in mind: the harness dispatches each produced message <strong>once</strong> to all matching
 consumers (a real broker delivers a distinct copy per subscribed queue), and partition lanes are not simulated
-(dispatch is inline and ordered by call). Retries run back-to-back without the configured delays; a one-way
-consumer that exhausts them publishes a <code>Fault&lt;T&gt;</code> — observable via <code>Published&lt;Fault&lt;TMessage&gt;&gt;()</code> — while the
-publish call itself completes normally.</p>
+(dispatch is inline and ordered by call).</p>
+<p>The harness runs each delivery through the core <code>DeliveryDispatcher</code>, the same delivery rules a custom transport
+gets (see <a href="messaging.html#writing-a-custom-transport">Writing a Custom Transport</a>):</p>
+<ul>
+<li>Consumers of one message retry in rounds: each round re-runs only the consumers that failed, so a consumer that
+completed never runs twice. Retries run back-to-back, without the configured delays.</li>
+<li>Every attempt gets its own DI scope.</li>
+<li>A one-way consumer that has failed for good publishes a <code>Fault&lt;T&gt;</code>, while the publish call itself completes
+normally. The fault is observable via <code>Published&lt;Fault&lt;TMessage&gt;&gt;()</code> and runs any <code>Handle&lt;Fault&lt;TMessage&gt;&gt;</code>
+stub, but, as on the broker, it never reaches a registered <code>IConsumer&lt;Fault&lt;TMessage&gt;&gt;</code>.</li>
+<li>When the caller's cancellation token ends a delivery, a publish or send throws <code>OperationCanceledException</code> and
+a request returns a <code>Messaging.Request.Cancelled</code> failure. A consumer's own <code>OperationCanceledException</code> is an
+ordinary failure and is retried.</li>
+</ul>
 <h3 id="composing-a-harness-unitcomponent-tests">Composing a harness (unit/component tests)</h3>
 <p>Call <code>UseTestHarness()</code> in place of a broker transport, then resolve <code>ITestHarness</code> alongside the usual
 <code>IPublisher</code>/<code>ISendEndpoint</code>/<code>IRequester</code>:</p>

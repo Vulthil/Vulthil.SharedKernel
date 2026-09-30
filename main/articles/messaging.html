@@ -853,7 +853,11 @@ alone — the RabbitMQ transport uses nothing more.</p>
 </tr>
 <tr>
 <td>Execution plans</td>
-<td><code>MessageExecutionRegistry&lt;THandler&gt;</code> + your <code>MessageHandlerFactory&lt;THandler&gt;</code></td>
+<td><code>MessageExecutionRegistry&lt;DeliveryHandler&gt;</code> + <code>DeliveryHandlerFactory</code></td>
+</tr>
+<tr>
+<td>Delivery rules</td>
+<td><code>DeliveryDispatcher</code> + your <code>IDeliveryPort</code></td>
 </tr>
 <tr>
 <td>Wire format</td>
@@ -864,63 +868,30 @@ alone — the RabbitMQ transport uses nothing more.</p>
 <td><code>MessageContext.CreateFromEnvelope</code></td>
 </tr>
 <tr>
-<td>Filter pipeline</td>
-<td><code>ConsumePipelineFactory.Build</code></td>
-</tr>
-<tr>
-<td>RPC failures</td>
-<td><code>RpcFault</code></td>
+<td>RPC replies</td>
+<td><code>RpcReply</code></td>
 </tr>
 </tbody>
 </table>
 <h3 id="1-build-execution-plans">1. Build execution plans</h3>
-<p>Choose a <code>THandler</code> type for your transport's dispatch closure, then derive from
-<code>MessageHandlerFactory&lt;THandler&gt;</code> and override its two generic methods. The consumer and message
-types are statically known there, so that is where you compose the filter pipeline and build the
-receive context. The base class binds each registration's CLR types to your overrides (cached per
-consumer/message shape):</p>
-<pre><code class="lang-csharp">public delegate Task Dispatch(IServiceProvider scope, object message, MessageEnvelope envelope, CancellationToken ct);
-
-internal sealed class MyHandlerFactory : MessageHandlerFactory&lt;Dispatch&gt;
-{
-    protected override Dispatch CreateConsumerHandler&lt;TConsumer, TMessage&gt;(RetryPolicyDefinition? retryPolicy)
-        =&gt; async (scope, message, envelope, ct) =&gt;
-        {
-            var consumer = scope.GetRequiredService&lt;TConsumer&gt;();
-            var context = MessageContext.CreateFromEnvelope(
-                (TMessage)message, envelope, routingKey: &quot;&quot;, redelivered: false,
-                retryCount: 0, replyToFallback: null,
-                scope.GetRequiredService&lt;IPublisher&gt;(), scope.GetRequiredService&lt;ISendEndpointProvider&gt;(), ct);
-
-            var pipeline = ConsumePipelineFactory.Build&lt;TMessage&gt;(scope, c =&gt; consumer.ConsumeAsync(c, c.CancellationToken));
-            await pipeline(context);
-        };
-
-    protected override Dispatch CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;(RetryPolicyDefinition? retryPolicy)
-        =&gt; async (scope, message, envelope, ct) =&gt;
-        {
-            // Run the consumer through the pipeline as above, then publish the reply envelope (step 4).
-        };
-}
-</code></pre>
-<p><code>retryPolicy</code> is the registration's effective policy (its own, or the queue default); it is always
-<code>null</code> for request consumers, which reply with an RPC fault instead of retrying. Implement
-<code>IMessageHandlerFactory&lt;THandler&gt;</code> directly instead when your handlers are not built from
-open-generic methods — the registry accepts either.</p>
-<p>Let <code>MessageExecutionRegistry&lt;THandler&gt;</code> assemble the per-message-type plans from the configured
-queues — it handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness
-(at most one per message type per queue), and partition attachment. Plans are keyed by URN within
-a registry instance, so queues registered into the same instance accumulate their handlers into
-one plan per message type. Register every queue in a single instance only when your transport
-dispatches each produced message exactly once (as the in-memory test harness does); a transport
-that receives a distinct delivery per queue (as the RabbitMQ transport does) must build one
-registry per queue so a delivery dispatches only the handlers its own queue registered:</p>
-<pre><code class="lang-csharp">var registry = new MessageExecutionRegistry&lt;Dispatch&gt;(provider, new MyHandlerFactory());
+<p><code>DeliveryHandlerFactory</code> turns each consumer registration into a <code>DeliveryHandler</code>: it resolves the consumer from
+the attempt's scope, runs the consume filter pipeline, and, for a request consumer, builds the reply. Let
+<code>MessageExecutionRegistry&lt;DeliveryHandler&gt;</code> assemble the per-message-type plans from the configured queues — it
+handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness (at most one per message type
+per queue), each consumer's effective retry policy, and partition attachment:</p>
+<pre><code class="lang-csharp">var registry = new MessageExecutionRegistry&lt;DeliveryHandler&gt;(provider, new DeliveryHandlerFactory());
 foreach (var queue in provider.QueueDefinitions)
 {
     registry.RegisterQueue(queue);
 }
 </code></pre>
+<p>Plans are keyed by URN within a registry instance, so queues registered into the same instance accumulate their
+handlers into one plan per message type. Register every queue in a single instance only when your transport
+dispatches each produced message exactly once (as the in-memory test harness does); a transport that receives a
+distinct delivery per queue (as the RabbitMQ transport does) must build one registry per queue so a delivery
+dispatches only the handlers its own queue registered.</p>
+<p>A transport that needs its own handler type can derive from <code>MessageHandlerFactory&lt;THandler&gt;</code> (or implement
+<code>IMessageHandlerFactory&lt;THandler&gt;</code>) instead, but it then owns every delivery rule of step 3 itself.</p>
 <h3 id="2-produce">2. Produce</h3>
 <p>Wrap each outgoing message in a <code>MessageEnvelope</code>. <code>MessageEnvelopeFactory.Create</code> promotes the
 publish context's metadata to typed envelope fields and serializes the payload:</p>
@@ -932,35 +903,77 @@ var body = JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializer
 <code>configure</code> callback writes to; read their resolved properties (<code>RoutingKey</code>, <code>CorrelationId</code>,
 <code>Headers</code>, …) when building the broker message.</p>
 <h3 id="3-consume">3. Consume</h3>
-<p>In the receive loop, parse the envelope, resolve the plan by URN, deserialize the payload, then
-run the plan's handlers:</p>
+<p>In the receive loop, parse the envelope, resolve the plan by URN and deserialize the payload. Then hand the plan's
+handlers to <code>DeliveryDispatcher</code> (registered by <code>AddMessaging</code>) with an <code>IDeliveryPort</code> for this delivery, and
+settle the delivery the way the returned <code>DeliveryOutcome</code> says:</p>
 <pre><code class="lang-csharp">var envelope = JsonSerializer.Deserialize&lt;MessageEnvelope&gt;(body, provider.JsonSerializerOptions)!;
 var plan = registry.GetPlanByUrn(envelope.MessageType);
 if (plan is null) { return; } // unknown type — drop or dead-letter
 
 var message = envelope.Message.Deserialize(plan.MessageType.Type, provider.JsonSerializerOptions)!;
+var outcome = await dispatcher.DispatchAsync(plan.Handlers, message, new MyDeliveryPort(envelope, delivery, stoppingToken));
 
-await using var scope = scopeFactory.CreateAsyncScope();
-foreach (var dispatch in plan.Handlers)
+switch (outcome.Settlement)
 {
-    await dispatch(scope.ServiceProvider, message, envelope, ct);
+    case DeliverySettlement.Acknowledge: await delivery.AckAsync(); break;
+    case DeliverySettlement.DeadLetter: await delivery.DeadLetterAsync(); break;
+    case DeliverySettlement.RedeliverLater:
+        await delivery.RedeliverAsync(outcome.RedeliveryHandlerIdentities, outcome.RedeliveryRetryCount, outcome.RedeliveryDelay);
+        break;
+    case DeliverySettlement.Abandon: break; // shutdown: leave it unsettled so the broker delivers it again
 }
 </code></pre>
-<p>When <code>plan.IsPartitioned</code>, serialize same-key deliveries through <code>plan.Partition</code> so per-key order
-is preserved (the RabbitMQ transport lanes deliveries through a <code>Partitioner</code>). The
-<code>MessageEnvelope</code> also carries metadata for the bare-JSON fallback — resolve unknown types via
-<code>provider.GetMessageType(urn)</code> / <code>registry.GetPlan(typeName)</code>.</p>
-<h3 id="4-rpc-replies">4. RPC replies</h3>
-<p>A request consumer replies with a <code>MessageEnvelope</code>: the <code>TResponse</code> payload at the response
-type's URN on success, or an <code>RpcFault</code> at <code>RpcFault.UrnUri</code> on failure. Build the reply with <code>RpcReply</code>, which
-echoes the request id and the business correlation id, so Vulthil clients interoperate without a
-transport-specific reply contract:</p>
-<pre><code class="lang-csharp">var reply = consumerFailure is null
-    ? RpcReply.Success(response, provider, request.RequestId, request.CorrelationId)
-    : RpcReply.Fault(consumerFailure, provider, request.RequestId, request.CorrelationId);
+<p>The port is the only broker-specific part of a delivery:</p>
+<pre><code class="lang-csharp">internal sealed class MyDeliveryPort(MessageEnvelope envelope, MyDelivery delivery, CancellationToken stoppingToken) : IDeliveryPort
+{
+    public int RetryCount =&gt; delivery.RetryCount; // 0, or the round a redelivery carries
+    public CancellationToken CancellationToken =&gt; stoppingToken;
+    public bool CanRedeliverLater =&gt; true; // false when retries can only run in-process
+
+    public MessageContext&lt;TMessage&gt; CreateContext&lt;TMessage&gt;(TMessage message, IServiceProvider services, int retryCount)
+        where TMessage : notnull
+        =&gt; MessageContext.CreateFromEnvelope(
+            message, envelope, delivery.RoutingKey, redelivered: retryCount &gt; 0, retryCount, replyToFallback: null,
+            services.GetRequiredService&lt;IPublisher&gt;(), services.GetRequiredService&lt;ISendEndpointProvider&gt;(), stoppingToken);
+
+    public Task WaitBeforeRetryAsync(TimeSpan delay) =&gt; Task.Delay(delay, stoppingToken);
+
+    public Task PublishFaultAsync&lt;TMessage&gt;(Fault&lt;TMessage&gt; fault) where TMessage : notnull
+        =&gt; delivery.TryPublishFaultAsync(fault); // best-effort: must not throw
+
+    public Task SendReplyAsync(MessageEnvelope reply) =&gt; delivery.ReplyAsync(reply);
+}
 </code></pre>
-<p>Use <code>RpcReply.ShortCircuited</code> when a consume filter ended the pipeline without a response. On the requesting side,
-<code>RpcReply.ToResult&lt;TResponse&gt;(reply, provider)</code> turns the reply back into the <code>Result&lt;TResponse&gt;</code> the caller receives.</p>
+<p>The dispatcher applies the delivery rules, so a custom transport gets them without writing them:</p>
+<ul>
+<li>Handlers run in rounds, in plan order. Each later round runs only the handlers that failed in the round before,
+so a consumer that completed never runs twice.</li>
+<li>Every attempt gets its own DI scope, so one consumer's scoped state (for example an unsaved <code>DbContext</code>) never
+reaches another consumer.</li>
+<li>A failed consumer retries under its own policy until the policy's budget is spent or it throws an exception the
+policy ignores. Then its <code>Fault&lt;T&gt;</code> goes to <code>PublishFaultAsync</code> at once.</li>
+<li>Consumers that retry in the same round share one wait: the longest back-off their policies ask for. The wait
+runs in-process through <code>WaitBeforeRetryAsync</code>, unless <code>CanRedeliverLater</code> is <code>true</code> and no retrying policy is
+in-memory; then the outcome is <code>RedeliverLater</code>.</li>
+<li>A request consumer runs once and replies through <code>SendReplyAsync</code> (step 4). It never retries and never
+publishes a fault.</li>
+<li>When <code>CancellationToken</code> ends the delivery, the dispatcher stops: it sends no fault and no reply for the
+interrupted attempt, and the outcome is <code>Abandon</code>. A consumer's own <code>OperationCanceledException</code> while the token
+is still live is an ordinary failure.</li>
+</ul>
+<p>A <code>RedeliverLater</code> outcome names the handlers the redelivery must run. On the redelivery, dispatch only the handlers
+whose <code>DeliveryHandler.Identity</code> it names, from a port whose <code>RetryCount</code> is <code>outcome.RedeliveryRetryCount</code>.</p>
+<p>When <code>plan.IsPartitioned</code>, serialize same-key deliveries through <code>plan.Partition</code> so per-key order is preserved
+(the RabbitMQ transport lanes deliveries through a <code>Partitioner</code>). The <code>MessageEnvelope</code> also carries metadata for
+the bare-JSON fallback — resolve unknown types via <code>provider.GetMessageType(urn)</code> / <code>registry.GetPlan(typeName)</code>.</p>
+<h3 id="4-rpc-replies">4. RPC replies</h3>
+<p>A request consumer's handler builds its reply with <code>RpcReply</code> and hands it to <code>IDeliveryPort.SendReplyAsync</code>; the
+transport only routes it to the requester. The reply is a <code>MessageEnvelope</code>: the <code>TResponse</code> payload at the
+response type's URN on success, or an <code>RpcFault</code> at <code>RpcFault.UrnUri</code> on failure (<code>RpcReply.ShortCircuited</code> when a
+consume filter ended the pipeline without a response). It echoes the request id and the business correlation id,
+so Vulthil clients interoperate without a transport-specific reply contract. On the requesting side,
+<code>RpcReply.ToResult&lt;TResponse&gt;(reply, provider)</code> turns the reply back into the <code>Result&lt;TResponse&gt;</code> the caller
+receives.</p>
 <h2 id="testing-messaging">Testing Messaging</h2>
 <p><code>Vulthil.Messaging.TestHarness</code> provides an in-memory transport that runs your consumers with no broker and
 captures produced and consumed messages for assertion. Compose it with <code>UseTestHarness()</code> (in place of a broker

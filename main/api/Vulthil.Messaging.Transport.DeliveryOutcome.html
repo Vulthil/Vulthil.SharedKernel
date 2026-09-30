@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DeliveryOutcome | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DeliveryOutcome | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="How a  finished a delivery: the settlement the transport must apply, and what happened on the way there.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Transport_DeliveryOutcome.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Transport.DeliveryOutcome%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.Transport.DeliveryOutcome">
+
+
+
+  <h1 id="Vulthil_Messaging_Transport_DeliveryOutcome" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome" class="text-break">
+Class DeliveryOutcome  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.Transport.html">Transport</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>How a <a class="xref" href="Vulthil.Messaging.Transport.DeliveryDispatcher.html">DeliveryDispatcher</a> finished a delivery: the settlement the transport must apply, and what
+happened on the way there.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class DeliveryOutcome</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">DeliveryOutcome</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryOutcome_Consumed_" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.Consumed*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryOutcome_Consumed" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.Consumed">
+  Consumed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the handlers whose consumer completed, in the order they completed. A handler whose pipeline a filter
+completed without calling the consumer is not included, and neither is a request consumer that answered with an
+<a class="xref" href="Vulthil.Messaging.Transport.RpcFault.html">RpcFault</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;DeliveryHandler&gt; Consumed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Vulthil.Messaging.Transport.DeliveryHandler.html">DeliveryHandler</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryOutcome_Failures_" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.Failures*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryOutcome_Failures" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.Failures">
+  Failures
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets every exception a one-way consumer threw during the delivery, in the order they were thrown.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;Exception&gt; Failures { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception">Exception</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryDelay_" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryDelay" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay">
+  RedeliveryDelay
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets, for <a class="xref" href="Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_RedeliverLater">RedeliverLater</a>, how long the broker should hold the delivery before
+redelivering it: the longest back-off any retrying handler's policy asks for. <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan.zero">Zero</a>
+otherwise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan RedeliveryDelay { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryHandlerIdentities_" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryHandlerIdentities" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities">
+  RedeliveryHandlerIdentities
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets, for <a class="xref" href="Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_RedeliverLater">RedeliverLater</a>, the identities of the handlers the redelivery must
+run (see <a class="xref" href="Vulthil.Messaging.Transport.DeliveryHandler.html#Vulthil_Messaging_Transport_DeliveryHandler_Identity">Identity</a>); empty otherwise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;string&gt; RedeliveryHandlerIdentities { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryRetryCount_" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryOutcome_RedeliveryRetryCount" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount">
+  RedeliveryRetryCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets, for <a class="xref" href="Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_RedeliverLater">RedeliverLater</a>, the retry round the redelivery starts at (its
+<a class="xref" href="Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_RetryCount">RetryCount</a>); 0 otherwise.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RedeliveryRetryCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryOutcome_Settlement_" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.Settlement*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryOutcome_Settlement" data-uid="Vulthil.Messaging.Transport.DeliveryOutcome.Settlement">
+  Settlement
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets how the transport must settle the delivery.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DeliverySettlement Settlement { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vulthil.Messaging.Transport.DeliverySettlement.html">DeliverySettlement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryOutcome.cs/#L7" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

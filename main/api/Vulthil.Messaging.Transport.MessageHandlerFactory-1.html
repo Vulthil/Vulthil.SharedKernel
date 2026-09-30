@@ -135,6 +135,12 @@ consumer/message shape, so the reflection cost is paid once per shape. Implement
     </dd>
   </dl>
 
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Vulthil.Messaging.Transport.DeliveryHandlerFactory.html">DeliveryHandlerFactory</a></div>
+    </dd>
+  </dl>
 
   <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
@@ -305,7 +311,8 @@ consumer replies with an RPC fault instead of retrying.</p>
     <dd><p>The CLR type of the consumed message.</p>
 </dd>
     <dt><code>retryPolicy</code> <a class="xref" href="Vulthil.Messaging.Queues.RetryPolicyDefinition.html">RetryPolicyDefinition</a></dt>
-    <dd><p>The retry policy to apply, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to inherit the queue default.</p>
+    <dd><p>The registration's effective retry policy (its own, or the queue default), or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when the
+handler fails for good on its first failure.</p>
 </dd>
   </dl>
 
@@ -359,7 +366,8 @@ consumer replies with an RPC fault instead of retrying.</p>
     <dd><p>The CLR type of the produced response.</p>
 </dd>
     <dt><code>retryPolicy</code> <a class="xref" href="Vulthil.Messaging.Queues.RetryPolicyDefinition.html">RetryPolicyDefinition</a></dt>
-    <dd><p>The retry policy to apply, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to inherit the queue default.</p>
+    <dd><p>Always <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when called by <a class="xref" href="Vulthil.Messaging.Transport.MessageExecutionRegistry-1.html">MessageExecutionRegistry&lt;THandler&gt;</a>: a request consumer
+replies with an RPC fault instead of retrying.</p>
 </dd>
   </dl>
 

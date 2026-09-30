@@ -101,9 +101,10 @@ queue configuration that a real transport would.</p>
 <ul>
 <li>Dispatch is synchronous: when a publish/send/request call returns, every consumer it triggered has run — no polling</li>
 <li>A one-way consumer's exception does <strong>not</strong> propagate to the publisher/sender: the consumer is retried per its
-resolved retry policy (attempts run back-to-back, without the configured delays), then a <code>Fault&lt;T&gt;</code> is published
-and captured — assert it via <code>Published&lt;Fault&lt;TMessage&gt;&gt;()</code>. A request consumer's exception becomes a failed
-<code>Result&lt;TResponse&gt;</code> on the requesting side</li>
+resolved retry policy, in rounds that re-run only the consumers that failed (attempts run back-to-back, without
+the configured delays), then a <code>Fault&lt;T&gt;</code> is published and captured — assert it via
+<code>Published&lt;Fault&lt;TMessage&gt;&gt;()</code>. As on the broker, the fault never reaches an <code>IConsumer&lt;Fault&lt;TMessage&gt;&gt;</code>. A
+request consumer's exception becomes a failed <code>Result&lt;TResponse&gt;</code> on the requesting side</li>
 <li>Keep assertions on <code>ITestHarness</code> deterministic and explicit; <code>Clear()</code> between phases</li>
 </ul>
 <h2 id="usage">Usage</h2>

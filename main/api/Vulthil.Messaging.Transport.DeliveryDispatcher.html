@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DeliveryDispatcher | Vulthil.SharedKernel </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DeliveryDispatcher | Vulthil.SharedKernel ">
+      
+      <meta name="description" content="Runs one delivered message through its handlers with the delivery rules every transport shares: Handlers run in rounds, one after another in plan order. The first round runs every handler it is given; each later round runs only the handlers that failed in the round before, so a handler that completed never runs again.Every attempt runs in its own service scope, so one handler&#39;s scoped state never reaches another&#39;s.A failed handler retries under its own policy until its budget runs out or it throws an exception its policy ignores. Then it has failed for good, and its fault is published at once.Handlers retrying in the same round share one wait: the longest back-off any of their policies asks for. The wait runs in-process, unless the port can redeliver later and no retrying policy is in-memory; then the delivery goes back to the broker (see ).A request consumer runs once and answers with its response or an ; it never retries and never publishes a fault.When  ends the delivery, the dispatcher stops without a fault or a reply for the interrupted attempt (see ).">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Transport_DeliveryDispatcher.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Transport.DeliveryDispatcher%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="Vulthil.SharedKernel">
+            Vulthil.SharedKernel
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vulthil.Messaging.Transport.DeliveryDispatcher">
+
+
+
+  <h1 id="Vulthil_Messaging_Transport_DeliveryDispatcher" data-uid="Vulthil.Messaging.Transport.DeliveryDispatcher" class="text-break">
+Class DeliveryDispatcher  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryDispatcher.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.Transport.html">Transport</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Runs one delivered message through its handlers with the delivery rules every transport shares:</p>
+<ul><li>Handlers run in rounds, one after another in plan order. The first round runs every handler it is
+given; each later round runs only the handlers that failed in the round before, so a handler that completed never
+runs again.</li><li>Every attempt runs in its own service scope, so one handler's scoped state never reaches
+another's.</li><li>A failed handler retries under its own policy until its budget runs out or it throws an exception
+its policy ignores. Then it has failed for good, and its fault is published at once.</li><li>Handlers retrying in the same round share one wait: the longest back-off any of their policies asks
+for. The wait runs in-process, unless the port can redeliver later and no retrying policy is in-memory; then the
+delivery goes back to the broker (see <a class="xref" href="Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_RedeliverLater">RedeliverLater</a>).</li><li>A request consumer runs once and answers with its response or an <a class="xref" href="Vulthil.Messaging.Transport.RpcFault.html">RpcFault</a>; it never
+retries and never publishes a fault.</li><li>When <a class="xref" href="Vulthil.Messaging.Transport.IDeliveryPort.html#Vulthil_Messaging_Transport_IDeliveryPort_CancellationToken">CancellationToken</a> ends the delivery, the dispatcher stops without a
+fault or a reply for the interrupted attempt (see <a class="xref" href="Vulthil.Messaging.Transport.DeliverySettlement.html#Vulthil_Messaging_Transport_DeliverySettlement_Abandon">Abandon</a>).</li></ul>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class DeliveryDispatcher</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">DeliveryDispatcher</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vulthil.Results.ResultExtensions.html#Vulthil_Results_ResultExtensions_ToResult__1___0_Vulthil_Results_Error_">ResultExtensions.ToResult&lt;T&gt;(T?, Error)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryDispatcher__ctor_" data-uid="Vulthil.Messaging.Transport.DeliveryDispatcher.#ctor*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryDispatcher__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Logging_ILogger_Vulthil_Messaging_Transport_DeliveryDispatcher__" data-uid="Vulthil.Messaging.Transport.DeliveryDispatcher.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Logging.ILogger{Vulthil.Messaging.Transport.DeliveryDispatcher})">
+  DeliveryDispatcher(IServiceScopeFactory, ILogger&lt;DeliveryDispatcher&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryDispatcher.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Vulthil.Messaging.Transport.DeliveryDispatcher.html">DeliveryDispatcher</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DeliveryDispatcher(IServiceScopeFactory scopeFactory, ILogger&lt;DeliveryDispatcher&gt; logger)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>scopeFactory</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicescopefactory">IServiceScopeFactory</a></dt>
+    <dd><p>Creates the service scope of each handler attempt.</p>
+</dd>
+    <dt><code>logger</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1">ILogger</a>&lt;<a class="xref" href="Vulthil.Messaging.Transport.DeliveryDispatcher.html">DeliveryDispatcher</a>&gt;</dt>
+    <dd><p>Logs handler failures and scheduled retries.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_Messaging_Transport_DeliveryDispatcher_DispatchAsync_" data-uid="Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_DeliveryDispatcher_DispatchAsync_System_Collections_Generic_IReadOnlyCollection_Vulthil_Messaging_Transport_DeliveryHandler__System_Object_Vulthil_Messaging_Transport_IDeliveryPort_" data-uid="Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync(System.Collections.Generic.IReadOnlyCollection{Vulthil.Messaging.Transport.DeliveryHandler},System.Object,Vulthil.Messaging.Transport.IDeliveryPort)">
+  DispatchAsync(IReadOnlyCollection&lt;DeliveryHandler&gt;, object, IDeliveryPort)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryDispatcher.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Runs <code class="paramref">message</code> through <code class="paramref">handlers</code> and returns how the transport must settle
+the delivery.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;DeliveryOutcome&gt; DispatchAsync(IReadOnlyCollection&lt;DeliveryHandler&gt; handlers, object message, IDeliveryPort port)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handlers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Vulthil.Messaging.Transport.DeliveryHandler.html">DeliveryHandler</a>&gt;</dt>
+    <dd><p>The handlers to run: a plan's handlers, or the subset a redelivery names.</p>
+</dd>
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The deserialized message.</p>
+</dd>
+    <dt><code>port</code> <a class="xref" href="Vulthil.Messaging.Transport.IDeliveryPort.html">IDeliveryPort</a></dt>
+    <dd><p>The transport's port for this delivery.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Messaging.Transport.DeliveryOutcome.html">DeliveryOutcome</a>&gt;</dt>
+    <dd><p>The settlement, and what happened on the way there.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/DeliveryDispatcher.cs/#L25" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

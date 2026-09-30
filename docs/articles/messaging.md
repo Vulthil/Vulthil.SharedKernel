@@ -873,7 +873,9 @@ When no timeout is set on the context, the request falls back to
 `Messaging:Options:DefaultTimeout` (see
 [Configuration-driven Setup](#configuration-driven-setup)). A request that exceeds
 its timeout completes with a `Result<TResponse>` failure carrying the
-`Messaging.Request.Timeout` error code rather than throwing.
+`Messaging.Request.Timeout` error code rather than throwing. Every error code a request can fail with is a constant on
+`RequestErrorCodes` (in `Vulthil.Messaging.Abstractions`): `Timeout`, `Cancelled`, `TransportUnavailable`, `Publish`,
+`Deserialize` and `Failure` — match on those instead of the strings.
 
 ### Reply wire format & correlation
 
@@ -889,6 +891,11 @@ The reply is a normal `MessageEnvelope` (single-serialized, like every other mes
 - **Failure** carries an RPC fault at `urn:message:Vulthil:RpcFault` (the remote exception's
   type and message); the requester maps it to a `Result<TResponse>` failure with the
   `Messaging.Request.Failure` error code.
+- A reply the requester cannot read (malformed, empty, or of an unexpected type) becomes a failure with the
+  `Messaging.Request.Deserialize` error code; it never throws.
+
+Every transport builds and reads replies through `Vulthil.Messaging.Transport.RpcReply`, so a reply means the same on
+RabbitMQ and on the in-memory test harness.
 
 A request consumer runs exactly once per request: a thrown exception becomes the fault reply
 rather than entering the retry machinery, so retry policies do not apply to request consumers
@@ -1010,25 +1017,18 @@ is preserved (the RabbitMQ transport lanes deliveries through a `Partitioner`). 
 ### 4. RPC replies
 
 A request consumer replies with a `MessageEnvelope`: the `TResponse` payload at the response
-type's URN on success, or an `RpcFault` at `RpcFault.UrnUri` on failure. Keeping the envelope and
-`RpcFault` shapes identical across transports means Vulthil clients interoperate without a
+type's URN on success, or an `RpcFault` at `RpcFault.UrnUri` on failure. Build the reply with `RpcReply`, which
+echoes the request id and the business correlation id, so Vulthil clients interoperate without a
 transport-specific reply contract:
 
 ```csharp
-var fault = new RpcFault
-{
-    Message = ex.Message,
-    ExceptionType = ex.GetType().FullName!,
-    StackTrace = ex.StackTrace,
-    FaultedAt = DateTimeOffset.UtcNow,
-};
-var reply = new MessageEnvelope
-{
-    MessageType = RpcFault.UrnUri,
-    Message = JsonSerializer.SerializeToElement(fault, provider.JsonSerializerOptions),
-    RequestId = request.RequestId,
-};
+var reply = consumerFailure is null
+    ? RpcReply.Success(response, provider, request.RequestId, request.CorrelationId)
+    : RpcReply.Fault(consumerFailure, provider, request.RequestId, request.CorrelationId);
 ```
+
+Use `RpcReply.ShortCircuited` when a consume filter ended the pipeline without a response. On the requesting side,
+`RpcReply.ToResult<TResponse>(reply, provider)` turns the reply back into the `Result<TResponse>` the caller receives.
 
 ## Testing Messaging
 

@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Transport;
@@ -85,18 +84,16 @@ internal sealed class TestHarness : ITestHarness
         => (scope, envelope, ct) =>
         {
             var provider = scope.GetRequiredService<IMessageConfigurationProvider>();
-            var options = provider.JsonSerializerOptions;
             var request = InMemoryContext.Deserialize<TRequest>(scope, envelope);
             var context = InMemoryContext.Create(scope, request, envelope, ct);
 
             try
             {
-                var response = responder(context);
-                return InMemoryReply.Build(provider.GetUrn(typeof(TResponse)), JsonSerializer.SerializeToElement(response, options), envelope);
+                return RpcReply.Success(responder(context), provider, envelope.RequestId, envelope.CorrelationId);
             }
             catch (Exception ex)
             {
-                return InMemoryReply.BuildFault(ex, options, envelope);
+                return RpcReply.Fault(ex, provider, envelope.RequestId, envelope.CorrelationId);
             }
         };
 

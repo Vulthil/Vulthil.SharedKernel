@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
@@ -71,7 +70,6 @@ internal sealed class InMemoryHandlerFactory : MessageHandlerFactory<InMemoryHan
             var consumer = scope.GetRequiredService<TConsumer>();
             var provider = scope.GetRequiredService<IMessageConfigurationProvider>();
             var harness = scope.GetRequiredService<TestHarness>();
-            var options = provider.JsonSerializerOptions;
             var context = InMemoryContext.Create(scope, (TRequest)message, envelope, ct);
 
             try
@@ -89,17 +87,12 @@ internal sealed class InMemoryHandlerFactory : MessageHandlerFactory<InMemoryHan
                 await pipeline(context).ConfigureAwait(false);
 
                 return (MessageEnvelope?)(produced
-                    ? InMemoryReply.Build(provider.GetUrn(typeof(TResponse)), JsonSerializer.SerializeToElement(response, options), envelope)
-                    : InMemoryReply.BuildFault(
-                        "Consume pipeline did not produce a response (a filter likely short-circuited the chain).",
-                        typeof(InvalidOperationException).FullName!,
-                        stackTrace: null,
-                        options,
-                        envelope));
+                    ? RpcReply.Success(response, provider, envelope.RequestId, envelope.CorrelationId)
+                    : RpcReply.ShortCircuited(provider, envelope.RequestId, envelope.CorrelationId));
             }
             catch (Exception ex)
             {
-                return InMemoryReply.BuildFault(ex, options, envelope);
+                return RpcReply.Fault(ex, provider, envelope.RequestId, envelope.CorrelationId);
             }
         });
 

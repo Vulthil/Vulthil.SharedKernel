@@ -38,3 +38,8 @@ Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForConsumer(System.
 Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
 Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
 Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
+Vulthil.Messaging.Transport.RpcReply
+static Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception! exception, Vulthil.Messaging.IMessageConfigurationProvider! provider, string? requestId, string? correlationId) -> Vulthil.Messaging.Transport.MessageEnvelope!
+static Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider! provider, string? requestId, string? correlationId) -> Vulthil.Messaging.Transport.MessageEnvelope!
+static Vulthil.Messaging.Transport.RpcReply.Success<TResponse>(TResponse response, Vulthil.Messaging.IMessageConfigurationProvider! provider, string? requestId, string? correlationId) -> Vulthil.Messaging.Transport.MessageEnvelope!
+static Vulthil.Messaging.Transport.RpcReply.ToResult<TResponse>(Vulthil.Messaging.Transport.MessageEnvelope! reply, Vulthil.Messaging.IMessageConfigurationProvider! provider) -> Vulthil.Results.Result<TResponse>!

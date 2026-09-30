@@ -11,8 +11,9 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 /// <summary>
 /// Builds the <see cref="MessageHandler"/> dispatch closures of the RabbitMQ transport. Each closure resolves the
 /// consumer from the delivery scope, builds the receive context for the envelope or bare-JSON path and runs the
-/// consume pipeline; a request consumer's closure also publishes the reply — or an <see cref="RpcFault"/> — through
-/// the worker's <see cref="GatedPublisher"/>. The base class binds each registration's CLR types to these methods.
+/// consume pipeline; a request consumer's closure also publishes the <see cref="RpcReply"/> — the response or an
+/// <see cref="RpcFault"/> — through the worker's <see cref="GatedPublisher"/>. The base class binds each
+/// registration's CLR types to these methods.
 /// </summary>
 internal sealed class RabbitMqHandlerFactory : MessageHandlerFactory<MessageHandler>
 {
@@ -51,10 +52,13 @@ internal sealed class RabbitMqHandlerFactory : MessageHandlerFactory<MessageHand
                 var publisher = sp.GetRequiredService<IPublisher>();
                 var sendEndpointProvider = sp.GetRequiredService<ISendEndpointProvider>();
                 var provider = sp.GetRequiredService<IMessageConfigurationProvider>();
-                var jsonOptions = provider.JsonSerializerOptions;
                 var context = envelope is null
                     ? MessageContextFactory.CreateContext((TRequest)message, ea, publisher, sendEndpointProvider, ct)
                     : MessageContextFactory.CreateContext((TRequest)message, ea, envelope, publisher, sendEndpointProvider, ct);
+
+                // The AMQP CorrelationId carries the request id, and it is the only one a bare-JSON request has.
+                var requestId = ea.BasicProperties.CorrelationId;
+                var correlationId = envelope?.CorrelationId;
 
                 MessageEnvelope reply;
                 try
@@ -75,52 +79,17 @@ internal sealed class RabbitMqHandlerFactory : MessageHandlerFactory<MessageHand
                     await pipeline(context).ConfigureAwait(false);
 
                     reply = responseProduced
-                        ? BuildReply(provider.GetUrn(typeof(TResponse)), JsonSerializer.SerializeToElement(response, jsonOptions), ea, envelope)
-                        : BuildFaultReply(
-                            "Consume pipeline did not produce a response (a filter likely short-circuited the chain).",
-                            typeof(InvalidOperationException).FullName!,
-                            stackTrace: null,
-                            jsonOptions,
-                            ea,
-                            envelope);
+                        ? RpcReply.Success(response, provider, requestId, correlationId)
+                        : RpcReply.ShortCircuited(provider, requestId, correlationId);
                 }
                 catch (Exception exception)
                 {
-                    reply = BuildFaultReply(exception.Message, exception.GetType().FullName ?? "Unknown", exception.StackTrace, jsonOptions, ea, envelope);
+                    reply = RpcReply.Fault(exception, provider, requestId, correlationId);
                 }
 
-                await SendResponseAsync(ea, reply, publishAsync, jsonOptions).ConfigureAwait(false);
+                await SendResponseAsync(ea, reply, publishAsync, provider.JsonSerializerOptions).ConfigureAwait(false);
             }
         };
-
-    private static MessageEnvelope BuildReply(Uri messageType, JsonElement message, BasicDeliverEventArgs ea, MessageEnvelope? requestEnvelope)
-        => new()
-        {
-            MessageId = Guid.CreateVersion7().ToString(),
-            RequestId = ea.BasicProperties.CorrelationId,
-            CorrelationId = requestEnvelope?.CorrelationId,
-            MessageType = messageType,
-            Message = message,
-            SentTime = DateTimeOffset.UtcNow,
-        };
-
-    private static MessageEnvelope BuildFaultReply(
-        string message,
-        string exceptionType,
-        string? stackTrace,
-        JsonSerializerOptions jsonOptions,
-        BasicDeliverEventArgs ea,
-        MessageEnvelope? requestEnvelope)
-    {
-        var fault = new RpcFault
-        {
-            Message = message,
-            ExceptionType = exceptionType,
-            StackTrace = stackTrace,
-            FaultedAt = DateTimeOffset.UtcNow,
-        };
-        return BuildReply(RpcFault.UrnUri, JsonSerializer.SerializeToElement(fault, jsonOptions), ea, requestEnvelope);
-    }
 
     private static async Task SendResponseAsync(BasicDeliverEventArgs ea, MessageEnvelope reply, GatedPublisher publishAsync, JsonSerializerOptions jsonOptions)
     {

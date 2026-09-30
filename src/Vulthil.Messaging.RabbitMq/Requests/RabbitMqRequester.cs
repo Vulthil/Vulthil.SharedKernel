@@ -81,7 +81,6 @@ internal sealed class RabbitMqRequester : IRequester
         // business CorrelationId free — two requests sharing a business key cannot collide on the waiter.
         var ids = RabbitMqWireMessageBuilder.ResolveIds(message, requestContext, messageConfiguration);
         var requestId = Guid.CreateVersion7().ToString();
-        var responseUrn = _messageConfigurationProvider.GetUrn(typeof(TResponse));
         var exchange = messageConfiguration.Exchange;
 
         // The bus starts in the background, so a request issued while the host is still warming up would be
@@ -97,14 +96,14 @@ internal sealed class RabbitMqRequester : IRequester
             if (timeoutCts.IsCancellationRequested)
             {
                 MessagingLog.RequestTimedOut(_logger, ids.UrnString, ids.CorrelationId, timeout.TotalSeconds);
-                return Result.Failure<TResponse>(Error.Failure("Messaging.Request.Timeout", $"Request timed out after {timeout.TotalSeconds}s waiting for the transport to start"));
+                return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Timeout, $"Request timed out after {timeout.TotalSeconds}s waiting for the transport to start"));
             }
 
-            return Result.Failure<TResponse>(Error.Failure("Messaging.Request.Cancelled", "Request was cancelled by user."));
+            return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Cancelled, "Request was cancelled by user."));
         }
         catch (Exception ex)
         {
-            return Result.Failure<TResponse>(Error.Failure("Messaging.Request.TransportUnavailable", $"The transport failed to start: {ex.Message}"));
+            return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.TransportUnavailable, $"The transport failed to start: {ex.Message}"));
         }
 
         var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken).ConfigureAwait(false);
@@ -113,7 +112,7 @@ internal sealed class RabbitMqRequester : IRequester
         using var activity = RabbitMqWireMessageBuilder.StartProducerActivity(
             $"{exchange} request", "request", exchange, routingKey, ids.UrnString, ids.MessageId, ids.CorrelationId);
 
-        _listener.RegisterWaiter(requestId, tcs, responseUrn);
+        _listener.RegisterWaiter(requestId, tcs);
         MessagingLog.RequestSending(_logger, ids.UrnString, ids.CorrelationId, timeout.TotalSeconds);
 
         try
@@ -137,11 +136,11 @@ internal sealed class RabbitMqRequester : IRequester
                 if (timeoutCts.IsCancellationRequested)
                 {
                     MessagingLog.RequestTimedOut(_logger, ids.UrnString, ids.CorrelationId, timeout.TotalSeconds);
-                    tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure("Messaging.Request.Timeout", $"Request timed out after {timeout.TotalSeconds}s")));
+                    tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Timeout, $"Request timed out after {timeout.TotalSeconds}s")));
                 }
                 else
                 {
-                    tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure("Messaging.Request.Cancelled", "Request was cancelled by user.")));
+                    tcs.TrySetResult(Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Cancelled, "Request was cancelled by user.")));
                 }
             }).ConfigureAwait(false);
 
@@ -154,7 +153,7 @@ internal sealed class RabbitMqRequester : IRequester
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             activity?.AddException(ex);
-            return Result.Failure<TResponse>(Error.Failure("Messaging.Request.Publish", $"Publishing error: {ex.Message}"));
+            return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Publish, $"Publishing error: {ex.Message}"));
         }
         finally
         {

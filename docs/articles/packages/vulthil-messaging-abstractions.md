@@ -70,6 +70,16 @@ Result<OrderDto> result = await requester.RequestAsync<GetOrderRequest, OrderDto
     cancellationToken: ct);
 ```
 
+A failed request carries one of the error codes on `RequestErrorCodes` (`Timeout`, `Cancelled`,
+`TransportUnavailable`, `Publish`, `Deserialize`, `Failure`), so a caller can branch on the reason:
+
+```csharp
+if (result.IsFailure && result.Error.Code == RequestErrorCodes.Timeout)
+{
+    // retry, or fall back
+}
+```
+
 See [Messaging — Request/Reply](../messaging.md#configuring-the-request) for details.
 
 ### Publishing from a consumer

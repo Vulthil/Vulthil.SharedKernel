@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -16,7 +15,6 @@ internal sealed class ResponseListener : IAsyncDisposable
     private readonly ConcurrentDictionary<string, IResponseWaiter> _waiters = new();
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
-    private JsonSerializerOptions JsonOptions => _messageConfigurationProvider.JsonSerializerOptions;
     private IChannel? _channel;
     private string _replyToQueueName = string.Empty;
 
@@ -45,8 +43,8 @@ internal sealed class ResponseListener : IAsyncDisposable
         return _replyToQueueName;
     }
 
-    public void RegisterWaiter<T>(string requestId, TaskCompletionSource<Result<T>> tcs, Uri responseUrn) where T : notnull
-        => _waiters[requestId] = new ResponseWaiter<T>(tcs, JsonOptions, responseUrn);
+    public void RegisterWaiter<T>(string requestId, TaskCompletionSource<Result<T>> tcs) where T : notnull
+        => _waiters[requestId] = new ResponseWaiter<T>(tcs, _messageConfigurationProvider);
 
     public void RemoveWaiter(string requestId) => _waiters.TryRemove(requestId, out _);
 

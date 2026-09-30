@@ -7,16 +7,20 @@ using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 namespace Vulthil.IntegrationTests.Fixtures;
 
 /// <summary>
-/// PostgreSQL-mapped context for the relational outbox store tests, using the Npgsql-optimized outbox mapping.
+/// PostgreSQL-mapped context for the relational outbox store tests: the Npgsql-optimized outbox mapping plus the
+/// <see cref="OutboxProbe"/> aggregate whose domain events feed the capture interceptor.
 /// </summary>
 public sealed class NpgsqlOutboxDbContext(DbContextOptions<NpgsqlOutboxDbContext> options) : BaseDbContext(options)
 {
+    public DbSet<OutboxProbe> Probes => Set<OutboxProbe>();
+
     protected override Assembly? ConfigurationAssembly => null;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyNpgsqlOutbox();
+        modelBuilder.Entity<OutboxProbe>(entity => entity.HasKey(probe => probe.Id));
     }
 }
 

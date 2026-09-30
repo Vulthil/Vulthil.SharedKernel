@@ -51,4 +51,4 @@ A dialect that cannot express its lock this way, or that pages with something ot
 
 ### Commit-time relay trigger
 
-`AddRelationalOutboxCommitTrigger()` registers a transaction interceptor (`OutboxCommitInterceptor`) that wakes the outbox relay when an explicit database transaction commits, so captured messages relay promptly instead of waiting for the next poll. Provider `Use*` extensions register it automatically when outbox processing is enabled.
+`AddRelationalOutboxCommitTrigger()` registers a transaction interceptor (`OutboxCommitInterceptor`) that reports every transaction's start and outcome to `OutboxRelayWakeup`. A commit wakes the outbox relay once when the transaction saved outbox rows, so captured messages relay promptly instead of waiting for the next poll; a commit that saved none, such as the relay's own batch, never wakes it. Provider `Use*` extensions register it automatically when outbox processing is enabled; a custom relational provider calls it itself.

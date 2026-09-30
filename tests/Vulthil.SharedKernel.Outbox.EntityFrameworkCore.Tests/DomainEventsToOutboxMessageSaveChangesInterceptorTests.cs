@@ -8,9 +8,16 @@ using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore.Tests;
 
-public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : BaseUnitTestCase
+public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : BaseUnitTestCase<DomainEventsToOutboxMessageSaveChangesInterceptor>
 {
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
+
+    public DomainEventsToOutboxMessageSaveChangesInterceptorTests()
+    {
+        Use(TimeProvider.System);
+        Use<IOptions<OutboxProcessingOptions>>(Options.Create(new OutboxProcessingOptions()));
+        UseReal<OutboxRelayWakeup>();
+    }
 
     protected override async ValueTask Initialize()
     {
@@ -19,14 +26,19 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
         await context.Database.EnsureCreatedAsync(CancellationToken);
     }
 
-    protected override async ValueTask Dispose() => await _connection.DisposeAsync();
+    protected override async ValueTask Dispose()
+    {
+        await _connection.DisposeAsync();
+        await base.Dispose();
+    }
 
     [Fact]
-    public async Task NonTransactionalSaveCapturingDomainEventsWakesTheRelay()
+    public async Task AnAsynchronousSaveCapturesEachDomainEventAsAnOutboxRowAndClearsTheAggregate()
     {
         // Arrange
         await using var context = NewContext();
         var aggregate = new TestAggregate(Guid.NewGuid());
+        aggregate.RaiseSomething();
         aggregate.RaiseSomething();
         context.Aggregates.Add(aggregate);
 
@@ -34,11 +46,15 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
         await context.SaveChangesAsync(CancellationToken);
 
         // Assert
-        GetMock<IOutboxSignal>().Verify(signal => signal.Notify(), Times.Once());
+        aggregate.DomainEvents.ShouldBeEmpty();
+        var captured = await context.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
+        captured.Count.ShouldBe(2);
+        captured.ShouldAllBe(message => message.Type == typeof(TestDomainEvent).FullName && message.Destination == OutboxDestination.DomainEvent);
+        captured.ShouldAllBe(message => message.Content.Contains(aggregate.Id.ToString()));
     }
 
     [Fact]
-    public async Task SyncSaveCapturingDomainEventsWakesTheRelay()
+    public async Task ASynchronousSaveCapturesEachDomainEventAsAnOutboxRowAndClearsTheAggregate()
     {
         // Arrange
         await using var context = NewContext();
@@ -50,70 +66,10 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
         SaveChangesSynchronously(context);
 
         // Assert
-        GetMock<IOutboxSignal>().Verify(signal => signal.Notify(), Times.Once());
-        var captured = await context.OutboxMessages.SingleAsync(CancellationToken);
+        aggregate.DomainEvents.ShouldBeEmpty();
+        var captured = await context.OutboxMessages.AsNoTracking().SingleAsync(CancellationToken);
         captured.Type.ShouldBe(typeof(TestDomainEvent).FullName);
-    }
-
-    [Fact]
-    public async Task SaveInsideAnExplicitTransactionDoesNotWakeTheRelay()
-    {
-        // Arrange
-        await using var context = NewContext();
-        var aggregate = new TestAggregate(Guid.NewGuid());
-        aggregate.RaiseSomething();
-        context.Aggregates.Add(aggregate);
-
-        // Act
-        await using var transaction = await context.Database.BeginTransactionAsync(CancellationToken);
-        await context.SaveChangesAsync(CancellationToken);
-        await transaction.CommitAsync(CancellationToken);
-
-        // Assert
-        GetMock<IOutboxSignal>().Verify(signal => signal.Notify(), Times.Never());
-    }
-
-    [Fact]
-    public async Task NonTransactionalSaveWithoutDomainEventsDoesNotWakeTheRelay()
-    {
-        // Arrange
-        await using var context = NewContext();
-        context.Aggregates.Add(new TestAggregate(Guid.NewGuid()));
-
-        // Act
-        await context.SaveChangesAsync(CancellationToken);
-
-        // Assert
-        GetMock<IOutboxSignal>().Verify(signal => signal.Notify(), Times.Never());
-    }
-
-    [Fact]
-    public async Task RelayStyleMarkingSaveWithoutAggregatesDoesNotWakeTheRelay()
-    {
-        // Arrange
-        var messageId = Guid.NewGuid();
-        await using (var seed = NewContext(withInterceptor: false))
-        {
-            seed.OutboxMessages.Add(new OutboxMessage
-            {
-                Id = messageId,
-                Type = typeof(TestDomainEvent).FullName!,
-                Content = "{}",
-                OccurredOnUtc = DateTimeOffset.UtcNow,
-                Destination = OutboxDestination.DomainEvent
-            });
-            await seed.SaveChangesAsync(CancellationToken);
-        }
-
-        await using var context = NewContext();
-
-        // Act
-        var pending = await context.OutboxMessages.SingleAsync(message => message.Id == messageId, CancellationToken);
-        pending.RetryCount++;
-        await context.SaveChangesAsync(CancellationToken);
-
-        // Assert
-        GetMock<IOutboxSignal>().Verify(signal => signal.Notify(), Times.Never());
+        captured.Content.ShouldContain(aggregate.Id.ToString());
     }
 
     private TestDbContext NewContext(bool withInterceptor = true)
@@ -122,10 +78,7 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
 
         if (withInterceptor)
         {
-            builder.AddInterceptors(new DomainEventsToOutboxMessageSaveChangesInterceptor(
-                TimeProvider.System,
-                Options.Create(new OutboxProcessingOptions()),
-                GetMock<IOutboxSignal>().Object));
+            builder.AddInterceptors(Target);
         }
 
         return new TestDbContext(builder.Options);

@@ -5,6 +5,7 @@ using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.MySql;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
+using Vulthil.SharedKernel.Outbox;
 using Vulthil.xUnit.Fixtures;
 
 namespace Vulthil.IntegrationTests.Fixtures;
@@ -25,6 +26,11 @@ public abstract class ProviderOutboxHostFixture<TDbContext>(IntegrationTestConta
     public IServiceProvider Services => _host?.Services
         ?? throw new InvalidOperationException("The fixture has not been initialized.");
 
+    /// <summary>
+    /// Gets the signal the host's outbox wiring wakes the relay through, counting the wake-ups instead.
+    /// </summary>
+    public CountingOutboxSignal Signal { get; } = new();
+
     protected abstract ITestContainer SelectContainer(IntegrationTestContainerHost host);
 
     protected abstract void RegisterDatabase(IHostApplicationBuilder builder, string connectionStringKey);
@@ -40,6 +46,10 @@ public abstract class ProviderOutboxHostFixture<TDbContext>(IntegrationTestConta
 
         var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
         builder.Configuration[$"ConnectionStrings:{connectionSource.ConnectionStringKey}"] = connectionSource.ConnectionString;
+
+        // The outbox engine registers its signal with TryAdd, so registering this one first makes the real wiring
+        // wake the counting signal.
+        builder.Services.AddSingleton<IOutboxSignal>(Signal);
         RegisterDatabase(builder, connectionSource.ConnectionStringKey);
 
         _host = builder.Build();
@@ -54,7 +64,8 @@ public abstract class ProviderOutboxHostFixture<TDbContext>(IntegrationTestConta
     }
 
     /// <summary>
-    /// Deletes every outbox row (and any provider-specific probe state) so the next test starts from a clean slate.
+    /// Deletes every outbox row (and any provider-specific probe state) and clears the counted relay wake-ups, so the
+    /// next test starts from a clean slate.
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     public async Task ResetOutboxStateAsync(CancellationToken cancellationToken)
@@ -63,6 +74,7 @@ public abstract class ProviderOutboxHostFixture<TDbContext>(IntegrationTestConta
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
         await context.OutboxMessages.ExecuteDeleteAsync(cancellationToken);
         await ResetAdditionalStateAsync(context, cancellationToken);
+        Signal.Reset();
     }
 
     protected virtual Task ResetAdditionalStateAsync(TDbContext context, CancellationToken cancellationToken) => Task.CompletedTask;
@@ -123,6 +135,9 @@ public sealed class NpgsqlOutboxHostFixture(IntegrationTestContainerHost contain
         builder.AddDbContext<NpgsqlOutboxDbContext>(database => database
             .UseNpgsql(connectionStringKey)
             .EnableOutboxProcessing());
+
+    protected override Task ResetAdditionalStateAsync(NpgsqlOutboxDbContext context, CancellationToken cancellationToken) =>
+        context.Probes.ExecuteDeleteAsync(cancellationToken);
 }
 
 /// <summary>

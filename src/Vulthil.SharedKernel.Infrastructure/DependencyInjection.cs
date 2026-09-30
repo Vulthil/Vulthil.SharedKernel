@@ -74,9 +74,10 @@ public static class DependencyInjection
         var dbContextLifetime = configurator.DbContextLifetime;
 
         // The engine (options, signal, processor, background service, in-process domain-event sink) registers its own
-        // internals; the EF-specific store, capture interceptor, and context marker are wired here.
+        // internals; the EF-specific store, capture interceptor, relay wake-up, and context marker are wired here.
         services.AddOutboxEngine(configurator.OutboxOptionsAction, dbContextLifetime);
 
+        services.TryAddSingleton<OutboxRelayWakeup>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IOutboxInterceptor, DomainEventsToOutboxMessageSaveChangesInterceptor>());
 
         services.Add(new ServiceDescriptor(

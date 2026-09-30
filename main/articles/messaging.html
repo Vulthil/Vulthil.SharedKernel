@@ -810,7 +810,9 @@ correlation id, and headers can be set just like a publish — and adds
 <code>Messaging:Options:DefaultTimeout</code> (see
 <a href="#configuration-driven-setup">Configuration-driven Setup</a>). A request that exceeds
 its timeout completes with a <code>Result&lt;TResponse&gt;</code> failure carrying the
-<code>Messaging.Request.Timeout</code> error code rather than throwing.</p>
+<code>Messaging.Request.Timeout</code> error code rather than throwing. Every error code a request can fail with is a constant on
+<code>RequestErrorCodes</code> (in <code>Vulthil.Messaging.Abstractions</code>): <code>Timeout</code>, <code>Cancelled</code>, <code>TransportUnavailable</code>, <code>Publish</code>,
+<code>Deserialize</code> and <code>Failure</code> — match on those instead of the strings.</p>
 <h3 id="reply-wire-format--correlation">Reply wire format &amp; correlation</h3>
 <p>Each request carries a dedicated <strong>request id</strong> (a fresh GUID per call) in the AMQP
 <code>CorrelationId</code> property and the envelope's <code>requestId</code> field. The reply echoes it, and the
@@ -823,7 +825,11 @@ repeat across concurrent requests without colliding.</p>
 <li><strong>Failure</strong> carries an RPC fault at <code>urn:message:Vulthil:RpcFault</code> (the remote exception's
 type and message); the requester maps it to a <code>Result&lt;TResponse&gt;</code> failure with the
 <code>Messaging.Request.Failure</code> error code.</li>
+<li>A reply the requester cannot read (malformed, empty, or of an unexpected type) becomes a failure with the
+<code>Messaging.Request.Deserialize</code> error code; it never throws.</li>
 </ul>
+<p>Every transport builds and reads replies through <code>Vulthil.Messaging.Transport.RpcReply</code>, so a reply means the same on
+RabbitMQ and on the in-memory test harness.</p>
 <p>A request consumer runs exactly once per request: a thrown exception becomes the fault reply
 rather than entering the retry machinery, so retry policies do not apply to request consumers
 (see <a href="#retries">Retries</a>) — retry on the requesting side when a request should be re-attempted.</p>
@@ -946,23 +952,15 @@ is preserved (the RabbitMQ transport lanes deliveries through a <code>Partitione
 <code>provider.GetMessageType(urn)</code> / <code>registry.GetPlan(typeName)</code>.</p>
 <h3 id="4-rpc-replies">4. RPC replies</h3>
 <p>A request consumer replies with a <code>MessageEnvelope</code>: the <code>TResponse</code> payload at the response
-type's URN on success, or an <code>RpcFault</code> at <code>RpcFault.UrnUri</code> on failure. Keeping the envelope and
-<code>RpcFault</code> shapes identical across transports means Vulthil clients interoperate without a
+type's URN on success, or an <code>RpcFault</code> at <code>RpcFault.UrnUri</code> on failure. Build the reply with <code>RpcReply</code>, which
+echoes the request id and the business correlation id, so Vulthil clients interoperate without a
 transport-specific reply contract:</p>
-<pre><code class="lang-csharp">var fault = new RpcFault
-{
-    Message = ex.Message,
-    ExceptionType = ex.GetType().FullName!,
-    StackTrace = ex.StackTrace,
-    FaultedAt = DateTimeOffset.UtcNow,
-};
-var reply = new MessageEnvelope
-{
-    MessageType = RpcFault.UrnUri,
-    Message = JsonSerializer.SerializeToElement(fault, provider.JsonSerializerOptions),
-    RequestId = request.RequestId,
-};
+<pre><code class="lang-csharp">var reply = consumerFailure is null
+    ? RpcReply.Success(response, provider, request.RequestId, request.CorrelationId)
+    : RpcReply.Fault(consumerFailure, provider, request.RequestId, request.CorrelationId);
 </code></pre>
+<p>Use <code>RpcReply.ShortCircuited</code> when a consume filter ended the pipeline without a response. On the requesting side,
+<code>RpcReply.ToResult&lt;TResponse&gt;(reply, provider)</code> turns the reply back into the <code>Result&lt;TResponse&gt;</code> the caller receives.</p>
 <h2 id="testing-messaging">Testing Messaging</h2>
 <p><code>Vulthil.Messaging.TestHarness</code> provides an in-memory transport that runs your consumers with no broker and
 captures produced and consumed messages for assertion. Compose it with <code>UseTestHarness()</code> (in place of a broker

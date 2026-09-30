@@ -160,6 +160,12 @@ Derive from <code>Vulthil.Messaging.Transport.MessageHandlerFactory&lt;THandler&
 (<code>CreateConsumerHandler&lt;TConsumer, TMessage&gt;</code> and <code>CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;</code>): the base
 class binds every registration's CLR types to those overrides, caches the binding per consumer/message shape, so the closure is written once with the types statically known. See
 <a href="../messaging.html#writing-a-custom-transport">Messaging — Writing a Custom Transport</a>.</p>
+<h3 id="requestreply-codec">Request/reply codec</h3>
+<p><code>Vulthil.Messaging.Transport.RpcReply</code> owns the reply wire contract. A transport builds a reply with
+<code>RpcReply.Success</code>, <code>RpcReply.Fault</code> (a consumer exception) or <code>RpcReply.ShortCircuited</code> (a filter ended the pipeline),
+and reads one back with <code>RpcReply.ToResult&lt;TResponse&gt;</code>, which never throws: an unreadable reply becomes a
+<code>Messaging.Request.Deserialize</code> failure. The RabbitMQ transport and the in-memory test harness both use it, so a reply
+means the same on each.</p>
 
 </article>
 

@@ -140,6 +140,13 @@ headers) plus <code>SetTimeout</code> for overriding the default response timeou
     ctx =&gt; { ctx.SetTimeout(TimeSpan.FromSeconds(5)); return Task.CompletedTask; },
     cancellationToken: ct);
 </code></pre>
+<p>A failed request carries one of the error codes on <code>RequestErrorCodes</code> (<code>Timeout</code>, <code>Cancelled</code>,
+<code>TransportUnavailable</code>, <code>Publish</code>, <code>Deserialize</code>, <code>Failure</code>), so a caller can branch on the reason:</p>
+<pre><code class="lang-csharp">if (result.IsFailure &amp;&amp; result.Error.Code == RequestErrorCodes.Timeout)
+{
+    // retry, or fall back
+}
+</code></pre>
 <p>See <a href="../messaging.html#configuring-the-request">Messaging — Request/Reply</a> for details.</p>
 <h3 id="publishing-from-a-consumer">Publishing from a consumer</h3>
 <p><code>IMessageContext</code> exposes <code>PublishAsync</code> with automatic correlation propagation

@@ -1287,6 +1287,48 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.GetSendEndpointAsync
   nameWithType: ISendEndpointProvider.GetSendEndpointAsync
+- uid: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes
+  name: RequestErrorCodes
+  href: api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html
+  commentId: T:Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes
+  fullName: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes
+  nameWithType: RequestErrorCodes
+- uid: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Cancelled
+  name: Cancelled
+  href: api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html#Vulthil_Messaging_Abstractions_Publishers_RequestErrorCodes_Cancelled
+  commentId: F:Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Cancelled
+  fullName: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Cancelled
+  nameWithType: RequestErrorCodes.Cancelled
+- uid: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Deserialize
+  name: Deserialize
+  href: api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html#Vulthil_Messaging_Abstractions_Publishers_RequestErrorCodes_Deserialize
+  commentId: F:Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Deserialize
+  fullName: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Deserialize
+  nameWithType: RequestErrorCodes.Deserialize
+- uid: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Failure
+  name: Failure
+  href: api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html#Vulthil_Messaging_Abstractions_Publishers_RequestErrorCodes_Failure
+  commentId: F:Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Failure
+  fullName: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Failure
+  nameWithType: RequestErrorCodes.Failure
+- uid: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Publish
+  name: Publish
+  href: api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html#Vulthil_Messaging_Abstractions_Publishers_RequestErrorCodes_Publish
+  commentId: F:Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Publish
+  fullName: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Publish
+  nameWithType: RequestErrorCodes.Publish
+- uid: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Timeout
+  name: Timeout
+  href: api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html#Vulthil_Messaging_Abstractions_Publishers_RequestErrorCodes_Timeout
+  commentId: F:Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Timeout
+  fullName: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Timeout
+  nameWithType: RequestErrorCodes.Timeout
+- uid: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.TransportUnavailable
+  name: TransportUnavailable
+  href: api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html#Vulthil_Messaging_Abstractions_Publishers_RequestErrorCodes_TransportUnavailable
+  commentId: F:Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.TransportUnavailable
+  fullName: Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.TransportUnavailable
+  nameWithType: RequestErrorCodes.TransportUnavailable
 - uid: Vulthil.Messaging.ConsumeFilterOptions
   name: ConsumeFilterOptions
   href: api/Vulthil.Messaging.ConsumeFilterOptions.html
@@ -5477,6 +5519,76 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Transport.RpcFault.UrnUri
   nameWithType: RpcFault.UrnUri
+- uid: Vulthil.Messaging.Transport.RpcReply
+  name: RpcReply
+  href: api/Vulthil.Messaging.Transport.RpcReply.html
+  commentId: T:Vulthil.Messaging.Transport.RpcReply
+  fullName: Vulthil.Messaging.Transport.RpcReply
+  nameWithType: RpcReply
+- uid: Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception,Vulthil.Messaging.IMessageConfigurationProvider,System.String,System.String)
+  name: Fault(Exception, IMessageConfigurationProvider, string?, string?)
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_Fault_System_Exception_Vulthil_Messaging_IMessageConfigurationProvider_System_String_System_String_
+  commentId: M:Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception,Vulthil.Messaging.IMessageConfigurationProvider,System.String,System.String)
+  name.vb: Fault(Exception, IMessageConfigurationProvider, String, String)
+  fullName: Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception, Vulthil.Messaging.IMessageConfigurationProvider, string?, string?)
+  fullName.vb: Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception, Vulthil.Messaging.IMessageConfigurationProvider, String, String)
+  nameWithType: RpcReply.Fault(Exception, IMessageConfigurationProvider, string?, string?)
+  nameWithType.vb: RpcReply.Fault(Exception, IMessageConfigurationProvider, String, String)
+- uid: Vulthil.Messaging.Transport.RpcReply.Fault*
+  name: Fault
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_Fault_
+  commentId: Overload:Vulthil.Messaging.Transport.RpcReply.Fault
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.RpcReply.Fault
+  nameWithType: RpcReply.Fault
+- uid: Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider,System.String,System.String)
+  name: ShortCircuited(IMessageConfigurationProvider, string?, string?)
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_ShortCircuited_Vulthil_Messaging_IMessageConfigurationProvider_System_String_System_String_
+  commentId: M:Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider,System.String,System.String)
+  name.vb: ShortCircuited(IMessageConfigurationProvider, String, String)
+  fullName: Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider, string?, string?)
+  fullName.vb: Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider, String, String)
+  nameWithType: RpcReply.ShortCircuited(IMessageConfigurationProvider, string?, string?)
+  nameWithType.vb: RpcReply.ShortCircuited(IMessageConfigurationProvider, String, String)
+- uid: Vulthil.Messaging.Transport.RpcReply.ShortCircuited*
+  name: ShortCircuited
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_ShortCircuited_
+  commentId: Overload:Vulthil.Messaging.Transport.RpcReply.ShortCircuited
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.RpcReply.ShortCircuited
+  nameWithType: RpcReply.ShortCircuited
+- uid: Vulthil.Messaging.Transport.RpcReply.Success*
+  name: Success
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_Success_
+  commentId: Overload:Vulthil.Messaging.Transport.RpcReply.Success
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.RpcReply.Success
+  nameWithType: RpcReply.Success
+- uid: Vulthil.Messaging.Transport.RpcReply.Success``1(``0,Vulthil.Messaging.IMessageConfigurationProvider,System.String,System.String)
+  name: Success<TResponse>(TResponse, IMessageConfigurationProvider, string?, string?)
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_Success__1___0_Vulthil_Messaging_IMessageConfigurationProvider_System_String_System_String_
+  commentId: M:Vulthil.Messaging.Transport.RpcReply.Success``1(``0,Vulthil.Messaging.IMessageConfigurationProvider,System.String,System.String)
+  name.vb: Success(Of TResponse)(TResponse, IMessageConfigurationProvider, String, String)
+  fullName: Vulthil.Messaging.Transport.RpcReply.Success<TResponse>(TResponse, Vulthil.Messaging.IMessageConfigurationProvider, string?, string?)
+  fullName.vb: Vulthil.Messaging.Transport.RpcReply.Success(Of TResponse)(TResponse, Vulthil.Messaging.IMessageConfigurationProvider, String, String)
+  nameWithType: RpcReply.Success<TResponse>(TResponse, IMessageConfigurationProvider, string?, string?)
+  nameWithType.vb: RpcReply.Success(Of TResponse)(TResponse, IMessageConfigurationProvider, String, String)
+- uid: Vulthil.Messaging.Transport.RpcReply.ToResult*
+  name: ToResult
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_ToResult_
+  commentId: Overload:Vulthil.Messaging.Transport.RpcReply.ToResult
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.RpcReply.ToResult
+  nameWithType: RpcReply.ToResult
+- uid: Vulthil.Messaging.Transport.RpcReply.ToResult``1(Vulthil.Messaging.Transport.MessageEnvelope,Vulthil.Messaging.IMessageConfigurationProvider)
+  name: ToResult<TResponse>(MessageEnvelope, IMessageConfigurationProvider)
+  href: api/Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_ToResult__1_Vulthil_Messaging_Transport_MessageEnvelope_Vulthil_Messaging_IMessageConfigurationProvider_
+  commentId: M:Vulthil.Messaging.Transport.RpcReply.ToResult``1(Vulthil.Messaging.Transport.MessageEnvelope,Vulthil.Messaging.IMessageConfigurationProvider)
+  name.vb: ToResult(Of TResponse)(MessageEnvelope, IMessageConfigurationProvider)
+  fullName: Vulthil.Messaging.Transport.RpcReply.ToResult<TResponse>(Vulthil.Messaging.Transport.MessageEnvelope, Vulthil.Messaging.IMessageConfigurationProvider)
+  fullName.vb: Vulthil.Messaging.Transport.RpcReply.ToResult(Of TResponse)(Vulthil.Messaging.Transport.MessageEnvelope, Vulthil.Messaging.IMessageConfigurationProvider)
+  nameWithType: RpcReply.ToResult<TResponse>(MessageEnvelope, IMessageConfigurationProvider)
+  nameWithType.vb: RpcReply.ToResult(Of TResponse)(MessageEnvelope, IMessageConfigurationProvider)
 - uid: Vulthil.Results
   name: Vulthil.Results
   href: api/Vulthil.Results.html

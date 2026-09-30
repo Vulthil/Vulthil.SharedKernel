@@ -209,6 +209,15 @@ whose <code>messageType</code> is <a class="xref" href="Vulthil.Messaging.Transp
 round-trips regardless of the configured JSON naming policy.</p>
 </dd>
     </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Transport.RpcReply.html">RpcReply</a></dt>
+      <dd><p>The request/reply wire contract every transport shares. A reply is a <a class="xref" href="Vulthil.Messaging.Transport.MessageEnvelope.html">MessageEnvelope</a> that echoes the
+request id the requester correlates on and the request's business correlation id. On success it carries the
+response payload at the response type's URN; on failure it carries an <a class="xref" href="Vulthil.Messaging.Transport.RpcFault.html">RpcFault</a> at
+<a class="xref" href="Vulthil.Messaging.Transport.RpcFault.html#Vulthil_Messaging_Transport_RpcFault_UrnUri">UrnUri</a>. Transports build replies with <a class="xref" href="Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_Success__1___0_Vulthil_Messaging_IMessageConfigurationProvider_System_String_System_String_">Success&lt;TResponse&gt;(TResponse, IMessageConfigurationProvider, string?, string?)</a>, <a class="xref" href="Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_Fault_System_Exception_Vulthil_Messaging_IMessageConfigurationProvider_System_String_System_String_">Fault(Exception, IMessageConfigurationProvider, string?, string?)</a> and
+<a class="xref" href="Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_ShortCircuited_Vulthil_Messaging_IMessageConfigurationProvider_System_String_System_String_">ShortCircuited(IMessageConfigurationProvider, string?, string?)</a>, and read them with <a class="xref" href="Vulthil.Messaging.Transport.RpcReply.html#Vulthil_Messaging_Transport_RpcReply_ToResult__1_Vulthil_Messaging_Transport_MessageEnvelope_Vulthil_Messaging_IMessageConfigurationProvider_">ToResult&lt;TResponse&gt;(MessageEnvelope, IMessageConfigurationProvider)</a>, so a reply means the same on every transport.</p>
+</dd>
+    </dl>
     <h3 id="interfaces">
 Interfaces
 </h3>

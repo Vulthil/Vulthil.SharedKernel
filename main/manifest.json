@@ -419,6 +419,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.yml\" sourcestartlinenumber=\"1\">The <xref href=\"Vulthil.Results.Error.Code\" data-throw-if-not-resolved=\"false\"></xref> values a request made through <xref href=\"Vulthil.Messaging.Abstractions.Publishers.IRequester\" data-throw-if-not-resolved=\"false\"></xref> fails with, on\nevery transport. Match a failed result against these instead of the literal strings.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Abstractions.Publishers.yml",
       "output": {
         ".html": {
@@ -1564,6 +1578,20 @@
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.RpcFault",
       "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.RpcFault.yml\" sourcestartlinenumber=\"1\">Wire payload for an RPC failure reply. Carried as the <code>message</code> of a <xref href=\"Vulthil.Messaging.Transport.MessageEnvelope\" data-throw-if-not-resolved=\"false\"></xref>\nwhose <code>messageType</code> is <xref href=\"Vulthil.Messaging.Transport.RpcFault.UrnUri\" data-throw-if-not-resolved=\"false\"></xref>. Property names are fixed (camelCase) so the reply\nround-trips regardless of the configured JSON naming policy.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.RpcReply.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.RpcReply.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.RpcReply",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.RpcReply.yml\" sourcestartlinenumber=\"1\">The request/reply wire contract every transport shares. A reply is a <xref href=\"Vulthil.Messaging.Transport.MessageEnvelope\" data-throw-if-not-resolved=\"false\"></xref> that echoes the\nrequest id the requester correlates on and the request's business correlation id. On success it carries the\nresponse payload at the response type's URN; on failure it carries an <xref href=\"Vulthil.Messaging.Transport.RpcFault\" data-throw-if-not-resolved=\"false\"></xref> at\n<xref href=\"Vulthil.Messaging.Transport.RpcFault.UrnUri\" data-throw-if-not-resolved=\"false\"></xref>. Transports build replies with <xref href=\"Vulthil.Messaging.Transport.RpcReply.Success%60%601(%60%600%2cVulthil.Messaging.IMessageConfigurationProvider%2cSystem.String%2cSystem.String)\" data-throw-if-not-resolved=\"false\"></xref>, <xref href=\"Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception%2cVulthil.Messaging.IMessageConfigurationProvider%2cSystem.String%2cSystem.String)\" data-throw-if-not-resolved=\"false\"></xref> and\n<xref href=\"Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider%2cSystem.String%2cSystem.String)\" data-throw-if-not-resolved=\"false\"></xref>, and read them with <xref href=\"Vulthil.Messaging.Transport.RpcReply.ToResult%60%601(Vulthil.Messaging.Transport.MessageEnvelope%2cVulthil.Messaging.IMessageConfigurationProvider)\" data-throw-if-not-resolved=\"false\"></xref>, so a reply means the same on every transport.</p>\n"
     },
     {
       "type": "ManagedReference",

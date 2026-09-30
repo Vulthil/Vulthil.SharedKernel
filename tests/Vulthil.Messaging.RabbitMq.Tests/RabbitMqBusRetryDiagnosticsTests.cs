@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -37,6 +38,7 @@ public sealed class RabbitMqBusRetryDiagnosticsTests : BaseUnitTestCase
         Use(new RabbitMqBusStartupStatus());
         Use<TimeProvider>(new FakeTimeProvider());
         Use<ILoggerFactory>(NullLoggerFactory.Instance);
+        UseReal<DeliveryDispatcher>();
         Use<ILogger<RabbitMqBus>>(_logger);
     }
 

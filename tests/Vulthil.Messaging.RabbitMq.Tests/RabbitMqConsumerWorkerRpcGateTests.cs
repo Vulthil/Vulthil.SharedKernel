@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
@@ -7,6 +6,7 @@ using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -28,7 +28,7 @@ public sealed class RabbitMqConsumerWorkerRpcGateTests : BaseUnitTestCase
         Use(TestProviders.Build());
         Use<IEnumerable<IConsumeFilter<TestRequest>>>([]);
         Use(new EchoRequestConsumer());
-        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        Use(new DeliveryDispatcher(new AutoMockerServiceScopeFactory(AutoMocker), NullLogger<DeliveryDispatcher>.Instance));
         Use<ILogger<RabbitMqConsumerWorker>>(NullLogger<RabbitMqConsumerWorker>.Instance);
         Use(queue);
         Use<TimeProvider>(new FakeTimeProvider());

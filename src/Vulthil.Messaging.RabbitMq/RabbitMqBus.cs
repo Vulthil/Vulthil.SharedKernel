@@ -1,16 +1,16 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
 using Vulthil.Messaging.RabbitMq.Logging;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq;
 
 internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
 {
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly DeliveryDispatcher _dispatcher;
     private readonly IConnection _connection;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly RabbitMqBusStartupStatus _startupStatus;
@@ -20,7 +20,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     private readonly List<RabbitMqConsumerWorker> _workers = [];
 
     public RabbitMqBus(
-        IServiceScopeFactory serviceScopeFactory,
+        DeliveryDispatcher dispatcher,
         IConnection connection,
         IMessageConfigurationProvider messageConfigurationProvider,
         RabbitMqBusStartupStatus startupStatus,
@@ -28,7 +28,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         ILoggerFactory loggerFactory,
         TimeProvider timeProvider)
     {
-        _serviceScopeFactory = serviceScopeFactory;
+        _dispatcher = dispatcher;
         _connection = connection;
         _messageConfigurationProvider = messageConfigurationProvider;
         _startupStatus = startupStatus;
@@ -107,7 +107,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 await channel.BasicQosAsync(0, queue.PrefetchCount, false, cancellationToken).ConfigureAwait(false);
 
                 var worker = new RabbitMqConsumerWorker(
-                    _serviceScopeFactory,
+                    _dispatcher,
                     queue,
                     channel,
                     plans,

@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
@@ -24,6 +23,7 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
     private static readonly string[] _ghostHandlerIdentities = ["Ghost.Consumer:Ghost.Message"];
 
     private readonly QueueDefinition _queue = new(QueueName);
+    private readonly IMessageConfigurationProvider _provider = TestProviders.Build();
     private readonly List<CapturedPublish> _publishes = [];
     private readonly FakeTimeProvider _timeProvider = new();
     private readonly Mock<IChannel> _channel;
@@ -34,11 +34,10 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
 
     public RabbitMqConsumerWorkerRetryTests()
     {
-        Use(TestProviders.Build());
+        Use(_provider);
         Use<IEnumerable<IConsumeFilter<OrderMessage>>>([]);
-        Use<IEnumerable<IConsumeFilter<IOrderEvent>>>([]);
         Use<IEnumerable<IConsumeFilter<PricingRequest>>>([]);
-        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        Use(new DeliveryDispatcher(new AutoMockerServiceScopeFactory(AutoMocker), NullLogger<DeliveryDispatcher>.Instance));
         Use<ILogger<RabbitMqConsumerWorker>>(NullLogger<RabbitMqConsumerWorker>.Instance);
         Use(_queue);
         Use<TimeProvider>(_timeProvider);
@@ -121,36 +120,7 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
             cancellationToken ?? CancellationToken);
 
     [Fact]
-    public async Task PolymorphicConsumersRetryPolicyAppliesToConcreteMessages()
-    {
-        // Arrange — a polymorphic consumer registered for the interface, subscribed to a concrete implementer.
-        var consumer = new PolymorphicOrderEventConsumer { FailuresBeforeSuccess = 2 };
-        Use(consumer);
-        _queue.AddSubscription(new Subscription(new MessageType(typeof(ConcreteOrderEvent))));
-        _queue.AddConsumer(new ConsumerRegistration
-        {
-            ConsumerType = new ConsumerType(typeof(PolymorphicOrderEventConsumer)),
-            MessageType = new MessageType(typeof(IOrderEvent)),
-            RetryPolicy = BuildPolicy(r =>
-            {
-                r.Immediate(2);
-                r.InMemory();
-            }),
-        });
-        await StartWorkerAsync();
-
-        // Act
-        await DeliverAsync(new ConcreteOrderEvent("evt-1"));
-
-        // Assert — the interface registration's policy governs the concrete delivery: two in-memory retries, then success.
-        consumer.Attempts.ShouldBe(3);
-        _ackCount.ShouldBe(1);
-        _nackCount.ShouldBe(0);
-        _publishes.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public async Task OnlyTheFailingConsumerIsRedispatchedOnInMemoryRetry()
+    public async Task AConsumerThatFailsForGoodPublishesAFaultForTheRoundItFailedOnAndTheDeliveryIsNacked()
     {
         // Arrange — two consumers on one message; only one of them fails, terminally.
         var steady = new SteadyConsumer();
@@ -173,34 +143,10 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
         failing.Attempts.ShouldBe(2);
         _ackCount.ShouldBe(0);
         _nackCount.ShouldBe(1);
-        _publishes.ShouldHaveSingleItem().Exchange.ShouldBe(FaultExchange);
-    }
-
-    [Fact]
-    public async Task OnlyTheFailingConsumerIsRedispatchedWhenItRecoversInMemory()
-    {
-        // Arrange — the failing consumer recovers on its second attempt.
-        var steady = new SteadyConsumer();
-        var failing = new FailingConsumer { FailuresBeforeSuccess = 1 };
-        Use(steady);
-        Use(failing);
-        RegisterConsumer<SteadyConsumer, OrderMessage>();
-        RegisterConsumer<FailingConsumer, OrderMessage>(BuildPolicy(r =>
-        {
-            r.Immediate(2);
-            r.InMemory();
-        }));
-        await StartWorkerAsync();
-
-        // Act
-        await DeliverAsync(new OrderMessage("order-2"));
-
-        // Assert
-        steady.Attempts.ShouldBe(1);
-        failing.Attempts.ShouldBe(2);
-        _ackCount.ShouldBe(1);
-        _nackCount.ShouldBe(0);
-        _publishes.ShouldBeEmpty();
+        var published = _publishes.ShouldHaveSingleItem();
+        published.Exchange.ShouldBe(FaultExchange);
+        var fault = JsonSerializer.Deserialize<Fault<OrderMessage>>(published.Body, _provider.JsonSerializerOptions).ShouldNotBeNull();
+        fault.OriginalContext.RetryCount.ShouldBe(1);
     }
 
     [Fact]
@@ -420,33 +366,11 @@ public sealed class RabbitMqConsumerWorkerRetryTests : BaseUnitTestCase
 
     private sealed record CapturedPublish(string Exchange, string RoutingKey, BasicProperties Properties, byte[] Body);
 
-    public interface IOrderEvent
-    {
-        string Id { get; }
-    }
-
-    public sealed record ConcreteOrderEvent(string Id) : IOrderEvent;
-
     public sealed record OrderMessage(string Id);
 
     public sealed record PricingRequest(string Sku);
 
     public sealed record PricingReply(string Sku, decimal Price);
-
-    public sealed class PolymorphicOrderEventConsumer : IConsumer<IOrderEvent>
-    {
-        public int FailuresBeforeSuccess { get; set; }
-
-        public int Attempts { get; private set; }
-
-        public Task ConsumeAsync(IMessageContext<IOrderEvent> messageContext, CancellationToken cancellationToken = default)
-        {
-            Attempts++;
-            return Attempts <= FailuresBeforeSuccess
-                ? throw new InvalidOperationException($"attempt {Attempts} failed")
-                : Task.CompletedTask;
-        }
-    }
 
     public sealed class SteadyConsumer : IConsumer<OrderMessage>
     {

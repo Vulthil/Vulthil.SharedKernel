@@ -285,8 +285,8 @@ Two fidelity limits to keep in mind: the harness dispatches each produced messag
 consumers (a real broker delivers a distinct copy per subscribed queue), and partition lanes are not simulated
 (dispatch is inline and ordered by call).
 
-The harness runs each delivery through the core `DeliveryDispatcher`, the same delivery rules a custom transport
-gets (see [Writing a Custom Transport](messaging.md#writing-a-custom-transport)):
+The harness runs each delivery through the core `DeliveryDispatcher`, the same delivery rules the RabbitMQ transport
+and any custom transport use (see [Writing a Custom Transport](messaging.md#writing-a-custom-transport)):
 
 - Consumers of one message retry in rounds: each round re-runs only the consumers that failed, so a consumer that
   completed never runs twice. Retries run back-to-back, without the configured delays.

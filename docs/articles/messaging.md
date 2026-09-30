@@ -439,6 +439,8 @@ When a queue runs several consumers for the same message, one consumer's failure
 the others in that attempt nor re-runs the ones that already succeeded:
 
 - Every pending consumer runs once per attempt; failures are collected per consumer.
+- Every attempt of every consumer runs in its own DI scope, so one consumer's scoped state (for
+  example an unsaved `DbContext`) never reaches another consumer, and a retried attempt starts clean.
 - On retry, **only the consumers that failed are re-dispatched** — on the delayed path the
   re-publish stamps the failed consumers' identities into an `x-retry-handlers` header and the
   re-delivery dispatches just those (an identity that no longer matches — the consumer was renamed
@@ -458,6 +460,11 @@ modes — precisely, the delivery is nacked for dead-lettering when its **final*
 with a terminal failure. A consumer that failed terminally in an earlier round (while others kept
 retrying and eventually succeeded) is reported through its published fault, not through the
 dead-letter queue.
+
+When the host shuts down while a delivery is dispatched, the delivery is left unsettled so the
+broker delivers it again: no fault is published for the interrupted attempt, and an interrupted
+request consumer sends no reply. A consumer's own `OperationCanceledException` while the host keeps
+running is an ordinary failure and is retried.
 
 ### Ignored exceptions
 
@@ -499,7 +506,8 @@ public record Fault<TMessage> where TMessage : notnull
 
 `Message` is the faulted message's own payload — for envelope-wrapped (Vulthil-produced) deliveries
 the wire envelope is unwrapped before the fault is built — so a subscriber reads the original fields
-with a plain deserialization:
+with a plain deserialization. `OriginalContext` is the context of the attempt that failed for good, so
+its `RetryCount` is the round the consumer failed on:
 
 ```csharp
 var fault = JsonSerializer.Deserialize<Fault<OrderCreatedEvent>>(body, jsonOptions)!;
@@ -812,6 +820,12 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(tracing => tracing.AddVulthilMessagingInstrumentation());
 ```
 
+Consumer failures and retries are logged by the core `DeliveryDispatcher` (event ids 2200–2202). The
+RabbitMQ transport opens a logging scope for each delivery that carries the queue, the routing key and
+the message type, so those entries show where the failure happened when your logging provider
+includes scopes. Every failed attempt is also recorded as an exception event on the delivery's
+`receive` span.
+
 W3C trace context (`traceparent` / `tracestate`) propagation is handled by
 `RabbitMQ.Client` itself, so producer-side activities link to consumer-side
 activities on the receiving service without any extra setup.
@@ -900,6 +914,8 @@ RabbitMQ and on the in-memory test harness.
 A request consumer runs exactly once per request: a thrown exception becomes the fault reply
 rather than entering the retry machinery, so retry policies do not apply to request consumers
 (see [Retries](#retries)) — retry on the requesting side when a request should be re-attempted.
+When the host shuts down while a request consumer runs, no reply is sent and the request stays
+unsettled, so another instance can answer it, or the requester times out.
 
 ## Writing a Custom Transport
 
@@ -1008,7 +1024,8 @@ internal sealed class MyDeliveryPort(MessageEnvelope envelope, MyDelivery delive
 }
 ```
 
-The dispatcher applies the delivery rules, so a custom transport gets them without writing them:
+The dispatcher applies the delivery rules, so a custom transport gets them without writing them (the RabbitMQ
+transport and the test harness run on it too):
 
 - Handlers run in rounds, in plan order. Each later round runs only the handlers that failed in the round before,
   so a consumer that completed never runs twice.

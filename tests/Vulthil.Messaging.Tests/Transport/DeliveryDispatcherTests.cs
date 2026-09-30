@@ -35,8 +35,10 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
             .AddScoped<FilteredConsumer>()
             .AddScoped<PriceConsumer>()
             .AddScoped<FilteredPriceConsumer>()
+            .AddScoped<TracedPriceConsumer>()
             .AddScoped<IConsumeFilter<FilteredEvent>, ShortCircuitFilter<FilteredEvent>>()
             .AddScoped<IConsumeFilter<FilteredPriceRequest>, ShortCircuitFilter<FilteredPriceRequest>>()
+            .AddScoped<IConsumeFilter<TracedPriceRequest>, TracingFilter<TracedPriceRequest>>()
             .BuildServiceProvider();
         Use(_services.GetRequiredService<IServiceScopeFactory>());
     }
@@ -362,6 +364,19 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
     }
 
     [Fact]
+    public async Task ARequestsFiltersFinishBeforeItsReplyIsSent()
+    {
+        // Arrange
+        var port = CreatePort(onReply: () => _probe.Note("reply"));
+
+        // Act
+        await Target.DispatchAsync([TracedPriceHandler()], new TracedPriceRequest("sku-3"), port);
+
+        // Assert
+        _probe.Runs.ShouldBe(["filter:before", "traced-price:0", "filter:after", "reply"]);
+    }
+
+    [Fact]
     public async Task ARequestConsumerStoppedByTheEndOfTheDeliverySendsNoReply()
     {
         // Arrange
@@ -412,6 +427,9 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
     private static DeliveryHandler FilteredPriceHandler()
         => HandlerFactory.ForRequestConsumer(typeof(FilteredPriceConsumer), typeof(FilteredPriceRequest), typeof(PriceQuote), retryPolicy: null);
 
+    private static DeliveryHandler TracedPriceHandler()
+        => HandlerFactory.ForRequestConsumer(typeof(TracedPriceConsumer), typeof(TracedPriceRequest), typeof(PriceQuote), retryPolicy: null);
+
     private static RetryPolicyDefinition Retry(int maxRetryCount, params TimeSpan[] intervals)
     {
         var policy = new RetryPolicyDefinition { MaxRetryCount = maxRetryCount };
@@ -434,13 +452,14 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
         throw new OperationCanceledException(_delivery.Token);
     }
 
-    private FakePort CreatePort(int retryCount = 0, bool canRedeliverLater = false, Action? onWait = null)
-        => new(_delivery.Token) { RetryCount = retryCount, CanRedeliverLater = canRedeliverLater, OnWait = onWait };
+    private FakePort CreatePort(int retryCount = 0, bool canRedeliverLater = false, Action? onWait = null, Action? onReply = null)
+        => new(_delivery.Token) { RetryCount = retryCount, CanRedeliverLater = canRedeliverLater, OnWait = onWait, OnReply = onReply };
 
     public sealed record OrderPlaced(string Id);
     public sealed record FilteredEvent(string Id);
     public sealed record PriceRequest(string Sku);
     public sealed record FilteredPriceRequest(string Sku);
+    public sealed record TracedPriceRequest(string Sku);
     public sealed record PriceQuote(string Sku, decimal Price);
 
     public sealed class ScopeMarker
@@ -459,6 +478,8 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
         public IReadOnlyList<Guid> Scopes => _scopes;
 
         public void On(string consumer, Func<IMessageContext, Task> behavior) => _behaviors[consumer] = behavior;
+
+        public void Note(string entry) => _runs.Add(entry);
 
         public Task RunAsync(string consumer, IMessageContext context, ScopeMarker scope)
         {
@@ -511,6 +532,26 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
         }
     }
 
+    public sealed class TracedPriceConsumer(Probe probe, ScopeMarker scope) : IRequestConsumer<TracedPriceRequest, PriceQuote>
+    {
+        public async Task<PriceQuote> ConsumeAsync(IMessageContext<TracedPriceRequest> messageContext, CancellationToken cancellationToken = default)
+        {
+            await probe.RunAsync("traced-price", messageContext, scope);
+            return new PriceQuote(messageContext.Message.Sku, PriceConsumer.Price);
+        }
+    }
+
+    public sealed class TracingFilter<TMessage>(Probe probe) : IConsumeFilter<TMessage>
+        where TMessage : notnull
+    {
+        public async Task ConsumeAsync(IMessageContext<TMessage> context, ConsumeDelegate<TMessage> next)
+        {
+            probe.Note("filter:before");
+            await next(context);
+            probe.Note("filter:after");
+        }
+    }
+
     public sealed class ShortCircuitFilter<TMessage> : IConsumeFilter<TMessage>
         where TMessage : notnull
     {
@@ -530,6 +571,8 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
         public bool CanRedeliverLater { get; init; }
 
         public Action? OnWait { get; init; }
+
+        public Action? OnReply { get; init; }
 
         public IReadOnlyList<TimeSpan> Waits => _waits;
 
@@ -569,6 +612,7 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
         public Task SendReplyAsync(MessageEnvelope reply)
         {
             _replies.Add(reply);
+            OnReply?.Invoke();
             return Task.CompletedTask;
         }
     }

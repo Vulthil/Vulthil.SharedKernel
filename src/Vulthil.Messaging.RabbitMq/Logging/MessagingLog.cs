@@ -4,6 +4,17 @@ namespace Vulthil.Messaging.RabbitMq.Logging;
 
 internal static partial class MessagingLog
 {
+    private static readonly Func<ILogger, string, string, string, IDisposable?> DeliveryScope =
+        LoggerMessage.DefineScope<string, string, string>("Queue '{Queue}' (routingKey='{RoutingKey}', type='{MessageType}')");
+
+    /// <summary>
+    /// Opens the logging scope of one delivery, so every entry logged while the delivery is dispatched — including
+    /// the <c>DeliveryDispatcher</c>'s consumer failures and retries — carries the queue, the routing key and the
+    /// message type.
+    /// </summary>
+    public static IDisposable? BeginDelivery(ILogger logger, string queue, string routingKey, string messageType)
+        => DeliveryScope(logger, queue, routingKey, messageType);
+
     [LoggerMessage(EventId = 1000, Level = LogLevel.Information,
         Message = "RabbitMQ bus starting: declaring topology for {QueueCount} queue(s)")]
     public static partial void BusStarting(ILogger logger, int queueCount);
@@ -27,18 +38,6 @@ internal static partial class MessagingLog
     [LoggerMessage(EventId = 1102, Level = LogLevel.Error,
         Message = "Poison message on queue '{Queue}' (type='{MessageType}', routingKey='{RoutingKey}'): payload could not be deserialized. Nacking without requeue.")]
     public static partial void PoisonMessage(ILogger logger, Exception exception, string queue, string messageType, string routingKey);
-
-    [LoggerMessage(EventId = 1103, Level = LogLevel.Warning,
-        Message = "Consumer '{Consumer}' threw on queue '{Queue}' (routingKey='{RoutingKey}', retry={Retry}/{MaxRetry})")]
-    public static partial void ConsumerThrew(ILogger logger, Exception exception, string queue, string consumer, string routingKey, int retry, int maxRetry);
-
-    [LoggerMessage(EventId = 1104, Level = LogLevel.Debug,
-        Message = "Scheduling retry {Retry}/{MaxRetry} on queue '{Queue}' after delay {Delay}")]
-    public static partial void SchedulingRetry(ILogger logger, string queue, int retry, int maxRetry, TimeSpan delay);
-
-    [LoggerMessage(EventId = 1105, Level = LogLevel.Error,
-        Message = "Consumer '{Consumer}' permanently failed on queue '{Queue}' (type='{MessageType}', routingKey='{RoutingKey}'). Publishing fault.")]
-    public static partial void ConsumerFailed(ILogger logger, Exception exception, string queue, string consumer, string messageType, string routingKey);
 
     [LoggerMessage(EventId = 1106, Level = LogLevel.Error,
         Message = "Failed to publish fault to exchange '{FaultExchange}' (routingKey='{RoutingKey}'). Original exception preserved.")]

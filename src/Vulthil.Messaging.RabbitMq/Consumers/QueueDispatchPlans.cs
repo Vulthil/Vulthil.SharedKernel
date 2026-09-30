@@ -12,7 +12,7 @@ namespace Vulthil.Messaging.RabbitMq.Consumers;
 /// </summary>
 internal sealed class QueueDispatchPlans
 {
-    private readonly MessageExecutionRegistry<MessageHandler> _registry;
+    private readonly MessageExecutionRegistry<DeliveryHandler> _registry;
     private readonly Dictionary<Uri, RabbitMqPlan> _plansByUrn;
 
     /// <summary>
@@ -23,7 +23,7 @@ internal sealed class QueueDispatchPlans
     /// <exception cref="InvalidOperationException"><paramref name="queue"/> registers a second request consumer for a message type that already has one.</exception>
     public QueueDispatchPlans(IMessageConfigurationProvider provider, QueueDefinition queue)
     {
-        _registry = new MessageExecutionRegistry<MessageHandler>(provider, new RabbitMqHandlerFactory());
+        _registry = new MessageExecutionRegistry<DeliveryHandler>(provider, new DeliveryHandlerFactory());
         _registry.RegisterQueue(queue);
         IsPartitioned = _registry.IsQueuePartitioned(queue);
         _plansByUrn = _registry.Plans.ToDictionary(plan => plan.Urn, BuildPlan);
@@ -49,7 +49,7 @@ internal sealed class QueueDispatchPlans
         return core is null ? null : _plansByUrn[core.Urn];
     }
 
-    private static RabbitMqPlan BuildPlan(MessageExecutionPlan<MessageHandler> plan)
+    private static RabbitMqPlan BuildPlan(MessageExecutionPlan<DeliveryHandler> plan)
     {
         var partition = plan.Partition is null
             ? null

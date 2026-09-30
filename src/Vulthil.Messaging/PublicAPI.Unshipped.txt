@@ -43,3 +43,32 @@ static Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception! exception, V
 static Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider! provider, string? requestId, string? correlationId) -> Vulthil.Messaging.Transport.MessageEnvelope!
 static Vulthil.Messaging.Transport.RpcReply.Success<TResponse>(TResponse response, Vulthil.Messaging.IMessageConfigurationProvider! provider, string? requestId, string? correlationId) -> Vulthil.Messaging.Transport.MessageEnvelope!
 static Vulthil.Messaging.Transport.RpcReply.ToResult<TResponse>(Vulthil.Messaging.Transport.MessageEnvelope! reply, Vulthil.Messaging.IMessageConfigurationProvider! provider) -> Vulthil.Results.Result<TResponse>!
+Vulthil.Messaging.Transport.DeliveryDispatcher
+Vulthil.Messaging.Transport.DeliveryDispatcher.DeliveryDispatcher(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory, Microsoft.Extensions.Logging.ILogger<Vulthil.Messaging.Transport.DeliveryDispatcher!>! logger) -> void
+Vulthil.Messaging.Transport.DeliveryDispatcher.DispatchAsync(System.Collections.Generic.IReadOnlyCollection<Vulthil.Messaging.Transport.DeliveryHandler!>! handlers, object! message, Vulthil.Messaging.Transport.IDeliveryPort! port) -> System.Threading.Tasks.Task<Vulthil.Messaging.Transport.DeliveryOutcome!>!
+Vulthil.Messaging.Transport.DeliveryHandler
+Vulthil.Messaging.Transport.DeliveryHandler.Identity.get -> string!
+Vulthil.Messaging.Transport.DeliveryHandler.Kind.get -> Vulthil.Messaging.Transport.HandlerKind
+Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy.get -> Vulthil.Messaging.Queues.RetryPolicyDefinition?
+Vulthil.Messaging.Transport.DeliveryHandlerFactory
+Vulthil.Messaging.Transport.DeliveryHandlerFactory.DeliveryHandlerFactory() -> void
+Vulthil.Messaging.Transport.DeliveryOutcome
+Vulthil.Messaging.Transport.DeliveryOutcome.Consumed.get -> System.Collections.Generic.IReadOnlyList<Vulthil.Messaging.Transport.DeliveryHandler!>!
+Vulthil.Messaging.Transport.DeliveryOutcome.Failures.get -> System.Collections.Generic.IReadOnlyList<System.Exception!>!
+Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryDelay.get -> System.TimeSpan
+Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryHandlerIdentities.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Vulthil.Messaging.Transport.DeliveryOutcome.RedeliveryRetryCount.get -> int
+Vulthil.Messaging.Transport.DeliveryOutcome.Settlement.get -> Vulthil.Messaging.Transport.DeliverySettlement
+Vulthil.Messaging.Transport.DeliverySettlement
+Vulthil.Messaging.Transport.DeliverySettlement.Abandon = 3 -> Vulthil.Messaging.Transport.DeliverySettlement
+Vulthil.Messaging.Transport.DeliverySettlement.Acknowledge = 0 -> Vulthil.Messaging.Transport.DeliverySettlement
+Vulthil.Messaging.Transport.DeliverySettlement.DeadLetter = 1 -> Vulthil.Messaging.Transport.DeliverySettlement
+Vulthil.Messaging.Transport.DeliverySettlement.RedeliverLater = 2 -> Vulthil.Messaging.Transport.DeliverySettlement
+Vulthil.Messaging.Transport.IDeliveryPort
+Vulthil.Messaging.Transport.IDeliveryPort.CanRedeliverLater.get -> bool
+Vulthil.Messaging.Transport.IDeliveryPort.CancellationToken.get -> System.Threading.CancellationToken
+Vulthil.Messaging.Transport.IDeliveryPort.CreateContext<TMessage>(TMessage message, System.IServiceProvider! services, int retryCount) -> Vulthil.Messaging.Transport.MessageContext<TMessage>!
+Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync<TMessage>(Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>! fault) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.IDeliveryPort.RetryCount.get -> int
+Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync(Vulthil.Messaging.Transport.MessageEnvelope! reply) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync(System.TimeSpan delay) -> System.Threading.Tasks.Task!

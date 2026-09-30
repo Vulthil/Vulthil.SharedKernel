@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Filters;
 using Vulthil.Messaging.Queues;
+using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging;
 
@@ -38,6 +39,7 @@ public static class DependencyInjection
         LoadMessageConfigurationsFromConfiguration(builder.Configuration, messagingOptions);
 
         builder.Services.TryAddSingleton(TimeProvider.System);
+        builder.Services.TryAddSingleton<DeliveryDispatcher>();
         builder.Services.AddHostedService<ConsumerHostedService>();
 
         var messagingConfigurator = new MessagingConfigurator(builder, messagingOptions);

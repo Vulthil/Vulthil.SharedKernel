@@ -17,7 +17,10 @@ public interface IMessageHandlerFactory<out THandler>
     /// </summary>
     /// <param name="consumerType">The CLR type of the <c>IConsumer&lt;TMessage&gt;</c> implementation.</param>
     /// <param name="messageType">The CLR type of the consumed message.</param>
-    /// <param name="retryPolicy">The retry policy to apply, or <see langword="null"/> to inherit the queue default.</param>
+    /// <param name="retryPolicy">
+    /// The registration's effective retry policy (its own, or the queue default), or <see langword="null"/> when the
+    /// handler fails for good on its first failure.
+    /// </param>
     /// <returns>The handler that runs the consumer for a delivered message.</returns>
     THandler ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy);
 
@@ -27,7 +30,10 @@ public interface IMessageHandlerFactory<out THandler>
     /// <param name="consumerType">The CLR type of the <c>IRequestConsumer&lt;TRequest, TResponse&gt;</c> implementation.</param>
     /// <param name="requestType">The CLR type of the consumed request.</param>
     /// <param name="responseType">The CLR type of the produced response.</param>
-    /// <param name="retryPolicy">The retry policy to apply, or <see langword="null"/> to inherit the queue default.</param>
+    /// <param name="retryPolicy">
+    /// Always <see langword="null"/> when called by <see cref="MessageExecutionRegistry{THandler}"/>: a request consumer
+    /// replies with an RPC fault instead of retrying.
+    /// </param>
     /// <returns>The handler that runs the request consumer for a delivered request and replies.</returns>
     THandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy);
 }

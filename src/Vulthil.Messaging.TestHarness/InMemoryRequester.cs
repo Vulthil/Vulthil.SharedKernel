@@ -7,7 +7,8 @@ namespace Vulthil.Messaging.TestHarness;
 /// <summary>
 /// In-memory <see cref="IRequester"/>: captures the request, dispatches it to a registered responder or request
 /// consumer, and reads the reply envelope into a <see cref="Result{TResponse}"/> with <see cref="RpcReply"/>, exactly
-/// as a broker transport does — the response payload on success, an <see cref="RpcFault"/> on failure.
+/// as a broker transport does — the response payload on success, an <see cref="RpcFault"/> on failure, and a
+/// <see cref="RequestErrorCodes.Cancelled"/> failure when the caller's token ends the request first.
 /// </summary>
 internal sealed class InMemoryRequester : IRequester
 {
@@ -46,7 +47,16 @@ internal sealed class InMemoryRequester : IRequester
         var envelope = OutgoingEnvelope.Build(_provider, message, context, requestId);
         _harness.RecordRequested(message, envelope);
 
-        var reply = await _transport.DeliverRequestAsync(envelope, cancellationToken).ConfigureAwait(false);
+        MessageEnvelope? reply;
+        try
+        {
+            reply = await _transport.DeliverRequestAsync(envelope, cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Cancelled, "Request was cancelled by user."));
+        }
+
         return MapReply<TResponse>(reply);
     }
 

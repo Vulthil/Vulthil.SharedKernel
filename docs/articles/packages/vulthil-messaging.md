@@ -85,12 +85,19 @@ The metadata a publish context carries (`ConversationId`, `InitiatorId`, `Source
 names are the constants on `Vulthil.Messaging.Transport.MessageHeaders`, and `MessageHeaders.IsReserved(key)` tells
 whether a key is one of them — a custom header must not reuse these keys.
 
-### Transport handler factories
+### Delivery dispatch
 
-A transport turns each consumer registration into its own dispatch handler through an `IMessageHandlerFactory<THandler>`.
-Derive from `Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>` and override its two generic methods
-(`CreateConsumerHandler<TConsumer, TMessage>` and `CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>`): the base
-class binds every registration's CLR types to those overrides, caches the binding per consumer/message shape, so the closure is written once with the types statically known. See
+`Vulthil.Messaging.Transport.DeliveryDispatcher` owns the delivery rules a transport needs: consumers run in rounds that
+re-run only the consumers that failed, every attempt runs in its own DI scope, each consumer retries under its own
+policy and publishes its `Fault<T>` once it has failed for good, and a request consumer runs once and replies. A
+transport builds its plans with `MessageExecutionRegistry<DeliveryHandler>` and `DeliveryHandlerFactory`, implements
+`IDeliveryPort` for each delivery (the receive context, the retry wait, and the fault and reply routes), and applies the
+`DeliverySettlement` the dispatcher returns. `AddMessaging` registers the dispatcher.
+
+A transport that needs its own handler type can instead derive from `MessageHandlerFactory<THandler>` and override its
+two generic methods (`CreateConsumerHandler<TConsumer, TMessage>` and
+`CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>`): the base class binds every registration's CLR types to
+those overrides and caches the binding per consumer/message shape. See
 [Messaging — Writing a Custom Transport](../messaging.md#writing-a-custom-transport).
 
 ### Request/reply codec

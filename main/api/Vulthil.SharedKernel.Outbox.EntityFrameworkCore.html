@@ -96,8 +96,9 @@ Classes
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.html">DomainEventsToOutboxMessageSaveChangesInterceptor</a></dt>
-      <dd><p>EF Core save-changes interceptor that captures domain events from tracked aggregate roots
-and persists them as <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessage.html">OutboxMessage</a> entries before the main save completes.</p>
+      <dd><p>EF Core save-changes interceptor that captures domain events from tracked aggregate roots and persists them as
+<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessage.html">OutboxMessage</a> entries before the main save completes. It also reports every save to
+<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html">OutboxRelayWakeup</a>, which wakes the outbox relay once the outbox rows the save inserted are durable.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -112,6 +113,15 @@ this type to add row-level locking (<a class="xref" href="Vulthil.SharedKernel.O
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html">OutboxModelBuilderExtensions</a></dt>
       <dd><p><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.modelbuilder">ModelBuilder</a> extensions that apply the provider-agnostic <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessage.html">OutboxMessage</a> mapping.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html">OutboxRelayWakeup</a></dt>
+      <dd><p>Wakes the outbox relay through <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxSignal.html">IOutboxSignal</a> once each time outbox rows inserted through a
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext">DbContext</a> become durable: right after a save that ran outside a transaction, or when the transaction
+the save ran in commits. A save that inserts no outbox rows never wakes the relay — so the relay's own bookkeeping,
+which only updates rows, cannot wake it and cut its failure back-off short — and a transaction that rolls back or
+fails forgets the rows it saved.</p>
 </dd>
     </dl>
     <h3 id="interfaces">

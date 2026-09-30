@@ -1,4 +1,5 @@
 {
+  "docfx_version": "2.81.0+ba844df625370a6bd7c1ecab0d0ec4d1d9128ac4",
   "source_base_path": "/home/runner/work/Vulthil.SharedKernel/Vulthil.SharedKernel/docs",
   "xrefmap": "xrefmap.yml",
   "files": [
@@ -2710,7 +2711,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.yml\" sourcestartlinenumber=\"1\">EF Core save-changes interceptor that captures domain events from tracked aggregate roots\nand persists them as <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> entries before the main save completes.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.yml\" sourcestartlinenumber=\"1\">EF Core save-changes interceptor that captures domain events from tracked aggregate roots and persists them as\n<xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> entries before the main save completes. It also reports every save to\n<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup\" data-throw-if-not-resolved=\"false\"></xref>, which wakes the outbox relay once the outbox rows the save inserted are durable.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2767,6 +2768,20 @@
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions",
       "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.yml\" sourcestartlinenumber=\"1\"><xref href=\"Microsoft.EntityFrameworkCore.ModelBuilder\" data-throw-if-not-resolved=\"false\"></xref> extensions that apply the provider-agnostic <xref href=\"Vulthil.SharedKernel.Outbox.OutboxMessage\" data-throw-if-not-resolved=\"false\"></xref> mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.yml\" sourcestartlinenumber=\"1\">Wakes the outbox relay through <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxSignal\" data-throw-if-not-resolved=\"false\"></xref> once each time outbox rows inserted through a\n<xref href=\"Microsoft.EntityFrameworkCore.DbContext\" data-throw-if-not-resolved=\"false\"></xref> become durable: right after a save that ran outside a transaction, or when the transaction\nthe save ran in commits. A save that inserts no outbox rows never wakes the relay — so the relay's own bookkeeping,\nwhich only updates rows, cannot wake it and cut its failure back-off short — and a transaction that rolls back or\nfails forgets the rows it saved.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2836,7 +2851,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.IOutboxSignal",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxSignal.yml\" sourcestartlinenumber=\"1\">Wakes the outbox background service when a transaction commits, so freshly-written outbox messages are relayed\npromptly instead of waiting for the next poll. Signals coalesce (at most one pending wake), and the periodic\npoll remains the correctness backstop for retries, other instances, and missed signals.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxSignal.yml\" sourcestartlinenumber=\"1\">Wakes the outbox background service when newly inserted outbox messages become durable, so they are relayed\npromptly instead of waiting for the next poll. Signals coalesce (at most one pending wake), and the periodic\npoll remains the correctness backstop for retries, other instances, and missed signals.</p>\n"
     },
     {
       "type": "ManagedReference",

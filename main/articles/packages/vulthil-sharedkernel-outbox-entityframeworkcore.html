@@ -103,6 +103,9 @@ or to have a <code>DbContext</code> implement <code>ISaveOutboxMessages</code> w
 (execution strategy, transaction, fetch, dispatch, mark, commit) plus the capture surface. Provider packages
 override fetch/mark/transaction for row-level locking and Cosmos best-effort behaviour.</li>
 <li><code>DomainEventsToOutboxMessageSaveChangesInterceptor</code> / <code>IOutboxInterceptor</code> — domain-event capture.</li>
+<li><code>OutboxRelayWakeup</code> — wakes the relay once each time outbox rows a context inserted become durable: right after a
+save outside a transaction, or when the transaction that saved them commits (reported by a transaction-capable
+provider, e.g. the relational <code>AddRelationalOutboxCommitTrigger()</code>). Saves that insert no outbox rows never wake it.</li>
 <li><code>ApplyOutbox()</code> — a <code>ModelBuilder</code> extension applying the provider-agnostic <code>OutboxMessage</code> mapping. Provider packages offer optimized alternatives (<code>ApplyNpgsqlOutbox()</code>, <code>ApplyMySqlOutbox()</code>, <code>ApplyCosmosOutbox()</code>).</li>
 </ul>
 <p>See the <a href="../outbox-pattern.html">Outbox Pattern</a>

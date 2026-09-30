@@ -9369,15 +9369,15 @@ references:
   commentId: T:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor
   fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor
   nameWithType: DomainEventsToOutboxMessageSaveChangesInterceptor
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.#ctor(System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions},Vulthil.SharedKernel.Outbox.IOutboxSignal)
-  name: DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider, IOptions<OutboxProcessingOptions>, IOutboxSignal)
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor__ctor_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__Vulthil_SharedKernel_Outbox_IOutboxSignal_
-  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.#ctor(System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions},Vulthil.SharedKernel.Outbox.IOutboxSignal)
-  name.vb: New(TimeProvider, IOptions(Of OutboxProcessingOptions), IOutboxSignal)
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(System.TimeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>, Vulthil.SharedKernel.Outbox.IOutboxSignal)
-  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.New(System.TimeProvider, Microsoft.Extensions.Options.IOptions(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions), Vulthil.SharedKernel.Outbox.IOutboxSignal)
-  nameWithType: DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider, IOptions<OutboxProcessingOptions>, IOutboxSignal)
-  nameWithType.vb: DomainEventsToOutboxMessageSaveChangesInterceptor.New(TimeProvider, IOptions(Of OutboxProcessingOptions), IOutboxSignal)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.#ctor(System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions},Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup)
+  name: DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider, IOptions<OutboxProcessingOptions>, OutboxRelayWakeup)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor__ctor_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.#ctor(System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions},Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup)
+  name.vb: New(TimeProvider, IOptions(Of OutboxProcessingOptions), OutboxRelayWakeup)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(System.TimeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>, Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup)
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.New(System.TimeProvider, Microsoft.Extensions.Options.IOptions(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions), Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup)
+  nameWithType: DomainEventsToOutboxMessageSaveChangesInterceptor.DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvider, IOptions<OutboxProcessingOptions>, OutboxRelayWakeup)
+  nameWithType.vb: DomainEventsToOutboxMessageSaveChangesInterceptor.New(TimeProvider, IOptions(Of OutboxProcessingOptions), OutboxRelayWakeup)
 - uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.#ctor*
   name: DomainEventsToOutboxMessageSaveChangesInterceptor
   href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_DomainEventsToOutboxMessageSaveChangesInterceptor__ctor_
@@ -9741,6 +9741,70 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.ApplyOutbox
   nameWithType: OutboxModelBuilderExtensions.ApplyOutbox
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup
+  name: OutboxRelayWakeup
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html
+  commentId: T:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup
+  nameWithType: OutboxRelayWakeup
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.#ctor(Vulthil.SharedKernel.Outbox.IOutboxSignal)
+  name: OutboxRelayWakeup(IOutboxSignal)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup__ctor_Vulthil_SharedKernel_Outbox_IOutboxSignal_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.#ctor(Vulthil.SharedKernel.Outbox.IOutboxSignal)
+  name.vb: New(IOutboxSignal)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.OutboxRelayWakeup(Vulthil.SharedKernel.Outbox.IOutboxSignal)
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.New(Vulthil.SharedKernel.Outbox.IOutboxSignal)
+  nameWithType: OutboxRelayWakeup.OutboxRelayWakeup(IOutboxSignal)
+  nameWithType.vb: OutboxRelayWakeup.New(IOutboxSignal)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.#ctor*
+  name: OutboxRelayWakeup
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup__ctor_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.OutboxRelayWakeup
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.New
+  nameWithType: OutboxRelayWakeup.OutboxRelayWakeup
+  nameWithType.vb: OutboxRelayWakeup.New
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionCommitted(Microsoft.EntityFrameworkCore.DbContext)
+  name: TransactionCommitted(DbContext)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup_TransactionCommitted_Microsoft_EntityFrameworkCore_DbContext_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionCommitted(Microsoft.EntityFrameworkCore.DbContext)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionCommitted(Microsoft.EntityFrameworkCore.DbContext)
+  nameWithType: OutboxRelayWakeup.TransactionCommitted(DbContext)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionCommitted*
+  name: TransactionCommitted
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup_TransactionCommitted_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionCommitted
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionCommitted
+  nameWithType: OutboxRelayWakeup.TransactionCommitted
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionRolledBack(Microsoft.EntityFrameworkCore.DbContext)
+  name: TransactionRolledBack(DbContext)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup_TransactionRolledBack_Microsoft_EntityFrameworkCore_DbContext_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionRolledBack(Microsoft.EntityFrameworkCore.DbContext)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionRolledBack(Microsoft.EntityFrameworkCore.DbContext)
+  nameWithType: OutboxRelayWakeup.TransactionRolledBack(DbContext)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionRolledBack*
+  name: TransactionRolledBack
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup_TransactionRolledBack_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionRolledBack
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionRolledBack
+  nameWithType: OutboxRelayWakeup.TransactionRolledBack
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionStarted(Microsoft.EntityFrameworkCore.DbContext)
+  name: TransactionStarted(DbContext)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup_TransactionStarted_Microsoft_EntityFrameworkCore_DbContext_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionStarted(Microsoft.EntityFrameworkCore.DbContext)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionStarted(Microsoft.EntityFrameworkCore.DbContext)
+  nameWithType: OutboxRelayWakeup.TransactionStarted(DbContext)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionStarted*
+  name: TransactionStarted
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxRelayWakeup_TransactionStarted_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionStarted
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxRelayWakeup.TransactionStarted
+  nameWithType: OutboxRelayWakeup.TransactionStarted
 - uid: Vulthil.SharedKernel.Outbox.IOutboxDispatcher
   name: IOutboxDispatcher
   href: api/Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html

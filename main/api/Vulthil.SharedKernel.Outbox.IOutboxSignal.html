@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface IOutboxSignal | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Wakes the outbox background service when a transaction commits, so freshly-written outbox messages are relayed promptly instead of waiting for the next poll. Signals coalesce (at most one pending wake), and the periodic poll remains the correctness backstop for retries, other instances, and missed signals.">
+      <meta name="description" content="Wakes the outbox background service when newly inserted outbox messages become durable, so they are relayed promptly instead of waiting for the next poll. Signals coalesce (at most one pending wake), and the periodic poll remains the correctness backstop for retries, other instances, and missed signals.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -93,11 +93,11 @@ Interface IOutboxSignal  <a class="header-action link-secondary" title="View sou
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><a class="xref" href="Vulthil.html">Vulthil</a>.<a class="xref" href="Vulthil.SharedKernel.html">SharedKernel</a>.<a class="xref" href="Vulthil.SharedKernel.Outbox.html">Outbox</a></dd></dl>
+    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<span class="xref">SharedKernel</span>.<a class="xref" href="Vulthil.SharedKernel.Outbox.html">Outbox</a></dd></dl>
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Outbox.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Wakes the outbox background service when a transaction commits, so freshly-written outbox messages are relayed
+  <div class="markdown summary"><p>Wakes the outbox background service when newly inserted outbox messages become durable, so they are relayed
 promptly instead of waiting for the next poll. Signals coalesce (at most one pending wake), and the periodic
 poll remains the correctness backstop for retries, other instances, and missed signals.</p>
 </div>

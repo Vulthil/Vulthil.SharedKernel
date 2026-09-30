@@ -125,7 +125,7 @@ app.Run();
 </code></pre>
 <p>A dialect that cannot express its lock this way, or that pages with something other than <code>LIMIT</code>, overrides <code>FetchMessagesAsync</code> with its own query instead.</p>
 <h3 id="commit-time-relay-trigger">Commit-time relay trigger</h3>
-<p><code>AddRelationalOutboxCommitTrigger()</code> registers a transaction interceptor (<code>OutboxCommitInterceptor</code>) that wakes the outbox relay when an explicit database transaction commits, so captured messages relay promptly instead of waiting for the next poll. Provider <code>Use*</code> extensions register it automatically when outbox processing is enabled.</p>
+<p><code>AddRelationalOutboxCommitTrigger()</code> registers a transaction interceptor (<code>OutboxCommitInterceptor</code>) that reports every transaction's start and outcome to <code>OutboxRelayWakeup</code>. A commit wakes the outbox relay once when the transaction saved outbox rows, so captured messages relay promptly instead of waiting for the next poll; a commit that saved none, such as the relay's own batch, never wakes it. Provider <code>Use*</code> extensions register it automatically when outbox processing is enabled; a custom relational provider calls it itself.</p>
 
 </article>
 

@@ -174,7 +174,7 @@ registered store does not.</p>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxSignal.html">IOutboxSignal</a></dt>
-      <dd><p>Wakes the outbox background service when a transaction commits, so freshly-written outbox messages are relayed
+      <dd><p>Wakes the outbox background service when newly inserted outbox messages become durable, so they are relayed
 promptly instead of waiting for the next poll. Signals coalesce (at most one pending wake), and the periodic
 poll remains the correctness backstop for retries, other instances, and missed signals.</p>
 </dd>

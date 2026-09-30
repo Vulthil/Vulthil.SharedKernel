@@ -18,14 +18,27 @@ runs:
         restore-keys: nuget-
 
     # The AppHost projects resolve DCP and the dashboard from the Aspire CLI bundle
-    # (AspireUseCliBundle); the build downloads it (~300 MB) into ~/.aspire when it is
-    # missing. The bundle version follows Aspire.AppHost.Sdk in global.json, hence the key.
+    # (AspireUseCliBundle) in ~/.aspire. The bundle version follows Aspire.AppHost.Sdk in
+    # global.json, hence the key.
     - uses: actions/cache@v6
+      id: aspire-bundle
       with:
         path: |
           ~/.aspire/versions
           ~/.aspire/bundle
         key: aspire-bundle-${{ runner.os }}-${{ hashFiles('global.json') }}
+
+    # On a cache miss the bundle (~300 MB) is prepared here, in one process. Left to the
+    # build, every AppHost of the parallel build runs the setup itself, and their concurrent
+    # dnx downloads of the same CLI package collide in the NuGet cache ("being used by
+    # another process"), which fails the build with ASPIRE009.
+    - name: Prepare the Aspire CLI bundle
+      if: steps.aspire-bundle.outputs.cache-hit != 'true'
+      shell: bash
+      run: >-
+        "$DOTNET_ROOT/dnx" --yes
+        "aspire.cli@$(jq -r '."msbuild-sdks"."Aspire.AppHost.Sdk"' global.json)"
+        -- setup --install-path "$HOME/.aspire"
 
     - name: Restore local dotnet tools
       shell: bash

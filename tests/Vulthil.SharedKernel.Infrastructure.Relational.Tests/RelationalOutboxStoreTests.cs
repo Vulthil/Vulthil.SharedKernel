@@ -2,11 +2,11 @@ using System.Reflection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Infrastructure.Relational.Tests;
@@ -34,7 +34,7 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task ProcessBatchThrowsDescriptiveErrorWhenContextDoesNotImplementUnitOfWork()
+    public async Task ARelayUnitThrowsDescriptiveErrorWhenContextDoesNotImplementUnitOfWork()
     {
         // Arrange
         await using var context = NewPlainContext();
@@ -42,7 +42,7 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
 
         // Act
         var exception = await Should.ThrowAsync<InvalidOperationException>(
-            () => store.ProcessBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken));
+            () => store.RelayBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken));
 
         // Assert
         exception.Message.ShouldContain(nameof(PlainDbContext));
@@ -50,7 +50,7 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task ProcessBatchOpensATransactionAndProcessesMessagesWhenContextImplementsUnitOfWork()
+    public async Task ARelayUnitOpensATransactionAndRelaysMessagesWhenContextImplementsUnitOfWork()
     {
         // Arrange
         await using var seed = NewUnitOfWorkContext();
@@ -60,7 +60,7 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
         var store = NewUnitOfWorkStore(context);
 
         // Act
-        var processed = await store.ProcessBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
+        var processed = await store.RelayBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
 
         // Assert
         processed.ShouldBe(1);
@@ -79,10 +79,10 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
     };
 
     private static RelationalOutboxStore<PlainDbContext> NewPlainStore(PlainDbContext context) =>
-        new(context, TimeProvider.System, Options.Create(new OutboxProcessingOptions()));
+        new(context, TimeProvider.System);
 
     private static RelationalOutboxStore<UnitOfWorkDbContext> NewUnitOfWorkStore(UnitOfWorkDbContext context) =>
-        new(context, TimeProvider.System, Options.Create(new OutboxProcessingOptions()));
+        new(context, TimeProvider.System);
 
     private PlainDbContext NewPlainContext() => new(new DbContextOptionsBuilder<PlainDbContext>().UseSqlite(_plainConnection).Options);
 

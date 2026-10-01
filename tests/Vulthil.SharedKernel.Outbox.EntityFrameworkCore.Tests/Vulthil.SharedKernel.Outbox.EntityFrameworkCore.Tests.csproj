@@ -10,4 +10,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Compile Include="..\Shared\OutboxRelayUnitTestExtensions.cs" Link="Shared\OutboxRelayUnitTestExtensions.cs" />
+	</ItemGroup>
+
 </Project>

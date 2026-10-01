@@ -7,27 +7,25 @@ namespace Vulthil.SharedKernel.Outbox.Tests;
 
 /// <summary>
 /// Groups every test that measures the process-wide <see cref="Telemetry.Meter"/> counters within a narrow
-/// listening window, so xUnit never runs them concurrently with each other — a real <see cref="OutboxProcessor"/>
-/// dispatch anywhere else in the process (e.g. <see cref="OutboxProcessorTests"/>) increments the same static
+/// listening window, so xUnit never runs them concurrently with each other — a real <see cref="OutboxRelayCycle"/>
+/// dispatch anywhere else in the process (e.g. <see cref="OutboxRelayCycleTests"/>) increments the same static
 /// counters and would otherwise be misattributed to a concurrently-running measurement.
 /// </summary>
 [CollectionDefinition(nameof(OutboxTelemetryCollection))]
 public sealed class OutboxTelemetryCollection;
 
 [Collection(nameof(OutboxTelemetryCollection))]
-public sealed class OutboxProcessorMetricsTests : BaseUnitTestCase
+public sealed class OutboxRelayCycleMetricsTests : BaseUnitTestCase
 {
-    private static readonly OutboxMessageData Message = new(
-        Guid.NewGuid(), "Some.Event", "{}", null, null, OutboxDestination.DomainEvent, null);
+    private readonly Lazy<OutboxRelayCycle> _lazyTarget;
 
-    private readonly Lazy<OutboxProcessor> _lazyTarget;
+    private OutboxRelayCycle Target => _lazyTarget.Value;
 
-    private OutboxProcessor Target => _lazyTarget.Value;
-
-    public OutboxProcessorMetricsTests()
+    public OutboxRelayCycleMetricsTests()
     {
-        _lazyTarget = new(CreateInstance<OutboxProcessor>);
+        _lazyTarget = new(CreateInstance<OutboxRelayCycle>);
         Use<IOptions<OutboxProcessingOptions>>(Options.Create(new OutboxProcessingOptions()));
+        Use<IOutboxStore>(new InMemoryRelayStore(messageCount: 1));
     }
 
     [Fact]
@@ -35,10 +33,9 @@ public sealed class OutboxProcessorMetricsTests : BaseUnitTestCase
     {
         // Arrange
         SetupDispatcher(succeeds: true);
-        SetupStoreToDispatch();
 
         // Act
-        var count = await MeasureCounterAsync("vulthil.outbox.relayed", () => Target.ExecuteAsync(CancellationToken));
+        var count = await MeasureCounterAsync("vulthil.outbox.relayed", () => Target.RunAsync(CancellationToken));
 
         // Assert
         count.ShouldBe(1);
@@ -49,10 +46,9 @@ public sealed class OutboxProcessorMetricsTests : BaseUnitTestCase
     {
         // Arrange
         SetupDispatcher(succeeds: false);
-        SetupStoreToDispatch();
 
         // Act
-        var count = await MeasureCounterAsync("vulthil.outbox.failed", () => Target.ExecuteAsync(CancellationToken));
+        var count = await MeasureCounterAsync("vulthil.outbox.failed", () => Target.RunAsync(CancellationToken));
 
         // Assert
         count.ShouldBe(1);
@@ -65,15 +61,14 @@ public sealed class OutboxProcessorMetricsTests : BaseUnitTestCase
         using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
         SetupDispatcherToThrowOperationCanceled();
-        SetupStoreToDispatch();
 
         // Act
         var count = await MeasureCounterAsync("vulthil.outbox.failed", () =>
-            Should.ThrowAsync<OperationCanceledException>(() => Target.ExecuteAsync(cts.Token)));
+            Should.ThrowAsync<OperationCanceledException>(() => Target.RunAsync(cts.Token)));
 
         // Assert
         count.ShouldBe(0);
-        GetMock<ILogger<OutboxProcessor>>().Invocations.ShouldBeEmpty();
+        GetMock<ILogger<OutboxRelayCycle>>().Invocations.ShouldBeEmpty();
     }
 
     private void SetupDispatcherToThrowOperationCanceled()
@@ -106,15 +101,6 @@ public sealed class OutboxProcessorMetricsTests : BaseUnitTestCase
             .Setup(sp => sp.GetService(typeof(IEnumerable<IOutboxDispatcher>)))
             .Returns(new[] { dispatcher.Object });
     }
-
-    private void SetupStoreToDispatch() =>
-        GetMock<IOutboxStore>()
-            .Setup(store => store.ProcessBatchAsync(It.IsAny<Func<OutboxMessageData, CancellationToken, Task<string?>>>(), It.IsAny<CancellationToken>()))
-            .Returns(async (Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken token) =>
-            {
-                await dispatch(Message, token);
-                return 1;
-            });
 
     private static async Task<long> MeasureCounterAsync(string instrumentName, Func<Task> action)
     {

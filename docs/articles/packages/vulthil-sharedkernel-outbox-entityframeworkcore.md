@@ -13,9 +13,9 @@ engine. It isolates all EF Core coupling so the engine package stays persistence
 ## What's here
 
 - `ISaveOutboxMessages` — the `DbSet<OutboxMessage>` marker the application's `DbContext` implements.
-- `EntityFrameworkOutboxStore<TContext>` — the `IOutboxStore` implementation: the transactional relay batch unit
-  (execution strategy, transaction, fetch, dispatch, mark, commit) plus the capture surface. Provider packages
-  override fetch/mark/transaction for row-level locking and Cosmos best-effort behaviour.
+- `EntityFrameworkOutboxStore<TContext>` — the `IOutboxStore` implementation: the relay's transactional boundary
+  (execution strategy, transaction, claim, record, commit; the engine dispatches) plus the capture surface. Provider
+  packages override fetch/mark/transaction for row-level locking and Cosmos best-effort behaviour.
 - `DomainEventsToOutboxMessageSaveChangesInterceptor` / `IOutboxInterceptor` — domain-event capture.
 - `OutboxRelayWakeup` — wakes the relay once each time outbox rows a context inserted become durable: right after a
   save outside a transaction, or when the transaction that saved them commits (reported by a transaction-capable

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.IntegrationTests;
@@ -90,7 +91,7 @@ public abstract class RelayWakeupIntegrationTests<TFixture, TDbContext>(TFixture
         var store = relayScope.ServiceProvider.GetRequiredService<IOutboxStore>();
 
         // Act
-        var relayed = await store.ProcessBatchAsync((_, _) => Task.FromResult<string?>("broker unavailable"), CancellationToken);
+        var relayed = await store.RelayBatchAsync((_, _) => Task.FromResult<string?>("broker unavailable"), CancellationToken);
 
         // Assert
         relayed.ShouldBe(0);
@@ -110,7 +111,7 @@ public abstract class RelayWakeupIntegrationTests<TFixture, TDbContext>(TFixture
         var store = relayScope.ServiceProvider.GetRequiredService<IOutboxStore>();
 
         // Act
-        var relayed = await store.ProcessBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
+        var relayed = await store.RelayBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
 
         // Assert
         relayed.ShouldBe(1);

@@ -131,6 +131,7 @@ The `samples/WebApi` project wires exactly this against PostgreSQL and RabbitMQ.
 
 - **Outbox**: register your own `IOutboxStore` with `UseOutboxStore<TStore>()`. The provider extensions propose
   their store through `UseDefaultOutboxStore<TStore>()`, which only applies when nothing was selected, so your
-  selection wins in any order. A custom provider package should use the same call.
+  selection wins in any order. A custom provider package should use the same call. What a store implements is in
+  [custom outbox store](outbox-pattern.md#custom-outbox-store).
 - **Inbox**: register your `IIdempotencyStore` and call `AddInboxCore()`; see
   [custom stores](inbox-pattern.md#custom-stores).

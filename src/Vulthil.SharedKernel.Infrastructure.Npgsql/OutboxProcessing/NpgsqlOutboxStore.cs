@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
@@ -13,8 +12,8 @@ namespace Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
 /// column names, so custom identifiers (a naming convention, <c>ToTable</c>, or <c>HasColumnName</c>) are supported.
 /// </summary>
 /// <typeparam name="TContext">The application's <see cref="DbContext"/>, which exposes the outbox set.</typeparam>
-public class NpgsqlOutboxStore<TContext>(TContext dbContext, TimeProvider timeProvider, IOptions<OutboxProcessingOptions> options)
-    : RelationalOutboxStore<TContext>(dbContext, timeProvider, options)
+public class NpgsqlOutboxStore<TContext>(TContext dbContext, TimeProvider timeProvider)
+    : RelationalOutboxStore<TContext>(dbContext, timeProvider)
     where TContext : DbContext, ISaveOutboxMessages
 {
     private const string RowLockClause = "FOR UPDATE SKIP LOCKED";

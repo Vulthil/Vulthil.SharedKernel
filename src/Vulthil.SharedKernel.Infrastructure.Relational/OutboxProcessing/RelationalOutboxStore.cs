@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Application.Data;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
@@ -19,14 +18,14 @@ namespace Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 /// <see cref="FetchMessagesWithRowLockAsync"/> and their dialect's lock clause.
 /// </summary>
 /// <typeparam name="TContext">The application's <see cref="DbContext"/>, which exposes the outbox set.</typeparam>
-public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider timeProvider, IOptions<OutboxProcessingOptions> options)
-    : EntityFrameworkOutboxStore<TContext>(dbContext, timeProvider, options)
+public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider timeProvider)
+    : EntityFrameworkOutboxStore<TContext>(dbContext, timeProvider)
     where TContext : DbContext, ISaveOutboxMessages
 {
     private OutboxSqlIdentifiers? _identifiers;
 
     /// <summary>
-    /// Opens the transaction for the relay batch, requiring <typeparamref name="TContext"/> to support one.
+    /// Opens the transaction for a relay unit, requiring <typeparamref name="TContext"/> to support one.
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The transaction to commit on success.</returns>

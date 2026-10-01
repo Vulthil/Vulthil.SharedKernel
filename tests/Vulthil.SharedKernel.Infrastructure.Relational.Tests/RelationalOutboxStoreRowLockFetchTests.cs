@@ -2,11 +2,11 @@ using System.Reflection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Infrastructure.Relational.Tests;
@@ -58,7 +58,7 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
         var store = NewStore(context, string.Empty);
 
         // Act
-        var processed = await store.ProcessBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
+        var processed = await store.RelayBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
 
         // Assert
         processed.ShouldBe(1);
@@ -80,15 +80,15 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
         }
 
         await using var context = NewContext();
-        var store = NewStore(context, string.Empty, new OutboxProcessingOptions { BatchSize = 2 });
+        var store = NewStore(context, string.Empty);
         var dispatched = new List<Guid>();
 
         // Act
-        var processed = await store.ProcessBatchAsync((message, _) =>
+        var processed = await store.RelayBatchAsync((message, _) =>
         {
             dispatched.Add(message.Id);
             return Task.FromResult<string?>(null);
-        }, CancellationToken);
+        }, CancellationToken, batchSize: 2);
 
         // Assert
         processed.ShouldBe(2);
@@ -114,15 +114,15 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
         }
 
         await using var context = NewContext();
-        var store = NewStore(context, string.Empty, new OutboxProcessingOptions { MaxRetries = maxRetries });
+        var store = NewStore(context, string.Empty);
         var dispatched = new List<Guid>();
 
         // Act
-        await store.ProcessBatchAsync((message, _) =>
+        await store.RelayBatchAsync((message, _) =>
         {
             dispatched.Add(message.Id);
             return Task.FromResult<string?>(null);
-        }, CancellationToken);
+        }, CancellationToken, maxRetries: maxRetries);
 
         // Assert
         dispatched.ShouldBe([pending.Id]);
@@ -137,7 +137,7 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
 
         // Act
         var exception = await Should.ThrowAsync<SqliteException>(
-            () => store.ProcessBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken));
+            () => store.RelayBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken));
 
         // Assert
         exception.Message.ShouldContain("FOR");
@@ -152,7 +152,7 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
 
         // Act
         var exception = await Should.ThrowAsync<InvalidOperationException>(
-            () => store.ProcessBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken));
+            () => store.RelayBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken));
 
         // Assert
         exception.Message.ShouldContain(nameof(UnmappedOutboxDbContext));
@@ -169,9 +169,9 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
         Destination = OutboxDestination.DomainEvent,
     };
 
-    private static RowLockOutboxStore<TContext> NewStore<TContext>(TContext context, string rowLockClause, OutboxProcessingOptions? options = null)
+    private static RowLockOutboxStore<TContext> NewStore<TContext>(TContext context, string rowLockClause)
         where TContext : DbContext, ISaveOutboxMessages =>
-        new(context, rowLockClause, Options.Create(options ?? new OutboxProcessingOptions()));
+        new(context, rowLockClause);
 
     private OutboxDbContext NewContext() => new(new DbContextOptionsBuilder<OutboxDbContext>().UseSqlite(_connection).Options);
 
@@ -196,8 +196,8 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
         entity.Property(message => message.FailedOnUtc).HasConversion(nullableUtcConverter);
     }
 
-    public sealed class RowLockOutboxStore<TContext>(TContext dbContext, string rowLockClause, IOptions<OutboxProcessingOptions> options)
-        : RelationalOutboxStore<TContext>(dbContext, TimeProvider.System, options)
+    public sealed class RowLockOutboxStore<TContext>(TContext dbContext, string rowLockClause)
+        : RelationalOutboxStore<TContext>(dbContext, TimeProvider.System)
         where TContext : DbContext, ISaveOutboxMessages
     {
         protected override Task<List<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>

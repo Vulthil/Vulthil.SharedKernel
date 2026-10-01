@@ -6,29 +6,29 @@ namespace Vulthil.SharedKernel.Outbox;
 /// packages; the engine itself takes no dependency on EF Core.
 /// </summary>
 /// <remarks>
-/// The store owns the whole relay batch unit — provider locking, the transactional boundary, fetching the pending
-/// rows, dispatching each, recording success/failure, and committing — so a relational implementation can run it
-/// inside an EF Core execution strategy. The capture members are used by message-bridge publish filters to enlist
-/// an outgoing message in the ambient business transaction.
+/// The store owns the relay's transactional boundary — provider locking, the transaction, claiming pending rows,
+/// recording the outcomes, and committing — so a relational implementation can run it inside an EF Core execution
+/// strategy. The relay cycle itself (which batch to claim, how to dispatch it, and when to run again) belongs to the
+/// engine. The capture members are used by message-bridge publish filters to enlist an outgoing message in the ambient
+/// business transaction.
 /// </remarks>
 public interface IOutboxStore
 {
     /// <summary>
-    /// Processes one batch of pending outbox messages: fetches up to the configured batch size, invokes
-    /// <paramref name="dispatch"/> for each, records the outcome (success, or the returned error with a retry
-    /// increment), and commits — all within the store's transactional boundary.
+    /// Runs one relay unit inside the store's transactional boundary: opens the transaction (inside any retrying
+    /// execution strategy the store uses), invokes <paramref name="unit"/> with the claim and record operations of that
+    /// transaction, and commits when the unit returns.
     /// </summary>
-    /// <param name="dispatch">
-    /// Delivers a single message; returns <see langword="null"/> on success, or an error description to record
-    /// against the row as a failed attempt.
-    /// </param>
+    /// <remarks>
+    /// A retrying execution strategy re-runs the whole unit after a transient failure, so <paramref name="unit"/> may be
+    /// invoked more than once and must not carry state from one invocation to the next. Messages an abandoned run
+    /// already dispatched are dispatched again, which the outbox's at-least-once delivery allows.
+    /// </remarks>
+    /// <typeparam name="TResult">The type of the unit's result.</typeparam>
+    /// <param name="unit">The relay unit: claims a batch, dispatches it, and records the outcomes.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <returns>
-    /// The number of messages <paramref name="dispatch"/> reported as successful. A caller uses this to decide
-    /// whether more work is likely waiting (the count reaches the configured batch size) — a batch that included
-    /// failures must not be mistaken for one that is exhausted.
-    /// </returns>
-    Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken);
+    /// <returns>The result of the unit's committed run.</returns>
+    Task<TResult> RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken);
 
     /// <summary>
     /// Stages an outbox message for persistence. Used by capture (e.g. a transactional bus-publish filter) to enlist

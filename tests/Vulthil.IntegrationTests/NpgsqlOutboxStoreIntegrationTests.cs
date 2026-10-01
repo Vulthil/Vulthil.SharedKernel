@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.IntegrationTests;
@@ -29,27 +29,27 @@ public sealed class NpgsqlOutboxStoreIntegrationTests(NpgsqlOutboxHostFixture fi
         timeout.CancelAfter(TimeSpan.FromSeconds(60));
         await using var scopeA = fixture.Services.CreateAsyncScope();
         await using var scopeB = fixture.Services.CreateAsyncScope();
-        var storeA = NewStore(scopeA.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>(), batchSize: 2);
-        var storeB = NewStore(scopeB.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>(), batchSize: 2);
+        var storeA = NewStore(scopeA.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>());
+        var storeB = NewStore(scopeB.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>());
         var dispatchedA = new List<Guid>();
         var dispatchedB = new List<Guid>();
         var firstDispatchStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var releaseFirstBatch = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         // Act
-        var batchA = storeA.ProcessBatchAsync(async (message, cancellationToken) =>
+        var batchA = storeA.RelayBatchAsync(async (message, cancellationToken) =>
         {
             dispatchedA.Add(message.Id);
             firstDispatchStarted.TrySetResult();
             await releaseFirstBatch.Task.WaitAsync(cancellationToken);
             return null;
-        }, timeout.Token);
+        }, timeout.Token, batchSize: 2);
         await firstDispatchStarted.Task.WaitAsync(timeout.Token);
-        var processedB = await storeB.ProcessBatchAsync((message, _) =>
+        var processedB = await storeB.RelayBatchAsync((message, _) =>
         {
             dispatchedB.Add(message.Id);
             return Task.FromResult<string?>(null);
-        }, timeout.Token);
+        }, timeout.Token, batchSize: 2);
         releaseFirstBatch.SetResult();
         var processedA = await batchA;
 
@@ -71,7 +71,7 @@ public sealed class NpgsqlOutboxStoreIntegrationTests(NpgsqlOutboxHostFixture fi
         var dispatched = new List<OutboxMessageData>();
 
         // Act
-        var processed = await store.ProcessBatchAsync(RecordingDispatch(dispatched), CancellationToken);
+        var processed = await store.RelayBatchAsync(RecordingDispatch(dispatched), CancellationToken);
 
         // Assert
         processed.ShouldBe(3);
@@ -93,7 +93,7 @@ public sealed class NpgsqlOutboxStoreIntegrationTests(NpgsqlOutboxHostFixture fi
         var dispatched = new List<OutboxMessageData>();
 
         // Act
-        var processed = await store.ProcessBatchAsync(RecordingDispatch(dispatched), CancellationToken);
+        var processed = await store.RelayBatchAsync(RecordingDispatch(dispatched), CancellationToken);
 
         // Assert
         processed.ShouldBe(6);
@@ -106,15 +106,15 @@ public sealed class NpgsqlOutboxStoreIntegrationTests(NpgsqlOutboxHostFixture fi
         // Arrange
         await SeedAsync([NewMessage(DateTimeOffset.UtcNow)]);
         await using var relayScope = fixture.Services.CreateAsyncScope();
-        var store = NewStore(relayScope.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>(), maxRetries: 2);
+        var store = NewStore(relayScope.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>());
         var dispatchedAfterDeadLetter = new List<OutboxMessageData>();
 
         // Act
-        var firstBatch = await store.ProcessBatchAsync(FailingDispatch("first failure"), CancellationToken);
+        var firstBatch = await store.RelayBatchAsync(FailingDispatch("first failure"), CancellationToken, maxRetries: 2);
         var afterFirst = await QuerySingleMessageAsync();
-        var secondBatch = await store.ProcessBatchAsync(FailingDispatch("second failure"), CancellationToken);
+        var secondBatch = await store.RelayBatchAsync(FailingDispatch("second failure"), CancellationToken, maxRetries: 2);
         var afterSecond = await QuerySingleMessageAsync();
-        await store.ProcessBatchAsync(RecordingDispatch(dispatchedAfterDeadLetter), CancellationToken);
+        await store.RelayBatchAsync(RecordingDispatch(dispatchedAfterDeadLetter), CancellationToken, maxRetries: 2);
 
         // Assert
         firstBatch.ShouldBe(0);
@@ -185,8 +185,8 @@ public sealed class NpgsqlOutboxStoreIntegrationTests(NpgsqlOutboxHostFixture fi
         return await context.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
     }
 
-    private static NpgsqlOutboxStore<NpgsqlOutboxDbContext> NewStore(NpgsqlOutboxDbContext context, int batchSize = 10, int maxRetries = 3) =>
-        new(context, TimeProvider.System, Options.Create(new OutboxProcessingOptions { BatchSize = batchSize, MaxRetries = maxRetries }));
+    private static NpgsqlOutboxStore<NpgsqlOutboxDbContext> NewStore(NpgsqlOutboxDbContext context) =>
+        new(context, TimeProvider.System);
 
     private static OutboxMessage NewMessage(DateTimeOffset occurredOnUtc) => new()
     {

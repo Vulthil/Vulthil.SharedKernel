@@ -1,1 +1,3 @@
 #nullable enable
+*REMOVED*Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>.CosmosOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! options) -> void
+Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>.CosmosOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider) -> void

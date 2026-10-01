@@ -90,6 +90,18 @@ running unprotected.
 | `MaxDelaySeconds` | 60 | Maximum back-off delay when a cycle relays nothing (no pending messages, or every fetched message failed) |
 | `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 
+### Dispatch scope
+
+Each relay cycle runs in its own DI scope, and the store opens the relay transaction on that scope's `DbContext`.
+
+- **In sequence** (the default), every message is dispatched in the relay's scope. The changes a handler saves and the
+  messages it publishes transactionally join the relay transaction, so they commit together with the batch's processed
+  marks, or roll back with them and the message is relayed again. A failed handler's unsaved changes also stay tracked
+  on that shared `DbContext`, so the batch can save them; keep relayed handlers idempotent.
+- **In parallel** (`EnableParallelPublishing`), every message is dispatched in its own scope, so concurrent handlers
+  never share the relay's `DbContext`. Their work is not part of the relay transaction: a handler saves its own
+  changes, and a publish with no open transaction in its scope is sent directly.
+
 ## Observability
 
 The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (exposed as `Telemetry.ActivitySourceName`). When `EnableTracing` is on (the default), each relayed message starts an `OutboxPublishing` span parented on the trace that captured the row — the originating trace is carried forward through the `OutboxMessage.TraceParent`/`TraceState` columns stamped at capture — so the relay, which runs later on its own background service, still correlates back to the request that produced the message.
@@ -148,10 +160,26 @@ The provider extensions propose their store with `UseDefaultOutboxStore<TStore>(
 store was selected, so `UseOutboxStore` wins wherever it sits in the chain. A custom provider package should call the
 same method instead of overwriting the application's selection.
 
+The store owns the relay's transactional boundary; the engine owns the relay cycle. The engine calls
+`RunRelayUnitAsync` once per cycle, and a store implements it like this:
+
+1. Open the transaction (inside the store's retrying execution strategy, if it uses one).
+2. Call the unit with an `IOutboxRelayUnit`. Its `ClaimAsync` fetches up to the requested number of pending messages
+   below the retry limit, and locks them where the provider can. Its `RecordAsync` marks the relayed messages
+   processed, records each failure, and dead-letters a message that reaches the retry limit.
+3. Commit when the unit returns.
+
+The engine decides the batch size, the dispatch (in sequence or in parallel, see [Dispatch scope](#dispatch-scope)),
+the retry limit, and when the next cycle runs. A retrying execution strategy can run the unit more than once, so start
+each run from a clean state. Messages that an abandoned run already dispatched are dispatched again, which
+at-least-once delivery allows. Deriving from `EntityFrameworkOutboxStore<TContext>` gives you all of this; override
+`FetchMessagesAsync` for row locking, `UpdateMessagesAsync` for set-based marking, or `BeginTransactionAsync` for a
+provider without transactions.
+
 ## One outbox, multiple sinks
 
 The relay engine is sink-agnostic: each `OutboxMessage` carries an `OutboxDestination` discriminator, and the
-`OutboxProcessor` routes it to the registered `IOutboxDispatcher` whose `Handles(destination)` is true. The
+relay cycle routes it to the registered `IOutboxDispatcher` whose `Handles(destination)` is true. The
 in-process domain-event dispatcher is registered by default; other sinks plug in and coexist in the **same** outbox
 table and relay, so an application never carries more than one outbox table regardless of how many sinks it uses.
 
@@ -225,9 +253,9 @@ Aggregate.Raise(event)
     ↓
 SaveChangesAsync  →  OutboxMessage row inserted (same transaction)
     ↓
-OutboxBackgroundService polls
+OutboxBackgroundService runs a relay cycle
     ↓
-OutboxProcessor deserialises & publishes via IDomainEventPublisher
+Relay cycle claims a batch and dispatches each message (domain events via IDomainEventPublisher)
     ↓
 Message marked as processed (or retried on failure, then dead-lettered after MaxRetries)
 ```

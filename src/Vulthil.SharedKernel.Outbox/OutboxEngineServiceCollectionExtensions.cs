@@ -16,7 +16,7 @@ public static class OutboxEngineServiceCollectionExtensions
 {
     /// <summary>
     /// Registers the outbox engine: <see cref="OutboxProcessingOptions"/> (validated on start), the commit-time
-    /// <see cref="IOutboxSignal"/>, the relay <see cref="OutboxProcessor"/> and its background service, and the
+    /// <see cref="IOutboxSignal"/>, the <see cref="OutboxRelayCycle"/> and its background service, and the
     /// default in-process <see cref="IOutboxDispatcher"/> for domain events. An <see cref="IOutboxStore"/> must be
     /// registered separately by the persistence provider. The engine's own services are registered idempotently, so
     /// calling this repeatedly (e.g. once per <c>EnableOutboxProcessing</c> call) never duplicates them; only one
@@ -26,7 +26,7 @@ public static class OutboxEngineServiceCollectionExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="configureOptions">An optional action to configure <see cref="OutboxProcessingOptions"/>.</param>
     /// <param name="processorLifetime">
-    /// The lifetime for the relay processor and the in-process dispatcher; match the application's
+    /// The lifetime for the relay cycle and the in-process dispatcher; match the application's
     /// <c>DbContext</c> lifetime so they resolve the store in the same scope.
     /// </param>
     /// <returns>The same service collection, for chaining.</returns>
@@ -101,7 +101,7 @@ public static class OutboxEngineServiceCollectionExtensions
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IOutboxSignal, OutboxSignal>();
 
-        services.TryAdd(new ServiceDescriptor(typeof(OutboxProcessor), typeof(OutboxProcessor), processorLifetime));
+        services.TryAdd(new ServiceDescriptor(typeof(OutboxRelayCycle), typeof(OutboxRelayCycle), processorLifetime));
         services.TryAddEnumerable(new ServiceDescriptor(typeof(IOutboxDispatcher), typeof(DomainEventOutboxDispatcher), processorLifetime));
 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, OutboxBackgroundService>());

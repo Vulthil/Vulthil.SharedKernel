@@ -7,8 +7,8 @@ The Entity Framework Core implementation of the
 engine. It keeps all EF Core coupling out of the engine package:
 
 - `ISaveOutboxMessages` — the `DbSet<OutboxMessage>` marker the application's `DbContext` implements.
-- `EntityFrameworkOutboxStore<TContext>` — the `IOutboxStore` implementation: the transactional relay batch unit
-  (execution strategy, transaction, fetch, dispatch, mark, commit) plus the capture surface (`AddOutboxMessage` /
+- `EntityFrameworkOutboxStore<TContext>` — the `IOutboxStore` implementation: the relay's transactional boundary
+  (execution strategy, transaction, claim, record, commit; the engine dispatches) plus the capture surface (`AddOutboxMessage` /
   `SaveChangesAsync` / `IsInTransaction`). Provider packages override fetch/mark/transaction for row-level locking
   and best-effort (Cosmos) behaviour.
 - `DomainEventsToOutboxMessageSaveChangesInterceptor` / `IOutboxInterceptor` — capture of aggregate domain events.

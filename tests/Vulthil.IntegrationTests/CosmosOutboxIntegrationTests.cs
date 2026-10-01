@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.IntegrationTests;
@@ -29,7 +29,7 @@ public sealed class CosmosOutboxIntegrationTests(CosmosWebApplicationFactory fac
         var dispatched = new List<OutboxMessageData>();
 
         // Act
-        var processed = await store.ProcessBatchAsync(RecordingDispatch(dispatched), CancellationToken);
+        var processed = await store.RelayBatchAsync(RecordingDispatch(dispatched), CancellationToken);
 
         // Assert
         processed.ShouldBe(2);
@@ -45,15 +45,15 @@ public sealed class CosmosOutboxIntegrationTests(CosmosWebApplicationFactory fac
         // Arrange
         await SeedAsync([NewMessage(DateTimeOffset.UtcNow)]);
         await using var relayScope = Factory.Services.CreateAsyncScope();
-        var store = NewStore(relayScope.ServiceProvider.GetRequiredService<CosmosProbeDbContext>(), maxRetries: 2);
+        var store = NewStore(relayScope.ServiceProvider.GetRequiredService<CosmosProbeDbContext>());
         var dispatchedAfterDeadLetter = new List<OutboxMessageData>();
 
         // Act
-        var firstBatch = await store.ProcessBatchAsync(FailingDispatch("first failure"), CancellationToken);
+        var firstBatch = await store.RelayBatchAsync(FailingDispatch("first failure"), CancellationToken, maxRetries: 2);
         var afterFirst = await QuerySingleMessageAsync();
-        var secondBatch = await store.ProcessBatchAsync(FailingDispatch("second failure"), CancellationToken);
+        var secondBatch = await store.RelayBatchAsync(FailingDispatch("second failure"), CancellationToken, maxRetries: 2);
         var afterSecond = await QuerySingleMessageAsync();
-        await store.ProcessBatchAsync(RecordingDispatch(dispatchedAfterDeadLetter), CancellationToken);
+        await store.RelayBatchAsync(RecordingDispatch(dispatchedAfterDeadLetter), CancellationToken, maxRetries: 2);
 
         // Assert
         firstBatch.ShouldBe(0);
@@ -124,8 +124,8 @@ public sealed class CosmosOutboxIntegrationTests(CosmosWebApplicationFactory fac
         return await context.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
     }
 
-    private static CosmosOutboxStore<CosmosProbeDbContext> NewStore(CosmosProbeDbContext context, int maxRetries = 3) =>
-        new(context, TimeProvider.System, Options.Create(new OutboxProcessingOptions { MaxRetries = maxRetries }));
+    private static CosmosOutboxStore<CosmosProbeDbContext> NewStore(CosmosProbeDbContext context) =>
+        new(context, TimeProvider.System);
 
     private static OutboxMessage NewMessage(DateTimeOffset occurredOnUtc) => new()
     {

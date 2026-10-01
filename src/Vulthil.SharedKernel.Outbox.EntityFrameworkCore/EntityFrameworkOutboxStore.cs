@@ -1,15 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Application.Data;
 
 namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 /// <summary>
-/// Entity Framework Core implementation of <see cref="IOutboxStore"/>. It owns the relay batch unit — runs inside the
-/// context's execution strategy, opens the transaction, fetches a batch, dispatches each message, records the
-/// outcome, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from
+/// Entity Framework Core implementation of <see cref="IOutboxStore"/>. It owns the relay's transactional boundary —
+/// runs each relay unit inside the context's execution strategy, opens the transaction, claims and records through
+/// the unit, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from
 /// this type to add row-level locking (<see cref="FetchMessagesAsync"/>), set-based updates
 /// (<see cref="UpdateMessagesAsync"/>), or a no-op transaction (<see cref="BeginTransactionAsync"/>).
 /// </summary>
@@ -18,22 +17,19 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     where TContext : DbContext, ISaveOutboxMessages
 {
     private readonly TimeProvider _timeProvider;
-    private readonly OutboxProcessingOptions _options;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EntityFrameworkOutboxStore{TContext}"/> class.
     /// </summary>
     /// <param name="dbContext">The application's persistence context.</param>
     /// <param name="timeProvider">The time provider used to stamp processed messages.</param>
-    /// <param name="options">The outbox processing options (batch size, retry limit, parallelism).</param>
-    public EntityFrameworkOutboxStore(TContext dbContext, TimeProvider timeProvider, IOptions<OutboxProcessingOptions> options)
+    public EntityFrameworkOutboxStore(TContext dbContext, TimeProvider timeProvider)
     {
         ArgumentNullException.ThrowIfNull(dbContext);
-        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(timeProvider);
 
         DbContext = dbContext;
         _timeProvider = timeProvider;
-        _options = options.Value;
         Logger = dbContext.GetService<ILoggerFactory>().CreateLogger(GetType());
     }
 
@@ -56,62 +52,38 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => DbContext.SaveChangesAsync(cancellationToken);
 
     /// <inheritdoc />
-    public Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken)
+    /// <remarks>
+    /// Every run of the unit starts from an empty change tracker, so a run the execution strategy retries never sees
+    /// entities an abandoned run left behind.
+    /// </remarks>
+    public Task<TResult> RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(dispatch);
+        ArgumentNullException.ThrowIfNull(unit);
 
         var strategy = DbContext.Database.CreateExecutionStrategy();
         return strategy.ExecuteAsync(
             async token =>
             {
                 DbContext.ChangeTracker.Clear();
-                return await ProcessBatchCoreAsync(dispatch, token).ConfigureAwait(false);
+                return await RunRelayUnitInTransactionAsync(unit, token).ConfigureAwait(false);
             },
             cancellationToken);
     }
 
-    private async Task<int> ProcessBatchCoreAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken)
+    private async Task<TResult> RunRelayUnitInTransactionAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken)
     {
         var transaction = await BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
         try
         {
-            var messages = await FetchMessagesAsync(_options.BatchSize, _options.MaxRetries, cancellationToken).ConfigureAwait(false);
-
-            if (messages.Count == 0)
-            {
-                return 0;
-            }
-
-            var successIds = new List<Guid>();
-            var failures = new List<OutboxMessageFailure>();
-
-            if (_options.EnableParallelPublishing)
-            {
-                using var throttle = new SemaphoreSlim(_options.MaxDegreeOfParallelism);
-                var outcomes = await Task.WhenAll(messages.Select(message => DispatchThrottledAsync(message, dispatch, throttle, cancellationToken))).ConfigureAwait(false);
-                foreach (var (id, error) in outcomes)
-                {
-                    Record(successIds, failures, id, error);
-                }
-            }
-            else
-            {
-                foreach (var message in messages)
-                {
-                    var error = await dispatch(message, cancellationToken).ConfigureAwait(false);
-                    Record(successIds, failures, message.Id, error);
-                }
-            }
-
-            await UpdateMessagesAsync(successIds, failures, _options.MaxRetries, _timeProvider.GetUtcNow(), cancellationToken).ConfigureAwait(false);
+            var result = await unit(new RelayUnit(this), cancellationToken).ConfigureAwait(false);
 
             if (transaction is not null)
             {
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            return successIds.Count;
+            return result;
         }
         finally
         {
@@ -122,37 +94,8 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         }
     }
 
-    private static void Record(List<Guid> successIds, List<OutboxMessageFailure> failures, Guid id, string? error)
-    {
-        if (error is null)
-        {
-            successIds.Add(id);
-        }
-        else
-        {
-            failures.Add(new OutboxMessageFailure(id, error));
-        }
-    }
-
-    private static async Task<(Guid Id, string? Error)> DispatchThrottledAsync(
-        OutboxMessageData message,
-        Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch,
-        SemaphoreSlim throttle,
-        CancellationToken cancellationToken)
-    {
-        await throttle.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            return (message.Id, await dispatch(message, cancellationToken).ConfigureAwait(false));
-        }
-        finally
-        {
-            throttle.Release();
-        }
-    }
-
     /// <summary>
-    /// Begins the transaction for the relay batch. The default enlists the context's <see cref="IUnitOfWork"/>;
+    /// Begins the transaction for a relay unit. The default enlists the context's <see cref="IUnitOfWork"/>;
     /// providers without ambient transactions (e.g. Cosmos) override this.
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
@@ -168,8 +111,8 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     }
 
     /// <summary>
-    /// Fetches a batch of unprocessed messages. Providers override this to add row-level locking
-    /// (e.g. <c>FOR UPDATE SKIP LOCKED</c>).
+    /// Fetches a batch of unprocessed messages for a relay unit's claim. Providers override this to add row-level
+    /// locking (e.g. <c>FOR UPDATE SKIP LOCKED</c>).
     /// </summary>
     /// <param name="batchSize">The maximum number of messages to fetch.</param>
     /// <param name="maxRetries">Messages at or above this retry count are excluded.</param>
@@ -250,5 +193,17 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         OutboxMessages.RemoveRange(rows);
         await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return rows.Count;
+    }
+
+    /// <summary>
+    /// The claim and record operations of one relay unit, run on the store's open transaction.
+    /// </summary>
+    private sealed class RelayUnit(EntityFrameworkOutboxStore<TContext> store) : IOutboxRelayUnit
+    {
+        public async Task<IReadOnlyList<OutboxMessageData>> ClaimAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
+            await store.FetchMessagesAsync(batchSize, maxRetries, cancellationToken).ConfigureAwait(false);
+
+        public Task RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken) =>
+            store.UpdateMessagesAsync(relayedIds, failures, maxRetries, store._timeProvider.GetUtcNow(), cancellationToken);
     }
 }

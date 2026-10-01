@@ -189,32 +189,24 @@ internal sealed class OutboxBackgroundService(
             return;
         }
 
-        int baseDelayMs = options.Value.OutboxProcessingDelaySeconds * 1000;
-        int maxDelayMs = options.Value.MaxDelaySeconds * 1000;
-        int currentDelayMs = 0;
+        var delay = TimeSpan.Zero;
 
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                if (currentDelayMs > 0)
+                if (delay > TimeSpan.Zero)
                 {
                     // Wake early when a transaction commits (low latency); the timeout keeps the poll as a backstop.
-                    await signal.WaitAsync(TimeSpan.FromMilliseconds(currentDelayMs), stoppingToken).ConfigureAwait(false);
+                    await signal.WaitAsync(delay, stoppingToken).ConfigureAwait(false);
                 }
 
                 var scope = serviceScopeFactory.CreateAsyncScope();
                 await using var _ = scope.ConfigureAwait(false);
-                var outboxProcessor = scope.ServiceProvider.GetRequiredService<OutboxProcessor>();
+                var relayCycle = scope.ServiceProvider.GetRequiredService<OutboxRelayCycle>();
 
-                var processedCount = await outboxProcessor.ExecuteAsync(stoppingToken).ConfigureAwait(false);
-
-                currentDelayMs = processedCount switch
-                {
-                    _ when processedCount >= options.Value.BatchSize => 0,
-                    0 => Math.Min(Math.Max(currentDelayMs * 2, baseDelayMs), maxDelayMs),
-                    _ => baseDelayMs
-                };
+                var cycle = await relayCycle.RunAsync(stoppingToken).ConfigureAwait(false);
+                delay = OutboxRelayBackoff.After(cycle, delay, options.Value);
             }
             catch (OperationCanceledException ex) when (stoppingToken.IsCancellationRequested)
             {
@@ -224,7 +216,7 @@ internal sealed class OutboxBackgroundService(
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error processing outbox messages");
-                currentDelayMs = baseDelayMs;
+                delay = OutboxRelayBackoff.AfterFault(options.Value);
             }
         }
     }

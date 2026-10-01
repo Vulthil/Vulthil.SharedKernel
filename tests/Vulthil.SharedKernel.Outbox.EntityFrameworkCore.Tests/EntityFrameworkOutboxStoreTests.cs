@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Options;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore.Tests;
@@ -27,10 +27,10 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), DateTimeOffset.UtcNow));
         await seed.SaveChangesAsync(CancellationToken);
         await using var context = NewContext();
-        var store = NewStore(context, maxRetries: 1);
+        var store = NewStore(context);
 
         // Act
-        await store.ProcessBatchAsync((_, _) => Task.FromResult<string?>("boom"), CancellationToken);
+        await store.RelayBatchAsync((_, _) => Task.FromResult<string?>("boom"), CancellationToken, maxRetries: 1);
 
         // Assert
         await using var verify = NewContext();
@@ -49,11 +49,11 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), DateTimeOffset.UtcNow, failedOnUtc: DateTimeOffset.UtcNow));
         await seed.SaveChangesAsync(CancellationToken);
         await using var context = NewContext();
-        var store = NewStore(context, maxRetries: 3);
+        var store = NewStore(context);
         var dispatched = new List<Guid>();
 
         // Act
-        var processed = await store.ProcessBatchAsync((data, _) =>
+        var processed = await store.RelayBatchAsync((data, _) =>
         {
             dispatched.Add(data.Id);
             return Task.FromResult<string?>(null);
@@ -73,11 +73,11 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), DateTimeOffset.UtcNow));
         await seed.SaveChangesAsync(CancellationToken);
         await using var context = NewContext();
-        var store = NewStore(context, maxRetries: 3);
+        var store = NewStore(context);
         var dispatchCount = 0;
 
         // Act
-        var processed = await store.ProcessBatchAsync((_, _) =>
+        var processed = await store.RelayBatchAsync((_, _) =>
         {
             dispatchCount++;
             return Task.FromResult<string?>(dispatchCount == 1 ? "boom" : null);
@@ -99,11 +99,11 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         seed.OutboxMessages.Add(NewMessage(first, occurredOn));
         await seed.SaveChangesAsync(CancellationToken);
         await using var context = NewContext();
-        var store = NewStore(context, maxRetries: 3);
+        var store = NewStore(context);
         var dispatched = new List<Guid>();
 
         // Act
-        await store.ProcessBatchAsync((data, _) =>
+        await store.RelayBatchAsync((data, _) =>
         {
             dispatched.Add(data.Id);
             return Task.FromResult<string?>(null);
@@ -114,32 +114,7 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task ThrottlesParallelDispatchToTheConfiguredMaxDegreeOfParallelism()
-    {
-        // Arrange
-        await using var seed = NewContext();
-        for (var i = 0; i < 6; i++)
-        {
-            seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), DateTimeOffset.UtcNow));
-        }
-        await seed.SaveChangesAsync(CancellationToken);
-        await using var context = NewContext();
-        var store = NewStore(context, maxRetries: 3, enableParallelPublishing: true, maxDegreeOfParallelism: 2);
-        var dispatcher = new ConcurrencyTrackingDispatcher(saturationCount: 2);
-
-        // Act
-        var processTask = store.ProcessBatchAsync((_, token) => dispatcher.DispatchAsync(token), CancellationToken);
-        await dispatcher.SaturationReached.WaitAsync(TimeSpan.FromSeconds(30), CancellationToken);
-        dispatcher.Release();
-        var processed = await processTask;
-
-        // Assert
-        processed.ShouldBe(6);
-        dispatcher.PeakConcurrency.ShouldBe(2);
-    }
-
-    [Fact]
-    public async Task RecordsEachMessageOutcomeIndividuallyWhenAParallelBatchHasAFailure()
+    public async Task RecordsEachMessageOutcomeIndividuallyWhenABatchHasAFailure()
     {
         // Arrange
         var failing = new Guid("00000000-0000-0000-0000-000000000001");
@@ -149,10 +124,10 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         seed.OutboxMessages.Add(NewMessage(new Guid("00000000-0000-0000-0000-000000000003"), DateTimeOffset.UtcNow));
         await seed.SaveChangesAsync(CancellationToken);
         await using var context = NewContext();
-        var store = NewStore(context, maxRetries: 3, enableParallelPublishing: true);
+        var store = NewStore(context);
 
         // Act
-        var processed = await store.ProcessBatchAsync(
+        var processed = await store.RelayBatchAsync(
             (data, _) => Task.FromResult<string?>(data.Id == failing ? "boom" : null),
             CancellationToken);
 
@@ -187,7 +162,7 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), now));
         await seed.SaveChangesAsync(CancellationToken);
         await using var context = NewContext();
-        var store = NewStore(context, maxRetries: 3);
+        var store = NewStore(context);
 
         // Act
         var deleted = await store.DeleteProcessedAsync(now.AddDays(-7), batchSize: 100, CancellationToken);
@@ -201,13 +176,8 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         remaining.ShouldContain(message => message.ProcessedOnUtc >= now.AddDays(-7));
     }
 
-    private static EntityFrameworkOutboxStore<TestDbContext> NewStore(TestDbContext context, int maxRetries, bool enableParallelPublishing = false, int maxDegreeOfParallelism = 4) =>
-        new(context, TimeProvider.System, Options.Create(new OutboxProcessingOptions
-        {
-            MaxRetries = maxRetries,
-            EnableParallelPublishing = enableParallelPublishing,
-            MaxDegreeOfParallelism = maxDegreeOfParallelism,
-        }));
+    private static EntityFrameworkOutboxStore<TestDbContext> NewStore(TestDbContext context) =>
+        new(context, TimeProvider.System);
 
     private static OutboxMessage NewMessage(Guid id, DateTimeOffset occurredOn, DateTimeOffset? failedOnUtc = null, DateTimeOffset? processedOnUtc = null) => new()
     {
@@ -221,53 +191,6 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
     };
 
     private TestDbContext NewContext() => new(new DbContextOptionsBuilder<TestDbContext>().UseSqlite(_connection).Options);
-
-    private sealed class ConcurrencyTrackingDispatcher(int saturationCount)
-    {
-        private readonly TaskCompletionSource _saturated = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private readonly TaskCompletionSource _gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private int _inFlight;
-        private int _peak;
-        private int _arrivals;
-
-        public Task SaturationReached => _saturated.Task;
-
-        public int PeakConcurrency => Volatile.Read(ref _peak);
-
-        public async Task<string?> DispatchAsync(CancellationToken cancellationToken)
-        {
-            RecordArrival();
-            await _gate.Task.WaitAsync(cancellationToken);
-            Interlocked.Decrement(ref _inFlight);
-            return null;
-        }
-
-        public void Release() => _gate.TrySetResult();
-
-        private void RecordArrival()
-        {
-            UpdatePeak(Interlocked.Increment(ref _inFlight));
-            if (Interlocked.Increment(ref _arrivals) >= saturationCount)
-            {
-                _saturated.TrySetResult();
-            }
-        }
-
-        private void UpdatePeak(int current)
-        {
-            var seen = Volatile.Read(ref _peak);
-            while (current > seen)
-            {
-                var previous = Interlocked.CompareExchange(ref _peak, current, seen);
-                if (previous == seen)
-                {
-                    return;
-                }
-
-                seen = previous;
-            }
-        }
-    }
 
     public sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options), ISaveOutboxMessages
     {

@@ -52,11 +52,11 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         services.AddOutboxEngine();
 
         // Act
-        var exception = Record.Exception(() => services.AddScoped<IOutboxStore, FakeOutboxStore<OutboxProcessor>>());
+        var exception = Record.Exception(() => services.AddScoped<IOutboxStore, FakeOutboxStore<OutboxRelayCycle>>());
 
         // Assert
         exception.ShouldBeNull();
-        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(IOutboxStore) && descriptor.ImplementationType == typeof(FakeOutboxStore<OutboxProcessor>));
+        services.ShouldContain(descriptor => descriptor.ServiceType == typeof(IOutboxStore) && descriptor.ImplementationType == typeof(FakeOutboxStore<OutboxRelayCycle>));
     }
 
     [Fact]
@@ -65,13 +65,13 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         // Arrange
         var services = new ServiceCollection();
         services.AddOutboxEngine();
-        services.AddScoped<IOutboxStore, FakeOutboxStore<OutboxProcessor>>();
+        services.AddScoped<IOutboxStore, FakeOutboxStore<OutboxRelayCycle>>();
 
         // Act
         var exception = Should.Throw<InvalidOperationException>(() => services.AddOutboxEngine());
 
         // Assert
-        exception.Message.ShouldContain(nameof(OutboxProcessor));
+        exception.Message.ShouldContain(nameof(OutboxRelayCycle));
         exception.Message.ShouldContain("one outbox-enabled DbContext");
         exception.Message.ShouldContain("IOutboxStore");
     }
@@ -88,7 +88,7 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
 
         // Assert
         services.Count(descriptor => descriptor.ServiceType == typeof(IHostedService) && descriptor.ImplementationType == typeof(OutboxBackgroundService)).ShouldBe(1);
-        services.Count(descriptor => descriptor.ServiceType == typeof(OutboxProcessor)).ShouldBe(1);
+        services.Count(descriptor => descriptor.ServiceType == typeof(OutboxRelayCycle)).ShouldBe(1);
     }
 
     [Fact]
@@ -225,7 +225,8 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
-        public Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken) => Task.FromResult(0);
+        public Task<TResult> RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken) =>
+            throw new NotSupportedException("This store backs registration tests and never relays.");
 
         public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
         {
@@ -344,6 +345,7 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
-        public Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken) => Task.FromResult(0);
+        public Task<TResult> RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken) =>
+            throw new NotSupportedException("This store backs registration tests and never relays.");
     }
 }

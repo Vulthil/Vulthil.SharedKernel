@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Vulthil.SharedKernel.Outbox)](https://www.nuget.org/packages/Vulthil.SharedKernel.Outbox)
 
 The transactional **outbox engine** for `Vulthil.SharedKernel`: the message-capture model (`OutboxMessage`), the
-relay processor and background service, pluggable dispatchers (`IOutboxDispatcher`), the commit-time relay signal,
+relay cycle and background service, pluggable dispatchers (`IOutboxDispatcher`), the commit-time relay signal,
 and the persistence-agnostic `IOutboxStore` seam.
 
 It is intentionally persistence-light — free of any EF Core dependency — so a messaging bridge (such as

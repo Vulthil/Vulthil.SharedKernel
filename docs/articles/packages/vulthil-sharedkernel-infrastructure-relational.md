@@ -31,14 +31,13 @@ app.Run();
 
 ### Reusing the relational outbox store
 
-Provider packages wire `RelationalOutboxStore<TContext>` (or a subclass of it) automatically through their own `Use*` extension. The base class records relay outcomes with set-based `ExecuteUpdate` calls, deletes retention batches by key, and requires the relay batch to run inside a transaction — it throws at relay time if `TContext` does not implement `IUnitOfWork` (derive from `BaseDbContext`), because without a transaction provider row-locking such as `FOR UPDATE SKIP LOCKED` would release immediately after the fetch and concurrent relay instances could double-dispatch.
+Provider packages wire `RelationalOutboxStore<TContext>` (or a subclass of it) automatically through their own `Use*` extension. The base class records relay outcomes with set-based `ExecuteUpdate` calls, deletes retention batches by key, and requires each relay unit to run inside a transaction — it throws at relay time if `TContext` does not implement `IUnitOfWork` (derive from `BaseDbContext`), because without a transaction provider row-locking such as `FOR UPDATE SKIP LOCKED` would release immediately after the fetch and concurrent relay instances could double-dispatch.
 
 If you are authoring a new provider, inherit from `RelationalOutboxStore<TContext>` and override the fetch. `FetchMessagesWithRowLockAsync` composes the `SELECT … ORDER BY … LIMIT` statement from the model's mapped table and column names (so renamed identifiers keep working) and appends the row-locking clause you pass — this is exactly what the Npgsql and MySQL stores do:
 
 ```csharp
-public sealed class MyProviderOutboxStore<TContext>(
-    TContext dbContext, TimeProvider timeProvider, IOptions<OutboxProcessingOptions> options)
-    : RelationalOutboxStore<TContext>(dbContext, timeProvider, options)
+public sealed class MyProviderOutboxStore<TContext>(TContext dbContext, TimeProvider timeProvider)
+    : RelationalOutboxStore<TContext>(dbContext, timeProvider)
     where TContext : DbContext, ISaveOutboxMessages
 {
     protected override Task<List<OutboxMessageData>> FetchMessagesAsync(

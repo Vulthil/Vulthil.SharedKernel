@@ -10,7 +10,35 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.DomainEventsToOutboxMessageSaveChangesInterceptor.#ctor(System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions},Vulthil.SharedKernel.Outbox.IOutboxSignal)</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)</Target>
     <Left>lib/net9.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
     <Right>lib/net9.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>

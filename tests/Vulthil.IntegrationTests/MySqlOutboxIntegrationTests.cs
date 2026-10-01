@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.IntegrationTests;
@@ -27,7 +27,7 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
         var dispatched = new List<OutboxMessageData>();
 
         // Act
-        var processed = await store.ProcessBatchAsync(RecordingDispatch(dispatched), CancellationToken);
+        var processed = await store.RelayBatchAsync(RecordingDispatch(dispatched), CancellationToken);
 
         // Assert
         store.ShouldBeOfType<MySqlOutboxStore<MySqlOutboxDbContext>>();
@@ -53,7 +53,7 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
         var dispatched = new List<OutboxMessageData>();
 
         // Act
-        var processed = await store.ProcessBatchAsync(RecordingDispatch(dispatched), CancellationToken);
+        var processed = await store.RelayBatchAsync(RecordingDispatch(dispatched), CancellationToken);
 
         // Assert
         processed.ShouldBe(6);
@@ -66,15 +66,15 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
         // Arrange
         await SeedAsync([NewMessage(DateTimeOffset.UtcNow)]);
         await using var relayScope = fixture.Services.CreateAsyncScope();
-        var store = NewStore(relayScope.ServiceProvider.GetRequiredService<MySqlOutboxDbContext>(), maxRetries: 2);
+        var store = NewStore(relayScope.ServiceProvider.GetRequiredService<MySqlOutboxDbContext>());
         var dispatchedAfterDeadLetter = new List<OutboxMessageData>();
 
         // Act
-        var firstBatch = await store.ProcessBatchAsync(FailingDispatch("first failure"), CancellationToken);
+        var firstBatch = await store.RelayBatchAsync(FailingDispatch("first failure"), CancellationToken, maxRetries: 2);
         var afterFirst = await QuerySingleMessageAsync();
-        var secondBatch = await store.ProcessBatchAsync(FailingDispatch("second failure"), CancellationToken);
+        var secondBatch = await store.RelayBatchAsync(FailingDispatch("second failure"), CancellationToken, maxRetries: 2);
         var afterSecond = await QuerySingleMessageAsync();
-        await store.ProcessBatchAsync(RecordingDispatch(dispatchedAfterDeadLetter), CancellationToken);
+        await store.RelayBatchAsync(RecordingDispatch(dispatchedAfterDeadLetter), CancellationToken, maxRetries: 2);
 
         // Assert
         firstBatch.ShouldBe(0);
@@ -171,8 +171,8 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
         return await context.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
     }
 
-    private static MySqlOutboxStore<MySqlOutboxDbContext> NewStore(MySqlOutboxDbContext context, int batchSize = 10, int maxRetries = 3) =>
-        new(context, TimeProvider.System, Options.Create(new OutboxProcessingOptions { BatchSize = batchSize, MaxRetries = maxRetries }));
+    private static MySqlOutboxStore<MySqlOutboxDbContext> NewStore(MySqlOutboxDbContext context) =>
+        new(context, TimeProvider.System);
 
     private static OutboxMessage NewMessage(DateTimeOffset occurredOnUtc, string type = "TestMessage") => new()
     {

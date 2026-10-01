@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.IntegrationTests;
@@ -35,12 +35,11 @@ public sealed class NpgsqlRenamedOutboxIntegrationTests(RenamedNpgsqlOutboxHostF
         await using var relayScope = fixture.Services.CreateAsyncScope();
         var store = new NpgsqlOutboxStore<RenamedNpgsqlOutboxDbContext>(
             relayScope.ServiceProvider.GetRequiredService<RenamedNpgsqlOutboxDbContext>(),
-            TimeProvider.System,
-            Options.Create(new OutboxProcessingOptions()));
+            TimeProvider.System);
         var dispatched = new List<OutboxMessageData>();
 
         // Act
-        var processed = await store.ProcessBatchAsync((data, _) =>
+        var processed = await store.RelayBatchAsync((data, _) =>
         {
             dispatched.Add(data);
             return Task.FromResult<string?>(null);

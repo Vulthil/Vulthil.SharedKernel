@@ -1,7 +1,7 @@
 namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
-/// Identifies the sink an outbox message is relayed to, so the <see cref="OutboxProcessor"/> can route each row to
+/// Identifies the sink an outbox message is relayed to, so the <see cref="OutboxRelayCycle"/> can route each row to
 /// the matching <see cref="IOutboxDispatcher"/>. One outbox table can carry messages bound for different sinks.
 /// </summary>
 public enum OutboxDestination

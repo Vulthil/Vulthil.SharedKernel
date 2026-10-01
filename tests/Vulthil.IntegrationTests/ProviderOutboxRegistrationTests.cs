@@ -2,7 +2,6 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Cosmos;
 using Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing;
@@ -13,6 +12,7 @@ using Vulthil.SharedKernel.Infrastructure.Npgsql;
 using Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.xUnit;
 
 namespace Vulthil.IntegrationTests;
@@ -339,9 +339,9 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
         protected override Assembly? ConfigurationAssembly => null;
     }
 
-    internal sealed class CustomOutboxStore(RegistrationProbeDbContext dbContext, TimeProvider timeProvider, IOptions<OutboxProcessingOptions> options)
-        : EntityFrameworkOutboxStore<RegistrationProbeDbContext>(dbContext, timeProvider, options);
+    internal sealed class CustomOutboxStore(RegistrationProbeDbContext dbContext, TimeProvider timeProvider)
+        : EntityFrameworkOutboxStore<RegistrationProbeDbContext>(dbContext, timeProvider);
 
-    internal sealed class OtherOutboxStore(RegistrationProbeDbContext dbContext, TimeProvider timeProvider, IOptions<OutboxProcessingOptions> options)
-        : EntityFrameworkOutboxStore<RegistrationProbeDbContext>(dbContext, timeProvider, options);
+    internal sealed class OtherOutboxStore(RegistrationProbeDbContext dbContext, TimeProvider timeProvider)
+        : EntityFrameworkOutboxStore<RegistrationProbeDbContext>(dbContext, timeProvider);
 }

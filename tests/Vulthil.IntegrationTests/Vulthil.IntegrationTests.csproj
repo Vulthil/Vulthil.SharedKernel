@@ -20,4 +20,8 @@
 		<ProjectReference Include="..\Vulthil.TestHost\Vulthil.TestHost.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Compile Include="..\Shared\OutboxRelayUnitTestExtensions.cs" Link="Shared\OutboxRelayUnitTestExtensions.cs" />
+	</ItemGroup>
+
 </Project>

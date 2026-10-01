@@ -18,8 +18,10 @@ seam. It has **no EF Core dependency**; the EF implementation lives in
 - One `OutboxMessages` table, one relay; rows are routed by an `OutboxDestination` discriminator to the registered
   `IOutboxDispatcher`, so in-process domain events and broker messages share a single outbox.
 - The engine relies on `IOutboxStore` for both capture (`AddOutboxMessage`/`SaveChangesAsync`/`IsInTransaction`) and
-  the relay batch unit (`ProcessBatchAsync`); the EF implementation and provider stores supply the transaction and
-  row-locking. `AddOutboxEngine` registers the engine's own internals.
+  the relay's transactional boundary (`RunRelayUnitAsync`, which hands the engine an `IOutboxRelayUnit` to claim a
+  batch and record its outcomes); the EF implementation and provider stores supply the transaction and row-locking.
+  The engine owns the relay cycle itself: batch size, dispatch, retry limit and back-off. `AddOutboxEngine` registers
+  the engine's own internals.
 - Relay spans are emitted on the `ActivitySource` `"Vulthil.SharedKernel.Outbox"` (`Telemetry.ActivitySourceName`),
   auto-registered with OpenTelemetry by `AddOutboxEngine` (manual: `tracing.AddVulthilOutboxInstrumentation()`).
 - Relay metrics (counters `vulthil.outbox.relayed`/`vulthil.outbox.failed`) are emitted on a `Meter` (`Telemetry.MeterName`),

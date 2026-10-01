@@ -1,1 +1,6 @@
 #nullable enable
+*REMOVED*Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func<Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>! dispatch, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+Vulthil.SharedKernel.Outbox.IOutboxRelayUnit
+Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync(int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!
+Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync(System.Collections.Generic.IReadOnlyList<System.Guid>! relayedIds, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageFailure>! failures, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync<TResult>(System.Func<Vulthil.SharedKernel.Outbox.IOutboxRelayUnit!, System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>!>! unit, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TResult>!

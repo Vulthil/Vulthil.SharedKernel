@@ -9,6 +9,7 @@ using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
+using Vulthil.SharedKernel.Outbox.Testing;
 using Vulthil.SharedKernel.Primitives;
 using Vulthil.xUnit;
 
@@ -156,7 +157,7 @@ public sealed class OutboxCommitInterceptorTests : BaseUnitTestCase
         var store = NewStore(context);
 
         // Act
-        var relayed = await store.ProcessBatchAsync((_, _) => Task.FromResult<string?>("broker unavailable"), CancellationToken);
+        var relayed = await store.RelayBatchAsync((_, _) => Task.FromResult<string?>("broker unavailable"), CancellationToken);
 
         // Assert
         relayed.ShouldBe(0);
@@ -174,7 +175,7 @@ public sealed class OutboxCommitInterceptorTests : BaseUnitTestCase
         var store = NewStore(context);
 
         // Act
-        var relayed = await store.ProcessBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
+        var relayed = await store.RelayBatchAsync((_, _) => Task.FromResult<string?>(null), CancellationToken);
 
         // Assert
         relayed.ShouldBe(1);
@@ -190,7 +191,7 @@ public sealed class OutboxCommitInterceptorTests : BaseUnitTestCase
         var store = NewStore(context);
 
         // Act
-        var relayed = await store.ProcessBatchAsync(async (_, cancellationToken) =>
+        var relayed = await store.RelayBatchAsync(async (_, cancellationToken) =>
         {
             context.Aggregates.Add(NewAggregateWithEvent());
             await context.SaveChangesAsync(cancellationToken);
@@ -224,8 +225,7 @@ public sealed class OutboxCommitInterceptorTests : BaseUnitTestCase
         return aggregate;
     }
 
-    private static UnlockedOutboxStore NewStore(WakeupDbContext context) =>
-        new(context, Options.Create(new OutboxProcessingOptions()));
+    private static UnlockedOutboxStore NewStore(WakeupDbContext context) => new(context);
 
     private WakeupDbContext NewContext(bool withInterceptors = true)
     {
@@ -249,8 +249,8 @@ public sealed class OutboxCommitInterceptorTests : BaseUnitTestCase
     /// <summary>
     /// The relational store with an empty lock clause, since SQLite has no row locks.
     /// </summary>
-    public sealed class UnlockedOutboxStore(WakeupDbContext dbContext, IOptions<OutboxProcessingOptions> options)
-        : RelationalOutboxStore<WakeupDbContext>(dbContext, TimeProvider.System, options)
+    public sealed class UnlockedOutboxStore(WakeupDbContext dbContext)
+        : RelationalOutboxStore<WakeupDbContext>(dbContext, TimeProvider.System)
     {
         protected override Task<List<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
             FetchMessagesWithRowLockAsync(string.Empty, batchSize, maxRetries, cancellationToken);

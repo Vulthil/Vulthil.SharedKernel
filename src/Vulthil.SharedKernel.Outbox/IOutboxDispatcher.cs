@@ -1,7 +1,7 @@
 namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
-/// Relays a fetched outbox message to its sink. The <see cref="OutboxProcessor"/> routes each row to the
+/// Relays a fetched outbox message to its sink. The <see cref="OutboxRelayCycle"/> routes each row to the
 /// registered dispatcher whose <see cref="Handles"/> returns <see langword="true"/> for the row's
 /// <see cref="OutboxDestination"/>, so a single outbox table can feed several sinks (in-process domain events,
 /// broker publishes/sends) that coexist in one application.

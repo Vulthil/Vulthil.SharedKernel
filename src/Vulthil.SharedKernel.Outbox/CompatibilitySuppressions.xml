@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)</Target>
+    <Left>lib/net9.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net9.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>

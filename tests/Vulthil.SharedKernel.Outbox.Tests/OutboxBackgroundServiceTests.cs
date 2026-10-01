@@ -6,6 +6,12 @@ using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Outbox.Tests;
 
+/// <summary>
+/// Shares <see cref="OutboxTelemetryCollection"/> with <see cref="OutboxRelayCycleMetricsTests"/>: the back-off tests
+/// run real <see cref="OutboxRelayCycle"/>s that increment the process-wide <see cref="Telemetry"/> counters that class
+/// measures within a narrow window.
+/// </summary>
+[Collection(nameof(OutboxTelemetryCollection))]
 public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
 {
     private readonly Lazy<OutboxBackgroundService> _lazyTarget;
@@ -229,11 +235,7 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
             BatchSize = batchSize,
             OutboxProcessingDelaySeconds = baseDelaySeconds
         }));
-        Use<IEnumerable<IOutboxRelayGate>>([]);
-        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
-        var store = new CountingOutboxStore(result: batchSize - 3);
-        Use<IOutboxStore>(store);
-        Use(CreateInstance<OutboxProcessor>());
+        var store = UseRelayCycleOver(new InMemoryRelayStore(messageCount: batchSize - 3));
         TimeSpan? capturedDelay = null;
         GetMock<IOutboxSignal>()
             .Setup(signal => signal.WaitAsync(It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()))
@@ -242,12 +244,12 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
 
         // Act
         await Target.StartAsync(CancellationToken);
-        await store.SecondCallStarted;
+        await store.SecondRunStarted.WaitAsync(TimeSpan.FromSeconds(30), CancellationToken);
         await Target.StopAsync(CancellationToken);
 
         // Assert
         capturedDelay.ShouldNotBeNull();
-        capturedDelay.Value.ShouldBeGreaterThanOrEqualTo(TimeSpan.FromSeconds(baseDelaySeconds));
+        capturedDelay.Value.ShouldBe(TimeSpan.FromSeconds(baseDelaySeconds));
     }
 
     [Fact]
@@ -256,19 +258,31 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
         // Arrange
         const int batchSize = 10;
         Use<IOptions<OutboxProcessingOptions>>(Options.Create(new OutboxProcessingOptions { BatchSize = batchSize }));
-        Use<IEnumerable<IOutboxRelayGate>>([]);
-        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
-        var store = new CountingOutboxStore(result: batchSize);
-        Use<IOutboxStore>(store);
-        Use(CreateInstance<OutboxProcessor>());
+        var store = UseRelayCycleOver(new InMemoryRelayStore(messageCount: batchSize));
 
         // Act
         await Target.StartAsync(CancellationToken);
-        await store.SecondCallStarted;
+        await store.SecondRunStarted.WaitAsync(TimeSpan.FromSeconds(30), CancellationToken);
         await Target.StopAsync(CancellationToken);
 
         // Assert
         GetMock<IOutboxSignal>().Verify(signal => signal.WaitAsync(It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    /// <summary>
+    /// Registers a real <see cref="OutboxRelayCycle"/> over <paramref name="store"/> that every relay scope resolves,
+    /// with a dispatcher that delivers every message.
+    /// </summary>
+    private InMemoryRelayStore UseRelayCycleOver(InMemoryRelayStore store)
+    {
+        Use<IEnumerable<IOutboxRelayGate>>([]);
+        Use<IServiceScopeFactory>(new AutoMockerServiceScopeFactory(AutoMocker));
+        Use<IOutboxStore>(store);
+        GetMock<IServiceProvider>()
+            .Setup(provider => provider.GetService(typeof(IEnumerable<IOutboxDispatcher>)))
+            .Returns(new IOutboxDispatcher[] { new AcceptingDispatcher() });
+        Use(CreateInstance<OutboxRelayCycle>());
+        return store;
     }
 
     private sealed class BlockingRelayGate : IOutboxRelayGate
@@ -305,30 +319,11 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
         }
     }
 
-    private sealed class CountingOutboxStore(int result) : IOutboxStore
+    private sealed class AcceptingDispatcher : IOutboxDispatcher
     {
-        private readonly TaskCompletionSource _secondCallStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private int _callCount;
+        public bool Handles(OutboxDestination destination) => true;
 
-        public Task SecondCallStarted => _secondCallStarted.Task;
-
-        public bool IsInTransaction => false;
-
-        public void AddOutboxMessage(OutboxMessage message)
-        {
-        }
-
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
-
-        public Task<int> ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch, CancellationToken cancellationToken)
-        {
-            if (Interlocked.Increment(ref _callCount) == 2)
-            {
-                _secondCallStarted.TrySetResult();
-            }
-
-            return Task.FromResult(result);
-        }
+        public Task DispatchAsync(OutboxMessageData message, CancellationToken cancellationToken) => Task.CompletedTask;
     }
 
     private sealed class AutoMockerServiceScopeFactory(IServiceProvider serviceProvider) : IServiceScopeFactory

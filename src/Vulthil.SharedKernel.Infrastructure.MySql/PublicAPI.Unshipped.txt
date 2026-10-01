@@ -1,1 +1,3 @@
 #nullable enable
+*REMOVED*Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! options) -> void
+Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider) -> void

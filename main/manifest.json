@@ -2865,7 +2865,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Entity Framework Core implementation of <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxStore\" data-throw-if-not-resolved=\"false\"></xref>. It owns the relay batch unit — runs inside the\ncontext's execution strategy, opens the transaction, fetches a batch, dispatches each message, records the\noutcome, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from\nthis type to add row-level locking (<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.FetchMessagesAsync(System.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>), set-based updates\n(<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList%7bSystem.Guid%7d%2cSystem.Collections.Generic.IReadOnlyList%7bVulthil.SharedKernel.Outbox.OutboxMessageFailure%7d%2cSystem.Int32%2cSystem.DateTimeOffset%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>), or a no-op transaction (<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.BeginTransactionAsync(System.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>).</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.yml\" sourcestartlinenumber=\"1\">Entity Framework Core implementation of <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxStore\" data-throw-if-not-resolved=\"false\"></xref>. It owns the relay's transactional boundary —\nruns each relay unit inside the context's execution strategy, opens the transaction, claims and records through\nthe unit, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from\nthis type to add row-level locking (<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.FetchMessagesAsync(System.Int32%2cSystem.Int32%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>), set-based updates\n(<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList%7bSystem.Guid%7d%2cSystem.Collections.Generic.IReadOnlyList%7bVulthil.SharedKernel.Outbox.OutboxMessageFailure%7d%2cSystem.Int32%2cSystem.DateTimeOffset%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>), or a no-op transaction (<xref href=\"Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore%601.BeginTransactionAsync(System.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>).</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2949,7 +2949,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.IOutboxDispatcher",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxDispatcher.yml\" sourcestartlinenumber=\"1\">Relays a fetched outbox message to its sink. The <xref href=\"Vulthil.SharedKernel.Outbox.OutboxProcessor\" data-throw-if-not-resolved=\"false\"></xref> routes each row to the\nregistered dispatcher whose <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Outbox.OutboxDestination)\" data-throw-if-not-resolved=\"false\"></xref> returns <a href=\"https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool\">true</a> for the row's\n<xref href=\"Vulthil.SharedKernel.Outbox.OutboxDestination\" data-throw-if-not-resolved=\"false\"></xref>, so a single outbox table can feed several sinks (in-process domain events,\nbroker publishes/sends) that coexist in one application.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxDispatcher.yml\" sourcestartlinenumber=\"1\">Relays a fetched outbox message to its sink. The <xref href=\"Vulthil.SharedKernel.Outbox.OutboxRelayCycle\" data-throw-if-not-resolved=\"false\"></xref> routes each row to the\nregistered dispatcher whose <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxDispatcher.Handles(Vulthil.SharedKernel.Outbox.OutboxDestination)\" data-throw-if-not-resolved=\"false\"></xref> returns <a href=\"https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool\">true</a> for the row's\n<xref href=\"Vulthil.SharedKernel.Outbox.OutboxDestination\" data-throw-if-not-resolved=\"false\"></xref>, so a single outbox table can feed several sinks (in-process domain events,\nbroker publishes/sends) that coexist in one application.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2964,6 +2964,20 @@
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.IOutboxRelayGate",
       "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxRelayGate.yml\" sourcestartlinenumber=\"1\">A readiness gate the outbox relay awaits once before its first processing pass. It lets a downstream sink defer\nthe relay until its delivery channel is ready — for example, the message-broker sink waits for the transport to\ndeclare its subscriber topology, so a relayed publish is not lost by being sent before the subscriber queues are\nbound. When no gate is registered the relay starts immediately.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.IOutboxRelayUnit",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.yml\" sourcestartlinenumber=\"1\">The claim and record operations of one relay unit, bound to the transaction the store opened for it (see\n<xref href=\"Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync%60%601(System.Func%7bVulthil.SharedKernel.Outbox.IOutboxRelayUnit%2cSystem.Threading.CancellationToken%2cSystem.Threading.Tasks.Task%7b%60%600%7d%7d%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>).</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3033,7 +3047,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.OutboxDestination",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxDestination.yml\" sourcestartlinenumber=\"1\">Identifies the sink an outbox message is relayed to, so the <xref href=\"Vulthil.SharedKernel.Outbox.OutboxProcessor\" data-throw-if-not-resolved=\"false\"></xref> can route each row to\nthe matching <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxDispatcher\" data-throw-if-not-resolved=\"false\"></xref>. One outbox table can carry messages bound for different sinks.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxDestination.yml\" sourcestartlinenumber=\"1\">Identifies the sink an outbox message is relayed to, so the <xref href=\"Vulthil.SharedKernel.Outbox.OutboxRelayCycle\" data-throw-if-not-resolved=\"false\"></xref> can route each row to\nthe matching <xref href=\"Vulthil.SharedKernel.Outbox.IOutboxDispatcher\" data-throw-if-not-resolved=\"false\"></xref>. One outbox table can carry messages bound for different sinks.</p>\n"
     },
     {
       "type": "ManagedReference",

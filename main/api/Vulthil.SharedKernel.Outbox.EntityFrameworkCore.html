@@ -103,9 +103,9 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html">EntityFrameworkOutboxStore&lt;TContext&gt;</a></dt>
-      <dd><p>Entity Framework Core implementation of <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a>. It owns the relay batch unit — runs inside the
-context's execution strategy, opens the transaction, fetches a batch, dispatches each message, records the
-outcome, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from
+      <dd><p>Entity Framework Core implementation of <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a>. It owns the relay's transactional boundary —
+runs each relay unit inside the context's execution strategy, opens the transaction, claims and records through
+the unit, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from
 this type to add row-level locking (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesAsync(int, int, CancellationToken)</a>), set-based updates
 (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_">UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, DateTimeOffset, CancellationToken)</a>), or a no-op transaction (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_BeginTransactionAsync_System_Threading_CancellationToken_">BeginTransactionAsync(CancellationToken)</a>).</p>
 </dd>

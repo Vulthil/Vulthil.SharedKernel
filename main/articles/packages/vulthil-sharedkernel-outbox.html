@@ -104,8 +104,10 @@ depends on the engine alone (no EF Core, no infrastructure package).</li>
 <li>One <code>OutboxMessages</code> table, one relay; rows are routed by an <code>OutboxDestination</code> discriminator to the registered
 <code>IOutboxDispatcher</code>, so in-process domain events and broker messages share a single outbox.</li>
 <li>The engine relies on <code>IOutboxStore</code> for both capture (<code>AddOutboxMessage</code>/<code>SaveChangesAsync</code>/<code>IsInTransaction</code>) and
-the relay batch unit (<code>ProcessBatchAsync</code>); the EF implementation and provider stores supply the transaction and
-row-locking. <code>AddOutboxEngine</code> registers the engine's own internals.</li>
+the relay's transactional boundary (<code>RunRelayUnitAsync</code>, which hands the engine an <code>IOutboxRelayUnit</code> to claim a
+batch and record its outcomes); the EF implementation and provider stores supply the transaction and row-locking.
+The engine owns the relay cycle itself: batch size, dispatch, retry limit and back-off. <code>AddOutboxEngine</code> registers
+the engine's own internals.</li>
 <li>Relay spans are emitted on the <code>ActivitySource</code> <code>&quot;Vulthil.SharedKernel.Outbox&quot;</code> (<code>Telemetry.ActivitySourceName</code>),
 auto-registered with OpenTelemetry by <code>AddOutboxEngine</code> (manual: <code>tracing.AddVulthilOutboxInstrumentation()</code>).</li>
 <li>Relay metrics (counters <code>vulthil.outbox.relayed</code>/<code>vulthil.outbox.failed</code>) are emitted on a <code>Meter</code> (<code>Telemetry.MeterName</code>),

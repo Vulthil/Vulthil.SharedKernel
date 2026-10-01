@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1" class="text-break">
-Class CosmosOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L15"><i class="bi bi-code-slash"></i></a>
+Class CosmosOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -156,7 +156,7 @@ scale should supply an SDK-backed store.</p>
       <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_SaveChangesAsync_System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.SaveChangesAsync(CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_ProcessBatchAsync_System_Func_Vulthil_SharedKernel_Outbox_OutboxMessageData_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_String___System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.ProcessBatchAsync(Func&lt;OutboxMessageData, CancellationToken, Task&lt;string&gt;&gt;, CancellationToken)</a>
+      <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.RunRelayUnitAsync&lt;TResult&gt;(Func&lt;IOutboxRelayUnit, CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.FetchMessagesAsync(int, int, CancellationToken)</a>
@@ -208,9 +208,9 @@ scale should supply an SDK-backed store.</p>
 
   <a id="Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1__ctor_" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})">
-  CosmosOutboxStore(TContext, TimeProvider, IOptions&lt;OutboxProcessingOptions&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1__ctor__0_System_TimeProvider_" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor(`0,System.TimeProvider)">
+  CosmosOutboxStore(TContext, TimeProvider)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Cosmos outbox store. Cosmos DB has no cross-partition transaction, so the relay runs without an ambient
@@ -220,7 +220,7 @@ scale should supply an SDK-backed store.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public CosmosOutboxStore(TContext dbContext, TimeProvider timeProvider, IOptions&lt;OutboxProcessingOptions&gt; options)</code></pre>
+    <pre><code class="lang-csharp hljs">public CosmosOutboxStore(TContext dbContext, TimeProvider timeProvider)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -228,8 +228,6 @@ scale should supply an SDK-backed store.</p>
     <dt><code>dbContext</code> <span class="xref">TContext</span></dt>
     <dd></dd>
     <dt><code>timeProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeprovider">TimeProvider</a></dt>
-    <dd></dd>
-    <dt><code>options</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1">IOptions</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html">OutboxProcessingOptions</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -252,10 +250,10 @@ scale should supply an SDK-backed store.</p>
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1_BeginTransactionAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.BeginTransactionAsync(System.Threading.CancellationToken)">
   BeginTransactionAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>: Cosmos DB has no relay-wide transaction, and the base batch unit treats a
+  <div class="markdown level1 summary"><p>Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>: Cosmos DB has no relay-wide transaction, and the base relay unit treats a
 <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> transaction as running without one.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -292,7 +290,7 @@ scale should supply an SDK-backed store.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L15" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Cosmos/OutboxProcessing/CosmosOutboxStore.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -256,7 +256,8 @@ marker together with the consumer's writes. A redelivery finds the marker and is
 <ul>
 <li><strong>Outbox</strong>: register your own <code>IOutboxStore</code> with <code>UseOutboxStore&lt;TStore&gt;()</code>. The provider extensions propose
 their store through <code>UseDefaultOutboxStore&lt;TStore&gt;()</code>, which only applies when nothing was selected, so your
-selection wins in any order. A custom provider package should use the same call.</li>
+selection wins in any order. A custom provider package should use the same call. What a store implements is in
+<a href="outbox-pattern.html#custom-outbox-store">custom outbox store</a>.</li>
 <li><strong>Inbox</strong>: register your <code>IIdempotencyStore</code> and call <code>AddInboxCore()</code>; see
 <a href="inbox-pattern.html#custom-stores">custom stores</a>.</li>
 </ul>

@@ -151,7 +151,7 @@ Interfaces
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html">IOutboxDispatcher</a></dt>
-      <dd><p>Relays a fetched outbox message to its sink. The <span class="xref">Vulthil.SharedKernel.Outbox.OutboxProcessor</span> routes each row to the
+      <dd><p>Relays a fetched outbox message to its sink. The <span class="xref">Vulthil.SharedKernel.Outbox.OutboxRelayCycle</span> routes each row to the
 registered dispatcher whose <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html#Vulthil_SharedKernel_Outbox_IOutboxDispatcher_Handles_Vulthil_SharedKernel_Outbox_OutboxDestination_">Handles(OutboxDestination)</a> returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> for the row's
 <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxDestination.html">OutboxDestination</a>, so a single outbox table can feed several sinks (in-process domain events,
 broker publishes/sends) that coexist in one application.</p>
@@ -163,6 +163,12 @@ broker publishes/sends) that coexist in one application.</p>
 the relay until its delivery channel is ready — for example, the message-broker sink waits for the transport to
 declare its subscriber topology, so a relayed publish is not lost by being sent before the subscriber queues are
 bound. When no gate is registered the relay starts immediately.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html">IOutboxRelayUnit</a></dt>
+      <dd><p>The claim and record operations of one relay unit, bound to the transaction the store opened for it (see
+<a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html#Vulthil_SharedKernel_Outbox_IOutboxStore_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_">RunRelayUnitAsync&lt;TResult&gt;(Func&lt;IOutboxRelayUnit, CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)</a>).</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -191,7 +197,7 @@ Enums
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxDestination.html">OutboxDestination</a></dt>
-      <dd><p>Identifies the sink an outbox message is relayed to, so the <span class="xref">Vulthil.SharedKernel.Outbox.OutboxProcessor</span> can route each row to
+      <dd><p>Identifies the sink an outbox message is relayed to, so the <span class="xref">Vulthil.SharedKernel.Outbox.OutboxRelayCycle</span> can route each row to
 the matching <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html">IOutboxDispatcher</a>. One outbox table can carry messages bound for different sinks.</p>
 </dd>
     </dl>

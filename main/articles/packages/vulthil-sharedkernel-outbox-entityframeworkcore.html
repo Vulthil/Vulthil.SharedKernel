@@ -99,9 +99,9 @@ or to have a <code>DbContext</code> implement <code>ISaveOutboxMessages</code> w
 <h2 id="whats-here">What's here</h2>
 <ul>
 <li><code>ISaveOutboxMessages</code> — the <code>DbSet&lt;OutboxMessage&gt;</code> marker the application's <code>DbContext</code> implements.</li>
-<li><code>EntityFrameworkOutboxStore&lt;TContext&gt;</code> — the <code>IOutboxStore</code> implementation: the transactional relay batch unit
-(execution strategy, transaction, fetch, dispatch, mark, commit) plus the capture surface. Provider packages
-override fetch/mark/transaction for row-level locking and Cosmos best-effort behaviour.</li>
+<li><code>EntityFrameworkOutboxStore&lt;TContext&gt;</code> — the <code>IOutboxStore</code> implementation: the relay's transactional boundary
+(execution strategy, transaction, claim, record, commit; the engine dispatches) plus the capture surface. Provider
+packages override fetch/mark/transaction for row-level locking and Cosmos best-effort behaviour.</li>
 <li><code>DomainEventsToOutboxMessageSaveChangesInterceptor</code> / <code>IOutboxInterceptor</code> — domain-event capture.</li>
 <li><code>OutboxRelayWakeup</code> — wakes the relay once each time outbox rows a context inserted become durable: right after a
 save outside a transaction, or when the transaction that saved them commits (reported by a transaction-capable

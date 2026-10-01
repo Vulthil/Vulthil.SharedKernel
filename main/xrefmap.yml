@@ -9097,15 +9097,15 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore(Of TContext)
   nameWithType: CosmosOutboxStore<TContext>
   nameWithType.vb: CosmosOutboxStore(Of TContext)
-- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name: CosmosOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name.vb: New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
-  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>.CosmosOutboxStore(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore(Of TContext).New(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions))
-  nameWithType: CosmosOutboxStore<TContext>.CosmosOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  nameWithType.vb: CosmosOutboxStore(Of TContext).New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
+- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name: CosmosOutboxStore(TContext, TimeProvider)
+  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1__ctor__0_System_TimeProvider_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name.vb: New(TContext, TimeProvider)
+  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore<TContext>.CosmosOutboxStore(TContext, System.TimeProvider)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore(Of TContext).New(TContext, System.TimeProvider)
+  nameWithType: CosmosOutboxStore<TContext>.CosmosOutboxStore(TContext, TimeProvider)
+  nameWithType.vb: CosmosOutboxStore(Of TContext).New(TContext, TimeProvider)
 - uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor*
   name: CosmosOutboxStore
   href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Cosmos_OutboxProcessing_CosmosOutboxStore_1__ctor_
@@ -9564,15 +9564,15 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore(Of TContext)
   nameWithType: MySqlOutboxStore<TContext>
   nameWithType.vb: MySqlOutboxStore(Of TContext)
-- uid: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name: MySqlOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  href: api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name.vb: New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
-  fullName: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore(Of TContext).New(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions))
-  nameWithType: MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  nameWithType.vb: MySqlOutboxStore(Of TContext).New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
+- uid: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name: MySqlOutboxStore(TContext, TimeProvider)
+  href: api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1__ctor__0_System_TimeProvider_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name.vb: New(TContext, TimeProvider)
+  fullName: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext, System.TimeProvider)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore(Of TContext).New(TContext, System.TimeProvider)
+  nameWithType: MySqlOutboxStore<TContext>.MySqlOutboxStore(TContext, TimeProvider)
+  nameWithType.vb: MySqlOutboxStore(Of TContext).New(TContext, TimeProvider)
 - uid: Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor*
   name: MySqlOutboxStore
   href: api/Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1__ctor_
@@ -9663,15 +9663,15 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore(Of TContext)
   nameWithType: NpgsqlOutboxStore<TContext>
   nameWithType.vb: NpgsqlOutboxStore(Of TContext)
-- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name: NpgsqlOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_NpgsqlOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name.vb: New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
-  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>.NpgsqlOutboxStore(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore(Of TContext).New(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions))
-  nameWithType: NpgsqlOutboxStore<TContext>.NpgsqlOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  nameWithType.vb: NpgsqlOutboxStore(Of TContext).New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
+- uid: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name: NpgsqlOutboxStore(TContext, TimeProvider)
+  href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_NpgsqlOutboxStore_1__ctor__0_System_TimeProvider_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name.vb: New(TContext, TimeProvider)
+  fullName: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>.NpgsqlOutboxStore(TContext, System.TimeProvider)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore(Of TContext).New(TContext, System.TimeProvider)
+  nameWithType: NpgsqlOutboxStore<TContext>.NpgsqlOutboxStore(TContext, TimeProvider)
+  nameWithType.vb: NpgsqlOutboxStore(Of TContext).New(TContext, TimeProvider)
 - uid: Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore`1.#ctor*
   name: NpgsqlOutboxStore
   href: api/Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Npgsql_OutboxProcessing_NpgsqlOutboxStore_1__ctor_
@@ -9752,15 +9752,15 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext)
   nameWithType: RelationalOutboxStore<TContext>
   nameWithType.vb: RelationalOutboxStore(Of TContext)
-- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name: RelationalOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name.vb: New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
-  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.RelationalOutboxStore(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).New(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions))
-  nameWithType: RelationalOutboxStore<TContext>.RelationalOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  nameWithType.vb: RelationalOutboxStore(Of TContext).New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name: RelationalOutboxStore(TContext, TimeProvider)
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1__ctor__0_System_TimeProvider_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name.vb: New(TContext, TimeProvider)
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.RelationalOutboxStore(TContext, System.TimeProvider)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).New(TContext, System.TimeProvider)
+  nameWithType: RelationalOutboxStore<TContext>.RelationalOutboxStore(TContext, TimeProvider)
+  nameWithType.vb: RelationalOutboxStore(Of TContext).New(TContext, TimeProvider)
 - uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor*
   name: RelationalOutboxStore
   href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1__ctor_
@@ -9971,15 +9971,15 @@ references:
   fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext)
   nameWithType: EntityFrameworkOutboxStore<TContext>
   nameWithType.vb: EntityFrameworkOutboxStore(Of TContext)
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name: EntityFrameworkOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__
-  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})
-  name.vb: New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.EntityFrameworkOutboxStore(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions>)
-  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).New(TContext, System.TimeProvider, Microsoft.Extensions.Options.IOptions(Of Vulthil.SharedKernel.Outbox.OutboxProcessingOptions))
-  nameWithType: EntityFrameworkOutboxStore<TContext>.EntityFrameworkOutboxStore(TContext, TimeProvider, IOptions<OutboxProcessingOptions>)
-  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).New(TContext, TimeProvider, IOptions(Of OutboxProcessingOptions))
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name: EntityFrameworkOutboxStore(TContext, TimeProvider)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1__ctor__0_System_TimeProvider_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor(`0,System.TimeProvider)
+  name.vb: New(TContext, TimeProvider)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.EntityFrameworkOutboxStore(TContext, System.TimeProvider)
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).New(TContext, System.TimeProvider)
+  nameWithType: EntityFrameworkOutboxStore<TContext>.EntityFrameworkOutboxStore(TContext, TimeProvider)
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).New(TContext, TimeProvider)
 - uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor*
   name: EntityFrameworkOutboxStore
   href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1__ctor_
@@ -10128,24 +10128,24 @@ references:
   fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).OutboxMessages
   nameWithType: EntityFrameworkOutboxStore<TContext>.OutboxMessages
   nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).OutboxMessages
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)
-  name: ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>>, CancellationToken)
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_ProcessBatchAsync_System_Func_Vulthil_SharedKernel_Outbox_OutboxMessageData_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_String___System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)
-  name.vb: ProcessBatchAsync(Func(Of OutboxMessageData, CancellationToken, Task(Of String)), CancellationToken)
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.ProcessBatchAsync(System.Func<Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>>, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).ProcessBatchAsync(System.Func(Of Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task(Of String)), System.Threading.CancellationToken)
-  nameWithType: EntityFrameworkOutboxStore<TContext>.ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>>, CancellationToken)
-  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).ProcessBatchAsync(Func(Of OutboxMessageData, CancellationToken, Task(Of String)), CancellationToken)
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.ProcessBatchAsync*
-  name: ProcessBatchAsync
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_ProcessBatchAsync_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.ProcessBatchAsync
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.RunRelayUnitAsync*
+  name: RunRelayUnitAsync
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_RunRelayUnitAsync_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.RunRelayUnitAsync
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.ProcessBatchAsync
-  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).ProcessBatchAsync
-  nameWithType: EntityFrameworkOutboxStore<TContext>.ProcessBatchAsync
-  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).ProcessBatchAsync
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.RunRelayUnitAsync
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).RunRelayUnitAsync
+  nameWithType: EntityFrameworkOutboxStore<TContext>.RunRelayUnitAsync
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).RunRelayUnitAsync
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)
+  name: RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>>, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)
+  name.vb: RunRelayUnitAsync(Of TResult)(Func(Of IOutboxRelayUnit, CancellationToken, Task(Of TResult)), CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.RunRelayUnitAsync<TResult>(System.Func<Vulthil.SharedKernel.Outbox.IOutboxRelayUnit, System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).RunRelayUnitAsync(Of TResult)(System.Func(Of Vulthil.SharedKernel.Outbox.IOutboxRelayUnit, System.Threading.CancellationToken, System.Threading.Tasks.Task(Of TResult)), System.Threading.CancellationToken)
+  nameWithType: EntityFrameworkOutboxStore<TContext>.RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>>, CancellationToken)
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).RunRelayUnitAsync(Of TResult)(Func(Of IOutboxRelayUnit, CancellationToken, Task(Of TResult)), CancellationToken)
 - uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.SaveChangesAsync(System.Threading.CancellationToken)
   name: SaveChangesAsync(CancellationToken)
   href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_SaveChangesAsync_System_Threading_CancellationToken_
@@ -10366,6 +10366,44 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayGate.WaitUntilReadyAsync
   nameWithType: IOutboxRelayGate.WaitUntilReadyAsync
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit
+  name: IOutboxRelayUnit
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html
+  commentId: T:Vulthil.SharedKernel.Outbox.IOutboxRelayUnit
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit
+  nameWithType: IOutboxRelayUnit
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync(System.Int32,System.Int32,System.Threading.CancellationToken)
+  name: ClaimAsync(int, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html#Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_ClaimAsync_System_Int32_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync(System.Int32,System.Int32,System.Threading.CancellationToken)
+  name.vb: ClaimAsync(Integer, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync(int, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync(Integer, Integer, System.Threading.CancellationToken)
+  nameWithType: IOutboxRelayUnit.ClaimAsync(int, int, CancellationToken)
+  nameWithType.vb: IOutboxRelayUnit.ClaimAsync(Integer, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync*
+  name: ClaimAsync
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html#Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_ClaimAsync_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync
+  nameWithType: IOutboxRelayUnit.ClaimAsync
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.Threading.CancellationToken)
+  name: RecordAsync(IReadOnlyList<Guid>, IReadOnlyList<OutboxMessageFailure>, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html#Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_RecordAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.Threading.CancellationToken)
+  name.vb: RecordAsync(IReadOnlyList(Of Guid), IReadOnlyList(Of OutboxMessageFailure), Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync(System.Collections.Generic.IReadOnlyList<System.Guid>, System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageFailure>, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync(System.Collections.Generic.IReadOnlyList(Of System.Guid), System.Collections.Generic.IReadOnlyList(Of Vulthil.SharedKernel.Outbox.OutboxMessageFailure), Integer, System.Threading.CancellationToken)
+  nameWithType: IOutboxRelayUnit.RecordAsync(IReadOnlyList<Guid>, IReadOnlyList<OutboxMessageFailure>, int, CancellationToken)
+  nameWithType.vb: IOutboxRelayUnit.RecordAsync(IReadOnlyList(Of Guid), IReadOnlyList(Of OutboxMessageFailure), Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync*
+  name: RecordAsync
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html#Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_RecordAsync_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync
+  nameWithType: IOutboxRelayUnit.RecordAsync
 - uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
   name: IOutboxRetentionStore
   href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html
@@ -10452,22 +10490,22 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.IOutboxStore.IsInTransaction
   nameWithType: IOutboxStore.IsInTransaction
-- uid: Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)
-  name: ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>>, CancellationToken)
-  href: api/Vulthil.SharedKernel.Outbox.IOutboxStore.html#Vulthil_SharedKernel_Outbox_IOutboxStore_ProcessBatchAsync_System_Func_Vulthil_SharedKernel_Outbox_OutboxMessageData_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_String___System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)
-  name.vb: ProcessBatchAsync(Func(Of OutboxMessageData, CancellationToken, Task(Of String)), CancellationToken)
-  fullName: Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func<Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>>, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func(Of Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task(Of String)), System.Threading.CancellationToken)
-  nameWithType: IOutboxStore.ProcessBatchAsync(Func<OutboxMessageData, CancellationToken, Task<string?>>, CancellationToken)
-  nameWithType.vb: IOutboxStore.ProcessBatchAsync(Func(Of OutboxMessageData, CancellationToken, Task(Of String)), CancellationToken)
-- uid: Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync*
-  name: ProcessBatchAsync
-  href: api/Vulthil.SharedKernel.Outbox.IOutboxStore.html#Vulthil_SharedKernel_Outbox_IOutboxStore_ProcessBatchAsync_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync
+- uid: Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync*
+  name: RunRelayUnitAsync
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxStore.html#Vulthil_SharedKernel_Outbox_IOutboxStore_RunRelayUnitAsync_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync
-  nameWithType: IOutboxStore.ProcessBatchAsync
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync
+  nameWithType: IOutboxStore.RunRelayUnitAsync
+- uid: Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)
+  name: RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>>, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxStore.html#Vulthil_SharedKernel_Outbox_IOutboxStore_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)
+  name.vb: RunRelayUnitAsync(Of TResult)(Func(Of IOutboxRelayUnit, CancellationToken, Task(Of TResult)), CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync<TResult>(System.Func<Vulthil.SharedKernel.Outbox.IOutboxRelayUnit, System.Threading.CancellationToken, System.Threading.Tasks.Task<TResult>>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync(Of TResult)(System.Func(Of Vulthil.SharedKernel.Outbox.IOutboxRelayUnit, System.Threading.CancellationToken, System.Threading.Tasks.Task(Of TResult)), System.Threading.CancellationToken)
+  nameWithType: IOutboxStore.RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>>, CancellationToken)
+  nameWithType.vb: IOutboxStore.RunRelayUnitAsync(Of TResult)(Func(Of IOutboxRelayUnit, CancellationToken, Task(Of TResult)), CancellationToken)
 - uid: Vulthil.SharedKernel.Outbox.IOutboxStore.SaveChangesAsync(System.Threading.CancellationToken)
   name: SaveChangesAsync(CancellationToken)
   href: api/Vulthil.SharedKernel.Outbox.IOutboxStore.html#Vulthil_SharedKernel_Outbox_IOutboxStore_SaveChangesAsync_System_Threading_CancellationToken_

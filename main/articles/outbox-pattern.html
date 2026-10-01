@@ -196,6 +196,17 @@ running unprotected.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="dispatch-scope">Dispatch scope</h3>
+<p>Each relay cycle runs in its own DI scope, and the store opens the relay transaction on that scope's <code>DbContext</code>.</p>
+<ul>
+<li><strong>In sequence</strong> (the default), every message is dispatched in the relay's scope. The changes a handler saves and the
+messages it publishes transactionally join the relay transaction, so they commit together with the batch's processed
+marks, or roll back with them and the message is relayed again. A failed handler's unsaved changes also stay tracked
+on that shared <code>DbContext</code>, so the batch can save them; keep relayed handlers idempotent.</li>
+<li><strong>In parallel</strong> (<code>EnableParallelPublishing</code>), every message is dispatched in its own scope, so concurrent handlers
+never share the relay's <code>DbContext</code>. Their work is not part of the relay transaction: a handler saves its own
+changes, and a publish with no open transaction in its scope is sent directly.</li>
+</ul>
 <h2 id="observability">Observability</h2>
 <p>The relay emits an <code>ActivitySource</code> named <code>&quot;Vulthil.SharedKernel.Outbox&quot;</code> (exposed as <code>Telemetry.ActivitySourceName</code>). When <code>EnableTracing</code> is on (the default), each relayed message starts an <code>OutboxPublishing</code> span parented on the trace that captured the row — the originating trace is carried forward through the <code>OutboxMessage.TraceParent</code>/<code>TraceState</code> columns stamped at capture — so the relay, which runs later on its own background service, still correlates back to the request that produced the message.</p>
 <p><code>AddOutboxEngine</code> (called by <code>EnableOutboxProcessing</code>) registers the source with OpenTelemetry automatically when <code>EnableTracing</code> is on (the default), so the spans reach whatever tracer the application has configured without extra wiring. If you build a <code>TracerProviderBuilder</code> yourself, the same registration is available as <code>tracing.AddVulthilOutboxInstrumentation()</code> — sugar for <code>AddSource(Telemetry.ActivitySourceName)</code>.</p>
@@ -263,9 +274,24 @@ registering it with <code>UseOutboxStore&lt;TStore&gt;()</code>:</p>
 <p>The provider extensions propose their store with <code>UseDefaultOutboxStore&lt;TStore&gt;()</code>, which only takes effect when no
 store was selected, so <code>UseOutboxStore</code> wins wherever it sits in the chain. A custom provider package should call the
 same method instead of overwriting the application's selection.</p>
+<p>The store owns the relay's transactional boundary; the engine owns the relay cycle. The engine calls
+<code>RunRelayUnitAsync</code> once per cycle, and a store implements it like this:</p>
+<ol>
+<li>Open the transaction (inside the store's retrying execution strategy, if it uses one).</li>
+<li>Call the unit with an <code>IOutboxRelayUnit</code>. Its <code>ClaimAsync</code> fetches up to the requested number of pending messages
+below the retry limit, and locks them where the provider can. Its <code>RecordAsync</code> marks the relayed messages
+processed, records each failure, and dead-letters a message that reaches the retry limit.</li>
+<li>Commit when the unit returns.</li>
+</ol>
+<p>The engine decides the batch size, the dispatch (in sequence or in parallel, see <a href="#dispatch-scope">Dispatch scope</a>),
+the retry limit, and when the next cycle runs. A retrying execution strategy can run the unit more than once, so start
+each run from a clean state. Messages that an abandoned run already dispatched are dispatched again, which
+at-least-once delivery allows. Deriving from <code>EntityFrameworkOutboxStore&lt;TContext&gt;</code> gives you all of this; override
+<code>FetchMessagesAsync</code> for row locking, <code>UpdateMessagesAsync</code> for set-based marking, or <code>BeginTransactionAsync</code> for a
+provider without transactions.</p>
 <h2 id="one-outbox-multiple-sinks">One outbox, multiple sinks</h2>
 <p>The relay engine is sink-agnostic: each <code>OutboxMessage</code> carries an <code>OutboxDestination</code> discriminator, and the
-<code>OutboxProcessor</code> routes it to the registered <code>IOutboxDispatcher</code> whose <code>Handles(destination)</code> is true. The
+relay cycle routes it to the registered <code>IOutboxDispatcher</code> whose <code>Handles(destination)</code> is true. The
 in-process domain-event dispatcher is registered by default; other sinks plug in and coexist in the <strong>same</strong> outbox
 table and relay, so an application never carries more than one outbox table regardless of how many sinks it uses.</p>
 <h2 id="transactional-bus-publish-outbox">Transactional bus-publish outbox</h2>
@@ -325,9 +351,9 @@ provider enlistment edge cases.</p>
     ↓
 SaveChangesAsync  →  OutboxMessage row inserted (same transaction)
     ↓
-OutboxBackgroundService polls
+OutboxBackgroundService runs a relay cycle
     ↓
-OutboxProcessor deserialises &amp; publishes via IDomainEventPublisher
+Relay cycle claims a batch and dispatches each message (domain events via IDomainEventPublisher)
     ↓
 Message marked as processed (or retried on failure, then dead-lettered after MaxRetries)
 </code></pre>

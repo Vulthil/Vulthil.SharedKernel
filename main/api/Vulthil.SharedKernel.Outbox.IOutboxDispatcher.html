@@ -97,7 +97,7 @@ Interface IOutboxDispatcher  <a class="header-action link-secondary" title="View
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Outbox.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Relays a fetched outbox message to its sink. The <span class="xref">Vulthil.SharedKernel.Outbox.OutboxProcessor</span> routes each row to the
+  <div class="markdown summary"><p>Relays a fetched outbox message to its sink. The <span class="xref">Vulthil.SharedKernel.Outbox.OutboxRelayCycle</span> routes each row to the
 registered dispatcher whose <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxDispatcher.html#Vulthil_SharedKernel_Outbox_IOutboxDispatcher_Handles_Vulthil_SharedKernel_Outbox_OutboxDestination_">Handles(OutboxDestination)</a> returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> for the row's
 <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxDestination.html">OutboxDestination</a>, so a single outbox table can feed several sinks (in-process domain events,
 broker publishes/sends) that coexist in one application.</p>

@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1" class="text-break">
-Class RelationalOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L22"><i class="bi bi-code-slash"></i></a>
+Class RelationalOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -165,7 +165,7 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
       <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_SaveChangesAsync_System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.SaveChangesAsync(CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_ProcessBatchAsync_System_Func_Vulthil_SharedKernel_Outbox_OutboxMessageData_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_String___System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.ProcessBatchAsync(Func&lt;OutboxMessageData, CancellationToken, Task&lt;string&gt;&gt;, CancellationToken)</a>
+      <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.RunRelayUnitAsync&lt;TResult&gt;(Func&lt;IOutboxRelayUnit, CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.FetchMessagesAsync(int, int, CancellationToken)</a>
@@ -211,9 +211,9 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
 
   <a id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1__ctor_" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})">
-  RelationalOutboxStore(TContext, TimeProvider, IOptions&lt;OutboxProcessingOptions&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1__ctor__0_System_TimeProvider_" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.#ctor(`0,System.TimeProvider)">
+  RelationalOutboxStore(TContext, TimeProvider)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Outbox store for relational database providers. Records processed and failed messages with set-based
@@ -225,7 +225,7 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public RelationalOutboxStore(TContext dbContext, TimeProvider timeProvider, IOptions&lt;OutboxProcessingOptions&gt; options)</code></pre>
+    <pre><code class="lang-csharp hljs">public RelationalOutboxStore(TContext dbContext, TimeProvider timeProvider)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -233,8 +233,6 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
     <dt><code>dbContext</code> <span class="xref">TContext</span></dt>
     <dd></dd>
     <dt><code>timeProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeprovider">TimeProvider</a></dt>
-    <dd></dd>
-    <dt><code>options</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1">IOptions</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html">OutboxProcessingOptions</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -257,10 +255,10 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_BeginTransactionAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.BeginTransactionAsync(System.Threading.CancellationToken)">
   BeginTransactionAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Opens the transaction for the relay batch, requiring <code class="typeparamref">TContext</code> to support one.</p>
+  <div class="markdown level1 summary"><p>Opens the transaction for a relay unit, requiring <code class="typeparamref">TContext</code> to support one.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -302,7 +300,7 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)">
   DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L139"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Deletes up to <code class="paramref">batchSize</code> outbox rows that were processed or dead-lettered before
@@ -353,7 +351,7 @@ of one long-locking statement.</p>
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_FetchMessagesWithRowLockAsync_System_String_System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.FetchMessagesWithRowLockAsync(System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
   FetchMessagesWithRowLockAsync(string, int, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Fetches a batch of unprocessed messages with a raw <code>SELECT</code> that ends in <code class="paramref">rowLockClause</code>
@@ -412,7 +410,7 @@ dispatch order is deterministic. Provider stores call this from their
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.DateTimeOffset,System.Threading.CancellationToken)">
   UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, DateTimeOffset, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Records processed and failed messages, dead-lettering any that reach <code class="paramref">maxRetries</code>. The default
@@ -464,7 +462,7 @@ providers override this with set-based <code>ExecuteUpdate</code> calls.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L22" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Relational/OutboxProcessing/RelationalOutboxStore.cs/#L21" class="edit-link">Edit this page</a>
         </div>
 
 

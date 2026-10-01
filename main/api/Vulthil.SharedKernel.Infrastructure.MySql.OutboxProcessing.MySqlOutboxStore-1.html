@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1" class="text-break">
-Class MySqlOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L16"><i class="bi bi-code-slash"></i></a>
+Class MySqlOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -170,7 +170,7 @@ column names, so custom identifiers (a naming convention, <code>ToTable</code>, 
       <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_SaveChangesAsync_System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.SaveChangesAsync(CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_ProcessBatchAsync_System_Func_Vulthil_SharedKernel_Outbox_OutboxMessageData_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_String___System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.ProcessBatchAsync(Func&lt;OutboxMessageData, CancellationToken, Task&lt;string&gt;&gt;, CancellationToken)</a>
+      <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_">EntityFrameworkOutboxStore&lt;TContext&gt;.RunRelayUnitAsync&lt;TResult&gt;(Func&lt;IOutboxRelayUnit, CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -213,9 +213,9 @@ column names, so custom identifiers (a naming convention, <code>ToTable</code>, 
 
   <a id="Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1__ctor_" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1__ctor__0_System_TimeProvider_Microsoft_Extensions_Options_IOptions_Vulthil_SharedKernel_Outbox_OutboxProcessingOptions__" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})">
-  MySqlOutboxStore(TContext, TimeProvider, IOptions&lt;OutboxProcessingOptions&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1__ctor__0_System_TimeProvider_" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.#ctor(`0,System.TimeProvider)">
+  MySqlOutboxStore(TContext, TimeProvider)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>MySQL-optimized outbox store that fetches messages with <code>SELECT ... FOR UPDATE SKIP LOCKED</code> so multiple
@@ -226,7 +226,7 @@ column names, so custom identifiers (a naming convention, <code>ToTable</code>, 
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MySqlOutboxStore(TContext dbContext, TimeProvider timeProvider, IOptions&lt;OutboxProcessingOptions&gt; options)</code></pre>
+    <pre><code class="lang-csharp hljs">public MySqlOutboxStore(TContext dbContext, TimeProvider timeProvider)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -234,8 +234,6 @@ column names, so custom identifiers (a naming convention, <code>ToTable</code>, 
     <dt><code>dbContext</code> <span class="xref">TContext</span></dt>
     <dd></dd>
     <dt><code>timeProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeprovider">TimeProvider</a></dt>
-    <dd></dd>
-    <dt><code>options</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1">IOptions</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html">OutboxProcessingOptions</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -258,11 +256,11 @@ column names, so custom identifiers (a naming convention, <code>ToTable</code>, 
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_MySql_OutboxProcessing_MySqlOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing.MySqlOutboxStore`1.FetchMessagesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
   FetchMessagesAsync(int, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Fetches a batch of unprocessed messages. Providers override this to add row-level locking
-(e.g. <code>FOR UPDATE SKIP LOCKED</code>).</p>
+  <div class="markdown level1 summary"><p>Fetches a batch of unprocessed messages for a relay unit's claim. Providers override this to add row-level
+locking (e.g. <code>FOR UPDATE SKIP LOCKED</code>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -304,7 +302,7 @@ column names, so custom identifiers (a naming convention, <code>ToTable</code>, 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L16" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/OutboxProcessing/MySqlOutboxStore.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

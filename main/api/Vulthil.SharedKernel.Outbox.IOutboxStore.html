@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Outbox_IOutboxStore" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore" class="text-break">
-Interface IOutboxStore  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Interface IOutboxStore  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -125,10 +125,11 @@ packages; the engine itself takes no dependency on EF Core.</p>
 
 
   <h2 id="Vulthil_SharedKernel_Outbox_IOutboxStore_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>The store owns the whole relay batch unit — provider locking, the transactional boundary, fetching the pending
-rows, dispatching each, recording success/failure, and committing — so a relational implementation can run it
-inside an EF Core execution strategy. The capture members are used by message-bridge publish filters to enlist
-an outgoing message in the ambient business transaction.</p>
+  <div class="markdown level0 remarks"><p>The store owns the relay's transactional boundary — provider locking, the transaction, claiming pending rows,
+recording the outcomes, and committing — so a relational implementation can run it inside an EF Core execution
+strategy. The relay cycle itself (which batch to claim, how to dispatch it, and when to run again) belongs to the
+engine. The capture members are used by message-bridge publish filters to enlist an outgoing message in the ambient
+business transaction.</p>
 </div>
 
 
@@ -207,28 +208,27 @@ the message in the ambient business transaction; call <a class="xref" href="Vult
 
 
 
-  <a id="Vulthil_SharedKernel_Outbox_IOutboxStore_ProcessBatchAsync_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync*"></a>
+  <a id="Vulthil_SharedKernel_Outbox_IOutboxStore_RunRelayUnitAsync_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Outbox_IOutboxStore_ProcessBatchAsync_System_Func_Vulthil_SharedKernel_Outbox_OutboxMessageData_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_String___System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func{Vulthil.SharedKernel.Outbox.OutboxMessageData,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.String}},System.Threading.CancellationToken)">
-  ProcessBatchAsync(Func&lt;OutboxMessageData, CancellationToken, Task&lt;string?&gt;&gt;, CancellationToken)
+  <h3 id="Vulthil_SharedKernel_Outbox_IOutboxStore_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)">
+  RunRelayUnitAsync&lt;TResult&gt;(Func&lt;IOutboxRelayUnit, CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Processes one batch of pending outbox messages: fetches up to the configured batch size, invokes
-<code class="paramref">dispatch</code> for each, records the outcome (success, or the returned error with a retry
-increment), and commits — all within the store's transactional boundary.</p>
+  <div class="markdown level1 summary"><p>Runs one relay unit inside the store's transactional boundary: opens the transaction (inside any retrying
+execution strategy the store uses), invokes <code class="paramref">unit</code> with the claim and record operations of that
+transaction, and commits when the unit returns.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;int&gt; ProcessBatchAsync(Func&lt;OutboxMessageData, CancellationToken, Task&lt;string?&gt;&gt; dispatch, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;TResult&gt; RunRelayUnitAsync&lt;TResult&gt;(Func&lt;IOutboxRelayUnit, CancellationToken, Task&lt;TResult&gt;&gt; unit, CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>dispatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessageData.html">OutboxMessageData</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;&gt;</dt>
-    <dd><p>Delivers a single message; returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> on success, or an error description to record
-against the row as a failed attempt.</p>
+    <dt><code>unit</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html">IOutboxRelayUnit</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResult&gt;&gt;</dt>
+    <dd><p>The relay unit: claims a batch, dispatches it, and records the outcomes.</p>
 </dd>
     <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
     <dd><p>A token to observe for cancellation.</p>
@@ -237,10 +237,15 @@ against the row as a failed attempt.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
-    <dd><p>The number of messages <code class="paramref">dispatch</code> reported as successful. A caller uses this to decide
-whether more work is likely waiting (the count reaches the configured batch size) — a batch that included
-failures must not be mistaken for one that is exhausted.</p>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResult&gt;</dt>
+    <dd><p>The result of the unit's committed run.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TResult</code></dt>
+    <dd><p>The type of the unit's result.</p>
 </dd>
   </dl>
 
@@ -249,7 +254,11 @@ failures must not be mistaken for one that is exhausted.</p>
 
 
 
-
+  <h4 class="section" id="Vulthil_SharedKernel_Outbox_IOutboxStore_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A retrying execution strategy re-runs the whole unit after a transient failure, so <code class="paramref">unit</code> may be
+invoked more than once and must not carry state from one invocation to the next. Messages an abandoned run
+already dispatched are dispatched again, which the outbox's at-least-once delivery allows.</p>
+</div>
 
 
 
@@ -297,7 +306,7 @@ failures must not be mistaken for one that is exhausted.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxStore.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

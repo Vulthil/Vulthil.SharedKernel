@@ -240,8 +240,23 @@ via `ToCreatedAtRouteHttpResult`. Every failure returns one `ProblemHttpResult`:
 status from the [table above](#error-classifications) and the error's `Description` as `detail`. For a
 `Validation` error the body is an `HttpValidationProblemDetails` whose per-field `errors` dictionary is built from
 the `ValidationError`'s inner errors; for every other error type the error's `Code` appears as a key in the problem
-`extensions` (mapped to the description). A failed result and a bare `error.ToIResult()` produce the same body, and
-the minimal-API and MVC paths produce the same status and detail for the same error.
+`extensions` (mapped to the description). A failed result, a bare `error.ToIResult()` and a controller's
+`ToActionResult(this)` all send the same response for the same error: one builder creates the body, and the
+problem-details service completes it with `type`, `title`, `instance` and the trace identifiers.
+
+### Exceptions that carry an error
+
+`AddProblemDetailsHandling()` registers an exception handler for exceptions nothing else caught. An exception that
+implements `IHasError` is answered with the same problem response as a failed result with its error:
+
+- A `DomainException` carries the `Error` it was created with, so
+  `DomainException(Error.Conflict("User.AlreadyInactive", …))` gives `409 Conflict`.
+- The validation pipeline throws a `CommandValidationException` for a command that does not return a `Result`; it
+  carries the `ValidationError`, so the client gets the same `400` validation problem as a failed result.
+- An exception of your own can implement `IHasError` to be answered the same way.
+
+Every other exception is answered with a generic `500` whose body never includes the exception message. The handler
+logs a client error (`4xx`) at `Warning` and a server error at `Error`.
 
 ### Documenting the errors an endpoint can produce
 

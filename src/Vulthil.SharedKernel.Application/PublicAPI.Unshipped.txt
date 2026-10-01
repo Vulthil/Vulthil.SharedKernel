@@ -3,3 +3,6 @@
 *REMOVED*virtual Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>.Invoke(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<TResponse>!
 virtual Vulthil.SharedKernel.Application.Pipeline.DomainEventPipelineDelegate.Invoke(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 virtual Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>.Invoke(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TResponse>!
+Vulthil.SharedKernel.Application.CommandValidationException
+Vulthil.SharedKernel.Application.CommandValidationException.CommandValidationException(System.Collections.Generic.IEnumerable<FluentValidation.Results.ValidationFailure!>! failures) -> void
+Vulthil.SharedKernel.Application.CommandValidationException.Error.get -> Vulthil.Results.ValidationError!

@@ -45,33 +45,16 @@ public static class ResultHttpExtensions
     }
 
     /// <summary>
-    /// Converts an <see cref="Error"/> to an appropriate <see cref="IActionResult"/> based on the error type, producing
-    /// an RFC 7807 <see cref="ProblemDetails"/> body carrying the error's code and description for every non-validation
-    /// error type.
+    /// Converts an <see cref="Error"/> to an <see cref="IActionResult"/> that writes the same RFC 7807 problem response as
+    /// the minimal-API path (see <see cref="CustomResults.Problem"/>), so a controller and a minimal API endpoint answer
+    /// the same error with the same status and body.
     /// </summary>
     public static IActionResult ToActionResult(this Error error, ControllerBase controller)
     {
         ArgumentNullException.ThrowIfNull(error);
         ArgumentNullException.ThrowIfNull(controller);
 
-        if (error.Type != ErrorType.Validation)
-        {
-            return ProblemActionResult(error);
-        }
-
-        if (error is ValidationError validationError)
-        {
-            foreach (var innerError in validationError.Errors)
-            {
-                controller.ModelState.AddModelError(innerError.Code, innerError.Description);
-            }
-        }
-        else
-        {
-            controller.ModelState.AddModelError(error.Code, error.Description);
-        }
-
-        return controller.ValidationProblem();
+        return new ProblemHttpActionResult(CustomResults.Problem(error));
     }
 
     /// <summary>
@@ -169,27 +152,6 @@ public static class ResultHttpExtensions
     /// produces (see <see cref="CustomResults.Problem"/>).
     /// </summary>
     public static ProblemHttpResult ToIResult(this Error error) => CustomResults.Problem(error);
-
-    private static ObjectResult ProblemActionResult(Error error)
-    {
-        var statusCode = CustomResults.GetStatusCode(error.Type);
-
-        var problemDetails = new ProblemDetails
-        {
-            Detail = error.Description,
-            Status = statusCode
-        };
-
-        foreach (var entry in CustomResults.GetErrorsDictionary(error))
-        {
-            problemDetails.Extensions[entry.Key] = entry.Value;
-        }
-
-        return new ObjectResult(problemDetails)
-        {
-            StatusCode = statusCode
-        };
-    }
 }
 
 /// <summary>
@@ -202,8 +164,8 @@ public static class CustomResults
     /// <see cref="ErrorType"/> and the description as <c>detail</c>. A <see cref="ErrorType.Validation"/> error produces
     /// an <see cref="HttpValidationProblemDetails"/> body whose <c>errors</c> map lists each inner error by code; every
     /// other error type produces a <see cref="ProblemDetails"/> body carrying the error code as an extension. Every
-    /// failure path of the typed-result extensions goes through this method, so a failed result and a bare error yield
-    /// the same response.
+    /// failure path of the typed-result and action-result extensions goes through this method, so a failed result and a
+    /// bare error yield the same response on the minimal-API and the MVC path.
     /// </summary>
     /// <param name="error">The error to convert.</param>
     /// <returns>A <see cref="ProblemHttpResult"/> representing the problem response.</returns>
@@ -211,22 +173,42 @@ public static class CustomResults
     {
         ArgumentNullException.ThrowIfNull(error);
 
+        return TypedResults.Problem(CreateProblemDetails(error));
+    }
+
+    /// <summary>
+    /// Builds the problem body for an <see cref="Error"/> (see <see cref="Problem"/>). Every problem response for an
+    /// error starts from this body — a failed result, a bare error, and an exception that carries an error — and the
+    /// problem-details service completes it with the type, title, instance and trace identifiers.
+    /// </summary>
+    /// <param name="error">The error to convert.</param>
+    /// <returns>The problem body, with its <see cref="ProblemDetails.Status"/> set.</returns>
+    internal static ProblemDetails CreateProblemDetails(Error error)
+    {
         var errors = GetErrorsDictionary(error);
         var statusCode = GetStatusCode(error.Type);
 
         if (error.Type == ErrorType.Validation)
         {
-            return TypedResults.Problem(new HttpValidationProblemDetails(errors)
+            return new HttpValidationProblemDetails(errors)
             {
                 Detail = error.Description,
                 Status = statusCode,
-            });
+            };
         }
 
-        return TypedResults.Problem(
-            detail: error.Description,
-            statusCode: statusCode,
-            extensions: errors.ToDictionary(s => s.Key, s => (object?)s.Value));
+        var problemDetails = new ProblemDetails
+        {
+            Detail = error.Description,
+            Status = statusCode,
+        };
+
+        foreach (var (code, descriptions) in errors)
+        {
+            problemDetails.Extensions[code] = descriptions;
+        }
+
+        return problemDetails;
     }
 
     /// <summary>

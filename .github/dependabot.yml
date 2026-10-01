@@ -33,6 +33,7 @@ updates:
       # deliberate edit can move it across an EF major.
       - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
       - dependency-name: "Microsoft.AspNetCore.OpenApi"
+      - dependency-name: "Microsoft.AspNetCore.TestHost"
       - dependency-name: "Microsoft.EntityFrameworkCore*"
       # The Microting Pomelo fork floors Microsoft.EntityFrameworkCore.Relational at its own patch
       # level, so bumping it ahead of the hand-managed train is an NU1605 downgrade error; it moves

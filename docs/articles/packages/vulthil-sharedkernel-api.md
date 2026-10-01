@@ -68,7 +68,8 @@ public sealed class UsersController(ISender sender) : BaseController
 }
 ```
 
-Or use `IActionResult` with model-state error translation; `[ProducesError]` documents the problem responses here too:
+Or use `IActionResult`: `ToActionResult(this)` sends the same problem response as the minimal-API path, and
+`[ProducesError]` documents the problem responses here too:
 
 ```csharp
 public sealed class UsersController(ISender sender) : BaseController

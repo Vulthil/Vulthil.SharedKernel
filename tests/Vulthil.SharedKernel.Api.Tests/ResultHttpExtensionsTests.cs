@@ -117,7 +117,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
 
     [Theory]
     [MemberData(nameof(NonValidationErrors))]
-    public void ErrorToActionResultReturnsProblemObjectResultWithCodeAndDescription(Error error, int expectedStatusCode)
+    public void ErrorToActionResultReturnsTheProblemResultWithCodeAndDescription(Error error, int expectedStatusCode)
     {
         // Arrange
         var controller = CreateController();
@@ -126,15 +126,14 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var actionResult = error.ToActionResult(controller);
 
         // Assert
-        var objectResult = Assert.IsType<ObjectResult>(actionResult);
-        Assert.Equal(expectedStatusCode, objectResult.StatusCode);
-        var problemDetails = Assert.IsType<ProblemDetails>(objectResult.Value);
-        Assert.Equal(error.Description, problemDetails.Detail);
-        Assert.Contains(error.Code, problemDetails.Extensions.Keys);
+        var problem = ProblemOf(actionResult);
+        Assert.Equal(expectedStatusCode, problem.StatusCode);
+        Assert.Equal(error.Description, problem.ProblemDetails.Detail);
+        Assert.Contains(error.Code, problem.ProblemDetails.Extensions.Keys);
     }
 
     [Fact]
-    public void ErrorToActionResultOnValidationErrorReturnsValidationProblemWithFieldErrors()
+    public void ErrorToActionResultOnValidationErrorReturnsValidationProblemWithFieldErrorsAndDetail()
     {
         // Arrange
         var controller = CreateController();
@@ -144,28 +143,29 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var actionResult = validationError.ToActionResult(controller);
 
         // Assert
-        var objectResult = Assert.IsAssignableFrom<ObjectResult>(actionResult);
-        Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
-        var problemDetails = Assert.IsType<ValidationProblemDetails>(objectResult.Value);
+        var problem = ProblemOf(actionResult);
+        Assert.Equal(StatusCodes.Status400BadRequest, problem.StatusCode);
+        var problemDetails = Assert.IsType<HttpValidationProblemDetails>(problem.ProblemDetails);
         Assert.Contains("Entity.Field", problemDetails.Errors.Keys);
+        Assert.Equal(validationError.Description, problemDetails.Detail);
     }
 
     [Theory]
     [MemberData(nameof(NonValidationErrors))]
-    public void ToIResultAndToActionResultProduceTheSameStatusCodeAndDetailForTheSameError(Error error, int expectedStatusCode)
+    public void ToIResultAndToActionResultProduceTheSameProblemForTheSameError(Error error, int expectedStatusCode)
     {
         // Arrange
         var controller = CreateController();
 
         // Act
         var httpResult = error.ToIResult();
-        var actionResult = Assert.IsType<ObjectResult>(error.ToActionResult(controller));
-        var actionProblemDetails = Assert.IsType<ProblemDetails>(actionResult.Value);
+        var actionProblem = ProblemOf(error.ToActionResult(controller));
 
         // Assert
         Assert.Equal(expectedStatusCode, httpResult.StatusCode);
-        Assert.Equal(actionResult.StatusCode, httpResult.StatusCode);
-        Assert.Equal(actionProblemDetails.Detail, httpResult.ProblemDetails.Detail);
+        Assert.Equal(httpResult.StatusCode, actionProblem.StatusCode);
+        Assert.Equal(httpResult.ProblemDetails.Detail, actionProblem.ProblemDetails.Detail);
+        Assert.Equal(httpResult.ProblemDetails.Extensions.Keys, actionProblem.ProblemDetails.Extensions.Keys);
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
 
     [Theory]
     [MemberData(nameof(NonValidationErrors))]
-    public void ResultToActionResultOnFailureReturnsProblemObjectResultWithCodeAndDescription(Error error, int expectedStatusCode)
+    public void ResultToActionResultOnFailureReturnsTheProblemResultWithCodeAndDescription(Error error, int expectedStatusCode)
     {
         // Arrange
         var controller = CreateController();
@@ -194,10 +194,9 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var actionResult = result.ToActionResult(controller);
 
         // Assert
-        var objectResult = Assert.IsType<ObjectResult>(actionResult);
-        Assert.Equal(expectedStatusCode, objectResult.StatusCode);
-        var problemDetails = Assert.IsType<ProblemDetails>(objectResult.Value);
-        Assert.Equal(error.Description, problemDetails.Detail);
+        var problem = ProblemOf(actionResult);
+        Assert.Equal(expectedStatusCode, problem.StatusCode);
+        Assert.Equal(error.Description, problem.ProblemDetails.Detail);
     }
 
     [Fact]
@@ -217,7 +216,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
 
     [Theory]
     [MemberData(nameof(NonValidationErrors))]
-    public void ResultOfTToActionResultOnFailureReturnsProblemObjectResultWithCodeAndDescription(Error error, int expectedStatusCode)
+    public void ResultOfTToActionResultOnFailureReturnsTheProblemResultWithCodeAndDescription(Error error, int expectedStatusCode)
     {
         // Arrange
         var controller = CreateController();
@@ -227,8 +226,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var actionResult = result.ToActionResult(controller);
 
         // Assert
-        var objectResult = Assert.IsType<ObjectResult>(actionResult);
-        Assert.Equal(expectedStatusCode, objectResult.StatusCode);
+        Assert.Equal(expectedStatusCode, ProblemOf(actionResult).StatusCode);
     }
 
     [Fact]
@@ -274,7 +272,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
 
     [Theory]
     [MemberData(nameof(NonValidationErrors))]
-    public async Task ToActionResultAsyncOnFailureReturnsProblemObjectResultWithCodeAndDescription(Error error, int expectedStatusCode)
+    public async Task ToActionResultAsyncOnFailureReturnsTheProblemResultWithCodeAndDescription(Error error, int expectedStatusCode)
     {
         // Arrange
         var controller = CreateController();
@@ -284,8 +282,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var actionResult = await resultTask.ToActionResultAsync(controller);
 
         // Assert
-        var objectResult = Assert.IsType<ObjectResult>(actionResult);
-        Assert.Equal(expectedStatusCode, objectResult.StatusCode);
+        Assert.Equal(expectedStatusCode, ProblemOf(actionResult).StatusCode);
     }
 
     [Fact]
@@ -326,7 +323,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
 
     [Theory]
     [MemberData(nameof(NonValidationErrors))]
-    public async Task ToActionResultAsyncOfTOnFailureReturnsProblemObjectResultWithCodeAndDescription(Error error, int expectedStatusCode)
+    public async Task ToActionResultAsyncOfTOnFailureReturnsTheProblemResultWithCodeAndDescription(Error error, int expectedStatusCode)
     {
         // Arrange
         var controller = CreateController();
@@ -336,8 +333,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var actionResult = await resultTask.ToActionResultAsync(controller);
 
         // Assert
-        var objectResult = Assert.IsType<ObjectResult>(actionResult);
-        Assert.Equal(expectedStatusCode, objectResult.StatusCode);
+        Assert.Equal(expectedStatusCode, ProblemOf(actionResult).StatusCode);
     }
 
     [Fact]
@@ -548,6 +544,9 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
             return [.. endpointBuilder.Metadata];
         }
     }
+
+    private static ProblemHttpResult ProblemOf(IActionResult actionResult)
+        => Assert.IsType<ProblemHttpActionResult>(actionResult).Problem;
 
     private static TestController CreateController()
     {

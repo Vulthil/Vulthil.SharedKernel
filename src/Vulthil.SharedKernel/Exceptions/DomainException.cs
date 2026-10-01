@@ -3,9 +3,11 @@ using Vulthil.Results;
 namespace Vulthil.SharedKernel.Exceptions;
 
 /// <summary>
-/// Base exception for domain rule violations, carrying a structured <see cref="Error"/>.
+/// Base exception for domain rule violations, carrying a structured <see cref="Results.Error"/>. It implements
+/// <see cref="IHasError"/>, so the exception handler of <c>Vulthil.SharedKernel.Api</c> answers it with the problem
+/// response its error maps to — the same response a failed result with that error produces.
 /// </summary>
-public abstract class DomainException : Exception
+public abstract class DomainException : Exception, IHasError
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DomainException"/> class.

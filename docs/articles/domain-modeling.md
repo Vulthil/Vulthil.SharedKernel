@@ -98,4 +98,9 @@ public void Deactivate()
 }
 ```
 
+With `Vulthil.SharedKernel.Api`'s `AddProblemDetailsHandling()`, an uncaught `DomainException` is answered with the
+problem response its `Error` maps to — `409 Conflict` for the example above — the same response a failed result with
+that error produces. Create the error with `Error.Failure` when the violation should surface as a `500`. See
+[Result Pattern — Exceptions that carry an error](result-pattern.md#exceptions-that-carry-an-error).
+
 For expected business failures (e.g. "email already taken"), prefer returning a `Result` with an `Error` instead. See [Result Pattern](result-pattern.md).

@@ -11,3 +11,5 @@ static Vulthil.Results.ResultExtensions.ZipAsync<T1, T2>(this Vulthil.Results.Re
 static Vulthil.Results.ResultExtensions.ZipAsync<T1, T2, TOut>(this Vulthil.Results.Result<T1>! first, System.Threading.Tasks.Task<Vulthil.Results.Result<T2>!>! secondTask, System.Func<T1, T2, TOut>! selector) -> System.Threading.Tasks.Task<Vulthil.Results.Result<TOut>!>!
 Vulthil.Results.ErrorType.Forbidden = 6 -> Vulthil.Results.ErrorType
 Vulthil.Results.ErrorType.Unauthorized = 5 -> Vulthil.Results.ErrorType
+Vulthil.Results.IHasError
+Vulthil.Results.IHasError.Error.get -> Vulthil.Results.Error!

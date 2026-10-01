@@ -48,6 +48,9 @@ public static class UserErrors
 Factories: `Failure`, `Validation`, `Problem`, `NotFound`, `Conflict`, `Unauthorized`, `Forbidden`. Each carries an
 `ErrorType` that the API layer maps to an HTTP status.
 
+An exception that implements `IHasError` carries an `Error` too. The exception handler of `Vulthil.SharedKernel.Api`
+answers such an exception with the same problem response as a failed result with that error.
+
 ### Chaining with Bind, Map, Tap, and Match
 
 ```csharp

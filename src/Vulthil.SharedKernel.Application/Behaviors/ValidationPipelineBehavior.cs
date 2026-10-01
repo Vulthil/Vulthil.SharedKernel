@@ -11,7 +11,8 @@ namespace Vulthil.SharedKernel.Application.Behaviors;
 /// Pipeline behavior that runs FluentValidation validators before the command handler. On a validation failure it
 /// short-circuits the pipeline: a command returning <see cref="Result"/> or <see cref="Result{T}"/> receives a failed
 /// result carrying a <see cref="ValidationError"/>, whereas a command with any other response type throws a
-/// <see cref="ValidationException"/> — there is no in-band way to represent failure for a non-result response.
+/// <see cref="CommandValidationException"/> carrying the same error — there is no in-band way to represent failure for
+/// a non-result response.
 /// </summary>
 internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators) :
     IPipelineHandler<TCommand, TResponse>
@@ -33,15 +34,15 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
 
         if (ValidationFailureMethod is not null)
         {
-            return (TResponse)ValidationFailureMethod.Invoke(null, [CreateValidationError(validationFailures)])!;
+            return (TResponse)ValidationFailureMethod.Invoke(null, [ValidationFailureConversion.ToValidationError(validationFailures)])!;
         }
 
         if (typeof(TResponse) == typeof(Result))
         {
-            return (TResponse)(object)Result.Failure(CreateValidationError(validationFailures));
+            return (TResponse)(object)Result.Failure(ValidationFailureConversion.ToValidationError(validationFailures));
         }
 
-        throw new ValidationException(validationFailures);
+        throw new CommandValidationException(validationFailures);
     }
 
     private static MethodInfo? CreateValidationFailureMethod()
@@ -78,7 +79,4 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
 
         return validationFailures;
     }
-
-    private static ValidationError CreateValidationError(ValidationFailure[] validationFailures) =>
-        new(validationFailures.Select(f => Error.Validation(f.ErrorCode, f.ErrorMessage)));
 }

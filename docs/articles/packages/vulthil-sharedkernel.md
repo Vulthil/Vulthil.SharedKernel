@@ -72,3 +72,6 @@ public sealed class UserNotFoundException : DomainException
     { }
 }
 ```
+
+`DomainException` implements `IHasError`, so the exception handler of `Vulthil.SharedKernel.Api` answers it with the
+problem response its error maps to — here `404 Not Found`.

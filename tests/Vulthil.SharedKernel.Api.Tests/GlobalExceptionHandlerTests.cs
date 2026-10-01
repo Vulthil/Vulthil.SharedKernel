@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Vulthil.Results;
+using Vulthil.SharedKernel.Exceptions;
 using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Api.Tests;
@@ -41,6 +43,31 @@ public sealed class GlobalExceptionHandlerTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task TryHandleAsyncAnswersAnExceptionThatCarriesAnErrorWithTheProblemItsErrorMapsTo()
+    {
+        // Arrange
+        ProblemDetailsContext? capturedContext = null;
+        GetMock<IProblemDetailsService>()
+            .Setup(service => service.TryWriteAsync(It.IsAny<ProblemDetailsContext>()))
+            .Callback<ProblemDetailsContext>(context => capturedContext = context)
+            .ReturnsAsync(true);
+        var httpContext = new DefaultHttpContext();
+        var exception = new OrderLockedException();
+
+        // Act
+        var handled = await Target.TryHandleAsync(httpContext, exception, CancellationToken);
+
+        // Assert
+        Assert.True(handled);
+        Assert.Equal(StatusCodes.Status409Conflict, httpContext.Response.StatusCode);
+        Assert.NotNull(capturedContext);
+        Assert.Same(exception, capturedContext.Exception);
+        Assert.Equal(StatusCodes.Status409Conflict, capturedContext.ProblemDetails.Status);
+        Assert.Equal(OrderLockedException.Locked.Description, capturedContext.ProblemDetails.Detail);
+        Assert.Contains(OrderLockedException.Locked.Code, capturedContext.ProblemDetails.Extensions.Keys);
+    }
+
+    [Fact]
     public async Task TryHandleAsyncReturnsFalseWhenTheProblemDetailsServiceCannotWriteTheResponse()
     {
         // Arrange
@@ -64,5 +91,10 @@ public sealed class GlobalExceptionHandlerTests : BaseUnitTestCase
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(
             async () => await Target.TryHandleAsync(null!, new InvalidOperationException(), CancellationToken));
+    }
+
+    public sealed class OrderLockedException() : DomainException(Locked)
+    {
+        public static Error Locked { get; } = Error.Conflict("Order.Locked", "Order 7 is locked.");
     }
 }

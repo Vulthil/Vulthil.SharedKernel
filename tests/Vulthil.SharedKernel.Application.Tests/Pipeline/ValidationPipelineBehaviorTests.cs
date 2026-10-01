@@ -148,19 +148,27 @@ public sealed class ValidationPipelineBehaviorWithNonResultResponseTests : BaseU
     }
 
     [Fact]
-    public async Task WithInvalidRequestThrowsValidationException()
+    public async Task WithInvalidRequestThrowsAValidationExceptionCarryingTheFailuresAsAValidationError()
     {
         // Arrange
         var request = new TestCommandWithPlainResponse();
         _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<TestCommandWithPlainResponse>>(), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new ValidationResult(new List<ValidationFailure>
                     {
-                        new ValidationFailure("Name", "Name is required")
+                        new ValidationFailure("Name", "Name is required") { ErrorCode = "NotEmptyValidator" }
                     }));
         PipelineDelegate<string> next = _ => Task.FromResult("unused");
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ValidationException>(() => Target.HandleAsync(request, next, CancellationToken));
+        // Act
+        var exception = await Assert.ThrowsAsync<CommandValidationException>(() => Target.HandleAsync(request, next, CancellationToken));
+
+        // Assert
+        Assert.IsAssignableFrom<ValidationException>(exception);
+        Assert.Same(exception.Error, ((IHasError)exception).Error);
+        var failure = Assert.Single(exception.Error.Errors);
+        Assert.Equal("NotEmptyValidator", failure.Code);
+        Assert.Equal("Name is required", failure.Description);
+        Assert.Equal(ErrorType.Validation, failure.Type);
     }
 }
 

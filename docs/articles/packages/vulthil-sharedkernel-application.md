@@ -80,6 +80,10 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
 }
 ```
 
+A command that returns `Result` or `Result<T>` gets a failed result with a `ValidationError`. Any other command gets a
+`CommandValidationException`: a `ValidationException` that carries the same `ValidationError`, which
+`Vulthil.SharedKernel.Api` answers with a `400` validation problem.
+
 ### Sending requests
 
 ```csharp

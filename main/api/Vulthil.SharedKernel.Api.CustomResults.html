@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Api_CustomResults" data-uid="Vulthil.SharedKernel.Api.CustomResults" class="text-break">
-Class CustomResults  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L198"><i class="bi bi-code-slash"></i></a>
+Class CustomResults  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L160"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,15 +157,15 @@ Class CustomResults  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_" data-uid="Vulthil.SharedKernel.Api.CustomResults.Problem(Vulthil.Results.Error)">
   Problem(Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L172"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates the RFC 7807 problem response for an <a class="xref" href="Vulthil.Results.Error.html">Error</a>, with the status code mapped from its
 <a class="xref" href="Vulthil.Results.ErrorType.html">ErrorType</a> and the description as <code>detail</code>. A <a class="xref" href="Vulthil.Results.ErrorType.html#Vulthil_Results_ErrorType_Validation">Validation</a> error produces
 an <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpvalidationproblemdetails">HttpValidationProblemDetails</a> body whose <code>errors</code> map lists each inner error by code; every
 other error type produces a <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.problemdetails">ProblemDetails</a> body carrying the error code as an extension. Every
-failure path of the typed-result extensions goes through this method, so a failed result and a bare error yield
-the same response.</p>
+failure path of the typed-result and action-result extensions goes through this method, so a failed result and a
+bare error yield the same response on the minimal-API and the MVC path.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -201,7 +201,7 @@ the same response.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L198" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L160" class="edit-link">Edit this page</a>
         </div>
 
 

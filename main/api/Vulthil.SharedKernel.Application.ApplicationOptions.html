@@ -194,7 +194,7 @@ Class ApplicationOptions  <a class="header-action link-secondary" title="View so
 
   <h3 id="Vulthil_SharedKernel_Application_ApplicationOptions_AddOpenDomainEventPipelineHandler_System_Type_" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenDomainEventPipelineHandler(System.Type)">
   AddOpenDomainEventPipelineHandler(Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L190"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L191"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an open-generic domain event pipeline handler type.</p>
@@ -233,7 +233,7 @@ Class ApplicationOptions  <a class="header-action link-secondary" title="View so
 
   <h3 id="Vulthil_SharedKernel_Application_ApplicationOptions_AddOpenPipelineHandler_System_Type_" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenPipelineHandler(System.Type)">
   AddOpenPipelineHandler(Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an open-generic request pipeline handler type.</p>
@@ -305,7 +305,7 @@ Class ApplicationOptions  <a class="header-action link-secondary" title="View so
 
   <h3 id="Vulthil_SharedKernel_Application_ApplicationOptions_AddTransactionalPipelineBehavior" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddTransactionalPipelineBehavior">
   AddTransactionalPipelineBehavior()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L169"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds the transactional pipeline behavior that wraps transactional commands in a database transaction.</p>
@@ -338,13 +338,14 @@ Class ApplicationOptions  <a class="header-action link-secondary" title="View so
 
   <h3 id="Vulthil_SharedKernel_Application_ApplicationOptions_AddValidationPipelineBehavior" data-uid="Vulthil.SharedKernel.Application.ApplicationOptions.AddValidationPipelineBehavior">
   AddValidationPipelineBehavior()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/ApplicationOptions.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds the validation pipeline behavior that validates commands with FluentValidation before execution. On a
 validation failure, a command returning <a class="xref" href="Vulthil.Results.Result.html">Result</a> or <code>Result&lt;T&gt;</code> receives a
 failed result containing a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a>; a command with any other response type
-throws a <span class="xref">FluentValidation.ValidationException</span>.</p>
+throws a <a class="xref" href="Vulthil.SharedKernel.Application.CommandValidationException.html">CommandValidationException</a>, a <span class="xref">FluentValidation.ValidationException</span> that
+carries the same error.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

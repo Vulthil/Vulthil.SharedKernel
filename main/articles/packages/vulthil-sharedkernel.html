@@ -144,6 +144,8 @@ public sealed class User : AggregateRoot&lt;UserId&gt;
     { }
 }
 </code></pre>
+<p><code>DomainException</code> implements <code>IHasError</code>, so the exception handler of <code>Vulthil.SharedKernel.Api</code> answers it with the
+problem response its error maps to — here <code>404 Not Found</code>.</p>
 
 </article>
 

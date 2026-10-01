@@ -100,6 +100,15 @@ Classes
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.SharedKernel.Application.CommandValidationException.html">CommandValidationException</a></dt>
+      <dd><p>The <span class="xref">FluentValidation.ValidationException</span> the validation pipeline behavior throws when a command that does not return a
+<a class="xref" href="Vulthil.Results.Result.html">Result</a> fails validation, because such a command has no in-band way to report the failure. It carries
+the failures as a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> through <a class="xref" href="Vulthil.Results.IHasError.html">IHasError</a>, so the exception handler of
+<code>Vulthil.SharedKernel.Api</code> answers it with the same 400 validation problem a failed result produces. Code that
+catches <span class="xref">FluentValidation.ValidationException</span> keeps working.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Application.DependencyInjection.html">DependencyInjection</a></dt>
       <dd><p>Provides extension methods for registering application-layer services.</p>
 </dd>

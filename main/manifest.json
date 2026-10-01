@@ -1735,6 +1735,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Results.IHasError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Results.IHasError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Results.IHasError",
+      "Summary": "<p sourcefile=\"api/Vulthil.Results.IHasError.yml\" sourcestartlinenumber=\"1\">A type that carries a structured <xref href=\"Vulthil.Results.Error\" data-throw-if-not-resolved=\"false\"></xref>. The exception handler of\n<code>Vulthil.SharedKernel.Api</code> answers an exception that implements it with the problem response its error maps\nto — the same response a failed <xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> with that error produces.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Results.Result-1.yml",
       "output": {
         ".html": {
@@ -1984,6 +1998,20 @@
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Application.Behaviors",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Application.CommandValidationException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Application.CommandValidationException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Application.CommandValidationException",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Application.CommandValidationException.yml\" sourcestartlinenumber=\"1\">The <xref href=\"FluentValidation.ValidationException\" data-throw-if-not-resolved=\"false\"></xref> the validation pipeline behavior throws when a command that does not return a\n<xref href=\"Vulthil.Results.Result\" data-throw-if-not-resolved=\"false\"></xref> fails validation, because such a command has no in-band way to report the failure. It carries\nthe failures as a <xref href=\"Vulthil.Results.ValidationError\" data-throw-if-not-resolved=\"false\"></xref> through <xref href=\"Vulthil.Results.IHasError\" data-throw-if-not-resolved=\"false\"></xref>, so the exception handler of\n<code>Vulthil.SharedKernel.Api</code> answers it with the same 400 validation problem a failed result produces. Code that\ncatches <xref href=\"FluentValidation.ValidationException\" data-throw-if-not-resolved=\"false\"></xref> keeps working.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2431,7 +2459,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Exceptions.DomainException",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Exceptions.DomainException.yml\" sourcestartlinenumber=\"1\">Base exception for domain rule violations, carrying a structured <xref href=\"Vulthil.SharedKernel.Exceptions.DomainException.Error\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Exceptions.DomainException.yml\" sourcestartlinenumber=\"1\">Base exception for domain rule violations, carrying a structured <xref href=\"Vulthil.Results.Error\" data-throw-if-not-resolved=\"false\"></xref>. It implements\n<xref href=\"Vulthil.Results.IHasError\" data-throw-if-not-resolved=\"false\"></xref>, so the exception handler of <code>Vulthil.SharedKernel.Api</code> answers it with the problem\nresponse its error maps to — the same response a failed result with that error produces.</p>\n"
     },
     {
       "type": "ManagedReference",

@@ -142,7 +142,8 @@ app.MapOpenApiEndpoints();
     }
 }
 </code></pre>
-<p>Or use <code>IActionResult</code> with model-state error translation; <code>[ProducesError]</code> documents the problem responses here too:</p>
+<p>Or use <code>IActionResult</code>: <code>ToActionResult(this)</code> sends the same problem response as the minimal-API path, and
+<code>[ProducesError]</code> documents the problem responses here too:</p>
 <pre><code class="lang-csharp">public sealed class UsersController(ISender sender) : BaseController
 {
     [HttpGet(&quot;{id:guid}&quot;)]

@@ -160,9 +160,9 @@ Class ResultHttpExtensions  <a class="header-action link-secondary" title="View 
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Converts an <a class="xref" href="Vulthil.Results.Error.html">Error</a> to an appropriate <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult">IActionResult</a> based on the error type, producing
-an RFC 7807 <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.problemdetails">ProblemDetails</a> body carrying the error's code and description for every non-validation
-error type.</p>
+  <div class="markdown level1 summary"><p>Converts an <a class="xref" href="Vulthil.Results.Error.html">Error</a> to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult">IActionResult</a> that writes the same RFC 7807 problem response as
+the minimal-API path (see <a class="xref" href="Vulthil.SharedKernel.Api.CustomResults.html#Vulthil_SharedKernel_Api_CustomResults_Problem_Vulthil_Results_Error_">Problem(Error)</a>), so a controller and a minimal API endpoint answer
+the same error with the same status and body.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -198,7 +198,7 @@ error type.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToActionResult_Vulthil_Results_Result_Microsoft_AspNetCore_Mvc_ControllerBase_" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToActionResult(Vulthil.Results.Result,Microsoft.AspNetCore.Mvc.ControllerBase)">
   ToActionResult(Result, ControllerBase)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result.html">Result</a> to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult">IActionResult</a>, returning 204 No Content on success.</p>
@@ -320,7 +320,7 @@ error type.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToActionResult__1_Vulthil_Results_Result___0__Microsoft_AspNetCore_Mvc_ControllerBase_" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToActionResult``1(Vulthil.Results.Result{``0},Microsoft.AspNetCore.Mvc.ControllerBase)">
   ToActionResult&lt;T&gt;(Result&lt;T&gt;, ControllerBase)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult">IActionResult</a>, returning 200 OK with the value on success.</p>
@@ -364,7 +364,7 @@ error type.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToCreatedAtRouteHttpResult__1_Vulthil_Results_Result___0__System_String_System_Func___0_System_Object__" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToCreatedAtRouteHttpResult``1(Vulthil.Results.Result{``0},System.String,System.Func{``0,System.Object})">
   ToCreatedAtRouteHttpResult&lt;T&gt;(Result&lt;T&gt;, string?, Func&lt;T, object?&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L100"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a>: <code>201 Created</code> with the value and a
@@ -414,7 +414,7 @@ endpoint can produce with <a class="xref" href="Vulthil.SharedKernel.Api.Produce
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToIResult_Vulthil_Results_Error_" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToIResult(Vulthil.Results.Error)">
   ToIResult(Error)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L154"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts an <a class="xref" href="Vulthil.Results.Error.html">Error</a> to the same <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpresults.problemhttpresult">ProblemHttpResult</a> problem response a failed result
@@ -452,7 +452,7 @@ produces (see <a class="xref" href="Vulthil.SharedKernel.Api.CustomResults.html#
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToIResult_Vulthil_Results_Result_" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToIResult(Vulthil.Results.Result)">
   ToIResult(Result)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L138"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result.html">Result</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a>: <code>204 No Content</code> on success, otherwise the
@@ -493,7 +493,7 @@ those problem responses are documented.</p>
 
   <h3 id="Vulthil_SharedKernel_Api_ResultHttpExtensions_ToIResult__1_Vulthil_Results_Result___0__" data-uid="Vulthil.SharedKernel.Api.ResultHttpExtensions.ToIResult``1(Vulthil.Results.Result{``0})">
   ToIResult&lt;T&gt;(Result&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/ResultHttpExtensions.cs/#L119"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a <a class="xref" href="Vulthil.Results.Result-1.html">Result&lt;TValue&gt;</a> to a typed <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.iresult">IResult</a>: <code>200 OK</code> with the value on success,

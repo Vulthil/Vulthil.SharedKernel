@@ -433,8 +433,21 @@ via <code>ToCreatedAtRouteHttpResult</code>. Every failure returns one <code>Pro
 status from the <a href="#error-classifications">table above</a> and the error's <code>Description</code> as <code>detail</code>. For a
 <code>Validation</code> error the body is an <code>HttpValidationProblemDetails</code> whose per-field <code>errors</code> dictionary is built from
 the <code>ValidationError</code>'s inner errors; for every other error type the error's <code>Code</code> appears as a key in the problem
-<code>extensions</code> (mapped to the description). A failed result and a bare <code>error.ToIResult()</code> produce the same body, and
-the minimal-API and MVC paths produce the same status and detail for the same error.</p>
+<code>extensions</code> (mapped to the description). A failed result, a bare <code>error.ToIResult()</code> and a controller's
+<code>ToActionResult(this)</code> all send the same response for the same error: one builder creates the body, and the
+problem-details service completes it with <code>type</code>, <code>title</code>, <code>instance</code> and the trace identifiers.</p>
+<h3 id="exceptions-that-carry-an-error">Exceptions that carry an error</h3>
+<p><code>AddProblemDetailsHandling()</code> registers an exception handler for exceptions nothing else caught. An exception that
+implements <code>IHasError</code> is answered with the same problem response as a failed result with its error:</p>
+<ul>
+<li>A <code>DomainException</code> carries the <code>Error</code> it was created with, so
+<code>DomainException(Error.Conflict(&quot;User.AlreadyInactive&quot;, …))</code> gives <code>409 Conflict</code>.</li>
+<li>The validation pipeline throws a <code>CommandValidationException</code> for a command that does not return a <code>Result</code>; it
+carries the <code>ValidationError</code>, so the client gets the same <code>400</code> validation problem as a failed result.</li>
+<li>An exception of your own can implement <code>IHasError</code> to be answered the same way.</li>
+</ul>
+<p>Every other exception is answered with a generic <code>500</code> whose body never includes the exception message. The handler
+logs a client error (<code>4xx</code>) at <code>Warning</code> and a server error at <code>Error</code>.</p>
 <h3 id="documenting-the-errors-an-endpoint-can-produce">Documenting the errors an endpoint can produce</h3>
 <p>Which errors an endpoint can return depends on the handler behind it, so the type system cannot document them.
 The typed unions therefore contain only what is always true — the success member and <code>ProblemHttpResult</code> — and

@@ -126,6 +126,8 @@ Result&lt;User&gt; invalidUser = Result.ValidationFailure&lt;User&gt;(validation
 </code></pre>
 <p>Factories: <code>Failure</code>, <code>Validation</code>, <code>Problem</code>, <code>NotFound</code>, <code>Conflict</code>, <code>Unauthorized</code>, <code>Forbidden</code>. Each carries an
 <code>ErrorType</code> that the API layer maps to an HTTP status.</p>
+<p>An exception that implements <code>IHasError</code> carries an <code>Error</code> too. The exception handler of <code>Vulthil.SharedKernel.Api</code>
+answers such an exception with the same problem response as a failed result with that error.</p>
 <h3 id="chaining-with-bind-map-tap-and-match">Chaining with Bind, Map, Tap, and Match</h3>
 <pre><code class="lang-csharp">// Bind chains operations that return Result
 Result&lt;Order&gt; order = await GetUser(userId)

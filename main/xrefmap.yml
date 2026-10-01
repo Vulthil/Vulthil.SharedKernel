@@ -6172,6 +6172,25 @@ references:
   commentId: F:Vulthil.Results.ErrorType.Validation
   fullName: Vulthil.Results.ErrorType.Validation
   nameWithType: ErrorType.Validation
+- uid: Vulthil.Results.IHasError
+  name: IHasError
+  href: api/Vulthil.Results.IHasError.html
+  commentId: T:Vulthil.Results.IHasError
+  fullName: Vulthil.Results.IHasError
+  nameWithType: IHasError
+- uid: Vulthil.Results.IHasError.Error
+  name: Error
+  href: api/Vulthil.Results.IHasError.html#Vulthil_Results_IHasError_Error
+  commentId: P:Vulthil.Results.IHasError.Error
+  fullName: Vulthil.Results.IHasError.Error
+  nameWithType: IHasError.Error
+- uid: Vulthil.Results.IHasError.Error*
+  name: Error
+  href: api/Vulthil.Results.IHasError.html#Vulthil_Results_IHasError_Error_
+  commentId: Overload:Vulthil.Results.IHasError.Error
+  isSpec: "True"
+  fullName: Vulthil.Results.IHasError.Error
+  nameWithType: IHasError.Error
 - uid: Vulthil.Results.Result
   name: Result
   href: api/Vulthil.Results.Result.html
@@ -8320,6 +8339,44 @@ references:
   fullName.vb: Vulthil.SharedKernel.Application.Behaviors.TransactionalPipelineBehavior(Of TCommand, TResponse).HandleAsync
   nameWithType: TransactionalPipelineBehavior<TCommand, TResponse>.HandleAsync
   nameWithType.vb: TransactionalPipelineBehavior(Of TCommand, TResponse).HandleAsync
+- uid: Vulthil.SharedKernel.Application.CommandValidationException
+  name: CommandValidationException
+  href: api/Vulthil.SharedKernel.Application.CommandValidationException.html
+  commentId: T:Vulthil.SharedKernel.Application.CommandValidationException
+  fullName: Vulthil.SharedKernel.Application.CommandValidationException
+  nameWithType: CommandValidationException
+- uid: Vulthil.SharedKernel.Application.CommandValidationException.#ctor(System.Collections.Generic.IEnumerable{FluentValidation.Results.ValidationFailure})
+  name: CommandValidationException(IEnumerable<ValidationFailure>)
+  href: api/Vulthil.SharedKernel.Application.CommandValidationException.html#Vulthil_SharedKernel_Application_CommandValidationException__ctor_System_Collections_Generic_IEnumerable_FluentValidation_Results_ValidationFailure__
+  commentId: M:Vulthil.SharedKernel.Application.CommandValidationException.#ctor(System.Collections.Generic.IEnumerable{FluentValidation.Results.ValidationFailure})
+  name.vb: New(IEnumerable(Of ValidationFailure))
+  fullName: Vulthil.SharedKernel.Application.CommandValidationException.CommandValidationException(System.Collections.Generic.IEnumerable<FluentValidation.Results.ValidationFailure>)
+  fullName.vb: Vulthil.SharedKernel.Application.CommandValidationException.New(System.Collections.Generic.IEnumerable(Of FluentValidation.Results.ValidationFailure))
+  nameWithType: CommandValidationException.CommandValidationException(IEnumerable<ValidationFailure>)
+  nameWithType.vb: CommandValidationException.New(IEnumerable(Of ValidationFailure))
+- uid: Vulthil.SharedKernel.Application.CommandValidationException.#ctor*
+  name: CommandValidationException
+  href: api/Vulthil.SharedKernel.Application.CommandValidationException.html#Vulthil_SharedKernel_Application_CommandValidationException__ctor_
+  commentId: Overload:Vulthil.SharedKernel.Application.CommandValidationException.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.SharedKernel.Application.CommandValidationException.CommandValidationException
+  fullName.vb: Vulthil.SharedKernel.Application.CommandValidationException.New
+  nameWithType: CommandValidationException.CommandValidationException
+  nameWithType.vb: CommandValidationException.New
+- uid: Vulthil.SharedKernel.Application.CommandValidationException.Error
+  name: Error
+  href: api/Vulthil.SharedKernel.Application.CommandValidationException.html#Vulthil_SharedKernel_Application_CommandValidationException_Error
+  commentId: P:Vulthil.SharedKernel.Application.CommandValidationException.Error
+  fullName: Vulthil.SharedKernel.Application.CommandValidationException.Error
+  nameWithType: CommandValidationException.Error
+- uid: Vulthil.SharedKernel.Application.CommandValidationException.Error*
+  name: Error
+  href: api/Vulthil.SharedKernel.Application.CommandValidationException.html#Vulthil_SharedKernel_Application_CommandValidationException_Error_
+  commentId: Overload:Vulthil.SharedKernel.Application.CommandValidationException.Error
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Application.CommandValidationException.Error
+  nameWithType: CommandValidationException.Error
 - uid: Vulthil.SharedKernel.Application.Data
   name: Vulthil.SharedKernel.Application.Data
   href: api/Vulthil.SharedKernel.Application.Data.html

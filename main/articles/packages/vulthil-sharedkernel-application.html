@@ -153,6 +153,9 @@ public sealed class GetUserQueryHandler(IUserRepository users)
     }
 }
 </code></pre>
+<p>A command that returns <code>Result</code> or <code>Result&lt;T&gt;</code> gets a failed result with a <code>ValidationError</code>. Any other command gets a
+<code>CommandValidationException</code>: a <code>ValidationException</code> that carries the same <code>ValidationError</code>, which
+<code>Vulthil.SharedKernel.Api</code> answers with a <code>400</code> validation problem.</p>
 <h3 id="sending-requests">Sending requests</h3>
 <pre><code class="lang-csharp">var result = await sender.SendAsync(new CreateUserCommand(&quot;user@example.com&quot;), cancellationToken);
 </code></pre>

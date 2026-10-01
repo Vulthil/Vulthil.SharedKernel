@@ -186,6 +186,10 @@ public void Deactivate()
     IsActive = false;
 }
 </code></pre>
+<p>With <code>Vulthil.SharedKernel.Api</code>'s <code>AddProblemDetailsHandling()</code>, an uncaught <code>DomainException</code> is answered with the
+problem response its <code>Error</code> maps to — <code>409 Conflict</code> for the example above — the same response a failed result with
+that error produces. Create the error with <code>Error.Failure</code> when the violation should surface as a <code>500</code>. See
+<a href="result-pattern.html#exceptions-that-carry-an-error">Result Pattern — Exceptions that carry an error</a>.</p>
 <p>For expected business failures (e.g. &quot;email already taken&quot;), prefer returning a <code>Result</code> with an <code>Error</code> instead. See <a href="result-pattern.html">Result Pattern</a>.</p>
 
 </article>

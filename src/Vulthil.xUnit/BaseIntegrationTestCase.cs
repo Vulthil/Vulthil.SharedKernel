@@ -19,8 +19,10 @@ namespace Vulthil.xUnit;
 /// Supply the factory as an <see cref="IClassFixture{TFixture}"/> (or collection fixture) so its containers are
 /// started once and shared across the tests in that scope; database state is reset after each test. Tests that
 /// register no services share the fixture's test host; a test that registers services runs on a derived host built
-/// through <see cref="WebApplicationFactory{TEntryPoint}.WithWebHostBuilder"/>, disposed after the test. Application
-/// logs reach the currently running test through the factory's TestContext-routed logger.
+/// through <see cref="WebApplicationFactory{TEntryPoint}.WithWebHostBuilder"/>, disposed after the test. Both hosts use
+/// the fixture's databases and virtual hosts, so while the derived host runs, the shared host pauses its restartable
+/// hosted services (see <see cref="BaseWebApplicationFactory{TEntryPoint}"/>). Application logs reach the currently
+/// running test through the factory's TestContext-routed logger.
 /// </remarks>
 /// <typeparam name="TEntryPoint">The application's entry point type, typically <c>Program</c>.</typeparam>
 public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
@@ -123,7 +125,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     /// yourself (for example <c>FactoryFixture.WithWebHostBuilder(...)</c>) when the tests need other per-test host
     /// configuration; call <see cref="ConfigureTestCaseServices"/> from the builder's <c>ConfigureTestServices</c> to
     /// keep the registered doubles. A derived factory is disposed automatically after each test, and the post-test
-    /// reset always targets whichever factory this method returns, never an unrelated, never-built host.
+    /// reset covers every live host of the fixture without building one.
     /// </summary>
     /// <returns>The factory the current test should run against.</returns>
     protected virtual WebApplicationFactory<TEntryPoint> CreateFactory()
@@ -229,7 +231,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     }
 
     /// <summary>
-    /// Resets the host this test ran on (restartable services paused, resettable resources cleared), disposes the
+    /// Resets the fixture's live hosts (restartable services paused, resettable resources cleared), disposes the
     /// scope, the client and any per-test derived factory, then disposes everything the auto-mocker holds. Override
     /// (calling the base implementation) for further cleanup.
     /// </summary>
@@ -238,12 +240,10 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     {
         try
         {
-            // Only the factory this test actually ran on (Factory, e.g. a WithWebHostBuilder(...) clone of
-            // FactoryFixture) has the running host whose restartable services need pausing around the reset; a test
-            // that never touched Factory never built any host, so there is nothing to reset.
+            // A test that never touched Factory changed nothing, so there is nothing to reset.
             if (_lazyFactory.IsValueCreated)
             {
-                await FactoryFixture.ResetAsync(_lazyFactory.Value.Services).ConfigureAwait(false);
+                await FactoryFixture.ResetAsync().ConfigureAwait(false);
             }
         }
         finally

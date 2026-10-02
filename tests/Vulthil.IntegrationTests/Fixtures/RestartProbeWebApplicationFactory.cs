@@ -12,15 +12,17 @@ namespace Vulthil.IntegrationTests.Fixtures;
 /// <summary>
 /// Boots the test host against the shared PostgreSQL server only (the broker transport is swapped for the in-memory
 /// harness, same as <see cref="TestHarnessWebApplicationFactory"/>), and additionally registers a
-/// <see cref="RestartableProbe"/> that records every start/stop it observes into <see cref="Events"/>. Used to verify
-/// that resetting after a test pauses and resumes the host the test actually ran on, not an unrelated, never-built
-/// clone of this fixture.
+/// <see cref="RestartableProbe"/> that records every start/stop it observes into <see cref="Events"/>, tagged with the
+/// host: the first host this factory builds is <c>host1</c>, the next <c>host2</c>, and so on. Used to verify which
+/// hosts a reset and a live-host pause stop and start.
 /// </summary>
 public sealed class RestartProbeWebApplicationFactory(IntegrationTestContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost)
 {
+    private int _hostCount;
+
     /// <summary>
-    /// Gets the shared log of "start"/"stop" events recorded by every <see cref="RestartableProbe"/> this factory's
-    /// hosts (its own, or any <c>WithWebHostBuilder</c> clone of it) have registered.
+    /// Gets the shared log of <c>start:hostN</c>/<c>stop:hostN</c> events recorded by every <see cref="RestartableProbe"/>
+    /// this factory's hosts (its own, or any <c>WithWebHostBuilder</c> clone of it) have registered.
     /// </summary>
     public ConcurrentQueue<string> Events { get; } = new();
 
@@ -36,7 +38,7 @@ public sealed class RestartProbeWebApplicationFactory(IntegrationTestContainerHo
         builder.ConfigureServices(services =>
         {
             services.ReplaceTransportWithTestHarness();
-            services.AddSingleton<IHostedService>(new RestartableProbe(Events));
+            services.AddSingleton<IHostedService>(new RestartableProbe(Events, $"host{Interlocked.Increment(ref _hostCount)}"));
         });
     }
 }

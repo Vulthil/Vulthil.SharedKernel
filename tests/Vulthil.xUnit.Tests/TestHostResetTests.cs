@@ -30,6 +30,9 @@ public sealed class TestHostResetTests : BaseUnitTestCase
 
     private static readonly Func<CancellationToken, Task> Throw = _ => throw new InvalidOperationException("boom");
 
+    private Task ResetAsync(IServiceProvider host, IReadOnlyCollection<IResettableResource> resources) =>
+        Target.ResetAsync(TestHostReset.RestartableServicesOf(host), resources, host);
+
     public sealed class RecordingService(
         ICollection<string> log,
         string name,
@@ -81,7 +84,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new RecordingService(_log, "a"), new RecordingService(_log, "b"));
 
         // Act
-        await Target.ResetAsync(host, [new RecordingResource(_log, "db")]);
+        await ResetAsync(host, [new RecordingResource(_log, "db")]);
 
         // Assert
         _log.ShouldBe(["stop:a", "stop:b", "reset:db", "start:a", "start:b"]);
@@ -94,7 +97,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new PlainService(_log), new RecordingService(_log, "a"));
 
         // Act
-        await Target.ResetAsync(host, []);
+        await ResetAsync(host, []);
 
         // Assert
         _log.ShouldBe(["stop:a", "start:a"]);
@@ -107,7 +110,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new RecordingService(_log, "a", onStop: Throw), new RecordingService(_log, "b"));
 
         // Act
-        var exception = await Should.ThrowAsync<AggregateException>(() => Target.ResetAsync(host, [new RecordingResource(_log, "db")]));
+        var exception = await Should.ThrowAsync<AggregateException>(() => ResetAsync(host, [new RecordingResource(_log, "db")]));
 
         // Assert
         _log.ShouldBe(["stop:a", "stop:b", "reset:db", "start:b"]);
@@ -123,7 +126,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new RecordingService(_log, "a", onStart: Throw), new RecordingService(_log, "b"));
 
         // Act
-        var exception = await Should.ThrowAsync<AggregateException>(() => Target.ResetAsync(host, []));
+        var exception = await Should.ThrowAsync<AggregateException>(() => ResetAsync(host, []));
 
         // Assert
         _log.ShouldBe(["stop:a", "stop:b", "start:a", "start:b"]);
@@ -142,7 +145,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         ];
 
         // Act
-        var exception = await Should.ThrowAsync<AggregateException>(() => Target.ResetAsync(host, resources));
+        var exception = await Should.ThrowAsync<AggregateException>(() => ResetAsync(host, resources));
 
         // Assert
         _log.ShouldContain("reset:broken");
@@ -161,7 +164,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new RecordingService(_log, "stuck", onStop: _ => neverStops.Task), new RecordingService(_log, "b"));
 
         // Act
-        var reset = Target.ResetAsync(host, [new RecordingResource(_log, "db")]);
+        var reset = ResetAsync(host, [new RecordingResource(_log, "db")]);
         _timeProvider.Advance(TestHostReset.StepTimeout);
         var exception = await Should.ThrowAsync<AggregateException>(() => reset);
 
@@ -177,7 +180,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new RecordingService(_log, "slow", onStop: token => Task.Delay(Timeout.InfiniteTimeSpan, token)));
 
         // Act
-        var reset = Target.ResetAsync(host, []);
+        var reset = ResetAsync(host, []);
         _timeProvider.Advance(TestHostReset.StepTimeout);
         var exception = await Should.ThrowAsync<AggregateException>(() => reset);
 
@@ -193,6 +196,6 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith();
 
         // Act & Assert
-        await Should.NotThrowAsync(() => Target.ResetAsync(host, []));
+        await Should.NotThrowAsync(() => ResetAsync(host, []));
     }
 }

@@ -28,15 +28,12 @@ public sealed class FixtureResetRoutingTests(RestartProbeWebApplicationFactory f
         // Act — runs the same reset dance xUnit would run automatically at the end of this test.
         await DisposeAsync();
 
-        // Assert — the reset dance ran exactly once, on the one host this test built: an initial auto-start, then
-        // the reset's own stop/start pair. Trailing "stop" events beyond that come from the derived factory's own
-        // teardown disposing its host afterwards (unrelated to the reset) and are intentionally not asserted here.
-        // Exactly two "start" events total is the key signal: the pre-fix code additionally built (and
-        // auto-started) FactoryFixture's own, otherwise-unused host as a side effect of resetting through it
-        // directly instead of the host this test actually ran on.
+        // Assert — the reset ran on the one host this test built: an initial auto-start, then the reset's own
+        // stop/start pair; later events come from the derived factory's teardown. Every event belongs to that host, so
+        // resetting never builds FactoryFixture's own, otherwise-unused host.
         var events = ProbeFactory.Events.ToArray();
-        events.Take(3).ShouldBe(["start", "stop", "start"]);
-        events.Count(e => e == "start").ShouldBe(2);
+        events.Take(3).ShouldBe(["start:host1", "stop:host1", "start:host1"]);
+        events.ShouldAllBe(e => e.EndsWith(":host1", StringComparison.Ordinal));
     }
 
     /// <inheritdoc />

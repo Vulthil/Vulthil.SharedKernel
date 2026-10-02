@@ -17,26 +17,33 @@ namespace Vulthil.xUnit;
 /// ensures EF Core migrations are applied during host startup.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Register the containers once on a <see cref="ContainerHost"/> assembly fixture and pass it to the constructor; the
 /// factory then consumes every host container (filter with <see cref="ShouldUseContainer"/>) through a per-factory
 /// scope view — an isolated database, virtual host, ... — so test classes run in parallel against shared containers
 /// without interfering. Use a derived factory as an <see cref="IClassFixture{TFixture}"/> (or collection fixture) so
 /// its scopes are provisioned once and shared across the tests in that scope, while
 /// <see cref="BaseIntegrationTestCase{TEntryPoint}"/> resets database state between tests.
+/// </para>
+/// <para>
 /// Migrations run from an <see cref="IHostedService"/> registered at the front of the host's hosted-service list, so the
 /// schema exists before the application's own background services start. The migration step only applies migrations that
 /// are still pending and tolerates a concurrent migrator, so an application that migrates itself on startup keeps
 /// ownership and the factory never interferes with the application's own migration logic.
+/// </para>
+/// <para>
+/// Every host the factory builds — its own and each one derived through <c>WithWebHostBuilder</c> — uses the same scope
+/// views, so the same databases and virtual hosts. Only the newest live host runs its
+/// <c>IRestartableHostedService</c>s: while a derived host runs, the hosts before it pause their restartable services
+/// (for example the outbox relay and the message consumers), and they resume when the derived host stops.
+/// </para>
 /// </remarks>
-public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>, IAsyncLifetime, ITestHostMigrator
+public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>, IAsyncLifetime
     where TEntryPoint : class
 {
-    private readonly ContainerHost _containerHost;
-    private readonly HashSet<ITestContainer> _containers = [];
+    private readonly TestHostScope _scope;
     private readonly Dictionary<string, HttpMock> _httpMocks = [];
     private readonly List<Action<IServiceCollection>> _httpClientConfigurations = [];
-    private readonly TestHostReset _reset = new(TimeProvider.System);
-    private bool _initialized;
 
     /// <summary>
     /// Initializes a factory that consumes the shared containers of <paramref name="containerHost"/>.
@@ -45,20 +52,8 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     protected BaseWebApplicationFactory(ContainerHost containerHost)
     {
         ArgumentNullException.ThrowIfNull(containerHost);
-        _containerHost = containerHost;
+        _scope = new TestHostScope(containerHost, ShouldUseContainer, CreateScopeId, TimeProvider.System);
     }
-
-    private IEnumerable<ITestContainerWithConnectionString> ContainersWithConnectionStrings => _containers
-        .OfType<ITestContainerWithConnectionString>();
-
-    private IEnumerable<ITestDatabaseContainer> DatabaseContainers => _containers
-        .OfType<ITestDatabaseContainer>();
-
-    private IEnumerable<IResettableResource> ResettableResources => _containers
-        .OfType<IResettableResource>()
-        .Concat(_httpMocks.Values);
-
-    private IEnumerable<IStartupResource> StartupResources => _containers.OfType<IStartupResource>();
 
     /// <summary>
     /// Registers an in-process HTTP mock for the named <see cref="HttpClient"/> registered with
@@ -162,20 +157,19 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
                 IncludeScopes = true,
             })));
 
-        foreach (var container in ContainersWithConnectionStrings)
+        foreach (var (key, connectionString) in _scope.ConnectionStrings)
         {
-            var connectionString = container.ConnectionString;
-            builder.UseSetting($"ConnectionStrings:{container.ConnectionStringKey}", connectionString);
+            builder.UseSetting(key, connectionString);
         }
 
-        foreach (var container in _containers)
+        foreach (var container in _scope.Containers)
         {
             container.ConfigureWebHost(builder);
         }
 
         builder.ConfigureTestServices(services =>
         {
-            foreach (var container in _containers)
+            foreach (var container in _scope.Containers)
             {
                 container.ConfigureServices(services);
             }
@@ -185,8 +179,7 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
         builder.ConfigureServices(services =>
         {
-            services.Insert(0, ServiceDescriptor.Singleton<IHostedService>(
-                sp => new TestMigrationHostedService(this, sp)));
+            services.Insert(0, ServiceDescriptor.Singleton<IHostedService>(_scope.CreateHostLifecycle));
 
             foreach (var configureHttpClient in _httpClientConfigurations)
             {
@@ -200,38 +193,8 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     /// each of them in parallel. Invoked once by xUnit before the tests in scope run.
     /// </summary>
     /// <returns>A task representing the asynchronous startup work.</returns>
-    public async ValueTask InitializeAsync()
-    {
-        if (_initialized)
-        {
-            return;
-        }
-
-        await AcquireHostContainers().ConfigureAwait(false);
-        await Parallel.ForEachAsync(_containers, (container, ct) => container.InitializeAsync()).ConfigureAwait(false);
-        _initialized = true;
-    }
-
-    private async Task AcquireHostContainers()
-    {
-        var consumedContainers = _containerHost.Containers.Where(ShouldUseContainer).ToList();
-        await Parallel.ForEachAsync(consumedContainers, async (container, ct) => await _containerHost.EnsureStartedAsync(container).ConfigureAwait(false)).ConfigureAwait(false);
-
-        var scopeId = CreateScopeId();
-        foreach (var container in consumedContainers)
-        {
-#pragma warning disable CA2000 // Ownership transfers to _containers; scope views are disposed in DisposeAsync.
-            _containers.Add(CreateScopeView(container, scopeId));
-#pragma warning restore CA2000
-        }
-    }
-
-    private static ITestContainer CreateScopeView(ITestContainer container, string scopeId) => container switch
-    {
-        ITestContainerScopeProvider scopeProvider => scopeProvider.CreateScope(scopeId),
-        ITestContainerWithConnectionString withConnectionString => new TestContainerWithConnectionStringScope(withConnectionString),
-        _ => new TestContainerScope(container),
-    };
+    /// <exception cref="InvalidOperationException">Two consumed containers use the same connection string key.</exception>
+    public async ValueTask InitializeAsync() => await _scope.InitializeAsync().ConfigureAwait(false);
 
     /// <inheritdoc />
     public override async ValueTask DisposeAsync()
@@ -242,48 +205,15 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         // per-factory scopes. The containers themselves are owned by the ContainerHost and outlive the factory.
         await base.DisposeAsync().ConfigureAwait(false);
 
-        await Parallel.ForEachAsync(_containers, (container, ct) => container.DisposeAsync()).ConfigureAwait(false);
-    }
-
-    async Task ITestHostMigrator.PrepareAsync(IServiceProvider serviceProvider)
-    {
-        var scope = serviceProvider.CreateAsyncScope();
-        await using var _ = scope.ConfigureAwait(false);
-        await Parallel.ForEachAsync(DatabaseContainers, (container, ct) => container.MigrateDatabase(scope.ServiceProvider)).ConfigureAwait(false);
-        await Parallel.ForEachAsync(StartupResources, (resource, ct) => resource.InitializeAsync(serviceProvider)).ConfigureAwait(false);
+        await _scope.DisposeAsync().ConfigureAwait(false);
     }
 
     /// <summary>
-    /// Resets the given host's restartable services and this factory's registered resources. Accepts the host's
-    /// service provider explicitly so a caller running against a derived factory (for example one produced by
-    /// <c>WithWebHostBuilder(...)</c>) can pass that host's own <see cref="IServiceProvider"/> — resetting always
-    /// targets the host the caller actually ran the test against, never an unrelated, never-built host.
+    /// Resets the factory's scope between tests: pauses the restartable services of every running host built by this
+    /// factory (its own and any derived through <c>WithWebHostBuilder</c>), resets the scope's resources and the HTTP
+    /// mocks, then resumes the paused services. Does nothing when no host is live, so a test that built no host never
+    /// builds one just to reset it.
     /// </summary>
-    /// <param name="hostServices">The service provider of the host the test ran against.</param>
-    internal Task ResetAsync(IServiceProvider hostServices) => _reset.ResetAsync(hostServices, [.. ResettableResources]);
-}
-
-internal interface ITestHostMigrator
-{
-    Task PrepareAsync(IServiceProvider serviceProvider);
-}
-
-internal sealed class TestMigrationHostedService(ITestHostMigrator migrator, IServiceProvider serviceProvider) : IHostedService
-{
-    private bool _completed;
-
-    /// <inheritdoc />
-    public async Task StartAsync(CancellationToken cancellationToken)
-    {
-        if (_completed)
-        {
-            return;
-        }
-
-        await migrator.PrepareAsync(serviceProvider).ConfigureAwait(false);
-        _completed = true;
-    }
-
-    /// <inheritdoc />
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    /// <returns>A task that completes when every step has run.</returns>
+    internal Task ResetAsync() => _scope.ResetAsync([.. _httpMocks.Values]);
 }

@@ -116,12 +116,15 @@ Key features:
   the test runs on a per-test copy of the host with that service replaced. Register under the type the application
   resolves (`Use<IWeatherClient>(stub)`, not `Use(stub)`). A test that registers nothing runs on the shared host;
   registering after the host is built throws, so a test never silently runs against the real service. Outbound HTTP
-  has its own mock, see [below](#mocking-outbound-http-dependencies).
+  has its own mock, see [below](#mocking-outbound-http-dependencies). The per-test host uses the class's databases and
+  virtual hosts, so while it runs, the shared host pauses its restartable hosted services (see the reset below) and
+  resumes them after the test: the two hosts never compete for the same queue or the same database rows.
 - **Automatic database reset** – the database is reset with Respawn after each test, so tests sharing a factory
   start from a clean state. Hosted services implementing `IRestartableHostedService` (from
-  `Vulthil.Extensions.Hosting`) are stopped around the reset and restarted afterwards, so a database-polling relay such
-  as the outbox background service never contends with it, and the message consumers stop consuming until the reset
-  is done. Every stop, reset and restart step is bounded by its own
+  `Vulthil.Extensions.Hosting`) on every live host of the class are stopped around the reset and restarted afterwards,
+  so a database-polling relay such as the outbox background service never contends with it, and the message consumers
+  stop consuming until the reset is done. Only the newest live host runs those services at any time: a per-test host
+  pauses the hosts built before it until it stops. Every stop, reset and restart step is bounded by its own
   30-second timeout rather than the test's cancellation token, a failing step never skips the remaining ones, and all
   failures are reported together — a test that timed out still leaves a clean fixture for the next one.
 - **Log capture** – application logs are routed to the currently running test automatically (via `TestContext`). The
@@ -136,7 +139,7 @@ Key features:
 `Vulthil.xUnit` ships fixture base classes (in the `Vulthil.xUnit.Fixtures` namespace) that wrap [Testcontainers](https://testcontainers.com/) containers so you can spin up databases, message brokers, and other dependencies as Docker containers. There are three levels, depending on what the container needs to expose:
 
 - `TestContainerFixture<TBuilderEntity, TContainerEntity>` – a plain container with a managed lifecycle (`ITestContainer`).
-- `TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>` – adds a connection string that is injected into the host's configuration under `ConnectionStrings:{ConnectionStringKey}` (`ITestContainerWithConnectionString`). Give `ConnectionStringKey` the bare name (e.g. `"AppDb"`); the factory adds the `ConnectionStrings:` prefix.
+- `TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>` – adds a connection string that is injected into the host's configuration under `ConnectionStrings:{ConnectionStringKey}` (`ITestContainerWithConnectionString`). Give `ConnectionStringKey` the bare name (e.g. `"AppDb"`); the factory adds the `ConnectionStrings:` prefix. Every container a factory consumes needs its own key: when two consumed containers use the same key (compared case-insensitively, like configuration keys), the factory's `InitializeAsync` throws instead of letting one connection string overwrite the other.
 - `TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>` – adds EF Core migrations and Respawn-based data reset between tests (`ITestDatabaseContainer`).
 
 None of them needs constructor arguments. Pass an `IMessageSink` to route Testcontainers' own log output somewhere
@@ -229,6 +232,8 @@ Every container on the host is consumed automatically, so containers are managed
 - A factory that should not consume every host container overrides `ShouldUseContainer` (e.g. a factory that swaps the broker for the in-memory test harness consumes only the database container).
 
 The scope identifier defaults to the factory type name plus a random suffix (override `CreateScopeId()` to change it), so two classes using the same factory type still get distinct databases and virtual hosts.
+
+A scope lives as long as its factory: one test class. All tests of the class — and the per-test hosts they build — share its database and virtual host. The database is reset after each test, but the queues are not purged, so a message that one test leaves in a queue is delivered during the next test of the class. Wait for the messages a test publishes before the test ends.
 
 ### Mocking outbound HTTP dependencies
 

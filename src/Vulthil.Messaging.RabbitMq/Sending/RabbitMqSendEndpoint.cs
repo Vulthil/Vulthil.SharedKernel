@@ -47,29 +47,15 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
         configureContext ??= (_ => ValueTask.CompletedTask);
         await configureContext(publishContext).ConfigureAwait(false);
 
-        var type = message.GetType();
-        // MessageConfiguration<T>.CorrelationIdFormatter still applies; Exchange and RoutingKeyFormatter
-        // are intentionally ignored on the send path — the destination queue name is authoritative.
-        var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(type);
+        var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(message.GetType());
+        var send = RabbitMqOutgoingMessages.Send(message, publishContext, messageConfiguration, _queueName, _messageConfigurationProvider.JsonSerializerOptions);
 
-        var ids = RabbitMqWireMessageBuilder.ResolveIds(message, publishContext, messageConfiguration);
-
-        using var activity = RabbitMqWireMessageBuilder.StartProducerActivity(
-            $"{_queueName} send", "send", _queueName, _queueName, ids.UrnString, ids.MessageId, ids.CorrelationId);
-
-        var properties = RabbitMqWireMessageBuilder.CreateBaseProperties(ids.UrnString, ids.MessageId, publishContext.Headers);
-        properties.ReplyTo = RabbitMqAddress.ResolveRoutingKey(publishContext.ResponseAddress);
-        properties.CorrelationId = ids.CorrelationId;
-        properties.Persistent = true;
-
-        var body = RabbitMqWireMessageBuilder.SerializeEnvelope(
-            message, publishContext, ids.MessageId, ids.CorrelationId, ids.Urn, _messageConfigurationProvider.JsonSerializerOptions);
-
-        MessagingLog.Sending(_logger, ids.UrnString, _queueName, ids.MessageId, ids.CorrelationId);
+        using var activity = send.StartActivity();
+        MessagingLog.Sending(_logger, send.Ids.UrnString, _queueName, send.Ids.MessageId, send.Ids.CorrelationId);
 
         try
         {
-            await _publisher.InternalSendAsync(body, properties, _queueName, cancellationToken).ConfigureAwait(false);
+            await _publisher.InternalSendAsync(send.Message, cancellationToken).ConfigureAwait(false);
             activity?.SetStatus(ActivityStatusCode.Ok);
         }
         catch (Exception ex)

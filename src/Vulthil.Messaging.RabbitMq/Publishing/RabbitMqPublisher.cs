@@ -35,20 +35,16 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
     /// discarded if it faults.
     /// </remarks>
     public async Task InternalPublishAsync(
-        byte[] body,
-        BasicProperties props,
-        string routingKey,
+        RabbitMqOutgoingMessage message,
         MessageConfiguration messageConfiguration,
         CancellationToken cancellationToken)
     {
-        var exchange = messageConfiguration.Exchange;
-
         var channel = await _channelPool.LeaseAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            await EnsureExchangeTopologyAsync(channel, exchange, messageConfiguration, cancellationToken).ConfigureAwait(false);
+            await EnsureExchangeTopologyAsync(channel, message.Exchange, messageConfiguration, cancellationToken).ConfigureAwait(false);
 
-            await channel.BasicPublishAsync(exchange, routingKey, mandatory: false, props, body, cancellationToken).ConfigureAwait(false);
+            await PublishOnAsync(channel, message, cancellationToken).ConfigureAwait(false);
             _channelPool.Return(channel);
         }
         catch
@@ -64,15 +60,13 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
     /// destination queue makes the broker return the message and the awaited confirm throw a <c>PublishReturnException</c>.
     /// </remarks>
     public async Task InternalSendAsync(
-        byte[] body,
-        BasicProperties props,
-        string queueName,
+        RabbitMqOutgoingMessage message,
         CancellationToken cancellationToken)
     {
         var channel = await _channelPool.LeaseAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            await channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, mandatory: true, props, body, cancellationToken).ConfigureAwait(false);
+            await PublishOnAsync(channel, message, cancellationToken).ConfigureAwait(false);
             _channelPool.Return(channel);
         }
         catch
@@ -93,33 +87,16 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         var publishContext = new PublishContext();
         configureContext ??= (_ => ValueTask.CompletedTask);
         await configureContext(publishContext).ConfigureAwait(false);
-        var type = message.GetType();
 
-        var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(type);
+        var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(message.GetType());
+        var publish = RabbitMqOutgoingMessages.Publish(message, publishContext, messageConfiguration, _messageConfigurationProvider.JsonSerializerOptions);
 
-        var routingKey = publishContext.RoutingKey
-           ?? messageConfiguration.RoutingKeyFormatter?.Invoke(message)
-           ?? string.Empty;
-
-        var ids = RabbitMqWireMessageBuilder.ResolveIds(message, publishContext, messageConfiguration);
-        var exchange = messageConfiguration.Exchange;
-
-        using var activity = RabbitMqWireMessageBuilder.StartProducerActivity(
-            $"{exchange} publish", "publish", exchange, routingKey, ids.UrnString, ids.MessageId, ids.CorrelationId);
-
-        var properties = RabbitMqWireMessageBuilder.CreateBaseProperties(ids.UrnString, ids.MessageId, publishContext.Headers);
-        properties.ReplyTo = RabbitMqAddress.ResolveRoutingKey(publishContext.ResponseAddress);
-        properties.CorrelationId = ids.CorrelationId;
-        properties.Persistent = true;
-
-        var body = RabbitMqWireMessageBuilder.SerializeEnvelope(
-            message, publishContext, ids.MessageId, ids.CorrelationId, ids.Urn, _messageConfigurationProvider.JsonSerializerOptions);
-
-        MessagingLog.Publishing(_logger, ids.UrnString, exchange, routingKey, ids.MessageId);
+        using var activity = publish.StartActivity();
+        MessagingLog.Publishing(_logger, publish.Ids.UrnString, publish.Message.Exchange, publish.Message.RoutingKey, publish.Ids.MessageId);
 
         try
         {
-            await InternalPublishAsync(body, properties, routingKey, messageConfiguration, cancellationToken).ConfigureAwait(false);
+            await InternalPublishAsync(publish.Message, messageConfiguration, cancellationToken).ConfigureAwait(false);
             activity?.SetStatus(ActivityStatusCode.Ok);
         }
         catch (Exception ex)
@@ -129,6 +106,9 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
             throw;
         }
     }
+
+    private static ValueTask PublishOnAsync(IChannel channel, RabbitMqOutgoingMessage message, CancellationToken cancellationToken) =>
+        channel.BasicPublishAsync(message.Exchange, message.RoutingKey, message.Mandatory, message.Properties, message.Body, cancellationToken);
 
     private async ValueTask EnsureExchangeTopologyAsync(IChannel channel, string exchange, MessageConfiguration messageConfiguration, CancellationToken cancellationToken)
     {

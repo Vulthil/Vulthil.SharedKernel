@@ -120,7 +120,8 @@ Key features:
 - **Automatic database reset** – the database is reset with Respawn after each test, so tests sharing a factory
   start from a clean state. Hosted services implementing `IRestartableHostedService` (from
   `Vulthil.Extensions.Hosting`) are stopped around the reset and restarted afterwards, so a database-polling relay such
-  as the outbox background service never contends with it. Every stop, reset and restart step is bounded by its own
+  as the outbox background service never contends with it, and the message consumers stop consuming until the reset
+  is done. Every stop, reset and restart step is bounded by its own
   30-second timeout rather than the test's cancellation token, a failing step never skips the remaining ones, and all
   failures are reported together — a test that timed out still leaves a clean fixture for the next one.
 - **Log capture** – application logs are routed to the currently running test automatically (via `TestContext`). The

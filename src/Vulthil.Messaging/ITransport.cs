@@ -1,7 +1,7 @@
 namespace Vulthil.Messaging;
 
 /// <summary>
-/// Represents the message transport responsible for starting consumer connections.
+/// Represents the message transport responsible for starting and stopping message consumption.
 /// </summary>
 public interface ITransport
 {
@@ -21,4 +21,14 @@ public interface ITransport
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>A task that completes when the transport is ready to route published messages.</returns>
     Task WaitUntilReadyAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    /// <summary>
+    /// Stops message consumption. When the returned task completes, no new message is delivered and the messages that
+    /// were being handled have finished (a transport may bound that wait); messages that were not delivered stay with
+    /// the broker. A stopped transport consumes again after <see cref="StartAsync"/>. The default implementation does
+    /// nothing, for a transport without background consumers.
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>A task representing the asynchronous stop operation.</returns>
+    Task StopAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 }

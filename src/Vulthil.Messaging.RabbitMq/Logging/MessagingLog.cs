@@ -27,6 +27,10 @@ internal static partial class MessagingLog
         Message = "Declared queue '{Queue}' with {RegistrationCount} consumer registration(s)")]
     public static partial void QueueDeclared(ILogger logger, string queue, int registrationCount);
 
+    [LoggerMessage(EventId = 1003, Level = LogLevel.Information,
+        Message = "RabbitMQ bus stopped consuming")]
+    public static partial void BusStopped(ILogger logger);
+
     [LoggerMessage(EventId = 1100, Level = LogLevel.Debug,
         Message = "Consumer worker started: queue='{Queue}', channel={ChannelIndex}, prefetch={Prefetch}, concurrency={Concurrency}")]
     public static partial void WorkerStarted(ILogger logger, string queue, int channelIndex, ushort prefetch, ushort concurrency);

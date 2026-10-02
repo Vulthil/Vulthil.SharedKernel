@@ -97,6 +97,7 @@
     <Project Path="src/Vulthil.xUnit/Vulthil.xUnit.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Vulthil.Extensions.Hosting.Tests/Vulthil.Extensions.Hosting.Tests.csproj" />
     <Project Path="tests/Vulthil.Extensions.Retention.Tests/Vulthil.Extensions.Retention.Tests.csproj" />
     <Project Path="tests/Vulthil.Results.Tests/Vulthil.Results.Tests.csproj" />
   </Folder>

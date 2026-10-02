@@ -928,12 +928,18 @@ A transport is the glue between the broker and these primitives:
 
 | Concern | Primitive |
 |---|---|
-| Lifetime | `ITransport.StartAsync` — declare topology, then start consuming |
+| Lifetime | `ITransport.StartAsync` — declare topology, then start consuming; `ITransport.StopAsync` — stop consuming |
 | Execution plans | `MessageExecutionRegistry<DeliveryHandler>` + `DeliveryHandlerFactory` |
 | Delivery rules | `DeliveryDispatcher` + your `IDeliveryPort` |
 | Wire format | `MessageEnvelope` + `MessageEnvelopeFactory.Create` |
 | Receive context | `MessageContext.CreateFromEnvelope` |
 | RPC replies | `RpcReply` |
+
+The messaging consumer host calls `StartAsync` when the application starts and `StopAsync` when the consumer host
+stops: at shutdown, or when infrastructure such as `Vulthil.xUnit` pauses it around a test reset. After a stop, it
+can call `StartAsync` again. Implement `StopAsync` to stop consuming and wait for the deliveries being handled; leave
+undelivered messages with the broker. The default `StopAsync` does nothing, which suits a transport without
+background consumers.
 
 ### 1. Build execution plans
 

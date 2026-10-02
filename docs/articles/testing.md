@@ -9,7 +9,7 @@
 | `Vulthil.xUnit` | Base test classes, auto-mocking, `WebApplicationFactory` support, and Testcontainers integration |
 | `Vulthil.xUnit.Cosmos` | Azure Cosmos DB emulator fixture with a database per test class |
 | `Vulthil.Messaging.TestHarness` | In-memory messaging transport for asserting published/consumed messages |
-| `Vulthil.Extensions.Testing` | Framework-agnostic helpers — `Result`-based polling and HTTP response deserialization; no xUnit dependency |
+| `Vulthil.Extensions.Testing` | Framework-agnostic helpers — `Result`-based polling, HTTP response deserialization and the `IResettableTestState` contract; no xUnit dependency |
 
 ## Unit Tests
 
@@ -127,6 +127,9 @@ Key features:
   pauses the hosts built before it until it stops. Every stop, reset and restart step is bounded by its own
   30-second timeout rather than the test's cancellation token, a failing step never skips the remaining ones, and all
   failures are reported together — a test that timed out still leaves a clean fixture for the next one.
+- **Test double reset** – a test double that keeps state in the host's services, such as the
+  [messaging test harness](#messaging-test-harness), is reset after each test in the same pause when it implements
+  `IResettableTestState`. See [Resetting your own test doubles](#resetting-your-own-test-doubles).
 - **Log capture** – application logs are routed to the currently running test automatically (via `TestContext`). The
   `ITestOutputHelper` constructor parameter is for writing test output directly.
 - **One host per class** – all tests in a class run against the fixture's test host. Override `CreateFactory()`
@@ -278,6 +281,48 @@ public async Task Uses_external_forecast()
 
 Mock state is reset after each test (like the database), so stubs and captured requests never leak between tests. Under the hood the mock implements `IResettableResource`; database containers implement it too, and the test case resets every registered resettable resource in its teardown. A WireMock-based or other `IHttpMock` implementation can be substituted if you need richer matching, but the built-in mock has no external dependency.
 
+### Resetting your own test doubles
+
+A test double that keeps state in the test host's services — an in-memory email sender that records what it sent,
+a stub store — is reset after each test when it implements `IResettableTestState` (from `Vulthil.Extensions.Testing`)
+and is registered as one:
+
+```csharp
+public sealed class InMemoryEmailSender : IEmailSender, IResettableTestState
+{
+    private readonly ConcurrentQueue<Email> _sent = new();
+
+    public IReadOnlyCollection<Email> Sent => _sent;
+
+    public Task SendAsync(Email email, CancellationToken cancellationToken = default)
+    {
+        _sent.Enqueue(email);
+        return Task.CompletedTask;
+    }
+
+    public ValueTask ResetAsync(CancellationToken cancellationToken = default)
+    {
+        _sent.Clear();
+        return ValueTask.CompletedTask;
+    }
+}
+
+public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost)
+{
+    protected override void ConfigureCustomWebHost(IWebHostBuilder builder) => builder.ConfigureTestServices(services =>
+    {
+        services.AddSingleton<InMemoryEmailSender>();
+        services.AddSingleton<IEmailSender>(sp => sp.GetRequiredService<InMemoryEmailSender>());
+        services.AddSingleton<IResettableTestState>(sp => sp.GetRequiredService<InMemoryEmailSender>());
+    });
+}
+```
+
+After each test, the test case resets every `IResettableTestState` of every live host of the class. The reset runs
+in the same pause as the database reset and has the same 30-second bound; the token passed to `ResetAsync` is
+cancelled when the bound runs out. The reset runs after each test, not before it: what the host records while it
+starts, or while its background services restart after a reset, is visible to the test that runs next.
+
 ## Messaging Test Harness
 
 `Vulthil.Messaging.TestHarness` provides an in-memory transport that runs your consumers with no broker and
@@ -332,25 +377,28 @@ matching `CapturedMessage<T>` items — `.Message` is the payload, `.Envelope` t
 
 ### Resetting between tests
 
-`ITestHarness` is registered as a singleton, so a test class that reuses one host across several tests — a
-`WebApplicationFactory` supplied as a class fixture (see [Integration Tests](#integration-tests)), or a hand-built
-`IHost` kept in a field — leaves an earlier test's captured messages visible to the next one. Call `Clear()` from
-your per-test setup hook so each test starts from an empty capture log:
+`ITestHarness` is registered as a singleton, so one host keeps one harness for every test it serves. The harness is
+also registered as an `IResettableTestState`, so `BaseIntegrationTestCase` resets it after each test: it clears the
+captured messages and removes the `Handle`/`Respond` stubs (see
+[Resetting your own test doubles](#resetting-your-own-test-doubles)). A test needs no setup code for this.
+
+The reset runs after each test, so messages that the host publishes while it starts are visible to the first test
+that uses the host. To ignore them, assert on the ids the test used, or call `Clear()` in the test body after the
+test registers its doubles. Do not call it from `Initialize()`: resolving the harness there builds the host before
+the test can register its doubles.
+
+`Clear()` empties only the captured messages and keeps the stubs, for a test that asserts in phases. A host that you
+build yourself and keep across tests is not reset for you; reset it from your per-test teardown:
 
 ```csharp
-public sealed class OrdersTests(AppWebFactory factory)
-    : BaseIntegrationTestCase<Program>(factory), IClassFixture<AppWebFactory>
+foreach (var testState in host.Services.GetServices<IResettableTestState>())
 {
-    protected override ValueTask Initialize()
-    {
-        Factory.Services.GetRequiredService<ITestHarness>().Clear();
-        return base.Initialize();
-    }
+    await testState.ResetAsync(cancellationToken);
 }
 ```
 
 A harness resolved from a fresh host per test (a new `Host.CreateApplicationBuilder().Build()` in the constructor,
-disposed in teardown, as in the snippet above) needs no such call, since each test gets its own instance.
+disposed in teardown, as in the snippet above) needs no reset, since each test gets its own instance.
 
 ### Mocking responses
 

@@ -210,9 +210,10 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
     /// <summary>
     /// Resets the factory's scope between tests: pauses the restartable services of every running host built by this
-    /// factory (its own and any derived through <c>WithWebHostBuilder</c>), resets the scope's resources and the HTTP
-    /// mocks, then resumes the paused services. Does nothing when no host is live, so a test that built no host never
-    /// builds one just to reset it.
+    /// factory (its own and any derived through <c>WithWebHostBuilder</c>), resets the scope's resources, the HTTP
+    /// mocks and the <see cref="Vulthil.Extensions.Testing.IResettableTestState"/>s of every live host, then resumes the
+    /// paused services. Does nothing when no host is live, so a test that built no host never builds one just to reset
+    /// it.
     /// </summary>
     /// <returns>A task that completes when every step has run.</returns>
     internal Task ResetAsync() => _scope.ResetAsync([.. _httpMocks.Values]);

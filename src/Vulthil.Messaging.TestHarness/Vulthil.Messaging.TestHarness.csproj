@@ -6,6 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
 	  <ProjectReference Include="..\Vulthil.Messaging\Vulthil.Messaging.csproj" />
 	</ItemGroup>
 

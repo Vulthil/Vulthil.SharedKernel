@@ -23,6 +23,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Vulthil.Extensions.Hosting\Vulthil.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -46,4 +46,4 @@ Focused usage guidance for each package in `src`. Pick the page that matches the
 - [Vulthil.xUnit](vulthil-xunit.md) – reusable xUnit base classes, auto-mocking, containers, and HTTP mocks.
 - [Vulthil.xUnit.Cosmos](vulthil-xunit-cosmos.md) – Cosmos DB emulator fixture for `Vulthil.xUnit`.
 - [Vulthil.Messaging.TestHarness](vulthil-messaging-testharness.md) – in-memory messaging test harness.
-- [Vulthil.Extensions.Testing](vulthil-extensions-testing.md) – framework-agnostic polling and HTTP response helpers.
+- [Vulthil.Extensions.Testing](vulthil-extensions-testing.md) – framework-agnostic polling and HTTP response helpers, and the resettable test-state contract.

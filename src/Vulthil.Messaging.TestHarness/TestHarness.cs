@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
+using Vulthil.Extensions.Testing;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Transport;
 
@@ -15,9 +16,10 @@ internal delegate MessageEnvelope AdHocResponder(IServiceProvider scope, Message
 /// <summary>
 /// Default <see cref="ITestHarness"/>: a thread-safe in-memory log of produced/consumed messages plus the
 /// ad-hoc stubs registered through <see cref="Handle{TMessage}"/> and <see cref="Respond{TRequest, TResponse}"/>.
-/// Stubs are keyed by the message wire URN so the in-memory transport can match a delivery without a CLR type.
+/// Stubs are keyed by the message wire URN so the in-memory transport can match a delivery without a CLR type. As an
+/// <see cref="IResettableTestState"/>, a reset clears both the log and the stubs.
 /// </summary>
-internal sealed class TestHarness : ITestHarness
+internal sealed class TestHarness : ITestHarness, IResettableTestState
 {
     private readonly IMessageConfigurationProvider _provider;
 
@@ -58,6 +60,14 @@ internal sealed class TestHarness : ITestHarness
         _sent.Clear();
         _consumed.Clear();
         _requested.Clear();
+    }
+
+    public ValueTask ResetAsync(CancellationToken cancellationToken = default)
+    {
+        Clear();
+        _handlers.Clear();
+        _responders.Clear();
+        return ValueTask.CompletedTask;
     }
 
     internal void RecordPublished(object message, MessageEnvelope envelope) => _published.Enqueue(new RecordedMessage(message, envelope));

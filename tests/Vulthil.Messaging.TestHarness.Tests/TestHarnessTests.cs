@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Vulthil.Extensions.Testing;
 using Vulthil.Messaging;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
@@ -16,6 +17,7 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     private readonly IHost _host;
 
     private ITestHarness Harness => _host.Services.GetRequiredService<ITestHarness>();
+    private IResettableTestState TestState => _host.Services.GetRequiredService<IResettableTestState>();
     private IPublisher Publisher => _host.Services.GetRequiredService<IPublisher>();
     private IRequester Requester => _host.Services.GetRequiredService<IRequester>();
     private ISendEndpointProvider SendEndpointProvider => _host.Services.GetRequiredService<ISendEndpointProvider>();
@@ -208,6 +210,82 @@ public sealed class TestHarnessTests : BaseUnitTestCase
         Harness.Published<OrderCreated>().ShouldBeEmpty();
         Harness.Consumed<OrderCreated>().ShouldBeEmpty();
         Harness.Published<OrderShipped>().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ClearKeepsTheRegisteredStubs()
+    {
+        // Arrange
+        Harness.Respond<GetWeather, WeatherForecast>(context => new WeatherForecast(context.Message.City, ResponderTemperature));
+        Harness.Clear();
+
+        // Act
+        var result = await Requester.RequestAsync<GetWeather, WeatherForecast>(new GetWeather("Bergen"), CancellationToken);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.TemperatureC.ShouldBe(ResponderTemperature);
+    }
+
+    [Fact]
+    public void TheHarnessIsTheHostsOnlyResettableTestState()
+    {
+        // Act
+        var testStates = _host.Services.GetServices<IResettableTestState>();
+
+        // Assert
+        testStates.ShouldHaveSingleItem().ShouldBeSameAs(Harness);
+    }
+
+    [Fact]
+    public async Task ResettingTheTestStateClearsTheCapturedMessages()
+    {
+        // Arrange
+        await Publisher.PublishAsync(new OrderCreated(Guid.NewGuid()), CancellationToken);
+        Harness.Published<OrderCreated>().ShouldNotBeEmpty();
+
+        // Act
+        await TestState.ResetAsync(CancellationToken);
+
+        // Assert
+        Harness.Published<OrderCreated>().ShouldBeEmpty();
+        Harness.Consumed<OrderCreated>().ShouldBeEmpty();
+        Harness.Published<OrderShipped>().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ResettingTheTestStateRemovesTheHandleStubs()
+    {
+        // Arrange
+        var shippedIds = new List<Guid>();
+        Harness.Handle<OrderShipped>(context =>
+        {
+            shippedIds.Add(context.Message.Id);
+            return Task.CompletedTask;
+        });
+        await TestState.ResetAsync(CancellationToken);
+
+        // Act
+        await Publisher.PublishAsync(new OrderCreated(Guid.NewGuid()), CancellationToken);
+
+        // Assert
+        Harness.Published<OrderShipped>().ShouldHaveSingleItem();
+        shippedIds.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ResettingTheTestStateRemovesTheRespondStubsSoTheRequestConsumerAnswersAgain()
+    {
+        // Arrange
+        Harness.Respond<GetWeather, WeatherForecast>(context => new WeatherForecast(context.Message.City, ResponderTemperature));
+        await TestState.ResetAsync(CancellationToken);
+
+        // Act
+        var result = await Requester.RequestAsync<GetWeather, WeatherForecast>(new GetWeather("Bergen"), CancellationToken);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.TemperatureC.ShouldBe(GetWeatherConsumer.Temperature);
     }
 
     [Fact]

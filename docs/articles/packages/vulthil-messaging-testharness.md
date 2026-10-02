@@ -20,6 +20,8 @@ queue configuration that a real transport would.
   `Published<Fault<TMessage>>()`. As on the broker, the fault never reaches an `IConsumer<Fault<TMessage>>`. A
   request consumer's exception becomes a failed `Result<TResponse>` on the requesting side
 - Keep assertions on `ITestHarness` deterministic and explicit; `Clear()` between phases
+- `Vulthil.xUnit` resets the harness after each test: it clears the captured messages and removes the stubs (see
+  [Resetting between tests](../testing.md#resetting-between-tests))
 
 ## Usage
 

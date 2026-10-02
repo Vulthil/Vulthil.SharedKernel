@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Description>Framework-agnostic test helpers — Result-based polling (Polling.WaitAsync) for eventually-consistent checks and HTTP response JSON deserialization. No xUnit dependency; the xUnit-coupled test stack lives in Vulthil.xUnit.</Description>
-		<PackageTags>testing;polling;eventually-consistent;http;result;helpers</PackageTags>
+		<Description>Framework-agnostic test helpers — Result-based polling (Polling.WaitAsync) for eventually-consistent checks, HTTP response JSON deserialization, and the IResettableTestState contract for test-double state that a test framework resets after each test. No xUnit dependency; the xUnit-coupled test stack lives in Vulthil.xUnit.</Description>
+		<PackageTags>testing;polling;eventually-consistent;http;result;helpers;test-isolation</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

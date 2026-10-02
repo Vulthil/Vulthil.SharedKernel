@@ -73,6 +73,13 @@ public sealed class UserCreatedEventHandler : IDomainEventHandler<UserCreatedEve
 
 Domain event handlers are discovered automatically when you register the application layer with `AddApplication`.
 
+`IDomainEventPublisher` dispatches an event by its runtime type. Every handler for that type runs in registration
+order, inside the type's pipeline handlers, which wrap the whole set of handlers. A failed handler does not stop the
+others: once every handler has run, their failures are thrown together in one `AggregateException`, even when only
+one handler failed. When the caller's token is canceled, no further handler starts and the
+`OperationCanceledException` is thrown unwrapped — so the outbox relay stops cleanly at shutdown instead of recording a
+failure. A handler's own `OperationCanceledException` while the token is still live counts as an ordinary failure.
+
 ## Domain Events and the Outbox
 
 When `Vulthil.SharedKernel.Infrastructure` is configured with outbox processing, domain events raised by aggregate roots are serialised into `OutboxMessage` rows during `SaveChangesAsync`. A background service then publishes them, guaranteeing at-least-once delivery even if the process crashes after the database commit.

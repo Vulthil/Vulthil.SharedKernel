@@ -168,6 +168,12 @@ public sealed record UserEmailChangedEvent(UserId UserId, string NewEmail) : IDo
 }
 </code></pre>
 <p>Domain event handlers are discovered automatically when you register the application layer with <code>AddApplication</code>.</p>
+<p><code>IDomainEventPublisher</code> dispatches an event by its runtime type. Every handler for that type runs in registration
+order, inside the type's pipeline handlers, which wrap the whole set of handlers. A failed handler does not stop the
+others: once every handler has run, their failures are thrown together in one <code>AggregateException</code>, even when only
+one handler failed. When the caller's token is canceled, no further handler starts and the
+<code>OperationCanceledException</code> is thrown unwrapped — so the outbox relay stops cleanly at shutdown instead of recording a
+failure. A handler's own <code>OperationCanceledException</code> while the token is still live counts as an ordinary failure.</p>
 <h2 id="domain-events-and-the-outbox">Domain Events and the Outbox</h2>
 <p>When <code>Vulthil.SharedKernel.Infrastructure</code> is configured with outbox processing, domain events raised by aggregate roots are serialised into <code>OutboxMessage</code> rows during <code>SaveChangesAsync</code>. A background service then publishes them, guaranteeing at-least-once delivery even if the process crashes after the database commit.</p>
 <p>See <a href="outbox-pattern.html">Outbox Pattern</a> for configuration details.</p>

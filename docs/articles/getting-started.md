@@ -19,7 +19,7 @@ The packages are organised into layers so you can adopt only what you need:
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.MySql` | MySQL provider integration (`UseMySql`) |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.Cosmos` | Azure Cosmos DB provider integration (`UseCosmosDb`) |
 | API | `Vulthil.SharedKernel.Api` | Minimal API endpoint conventions and `Result` → HTTP mapping |
-| Hosting | `Vulthil.Extensions.Hosting` | `IRestartableHostedService` marker for cleanly pausable hosted services |
+| Hosting | `Vulthil.Extensions.Hosting` | `IRestartableHostedService` marker and `RestartableBackgroundService` base for cleanly pausable hosted services |
 | Messaging | `Vulthil.Messaging.Abstractions` | Transport-agnostic consumer and publisher contracts |
 | Messaging | `Vulthil.Messaging` | Queue/consumer registration, hosted orchestration, and the transport SDK |
 | Messaging | `Vulthil.Messaging.RabbitMq` | RabbitMQ transport implementation |

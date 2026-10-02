@@ -1,30 +1,35 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Vulthil.Extensions.Hosting;
 
 namespace Vulthil.Messaging;
 
 /// <summary>
-/// Hosts the message <see cref="ITransport"/> for the lifetime of the application, starting the transport (and its
-/// consumers) on startup.
+/// Hosts the message <see cref="ITransport"/> for the lifetime of the application: each generation starts the
+/// transport (and its consumers) and stops it again when the service stops. It derives from
+/// <see cref="RestartableBackgroundService"/>, so infrastructure (such as a test harness resetting the database) can
+/// pause message consumption and resume it.
 /// </summary>
 /// <remarks>
-/// Transport startup is retried with capped exponential backoff until it succeeds or the host stops, because a broker
-/// that is still coming up is a transient infrastructure condition rather than a reason to fault the host. The host's
-/// <c>BackgroundServiceExceptionBehavior</c> is left untouched, so a genuine fault raised once the transport is running
-/// still surfaces and stops the host as usual.
 /// <para>
-/// The generic host swallows exceptions thrown from inside <see cref="BackgroundService.ExecuteAsync"/> — even ones
-/// thrown synchronously before the first await — logging them and stopping the host without ever propagating them out
-/// of <c>IHost.StartAsync</c>. A hosted service constructor throwing is not subject to that: it fails DI resolution
-/// directly, so <c>IHost.StartAsync</c> throws it as-is. The clear "no transport registered" error therefore still
-/// needs to fire from the constructor to surface synchronously; it does so via <see cref="IServiceProviderIsService"/>,
+/// Transport startup is retried with capped exponential backoff until it succeeds or the service stops, because a
+/// broker that is still coming up is a transient infrastructure condition rather than a reason to fault the host.
+/// </para>
+/// <para>
+/// A generation stops the transport it started before it ends, and the next start waits for the previous generation,
+/// so a restart never starts the transport while the previous stop is still running.
+/// </para>
+/// <para>
+/// A hosted service constructor that throws fails DI resolution directly, so <c>IHost.StartAsync</c> throws it as-is,
+/// while a failure inside a generation never propagates out of <c>IHost.StartAsync</c>. The clear "no transport
+/// registered" error therefore fires from the constructor; it does so via <see cref="IServiceProviderIsService"/>,
 /// which answers whether <see cref="ITransport"/> is registered without constructing one. The transport instance
 /// itself is resolved lazily, inside the retry loop, so a transport whose construction depends on an unreachable
 /// resource (such as a broker connection) is treated as a retryable startup failure instead.
 /// </para>
 /// </remarks>
-internal sealed class ConsumerHostedService : BackgroundService
+internal sealed class ConsumerHostedService : RestartableBackgroundService
 {
     private const string NoTransportRegisteredMessage =
         "No messaging transport is registered. Call a transport extension such as .UseRabbitMq(...) " +
@@ -35,13 +40,14 @@ internal sealed class ConsumerHostedService : BackgroundService
 
     private readonly IServiceProvider _serviceProvider;
     private readonly TimeProvider _timeProvider;
-    private readonly ILogger<ConsumerHostedService> _logger;
 
     public ConsumerHostedService(
         IServiceProvider serviceProvider,
         IServiceProviderIsService serviceProviderIsService,
         TimeProvider timeProvider,
+        IHostApplicationLifetime applicationLifetime,
         ILogger<ConsumerHostedService> logger)
+        : base(applicationLifetime, logger)
     {
         if (!serviceProviderIsService.IsService(typeof(ITransport)))
         {
@@ -50,10 +56,25 @@ internal sealed class ConsumerHostedService : BackgroundService
 
         _serviceProvider = serviceProvider;
         _timeProvider = timeProvider;
-        _logger = logger;
     }
 
+    /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        if (await StartTransportAsync(stoppingToken).ConfigureAwait(false) is not { } transport)
+        {
+            return;
+        }
+
+        await Task.Delay(Timeout.Infinite, stoppingToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        await StopTransportAsync(transport).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Starts the transport, retrying a failed start until it succeeds. Returns the started transport, or
+    /// <see langword="null"/> when the service is stopped before a start succeeds.
+    /// </summary>
+    private async Task<ITransport?> StartTransportAsync(CancellationToken stoppingToken)
     {
         var retryDelay = InitialRetryDelay;
 
@@ -61,24 +82,43 @@ internal sealed class ConsumerHostedService : BackgroundService
         {
             try
             {
-                await ResolveTransport().StartAsync(stoppingToken).ConfigureAwait(false);
-                return;
+                var transport = ResolveTransport();
+                await transport.StartAsync(stoppingToken).ConfigureAwait(false);
+                return transport;
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
-                return;
+                return null;
             }
             catch (Exception exception)
             {
-                ConsumerLog.TransportStartFailed(_logger, retryDelay.TotalSeconds, exception);
+                ConsumerLog.TransportStartFailed(Logger, retryDelay.TotalSeconds, exception);
             }
 
             if (!await TryDelayAsync(retryDelay, stoppingToken).ConfigureAwait(false))
             {
-                return;
+                return null;
             }
 
             retryDelay = NextRetryDelay(retryDelay);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Stops the transport this generation started. A failed stop is logged instead of faulting the service, so a
+    /// shutdown or a pause still completes.
+    /// </summary>
+    private async Task StopTransportAsync(ITransport transport)
+    {
+        try
+        {
+            await transport.StopAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            ConsumerLog.TransportStopFailed(Logger, exception);
         }
     }
 
@@ -118,4 +158,8 @@ internal static partial class ConsumerLog
     [LoggerMessage(EventId = 2100, Level = LogLevel.Warning,
         Message = "Message transport startup failed; retrying in {RetryDelaySeconds}s.")]
     public static partial void TransportStartFailed(ILogger logger, double retryDelaySeconds, Exception exception);
+
+    [LoggerMessage(EventId = 2101, Level = LogLevel.Error,
+        Message = "Message transport stop failed; message consumption may not have stopped.")]
+    public static partial void TransportStopFailed(ILogger logger, Exception exception);
 }

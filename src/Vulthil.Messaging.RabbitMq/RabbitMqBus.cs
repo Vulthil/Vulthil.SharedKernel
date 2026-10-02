@@ -81,6 +81,16 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         _startupStatus.Ready.WaitAsync(cancellationToken);
 
     /// <remarks>
+    /// Cancels every consumer, waits for the deliveries being handled, and closes the consumer channels. The
+    /// connection and the declared topology stay, so <see cref="StartAsync"/> consumes again with new consumers.
+    /// </remarks>
+    public async Task StopAsync(CancellationToken cancellationToken = default)
+    {
+        await DisposeWorkersAsync().ConfigureAwait(false);
+        MessagingLog.BusStopped(_logger);
+    }
+
+    /// <remarks>
     /// A partitioned queue dispatches in FIFO order from a single channel so the worker can assign deliveries to
     /// partition lanes in arrival order; parallelism comes from the lanes (bounded by <c>PrefetchCount</c>) rather
     /// than concurrent dispatch.
@@ -273,13 +283,32 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Disposes every consumer worker, even when one of them fails, and empties the list, so a later start never keeps
+    /// a worker of an earlier start.
+    /// </summary>
+    /// <exception cref="AggregateException">One or more workers failed to stop; every other worker was still disposed.</exception>
     private async Task DisposeWorkersAsync()
     {
-        foreach (var worker in _workers)
+        var workers = _workers.ToArray();
+        _workers.Clear();
+
+        List<Exception>? failures = null;
+        foreach (var worker in workers)
         {
-            await worker.DisposeAsync().ConfigureAwait(false);
+            try
+            {
+                await worker.DisposeAsync().ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                (failures ??= []).Add(exception);
+            }
         }
 
-        _workers.Clear();
+        if (failures is not null)
+        {
+            throw new AggregateException("Stopping one or more RabbitMQ consumers failed.", failures);
+        }
     }
 }

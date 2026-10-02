@@ -72,3 +72,4 @@ Vulthil.Messaging.Transport.IDeliveryPort.PublishFaultAsync<TMessage>(Vulthil.Me
 Vulthil.Messaging.Transport.IDeliveryPort.RetryCount.get -> int
 Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync(Vulthil.Messaging.Transport.MessageEnvelope! reply) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync(System.TimeSpan delay) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.ITransport.StopAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!

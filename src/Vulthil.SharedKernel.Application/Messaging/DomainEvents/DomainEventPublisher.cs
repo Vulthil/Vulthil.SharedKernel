@@ -3,11 +3,13 @@ using Vulthil.SharedKernel.Events;
 
 namespace Vulthil.SharedKernel.Application.Messaging.DomainEvents;
 
+/// <summary>
+/// The untyped front door of domain-event dispatch: hands each event to the <see cref="DomainEventDispatcher{TEvent}"/>
+/// of its runtime type, which owns the dispatch contract.
+/// </summary>
 internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : IDomainEventPublisher
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-
-    private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers = new();
+    private static readonly ConcurrentDictionary<Type, IDomainEventDispatcher> _dispatchers = new();
 
     public Task PublishAsync(object notification, CancellationToken cancellationToken = default) =>
         notification switch
@@ -21,40 +23,13 @@ internal sealed class DomainEventPublisher(IServiceProvider serviceProvider) : I
         where TNotification : IDomainEvent =>
         notification is null
             ? throw new ArgumentNullException(nameof(notification))
-            : InternalPublish(notification, cancellationToken);
+            : DispatcherFor(notification.GetType()).DispatchAsync(notification, serviceProvider, cancellationToken);
 
-    private Task InternalPublish<TNotification>(TNotification notification, CancellationToken cancellationToken) where TNotification : IDomainEvent
-    {
-
-        var handler = _notificationHandlers.GetOrAdd(notification.GetType(), static notificationType =>
+    private static IDomainEventDispatcher DispatcherFor(Type eventType) =>
+        _dispatchers.GetOrAdd(eventType, static type =>
         {
-            var wrapperType = typeof(NotificationHandlerWrapper<>).MakeGenericType(notificationType);
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper for type {notificationType}");
-            return (INotificationHandlerWrapper)wrapper;
+            var dispatcherType = typeof(DomainEventDispatcher<>).MakeGenericType(type);
+            return (IDomainEventDispatcher)(Activator.CreateInstance(dispatcherType)
+                ?? throw new InvalidOperationException($"Could not create the dispatcher for domain event type {type}."));
         });
-
-        return handler.HandleAsync(notification, _serviceProvider, PublishCore, cancellationToken);
-    }
-
-    private static async Task PublishCore(IEnumerable<NotificationHandlerExecutor> handlerExecutors, IDomainEvent notification, CancellationToken cancellationToken)
-    {
-        List<Exception>? exceptions = null;
-
-        foreach (var executor in handlerExecutors)
-        {
-            try
-            {
-                await executor.HandlerCallback(notification, cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                (exceptions ??= []).Add(ex);
-            }
-        }
-
-        if (exceptions is not null)
-        {
-            throw new AggregateException("One or more domain event handlers failed.", exceptions);
-        }
-    }
 }

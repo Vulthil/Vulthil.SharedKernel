@@ -1,6 +1,10 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Vulthil.SharedKernel.Application;
+using Vulthil.SharedKernel.Application.Messaging.DomainEvents;
+using Vulthil.SharedKernel.Events;
 using Vulthil.xUnit;
 
 namespace Vulthil.SharedKernel.Outbox.Tests;
@@ -196,6 +200,29 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
         store.RecordCount.ShouldBe(0);
     }
 
+    [Fact]
+    public async Task ACancelledDomainEventDispatchStopsTheCycleWithoutRecordingAFailure()
+    {
+        // Arrange
+        using var cycleCancellation = CancellationTokenSource.CreateLinkedTokenSource(CancellationToken);
+        var probe = new CancellingHandlerProbe(cycleCancellation);
+        var services = new ServiceCollection();
+        services.AddSingleton(probe);
+        services.AddHandlers(handlers => handlers.RegisterHandlerAssemblies(typeof(OutboxRelayCycleTests).Assembly));
+        await using var provider = services.BuildServiceProvider();
+        await using var scope = provider.CreateAsyncScope();
+        UseRootDispatchers(new DomainEventOutboxDispatcher(scope.ServiceProvider.GetRequiredService<IDomainEventPublisher>()));
+        var store = UseStore(new InMemoryRelayStore([CancellingEventMessage(), CancellingEventMessage()]));
+
+        // Act
+        await Should.ThrowAsync<OperationCanceledException>(() => Target.RunAsync(cycleCancellation.Token));
+
+        // Assert
+        probe.Calls.ShouldBe(1);
+        store.RecordCount.ShouldBe(0);
+        GetMock<ILogger<OutboxRelayCycle>>().Invocations.ShouldBeEmpty();
+    }
+
     private void UseOptions(OutboxProcessingOptions options) => Use<IOptions<OutboxProcessingOptions>>(Options.Create(options));
 
     private InMemoryRelayStore UseStore(InMemoryRelayStore store)
@@ -206,6 +233,33 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
 
     private void UseRootDispatchers(params IOutboxDispatcher[] dispatchers) =>
         GetMock<IServiceProvider>().Setup(provider => provider.GetService(typeof(IEnumerable<IOutboxDispatcher>))).Returns(dispatchers);
+
+    private static OutboxMessageData CancellingEventMessage() =>
+        new(Guid.NewGuid(), typeof(CancellingEvent).AssemblyQualifiedName!, "{}", null, null, OutboxDestination.DomainEvent, null);
+
+    public sealed record CancellingEvent : IDomainEvent;
+
+    /// <summary>Counts the handler's calls and holds the cancellation the handler fires, like a host stopping mid-batch.</summary>
+    public sealed class CancellingHandlerProbe(CancellationTokenSource cycleCancellation)
+    {
+        private int _calls;
+
+        public int Calls => Volatile.Read(ref _calls);
+
+        public CancellationTokenSource CycleCancellation { get; } = cycleCancellation;
+
+        public void RecordCall() => Interlocked.Increment(ref _calls);
+    }
+
+    public sealed class CancellingEventHandler(CancellingHandlerProbe probe) : IDomainEventHandler<CancellingEvent>
+    {
+        public async Task HandleAsync(CancellingEvent notification, CancellationToken cancellationToken = default)
+        {
+            probe.RecordCall();
+            await probe.CycleCancellation.CancelAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+    }
 
     private sealed class RecordingServiceScopeFactory(Func<IServiceProvider> scopedProviderFactory) : IServiceScopeFactory
     {

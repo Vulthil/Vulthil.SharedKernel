@@ -87,8 +87,8 @@
         <article data-uid="">
 <h1 id="vulthilextensionshosting">Vulthil.Extensions.Hosting</h1>
 
-<p>Small hosting abstractions for Vulthil. The package currently contains one contract:
-<code>IRestartableHostedService</code>.</p>
+<p>Small hosting abstractions for Vulthil: the <code>IRestartableHostedService</code> marker and
+<code>RestartableBackgroundService</code>, a restart-safe base class for a service that carries it.</p>
 <h2 id="when-to-use">When to use</h2>
 <ul>
 <li>A hosted service (such as a database-polling relay) should be pausable around operations that must not run
@@ -100,20 +100,42 @@ concurrently with it</li>
 again cleanly</strong>. Infrastructure can then pause the service for the duration of an operation that must not run
 concurrently with it, and resume it afterwards.</p>
 <p>The primary use is test isolation: <code>Vulthil.xUnit</code> stops every registered hosted service implementing this
-marker around the per-test database reset and restarts it afterwards, so a live database-polling relay (for
-example the <code>Vulthil.SharedKernel.Outbox</code> background relay) does not contend with the reset and time it out.
-The relay opts in simply by implementing the marker — no test-only code, and the testing library never depends
-on the outbox engine.</p>
-<pre><code class="lang-csharp">internal sealed class OutboxBackgroundService(/* ... */) : IRestartableHostedService, IDisposable
+marker around the per-test database reset and restarts it afterwards, so live background work does not run while
+the database is reset. Two services in this repository opt in: the <code>Vulthil.SharedKernel.Outbox</code> relay and the
+<code>Vulthil.Messaging</code> consumer host (which stops and restarts the transport's consumers). They opt in simply by
+implementing the marker — no test-only code, and the testing library never depends on the outbox engine or the
+messaging library.</p>
+<h2 id="restartablebackgroundservice"><code>RestartableBackgroundService</code></h2>
+<p>A restart-safe base class for a long-running service with the marker, used in place of <code>BackgroundService</code>:</p>
+<ul>
+<li>Every start runs <code>ExecuteAsync</code> as a new <strong>generation</strong> with its own stopping token.</li>
+<li>A stop cancels the running generation and waits for it, bounded by the caller's token.</li>
+<li>A start first waits for the previous generation to finish, so two generations never run at the same time —
+even when a stop gave up waiting early. Of two overlapping starts, only one begins a generation.</li>
+<li>The execute task (<code>ExecuteTask</code>) always completes successfully. A cancellation after a stop ends it gracefully;
+any other exception is logged and stops the application, like a faulted <code>BackgroundService</code>.</li>
+<li><code>Dispose</code> cancels the running generation; a later start does nothing.</li>
+</ul>
+<p>A generation releases everything it acquired before it returns, because the next generation starts only after it
+has finished. The messaging consumer host relies on this: each generation starts the transport and stops it again.</p>
+<pre><code class="lang-csharp">internal sealed class PollingWorker(IHostApplicationLifetime lifetime, ILogger&lt;PollingWorker&gt; logger)
+    : RestartableBackgroundService(lifetime, logger)
 {
-    // StartAsync/StopAsync manage the execute task so a Stop/Start cycle re-runs it cleanly.
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            // One unit of work, then wait for the next poll.
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+        }
+    }
 }
 </code></pre>
 <h2 id="implementation-guidance">Implementation guidance</h2>
-<p>Implement the marker only on services whose <code>StartAsync</code>/<code>StopAsync</code> are idempotent across repeated cycles.
-Prefer implementing <code>IHostedService</code> directly over inheriting <code>BackgroundService</code>: the host observes only the
-execute task of a <code>BackgroundService</code>'s first start and stops the whole host when that task is canceled while
-the application is running — and on .NET 10 a stop racing service startup can cancel the task before
+<p>Implement the marker only on services whose <code>StartAsync</code>/<code>StopAsync</code> are idempotent across repeated cycles; deriving
+from <code>RestartableBackgroundService</code> gives you that. Do not combine <code>BackgroundService</code> with the marker: the host
+observes only the execute task of a <code>BackgroundService</code>'s first start and stops the whole host when that task is
+canceled while the application is running — and on .NET 10 a stop racing service startup can cancel the task before
 <code>ExecuteAsync</code> has run at all.</p>
 <p>See <a href="../testing.html">Testing</a> for how the marker participates in the per-test reset.</p>
 

@@ -13,6 +13,118 @@ references:
   commentId: T:Vulthil.Extensions.Hosting.IRestartableHostedService
   fullName: Vulthil.Extensions.Hosting.IRestartableHostedService
   nameWithType: IRestartableHostedService
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService
+  name: RestartableBackgroundService
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html
+  commentId: T:Vulthil.Extensions.Hosting.RestartableBackgroundService
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService
+  nameWithType: RestartableBackgroundService
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.#ctor(Microsoft.Extensions.Hosting.IHostApplicationLifetime,Microsoft.Extensions.Logging.ILogger)
+  name: RestartableBackgroundService(IHostApplicationLifetime, ILogger)
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService__ctor_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Microsoft_Extensions_Logging_ILogger_
+  commentId: M:Vulthil.Extensions.Hosting.RestartableBackgroundService.#ctor(Microsoft.Extensions.Hosting.IHostApplicationLifetime,Microsoft.Extensions.Logging.ILogger)
+  name.vb: New(IHostApplicationLifetime, ILogger)
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.RestartableBackgroundService(Microsoft.Extensions.Hosting.IHostApplicationLifetime, Microsoft.Extensions.Logging.ILogger)
+  fullName.vb: Vulthil.Extensions.Hosting.RestartableBackgroundService.New(Microsoft.Extensions.Hosting.IHostApplicationLifetime, Microsoft.Extensions.Logging.ILogger)
+  nameWithType: RestartableBackgroundService.RestartableBackgroundService(IHostApplicationLifetime, ILogger)
+  nameWithType.vb: RestartableBackgroundService.New(IHostApplicationLifetime, ILogger)
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.#ctor*
+  name: RestartableBackgroundService
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService__ctor_
+  commentId: Overload:Vulthil.Extensions.Hosting.RestartableBackgroundService.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.RestartableBackgroundService
+  fullName.vb: Vulthil.Extensions.Hosting.RestartableBackgroundService.New
+  nameWithType: RestartableBackgroundService.RestartableBackgroundService
+  nameWithType.vb: RestartableBackgroundService.New
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose
+  name: Dispose()
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_Dispose
+  commentId: M:Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose()
+  nameWithType: RestartableBackgroundService.Dispose()
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose(System.Boolean)
+  name: Dispose(bool)
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_Dispose_System_Boolean_
+  commentId: M:Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose(System.Boolean)
+  name.vb: Dispose(Boolean)
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose(bool)
+  fullName.vb: Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose(Boolean)
+  nameWithType: RestartableBackgroundService.Dispose(bool)
+  nameWithType.vb: RestartableBackgroundService.Dispose(Boolean)
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose*
+  name: Dispose
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_Dispose_
+  commentId: Overload:Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.Dispose
+  nameWithType: RestartableBackgroundService.Dispose
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteAsync(System.Threading.CancellationToken)
+  name: ExecuteAsync(CancellationToken)
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_ExecuteAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteAsync(System.Threading.CancellationToken)
+  nameWithType: RestartableBackgroundService.ExecuteAsync(CancellationToken)
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteAsync*
+  name: ExecuteAsync
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_ExecuteAsync_
+  commentId: Overload:Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteAsync
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteAsync
+  nameWithType: RestartableBackgroundService.ExecuteAsync
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteTask
+  name: ExecuteTask
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_ExecuteTask
+  commentId: P:Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteTask
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteTask
+  nameWithType: RestartableBackgroundService.ExecuteTask
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteTask*
+  name: ExecuteTask
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_ExecuteTask_
+  commentId: Overload:Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteTask
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteTask
+  nameWithType: RestartableBackgroundService.ExecuteTask
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.Logger
+  name: Logger
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_Logger
+  commentId: P:Vulthil.Extensions.Hosting.RestartableBackgroundService.Logger
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.Logger
+  nameWithType: RestartableBackgroundService.Logger
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.Logger*
+  name: Logger
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_Logger_
+  commentId: Overload:Vulthil.Extensions.Hosting.RestartableBackgroundService.Logger
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.Logger
+  nameWithType: RestartableBackgroundService.Logger
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.StartAsync(System.Threading.CancellationToken)
+  name: StartAsync(CancellationToken)
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_StartAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Extensions.Hosting.RestartableBackgroundService.StartAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.StartAsync(System.Threading.CancellationToken)
+  nameWithType: RestartableBackgroundService.StartAsync(CancellationToken)
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.StartAsync*
+  name: StartAsync
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_StartAsync_
+  commentId: Overload:Vulthil.Extensions.Hosting.RestartableBackgroundService.StartAsync
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.StartAsync
+  nameWithType: RestartableBackgroundService.StartAsync
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.StopAsync(System.Threading.CancellationToken)
+  name: StopAsync(CancellationToken)
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_StopAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Extensions.Hosting.RestartableBackgroundService.StopAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.StopAsync(System.Threading.CancellationToken)
+  nameWithType: RestartableBackgroundService.StopAsync(CancellationToken)
+- uid: Vulthil.Extensions.Hosting.RestartableBackgroundService.StopAsync*
+  name: StopAsync
+  href: api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_StopAsync_
+  commentId: Overload:Vulthil.Extensions.Hosting.RestartableBackgroundService.StopAsync
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Hosting.RestartableBackgroundService.StopAsync
+  nameWithType: RestartableBackgroundService.StopAsync
 - uid: Vulthil.Extensions.Retention
   name: Vulthil.Extensions.Retention
   href: api/Vulthil.Extensions.Retention.html
@@ -1725,6 +1837,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.ITransport.StartAsync
   nameWithType: ITransport.StartAsync
+- uid: Vulthil.Messaging.ITransport.StopAsync(System.Threading.CancellationToken)
+  name: StopAsync(CancellationToken)
+  href: api/Vulthil.Messaging.ITransport.html#Vulthil_Messaging_ITransport_StopAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Messaging.ITransport.StopAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.Messaging.ITransport.StopAsync(System.Threading.CancellationToken)
+  nameWithType: ITransport.StopAsync(CancellationToken)
+- uid: Vulthil.Messaging.ITransport.StopAsync*
+  name: StopAsync
+  href: api/Vulthil.Messaging.ITransport.html#Vulthil_Messaging_ITransport_StopAsync_
+  commentId: Overload:Vulthil.Messaging.ITransport.StopAsync
+  isSpec: "True"
+  fullName: Vulthil.Messaging.ITransport.StopAsync
+  nameWithType: ITransport.StopAsync
 - uid: Vulthil.Messaging.ITransport.WaitUntilReadyAsync(System.Threading.CancellationToken)
   name: WaitUntilReadyAsync(CancellationToken)
   href: api/Vulthil.Messaging.ITransport.html#Vulthil_Messaging_ITransport_WaitUntilReadyAsync_System_Threading_CancellationToken_

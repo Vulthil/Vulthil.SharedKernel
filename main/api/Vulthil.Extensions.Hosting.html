@@ -91,6 +91,17 @@
   <div class="markdown level0 conceptual"></div>
   <div class="markdown level0 remarks"></div>
 
+    <h3 id="classes">
+Classes
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Extensions.Hosting.RestartableBackgroundService.html">RestartableBackgroundService</a></dt>
+      <dd><p>A restart-safe base class for a long-running <a class="xref" href="Vulthil.Extensions.Hosting.IRestartableHostedService.html">IRestartableHostedService</a>, used in place of
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a>. Every start runs <a class="xref" href="Vulthil.Extensions.Hosting.RestartableBackgroundService.html#Vulthil_Extensions_Hosting_RestartableBackgroundService_ExecuteAsync_System_Threading_CancellationToken_">ExecuteAsync(CancellationToken)</a> as a new generation; a stop cancels the
+running generation and waits for it, and a start first waits for the previous generation to finish, so two
+generations never run at the same time.</p>
+</dd>
+    </dl>
     <h3 id="interfaces">
 Interfaces
 </h3>

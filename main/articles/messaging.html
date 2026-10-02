@@ -863,7 +863,7 @@ alone — the RabbitMQ transport uses nothing more.</p>
 <tbody>
 <tr>
 <td>Lifetime</td>
-<td><code>ITransport.StartAsync</code> — declare topology, then start consuming</td>
+<td><code>ITransport.StartAsync</code> — declare topology, then start consuming; <code>ITransport.StopAsync</code> — stop consuming</td>
 </tr>
 <tr>
 <td>Execution plans</td>
@@ -887,6 +887,11 @@ alone — the RabbitMQ transport uses nothing more.</p>
 </tr>
 </tbody>
 </table>
+<p>The messaging consumer host calls <code>StartAsync</code> when the application starts and <code>StopAsync</code> when the consumer host
+stops: at shutdown, or when infrastructure such as <code>Vulthil.xUnit</code> pauses it around a test reset. After a stop, it
+can call <code>StartAsync</code> again. Implement <code>StopAsync</code> to stop consuming and wait for the deliveries being handled; leave
+undelivered messages with the broker. The default <code>StopAsync</code> does nothing, which suits a transport without
+background consumers.</p>
 <h3 id="1-build-execution-plans">1. Build execution plans</h3>
 <p><code>DeliveryHandlerFactory</code> turns each consumer registration into a <code>DeliveryHandler</code>: it resolves the consumer from
 the attempt's scope, runs the consume filter pipeline, and, for a request consumer, builds the reply. Let

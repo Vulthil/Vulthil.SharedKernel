@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Interface ITransport | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Represents the message transport responsible for starting consumer connections.">
+      <meta name="description" content="Represents the message transport responsible for starting and stopping message consumption.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -97,7 +97,7 @@ Interface ITransport  <a class="header-action link-secondary" title="View source
   <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Represents the message transport responsible for starting consumer connections.</p>
+  <div class="markdown summary"><p>Represents the message transport responsible for starting and stopping message consumption.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -154,6 +154,48 @@ Interface ITransport  <a class="header-action link-secondary" title="View source
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
     <dd><p>A task representing the asynchronous startup operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vulthil_Messaging_ITransport_StopAsync_" data-uid="Vulthil.Messaging.ITransport.StopAsync*"></a>
+
+  <h3 id="Vulthil_Messaging_ITransport_StopAsync_System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.ITransport.StopAsync(System.Threading.CancellationToken)">
+  StopAsync(CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/ITransport.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Stops message consumption. When the returned task completes, no new message is delivered and the messages that
+were being handled have finished (a transport may bound that wait); messages that were not delivered stay with
+the broker. A stopped transport consumes again after <a class="xref" href="Vulthil.Messaging.ITransport.html#Vulthil_Messaging_ITransport_StartAsync_System_Threading_CancellationToken_">StartAsync(CancellationToken)</a>. The default implementation does
+nothing, for a transport without background consumers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task StopAsync(CancellationToken cancellationToken = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd><p>A task representing the asynchronous stop operation.</p>
 </dd>
   </dl>
 

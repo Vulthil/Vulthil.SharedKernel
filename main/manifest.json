@@ -27,6 +27,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Hosting.RestartableBackgroundService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Hosting.RestartableBackgroundService.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Hosting.RestartableBackgroundService",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Hosting.RestartableBackgroundService.yml\" sourcestartlinenumber=\"1\">A restart-safe base class for a long-running <xref href=\"Vulthil.Extensions.Hosting.IRestartableHostedService\" data-throw-if-not-resolved=\"false\"></xref>, used in place of\n<xref href=\"Microsoft.Extensions.Hosting.BackgroundService\" data-throw-if-not-resolved=\"false\"></xref>. Every start runs <xref href=\"Vulthil.Extensions.Hosting.RestartableBackgroundService.ExecuteAsync(System.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> as a new generation; a stop cancels the\nrunning generation and waits for it, and a start first waits for the previous generation to finish, so two\ngenerations never run at the same time.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Extensions.Hosting.yml",
       "output": {
         ".html": {
@@ -527,7 +541,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.ITransport",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.ITransport.yml\" sourcestartlinenumber=\"1\">Represents the message transport responsible for starting consumer connections.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.ITransport.yml\" sourcestartlinenumber=\"1\">Represents the message transport responsible for starting and stopping message consumption.</p>\n"
     },
     {
       "type": "ManagedReference",

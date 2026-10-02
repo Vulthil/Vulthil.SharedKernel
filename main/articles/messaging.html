@@ -635,6 +635,13 @@ fields rather than relying on AMQP <code>BasicProperties</code> headers:</p>
 <p><code>BasicProperties.MessageId</code>, <code>CorrelationId</code>, and <code>Type</code> (= URN) are still
 mirrored into AMQP for broker tooling and trace propagation, but the envelope
 is the source of truth.</p>
+<p>Every message the transport creates — publishes, sends, requests, RPC replies
+and faults — also carries <code>ContentType</code> (<code>application/json</code>) and a
+<code>Timestamp</code>. A reply carries its envelope's <code>MessageId</code> and the request's AMQP
+<code>CorrelationId</code>; a fault carries a <code>MessageId</code> of its own and the faulted
+delivery's <code>CorrelationId</code>. Publishes and sends are persistent; requests,
+replies and faults are not. A retry re-publish keeps the properties of the
+delivery it re-publishes.</p>
 <p>External producers that emit bare JSON (no envelope) are accepted on the
 receive path — the worker probes the body and falls back to using
 <code>BasicProperties.Type</code> as the type identity.</p>

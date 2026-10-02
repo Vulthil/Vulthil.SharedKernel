@@ -120,7 +120,7 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
 
         // Act & Assert
         var ex = await Should.ThrowAsync<InvalidOperationException>(
-            () => Target.InternalSendAsync([1, 2, 3], new BasicProperties(), "missing-queue", CancellationToken));
+            () => Target.InternalSendAsync(new RabbitMqOutgoingMessage(string.Empty, "missing-queue", Mandatory: true, new BasicProperties(), new byte[] { 1, 2, 3 }), CancellationToken));
         ex.Message.ShouldContain("broker rejected");
     }
 

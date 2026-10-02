@@ -56,10 +56,10 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
 
         GetMock<IInternalPublisher>()
             .Setup(p => p.InternalPublishAsync(
-                It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
-            .Callback((byte[] body, BasicProperties props, string _, MessageConfiguration _, CancellationToken _) =>
+                It.IsAny<RabbitMqOutgoingMessage>(), It.IsAny<MessageConfiguration>(), It.IsAny<CancellationToken>()))
+            .Callback((RabbitMqOutgoingMessage outgoing, MessageConfiguration _, CancellationToken _) =>
             {
-                _published.Add(new CapturedRequest(props, body));
+                _published.Add(new CapturedRequest(outgoing.Properties, outgoing.Body.ToArray()));
                 _firstPublish.TrySetResult();
             })
             .Returns(Task.CompletedTask);

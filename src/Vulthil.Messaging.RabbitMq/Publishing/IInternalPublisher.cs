@@ -1,26 +1,22 @@
-﻿using RabbitMQ.Client;
+using RabbitMQ.Client;
 
 namespace Vulthil.Messaging.RabbitMq.Publishing;
 
 internal interface IInternalPublisher
 {
     /// <summary>
-    /// Publishes the already-serialized message body over the message's fanout/topic exchange.
+    /// Publishes a built message over its message type's fanout/topic exchange, declaring the exchange first.
     /// </summary>
     Task InternalPublishAsync(
-        byte[] body,
-        BasicProperties props,
-        string routingKey,
+        RabbitMqOutgoingMessage message,
         MessageConfiguration messageConfiguration,
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// Publishes a message to the broker's default exchange using the supplied queue name as the routing key.
-    /// No topology declaration is performed — the destination queue is owned by the receiving service.
+    /// Publishes a built send to the broker's default exchange, routed to its destination queue. No topology
+    /// declaration is performed — the destination queue is owned by the receiving service.
     /// </summary>
     Task InternalSendAsync(
-        byte[] body,
-        BasicProperties props,
-        string queueName,
+        RabbitMqOutgoingMessage message,
         CancellationToken cancellationToken);
 }

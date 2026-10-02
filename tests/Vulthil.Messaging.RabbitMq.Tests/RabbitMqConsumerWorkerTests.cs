@@ -15,8 +15,6 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
 {
     private const string QueueName = "orders";
-    private const string FaultExchange = "Fault.Exchange";
-    private const string MessageUrn = "urn:message:Acme.Orders:OrderCreatedEvent";
     private const string ReplyQueue = "reply.queue";
     private const string RequestCorrelationId = "corr-1";
     private const int ConsumerFailedEventId = 2202;
@@ -50,48 +48,6 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
             .Callback((string exchange, string routingKey, bool _, BasicProperties props, ReadOnlyMemory<byte> body, CancellationToken _) =>
                 _publishes.Add(new CapturedPublish(exchange, routingKey, props, body.ToArray())))
             .Returns(ValueTask.CompletedTask);
-    }
-
-    [Fact]
-    public void ResolveFaultRouteBroadcastsToTheFaultExchangeWhenNoFaultAddressIsPresent()
-    {
-        // Arrange
-        var headers = new Dictionary<string, object?>();
-
-        // Act
-        var (exchange, routingKey) = RabbitMqConsumerWorker.ResolveFaultRoute(headers, FaultExchange, MessageUrn);
-
-        // Assert
-        exchange.ShouldBe(FaultExchange);
-        routingKey.ShouldBe(MessageUrn);
-    }
-
-    [Fact]
-    public void ResolveFaultRouteRoutesPointToPointThroughTheDefaultExchangeWhenFaultAddressIsPresent()
-    {
-        // Arrange
-        var headers = new Dictionary<string, object?> { ["FaultAddress"] = "queue:order-faults" };
-
-        // Act
-        var (exchange, routingKey) = RabbitMqConsumerWorker.ResolveFaultRoute(headers, FaultExchange, MessageUrn);
-
-        // Assert
-        exchange.ShouldBe(string.Empty);
-        routingKey.ShouldBe("order-faults");
-    }
-
-    [Fact]
-    public void ResolveFaultRouteReadsTheFaultAddressFromAWireEncodedHeaderValue()
-    {
-        // Arrange — RabbitMQ surfaces header values as UTF-8 byte arrays.
-        var headers = new Dictionary<string, object?> { ["FaultAddress"] = Encoding.UTF8.GetBytes("queue:order-faults") };
-
-        // Act
-        var (exchange, routingKey) = RabbitMqConsumerWorker.ResolveFaultRoute(headers, FaultExchange, MessageUrn);
-
-        // Assert
-        exchange.ShouldBe(string.Empty);
-        routingKey.ShouldBe("order-faults");
     }
 
     [Fact]

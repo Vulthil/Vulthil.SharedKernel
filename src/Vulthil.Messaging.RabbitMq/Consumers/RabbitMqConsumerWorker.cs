@@ -85,8 +85,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// Publishes on the shared consumer channel through the channel gate, so a reply, a fault or a retry
     /// re-publish serializes with the acks and nacks settling other deliveries on this channel.
     /// </summary>
-    private Task PublishThroughGateAsync(string exchange, string routingKey, bool mandatory, BasicProperties basicProperties, ReadOnlyMemory<byte> body)
-        => OnChannelAsync(() => _channel.BasicPublishAsync(exchange, routingKey, mandatory, basicProperties, body));
+    private Task PublishThroughGateAsync(RabbitMqOutgoingMessage message)
+        => OnChannelAsync(() => _channel.BasicPublishAsync(message.Exchange, message.RoutingKey, message.Mandatory, message.Properties, message.Body));
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -243,23 +243,12 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     }
 
     /// <summary>
-    /// Re-publishes the delivery to the queue's retry queue for delayed re-delivery, stamping the round the
-    /// re-delivery starts at and the identities of the handlers it must run. The per-message TTL is the outcome's
-    /// redelivery delay; the caller acks the original delivery afterwards.
+    /// Re-publishes the delivery to the queue's retry queue for delayed re-delivery (see
+    /// <see cref="RabbitMqOutgoingMessages.Retry"/>); the caller acks the original delivery afterwards.
     /// </summary>
-    private async Task RepublishForRetryAsync(DeliveryOutcome outcome, BasicDeliverEventArgs ea)
-    {
-        var headers = CopyHeaders(ea);
-        headers[RabbitMqConstants.RetryCountHeader] = outcome.RedeliveryRetryCount;
-        headers[RabbitMqConstants.RetryHandlersHeader] = RabbitMqConstants.SerializeRetryHandlerIdentities(outcome.RedeliveryHandlerIdentities);
-        var props = new BasicProperties(ea.BasicProperties)
-        {
-            Headers = headers,
-            Expiration = RabbitMqConstants.FormatExpiration(outcome.RedeliveryDelay),
-        };
-
-        await PublishThroughGateAsync($"{_queueDefinition.Name}.Retry", ea.RoutingKey, true, props, ea.Body).ConfigureAwait(false);
-    }
+    private Task RepublishForRetryAsync(DeliveryOutcome outcome, BasicDeliverEventArgs ea)
+        => PublishThroughGateAsync(RabbitMqOutgoingMessages.Retry(
+            ea, _queueDefinition.Name, outcome.RedeliveryRetryCount, outcome.RedeliveryHandlerIdentities, outcome.RedeliveryDelay));
 
     private Activity? StartReceiveActivity(BasicDeliverEventArgs ea, string messageTypeName)
     {
@@ -284,89 +273,36 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     }
 
     /// <summary>
-    /// Publishes the fault of a consumer that failed for good. When the delivery carries an explicit
-    /// <c>FaultAddress</c> the fault is routed point-to-point to that address (via the broker's default exchange);
-    /// otherwise it is published by convention to the shared fault exchange with the faulted message's URN as the
-    /// routing key. The published fault's <c>Message</c> is the payload as delivered — the envelope's message for an
-    /// envelope-wrapped delivery, otherwise the whole body — so a subscriber can deserialize it as
-    /// <see cref="Fault{TMessage}"/> of the faulted message type. Publishing is best-effort: a failure to publish
-    /// the fault is logged and never disrupts settling the original delivery.
+    /// Publishes the fault of a consumer that failed for good (see
+    /// <see cref="RabbitMqOutgoingMessages.Fault{TMessage}"/>), so a subscriber can deserialize it as
+    /// <see cref="Fault{TMessage}"/> of the faulted message type. Publishing is best-effort: a failure to publish the
+    /// fault is logged and never disrupts settling the original delivery.
     /// </summary>
     private async Task PublishFaultAsync<TMessage>(Fault<TMessage> fault, PreparedDelivery prepared, BasicDeliverEventArgs ea)
         where TMessage : notnull
     {
-        var headers = ea.BasicProperties.Headers ?? new Dictionary<string, object?>();
-        var (exchange, routingKey) = ResolveFaultRoute(headers, _messageConfigurationProvider.FaultExchangeName, prepared.DiagnosticTypeName);
-
+        var faultExchangeName = _messageConfigurationProvider.FaultExchangeName;
         try
         {
-            // The payload goes out as delivered: re-serializing the consumer's message type would drop the fields
-            // that a polymorphic registration's interface does not declare.
-            var deliveredFault = new Fault<JsonElement>
-            {
-                Message = prepared.Envelope?.Message ?? JsonSerializer.Deserialize<JsonElement>(ea.Body.Span, _jsonOptions),
-                ExceptionMessage = fault.ExceptionMessage,
-                StackTrace = fault.StackTrace,
-                ExceptionType = fault.ExceptionType,
-                FaultedAt = fault.FaultedAt,
-                OriginalContext = fault.OriginalContext,
-            };
-
-            var faultBody = JsonSerializer.SerializeToUtf8Bytes(deliveredFault, _jsonOptions);
-            var faultProps = new BasicProperties
-            {
-                CorrelationId = ea.BasicProperties.CorrelationId,
-                Type = $"Fault<{ea.BasicProperties.Type}>",
-                Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
-            };
-
-            await PublishThroughGateAsync(exchange, routingKey, false, faultProps, faultBody).ConfigureAwait(false);
+            var faultMessage = RabbitMqOutgoingMessages.Fault(fault, prepared.Envelope?.Message, ea, faultExchangeName, prepared.DiagnosticTypeName, _jsonOptions);
+            await PublishThroughGateAsync(faultMessage).ConfigureAwait(false);
         }
         catch (Exception faultEx)
         {
+            var (exchange, routingKey) = RabbitMqOutgoingMessages.ResolveFaultRoute(
+                ea.BasicProperties.Headers ?? new Dictionary<string, object?>(), faultExchangeName, prepared.DiagnosticTypeName);
             MessagingLog.FaultPublishFailed(_logger, faultEx, exchange, routingKey);
         }
     }
 
     /// <summary>
-    /// Publishes a request consumer's reply to the delivery's <c>ReplyTo</c> queue through the broker's default
-    /// exchange, under the request's AMQP correlation id, which the requester matches the reply by. A request without
-    /// a <c>ReplyTo</c> gets no reply.
+    /// Publishes a request consumer's reply (see <see cref="RabbitMqOutgoingMessages.Reply"/>). A request without a
+    /// <c>ReplyTo</c> gets no reply.
     /// </summary>
     private Task SendReplyAsync(MessageEnvelope reply, BasicDeliverEventArgs ea)
-    {
-        if (string.IsNullOrEmpty(ea.BasicProperties.ReplyTo))
-        {
-            return Task.CompletedTask;
-        }
-
-        var body = JsonSerializer.SerializeToUtf8Bytes(reply, _jsonOptions);
-        var replyProps = new BasicProperties
-        {
-            CorrelationId = ea.BasicProperties.CorrelationId,
-            Type = reply.MessageType.AbsoluteUri,
-            ContentType = RabbitMqConstants.ContentType,
-        };
-
-        return PublishThroughGateAsync(string.Empty, ea.BasicProperties.ReplyTo, true, replyProps, body);
-    }
-
-    /// <summary>
-    /// Resolves the broker route for a fault. A delivery carrying an explicit <c>FaultAddress</c> routes
-    /// point-to-point through the broker's default exchange (empty exchange, the address's queue name as the
-    /// routing key); otherwise the fault is published by convention to <paramref name="faultExchangeName"/> with
-    /// the faulted message's URN (<paramref name="messageTypeName"/>) as the routing key.
-    /// </summary>
-    internal static (string Exchange, string RoutingKey) ResolveFaultRoute(
-        IDictionary<string, object?> headers,
-        string faultExchangeName,
-        string messageTypeName)
-    {
-        var faultAddress = RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.FaultAddress);
-        return faultAddress is null
-            ? (faultExchangeName, messageTypeName)
-            : (string.Empty, RabbitMqAddress.ResolveRoutingKey(faultAddress) ?? string.Empty);
-    }
+        => RabbitMqOutgoingMessages.Reply(reply, ea, _jsonOptions) is { } replyMessage
+            ? PublishThroughGateAsync(replyMessage)
+            : Task.CompletedTask;
 
     /// <summary>
     /// Returns a copy of <paramref name="ea"/> whose <c>x-retry-count</c> header is set to
@@ -376,19 +312,12 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// </summary>
     internal static BasicDeliverEventArgs WithRetryCount(BasicDeliverEventArgs ea, int retryCount)
     {
-        var headers = CopyHeaders(ea);
+        var headers = RabbitMqOutgoingMessages.CopyHeaders(ea);
         headers[RabbitMqConstants.RetryCountHeader] = retryCount;
         var properties = new BasicProperties(ea.BasicProperties) { Headers = headers };
         return new BasicDeliverEventArgs(
             ea.ConsumerTag, ea.DeliveryTag, ea.Redelivered, ea.Exchange, ea.RoutingKey, properties, ea.Body, ea.CancellationToken);
     }
-
-    /// <summary>
-    /// Copies the delivery's headers into a dictionary of their own. AMQP properties copied from a delivery share its
-    /// header dictionary, so a header set on the copy would otherwise change the delivery itself.
-    /// </summary>
-    private static Dictionary<string, object?> CopyHeaders(BasicDeliverEventArgs ea)
-        => ea.BasicProperties.Headers is { } headers ? new(headers) : [];
 
     /// <summary>
     /// Parses the envelope, resolves the execution plan, and deserializes the message. Settles the delivery

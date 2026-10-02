@@ -74,7 +74,7 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 
         // Act
         await Should.ThrowAsync<InvalidOperationException>(
-            () => Target.InternalSendAsync([], new BasicProperties(), "some-queue", CancellationToken));
+            () => Target.InternalSendAsync(new RabbitMqOutgoingMessage(string.Empty, "some-queue", Mandatory: true, new BasicProperties(), ReadOnlyMemory<byte>.Empty), CancellationToken));
 
         // Assert — a still-open channel is returned to the pool, not disposed.
         _channelMock.Verify(channel => channel.DisposeAsync(), Times.Never);
@@ -91,7 +91,7 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
 
         // Act
         await Should.ThrowAsync<InvalidOperationException>(
-            () => Target.InternalSendAsync([], new BasicProperties(), "some-queue", CancellationToken));
+            () => Target.InternalSendAsync(new RabbitMqOutgoingMessage(string.Empty, "some-queue", Mandatory: true, new BasicProperties(), ReadOnlyMemory<byte>.Empty), CancellationToken));
 
         // Assert — a faulted (closed) channel is discarded.
         _channelMock.Verify(channel => channel.DisposeAsync(), Times.Once);

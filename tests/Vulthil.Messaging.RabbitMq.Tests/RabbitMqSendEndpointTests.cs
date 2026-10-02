@@ -21,7 +21,7 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
     {
         _publisherMock = GetMock<IInternalPublisher>();
         _publisherMock.Setup(p => p.InternalSendAsync(
-            It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            It.IsAny<RabbitMqOutgoingMessage>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _messageConfigurationProviderMock = GetMock<IMessageConfigurationProvider>();
@@ -47,8 +47,8 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
         var message = new TestMessage { Content = "send-me" };
         string? capturedQueue = null;
         _publisherMock.Setup(p => p.InternalSendAsync(
-                It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Callback((byte[] _, BasicProperties _, string queue, CancellationToken _) => capturedQueue = queue)
+                It.IsAny<RabbitMqOutgoingMessage>(), It.IsAny<CancellationToken>()))
+            .Callback((RabbitMqOutgoingMessage outgoing, CancellationToken _) => capturedQueue = outgoing.RoutingKey)
             .Returns(Task.CompletedTask);
 
         // Act
@@ -65,8 +65,8 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
         var message = new TestMessage { Content = "abc" };
         BasicProperties? captured = null;
         _publisherMock.Setup(p => p.InternalSendAsync(
-                It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Callback((byte[] _, BasicProperties props, string _, CancellationToken _) => captured = props)
+                It.IsAny<RabbitMqOutgoingMessage>(), It.IsAny<CancellationToken>()))
+            .Callback((RabbitMqOutgoingMessage outgoing, CancellationToken _) => captured = outgoing.Properties)
             .Returns(Task.CompletedTask);
 
         _messageConfigurationProviderMock.Setup(p => p.GetMessageConfiguration(It.IsAny<Type>()))
@@ -90,8 +90,8 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
         var message = new TestMessage { Content = "abc" };
         BasicProperties? captured = null;
         _publisherMock.Setup(p => p.InternalSendAsync(
-                It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Callback((byte[] _, BasicProperties props, string _, CancellationToken _) => captured = props)
+                It.IsAny<RabbitMqOutgoingMessage>(), It.IsAny<CancellationToken>()))
+            .Callback((RabbitMqOutgoingMessage outgoing, CancellationToken _) => captured = outgoing.Properties)
             .Returns(Task.CompletedTask);
 
         _messageConfigurationProviderMock.Setup(p => p.GetMessageConfiguration(It.IsAny<Type>()))
@@ -130,8 +130,8 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
         var message = new TestMessage { Content = "x" };
         BasicProperties? captured = null;
         _publisherMock.Setup(p => p.InternalSendAsync(
-                It.IsAny<byte[]>(), It.IsAny<BasicProperties>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Callback((byte[] _, BasicProperties props, string _, CancellationToken _) => captured = props)
+                It.IsAny<RabbitMqOutgoingMessage>(), It.IsAny<CancellationToken>()))
+            .Callback((RabbitMqOutgoingMessage outgoing, CancellationToken _) => captured = outgoing.Properties)
             .Returns(Task.CompletedTask);
 
         // Act

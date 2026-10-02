@@ -72,16 +72,7 @@ internal sealed class RabbitMqRequester : IRequester
         var type = message.GetType();
         var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(type);
 
-        var routingKey = requestContext.RoutingKey
-            ?? messageConfiguration.RoutingKeyFormatter?.Invoke(message)
-            ?? string.Empty;
-
-        // A dedicated per-request id correlates the reply back to this call. It is carried in the AMQP
-        // CorrelationId property (the RPC slot the reply echoes) and the envelope's RequestId, leaving the
-        // business CorrelationId free — two requests sharing a business key cannot collide on the waiter.
-        var ids = RabbitMqWireMessageBuilder.ResolveIds(message, requestContext, messageConfiguration);
         var requestId = Guid.CreateVersion7().ToString();
-        var exchange = messageConfiguration.Exchange;
 
         // The bus starts in the background, so a request issued while the host is still warming up would be
         // published before the responder's queue and bindings exist and expire unanswered. Hold the request until
@@ -95,7 +86,8 @@ internal sealed class RabbitMqRequester : IRequester
         {
             if (timeoutCts.IsCancellationRequested)
             {
-                MessagingLog.RequestTimedOut(_logger, ids.UrnString, ids.CorrelationId, timeout.TotalSeconds);
+                var unsentIds = RabbitMqOutgoingMessages.ResolveIds(message, requestContext, messageConfiguration);
+                MessagingLog.RequestTimedOut(_logger, unsentIds.UrnString, unsentIds.CorrelationId, timeout.TotalSeconds);
                 return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Timeout, $"Request timed out after {timeout.TotalSeconds}s waiting for the transport to start"));
             }
 
@@ -107,29 +99,26 @@ internal sealed class RabbitMqRequester : IRequester
         }
 
         var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken).ConfigureAwait(false);
-        var replyTo = RabbitMqAddress.ResolveRoutingKey(requestContext.ResponseAddress) ?? replyQueue;
 
-        using var activity = RabbitMqWireMessageBuilder.StartProducerActivity(
-            $"{exchange} request", "request", exchange, routingKey, ids.UrnString, ids.MessageId, ids.CorrelationId);
+        RabbitMqProducedMessage request;
+        try
+        {
+            request = RabbitMqOutgoingMessages.Request(message, requestContext, messageConfiguration, requestId, replyQueue, timeout, JsonOptions);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.Publish, $"Publishing error: {ex.Message}"));
+        }
+
+        var ids = request.Ids;
+        using var activity = request.StartActivity();
 
         _listener.RegisterWaiter(requestId, tcs);
         MessagingLog.RequestSending(_logger, ids.UrnString, ids.CorrelationId, timeout.TotalSeconds);
 
         try
         {
-            var props = RabbitMqWireMessageBuilder.CreateBaseProperties(ids.UrnString, ids.MessageId, requestContext.Headers);
-            props.CorrelationId = requestId;
-            props.ReplyTo = replyTo;
-            // A request that waits for its reply indefinitely must not expire in the queue before a responder takes it.
-            if (timeout != Timeout.InfiniteTimeSpan)
-            {
-                props.Expiration = RabbitMqConstants.FormatExpiration(timeout);
-            }
-
-            var body = RabbitMqWireMessageBuilder.SerializeEnvelope(
-                message, requestContext, ids.MessageId, ids.CorrelationId, ids.Urn, JsonOptions, requestId);
-
-            await _publisher.InternalPublishAsync(body, props, routingKey, messageConfiguration, cancellationToken).ConfigureAwait(false);
+            await _publisher.InternalPublishAsync(request.Message, messageConfiguration, cancellationToken).ConfigureAwait(false);
 
             await using var ctRegistration = linkedCts.Token.Register(() =>
             {

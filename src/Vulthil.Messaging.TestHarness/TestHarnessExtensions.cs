@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Vulthil.Extensions.Testing;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Transport;
 
@@ -8,7 +9,8 @@ namespace Vulthil.Messaging.TestHarness;
 /// <summary>
 /// Registers the in-memory <see cref="ITestHarness"/> transport. The harness reuses the messaging configuration
 /// (queues, consumers, message settings) that <c>AddMessaging</c> registered, so it mirrors the real topology
-/// with no broker.
+/// with no broker. The harness is also registered as an <see cref="IResettableTestState"/>, so a test framework
+/// adapter such as <c>Vulthil.xUnit</c> clears its captured messages and its stubs after each test.
 /// </summary>
 public static class TestHarnessExtensions
 {
@@ -51,6 +53,7 @@ public static class TestHarnessExtensions
 
         services.AddSingleton<TestHarness>();
         services.AddSingleton<ITestHarness>(sp => sp.GetRequiredService<TestHarness>());
+        services.AddSingleton<IResettableTestState>(sp => sp.GetRequiredService<TestHarness>());
         services.AddSingleton<InMemoryTransport>();
         services.AddSingleton<ITransport>(sp => sp.GetRequiredService<InMemoryTransport>());
         services.AddSingleton<ITransportPublisher, InMemoryPublisher>();

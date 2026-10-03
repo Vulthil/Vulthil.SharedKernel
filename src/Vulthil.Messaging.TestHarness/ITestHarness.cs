@@ -18,6 +18,9 @@ namespace Vulthil.Messaging.TestHarness;
 /// or send itself still completes. Like the broker, the harness never delivers the fault to a registered
 /// <c>IConsumer&lt;Fault&lt;T&gt;&gt;</c>. A request consumer's exception is surfaced as a failed request
 /// result.</para>
+/// <para>The harness is a singleton per host. It is also registered as a
+/// <see cref="Vulthil.Extensions.Testing.IResettableTestState"/>, so <c>Vulthil.xUnit</c> clears its captured messages
+/// and removes its stubs after each test. <see cref="Clear"/> clears only the captured messages.</para>
 /// </remarks>
 public interface ITestHarness
 {

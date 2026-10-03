@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Extensions.Hosting;
+using Vulthil.Extensions.Testing;
 using Vulthil.xUnit.Fixtures;
 
 namespace Vulthil.xUnit;
@@ -95,9 +96,15 @@ internal sealed class TestHostScope : IAsyncDisposable
 
     /// <summary>
     /// Resets the scope between tests: pauses the restartable services of every running live host, resets the scope's
-    /// resettable views and <paramref name="additionalResources"/>, and resumes the services it paused. Does nothing
-    /// when no host is live. Resources resolve application services from the newest live host — the one the test ran on.
+    /// resettable views, <paramref name="additionalResources"/> and the <see cref="IResettableTestState"/>s of every live
+    /// host, and resumes the services it paused. Does nothing when no host is live. Resources resolve application
+    /// services from the newest live host — the one the test ran on.
     /// </summary>
+    /// <remarks>
+    /// The test states of every live host are reset, not only the newest host's, because the next test can run on an
+    /// older host: the class's shared host, after a test that ran on a per-test host. A test state that two hosts share
+    /// is reset once.
+    /// </remarks>
     /// <param name="additionalResources">Resources the adapter owns, reset together with the scope's views.</param>
     /// <returns>A task that completes when every step has run.</returns>
     /// <exception cref="AggregateException">One or more steps failed or timed out; every other step still ran.</exception>
@@ -116,7 +123,11 @@ internal sealed class TestHostScope : IAsyncDisposable
                 .SelectMany(host => TestHostReset.RestartableServicesOf(host.Services))
                 .ToList();
             var resources = _containers.OfType<IResettableResource>().Concat(additionalResources).ToList();
-            await _reset.ResetAsync(runningServices, resources, _liveHosts[^1].Services).ConfigureAwait(false);
+            var testStates = _liveHosts
+                .SelectMany(host => host.Services.GetServices<IResettableTestState>())
+                .Distinct<IResettableTestState>(ReferenceEqualityComparer.Instance)
+                .ToList();
+            await _reset.ResetAsync(runningServices, resources, _liveHosts[^1].Services, testStates).ConfigureAwait(false);
         }
         finally
         {

@@ -8,6 +8,8 @@ namespace Vulthil.xUnit;
 /// </summary>
 /// <remarks>
 /// <see cref="BaseIntegrationTestCase{TEntryPoint}"/> resets every registered resettable resource after each test.
+/// State that a test double keeps in the test host's services resets through
+/// <see cref="Vulthil.Extensions.Testing.IResettableTestState"/> instead.
 /// </remarks>
 public interface IResettableResource
 {

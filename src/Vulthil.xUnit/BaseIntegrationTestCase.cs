@@ -17,12 +17,14 @@ namespace Vulthil.xUnit;
 /// </summary>
 /// <remarks>
 /// Supply the factory as an <see cref="IClassFixture{TFixture}"/> (or collection fixture) so its containers are
-/// started once and shared across the tests in that scope; database state is reset after each test. Tests that
-/// register no services share the fixture's test host; a test that registers services runs on a derived host built
-/// through <see cref="WebApplicationFactory{TEntryPoint}.WithWebHostBuilder"/>, disposed after the test. Both hosts use
-/// the fixture's databases and virtual hosts, so while the derived host runs, the shared host pauses its restartable
-/// hosted services (see <see cref="BaseWebApplicationFactory{TEntryPoint}"/>). Application logs reach the currently
-/// running test through the factory's TestContext-routed logger.
+/// started once and shared across the tests in that scope; database state, and every
+/// <see cref="Vulthil.Extensions.Testing.IResettableTestState"/> registered in the hosts (such as the messaging test
+/// harness), is reset after each test. Tests that register no services share the fixture's test host; a test that
+/// registers services runs on a derived host built through
+/// <see cref="WebApplicationFactory{TEntryPoint}.WithWebHostBuilder"/>, disposed after the test. Both hosts use the
+/// fixture's databases and virtual hosts, so while the derived host runs, the shared host pauses its restartable hosted
+/// services (see <see cref="BaseWebApplicationFactory{TEntryPoint}"/>). Application logs reach the currently running
+/// test through the factory's TestContext-routed logger.
 /// </remarks>
 /// <typeparam name="TEntryPoint">The application's entry point type, typically <c>Program</c>.</typeparam>
 public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
@@ -231,9 +233,9 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     }
 
     /// <summary>
-    /// Resets the fixture's live hosts (restartable services paused, resettable resources cleared), disposes the
-    /// scope, the client and any per-test derived factory, then disposes everything the auto-mocker holds. Override
-    /// (calling the base implementation) for further cleanup.
+    /// Resets the fixture's live hosts (restartable services paused, resettable resources and test states reset),
+    /// disposes the scope, the client and any per-test derived factory, then disposes everything the auto-mocker holds.
+    /// Override (calling the base implementation) for further cleanup.
     /// </summary>
     /// <returns>A task representing the cleanup work.</returns>
     protected override async ValueTask Dispose()

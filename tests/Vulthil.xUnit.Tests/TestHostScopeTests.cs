@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.Extensions.Hosting;
+using Vulthil.Extensions.Testing;
 using Vulthil.xUnit.Fixtures;
 
 namespace Vulthil.xUnit.Tests;
@@ -187,6 +188,60 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task ResetResetsTheTestStatesOfEveryLiveHost()
+    {
+        // Arrange
+        await Target.InitializeAsync();
+        await using var sharedHost = HostWithTestStates(new RecordingTestState(_log, "shared"));
+        await using var testHost = HostWithTestStates(new RecordingTestState(_log, "test"));
+        await Target.CreateHostLifecycle(sharedHost).StartAsync(CancellationToken);
+        await Target.CreateHostLifecycle(testHost).StartAsync(CancellationToken);
+
+        // Act
+        await Target.ResetAsync([]);
+
+        // Assert
+        TestStateResets().ShouldBe(["reset-state:shared", "reset-state:test"], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task ATestStateThatTwoLiveHostsShareIsResetOnce()
+    {
+        // Arrange
+        var sharedState = new RecordingTestState(_log, "shared");
+        await Target.InitializeAsync();
+        await using var sharedHost = HostWithTestStates(sharedState);
+        await using var testHost = HostWithTestStates(sharedState);
+        await Target.CreateHostLifecycle(sharedHost).StartAsync(CancellationToken);
+        await Target.CreateHostLifecycle(testHost).StartAsync(CancellationToken);
+
+        // Act
+        await Target.ResetAsync([]);
+
+        // Assert
+        TestStateResets().ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task TheTestStatesOfAHostThatStoppedAreNotReset()
+    {
+        // Arrange
+        await Target.InitializeAsync();
+        await using var sharedHost = HostWithTestStates(new RecordingTestState(_log, "shared"));
+        await using var testHost = HostWithTestStates(new RecordingTestState(_log, "test"));
+        var testHostLifecycle = Target.CreateHostLifecycle(testHost);
+        await Target.CreateHostLifecycle(sharedHost).StartAsync(CancellationToken);
+        await testHostLifecycle.StartAsync(CancellationToken);
+        await testHostLifecycle.StopAsync(CancellationToken);
+
+        // Act
+        await Target.ResetAsync([]);
+
+        // Assert
+        TestStateResets().ShouldBe(["reset-state:shared"]);
+    }
+
+    [Fact]
     public async Task ResetWithoutALiveHostDoesNothing()
     {
         // Arrange
@@ -242,12 +297,26 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
     private string[] ServiceEvents() =>
         [.. _log.Where(entry => entry.StartsWith("start:", StringComparison.Ordinal) || entry.StartsWith("stop:", StringComparison.Ordinal))];
 
+    private string[] TestStateResets() =>
+        [.. _log.Where(entry => entry.StartsWith("reset-state:", StringComparison.Ordinal))];
+
     private static ServiceProvider HostWith(params IHostedService[] services)
     {
         var collection = new ServiceCollection();
         foreach (var service in services)
         {
             collection.AddSingleton(service);
+        }
+
+        return collection.BuildServiceProvider();
+    }
+
+    private static ServiceProvider HostWithTestStates(params IResettableTestState[] testStates)
+    {
+        var collection = new ServiceCollection();
+        foreach (var testState in testStates)
+        {
+            collection.AddSingleton(testState);
         }
 
         return collection.BuildServiceProvider();
@@ -380,6 +449,15 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
         public ValueTask ResetAsync(IServiceProvider serviceProvider)
         {
             log.Enqueue($"reset:{name}");
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    public sealed class RecordingTestState(ConcurrentQueue<string> log, string name) : IResettableTestState
+    {
+        public ValueTask ResetAsync(CancellationToken cancellationToken = default)
+        {
+            log.Enqueue($"reset-state:{name}");
             return ValueTask.CompletedTask;
         }
     }

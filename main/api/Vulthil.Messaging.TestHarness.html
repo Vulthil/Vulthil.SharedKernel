@@ -104,7 +104,8 @@ Classes
       <dt><a class="xref" href="Vulthil.Messaging.TestHarness.TestHarnessExtensions.html">TestHarnessExtensions</a></dt>
       <dd><p>Registers the in-memory <a class="xref" href="Vulthil.Messaging.TestHarness.ITestHarness.html">ITestHarness</a> transport. The harness reuses the messaging configuration
 (queues, consumers, message settings) that <code>AddMessaging</code> registered, so it mirrors the real topology
-with no broker.</p>
+with no broker. The harness is also registered as an <a class="xref" href="Vulthil.Extensions.Testing.IResettableTestState.html">IResettableTestState</a>, so a test framework
+adapter such as <code>Vulthil.xUnit</code> clears its captured messages and its stubs after each test.</p>
 </dd>
     </dl>
     <h3 id="interfaces">

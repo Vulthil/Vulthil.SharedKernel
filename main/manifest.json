@@ -125,6 +125,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.IResettableTestState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.IResettableTestState.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.IResettableTestState",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.IResettableTestState.yml\" sourcestartlinenumber=\"1\">State that a test double keeps in a test host's services — captured messages, registered stubs, an in-memory\nstore — and that is reset to a clean baseline after each test, so tests that share one host never see each other's\nstate.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Extensions.Testing.Polling.yml",
       "output": {
         ".html": {
@@ -1269,7 +1283,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.TestHarness.TestHarnessExtensions",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.TestHarness.TestHarnessExtensions.yml\" sourcestartlinenumber=\"1\">Registers the in-memory <xref href=\"Vulthil.Messaging.TestHarness.ITestHarness\" data-throw-if-not-resolved=\"false\"></xref> transport. The harness reuses the messaging configuration\n(queues, consumers, message settings) that <code>AddMessaging</code> registered, so it mirrors the real topology\nwith no broker.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.TestHarness.TestHarnessExtensions.yml\" sourcestartlinenumber=\"1\">Registers the in-memory <xref href=\"Vulthil.Messaging.TestHarness.ITestHarness\" data-throw-if-not-resolved=\"false\"></xref> transport. The harness reuses the messaging configuration\n(queues, consumers, message settings) that <code>AddMessaging</code> registered, so it mirrors the real topology\nwith no broker. The harness is also registered as an <xref href=\"Vulthil.Extensions.Testing.IResettableTestState\" data-throw-if-not-resolved=\"false\"></xref>, so a test framework\nadapter such as <code>Vulthil.xUnit</code> clears its captured messages and its stubs after each test.</p>\n"
     },
     {
       "type": "ManagedReference",

@@ -106,6 +106,8 @@ the configured delays), then a <code>Fault&lt;T&gt;</code> is published and capt
 <code>Published&lt;Fault&lt;TMessage&gt;&gt;()</code>. As on the broker, the fault never reaches an <code>IConsumer&lt;Fault&lt;TMessage&gt;&gt;</code>. A
 request consumer's exception becomes a failed <code>Result&lt;TResponse&gt;</code> on the requesting side</li>
 <li>Keep assertions on <code>ITestHarness</code> deterministic and explicit; <code>Clear()</code> between phases</li>
+<li><code>Vulthil.xUnit</code> resets the harness after each test: it clears the captured messages and removes the stubs (see
+<a href="../testing.html#resetting-between-tests">Resetting between tests</a>)</li>
 </ul>
 <h2 id="usage">Usage</h2>
 <h3 id="compose-the-harness-unitcomponent-tests">Compose the harness (unit/component tests)</h3>

@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_BaseIntegrationTestCase_1" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1" class="text-break">
-Class BaseIntegrationTestCase&lt;TEntryPoint&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L28"><i class="bi bi-code-slash"></i></a>
+Class BaseIntegrationTestCase&lt;TEntryPoint&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -190,12 +190,14 @@ that service in a per-test copy of the host, so an external dependency is mocked
 
   <h2 id="Vulthil_xUnit_BaseIntegrationTestCase_1_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>Supply the factory as an <span class="xref">Xunit.IClassFixture&lt;TFixture&gt;</span> (or collection fixture) so its containers are
-started once and shared across the tests in that scope; database state is reset after each test. Tests that
-register no services share the fixture's test host; a test that registers services runs on a derived host built
-through <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1.withwebhostbuilder">WithWebHostBuilder(Action&lt;IWebHostBuilder&gt;)</a>, disposed after the test. Both hosts use
-the fixture's databases and virtual hosts, so while the derived host runs, the shared host pauses its restartable
-hosted services (see <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a>). Application logs reach the currently
-running test through the factory's TestContext-routed logger.</p>
+started once and shared across the tests in that scope; database state, and every
+<a class="xref" href="Vulthil.Extensions.Testing.IResettableTestState.html">IResettableTestState</a> registered in the hosts (such as the messaging test
+harness), is reset after each test. Tests that register no services share the fixture's test host; a test that
+registers services runs on a derived host built through
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1.withwebhostbuilder">WithWebHostBuilder(Action&lt;IWebHostBuilder&gt;)</a>, disposed after the test. Both hosts use the
+fixture's databases and virtual hosts, so while the derived host runs, the shared host pauses its restartable hosted
+services (see <a class="xref" href="Vulthil.xUnit.BaseWebApplicationFactory-1.html">BaseWebApplicationFactory&lt;TEntryPoint&gt;</a>). Application logs reach the currently running
+test through the factory's TestContext-routed logger.</p>
 </div>
 
 
@@ -207,7 +209,7 @@ running test through the factory's TestContext-routed logger.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1__ctor_Vulthil_xUnit_BaseWebApplicationFactory__0__Xunit_ITestOutputHelper_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.#ctor(Vulthil.xUnit.BaseWebApplicationFactory{`0},Xunit.ITestOutputHelper)">
   BaseIntegrationTestCase(BaseWebApplicationFactory&lt;TEntryPoint&gt;, ITestOutputHelper?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance with the shared web application factory and optional test output.</p>
@@ -247,7 +249,7 @@ running test through the factory's TestContext-routed logger.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_Client" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.Client">
   Client
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a> connected to the test server, created on first access.</p>
@@ -279,7 +281,7 @@ running test through the factory's TestContext-routed logger.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_Factory" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.Factory">
   Factory
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the web application factory this test runs against, created on first access via <a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_CreateFactory">CreateFactory()</a>.</p>
@@ -311,7 +313,7 @@ running test through the factory's TestContext-routed logger.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_FactoryFixture" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.FactoryFixture">
   FactoryFixture
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the shared factory fixture providing the container infrastructure and the test host.</p>
@@ -343,7 +345,7 @@ running test through the factory's TestContext-routed logger.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_ScopedServices" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.ScopedServices">
   ScopedServices
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a scoped service provider resolved from the test application's root services.
@@ -376,7 +378,7 @@ The scope is created on first access and disposed after each test.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_TestOutputHelper" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.TestOutputHelper">
   TestOutputHelper
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the test output helper passed to the constructor, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not provided. Application
@@ -413,7 +415,7 @@ logs are routed to the running test automatically; the helper is for writing tes
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_ConfigureTestCaseServices_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.ConfigureTestCaseServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
   ConfigureTestCaseServices(IServiceCollection)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L151"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Replaces, in <code class="paramref">services</code>, every service registered on this test case with the instance the
@@ -452,7 +454,7 @@ The default <a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-1.html#V
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_CreateFactory" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.CreateFactory">
   CreateFactory()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L133"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1">WebApplicationFactory&lt;TEntryPoint&gt;</a> this test runs against. By default this is the
@@ -492,12 +494,12 @@ reset covers every live host of the fixture without building one.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_Dispose" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose">
   Dispose()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L239"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L241"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Resets the fixture's live hosts (restartable services paused, resettable resources cleared), disposes the
-scope, the client and any per-test derived factory, then disposes everything the auto-mocker holds. Override
-(calling the base implementation) for further cleanup.</p>
+  <div class="markdown level1 summary"><p>Resets the fixture's live hosts (restartable services paused, resettable resources and test states reset),
+disposes the scope, the client and any per-test derived factory, then disposes everything the auto-mocker holds.
+Override (calling the base implementation) for further cleanup.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -527,7 +529,7 @@ scope, the client and any per-test derived factory, then disposes everything the
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_GetMock__1" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.GetMock``1">
   GetMock&lt;TMock&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L202"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Retrieves the mock for the specified type from the auto-mocker.</p>
@@ -569,7 +571,7 @@ scope, the client and any per-test derived factory, then disposes everything the
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_HttpMock_System_String_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock(System.String)">
   HttpMock(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the HTTP mock registered for the named HTTP client <code class="paramref">name</code>, for configuring stubbed
@@ -609,7 +611,7 @@ responses and inspecting captured requests. The mock is reset after each test.</
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_HttpMock__1" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.HttpMock``1">
   HttpMock&lt;TClient&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L188"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the HTTP mock registered for the typed client <code class="typeparamref">TClient</code>, for configuring stubbed
@@ -649,7 +651,7 @@ responses and inspecting captured requests. The mock is reset after each test.</
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_InitializeAsync" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync">
   InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L227"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L229"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Runs the <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Initialize">Initialize()</a> hook, then discards the service scope it may have used so
@@ -683,7 +685,7 @@ the test itself starts from a fresh one.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScope" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope">
   ResetScope()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L267"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L269"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Disposes the current service scope, if one exists, so the next access to
@@ -717,7 +719,7 @@ the test itself starts from a fresh one.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_UseRealFor__2" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.UseRealFor``2">
   UseRealFor&lt;TService, TImplementation&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L218"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the auto-mocker to create a real instance of <code class="typeparamref">TImplementation</code> registered as
@@ -761,7 +763,7 @@ resolution is still picked up.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_UseReal__1" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.UseReal``1">
   UseReal&lt;TService&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L210"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the auto-mocker to create a real instance of <code class="typeparamref">TService</code> with all dependencies
@@ -802,7 +804,7 @@ resolution is still picked up.</p>
 
   <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_Use__1___0_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.Use``1(``0)">
   Use&lt;TService&gt;(TService)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L192"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L194"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an explicit service instance in the auto-mocker.</p>
@@ -846,7 +848,7 @@ resolution is still picked up.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L28" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L30" class="edit-link">Edit this page</a>
         </div>
 
 

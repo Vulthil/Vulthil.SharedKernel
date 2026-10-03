@@ -251,6 +251,25 @@ references:
   fullName.vb: Vulthil.Extensions.Testing.HttpResponseMessageExtensions.GetResponseAsync(Of TResponse)(System.Net.Http.HttpResponseMessage, System.Threading.CancellationToken)
   nameWithType: HttpResponseMessageExtensions.GetResponseAsync<TResponse>(HttpResponseMessage?, CancellationToken)
   nameWithType.vb: HttpResponseMessageExtensions.GetResponseAsync(Of TResponse)(HttpResponseMessage, CancellationToken)
+- uid: Vulthil.Extensions.Testing.IResettableTestState
+  name: IResettableTestState
+  href: api/Vulthil.Extensions.Testing.IResettableTestState.html
+  commentId: T:Vulthil.Extensions.Testing.IResettableTestState
+  fullName: Vulthil.Extensions.Testing.IResettableTestState
+  nameWithType: IResettableTestState
+- uid: Vulthil.Extensions.Testing.IResettableTestState.ResetAsync(System.Threading.CancellationToken)
+  name: ResetAsync(CancellationToken)
+  href: api/Vulthil.Extensions.Testing.IResettableTestState.html#Vulthil_Extensions_Testing_IResettableTestState_ResetAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Extensions.Testing.IResettableTestState.ResetAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.Extensions.Testing.IResettableTestState.ResetAsync(System.Threading.CancellationToken)
+  nameWithType: IResettableTestState.ResetAsync(CancellationToken)
+- uid: Vulthil.Extensions.Testing.IResettableTestState.ResetAsync*
+  name: ResetAsync
+  href: api/Vulthil.Extensions.Testing.IResettableTestState.html#Vulthil_Extensions_Testing_IResettableTestState_ResetAsync_
+  commentId: Overload:Vulthil.Extensions.Testing.IResettableTestState.ResetAsync
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Testing.IResettableTestState.ResetAsync
+  nameWithType: IResettableTestState.ResetAsync
 - uid: Vulthil.Extensions.Testing.Polling
   name: Polling
   href: api/Vulthil.Extensions.Testing.Polling.html

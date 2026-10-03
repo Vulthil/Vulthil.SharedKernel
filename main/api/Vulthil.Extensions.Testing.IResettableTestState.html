@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Interface IResettableResource | Vulthil.SharedKernel </title>
+      <title>Interface IResettableTestState | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Interface IResettableResource | Vulthil.SharedKernel ">
+      <meta name="title" content="Interface IResettableTestState | Vulthil.SharedKernel ">
       
-      <meta name="description" content="A test resource whose state can be reset to a clean baseline between tests — for example a database reset via Respawn, or an HTTP mock whose configured responses and captured requests are cleared.">
+      <meta name="description" content="State that a test double keeps in a test host&#39;s services — captured messages, registered stubs, an in-memory store — and that is reset to a clean baseline after each test, so tests that share one host never see each other&#39;s state.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_xUnit_IResettableResource.md&amp;value=---%0Auid%3A%20Vulthil.xUnit.IResettableResource%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Extensions_Testing_IResettableTestState.md&amp;value=---%0Auid%3A%20Vulthil.Extensions.Testing.IResettableTestState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,26 +84,27 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.xUnit.IResettableResource">
+        <article data-uid="Vulthil.Extensions.Testing.IResettableTestState">
 
 
 
-  <h1 id="Vulthil_xUnit_IResettableResource" data-uid="Vulthil.xUnit.IResettableResource" class="text-break">
-Interface IResettableResource  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IResettableResource.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_Extensions_Testing_IResettableTestState" data-uid="Vulthil.Extensions.Testing.IResettableTestState" class="text-break">
+Interface IResettableTestState  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/IResettableTestState.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<a class="xref" href="Vulthil.xUnit.html">xUnit</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>Vulthil.xUnit.dll</dd></dl>
+    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<span class="xref">Extensions</span>.<a class="xref" href="Vulthil.Extensions.Testing.html">Testing</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Extensions.Testing.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>A test resource whose state can be reset to a clean baseline between tests — for example a database
-reset via Respawn, or an HTTP mock whose configured responses and captured requests are cleared.</p>
+  <div class="markdown summary"><p>State that a test double keeps in a test host's services — captured messages, registered stubs, an in-memory
+store — and that is reset to a clean baseline after each test, so tests that share one host never see each other's
+state.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IResettableResource</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IResettableTestState</code></pre>
   </div>
 
 
@@ -123,10 +124,24 @@ reset via Respawn, or an HTTP mock whose configured responses and captured reque
 
 
 
-  <h2 id="Vulthil_xUnit_IResettableResource_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p><a class="xref" href="Vulthil.xUnit.BaseIntegrationTestCase-1.html">BaseIntegrationTestCase&lt;TEntryPoint&gt;</a> resets every registered resettable resource after each test.
-State that a test double keeps in the test host's services resets through
-<a class="xref" href="Vulthil.Extensions.Testing.IResettableTestState.html">IResettableTestState</a> instead.</p>
+  <h2 id="Vulthil_Extensions_Testing_IResettableTestState_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>
+Register the implementation in the test host's services as an <a class="xref" href="Vulthil.Extensions.Testing.IResettableTestState.html">IResettableTestState</a>, usually as a
+forward to the singleton that holds the state:
+<pre><code class="lang-csharp">services.AddSingleton&lt;InMemoryEmailSender&gt;();
+services.AddSingleton&lt;IEmailSender&gt;(sp =&gt; sp.GetRequiredService&lt;InMemoryEmailSender&gt;());
+services.AddSingleton&lt;IResettableTestState&gt;(sp =&gt; sp.GetRequiredService&lt;InMemoryEmailSender&gt;());</code></pre>
+
+<p>
+A test framework adapter resets every registered instance after each test. <code>Vulthil.xUnit</code> resets the
+instances of every live test host while the hosts' restartable background services are paused, and cancels the
+token when a reset takes too long. With no such adapter, resolve the instances from the host's services in the
+per-test teardown and call <a class="xref" href="Vulthil.Extensions.Testing.IResettableTestState.html#Vulthil_Extensions_Testing_IResettableTestState_ResetAsync_System_Threading_CancellationToken_">ResetAsync(CancellationToken)</a> on each.
+</p>
+<p>
+The reset runs after each test, not before it: what the host records while it starts, or while its background
+services restart after a reset, is visible to the next test.
+</p>
 </div>
 
 
@@ -134,35 +149,32 @@ State that a test double keeps in the test host's services resets through
 </h2>
 
 
-  <a id="Vulthil_xUnit_IResettableResource_ResetAsync_" data-uid="Vulthil.xUnit.IResettableResource.ResetAsync*"></a>
+  <a id="Vulthil_Extensions_Testing_IResettableTestState_ResetAsync_" data-uid="Vulthil.Extensions.Testing.IResettableTestState.ResetAsync*"></a>
 
-  <h3 id="Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_" data-uid="Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)">
-  ResetAsync(IServiceProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IResettableResource.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_Extensions_Testing_IResettableTestState_ResetAsync_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.IResettableTestState.ResetAsync(System.Threading.CancellationToken)">
+  ResetAsync(CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/IResettableTestState.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Resets the resource to a clean state after each test, with the application's root service provider so a resource
-that needs the app's services — for example a Cosmos store recreating its database through the registered
-<code>DbContext</code> — can resolve them from a fresh scope. Resources that need no services ignore the argument.
-One-time setup that must run before the first test instead belongs in <a class="xref" href="Vulthil.xUnit.IStartupResource.html">IStartupResource</a>.</p>
+  <div class="markdown level1 summary"><p>Resets the state to its clean baseline.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask ResetAsync(IServiceProvider serviceProvider)</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask ResetAsync(CancellationToken cancellationToken = default)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serviceProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></dt>
-    <dd><p>The application's root service provider; create a scope from it to resolve scoped services.</p>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>Cancelled when the reset must stop, for example because it took too long.</p>
 </dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A task representing the asynchronous reset work.</p>
+    <dd><p>A task that completes when the state is reset.</p>
 </dd>
   </dl>
 
@@ -180,7 +192,7 @@ One-time setup that must run before the first test instead belongs in <a class="
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/IResettableResource.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/IResettableTestState.cs/#L29" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -93,6 +93,7 @@ xUnit-coupled test stack (base classes, fixtures, containers) lives in <a href="
 <ul>
 <li>Polling asynchronous conditions during integration tests (<code>Polling.WaitAsync</code>)</li>
 <li>Reading and asserting JSON HTTP responses (<code>GetResponseAsync&lt;T&gt;</code>)</li>
+<li>Resetting the state of a test double between tests (<code>IResettableTestState</code>)</li>
 <li>Any test framework — nothing here requires xUnit</li>
 </ul>
 <h2 id="pattern">Pattern</h2>
@@ -124,6 +125,22 @@ result.IsSuccess.ShouldBeTrue();
 <pre><code class="lang-csharp">var response = await client.GetAsync(&quot;/weather/london&quot;);
 var forecast = await response.GetResponseAsync&lt;Forecast&gt;();
 </code></pre>
+<h2 id="resettable-test-state">Resettable test state</h2>
+<p><code>IResettableTestState</code> marks state that a test double keeps in a test host's services — captured messages, stubs,
+an in-memory store. Register the double as an <code>IResettableTestState</code>, and a test framework adapter resets it after
+each test. <code>Vulthil.xUnit</code> resets every instance of every live test host, and the messaging test harness registers
+itself as one.</p>
+<pre><code class="lang-csharp">services.AddSingleton&lt;InMemoryEmailSender&gt;();
+services.AddSingleton&lt;IEmailSender&gt;(sp =&gt; sp.GetRequiredService&lt;InMemoryEmailSender&gt;());
+services.AddSingleton&lt;IResettableTestState&gt;(sp =&gt; sp.GetRequiredService&lt;InMemoryEmailSender&gt;());
+</code></pre>
+<p>With another test framework, reset the instances from the per-test teardown:</p>
+<pre><code class="lang-csharp">foreach (var testState in host.Services.GetServices&lt;IResettableTestState&gt;())
+{
+    await testState.ResetAsync(cancellationToken);
+}
+</code></pre>
+<p>See <a href="../testing.html#resetting-your-own-test-doubles">Resetting your own test doubles</a> for the <code>Vulthil.xUnit</code> details.</p>
 
 </article>
 

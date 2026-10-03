@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class TestHarnessExtensions | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Registers the in-memory  transport. The harness reuses the messaging configuration (queues, consumers, message settings) that AddMessaging registered, so it mirrors the real topology with no broker.">
+      <meta name="description" content="Registers the in-memory  transport. The harness reuses the messaging configuration (queues, consumers, message settings) that AddMessaging registered, so it mirrors the real topology with no broker. The harness is also registered as an , so a test framework adapter such as Vulthil.xUnit clears its captured messages and its stubs after each test.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_TestHarness_TestHarnessExtensions" data-uid="Vulthil.Messaging.TestHarness.TestHarnessExtensions" class="text-break">
-Class TestHarnessExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class TestHarnessExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -99,7 +99,8 @@ Class TestHarnessExtensions  <a class="header-action link-secondary" title="View
 
   <div class="markdown summary"><p>Registers the in-memory <a class="xref" href="Vulthil.Messaging.TestHarness.ITestHarness.html">ITestHarness</a> transport. The harness reuses the messaging configuration
 (queues, consumers, message settings) that <code>AddMessaging</code> registered, so it mirrors the real topology
-with no broker.</p>
+with no broker. The harness is also registered as an <a class="xref" href="Vulthil.Extensions.Testing.IResettableTestState.html">IResettableTestState</a>, so a test framework
+adapter such as <code>Vulthil.xUnit</code> clears its captured messages and its stubs after each test.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -159,7 +160,7 @@ with no broker.</p>
 
   <h3 id="Vulthil_Messaging_TestHarness_TestHarnessExtensions_ReplaceTransportWithTestHarness_Microsoft_Extensions_DependencyInjection_IServiceCollection_" data-uid="Vulthil.Messaging.TestHarness.TestHarnessExtensions.ReplaceTransportWithTestHarness(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
   ReplaceTransportWithTestHarness(IServiceCollection)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Replaces an already-registered transport (e.g. RabbitMQ) with the in-memory test harness, leaving the rest
@@ -201,7 +202,7 @@ registrations remain but are never resolved, so no broker connection is attempte
 
   <h3 id="Vulthil_Messaging_TestHarness_TestHarnessExtensions_UseTestHarness_Vulthil_Messaging_IMessagingConfigurator_" data-uid="Vulthil.Messaging.TestHarness.TestHarnessExtensions.UseTestHarness(Vulthil.Messaging.IMessagingConfigurator)">
   UseTestHarness(IMessagingConfigurator)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the messaging infrastructure to use the in-memory test harness as its transport. Call this in
@@ -241,7 +242,7 @@ place of a broker transport (e.g. <code>UseRabbitMq</code>) when composing messa
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/TestHarnessExtensions.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -237,7 +237,10 @@ directly. The transaction is established by one of:
 - **Consumers** — the [inbox](inbox-pattern.md) opens one, or call `messaging.AddTransactionalConsumer<TMessage>()`
   to run a consumer in a transaction without the inbox. The two compose: if the inbox is also enabled it opens the
   transaction and the consume filter joins it rather than nesting.
-- **Anything else** — wrap the work in `IUnitOfWork.ExecuteInTransactionAsync(...)`.
+- **Anything else** — wrap the work in `IUnitOfWork.ExecuteInTransactionAsync(...)`. Changes made before the call
+  are saved in the transaction. A transient-fault retry re-runs the operation from a clean change tracker, so load
+  and change the entities inside the operation; when unsaved changes from before the call would be lost, the retry
+  throws instead.
 
 Ambient `System.Transactions.TransactionScope` transactions are **not supported**: the capture gate checks for an
 Entity Framework Core transaction specifically, and EF Core does not surface an ambient scope as one. Publishing

@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Publishers;
@@ -230,6 +232,24 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
         _published.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void UseRabbitMqRegistersARequesterThatASingletonCanDependOn()
+    {
+        // Arrange
+        var builder = Host.CreateApplicationBuilder();
+        builder.AddMessaging(messaging => messaging.UseRabbitMq());
+        builder.Services.AddSingleton<RequesterClient>();
+
+        // Act & Assert
+        using var provider = Should.NotThrow(() => builder.Services.BuildServiceProvider(
+            new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }));
+    }
+
+    public sealed class RequesterClient(IRequester requester)
+    {
+        public IRequester Requester => requester;
     }
 
     private sealed record CapturedRequest(BasicProperties Properties, byte[] Body);

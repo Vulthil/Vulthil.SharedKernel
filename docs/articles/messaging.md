@@ -858,7 +858,7 @@ health check.
 ## Request/Reply
 
 `IRequester` is registered automatically by `UseRabbitMq` and returns a typed
-`Result<TResponse>`:
+`Result<TResponse>`. It is a singleton, so a service of any lifetime can inject it, a hosted service included:
 
 ```csharp
 public sealed class OrderLookupService(IRequester requester)
@@ -1072,6 +1072,9 @@ consume filter ended the pipeline without a response). It echoes the request id 
 so Vulthil clients interoperate without a transport-specific reply contract. On the requesting side,
 `RpcReply.ToResult<TResponse>(reply, provider)` turns the reply back into the `Result<TResponse>` the caller
 receives.
+
+Implement the requesting side as an `IRequester` and register it as a singleton, as the RabbitMQ transport and the
+test harness do, so a service of any lifetime can inject it.
 
 ## Testing Messaging
 

@@ -71,11 +71,26 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
             return await operation(cancellationToken);
         }
 
+        var hadUnsavedChanges = ChangeTracker.HasChanges();
+        var isRetry = false;
         var strategy = Database.CreateExecutionStrategy();
         return await strategy.ExecuteAsync(
             async token =>
             {
-                ChangeTracker.Clear();
+                // Only a retry starts clean: the first attempt saves what the caller changed before the call. A retry
+                // cannot repeat changes made before the call, so it throws instead of dropping them.
+                if (isRetry)
+                {
+                    if (hadUnsavedChanges)
+                    {
+                        throw new InvalidOperationException(
+                            "A transient fault interrupted ExecuteInTransactionAsync, and the operation cannot be retried: the context held unsaved changes before the call, and a retry runs the operation from a clean change tracker. Make the changes inside the operation, so that a retry can repeat them.");
+                    }
+
+                    ChangeTracker.Clear();
+                }
+
+                isRetry = true;
                 await using var transaction = await Database.BeginTransactionAsync(token);
                 var result = await operation(token);
                 if (shouldCommit(result))

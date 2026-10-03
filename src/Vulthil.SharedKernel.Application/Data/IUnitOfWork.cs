@@ -25,15 +25,27 @@ public interface IUnitOfWork
     /// <remarks>
     /// Prefer this over manually pairing <see cref="BeginTransactionAsync"/> with a commit when a retrying execution
     /// strategy may be configured (e.g. the EF Core default): a bare user-initiated transaction is rejected under a
-    /// retrying strategy, whereas this wraps the whole begin/operation/commit as one retriable unit. A transient-fault
-    /// retry re-runs <paramref name="operation"/> from a clean change-tracker state, so it must be idempotent. If a
-    /// transaction is already active, <paramref name="operation"/> simply joins it (the outer scope owns the commit),
-    /// so this composes with an outer caller that already opened a transaction.
+    /// retrying strategy, whereas this wraps the whole begin/operation/commit as one retriable unit.
+    /// <para>
+    /// The first attempt runs on the change tracker as it is, so changes made before the call are saved in the
+    /// transaction. A transient-fault retry clears the change tracker and re-runs <paramref name="operation"/>, so
+    /// <paramref name="operation"/> must be idempotent and must load the entities it changes: an entity loaded before
+    /// the call is no longer tracked during a retry. A retry cannot repeat changes made before the call, so when the
+    /// change tracker held unsaved changes before the call, the retry throws instead and the transaction is rolled back.
+    /// </para>
+    /// <para>
+    /// If a transaction is already active, <paramref name="operation"/> simply joins it (the outer scope owns the
+    /// commit), so this composes with an outer caller that already opened a transaction.
+    /// </para>
     /// </remarks>
     /// <typeparam name="TResult">The type produced by <paramref name="operation"/>.</typeparam>
     /// <param name="operation">The work to run inside the transaction.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The result produced by <paramref name="operation"/>.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// A transient fault interrupted the first attempt, and the change tracker held unsaved changes before the call, so
+    /// the operation cannot be retried.
+    /// </exception>
     Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken);
 
     /// <summary>
@@ -44,7 +56,7 @@ public interface IUnitOfWork
     /// <remarks>
     /// Use this overload to roll back on a <em>returned</em> failure — for example a failed
     /// <see cref="Vulthil.Results.Result"/> from a command handler — rather than only on a thrown exception. The same
-    /// execution-strategy and ambient-transaction semantics as
+    /// execution-strategy, change-tracker and ambient-transaction semantics as
     /// <see cref="ExecuteInTransactionAsync{TResult}(System.Func{System.Threading.CancellationToken, System.Threading.Tasks.Task{TResult}}, System.Threading.CancellationToken)"/>
     /// apply; when a transaction is already active the outer scope owns the commit and <paramref name="shouldCommit"/>
     /// is not consulted.
@@ -54,6 +66,10 @@ public interface IUnitOfWork
     /// <param name="shouldCommit">A predicate that decides, from the produced result, whether to commit the transaction.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The result produced by <paramref name="operation"/>.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// A transient fault interrupted the first attempt, and the change tracker held unsaved changes before the call, so
+    /// the operation cannot be retried.
+    /// </exception>
     Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, Func<TResult, bool> shouldCommit, CancellationToken cancellationToken = default);
 }
 

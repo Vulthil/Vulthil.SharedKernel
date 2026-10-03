@@ -289,6 +289,19 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void UseTestHarnessRegistersARequesterThatASingletonCanDependOn()
+    {
+        // Arrange
+        var builder = Host.CreateApplicationBuilder();
+        builder.AddMessaging(messaging => messaging.UseTestHarness());
+        builder.Services.AddSingleton<RequesterClient>();
+
+        // Act & Assert
+        using var provider = Should.NotThrow(() => builder.Services.BuildServiceProvider(
+            new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }));
+    }
+
+    [Fact]
     public async Task ReplaceTransportWithTestHarnessReplacesAnAlreadyRegisteredTransport()
     {
         // Arrange — a host composed with a stand-in "real" transport, as production code would register.
@@ -361,6 +374,11 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     {
         public Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(TRequest message, CancellationToken cancellationToken) where TRequest : notnull where TResponse : notnull => throw new NotSupportedException();
         public Task<Result<TResponse>> RequestAsync<TRequest, TResponse>(TRequest message, Func<IRequestContext, ValueTask>? configureContext = null, CancellationToken cancellationToken = default) where TRequest : notnull where TResponse : notnull => throw new NotSupportedException();
+    }
+
+    public sealed class RequesterClient(IRequester requester)
+    {
+        public IRequester Requester => requester;
     }
 
     public sealed record OrderCreated(Guid Id);

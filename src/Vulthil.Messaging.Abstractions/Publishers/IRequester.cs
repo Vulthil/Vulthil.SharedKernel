@@ -5,6 +5,10 @@ namespace Vulthil.Messaging.Abstractions.Publishers;
 /// <summary>
 /// Sends a request message and awaits a response from a remote consumer.
 /// </summary>
+/// <remarks>
+/// Transports register the requester as a singleton, so a service of any lifetime can inject it, a hosted service
+/// included.
+/// </remarks>
 public interface IRequester
 {
     /// <summary>

@@ -89,7 +89,7 @@ public static class MessagingConfiguratorExtensions
         // ResponseListener is lazily initialized on the first IRequester.RequestAsync call.
         // Services that never make request/reply calls do not pay the cost of declaring a reply queue.
         services.AddSingleton<ResponseListener>();
-        services.AddScoped<IRequester, RabbitMqRequester>();
+        services.AddSingleton<IRequester, RabbitMqRequester>();
 
         if (tracingEnabled)
         {

@@ -800,7 +800,7 @@ that to <code>true</code> to suppress the health check alongside Aspire's connec
 health check.</p>
 <h2 id="requestreply">Request/Reply</h2>
 <p><code>IRequester</code> is registered automatically by <code>UseRabbitMq</code> and returns a typed
-<code>Result&lt;TResponse&gt;</code>:</p>
+<code>Result&lt;TResponse&gt;</code>. It is a singleton, so a service of any lifetime can inject it, a hosted service included:</p>
 <pre><code class="lang-csharp">public sealed class OrderLookupService(IRequester requester)
 {
     public Task&lt;Result&lt;OrderDto&gt;&gt; GetAsync(Guid orderId, CancellationToken ct)
@@ -1001,6 +1001,8 @@ consume filter ended the pipeline without a response). It echoes the request id 
 so Vulthil clients interoperate without a transport-specific reply contract. On the requesting side,
 <code>RpcReply.ToResult&lt;TResponse&gt;(reply, provider)</code> turns the reply back into the <code>Result&lt;TResponse&gt;</code> the caller
 receives.</p>
+<p>Implement the requesting side as an <code>IRequester</code> and register it as a singleton, as the RabbitMQ transport and the
+test harness do, so a service of any lifetime can inject it.</p>
 <h2 id="testing-messaging">Testing Messaging</h2>
 <p><code>Vulthil.Messaging.TestHarness</code> provides an in-memory transport that runs your consumers with no broker and
 captures produced and consumed messages for assertion. Compose it with <code>UseTestHarness()</code> (in place of a broker

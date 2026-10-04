@@ -57,6 +57,27 @@ Only one outbox-enabled `DbContext` is supported per host: the relay and retenti
 single `IOutboxStore`, so a second `EnableOutboxProcessing()` call (on a different `DbContext`) throws an
 `InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed.
 
+### Several DbContexts
+
+Each context registered with `AddDbContext` is part of the host's `IUnitOfWork`. With one context, `IUnitOfWork` is
+that context. With several, `IUnitOfWork` spans all of them, so transactional commands and transactional consumers
+open a transaction on every context:
+
+- `SaveChangesAsync` saves every context, and the contexts commit one by one: in registration order, with the
+  outbox-enabled context last. A failed commit can leave a saved change without its message, but never a message for
+  a change that was not saved.
+- A commit is atomic per context only. When a commit fails after another context committed, the committed changes
+  stay saved, the rest is rolled back, and `ExecuteInTransactionAsync` throws an `InvalidOperationException` instead
+  of retrying, because a retry would repeat the committed changes.
+- Retries follow the execution strategy of the first registered context. With two kinds of database, a transient
+  fault of the second kind is not retried.
+- A context whose provider has no transactions (for example Cosmos DB) stays out of the transaction: its saves are
+  not rolled back with the others.
+- Every transactional unit opens a transaction, and a connection, on every context, even when it uses only one.
+
+To make one context the unit of work instead, register `IUnitOfWork` yourself after the `AddDbContext` calls, for
+example `services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<OrdersDbContext>())`.
+
 ### Database initialization
 
 ```csharp

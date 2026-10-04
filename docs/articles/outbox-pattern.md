@@ -72,7 +72,9 @@ context. A context that will never use the outbox can opt out with `modelBuilder
 
 Only one outbox-enabled `DbContext` is supported per host: the relay and retention background services resolve a
 single `IOutboxStore`, so calling `EnableOutboxProcessing()` for a second context throws an
-`InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed. The
+`InvalidOperationException` at startup instead of silently leaving the first context's messages unrelayed. Other
+contexts can still be registered: the unit of work then spans every context and commits the outbox-enabled one last
+(see [Several DbContexts](packages/vulthil-sharedkernel-infrastructure.md#several-dbcontexts)). The
 Npgsql and MySQL stores also require your context to derive from `BaseDbContext` (or otherwise implement
 `IUnitOfWork`) — without a transaction their `FOR UPDATE SKIP LOCKED` fetch would release its locks immediately,
 letting concurrent relay instances double-dispatch the same messages, so `RelationalOutboxStore` throws instead of

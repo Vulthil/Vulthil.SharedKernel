@@ -3,6 +3,10 @@ namespace Vulthil.SharedKernel.Application.Data;
 /// <summary>
 /// Abstracts the persistence boundary for saving changes and managing transactions.
 /// </summary>
+/// <remarks>
+/// A unit of work can span several databases: when a host registers several contexts, the infrastructure package's
+/// unit of work covers all of them. A commit is then atomic per database only.
+/// </remarks>
 public interface IUnitOfWork
 {
     /// <summary>

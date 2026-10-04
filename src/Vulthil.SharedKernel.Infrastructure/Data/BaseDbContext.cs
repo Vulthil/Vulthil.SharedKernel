@@ -68,7 +68,7 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
                 // Only a retry starts clean: the first attempt saves what the caller changed before the call.
                 if (isRetry)
                 {
-                    PrepareRetry(hadUnsavedChanges);
+                    UnitOfWorkRetry.Prepare([this], hadUnsavedChanges);
                 }
 
                 isRetry = true;
@@ -87,23 +87,5 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
                 return result;
             },
             cancellationToken).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    /// Readies the context for a retry of the operation: clears the change tracker so the retry starts from a clean
-    /// state, or throws when the context held unsaved changes before the call, because clearing would drop them and the
-    /// operation cannot repeat them.
-    /// </summary>
-    /// <param name="hadUnsavedChanges">Whether the change tracker held unsaved changes before the first attempt.</param>
-    /// <exception cref="InvalidOperationException"><paramref name="hadUnsavedChanges"/> is <see langword="true"/>.</exception>
-    private void PrepareRetry(bool hadUnsavedChanges)
-    {
-        if (hadUnsavedChanges)
-        {
-            throw new InvalidOperationException(
-                "A transient fault interrupted ExecuteInTransactionAsync, and the operation cannot be retried: the context held unsaved changes before the call, and a retry runs the operation from a clean change tracker. Make the changes inside the operation, so that a retry can repeat them.");
-        }
-
-        ChangeTracker.Clear();
     }
 }

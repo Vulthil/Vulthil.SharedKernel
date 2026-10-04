@@ -17,6 +17,22 @@ public static class DependencyInjection
     /// <summary>
     /// Registers a <see cref="BaseDbContext"/>-derived context with unit-of-work and optional outbox processing.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The context becomes the host's <see cref="IUnitOfWork"/>. When the host registers several contexts with this
+    /// method, <see cref="IUnitOfWork"/> spans all of them: saves and transactions cover every context, and the contexts
+    /// commit one by one, in registration order with the outbox-enabled context last. So a failed commit can leave a
+    /// saved change without its message, but never a message for a change that was not saved.
+    /// </para>
+    /// <para>
+    /// A commit is atomic per context only. When a commit fails after another context committed, the committed changes
+    /// stay saved, the rest is rolled back, and <see cref="IUnitOfWork.ExecuteInTransactionAsync{TResult}(Func{CancellationToken, Task{TResult}}, Func{TResult, bool}, CancellationToken)"/>
+    /// throws <see cref="InvalidOperationException"/> instead of retrying. Retries follow the execution strategy of the
+    /// first registered context. A context whose provider has no transactions (for example Cosmos DB) stays out of the
+    /// transaction. To make one context the unit of work instead, register <see cref="IUnitOfWork"/> yourself after
+    /// the <c>AddDbContext</c> calls.
+    /// </para>
+    /// </remarks>
     /// <typeparam name="TDbContext">The concrete DbContext type.</typeparam>
     /// <param name="hostApplicationBuilder">The host application builder.</param>
     /// <param name="databaseInfrastructureConfiguratorAction">An action to configure the database infrastructure.</param>
@@ -28,12 +44,11 @@ public static class DependencyInjection
         databaseInfrastructureConfiguratorAction(databaseInfrastructureConfigurator);
         databaseInfrastructureConfigurator.FinalizeConfiguration();
 
-        var dbContextLifetime = databaseInfrastructureConfigurator.DbContextLifetime;
-
-        hostApplicationBuilder.Services.Add(new ServiceDescriptor(
-            typeof(IUnitOfWork),
-            sp => sp.GetRequiredService<TDbContext>(),
-            dbContextLifetime));
+        UnitOfWorkRegistry.Register(
+            hostApplicationBuilder.Services,
+            typeof(TDbContext),
+            databaseInfrastructureConfigurator.DbContextLifetime,
+            databaseInfrastructureConfigurator.OutboxProcessingEnabled);
 
         if (databaseInfrastructureConfigurator.OutboxProcessingEnabled)
         {

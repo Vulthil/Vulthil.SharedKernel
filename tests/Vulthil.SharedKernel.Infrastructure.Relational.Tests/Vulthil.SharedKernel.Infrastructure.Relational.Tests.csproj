@@ -7,6 +7,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- Cosmos stands in for a provider without transactions; the tests never reach an emulator. -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
 	</ItemGroup>
 

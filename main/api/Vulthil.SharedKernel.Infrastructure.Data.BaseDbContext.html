@@ -578,12 +578,19 @@ otherwise (or when <code class="paramref">operation</code> throws), using the st
   <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_Data_BaseDbContext_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Func___0_System_Boolean__System_Threading_CancellationToken__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>Use this overload to roll back on a <em>returned</em> failure — for example a failed
 <a class="xref" href="Vulthil.Results.Result.html">Result</a> from a command handler — rather than only on a thrown exception. The same
-execution-strategy and ambient-transaction semantics as
+execution-strategy, change-tracker and ambient-transaction semantics as
 <a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWork.html#Vulthil_SharedKernel_Application_Data_IUnitOfWork_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_">ExecuteInTransactionAsync&lt;TResult&gt;(Func&lt;CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)</a>
 apply; when a transaction is already active the outer scope owns the commit and <code class="paramref">shouldCommit</code>
 is not consulted.</p>
 </div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>A transient fault interrupted the first attempt, and the change tracker held unsaved changes before the call, so
+the operation cannot be retried.</p>
+</dd>
+  </dl>
 
 
 
@@ -635,12 +642,27 @@ failure, using the store's execution strategy so it is compatible with a retryin
   <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_Data_BaseDbContext_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>Prefer this over manually pairing <a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWork.html#Vulthil_SharedKernel_Application_Data_IUnitOfWork_BeginTransactionAsync_System_Threading_CancellationToken_">BeginTransactionAsync(CancellationToken)</a> with a commit when a retrying execution
 strategy may be configured (e.g. the EF Core default): a bare user-initiated transaction is rejected under a
-retrying strategy, whereas this wraps the whole begin/operation/commit as one retriable unit. A transient-fault
-retry re-runs <code class="paramref">operation</code> from a clean change-tracker state, so it must be idempotent. If a
-transaction is already active, <code class="paramref">operation</code> simply joins it (the outer scope owns the commit),
-so this composes with an outer caller that already opened a transaction.</p>
+retrying strategy, whereas this wraps the whole begin/operation/commit as one retriable unit.</p>
+<p>
+The first attempt runs on the change tracker as it is, so changes made before the call are saved in the
+transaction. A transient-fault retry clears the change tracker and re-runs <code class="paramref">operation</code>, so
+<code class="paramref">operation</code> must be idempotent and must load the entities it changes: an entity loaded before
+the call is no longer tracked during a retry. A retry cannot repeat changes made before the call, so when the
+change tracker held unsaved changes before the call, the retry throws instead and the transaction is rolled back.
+</p>
+<p>
+If a transaction is already active, <code class="paramref">operation</code> simply joins it (the outer scope owns the
+commit), so this composes with an outer caller that already opened a transaction.
+</p>
 </div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>A transient fault interrupted the first attempt, and the change tracker held unsaved changes before the call, so
+the operation cannot be retried.</p>
+</dd>
+  </dl>
 
 
 

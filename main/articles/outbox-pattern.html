@@ -338,7 +338,10 @@ behavior runs the command in a transaction.</li>
 <li><strong>Consumers</strong> — the <a href="inbox-pattern.html">inbox</a> opens one, or call <code>messaging.AddTransactionalConsumer&lt;TMessage&gt;()</code>
 to run a consumer in a transaction without the inbox. The two compose: if the inbox is also enabled it opens the
 transaction and the consume filter joins it rather than nesting.</li>
-<li><strong>Anything else</strong> — wrap the work in <code>IUnitOfWork.ExecuteInTransactionAsync(...)</code>.</li>
+<li><strong>Anything else</strong> — wrap the work in <code>IUnitOfWork.ExecuteInTransactionAsync(...)</code>. Changes made before the call
+are saved in the transaction. A transient-fault retry re-runs the operation from a clean change tracker, so load
+and change the entities inside the operation; when unsaved changes from before the call would be lost, the retry
+throws instead.</li>
 </ul>
 <p>Ambient <code>System.Transactions.TransactionScope</code> transactions are <strong>not supported</strong>: the capture gate checks for an
 Entity Framework Core transaction specifically, and EF Core does not surface an ambient scope as one. Publishing

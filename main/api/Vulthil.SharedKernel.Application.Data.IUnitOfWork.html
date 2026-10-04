@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Application_Data_IUnitOfWork" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWork" class="text-break">
-Interface IUnitOfWork  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L6"><i class="bi bi-code-slash"></i></a>
+Interface IUnitOfWork  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L10"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -122,6 +122,10 @@ Interface IUnitOfWork  <a class="header-action link-secondary" title="View sourc
 
 
 
+  <h2 id="Vulthil_SharedKernel_Application_Data_IUnitOfWork_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>A unit of work can span several databases: when a host registers several contexts, the infrastructure package's
+unit of work covers all of them. A commit is then atomic per database only.</p>
+</div>
 
 
   <h2 class="section" id="methods">Methods
@@ -132,7 +136,7 @@ Interface IUnitOfWork  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_SharedKernel_Application_Data_IUnitOfWork_BeginTransactionAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWork.BeginTransactionAsync(System.Threading.CancellationToken)">
   BeginTransactionAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Begins a new database transaction.</p>
@@ -171,7 +175,7 @@ Interface IUnitOfWork  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_SharedKernel_Application_Data_IUnitOfWork_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Func___0_System_Boolean__System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Func{``0,System.Boolean},System.Threading.CancellationToken)">
   ExecuteInTransactionAsync&lt;TResult&gt;(Func&lt;CancellationToken, Task&lt;TResult&gt;&gt;, Func&lt;TResult, bool&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Runs <code class="paramref">operation</code> inside a database transaction, committing only when
@@ -239,7 +243,7 @@ the operation cannot be retried.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_Data_IUnitOfWork_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWork.ExecuteInTransactionAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)">
   ExecuteInTransactionAsync&lt;TResult&gt;(Func&lt;CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Runs <code class="paramref">operation</code> inside a database transaction, committing on success and rolling back on
@@ -311,7 +315,7 @@ the operation cannot be retried.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_Data_IUnitOfWork_SaveChangesAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWork.SaveChangesAsync(System.Threading.CancellationToken)">
   SaveChangesAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Persists all pending changes to the underlying store.</p>
@@ -350,7 +354,7 @@ the operation cannot be retried.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L6" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L10" class="edit-link">Edit this page</a>
         </div>
 
 

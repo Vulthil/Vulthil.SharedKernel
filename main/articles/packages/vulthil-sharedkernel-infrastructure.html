@@ -133,6 +133,25 @@ any order. The full outbox-plus-inbox wiring is in <a href="../transactional-mes
 <p>Only one outbox-enabled <code>DbContext</code> is supported per host: the relay and retention background services resolve a
 single <code>IOutboxStore</code>, so a second <code>EnableOutboxProcessing()</code> call (on a different <code>DbContext</code>) throws an
 <code>InvalidOperationException</code> at startup instead of silently leaving the first context's messages unrelayed.</p>
+<h3 id="several-dbcontexts">Several DbContexts</h3>
+<p>Each context registered with <code>AddDbContext</code> is part of the host's <code>IUnitOfWork</code>. With one context, <code>IUnitOfWork</code> is
+that context. With several, <code>IUnitOfWork</code> spans all of them, so transactional commands and transactional consumers
+open a transaction on every context:</p>
+<ul>
+<li><code>SaveChangesAsync</code> saves every context, and the contexts commit one by one: in registration order, with the
+outbox-enabled context last. A failed commit can leave a saved change without its message, but never a message for
+a change that was not saved.</li>
+<li>A commit is atomic per context only. When a commit fails after another context committed, the committed changes
+stay saved, the rest is rolled back, and <code>ExecuteInTransactionAsync</code> throws an <code>InvalidOperationException</code> instead
+of retrying, because a retry would repeat the committed changes.</li>
+<li>Retries follow the execution strategy of the first registered context. With two kinds of database, a transient
+fault of the second kind is not retried.</li>
+<li>A context whose provider has no transactions (for example Cosmos DB) stays out of the transaction: its saves are
+not rolled back with the others.</li>
+<li>Every transactional unit opens a transaction, and a connection, on every context, even when it uses only one.</li>
+</ul>
+<p>To make one context the unit of work instead, register <code>IUnitOfWork</code> yourself after the <code>AddDbContext</code> calls, for
+example <code>services.AddScoped&lt;IUnitOfWork&gt;(sp =&gt; sp.GetRequiredService&lt;OrdersDbContext&gt;())</code>.</p>
 <h3 id="database-initialization">Database initialization</h3>
 <pre><code class="lang-csharp">// Apply pending migrations on startup
 await app.MigrateAsync&lt;AppDbContext&gt;();

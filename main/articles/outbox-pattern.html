@@ -144,7 +144,9 @@ context. A context that will never use the outbox can opt out with <code>modelBu
 <code>OnModelCreating</code>; an outbox-enabled context must keep the mapping (the relay store refuses to run without it).</p>
 <p>Only one outbox-enabled <code>DbContext</code> is supported per host: the relay and retention background services resolve a
 single <code>IOutboxStore</code>, so calling <code>EnableOutboxProcessing()</code> for a second context throws an
-<code>InvalidOperationException</code> at startup instead of silently leaving the first context's messages unrelayed. The
+<code>InvalidOperationException</code> at startup instead of silently leaving the first context's messages unrelayed. Other
+contexts can still be registered: the unit of work then spans every context and commits the outbox-enabled one last
+(see <a href="packages/vulthil-sharedkernel-infrastructure.html#several-dbcontexts">Several DbContexts</a>). The
 Npgsql and MySQL stores also require your context to derive from <code>BaseDbContext</code> (or otherwise implement
 <code>IUnitOfWork</code>) — without a transaction their <code>FOR UPDATE SKIP LOCKED</code> fetch would release its locks immediately,
 letting concurrent relay instances double-dispatch the same messages, so <code>RelationalOutboxStore</code> throws instead of

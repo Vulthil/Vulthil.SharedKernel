@@ -157,7 +157,7 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_DependencyInjection_AddDbContext__1_Microsoft_Extensions_Hosting_IHostApplicationBuilder_System_Action_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0___" data-uid="Vulthil.SharedKernel.Infrastructure.DependencyInjection.AddDbContext``1(Microsoft.Extensions.Hosting.IHostApplicationBuilder,System.Action{Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0}})">
   AddDbContext&lt;TDbContext&gt;(IHostApplicationBuilder, Action&lt;IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.html">BaseDbContext</a>-derived context with unit-of-work and optional outbox processing.</p>
@@ -197,6 +197,22 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
 
 
+  <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_DependencyInjection_AddDbContext__1_Microsoft_Extensions_Hosting_IHostApplicationBuilder_System_Action_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+The context becomes the host's <a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWork.html">IUnitOfWork</a>. When the host registers several contexts with this
+method, <a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWork.html">IUnitOfWork</a> spans all of them: saves and transactions cover every context, and the contexts
+commit one by one, in registration order with the outbox-enabled context last. So a failed commit can leave a
+saved change without its message, but never a message for a change that was not saved.
+</p>
+<p>
+A commit is atomic per context only. When a commit fails after another context committed, the committed changes
+stay saved, the rest is rolled back, and <a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWork.html#Vulthil_SharedKernel_Application_Data_IUnitOfWork_ExecuteInTransactionAsync__1_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Func___0_System_Boolean__System_Threading_CancellationToken_">ExecuteInTransactionAsync&lt;TResult&gt;(Func&lt;CancellationToken, Task&lt;TResult&gt;&gt;, Func&lt;TResult, bool&gt;, CancellationToken)</a>
+throws <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a> instead of retrying. Retries follow the execution strategy of the
+first registered context. A context whose provider has no transactions (for example Cosmos DB) stays out of the
+transaction. To make one context the unit of work instead, register <a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWork.html">IUnitOfWork</a> yourself after
+the <code>AddDbContext</code> calls.
+</p>
+</div>
 
 
 
@@ -205,7 +221,7 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_DependencyInjection_AddDbContext__2_Microsoft_Extensions_Hosting_IHostApplicationBuilder_System_Action_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___1___" data-uid="Vulthil.SharedKernel.Infrastructure.DependencyInjection.AddDbContext``2(Microsoft.Extensions.Hosting.IHostApplicationBuilder,System.Action{Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``1}})">
   AddDbContext&lt;TDbContextInterface, TDbContext&gt;(IHostApplicationBuilder, Action&lt;IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers a <a class="xref" href="Vulthil.SharedKernel.Infrastructure.Data.BaseDbContext.html">BaseDbContext</a>-derived context with an additional service interface and optional outbox processing.</p>
@@ -256,7 +272,7 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_DependencyInjection_EnsureCreatedAsync__1_Microsoft_Extensions_Hosting_IHost_" data-uid="Vulthil.SharedKernel.Infrastructure.DependencyInjection.EnsureCreatedAsync``1(Microsoft.Extensions.Hosting.IHost)">
   EnsureCreatedAsync&lt;TDbContext&gt;(IHost)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L134"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Ensures the database for <code class="typeparamref">TDbContext</code> has been created.</p>
@@ -300,7 +316,7 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_DependencyInjection_EnsureCreatedAsync__1_System_IServiceProvider_" data-uid="Vulthil.SharedKernel.Infrastructure.DependencyInjection.EnsureCreatedAsync``1(System.IServiceProvider)">
   EnsureCreatedAsync&lt;TDbContext&gt;(IServiceProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure/DependencyInjection.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Ensures the database for <code class="typeparamref">TDbContext</code> has been created using the provided service provider.</p>

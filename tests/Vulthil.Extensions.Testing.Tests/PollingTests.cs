@@ -50,8 +50,8 @@ public sealed class PollingWaitAsyncOfTTests : BaseUnitTestCase
 
         // Act
         var polling = Polling.WaitAsync(Tick * 5, Poll, Tick, _timeProvider, CancellationToken);
-        await AdvanceOneTickAsync();
-        await AdvanceOneTickAsync();
+        await AdvanceToTheNextAttemptAsync();
+        await AdvanceToTheNextAttemptAsync();
         var result = await polling.WaitAsync(Guard, CancellationToken);
 
         // Assert
@@ -74,8 +74,8 @@ public sealed class PollingWaitAsyncOfTTests : BaseUnitTestCase
 
         // Act
         var polling = Polling.WaitAsync(Tick * 2.5, Poll, Tick, _timeProvider, CancellationToken);
-        await AdvanceOneTickAsync();
-        await AdvanceOneTickAsync();
+        await AdvanceToTheNextAttemptAsync();
+        await AdvanceToTheNextAttemptAsync();
         _timeProvider.Advance(Tick / 2);
         var result = await polling.WaitAsync(Guard, CancellationToken);
 
@@ -161,7 +161,7 @@ public sealed class PollingWaitAsyncOfTTests : BaseUnitTestCase
 
         // Act
         var exception = await Should.ThrowAsync<OperationCanceledException>(
-            () => Polling.WaitAsync(Tick / 2, Poll, Tick, _timeProvider, callerCts.Token));
+            () => Polling.WaitAsync(Tick / 2, Poll, Tick, _timeProvider, callerCts.Token).WaitAsync(Guard, CancellationToken));
 
         // Assert
         exception.ShouldNotBeNull();
@@ -199,9 +199,62 @@ public sealed class PollingWaitAsyncOfTTests : BaseUnitTestCase
         exceptions.ShouldAllBe(exception => exception.ParamName == "func");
     }
 
+    [Fact]
+    public async Task OptionsSetTheTimeoutTheTickAndTheClock()
+    {
+        // Arrange
+        var attempt = 0;
+        Task<Result<int>> Poll(CancellationToken ct)
+        {
+            attempt++;
+            RecordAttempt();
+            return Task.FromResult(Result.Failure<int>(Error.Failure($"error-{attempt}", "still failing")));
+        }
+        var options = new PollingOptions(Tick * 3) { TimerTick = Tick * 2, TimeProvider = _timeProvider };
+
+        // Act
+        var polling = Polling.WaitAsync(options, Poll, CancellationToken);
+        _timeProvider.Advance(Tick);
+        await AdvanceToTheNextAttemptAsync();
+        _timeProvider.Advance(Tick);
+        var result = await polling.WaitAsync(Guard, CancellationToken);
+
+        // Assert
+        result.PollingError.ShouldNotBeNull();
+        result.PollingError.Errors.Select(error => error.Code).ShouldBe(["error-1", "error-2"]);
+    }
+
+    [Fact]
+    public async Task NullOptionsThrowsArgumentNullException()
+    {
+        // Arrange
+        PollingOptions? options = null;
+
+        // Act
+        var exception = await Should.ThrowAsync<ArgumentNullException>(
+            () => Polling.WaitAsync(options!, _ => Task.FromResult(Result.Success(42)), CancellationToken));
+
+        // Assert
+        exception.ParamName.ShouldBe("options");
+    }
+
+    [Fact]
+    public async Task NullTimeProviderThrowsArgumentNullException()
+    {
+        // Arrange
+        TimeProvider? timeProvider = null;
+
+        // Act
+        var exception = await Should.ThrowAsync<ArgumentNullException>(
+            () => Polling.WaitAsync(TimeSpan.FromSeconds(1), _ => Task.FromResult(Result.Success(42)), Tick, timeProvider!, CancellationToken));
+
+        // Assert
+        exception.ParamName.ShouldBe("timeProvider");
+    }
+
     private void RecordAttempt() => _nextAttempt?.TrySetResult();
 
-    private async Task AdvanceOneTickAsync()
+    private async Task AdvanceToTheNextAttemptAsync()
     {
         var nextAttempt = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _nextAttempt = nextAttempt;
@@ -256,8 +309,8 @@ public sealed class PollingWaitAsyncTests : BaseUnitTestCase
 
         // Act
         var polling = Polling.WaitAsync(Tick * 5, Poll, Tick, _timeProvider, CancellationToken);
-        await AdvanceOneTickAsync();
-        await AdvanceOneTickAsync();
+        await AdvanceToTheNextAttemptAsync();
+        await AdvanceToTheNextAttemptAsync();
         var result = await polling.WaitAsync(Guard, CancellationToken);
 
         // Assert
@@ -279,8 +332,8 @@ public sealed class PollingWaitAsyncTests : BaseUnitTestCase
 
         // Act
         var polling = Polling.WaitAsync(Tick * 2.5, Poll, Tick, _timeProvider, CancellationToken);
-        await AdvanceOneTickAsync();
-        await AdvanceOneTickAsync();
+        await AdvanceToTheNextAttemptAsync();
+        await AdvanceToTheNextAttemptAsync();
         _timeProvider.Advance(Tick / 2);
         var result = await polling.WaitAsync(Guard, CancellationToken);
 
@@ -366,7 +419,7 @@ public sealed class PollingWaitAsyncTests : BaseUnitTestCase
 
         // Act
         var exception = await Should.ThrowAsync<OperationCanceledException>(
-            () => Polling.WaitAsync(Tick / 2, Poll, Tick, _timeProvider, callerCts.Token));
+            () => Polling.WaitAsync(Tick / 2, Poll, Tick, _timeProvider, callerCts.Token).WaitAsync(Guard, CancellationToken));
 
         // Assert
         exception.ShouldNotBeNull();
@@ -404,9 +457,62 @@ public sealed class PollingWaitAsyncTests : BaseUnitTestCase
         exceptions.ShouldAllBe(exception => exception.ParamName == "func");
     }
 
+    [Fact]
+    public async Task OptionsSetTheTimeoutTheTickAndTheClock()
+    {
+        // Arrange
+        var attempt = 0;
+        Task<Result> Poll(CancellationToken ct)
+        {
+            attempt++;
+            RecordAttempt();
+            return Task.FromResult(Result.Failure(Error.Failure($"error-{attempt}", "still failing")));
+        }
+        var options = new PollingOptions(Tick * 3) { TimerTick = Tick * 2, TimeProvider = _timeProvider };
+
+        // Act
+        var polling = Polling.WaitAsync(options, Poll, CancellationToken);
+        _timeProvider.Advance(Tick);
+        await AdvanceToTheNextAttemptAsync();
+        _timeProvider.Advance(Tick);
+        var result = await polling.WaitAsync(Guard, CancellationToken);
+
+        // Assert
+        result.PollingError.ShouldNotBeNull();
+        result.PollingError.Errors.Select(error => error.Code).ShouldBe(["error-1", "error-2"]);
+    }
+
+    [Fact]
+    public async Task NullOptionsThrowsArgumentNullException()
+    {
+        // Arrange
+        PollingOptions? options = null;
+
+        // Act
+        var exception = await Should.ThrowAsync<ArgumentNullException>(
+            () => Polling.WaitAsync(options!, _ => Task.FromResult(Result.Success()), CancellationToken));
+
+        // Assert
+        exception.ParamName.ShouldBe("options");
+    }
+
+    [Fact]
+    public async Task NullTimeProviderThrowsArgumentNullException()
+    {
+        // Arrange
+        TimeProvider? timeProvider = null;
+
+        // Act
+        var exception = await Should.ThrowAsync<ArgumentNullException>(
+            () => Polling.WaitAsync(TimeSpan.FromSeconds(1), _ => Task.FromResult(Result.Success()), Tick, timeProvider!, CancellationToken));
+
+        // Assert
+        exception.ParamName.ShouldBe("timeProvider");
+    }
+
     private void RecordAttempt() => _nextAttempt?.TrySetResult();
 
-    private async Task AdvanceOneTickAsync()
+    private async Task AdvanceToTheNextAttemptAsync()
     {
         var nextAttempt = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _nextAttempt = nextAttempt;

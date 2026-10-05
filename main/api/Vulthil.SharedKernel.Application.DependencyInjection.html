@@ -448,7 +448,7 @@ the shared <a class="xref" href="Vulthil.SharedKernel.Application.Messaging.ISen
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddOpenDomainEventPipelineHandler_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Type_" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddOpenDomainEventPipelineHandler(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
   AddOpenDomainEventPipelineHandler(IServiceCollection, Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L178"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an open-generic domain event pipeline behavior. Behaviors registered through this
@@ -497,13 +497,11 @@ method apply lazily and are independent of when handlers were registered.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddOpenPipelineHandler_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Type_" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddOpenPipelineHandler(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
   AddOpenPipelineHandler(IServiceCollection, Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L160"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Registers an open-generic request pipeline behavior. Behaviors registered through this method
-apply to every handler resolved after <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> construction — order of
-registration relative to <a class="xref" href="Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_ApplicationOptions__">AddApplication(IServiceCollection, Action&lt;ApplicationOptions&gt;)</a>
-is irrelevant because behaviors are composed lazily at handler-resolution time.</p>
+  <div class="markdown level1 summary"><p>Registers an open-generic request pipeline behavior. Behaviors are composed when a handler is resolved, so the
+behavior applies to every handler, whether the handler was registered before or after it.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -534,6 +532,12 @@ is irrelevant because behaviors are composed lazily at handler-resolution time.<
 
 
 
+  <h4 class="section" id="Vulthil_SharedKernel_Application_DependencyInjection_AddOpenPipelineHandler_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Type__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Behaviors nest in registration order across all calls: the first one registered is the outermost. A behavior
+registered after <a class="xref" href="Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_ApplicationOptions__">AddApplication(IServiceCollection, Action&lt;ApplicationOptions&gt;)</a> runs inside the
+behaviors that <a class="xref" href="Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_ApplicationOptions__">AddApplication(IServiceCollection, Action&lt;ApplicationOptions&gt;)</a> registered, and one
+registered before it runs outside them. Registering the same behavior type again keeps its first position.</p>
+</div>
 
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">

@@ -114,9 +114,6 @@ public static class Polling
         CancellationToken cancellationToken)
         => WaitAsync<T>(timeout, func, timerTick, TimeProvider.System, cancellationToken);
 
-    /// <summary>
-    /// Polls on the timer and the timeout of <paramref name="timeProvider"/>, so tests can drive both with a fake clock.
-    /// </summary>
     internal static Task<PollingResult<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<CancellationToken, Task<Result<T>>>? func,
@@ -221,9 +218,6 @@ public static class Polling
         CancellationToken cancellationToken)
         => WaitAsync(timeout, func, timerTick, TimeProvider.System, cancellationToken);
 
-    /// <summary>
-    /// Polls on the timer and the timeout of <paramref name="timeProvider"/>, so tests can drive both with a fake clock.
-    /// </summary>
     internal static Task<PollingResult> WaitAsync(
         TimeSpan timeout,
         Func<CancellationToken, Task<Result>>? func,
@@ -280,10 +274,8 @@ public static class Polling
         return onTimeout(PollingError.FromErrors(errors));
     }
 
-    /// <summary>
-    /// Adapts a token-less function and passes <see langword="null"/> through, so the core rejects it with
-    /// <see cref="ArgumentNullException"/> when the poll is awaited, as it does for every other overload.
-    /// </summary>
+    // A null func passes through, so the core rejects it with ArgumentNullException when the poll is awaited,
+    // as it does for every other overload.
     private static Func<CancellationToken, Task<TResult>>? IgnoreToken<TResult>(Func<Task<TResult>>? func)
         => func is null ? null : _ => func();
 }

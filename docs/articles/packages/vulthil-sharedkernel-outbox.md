@@ -17,6 +17,9 @@ seam. It has **no EF Core dependency**; the EF implementation lives in
 
 - One `OutboxMessages` table, one relay; rows are routed by an `OutboxDestination` discriminator to the registered
   `IOutboxDispatcher`, so in-process domain events and broker messages share a single outbox.
+- A row stores its message type's full name: `OutboxMessageTypes.NameOf` names the type on capture, and
+  `OutboxMessageTypes.Resolve` finds it again on relay. A row fails when no loaded assembly defines its type, or when
+  two loaded assemblies define different types with that name.
 - The engine relies on `IOutboxStore` for both capture (`AddOutboxMessage`/`SaveChangesAsync`/`IsInTransaction`) and
   the relay's transactional boundary (`RunRelayUnitAsync`, which hands the engine an `IOutboxRelayUnit` to claim a
   batch and record its outcomes); the EF implementation and provider stores supply the transaction and row-locking.

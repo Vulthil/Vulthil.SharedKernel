@@ -185,6 +185,14 @@ relay cycle routes it to the registered `IOutboxDispatcher` whose `Handles(desti
 in-process domain-event dispatcher is registered by default; other sinks plug in and coexist in the **same** outbox
 table and relay, so an application never carries more than one outbox table regardless of how many sinks it uses.
 
+Every row stores its message type by name: the type's full name (`Type.FullName`), without the assembly, so a row
+stays readable when the assembly version changes. `OutboxMessageTypes.NameOf` produces the name, and
+`OutboxMessageTypes.Resolve` finds the type again among the assemblies loaded in the relay process, so a custom sink
+reads rows the same way the built-in dispatchers do. The relay fails a row when no loaded assembly defines its type,
+or when two loaded assemblies define different types with that name; the row is then retried like any other failure.
+Broker messages are serialized with the messaging JSON settings, and domain events with the default
+`System.Text.Json` settings.
+
 ## Transactional bus-publish outbox
 
 `Vulthil.Messaging.Outbox` adds a sink for the message broker. A publish/send filter captures any message published

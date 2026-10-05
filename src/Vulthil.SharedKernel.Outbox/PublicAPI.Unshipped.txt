@@ -1,4 +1,7 @@
 #nullable enable
+static Vulthil.SharedKernel.Outbox.OutboxMessageTypes.NameOf(System.Type! type) -> string!
+static Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve(string! typeName) -> System.Type!
+Vulthil.SharedKernel.Outbox.OutboxMessageTypes
 *REMOVED*Vulthil.SharedKernel.Outbox.IOutboxStore.ProcessBatchAsync(System.Func<Vulthil.SharedKernel.Outbox.OutboxMessageData, System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>! dispatch, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 Vulthil.SharedKernel.Outbox.IOutboxRelayUnit
 Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.ClaimAsync(int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!

@@ -97,7 +97,7 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptor(TimeProvid
             .Select(d => new OutboxMessage
             {
                 OccurredOnUtc = _timeProvider.GetUtcNow(),
-                Type = d.GetType().FullName!,
+                Type = OutboxMessageTypes.NameOf(d.GetType()),
                 Content = JsonSerializer.Serialize(d, d.GetType()),
                 TraceParent = activity?.Id,
                 TraceState = activity?.TraceStateString,

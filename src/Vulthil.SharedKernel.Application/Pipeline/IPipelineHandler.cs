@@ -15,6 +15,10 @@ public delegate Task<TResponse> PipelineDelegate<TResponse>(CancellationToken ca
 /// <summary>
 /// Defines a pipeline handler that wraps request processing with cross-cutting behavior.
 /// </summary>
+/// <remarks>
+/// Pipeline handlers run in registration order, across every registration call: the first one registered is the
+/// outermost, so it runs first and sees the response last.
+/// </remarks>
 /// <typeparam name="TRequest">The type of request being processed.</typeparam>
 /// <typeparam name="TResponse">The type of response produced.</typeparam>
 public interface IPipelineHandler<in TRequest, TResponse>

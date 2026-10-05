@@ -23,8 +23,10 @@ services.AddApplication(options =>
 {
     options.RegisterHandlerAssemblies(typeof(Program).Assembly);
     options.RegisterFluentValidationAssemblies(typeof(Program).Assembly);
-    options.AddValidationPipelineBehavior();
+
+    // The first behavior registered is the outermost.
     options.AddRequestLoggingBehavior();
+    options.AddValidationPipelineBehavior();
     options.AddTransactionalPipelineBehavior();
 });
 ```

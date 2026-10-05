@@ -141,6 +141,52 @@ public sealed class HandlerRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task ABehaviorRegisteredAfterAddApplicationRunsInsideTheBehaviorsItRegistered()
+    {
+        // Arrange
+        OrderTrackingBehaviors.ExecutionOrder.Clear();
+        var services = new ServiceCollection();
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly);
+            o.AddOpenPipelineHandler(typeof(FirstOrderTrackingBehavior<,>));
+        });
+        services.AddOpenPipelineHandler(typeof(SecondOrderTrackingBehavior<,>));
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<IHandler<PingCommand, Result<string>>>();
+
+        // Act
+        await handler.HandleAsync(new PingCommand("order"), CancellationToken);
+
+        // Assert
+        OrderTrackingBehaviors.ExecutionOrder.ShouldBe(["First-Before", "Second-Before", "Second-After", "First-After"]);
+    }
+
+    [Fact]
+    public async Task ABehaviorRegisteredBeforeAddApplicationRunsOutsideTheBehaviorsItRegistered()
+    {
+        // Arrange
+        OrderTrackingBehaviors.ExecutionOrder.Clear();
+        var services = new ServiceCollection();
+        services.AddOpenPipelineHandler(typeof(SecondOrderTrackingBehavior<,>));
+        services.AddApplication(o =>
+        {
+            o.RegisterHandlerAssemblies(typeof(HandlerRegistrationTests).Assembly);
+            o.AddOpenPipelineHandler(typeof(FirstOrderTrackingBehavior<,>));
+        });
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<IHandler<PingCommand, Result<string>>>();
+
+        // Act
+        await handler.HandleAsync(new PingCommand("order"), CancellationToken);
+
+        // Assert
+        OrderTrackingBehaviors.ExecutionOrder.ShouldBe(["Second-Before", "First-Before", "First-After", "Second-After"]);
+    }
+
+    [Fact]
     public async Task AddHandlersAndAddFluentValidationFromASecondModuleComposeAdditively()
     {
         // Arrange

@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Telemetry;
@@ -8,7 +7,7 @@ using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Sending;
 
-internal sealed class RabbitMqSendEndpoint : ISendEndpoint
+internal sealed class RabbitMqSendEndpoint : ITransportSendEndpoint
 {
     private readonly IInternalPublisher _publisher;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
@@ -31,24 +30,13 @@ internal sealed class RabbitMqSendEndpoint : ISendEndpoint
 
     public Uri Address { get; }
 
-    public Task SendAsync<TMessage>(TMessage message, CancellationToken cancellationToken)
-        where TMessage : notnull
-        => SendAsync(message, null, cancellationToken);
-
-    public async Task SendAsync<TMessage>(
-        TMessage message,
-        Func<IPublishContext, ValueTask>? configureContext = null,
-        CancellationToken cancellationToken = default)
-        where TMessage : notnull
+    public async Task SendAsync(object message, PublishContext context, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(message);
-
-        var publishContext = new PublishContext();
-        configureContext ??= (_ => ValueTask.CompletedTask);
-        await configureContext(publishContext).ConfigureAwait(false);
+        ArgumentNullException.ThrowIfNull(context);
 
         var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(message.GetType());
-        var send = RabbitMqOutgoingMessages.Send(message, publishContext, messageConfiguration, _queueName, _messageConfigurationProvider.JsonSerializerOptions);
+        var send = RabbitMqOutgoingMessages.Send(message, context, messageConfiguration, _queueName, _messageConfigurationProvider.JsonSerializerOptions);
 
         using var activity = send.StartActivity();
         MessagingLog.Sending(_logger, send.Ids.UrnString, _queueName, send.Ids.MessageId, send.Ids.CorrelationId);

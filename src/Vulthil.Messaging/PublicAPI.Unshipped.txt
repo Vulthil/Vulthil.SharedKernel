@@ -73,3 +73,10 @@ Vulthil.Messaging.Transport.IDeliveryPort.RetryCount.get -> int
 Vulthil.Messaging.Transport.IDeliveryPort.SendReplyAsync(Vulthil.Messaging.Transport.MessageEnvelope! reply) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.Transport.IDeliveryPort.WaitBeforeRetryAsync(System.TimeSpan delay) -> System.Threading.Tasks.Task!
 Vulthil.Messaging.ITransport.StopAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+*REMOVED*Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync<TMessage>(TMessage message, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext!, System.Threading.Tasks.ValueTask>? configureContext = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+*REMOVED*Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri! address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint!>
+Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(object! message, Vulthil.Messaging.Transport.PublishContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.ITransportSendEndpoint
+Vulthil.Messaging.Transport.ITransportSendEndpoint.Address.get -> System.Uri!
+Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync(object! message, Vulthil.Messaging.Transport.PublishContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri! address, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vulthil.Messaging.Transport.ITransportSendEndpoint!>

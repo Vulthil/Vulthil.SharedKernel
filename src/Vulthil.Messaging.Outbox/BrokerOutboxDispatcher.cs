@@ -1,7 +1,4 @@
-using System.Collections.Concurrent;
-using System.Reflection;
 using System.Text.Json;
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Transport;
 using Vulthil.SharedKernel.Outbox;
 
@@ -18,21 +15,6 @@ internal sealed class BrokerOutboxDispatcher(
     ITransportSendEndpointProvider sendEndpointProvider,
     IMessageConfigurationProvider messageConfigurationProvider) : IOutboxDispatcher
 {
-    private static readonly MethodInfo PublishMethod = typeof(ITransportPublisher)
-        .GetMethods()
-        .Single(method => method.Name == nameof(ITransportPublisher.PublishAsync)
-            && method.IsGenericMethodDefinition
-            && method.GetParameters().Length == 3);
-
-    private static readonly MethodInfo SendMethod = typeof(ISendEndpoint)
-        .GetMethods()
-        .Single(method => method.Name == nameof(ISendEndpoint.SendAsync)
-            && method.IsGenericMethodDefinition
-            && method.GetParameters().Length == 3);
-
-    private static readonly ConcurrentDictionary<Type, MethodInfo> PublishByType = [];
-    private static readonly ConcurrentDictionary<Type, MethodInfo> SendByType = [];
-
     public bool Handles(OutboxDestination destination) =>
         destination is OutboxDestination.Publish or OutboxDestination.Send;
 
@@ -44,32 +26,27 @@ internal sealed class BrokerOutboxDispatcher(
             ? null
             : JsonSerializer.Deserialize<BrokerOutboxMetadata>(message.Metadata, messageConfigurationProvider.JsonSerializerOptions);
 
-        Func<IPublishContext, ValueTask> configure = context =>
-        {
-            Apply(metadata, context);
-            return ValueTask.CompletedTask;
-        };
+        var context = CreateContext(metadata);
 
         if (message.Destination == OutboxDestination.Send)
         {
             var address = new Uri(metadata?.DestinationAddress
                 ?? throw new InvalidOperationException("An outbox send message is missing its destination address."));
             var endpoint = await sendEndpointProvider.GetSendEndpointAsync(address, cancellationToken).ConfigureAwait(false);
-            var send = SendByType.GetOrAdd(messageType, static type => SendMethod.MakeGenericMethod(type));
-            await ((Task)send.Invoke(endpoint, [payload, configure, cancellationToken])!).ConfigureAwait(false);
+            await endpoint.SendAsync(payload, context, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            var publish = PublishByType.GetOrAdd(messageType, static type => PublishMethod.MakeGenericMethod(type));
-            await ((Task)publish.Invoke(publisher, [payload, configure, cancellationToken])!).ConfigureAwait(false);
+            await publisher.PublishAsync(payload, context, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    private static void Apply(BrokerOutboxMetadata? metadata, IPublishContext context)
+    private static PublishContext CreateContext(BrokerOutboxMetadata? metadata)
     {
+        var context = new PublishContext();
         if (metadata is null)
         {
-            return;
+            return context;
         }
 
         if (!string.IsNullOrEmpty(metadata.MessageId))
@@ -91,5 +68,7 @@ internal sealed class BrokerOutboxDispatcher(
         {
             context.AddHeaders(headers);
         }
+
+        return context;
     }
 }

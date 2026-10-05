@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.Transport;
 
@@ -11,7 +10,7 @@ internal sealed class RabbitMqSendEndpointProvider : ITransportSendEndpointProvi
     private readonly IInternalPublisher _publisher;
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<RabbitMqSendEndpoint> _endpointLogger;
-    private readonly ConcurrentDictionary<Uri, ISendEndpoint> _endpoints = new();
+    private readonly ConcurrentDictionary<Uri, ITransportSendEndpoint> _endpoints = new();
 
     public RabbitMqSendEndpointProvider(
         IInternalPublisher publisher,
@@ -23,7 +22,7 @@ internal sealed class RabbitMqSendEndpointProvider : ITransportSendEndpointProvi
         _endpointLogger = loggerFactory.CreateLogger<RabbitMqSendEndpoint>();
     }
 
-    public ValueTask<ISendEndpoint> GetSendEndpointAsync(Uri address, CancellationToken cancellationToken = default)
+    public ValueTask<ITransportSendEndpoint> GetSendEndpointAsync(Uri address, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(address);
 
@@ -31,7 +30,7 @@ internal sealed class RabbitMqSendEndpointProvider : ITransportSendEndpointProvi
         return ValueTask.FromResult(endpoint);
     }
 
-    private ISendEndpoint CreateEndpoint(Uri address)
+    private ITransportSendEndpoint CreateEndpoint(Uri address)
     {
         var queueName = RabbitMqAddress.ResolveRoutingKey(address);
         if (string.IsNullOrEmpty(queueName))

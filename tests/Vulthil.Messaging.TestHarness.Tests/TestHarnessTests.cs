@@ -197,6 +197,43 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task APublishThroughAnInterfaceDeliversEveryMemberOfTheMessage()
+    {
+        // Arrange
+        ShipmentDispatched? observed = null;
+        Harness.Handle<ShipmentDispatched>(context =>
+        {
+            observed = context.Message;
+            return Task.CompletedTask;
+        });
+
+        // Act
+        await Publisher.PublishAsync<IShipmentEvent>(new ShipmentDispatched(Guid.NewGuid(), "Acme Freight"), CancellationToken);
+
+        // Assert
+        observed.ShouldNotBeNull().Carrier.ShouldBe("Acme Freight");
+    }
+
+    [Fact]
+    public async Task ASendThroughAnInterfaceDeliversEveryMemberOfTheMessage()
+    {
+        // Arrange
+        ShipmentDispatched? observed = null;
+        Harness.Handle<ShipmentDispatched>(context =>
+        {
+            observed = context.Message;
+            return Task.CompletedTask;
+        });
+        var endpoint = await SendEndpointProvider.GetSendEndpointAsync(new Uri("queue:shipments"), CancellationToken);
+
+        // Act
+        await endpoint.SendAsync<IShipmentEvent>(new ShipmentDispatched(Guid.NewGuid(), "Acme Freight"), CancellationToken);
+
+        // Assert
+        observed.ShouldNotBeNull().Carrier.ShouldBe("Acme Freight");
+    }
+
+    [Fact]
     public async Task ClearResetsCapturedMessages()
     {
         // Arrange
@@ -389,6 +426,13 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     public sealed record ExplodingRequest(string Value);
     public sealed record ExternalQuery(string Query);
     public sealed record ExternalReply(string Answer);
+
+    public interface IShipmentEvent
+    {
+        Guid ShipmentId { get; }
+    }
+
+    public sealed record ShipmentDispatched(Guid ShipmentId, string Carrier) : IShipmentEvent;
 
     public sealed class OrderCreatedConsumer : IConsumer<OrderCreated>
     {

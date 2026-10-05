@@ -76,20 +76,13 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         }
     }
 
-    public async Task PublishAsync<TMessage>(
-        TMessage message,
-        Func<IPublishContext, ValueTask>? configureContext = null,
-        CancellationToken cancellationToken = default)
-        where TMessage : notnull
+    public async Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(message);
-
-        var publishContext = new PublishContext();
-        configureContext ??= (_ => ValueTask.CompletedTask);
-        await configureContext(publishContext).ConfigureAwait(false);
+        ArgumentNullException.ThrowIfNull(context);
 
         var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(message.GetType());
-        var publish = RabbitMqOutgoingMessages.Publish(message, publishContext, messageConfiguration, _messageConfigurationProvider.JsonSerializerOptions);
+        var publish = RabbitMqOutgoingMessages.Publish(message, context, messageConfiguration, _messageConfigurationProvider.JsonSerializerOptions);
 
         using var activity = publish.StartActivity();
         MessagingLog.Publishing(_logger, publish.Ids.UrnString, publish.Message.Exchange, publish.Message.RoutingKey, publish.Ids.MessageId);

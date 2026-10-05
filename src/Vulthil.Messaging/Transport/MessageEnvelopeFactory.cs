@@ -10,7 +10,9 @@ namespace Vulthil.Messaging.Transport;
 public static class MessageEnvelopeFactory
 {
     /// <summary>
-    /// Builds a <see cref="MessageEnvelope"/> from the resolved publish state for a single outgoing message.
+    /// Builds a <see cref="MessageEnvelope"/> from the resolved publish state for a single outgoing message. The payload
+    /// is serialized as the message's runtime type, not as <typeparamref name="TMessage"/>, so a message passed as a
+    /// base type or an interface keeps every member of its actual type; pass the URN of that runtime type.
     /// </summary>
     /// <typeparam name="TMessage">The message type being published.</typeparam>
     /// <param name="message">The message payload to serialize into the envelope.</param>
@@ -31,6 +33,9 @@ public static class MessageEnvelopeFactory
         string? requestId = null)
         where TMessage : notnull
     {
+        ArgumentNullException.ThrowIfNull(message);
+        ArgumentNullException.ThrowIfNull(publishContext);
+
         // Copy user headers, removing the keys that we promote to typed envelope fields.
         Dictionary<string, object?>? userHeaders = null;
         foreach (var (key, value) in publishContext.Headers)
@@ -55,7 +60,7 @@ public static class MessageEnvelopeFactory
             ResponseAddress = publishContext.ResponseAddress?.ToString(),
             FaultAddress = publishContext.FaultAddress?.ToString(),
             MessageType = urn,
-            Message = JsonSerializer.SerializeToElement(message, jsonOptions),
+            Message = JsonSerializer.SerializeToElement(message, message.GetType(), jsonOptions),
             SentTime = DateTimeOffset.UtcNow,
             Headers = userHeaders,
         };

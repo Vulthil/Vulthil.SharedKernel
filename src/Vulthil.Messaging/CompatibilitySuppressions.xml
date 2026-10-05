@@ -45,6 +45,20 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync``1(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask},System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri,System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Vulthil.Messaging.Transport.IMessageHandlerFactory`1.ForConsumer(System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)</Target>
     <Left>lib/net9.0/Vulthil.Messaging.dll</Left>
     <Right>lib/net9.0/Vulthil.Messaging.dll</Right>
@@ -58,6 +72,20 @@
     <IsBaselineSuppression>true</IsBaselineSuppression>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync``1(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask},System.Threading.CancellationToken)</Target>
+    <Left>lib/net9.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net9.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri,System.Threading.CancellationToken)</Target>
+    <Left>lib/net9.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net9.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Vulthil.Messaging.Transport.IMessageHandlerFactory`1.ForConsumer(System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)</Target>
     <Left>lib/net10.0/Vulthil.Messaging.dll</Left>
@@ -67,6 +95,20 @@
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Vulthil.Messaging.Transport.IMessageHandlerFactory`1.ForRequestConsumer(System.Type,System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri,System.Threading.CancellationToken)</Target>
     <Left>lib/net10.0/Vulthil.Messaging.dll</Left>
     <Right>lib/net10.0/Vulthil.Messaging.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -81,6 +123,20 @@
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Vulthil.Messaging.Transport.IMessageHandlerFactory`1.ForRequestConsumer(System.Type,System.Type,System.Type,Vulthil.Messaging.Queues.RetryPolicyDefinition)</Target>
+    <Left>lib/net9.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net9.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)</Target>
+    <Left>lib/net9.0/Vulthil.Messaging.dll</Left>
+    <Right>lib/net9.0/Vulthil.Messaging.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri,System.Threading.CancellationToken)</Target>
     <Left>lib/net9.0/Vulthil.Messaging.dll</Left>
     <Right>lib/net9.0/Vulthil.Messaging.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>

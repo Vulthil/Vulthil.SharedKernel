@@ -4,8 +4,9 @@ namespace Vulthil.Messaging.Transport;
 
 /// <summary>
 /// The public <see cref="IPublisher"/> facade. It builds the publish context, assigns a stable message id, runs the
-/// registered <see cref="IPublishFilter"/> pipeline (resolved from the caller's scope), and delegates to the raw
-/// <see cref="ITransportPublisher"/> terminal. Registered as scoped so filters can depend on scoped services.
+/// registered <see cref="IPublishFilter"/> pipeline (resolved from the caller's scope), and hands the message and the
+/// resolved context to the raw <see cref="ITransportPublisher"/> terminal. Registered as scoped so filters can depend
+/// on scoped services.
 /// </summary>
 internal sealed class FilteringPublisher(IServiceProvider serviceProvider, ITransportPublisher transport) : IPublisher
 {
@@ -43,14 +44,7 @@ internal sealed class FilteringPublisher(IServiceProvider serviceProvider, ITran
 
         var pipeline = PublishPipelineFactory.Build(
             serviceProvider,
-            _ => transport.PublishAsync(
-                message,
-                target =>
-                {
-                    PublishContextCopier.CopyResolved(context, target);
-                    return ValueTask.CompletedTask;
-                },
-                cancellationToken));
+            _ => transport.PublishAsync(message, context, cancellationToken));
 
         await pipeline(filterContext).ConfigureAwait(false);
     }

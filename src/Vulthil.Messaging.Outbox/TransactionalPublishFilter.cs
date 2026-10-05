@@ -63,7 +63,7 @@ internal sealed class TransactionalPublishFilter(
 
         return new OutboxMessage
         {
-            Type = context.MessageType.FullName!,
+            Type = OutboxMessageTypes.NameOf(context.MessageType),
             Content = JsonSerializer.Serialize(context.Message, context.MessageType, messageConfigurationProvider.JsonSerializerOptions),
             OccurredOnUtc = timeProvider.GetUtcNow(),
             Destination = context.Kind == PublishKind.Send ? OutboxDestination.Send : OutboxDestination.Publish,

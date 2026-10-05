@@ -6,9 +6,97 @@ namespace Vulthil.xUnit.Tests.Fixtures;
 
 public sealed class TestContainerScopeTests : BaseUnitTestCase
 {
-    private readonly RecordingContainer _container = new();
+    private const string NamespaceName = "orders_1";
 
-    public sealed class RecordingContainer : ITestContainerWithConnectionString, IResettableResource
+    private readonly SharedContainer _container = new();
+
+    [Fact]
+    public async Task AScopeCreatesItsNamespaceWhenItInitializesAndDeletesItWhenItIsDisposed()
+    {
+        // Arrange
+        await using var scope = new NamespacedScope(_container, NamespaceName);
+
+        // Act
+        await scope.InitializeAsync();
+        await scope.DisposeAsync();
+
+        // Assert
+        scope.Calls.ShouldBe([$"create:{NamespaceName}", $"delete:{NamespaceName}"]);
+        _container.InitializeCount.ShouldBe(0);
+        _container.DisposeCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task AScopeWithoutANamespaceNeitherCreatesNorDeletesOne()
+    {
+        // Arrange
+        await using var scope = new NamespacedScope(_container, namespaceName: null);
+
+        // Act
+        await scope.InitializeAsync();
+        await scope.DisposeAsync();
+
+        // Assert
+        scope.Calls.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task AFailedDeleteOfAnyKindIsReportedInsteadOfThrown()
+    {
+        // Arrange
+        await using var scope = new NamespacedScope(_container, NamespaceName)
+        {
+            DeleteFailure = new InvalidOperationException("The broker is gone."),
+        };
+
+        // Act
+        await Should.NotThrowAsync(() => scope.DisposeAsync().AsTask());
+
+        // Assert
+        scope.Calls.ShouldBe([$"delete:{NamespaceName}"]);
+    }
+
+    [Fact]
+    public async Task AScopeForwardsTheHostConfigurationAndTheConnectionStringKeyToTheSharedContainer()
+    {
+        // Arrange
+        await using var scope = new NamespacedScope(_container, NamespaceName);
+        var builder = Mock.Of<IWebHostBuilder>();
+        var services = new ServiceCollection();
+
+        // Act
+        scope.ConfigureWebHost(builder);
+        scope.ConfigureServices(services);
+
+        // Assert
+        _container.ConfiguredWebHost.ShouldBeSameAs(builder);
+        _container.ConfiguredServices.ShouldBeSameAs(services);
+        scope.ConnectionStringKey.ShouldBe(_container.ConnectionStringKey);
+    }
+
+    [Fact]
+    public async Task AScopeForwardsTheConnectionStringUnlessItsNamespaceHasAnAddressOfItsOwn()
+    {
+        // Arrange
+        await using var forwarding = new NamespacedScope(_container, NamespaceName);
+        await using var addressed = new NamespacedScope(_container, NamespaceName) { ConnectionStringOverride = "Host=shared;Database=orders_1" };
+
+        // Act & Assert
+        forwarding.ConnectionString.ShouldBe(_container.ConnectionString);
+        addressed.ConnectionString.ShouldBe("Host=shared;Database=orders_1");
+    }
+
+    [Fact]
+    public void TheBaseViewNeverResetsTheSharedContainer()
+    {
+        // Act
+        var interfaces = typeof(TestContainerScope<>).GetInterfaces();
+
+        // Assert
+        interfaces.ShouldNotContain(typeof(IResettableResource));
+    }
+
+    public sealed class SharedContainer : ITestContainerWithConnectionString
     {
         public int InitializeCount { get; private set; }
 
@@ -17,8 +105,6 @@ public sealed class TestContainerScopeTests : BaseUnitTestCase
         public IWebHostBuilder? ConfiguredWebHost { get; private set; }
 
         public IServiceCollection? ConfiguredServices { get; private set; }
-
-        public IServiceProvider? ResetWith { get; private set; }
 
         public string ConnectionString => "Host=shared;Database=shared";
 
@@ -39,94 +125,31 @@ public sealed class TestContainerScopeTests : BaseUnitTestCase
         public void ConfigureWebHost(IWebHostBuilder builder) => ConfiguredWebHost = builder;
 
         public void ConfigureServices(IServiceCollection services) => ConfiguredServices = services;
+    }
 
-        public ValueTask ResetAsync(IServiceProvider serviceProvider)
+    public sealed class NamespacedScope(SharedContainer container, string? namespaceName)
+        : TestContainerWithConnectionStringScope<SharedContainer>(container, namespaceName)
+    {
+        private readonly List<string> _calls = [];
+
+        public IReadOnlyList<string> Calls => _calls;
+
+        public Exception? DeleteFailure { get; init; }
+
+        public string? ConnectionStringOverride { get; init; }
+
+        public override string ConnectionString => ConnectionStringOverride ?? base.ConnectionString;
+
+        protected override ValueTask CreateNamespaceAsync(string namespaceName)
         {
-            ResetWith = serviceProvider;
+            _calls.Add($"create:{namespaceName}");
             return ValueTask.CompletedTask;
         }
-    }
 
-    public sealed class PlainContainer : ITestContainer
-    {
-        public ValueTask InitializeAsync() => ValueTask.CompletedTask;
-
-        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
-
-        public void ConfigureWebHost(IWebHostBuilder builder)
+        protected override ValueTask DeleteNamespaceAsync(string namespaceName)
         {
+            _calls.Add($"delete:{namespaceName}");
+            return DeleteFailure is null ? ValueTask.CompletedTask : ValueTask.FromException(DeleteFailure);
         }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-        }
-    }
-
-    [Fact]
-    public async Task TheScopeLifecycleNeverTouchesTheSharedContainer()
-    {
-        // Arrange
-        await using var scope = new TestContainerScope(_container);
-
-        // Act
-        await scope.InitializeAsync();
-        await scope.DisposeAsync();
-
-        // Assert
-        _container.InitializeCount.ShouldBe(0);
-        _container.DisposeCount.ShouldBe(0);
-    }
-
-    [Fact]
-    public async Task HostConfigurationIsForwardedToTheSharedContainer()
-    {
-        // Arrange
-        await using var scope = new TestContainerScope(_container);
-        var builder = Mock.Of<IWebHostBuilder>();
-        var services = new ServiceCollection();
-
-        // Act
-        scope.ConfigureWebHost(builder);
-        scope.ConfigureServices(services);
-
-        // Assert
-        _container.ConfiguredWebHost.ShouldBeSameAs(builder);
-        _container.ConfiguredServices.ShouldBeSameAs(services);
-    }
-
-    [Fact]
-    public async Task ResetIsForwardedToAResettableContainerWithTheSameServiceProvider()
-    {
-        // Arrange
-        await using var scope = new TestContainerScope(_container);
-        var serviceProvider = Mock.Of<IServiceProvider>();
-
-        // Act
-        await scope.ResetAsync(serviceProvider);
-
-        // Assert
-        _container.ResetWith.ShouldBeSameAs(serviceProvider);
-    }
-
-    [Fact]
-    public async Task ResetIsANoOpForAContainerThatIsNotResettable()
-    {
-        // Arrange
-        await using var plain = new PlainContainer();
-        await using var scope = new TestContainerScope(plain);
-
-        // Act & Assert
-        await Should.NotThrowAsync(() => scope.ResetAsync(Mock.Of<IServiceProvider>()).AsTask());
-    }
-
-    [Fact]
-    public async Task TheConnectionStringScopeForwardsTheConnectionStringAndItsKeyUnchanged()
-    {
-        // Arrange
-        await using var scope = new TestContainerWithConnectionStringScope(_container);
-
-        // Act & Assert
-        scope.ConnectionString.ShouldBe(_container.ConnectionString);
-        scope.ConnectionStringKey.ShouldBe(_container.ConnectionStringKey);
     }
 }

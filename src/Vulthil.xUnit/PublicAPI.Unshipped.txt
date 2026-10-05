@@ -50,3 +50,16 @@ override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseReal<TService>() 
 override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseRealFor<TService, TImplementation>() -> void
 virtual Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.CreateFactory() -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
 virtual Vulthil.xUnit.BaseUnitTestCase.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>
+Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.Container.get -> TContainer
+Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.TestContainerScope(TContainer container, string? namespaceName) -> void
+Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>
+Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionStringKey.get -> string!
+Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.TestContainerWithConnectionStringScope(TContainer container, string? namespaceName) -> void
+virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder! builder) -> void
+virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.CreateNamespaceAsync(string! namespaceName) -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DeleteNamespaceAsync(string! namespaceName) -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionString.get -> string!

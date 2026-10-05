@@ -3135,6 +3135,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.SharedKernel.Outbox.OutboxMessageTypes",
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.yml\" sourcestartlinenumber=\"1\">The type part of the outbox row format: the name a row stores for its message type, and the lookup that finds the\ntype again when the relay reads the row. Every capture and every dispatcher uses it, so they agree on the format.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.yml",
       "output": {
         ".html": {

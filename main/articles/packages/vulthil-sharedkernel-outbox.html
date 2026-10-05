@@ -103,6 +103,9 @@ depends on the engine alone (no EF Core, no infrastructure package).</li>
 <ul>
 <li>One <code>OutboxMessages</code> table, one relay; rows are routed by an <code>OutboxDestination</code> discriminator to the registered
 <code>IOutboxDispatcher</code>, so in-process domain events and broker messages share a single outbox.</li>
+<li>A row stores its message type's full name: <code>OutboxMessageTypes.NameOf</code> names the type on capture, and
+<code>OutboxMessageTypes.Resolve</code> finds it again on relay. A row fails when no loaded assembly defines its type, or when
+two loaded assemblies define different types with that name.</li>
 <li>The engine relies on <code>IOutboxStore</code> for both capture (<code>AddOutboxMessage</code>/<code>SaveChangesAsync</code>/<code>IsInTransaction</code>) and
 the relay's transactional boundary (<code>RunRelayUnitAsync</code>, which hands the engine an <code>IOutboxRelayUnit</code> to claim a
 batch and record its outcomes); the EF implementation and provider stores supply the transaction and row-locking.

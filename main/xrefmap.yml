@@ -11057,6 +11057,41 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxMessageFailure.Id
   nameWithType: OutboxMessageFailure.Id
+- uid: Vulthil.SharedKernel.Outbox.OutboxMessageTypes
+  name: OutboxMessageTypes
+  href: api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.html
+  commentId: T:Vulthil.SharedKernel.Outbox.OutboxMessageTypes
+  fullName: Vulthil.SharedKernel.Outbox.OutboxMessageTypes
+  nameWithType: OutboxMessageTypes
+- uid: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.NameOf(System.Type)
+  name: NameOf(Type)
+  href: api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.html#Vulthil_SharedKernel_Outbox_OutboxMessageTypes_NameOf_System_Type_
+  commentId: M:Vulthil.SharedKernel.Outbox.OutboxMessageTypes.NameOf(System.Type)
+  fullName: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.NameOf(System.Type)
+  nameWithType: OutboxMessageTypes.NameOf(Type)
+- uid: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.NameOf*
+  name: NameOf
+  href: api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.html#Vulthil_SharedKernel_Outbox_OutboxMessageTypes_NameOf_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxMessageTypes.NameOf
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.NameOf
+  nameWithType: OutboxMessageTypes.NameOf
+- uid: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve(System.String)
+  name: Resolve(string)
+  href: api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.html#Vulthil_SharedKernel_Outbox_OutboxMessageTypes_Resolve_System_String_
+  commentId: M:Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve(System.String)
+  name.vb: Resolve(String)
+  fullName: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve(string)
+  fullName.vb: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve(String)
+  nameWithType: OutboxMessageTypes.Resolve(string)
+  nameWithType.vb: OutboxMessageTypes.Resolve(String)
+- uid: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve*
+  name: Resolve
+  href: api/Vulthil.SharedKernel.Outbox.OutboxMessageTypes.html#Vulthil_SharedKernel_Outbox_OutboxMessageTypes_Resolve_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxMessageTypes.Resolve
+  nameWithType: OutboxMessageTypes.Resolve
 - uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions
   name: OutboxProcessingOptions
   href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html

@@ -17,11 +17,11 @@ internal sealed class FilteringSendEndpointProvider(IServiceProvider serviceProv
 }
 
 /// <summary>
-/// Wraps a transport <see cref="ISendEndpoint"/>: builds the publish context, assigns a stable message id, runs the
-/// registered <see cref="IPublishFilter"/> pipeline (as <see cref="PublishKind.Send"/>), and delegates to the inner
-/// endpoint.
+/// Wraps a transport <see cref="ITransportSendEndpoint"/>: builds the publish context, assigns a stable message id,
+/// runs the registered <see cref="IPublishFilter"/> pipeline (as <see cref="PublishKind.Send"/>), and hands the message
+/// and the resolved context to the inner endpoint.
 /// </summary>
-internal sealed class FilteringSendEndpoint(IServiceProvider serviceProvider, ISendEndpoint inner) : ISendEndpoint
+internal sealed class FilteringSendEndpoint(IServiceProvider serviceProvider, ITransportSendEndpoint inner) : ISendEndpoint
 {
     public Uri Address => inner.Address;
 
@@ -60,14 +60,7 @@ internal sealed class FilteringSendEndpoint(IServiceProvider serviceProvider, IS
 
         var pipeline = PublishPipelineFactory.Build(
             serviceProvider,
-            _ => inner.SendAsync(
-                message,
-                target =>
-                {
-                    PublishContextCopier.CopyResolved(context, target);
-                    return ValueTask.CompletedTask;
-                },
-                cancellationToken));
+            _ => inner.SendAsync(message, context, cancellationToken));
 
         await pipeline(filterContext).ConfigureAwait(false);
     }

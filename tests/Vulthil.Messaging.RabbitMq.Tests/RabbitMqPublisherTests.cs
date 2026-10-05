@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -44,7 +45,7 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         var message = new TestMessage { Content = "test" };
 
         // Act
-        await Target.PublishAsync(message, cancellationToken: CancellationToken);
+        await Target.PublishAsync(message, new PublishContext(), CancellationToken);
 
         // Assert — publish is pub/sub, so it is not mandatory (zero subscribers is normal).
         _channelMock.Verify(x => x.BasicPublishAsync(
@@ -60,7 +61,7 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
     public async Task PublishAsyncWithNullMessageThrowsArgumentNullException()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => Target.PublishAsync<TestMessage>(null!, cancellationToken: CancellationToken));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => Target.PublishAsync(null!, new PublishContext(), CancellationToken));
     }
 
     [Fact]

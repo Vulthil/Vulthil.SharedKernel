@@ -85,6 +85,15 @@ The metadata a publish context carries (`ConversationId`, `InitiatorId`, `Source
 names are the constants on `Vulthil.Messaging.Transport.MessageHeaders`, and `MessageHeaders.IsReserved(key)` tells
 whether a key is one of them — a custom header must not reuse these keys.
 
+### Publish and send terminals
+
+A transport implements two raw terminals: `ITransportPublisher`, and `ITransportSendEndpointProvider`, which hands out
+one `ITransportSendEndpoint` per address. It registers them and calls `AddPublishFiltering`, which puts the public
+`IPublisher` and `ISendEndpointProvider` in front of them. The public facade runs the caller's `configure` callback and
+the publish filters on one `PublishContext`, then hands the terminal the message and that resolved context. The outbox
+relay calls the same terminals with the context it stored. `MessageEnvelopeFactory.Create` serializes the payload as
+the message's runtime type, so a message held as a base type or an interface keeps every member of its concrete type.
+
 ### Delivery dispatch
 
 `Vulthil.Messaging.Transport.DeliveryDispatcher` owns the delivery rules a transport needs: consumers run in rounds that

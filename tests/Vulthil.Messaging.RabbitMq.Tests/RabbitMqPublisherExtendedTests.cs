@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -54,7 +55,7 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await Target.PublishAsync(message, cancellationToken: CancellationToken);
+        await Target.PublishAsync(message, new PublishContext(), CancellationToken);
 
         // Assert
         var expectedUrn = new MessageConfiguration(typeof(TestMessage).FullName!).Urn.AbsoluteUri;
@@ -76,7 +77,7 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
         // Act
         foreach (var message in messages)
         {
-            await Target.PublishAsync(message, cancellationToken: CancellationToken);
+            await Target.PublishAsync(message, new PublishContext(), CancellationToken);
         }
 
         // Assert
@@ -103,7 +104,7 @@ public sealed class RabbitMqPublisherExtendedTests : BaseUnitTestCase
             .Returns(ValueTask.CompletedTask);
 
         // Act
-        await Target.PublishAsync(message, cancellationToken: CancellationToken);
+        await Target.PublishAsync(message, new PublishContext(), CancellationToken);
 
         // Assert
         capturedExchange.ShouldBe(typeof(TestMessage).FullName);

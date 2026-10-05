@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Transport;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.xUnit;
@@ -36,10 +35,10 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
         // Arrange
         var jsonOptions = new JsonSerializerOptions();
         GetMock<IMessageConfigurationProvider>().Setup(provider => provider.JsonSerializerOptions).Returns(jsonOptions);
-        Func<IPublishContext, ValueTask>? capturedConfigure = null;
+        PublishContext? capturedContext = null;
         GetMock<ITransportPublisher>()
-            .Setup(publisher => publisher.PublishAsync(It.IsAny<TestMessage>(), It.IsAny<Func<IPublishContext, ValueTask>>(), It.IsAny<CancellationToken>()))
-            .Callback<TestMessage, Func<IPublishContext, ValueTask>, CancellationToken>((_, configure, _) => capturedConfigure = configure)
+            .Setup(publisher => publisher.PublishAsync(It.IsAny<object>(), It.IsAny<PublishContext>(), It.IsAny<CancellationToken>()))
+            .Callback<object, PublishContext, CancellationToken>((_, context, _) => capturedContext = context)
             .Returns(Task.CompletedTask);
         var metadata = new BrokerOutboxMetadata
         {
@@ -63,15 +62,13 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
 
         // Assert
         GetMock<ITransportPublisher>().Verify(
-            publisher => publisher.PublishAsync(It.Is<TestMessage>(m => m.Value == "hello"), It.IsAny<Func<IPublishContext, ValueTask>>(), CancellationToken),
+            publisher => publisher.PublishAsync(It.Is<TestMessage>(m => m.Value == "hello"), It.IsAny<PublishContext>(), CancellationToken),
             Times.Once);
-        capturedConfigure.ShouldNotBeNull();
-        var appliedContext = new PublishContext();
-        await capturedConfigure(appliedContext);
-        appliedContext.MessageId.ShouldBe("stable-message-id");
-        appliedContext.CorrelationId.ShouldBe("correlation-1");
-        appliedContext.RoutingKey.ShouldBe("routing-key-1");
-        appliedContext.Headers["tenant"].ShouldBe("acme");
+        capturedContext.ShouldNotBeNull();
+        capturedContext.MessageId.ShouldBe("stable-message-id");
+        capturedContext.CorrelationId.ShouldBe("correlation-1");
+        capturedContext.RoutingKey.ShouldBe("routing-key-1");
+        capturedContext.Headers["tenant"].ShouldBe("acme");
     }
 
     [Fact]
@@ -80,11 +77,11 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
         // Arrange
         var jsonOptions = new JsonSerializerOptions();
         GetMock<IMessageConfigurationProvider>().Setup(provider => provider.JsonSerializerOptions).Returns(jsonOptions);
-        var sendEndpoint = new Mock<ISendEndpoint>();
-        Func<IPublishContext, ValueTask>? capturedConfigure = null;
+        var sendEndpoint = GetMock<ITransportSendEndpoint>();
+        PublishContext? capturedContext = null;
         sendEndpoint
-            .Setup(endpoint => endpoint.SendAsync(It.IsAny<TestMessage>(), It.IsAny<Func<IPublishContext, ValueTask>>(), It.IsAny<CancellationToken>()))
-            .Callback<TestMessage, Func<IPublishContext, ValueTask>, CancellationToken>((_, configure, _) => capturedConfigure = configure)
+            .Setup(endpoint => endpoint.SendAsync(It.IsAny<object>(), It.IsAny<PublishContext>(), It.IsAny<CancellationToken>()))
+            .Callback<object, PublishContext, CancellationToken>((_, context, _) => capturedContext = context)
             .Returns(Task.CompletedTask);
         var destinationAddress = new Uri("queue:order-commands");
         GetMock<ITransportSendEndpointProvider>()
@@ -111,13 +108,11 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
 
         // Assert
         sendEndpoint.Verify(
-            endpoint => endpoint.SendAsync(It.Is<TestMessage>(m => m.Value == "hello"), It.IsAny<Func<IPublishContext, ValueTask>>(), CancellationToken),
+            endpoint => endpoint.SendAsync(It.Is<TestMessage>(m => m.Value == "hello"), It.IsAny<PublishContext>(), CancellationToken),
             Times.Once);
-        capturedConfigure.ShouldNotBeNull();
-        var appliedContext = new PublishContext();
-        await capturedConfigure(appliedContext);
-        appliedContext.MessageId.ShouldBe("stable-send-id");
-        appliedContext.Headers["tenant"].ShouldBe("acme");
+        capturedContext.ShouldNotBeNull();
+        capturedContext.MessageId.ShouldBe("stable-send-id");
+        capturedContext.Headers["tenant"].ShouldBe("acme");
     }
 
     [Fact]

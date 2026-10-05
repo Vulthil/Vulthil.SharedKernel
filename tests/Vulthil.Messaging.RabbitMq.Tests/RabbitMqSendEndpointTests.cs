@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Sending;
+using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -52,7 +53,7 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
             .Returns(Task.CompletedTask);
 
         // Act
-        await Target.SendAsync(message, CancellationToken);
+        await Target.SendAsync(message, new PublishContext(), CancellationToken);
 
         // Assert
         capturedQueue.ShouldBe(QueueName);
@@ -76,7 +77,7 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
             });
 
         // Act
-        await Target.SendAsync(message, CancellationToken);
+        await Target.SendAsync(message, new PublishContext(), CancellationToken);
 
         // Assert
         captured.ShouldNotBeNull();
@@ -99,16 +100,11 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
             {
                 CorrelationIdFormatter = m => "from-formatter"
             });
+        var context = new PublishContext();
+        context.SetCorrelationId("explicit");
 
         // Act
-        await Target.SendAsync(
-            message,
-            ctx =>
-            {
-                ctx.SetCorrelationId("explicit");
-                return ValueTask.CompletedTask;
-            },
-            CancellationToken);
+        await Target.SendAsync(message, context, CancellationToken);
 
         // Assert
         captured.ShouldNotBeNull();
@@ -120,7 +116,7 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
     {
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(
-            () => Target.SendAsync<TestMessage>(null!, CancellationToken));
+            () => Target.SendAsync(null!, new PublishContext(), CancellationToken));
     }
 
     [Fact]
@@ -135,7 +131,7 @@ public sealed class RabbitMqSendEndpointTests : BaseUnitTestCase
             .Returns(Task.CompletedTask);
 
         // Act
-        await Target.SendAsync(message, CancellationToken);
+        await Target.SendAsync(message, new PublishContext(), CancellationToken);
 
         // Assert
         captured.ShouldNotBeNull();

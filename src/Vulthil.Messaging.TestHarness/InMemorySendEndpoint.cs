@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.TestHarness;
@@ -10,7 +9,7 @@ internal sealed class InMemorySendEndpointProvider : ITransportSendEndpointProvi
     private readonly IMessageConfigurationProvider _provider;
     private readonly InMemoryTransport _transport;
     private readonly TestHarness _harness;
-    private readonly ConcurrentDictionary<Uri, ISendEndpoint> _endpoints = new();
+    private readonly ConcurrentDictionary<Uri, ITransportSendEndpoint> _endpoints = new();
 
     public InMemorySendEndpointProvider(IMessageConfigurationProvider provider, InMemoryTransport transport, TestHarness harness)
     {
@@ -19,7 +18,7 @@ internal sealed class InMemorySendEndpointProvider : ITransportSendEndpointProvi
         _harness = harness;
     }
 
-    public ValueTask<ISendEndpoint> GetSendEndpointAsync(Uri address, CancellationToken cancellationToken = default)
+    public ValueTask<ITransportSendEndpoint> GetSendEndpointAsync(Uri address, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(address);
         var endpoint = _endpoints.GetOrAdd(address, a => new InMemorySendEndpoint(a, _provider, _transport, _harness));
@@ -27,8 +26,8 @@ internal sealed class InMemorySendEndpointProvider : ITransportSendEndpointProvi
     }
 }
 
-/// <summary>In-memory <see cref="ISendEndpoint"/>: captures every sent message, then dispatches it to consumers in-process.</summary>
-internal sealed class InMemorySendEndpoint : ISendEndpoint
+/// <summary>In-memory <see cref="ITransportSendEndpoint"/>: captures every sent message, then dispatches it to consumers in-process.</summary>
+internal sealed class InMemorySendEndpoint : ITransportSendEndpoint
 {
     private readonly IMessageConfigurationProvider _provider;
     private readonly InMemoryTransport _transport;
@@ -44,23 +43,10 @@ internal sealed class InMemorySendEndpoint : ISendEndpoint
 
     public Uri Address { get; }
 
-    public Task SendAsync<TMessage>(TMessage message, CancellationToken cancellationToken)
-        where TMessage : notnull
-        => SendAsync(message, null, cancellationToken);
-
-    public async Task SendAsync<TMessage>(
-        TMessage message,
-        Func<IPublishContext, ValueTask>? configureContext = null,
-        CancellationToken cancellationToken = default)
-        where TMessage : notnull
+    public async Task SendAsync(object message, PublishContext context, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(message);
-
-        var context = new PublishContext();
-        if (configureContext is not null)
-        {
-            await configureContext(context).ConfigureAwait(false);
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         var envelope = OutgoingEnvelope.Build(_provider, message, context);
         _harness.RecordSent(message, envelope);

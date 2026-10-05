@@ -1,4 +1,3 @@
-using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.TestHarness;
@@ -17,19 +16,10 @@ internal sealed class InMemoryPublisher : ITransportPublisher
         _harness = harness;
     }
 
-    public async Task PublishAsync<TMessage>(
-        TMessage message,
-        Func<IPublishContext, ValueTask>? configureContext = null,
-        CancellationToken cancellationToken = default)
-        where TMessage : notnull
+    public async Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(message);
-
-        var context = new PublishContext();
-        if (configureContext is not null)
-        {
-            await configureContext(context).ConfigureAwait(false);
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         var envelope = OutgoingEnvelope.Build(_provider, message, context);
         _harness.RecordPublished(message, envelope);

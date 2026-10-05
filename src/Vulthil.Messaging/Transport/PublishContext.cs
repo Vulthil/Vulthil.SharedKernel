@@ -3,10 +3,12 @@ using Vulthil.Messaging.Abstractions.Publishers;
 namespace Vulthil.Messaging.Transport;
 
 /// <summary>
-/// Mutable, write-through configuration captured for a single outgoing message. A transport creates one,
-/// passes it to the caller's <c>configure</c> callback as <see cref="IPublishContext"/>, then reads the resolved
-/// values to build its wire message. Metadata that maps to typed envelope fields is stored under reserved header
-/// keys and surfaced through the strongly-typed properties.
+/// Mutable, write-through configuration captured for a single outgoing message. The caller's <c>configure</c>
+/// callback writes to it as <see cref="IPublishContext"/>, and a transport reads the resolved values to build its wire
+/// message. For a publish or a send, the public facade creates it and runs the publish filters on it before it hands
+/// it to the transport terminal (<see cref="ITransportPublisher"/>, <see cref="ITransportSendEndpoint"/>). Metadata
+/// that maps to typed envelope fields is stored under reserved header keys and surfaced through the strongly-typed
+/// properties.
 /// </summary>
 public class PublishContext : IPublishContext
 {

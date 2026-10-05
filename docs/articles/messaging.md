@@ -710,6 +710,12 @@ a single `OrderPlaced` delivery fires consumers registered against the concrete
 `OrderPlaced`, against `IOrder` (immediate interface), and against
 `IOrderEvent` (transitive interface).
 
+A producer may hold the message as a base type or an interface, for example
+`foreach (IOrderEvent orderEvent in events) await publisher.PublishAsync(orderEvent);`.
+The message still goes to its concrete type's exchange, and its body carries
+every member of the concrete type, on a direct publish or send and through the
+outbox alike.
+
 ### Validation at composition time
 
 After `ConfigureQueue` returns, a build pass validates the queue's wiring and
@@ -976,18 +982,39 @@ A transport that needs its own handler type can derive from `MessageHandlerFacto
 
 ### 2. Produce
 
-Wrap each outgoing message in a `MessageEnvelope`. `MessageEnvelopeFactory.Create` promotes the
-publish context's metadata to typed envelope fields and serializes the payload:
+Implement the two raw terminals and register them: `ITransportPublisher`, and `ITransportSendEndpointProvider`,
+which hands out one `ITransportSendEndpoint` per destination address. `AddPublishFiltering` then puts the public
+`IPublisher` and `ISendEndpointProvider` in front of them:
 
 ```csharp
-var envelope = MessageEnvelopeFactory.Create(
-    message, publishContext, messageId, correlationId, urn, provider.JsonSerializerOptions);
-var body = JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializerOptions);
+services.AddSingleton<ITransportPublisher, MyPublisher>();
+services.AddSingleton<ITransportSendEndpointProvider, MySendEndpointProvider>();
+services.AddPublishFiltering();
 ```
 
-`PublishContext`/`RequestContext` implement the `IPublishContext`/`IRequestContext` the caller's
-`configure` callback writes to; read their resolved properties (`RoutingKey`, `CorrelationId`,
-`Headers`, …) when building the broker message.
+The public facade runs the caller's `configure` callback and the publish filters on one `PublishContext` and gives
+it a message id. Then it calls the terminal with the message and that resolved context. The outbox relay calls the
+same terminal with the context it stored, without the filters. The terminal reads the resolved properties
+(`MessageId`, `CorrelationId`, `RoutingKey`, `Headers`, …) and wraps the message in a `MessageEnvelope`.
+`MessageEnvelopeFactory.Create` promotes the context's metadata to typed envelope fields and serializes the payload
+as the message's runtime type:
+
+```csharp
+public async Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)
+{
+    var configuration = provider.GetMessageConfiguration(message.GetType());
+    var envelope = MessageEnvelopeFactory.Create(
+        message, context, messageId, correlationId, configuration.Urn, provider.JsonSerializerOptions);
+    var body = JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializerOptions);
+    await broker.PublishAsync(configuration.Exchange, body, cancellationToken);
+}
+```
+
+Select the message configuration by the runtime type too (`message.GetType()`), so the URN and the body describe
+the same type even when the caller holds the message as a base type or an interface.
+
+A requester creates its own `RequestContext` (step 4). It implements the `IRequestContext` that the caller's
+`configure` callback writes to; read its resolved properties the same way.
 
 ### 3. Consume
 

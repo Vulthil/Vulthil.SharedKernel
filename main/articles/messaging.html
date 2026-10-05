@@ -685,6 +685,11 @@ and interfaces are skipped (only concrete types have exchanges):</p>
 a single <code>OrderPlaced</code> delivery fires consumers registered against the concrete
 <code>OrderPlaced</code>, against <code>IOrder</code> (immediate interface), and against
 <code>IOrderEvent</code> (transitive interface).</p>
+<p>A producer may hold the message as a base type or an interface, for example
+<code>foreach (IOrderEvent orderEvent in events) await publisher.PublishAsync(orderEvent);</code>.
+The message still goes to its concrete type's exchange, and its body carries
+every member of the concrete type, on a direct publish or send and through the
+outbox alike.</p>
 <h3 id="validation-at-composition-time">Validation at composition time</h3>
 <p>After <code>ConfigureQueue</code> returns, a build pass validates the queue's wiring and
 throws with a descriptive message if anything is incoherent:</p>
@@ -919,15 +924,32 @@ dispatches only the handlers its own queue registered.</p>
 <p>A transport that needs its own handler type can derive from <code>MessageHandlerFactory&lt;THandler&gt;</code> (or implement
 <code>IMessageHandlerFactory&lt;THandler&gt;</code>) instead, but it then owns every delivery rule of step 3 itself.</p>
 <h3 id="2-produce">2. Produce</h3>
-<p>Wrap each outgoing message in a <code>MessageEnvelope</code>. <code>MessageEnvelopeFactory.Create</code> promotes the
-publish context's metadata to typed envelope fields and serializes the payload:</p>
-<pre><code class="lang-csharp">var envelope = MessageEnvelopeFactory.Create(
-    message, publishContext, messageId, correlationId, urn, provider.JsonSerializerOptions);
-var body = JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializerOptions);
+<p>Implement the two raw terminals and register them: <code>ITransportPublisher</code>, and <code>ITransportSendEndpointProvider</code>,
+which hands out one <code>ITransportSendEndpoint</code> per destination address. <code>AddPublishFiltering</code> then puts the public
+<code>IPublisher</code> and <code>ISendEndpointProvider</code> in front of them:</p>
+<pre><code class="lang-csharp">services.AddSingleton&lt;ITransportPublisher, MyPublisher&gt;();
+services.AddSingleton&lt;ITransportSendEndpointProvider, MySendEndpointProvider&gt;();
+services.AddPublishFiltering();
 </code></pre>
-<p><code>PublishContext</code>/<code>RequestContext</code> implement the <code>IPublishContext</code>/<code>IRequestContext</code> the caller's
-<code>configure</code> callback writes to; read their resolved properties (<code>RoutingKey</code>, <code>CorrelationId</code>,
-<code>Headers</code>, …) when building the broker message.</p>
+<p>The public facade runs the caller's <code>configure</code> callback and the publish filters on one <code>PublishContext</code> and gives
+it a message id. Then it calls the terminal with the message and that resolved context. The outbox relay calls the
+same terminal with the context it stored, without the filters. The terminal reads the resolved properties
+(<code>MessageId</code>, <code>CorrelationId</code>, <code>RoutingKey</code>, <code>Headers</code>, …) and wraps the message in a <code>MessageEnvelope</code>.
+<code>MessageEnvelopeFactory.Create</code> promotes the context's metadata to typed envelope fields and serializes the payload
+as the message's runtime type:</p>
+<pre><code class="lang-csharp">public async Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)
+{
+    var configuration = provider.GetMessageConfiguration(message.GetType());
+    var envelope = MessageEnvelopeFactory.Create(
+        message, context, messageId, correlationId, configuration.Urn, provider.JsonSerializerOptions);
+    var body = JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializerOptions);
+    await broker.PublishAsync(configuration.Exchange, body, cancellationToken);
+}
+</code></pre>
+<p>Select the message configuration by the runtime type too (<code>message.GetType()</code>), so the URN and the body describe
+the same type even when the caller holds the message as a base type or an interface.</p>
+<p>A requester creates its own <code>RequestContext</code> (step 4). It implements the <code>IRequestContext</code> that the caller's
+<code>configure</code> callback writes to; read its resolved properties the same way.</p>
 <h3 id="3-consume">3. Consume</h3>
 <p>In the receive loop, parse the envelope, resolve the plan by URN and deserialize the payload. Then hand the plan's
 handlers to <code>DeliveryDispatcher</code> (registered by <code>AddMessaging</code>) with an <code>IDeliveryPort</code> for this delivery, and

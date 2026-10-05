@@ -154,6 +154,13 @@ denote the same destination.</p>
 <code>ResponseAddress</code>, <code>FaultAddress</code>) travels under reserved header keys that the envelope promotes to typed fields. The
 names are the constants on <code>Vulthil.Messaging.Transport.MessageHeaders</code>, and <code>MessageHeaders.IsReserved(key)</code> tells
 whether a key is one of them — a custom header must not reuse these keys.</p>
+<h3 id="publish-and-send-terminals">Publish and send terminals</h3>
+<p>A transport implements two raw terminals: <code>ITransportPublisher</code>, and <code>ITransportSendEndpointProvider</code>, which hands out
+one <code>ITransportSendEndpoint</code> per address. It registers them and calls <code>AddPublishFiltering</code>, which puts the public
+<code>IPublisher</code> and <code>ISendEndpointProvider</code> in front of them. The public facade runs the caller's <code>configure</code> callback and
+the publish filters on one <code>PublishContext</code>, then hands the terminal the message and that resolved context. The outbox
+relay calls the same terminals with the context it stored. <code>MessageEnvelopeFactory.Create</code> serializes the payload as
+the message's runtime type, so a message held as a base type or an interface keeps every member of its concrete type.</p>
 <h3 id="delivery-dispatch">Delivery dispatch</h3>
 <p><code>Vulthil.Messaging.Transport.DeliveryDispatcher</code> owns the delivery rules a transport needs: consumers run in rounds that
 re-run only the consumers that failed, every attempt runs in its own DI scope, each consumer retries under its own

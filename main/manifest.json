@@ -1451,7 +1451,21 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.ITransportPublisher",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ITransportPublisher.yml\" sourcestartlinenumber=\"1\">A transport's raw publish terminal: it builds the wire envelope and sends it to the broker. The public\n<xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublisher\" data-throw-if-not-resolved=\"false\"></xref> registered to callers is a filtering facade that runs the publish pipeline and then\ndelegates to this terminal. Transports register their publisher under this interface instead of\n<xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublisher\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ITransportPublisher.yml\" sourcestartlinenumber=\"1\">A transport's raw publish terminal: it builds the wire envelope and sends it to the broker. The public\n<xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublisher\" data-throw-if-not-resolved=\"false\"></xref> registered to callers is a filtering facade: it runs the caller's configure callback and\nthe publish pipeline on one <xref href=\"Vulthil.Messaging.Transport.PublishContext\" data-throw-if-not-resolved=\"false\"></xref>, then hands the message and that resolved context to this\nterminal. The outbox relay calls the terminal the same way, with the context it stored. Transports register their\npublisher under this interface instead of <xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublisher\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Messaging.Transport.ITransportSendEndpoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Messaging.Transport.ITransportSendEndpoint.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Messaging.Transport.ITransportSendEndpoint",
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ITransportSendEndpoint.yml\" sourcestartlinenumber=\"1\">A transport's raw send terminal for one destination: it builds the wire envelope and sends it to\n<xref href=\"Vulthil.Messaging.Transport.ITransportSendEndpoint.Address\" data-throw-if-not-resolved=\"false\"></xref>. The public <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint\" data-throw-if-not-resolved=\"false\"></xref> handed to callers is a filtering facade: it runs the\ncaller's configure callback and the publish pipeline on one <xref href=\"Vulthil.Messaging.Transport.PublishContext\" data-throw-if-not-resolved=\"false\"></xref>, then hands the message\nand that resolved context to this terminal. The outbox relay calls the terminal the same way, with the context it\nstored.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1465,7 +1479,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.ITransportSendEndpointProvider",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ITransportSendEndpointProvider.yml\" sourcestartlinenumber=\"1\">A transport's raw send-endpoint provider. The public <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref> registered to callers\nis a filtering facade that wraps the returned <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint\" data-throw-if-not-resolved=\"false\"></xref> with the publish pipeline. Transports\nregister their provider under this interface instead of <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.ITransportSendEndpointProvider.yml\" sourcestartlinenumber=\"1\">A transport's raw send-endpoint provider. The public <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref> registered to callers\nis a filtering facade that wraps the returned <xref href=\"Vulthil.Messaging.Transport.ITransportSendEndpoint\" data-throw-if-not-resolved=\"false\"></xref> with the publish pipeline.\nTransports register their provider under this interface instead of <xref href=\"Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1605,7 +1619,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.PublishContext",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishContext.yml\" sourcestartlinenumber=\"1\">Mutable, write-through configuration captured for a single outgoing message. A transport creates one,\npasses it to the caller's <code>configure</code> callback as <xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublishContext\" data-throw-if-not-resolved=\"false\"></xref>, then reads the resolved\nvalues to build its wire message. Metadata that maps to typed envelope fields is stored under reserved header\nkeys and surfaced through the strongly-typed properties.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.PublishContext.yml\" sourcestartlinenumber=\"1\">Mutable, write-through configuration captured for a single outgoing message. The caller's <code>configure</code>\ncallback writes to it as <xref href=\"Vulthil.Messaging.Abstractions.Publishers.IPublishContext\" data-throw-if-not-resolved=\"false\"></xref>, and a transport reads the resolved values to build its wire\nmessage. For a publish or a send, the public facade creates it and runs the publish filters on it before it hands\nit to the transport terminal (<xref href=\"Vulthil.Messaging.Transport.ITransportPublisher\" data-throw-if-not-resolved=\"false\"></xref>, <xref href=\"Vulthil.Messaging.Transport.ITransportSendEndpoint\" data-throw-if-not-resolved=\"false\"></xref>). Metadata\nthat maps to typed envelope fields is stored under reserved header keys and surfaced through the strongly-typed\nproperties.</p>\n"
     },
     {
       "type": "ManagedReference",

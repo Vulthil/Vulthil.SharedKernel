@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Interface ITransportPublisher | Vulthil.SharedKernel </title>
+      <title>Interface ITransportSendEndpoint | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Interface ITransportPublisher | Vulthil.SharedKernel ">
+      <meta name="title" content="Interface ITransportSendEndpoint | Vulthil.SharedKernel ">
       
-      <meta name="description" content="A transport&#39;s raw publish terminal: it builds the wire envelope and sends it to the broker. The public  registered to callers is a filtering facade: it runs the caller&#39;s configure callback and the publish pipeline on one , then hands the message and that resolved context to this terminal. The outbox relay calls the terminal the same way, with the context it stored. Transports register their publisher under this interface instead of .">
+      <meta name="description" content="A transport&#39;s raw send terminal for one destination: it builds the wire envelope and sends it to . The public  handed to callers is a filtering facade: it runs the caller&#39;s configure callback and the publish pipeline on one , then hands the message and that resolved context to this terminal. The outbox relay calls the terminal the same way, with the context it stored.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Transport_ITransportPublisher.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Transport.ITransportPublisher%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_Transport_ITransportSendEndpoint.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.Transport.ITransportSendEndpoint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,12 +84,12 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.Messaging.Transport.ITransportPublisher">
+        <article data-uid="Vulthil.Messaging.Transport.ITransportSendEndpoint">
 
 
 
-  <h1 id="Vulthil_Messaging_Transport_ITransportPublisher" data-uid="Vulthil.Messaging.Transport.ITransportPublisher" class="text-break">
-Interface ITransportPublisher  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportPublisher.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_Messaging_Transport_ITransportSendEndpoint" data-uid="Vulthil.Messaging.Transport.ITransportSendEndpoint" class="text-break">
+Interface ITransportSendEndpoint  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportSendEndpoint.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,16 +97,16 @@ Interface ITransportPublisher  <a class="header-action link-secondary" title="Vi
   <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>A transport's raw publish terminal: it builds the wire envelope and sends it to the broker. The public
-<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublisher.html">IPublisher</a> registered to callers is a filtering facade: it runs the caller's configure callback and
-the publish pipeline on one <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a>, then hands the message and that resolved context to this
-terminal. The outbox relay calls the terminal the same way, with the context it stored. Transports register their
-publisher under this interface instead of <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublisher.html">IPublisher</a>.</p>
+  <div class="markdown summary"><p>A transport's raw send terminal for one destination: it builds the wire envelope and sends it to
+<a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html#Vulthil_Messaging_Transport_ITransportSendEndpoint_Address">Address</a>. The public <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html">ISendEndpoint</a> handed to callers is a filtering facade: it runs the
+caller's configure callback and the publish pipeline on one <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a>, then hands the message
+and that resolved context to this terminal. The outbox relay calls the terminal the same way, with the context it
+stored.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface ITransportPublisher</code></pre>
+    <pre><code class="lang-csharp hljs">public interface ITransportSendEndpoint</code></pre>
   </div>
 
 
@@ -128,33 +128,70 @@ publisher under this interface instead of <a class="xref" href="Vulthil.Messagin
 
 
 
-  <h2 class="section" id="methods">Methods
+  <h2 class="section" id="properties">Properties
 </h2>
 
 
-  <a id="Vulthil_Messaging_Transport_ITransportPublisher_PublishAsync_" data-uid="Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync*"></a>
+  <a id="Vulthil_Messaging_Transport_ITransportSendEndpoint_Address_" data-uid="Vulthil.Messaging.Transport.ITransportSendEndpoint.Address*"></a>
 
-  <h3 id="Vulthil_Messaging_Transport_ITransportPublisher_PublishAsync_System_Object_Vulthil_Messaging_Transport_PublishContext_System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)">
-  PublishAsync(object, PublishContext, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportPublisher.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_Messaging_Transport_ITransportSendEndpoint_Address" data-uid="Vulthil.Messaging.Transport.ITransportSendEndpoint.Address">
+  Address
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportSendEndpoint.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Publishes <code class="paramref">message</code> to the broker with the resolved values of <code class="paramref">context</code>.</p>
+  <div class="markdown level1 summary"><p>Gets the destination address this endpoint sends to.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">Uri Address { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vulthil_Messaging_Transport_ITransportSendEndpoint_SendAsync_" data-uid="Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync*"></a>
+
+  <h3 id="Vulthil_Messaging_Transport_ITransportSendEndpoint_SendAsync_System_Object_Vulthil_Messaging_Transport_PublishContext_System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)">
+  SendAsync(object, PublishContext, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportSendEndpoint.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sends <code class="paramref">message</code> to <a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html#Vulthil_Messaging_Transport_ITransportSendEndpoint_Address">Address</a> with the resolved values of
+<code class="paramref">context</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task SendAsync(object message, PublishContext context, CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
-    <dd><p>The message to publish. Its runtime type selects the message configuration, and the payload is serialized as
-that type.</p>
+    <dd><p>The message to send. Its runtime type selects the message configuration, and the payload is serialized as that
+type.</p>
 </dd>
     <dt><code>context</code> <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a></dt>
-    <dd><p>The resolved publish context: message id, correlation id, routing key and headers.</p>
+    <dd><p>The resolved publish context: message id, correlation id and headers.</p>
 </dd>
     <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
     <dd><p>A token to observe for cancellation.</p>
@@ -164,7 +201,7 @@ that type.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
-    <dd><p>A task that completes when the transport has published the message.</p>
+    <dd><p>A task that completes when the transport has sent the message.</p>
 </dd>
   </dl>
 
@@ -182,7 +219,7 @@ that type.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportPublisher.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportSendEndpoint.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

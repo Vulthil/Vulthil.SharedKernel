@@ -98,8 +98,8 @@ Interface ITransportSendEndpointProvider  <a class="header-action link-secondary
   </div>
 
   <div class="markdown summary"><p>A transport's raw send-endpoint provider. The public <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html">ISendEndpointProvider</a> registered to callers
-is a filtering facade that wraps the returned <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html">ISendEndpoint</a> with the publish pipeline. Transports
-register their provider under this interface instead of <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html">ISendEndpointProvider</a>.</p>
+is a filtering facade that wraps the returned <a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html">ITransportSendEndpoint</a> with the publish pipeline.
+Transports register their provider under this interface instead of <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html">ISendEndpointProvider</a>.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -134,7 +134,7 @@ register their provider under this interface instead of <a class="xref" href="Vu
 
   <h3 id="Vulthil_Messaging_Transport_ITransportSendEndpointProvider_GetSendEndpointAsync_System_Uri_System_Threading_CancellationToken_" data-uid="Vulthil.Messaging.Transport.ITransportSendEndpointProvider.GetSendEndpointAsync(System.Uri,System.Threading.CancellationToken)">
   GetSendEndpointAsync(Uri, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportSendEndpointProvider.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/ITransportSendEndpointProvider.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resolves the transport's send endpoint for <code class="paramref">address</code>.</p>
@@ -142,7 +142,7 @@ register their provider under this interface instead of <a class="xref" href="Vu
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask&lt;ISendEndpoint&gt; GetSendEndpointAsync(Uri address, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;ITransportSendEndpoint&gt; GetSendEndpointAsync(Uri address, CancellationToken cancellationToken = default)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -157,8 +157,10 @@ register their provider under this interface instead of <a class="xref" href="Vu
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html">ISendEndpoint</a>&gt;</dt>
-    <dd></dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html">ITransportSendEndpoint</a>&gt;</dt>
+    <dd><p>The endpoint bound to <code class="paramref">address</code>. Implementations may reject an address they cannot route to
+here, and may cache and share endpoints across calls.</p>
+</dd>
   </dl>
 
 

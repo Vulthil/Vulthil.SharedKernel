@@ -209,10 +209,12 @@ reads back on the consume side. A custom header must not use one of these keys.<
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a></dt>
-      <dd><p>Mutable, write-through configuration captured for a single outgoing message. A transport creates one,
-passes it to the caller's <code>configure</code> callback as <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html">IPublishContext</a>, then reads the resolved
-values to build its wire message. Metadata that maps to typed envelope fields is stored under reserved header
-keys and surfaced through the strongly-typed properties.</p>
+      <dd><p>Mutable, write-through configuration captured for a single outgoing message. The caller's <code>configure</code>
+callback writes to it as <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html">IPublishContext</a>, and a transport reads the resolved values to build its wire
+message. For a publish or a send, the public facade creates it and runs the publish filters on it before it hands
+it to the transport terminal (<a class="xref" href="Vulthil.Messaging.Transport.ITransportPublisher.html">ITransportPublisher</a>, <a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html">ITransportSendEndpoint</a>). Metadata
+that maps to typed envelope fields is stored under reserved header keys and surfaced through the strongly-typed
+properties.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -283,16 +285,26 @@ or caller code.</p>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Transport.ITransportPublisher.html">ITransportPublisher</a></dt>
       <dd><p>A transport's raw publish terminal: it builds the wire envelope and sends it to the broker. The public
-<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublisher.html">IPublisher</a> registered to callers is a filtering facade that runs the publish pipeline and then
-delegates to this terminal. Transports register their publisher under this interface instead of
-<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublisher.html">IPublisher</a>.</p>
+<a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublisher.html">IPublisher</a> registered to callers is a filtering facade: it runs the caller's configure callback and
+the publish pipeline on one <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a>, then hands the message and that resolved context to this
+terminal. The outbox relay calls the terminal the same way, with the context it stored. Transports register their
+publisher under this interface instead of <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.IPublisher.html">IPublisher</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html">ITransportSendEndpoint</a></dt>
+      <dd><p>A transport's raw send terminal for one destination: it builds the wire envelope and sends it to
+<a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html#Vulthil_Messaging_Transport_ITransportSendEndpoint_Address">Address</a>. The public <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html">ISendEndpoint</a> handed to callers is a filtering facade: it runs the
+caller's configure callback and the publish pipeline on one <a class="xref" href="Vulthil.Messaging.Transport.PublishContext.html">PublishContext</a>, then hands the message
+and that resolved context to this terminal. The outbox relay calls the terminal the same way, with the context it
+stored.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpointProvider.html">ITransportSendEndpointProvider</a></dt>
       <dd><p>A transport's raw send-endpoint provider. The public <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html">ISendEndpointProvider</a> registered to callers
-is a filtering facade that wraps the returned <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpoint.html">ISendEndpoint</a> with the publish pipeline. Transports
-register their provider under this interface instead of <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html">ISendEndpointProvider</a>.</p>
+is a filtering facade that wraps the returned <a class="xref" href="Vulthil.Messaging.Transport.ITransportSendEndpoint.html">ITransportSendEndpoint</a> with the publish pipeline.
+Transports register their provider under this interface instead of <a class="xref" href="Vulthil.Messaging.Abstractions.Publishers.ISendEndpointProvider.html">ISendEndpointProvider</a>.</p>
 </dd>
     </dl>
     <h3 id="enums">

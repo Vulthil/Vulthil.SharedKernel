@@ -4487,6 +4487,15 @@ references:
   commentId: T:Vulthil.Messaging.Transport.ITransportPublisher
   fullName: Vulthil.Messaging.Transport.ITransportPublisher
   nameWithType: ITransportPublisher
+- uid: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)
+  name: PublishAsync(object, PublishContext, CancellationToken)
+  href: api/Vulthil.Messaging.Transport.ITransportPublisher.html#Vulthil_Messaging_Transport_ITransportPublisher_PublishAsync_System_Object_Vulthil_Messaging_Transport_PublishContext_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)
+  name.vb: PublishAsync(Object, PublishContext, CancellationToken)
+  fullName: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(object, Vulthil.Messaging.Transport.PublishContext, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(Object, Vulthil.Messaging.Transport.PublishContext, System.Threading.CancellationToken)
+  nameWithType: ITransportPublisher.PublishAsync(object, PublishContext, CancellationToken)
+  nameWithType.vb: ITransportPublisher.PublishAsync(Object, PublishContext, CancellationToken)
 - uid: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync*
   name: PublishAsync
   href: api/Vulthil.Messaging.Transport.ITransportPublisher.html#Vulthil_Messaging_Transport_ITransportPublisher_PublishAsync_
@@ -4494,15 +4503,41 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync
   nameWithType: ITransportPublisher.PublishAsync
-- uid: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync``1(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask},System.Threading.CancellationToken)
-  name: PublishAsync<TMessage>(TMessage, Func<IPublishContext, ValueTask>?, CancellationToken)
-  href: api/Vulthil.Messaging.Transport.ITransportPublisher.html#Vulthil_Messaging_Transport_ITransportPublisher_PublishAsync__1___0_System_Func_Vulthil_Messaging_Abstractions_Publishers_IPublishContext_System_Threading_Tasks_ValueTask__System_Threading_CancellationToken_
-  commentId: M:Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync``1(``0,System.Func{Vulthil.Messaging.Abstractions.Publishers.IPublishContext,System.Threading.Tasks.ValueTask},System.Threading.CancellationToken)
-  name.vb: PublishAsync(Of TMessage)(TMessage, Func(Of IPublishContext, ValueTask), CancellationToken)
-  fullName: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync<TMessage>(TMessage, System.Func<Vulthil.Messaging.Abstractions.Publishers.IPublishContext, System.Threading.Tasks.ValueTask>?, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.Messaging.Transport.ITransportPublisher.PublishAsync(Of TMessage)(TMessage, System.Func(Of Vulthil.Messaging.Abstractions.Publishers.IPublishContext, System.Threading.Tasks.ValueTask), System.Threading.CancellationToken)
-  nameWithType: ITransportPublisher.PublishAsync<TMessage>(TMessage, Func<IPublishContext, ValueTask>?, CancellationToken)
-  nameWithType.vb: ITransportPublisher.PublishAsync(Of TMessage)(TMessage, Func(Of IPublishContext, ValueTask), CancellationToken)
+- uid: Vulthil.Messaging.Transport.ITransportSendEndpoint
+  name: ITransportSendEndpoint
+  href: api/Vulthil.Messaging.Transport.ITransportSendEndpoint.html
+  commentId: T:Vulthil.Messaging.Transport.ITransportSendEndpoint
+  fullName: Vulthil.Messaging.Transport.ITransportSendEndpoint
+  nameWithType: ITransportSendEndpoint
+- uid: Vulthil.Messaging.Transport.ITransportSendEndpoint.Address
+  name: Address
+  href: api/Vulthil.Messaging.Transport.ITransportSendEndpoint.html#Vulthil_Messaging_Transport_ITransportSendEndpoint_Address
+  commentId: P:Vulthil.Messaging.Transport.ITransportSendEndpoint.Address
+  fullName: Vulthil.Messaging.Transport.ITransportSendEndpoint.Address
+  nameWithType: ITransportSendEndpoint.Address
+- uid: Vulthil.Messaging.Transport.ITransportSendEndpoint.Address*
+  name: Address
+  href: api/Vulthil.Messaging.Transport.ITransportSendEndpoint.html#Vulthil_Messaging_Transport_ITransportSendEndpoint_Address_
+  commentId: Overload:Vulthil.Messaging.Transport.ITransportSendEndpoint.Address
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.ITransportSendEndpoint.Address
+  nameWithType: ITransportSendEndpoint.Address
+- uid: Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)
+  name: SendAsync(object, PublishContext, CancellationToken)
+  href: api/Vulthil.Messaging.Transport.ITransportSendEndpoint.html#Vulthil_Messaging_Transport_ITransportSendEndpoint_SendAsync_System_Object_Vulthil_Messaging_Transport_PublishContext_System_Threading_CancellationToken_
+  commentId: M:Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync(System.Object,Vulthil.Messaging.Transport.PublishContext,System.Threading.CancellationToken)
+  name.vb: SendAsync(Object, PublishContext, CancellationToken)
+  fullName: Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync(object, Vulthil.Messaging.Transport.PublishContext, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync(Object, Vulthil.Messaging.Transport.PublishContext, System.Threading.CancellationToken)
+  nameWithType: ITransportSendEndpoint.SendAsync(object, PublishContext, CancellationToken)
+  nameWithType.vb: ITransportSendEndpoint.SendAsync(Object, PublishContext, CancellationToken)
+- uid: Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync*
+  name: SendAsync
+  href: api/Vulthil.Messaging.Transport.ITransportSendEndpoint.html#Vulthil_Messaging_Transport_ITransportSendEndpoint_SendAsync_
+  commentId: Overload:Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Transport.ITransportSendEndpoint.SendAsync
+  nameWithType: ITransportSendEndpoint.SendAsync
 - uid: Vulthil.Messaging.Transport.ITransportSendEndpointProvider
   name: ITransportSendEndpointProvider
   href: api/Vulthil.Messaging.Transport.ITransportSendEndpointProvider.html

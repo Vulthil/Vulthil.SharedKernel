@@ -82,7 +82,8 @@ public class HandlerOptions
     }
 
     /// <summary>
-    /// Registers an open-generic request pipeline handler type.
+    /// Registers an open-generic request pipeline handler type. Pipeline handlers run in registration order: the first
+    /// one registered is the outermost.
     /// </summary>
     /// <param name="pipelineHandler">The open-generic type implementing <see cref="IPipelineHandler{TRequest, TResponse}"/>.</param>
     /// <returns>The current options instance for chaining.</returns>
@@ -173,7 +174,8 @@ public sealed class ApplicationOptions
     }
 
     /// <summary>
-    /// Registers an open-generic request pipeline handler type.
+    /// Registers an open-generic request pipeline handler type. Pipeline handlers run in registration order: the first
+    /// one registered is the outermost.
     /// </summary>
     /// <param name="pipelineHandler">The open-generic type implementing <see cref="Pipeline.IPipelineHandler{TRequest, TResponse}"/>.</param>
     /// <returns>The current options instance for chaining.</returns>

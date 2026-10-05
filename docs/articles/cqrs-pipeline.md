@@ -25,12 +25,16 @@ builder.Services.AddApplication(options =>
     // Scan assemblies for FluentValidation validators
     options.RegisterFluentValidationAssemblies(typeof(Program).Assembly);
 
-    // Add pipeline behaviors (order matters)
-    options.AddValidationPipelineBehavior();
+    // Add pipeline behaviors: the first one registered is the outermost
     options.AddRequestLoggingBehavior();
+    options.AddValidationPipelineBehavior();
     options.AddTransactionalPipelineBehavior();
 });
 ```
+
+Behaviors run in registration order: the first one registered is the outermost, so it runs first and sees the result
+last. In this order, logging also records the requests that fail validation, and validation rejects an invalid
+command before the transactional behavior opens a transaction.
 
 ### Registering from multiple assemblies
 
@@ -166,7 +170,9 @@ The interfaces you can inject are `IHandler<TRequest, TResponse>`, `ICommandHand
 
 ## Behaviors across assemblies
 
-Pipeline behaviors are composed at handler-resolution time, not at registration time, so the order of registration is irrelevant. Different assemblies may register handlers and behaviors independently — all behaviors registered before `BuildServiceProvider` apply to all handlers resolved afterwards.
+Pipeline behaviors are composed when a handler is resolved, so a behavior applies to every handler, whether the handler was registered before or after it. Different assemblies may register handlers and behaviors independently — all behaviors registered before `BuildServiceProvider` apply to all handlers resolved afterwards.
+
+Behaviors nest in registration order across all calls: a behavior registered after `AddApplication` runs inside the behaviors that `AddApplication` registered, and one registered before `AddApplication` runs outside them. Registering the same behavior type again keeps its first position.
 
 ```csharp
 // In an Infrastructure assembly:

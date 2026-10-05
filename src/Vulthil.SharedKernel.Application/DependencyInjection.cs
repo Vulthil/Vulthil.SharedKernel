@@ -144,11 +144,15 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Registers an open-generic request pipeline behavior. Behaviors registered through this method
-    /// apply to every handler resolved after <see cref="IServiceProvider"/> construction — order of
-    /// registration relative to <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>
-    /// is irrelevant because behaviors are composed lazily at handler-resolution time.
+    /// Registers an open-generic request pipeline behavior. Behaviors are composed when a handler is resolved, so the
+    /// behavior applies to every handler, whether the handler was registered before or after it.
     /// </summary>
+    /// <remarks>
+    /// Behaviors nest in registration order across all calls: the first one registered is the outermost. A behavior
+    /// registered after <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/> runs inside the
+    /// behaviors that <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/> registered, and one
+    /// registered before it runs outside them. Registering the same behavior type again keeps its first position.
+    /// </remarks>
     /// <param name="services">The service collection.</param>
     /// <param name="pipelineHandler">The open-generic type implementing <see cref="IPipelineHandler{TRequest, TResponse}"/>.</param>
     /// <returns>The service collection for chaining.</returns>

@@ -30,10 +30,11 @@ public static class Polling
     /// A <see cref="PollingResult{T}"/> containing the first successful result,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<Task<Result<T>>> func)
-        => WaitAsync<T>(timeout, _ => func(), DefaultTimerTick, CancellationToken.None);
+        => WaitAsync<T>(timeout, IgnoreToken(func), DefaultTimerTick, TimeProvider.System, CancellationToken.None);
 
     /// <summary>
     /// Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
@@ -46,11 +47,12 @@ public static class Polling
     /// A <see cref="PollingResult{T}"/> containing the first successful result,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<Task<Result<T>>> func,
         CancellationToken cancellationToken)
-        => WaitAsync<T>(timeout, _ => func(), DefaultTimerTick, cancellationToken);
+        => WaitAsync<T>(timeout, IgnoreToken(func), DefaultTimerTick, TimeProvider.System, cancellationToken);
 
     /// <summary>
     /// Polls the provided function at regular intervals until it returns a successful result or the timeout expires.
@@ -64,12 +66,13 @@ public static class Polling
     /// A <see cref="PollingResult{T}"/> containing the first successful result,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<Task<Result<T>>> func,
         TimeSpan timerTick,
         CancellationToken cancellationToken)
-        => WaitAsync<T>(timeout, _ => func(), timerTick, cancellationToken);
+        => WaitAsync<T>(timeout, IgnoreToken(func), timerTick, TimeProvider.System, cancellationToken);
 
     /// <summary>
     /// Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
@@ -83,11 +86,12 @@ public static class Polling
     /// A <see cref="PollingResult{T}"/> containing the first successful result,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<CancellationToken, Task<Result<T>>> func,
         CancellationToken cancellationToken)
-        => WaitAsync<T>(timeout, func, DefaultTimerTick, cancellationToken);
+        => WaitAsync<T>(timeout, func, DefaultTimerTick, TimeProvider.System, cancellationToken);
 
     /// <summary>
     /// Polls the provided function at regular intervals until it returns a successful result or the timeout expires.
@@ -102,42 +106,31 @@ public static class Polling
     /// A <see cref="PollingResult{T}"/> containing the first successful result,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
-    public static async Task<PollingResult<T>> WaitAsync<T>(
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
+    public static Task<PollingResult<T>> WaitAsync<T>(
         TimeSpan timeout,
         Func<CancellationToken, Task<Result<T>>> func,
         TimeSpan timerTick,
         CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(func);
+        => WaitAsync<T>(timeout, func, timerTick, TimeProvider.System, cancellationToken);
 
-        using var timeoutCts = new CancellationTokenSource(timeout);
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
-        using var timer = new PeriodicTimer(timerTick);
-
-        List<Error> errors = [];
-
-        try
-        {
-            do
-            {
-                Result<T> result = await func(linkedCts.Token).ConfigureAwait(false);
-
-                if (result.IsSuccess)
-                {
-                    return PollingResult<T>.CreateSuccess(result.Value);
-                }
-
-                errors.Add(result.Error);
-            }
-            while (await timer.WaitForNextTickAsync(linkedCts.Token).ConfigureAwait(false));
-        }
-        catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
-        {
-            // Polling timeout reached; surface the aggregated errors below.
-        }
-
-        return PollingResult<T>.CreateTimeout(PollingError.FromErrors(errors));
-    }
+    /// <summary>
+    /// Polls on the timer and the timeout of <paramref name="timeProvider"/>, so tests can drive both with a fake clock.
+    /// </summary>
+    internal static Task<PollingResult<T>> WaitAsync<T>(
+        TimeSpan timeout,
+        Func<CancellationToken, Task<Result<T>>>? func,
+        TimeSpan timerTick,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+        => PollAsync(
+            timeout,
+            func,
+            timerTick,
+            timeProvider,
+            static result => PollingResult<T>.CreateSuccess(result.Value),
+            PollingResult<T>.CreateTimeout,
+            cancellationToken);
 
     /// <summary>
     /// Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
@@ -148,10 +141,11 @@ public static class Polling
     /// A <see cref="PollingResult"/> containing a success indication,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult> WaitAsync(
         TimeSpan timeout,
         Func<Task<Result>> func)
-        => WaitAsync(timeout, _ => func(), DefaultTimerTick, CancellationToken.None);
+        => WaitAsync(timeout, IgnoreToken(func), DefaultTimerTick, TimeProvider.System, CancellationToken.None);
 
     /// <summary>
     /// Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
@@ -163,11 +157,12 @@ public static class Polling
     /// A <see cref="PollingResult"/> containing a success indication,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult> WaitAsync(
         TimeSpan timeout,
         Func<Task<Result>> func,
         CancellationToken cancellationToken)
-        => WaitAsync(timeout, _ => func(), DefaultTimerTick, cancellationToken);
+        => WaitAsync(timeout, IgnoreToken(func), DefaultTimerTick, TimeProvider.System, cancellationToken);
 
     /// <summary>
     /// Polls the provided function at regular intervals until it returns a successful result or the timeout expires.
@@ -180,12 +175,13 @@ public static class Polling
     /// A <see cref="PollingResult"/> containing a success indication,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult> WaitAsync(
         TimeSpan timeout,
         Func<Task<Result>> func,
         TimeSpan timerTick,
         CancellationToken cancellationToken)
-        => WaitAsync(timeout, _ => func(), timerTick, cancellationToken);
+        => WaitAsync(timeout, IgnoreToken(func), timerTick, TimeProvider.System, cancellationToken);
 
     /// <summary>
     /// Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
@@ -198,11 +194,12 @@ public static class Polling
     /// A <see cref="PollingResult"/> containing a success indication,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
     public static Task<PollingResult> WaitAsync(
         TimeSpan timeout,
         Func<CancellationToken, Task<Result>> func,
         CancellationToken cancellationToken)
-        => WaitAsync(timeout, func, DefaultTimerTick, cancellationToken);
+        => WaitAsync(timeout, func, DefaultTimerTick, TimeProvider.System, cancellationToken);
 
     /// <summary>
     /// Polls the provided function at regular intervals until it returns a successful result or the timeout expires.
@@ -216,17 +213,47 @@ public static class Polling
     /// A <see cref="PollingResult"/> containing a success indication,
     /// or a <see cref="PollingError"/> with all errors collected during polling.
     /// </returns>
-    public static async Task<PollingResult> WaitAsync(
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
+    public static Task<PollingResult> WaitAsync(
         TimeSpan timeout,
         Func<CancellationToken, Task<Result>> func,
         TimeSpan timerTick,
         CancellationToken cancellationToken)
+        => WaitAsync(timeout, func, timerTick, TimeProvider.System, cancellationToken);
+
+    /// <summary>
+    /// Polls on the timer and the timeout of <paramref name="timeProvider"/>, so tests can drive both with a fake clock.
+    /// </summary>
+    internal static Task<PollingResult> WaitAsync(
+        TimeSpan timeout,
+        Func<CancellationToken, Task<Result>>? func,
+        TimeSpan timerTick,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+        => PollAsync(
+            timeout,
+            func,
+            timerTick,
+            timeProvider,
+            static _ => PollingResult.CreateSuccess(),
+            PollingResult.CreateTimeout,
+            cancellationToken);
+
+    private static async Task<TPollingResult> PollAsync<TResult, TPollingResult>(
+        TimeSpan timeout,
+        Func<CancellationToken, Task<TResult>>? func,
+        TimeSpan timerTick,
+        TimeProvider timeProvider,
+        Func<TResult, TPollingResult> onSuccess,
+        Func<PollingError, TPollingResult> onTimeout,
+        CancellationToken cancellationToken)
+        where TResult : Result
     {
         ArgumentNullException.ThrowIfNull(func);
 
-        using var timeoutCts = new CancellationTokenSource(timeout);
+        using var timeoutCts = new CancellationTokenSource(timeout, timeProvider);
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
-        using var timer = new PeriodicTimer(timerTick);
+        using var timer = new PeriodicTimer(timerTick, timeProvider);
 
         List<Error> errors = [];
 
@@ -234,11 +261,11 @@ public static class Polling
         {
             do
             {
-                Result result = await func(linkedCts.Token).ConfigureAwait(false);
+                TResult result = await func(linkedCts.Token).ConfigureAwait(false);
 
                 if (result.IsSuccess)
                 {
-                    return PollingResult.CreateSuccess();
+                    return onSuccess(result);
                 }
 
                 errors.Add(result.Error);
@@ -250,6 +277,13 @@ public static class Polling
             // Polling timeout reached; surface the aggregated errors below.
         }
 
-        return PollingResult.CreateTimeout(PollingError.FromErrors(errors));
+        return onTimeout(PollingError.FromErrors(errors));
     }
+
+    /// <summary>
+    /// Adapts a token-less function and passes <see langword="null"/> through, so the core rejects it with
+    /// <see cref="ArgumentNullException"/> when the poll is awaited, as it does for every other overload.
+    /// </summary>
+    private static Func<CancellationToken, Task<TResult>>? IgnoreToken<TResult>(Func<Task<TResult>>? func)
+        => func is null ? null : _ => func();
 }

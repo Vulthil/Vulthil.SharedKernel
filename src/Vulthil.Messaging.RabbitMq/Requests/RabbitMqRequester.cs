@@ -76,11 +76,13 @@ internal sealed class RabbitMqRequester : IRequester
 
         // The bus starts in the background, so a request issued while the host is still warming up would be
         // published before the responder's queue and bindings exist and expire unanswered. Hold the request until
-        // the bus has declared its topology and started its consumers (mirroring the outbox relay), bounded by the
-        // request timeout.
+        // the bus has declared its topology and started its consumers (mirroring the outbox relay), and until the
+        // reply queue exists, which the first request declares. The request timeout bounds both waits.
+        string replyQueue;
         try
         {
             await _startupStatus.Ready.WaitAsync(linkedCts.Token).ConfigureAwait(false);
+            replyQueue = await _listener.GetReplyToQueueNameAsync(linkedCts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -97,8 +99,6 @@ internal sealed class RabbitMqRequester : IRequester
         {
             return Result.Failure<TResponse>(Error.Failure(RequestErrorCodes.TransportUnavailable, $"The transport failed to start: {ex.Message}"));
         }
-
-        var replyQueue = await _listener.GetReplyToQueueNameAsync(cancellationToken).ConfigureAwait(false);
 
         RabbitMqProducedMessage request;
         try

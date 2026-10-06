@@ -66,24 +66,33 @@ internal sealed class ResponseListener : IAsyncDisposable
 #pragma warning restore CA1508
 
             var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+            try
+            {
+                var declareResult = await channel.QueueDeclareAsync(
+                    queue: $"callback.{Guid.NewGuid():N}",
+                    durable: false,
+                    exclusive: true,
+                    autoDelete: true,
+                    cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            var declareResult = await channel.QueueDeclareAsync(
-                queue: $"callback.{Guid.NewGuid():N}",
-                durable: false,
-                exclusive: true,
-                autoDelete: true,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+                _replyToQueueName = declareResult.QueueName;
 
-            _replyToQueueName = declareResult.QueueName;
+                var consumer = new AsyncEventingBasicConsumer(channel);
+                consumer.ReceivedAsync += OnResponseReceivedAsync;
 
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.ReceivedAsync += OnResponseReceivedAsync;
-
-            await channel.BasicConsumeAsync(
-                queue: _replyToQueueName,
-                autoAck: false,
-                consumer: consumer,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+                await channel.BasicConsumeAsync(
+                    queue: _replyToQueueName,
+                    autoAck: false,
+                    consumer: consumer,
+                    cancellationToken: cancellationToken).ConfigureAwait(false);
+            }
+            catch
+            {
+                // The next request starts over on a new channel, so a channel whose setup failed or timed out is never
+                // used again; left open, every such request would leave one more open channel on the connection.
+                await channel.DisposeAsync().ConfigureAwait(false);
+                throw;
+            }
 
             _channel = channel;
             MessagingLog.ResponseListenerStarted(_logger, _replyToQueueName);

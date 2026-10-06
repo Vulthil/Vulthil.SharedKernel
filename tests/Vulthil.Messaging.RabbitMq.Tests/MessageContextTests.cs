@@ -83,6 +83,34 @@ public sealed class MessageContextTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void CreateContextKeepsTheReservedKeysOutOfTheHeadersAndSurfacesThemAsTypedProperties()
+    {
+        // Arrange
+        var eventArgs = CreateDeliverEventArgs(headers: new Dictionary<string, object?>
+        {
+            ["ConversationId"] = Encoding.UTF8.GetBytes("conv-1"),
+            ["InitiatorId"] = Encoding.UTF8.GetBytes("init-1"),
+            ["SourceAddress"] = Encoding.UTF8.GetBytes("source-queue"),
+            ["DestinationAddress"] = Encoding.UTF8.GetBytes("destination-queue"),
+            ["ResponseAddress"] = Encoding.UTF8.GetBytes("reply-queue"),
+            ["FaultAddress"] = Encoding.UTF8.GetBytes("fault-queue"),
+            ["tenant"] = Encoding.UTF8.GetBytes("acme"),
+        });
+
+        // Act
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+
+        // Assert
+        context.Headers.Keys.ShouldBe(["tenant"]);
+        context.ConversationId.ShouldBe("conv-1");
+        context.InitiatorId.ShouldBe("init-1");
+        context.SourceAddress.ShouldBe(new Uri("queue:source-queue"));
+        context.DestinationAddress.ShouldBe(new Uri("queue:destination-queue"));
+        context.ResponseAddress.ShouldBe(new Uri("queue:reply-queue"));
+        context.FaultAddress.ShouldBe(new Uri("queue:fault-queue"));
+    }
+
+    [Fact]
     public void CreateContextAnchorsTheTtlExpirationToTheSentTimestamp()
     {
         // Arrange — the AMQP expiration is a TTL relative to publish, carried alongside the publish timestamp.

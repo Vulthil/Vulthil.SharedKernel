@@ -13,20 +13,30 @@ internal static class RabbitMqConstants
 
     public const string RetryHandlersHeader = "x-retry-handlers";
 
+    /// <summary>
+    /// Reads the round a delivery starts at from its <see cref="RetryCountHeader"/> header. The worker writes the
+    /// round as an <see cref="int"/>, but a message replayed from the management UI or sent by another client can
+    /// carry it as another integer type or as text. A whole number from 0 to <see cref="int.MaxValue"/> counts in
+    /// any of these forms. Any other value counts as 0, a first delivery, so the consumers still run; a retry
+    /// re-publish writes the round back as an <see cref="int"/>.
+    /// </summary>
     public static int GetRetryCount(IDictionary<string, object?>? headers)
     {
-        if (headers?.TryGetValue(RetryCountHeader, out var countObj) == true)
+        if (headers is null || !headers.TryGetValue(RetryCountHeader, out var value))
         {
-            return countObj switch
-            {
-                int i => i,
-                byte[] b => BitConverter.ToInt32(b),
-                long l => (int)l,
-                _ => 0
-            };
+            return 0;
         }
 
-        return 0;
+        return value switch
+        {
+            int count and >= 0 => count,
+            long count and >= 0 and <= int.MaxValue => (int)count,
+            _ => int.TryParse(
+                AsText(value),
+                NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite,
+                CultureInfo.InvariantCulture,
+                out var count) ? count : 0,
+        };
     }
 
     /// <summary>
@@ -92,15 +102,15 @@ internal static class RabbitMqConstants
     }
 
     public static string? GetHeaderString(IDictionary<string, object?> headers, string key)
-    {
-        if (headers.TryGetValue(key, out var value) && value is byte[] bytes)
-        {
-            return Encoding.UTF8.GetString(bytes);
-        }
-
-        return value?.ToString();
-    }
+        => headers.TryGetValue(key, out var value) ? AsText(value) : null;
 
     public static Uri? GetHeaderUri(IDictionary<string, object?> headers, string key) =>
         MessageAddress.Parse(GetHeaderString(headers, key));
+
+    /// <summary>
+    /// Reads a header value as text. The client surfaces an AMQP string as its UTF-8 bytes, so a byte array decodes
+    /// back to the string; any other value is formatted.
+    /// </summary>
+    private static string? AsText(object? value)
+        => value is byte[] bytes ? Encoding.UTF8.GetString(bytes) : value?.ToString();
 }

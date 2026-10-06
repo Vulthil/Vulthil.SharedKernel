@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -13,6 +14,8 @@ namespace Vulthil.Messaging.RabbitMq.Tests;
 
 public sealed class RabbitMqConsumerWorkerFaultPayloadTests : BaseUnitTestCase
 {
+    private const string FaultQueue = "order-faults";
+
     private RecordedPublish? _fault;
 
     [Fact]
@@ -71,6 +74,89 @@ public sealed class RabbitMqConsumerWorkerFaultPayloadTests : BaseUnitTestCase
         var fault = JsonSerializer.Deserialize<Fault<TestMessage>>(published.Body, provider.JsonSerializerOptions).ShouldNotBeNull();
         fault.Message.Value.ShouldBe("bare");
     }
+
+    [Fact]
+    public async Task AFaultForAnEnvelopeDeliveryGoesToTheFaultAddressOfItsEnvelope()
+    {
+        // Arrange
+        var provider = TestProviders.Build();
+        var urn = provider.GetUrn(typeof(TestMessage));
+        var publishContext = new PublishContext();
+        publishContext.SetFaultAddress(MessageAddress.Queue(FaultQueue));
+        var envelope = MessageEnvelopeFactory.Create(
+            new TestMessage("payload"), publishContext, "message-id-3", "corr-3", urn, provider.JsonSerializerOptions);
+        var consumer = await StartWorkerAsync(provider);
+
+        // Act
+        await consumer.HandleBasicDeliverAsync(
+            "consumer-tag",
+            1,
+            false,
+            "orders",
+            "orders",
+            new BasicProperties { Type = urn.AbsoluteUri, MessageId = "message-id-3", Headers = new Dictionary<string, object?>() },
+            JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializerOptions),
+            CancellationToken);
+
+        // Assert
+        var published = _fault.ShouldNotBeNull();
+        published.Exchange.ShouldBe(string.Empty);
+        published.RoutingKey.ShouldBe(FaultQueue);
+    }
+
+    [Fact]
+    public async Task AFaultForAnEnvelopeDeliveryIgnoresAFaultAddressHeaderItsEnvelopeDoesNotCarry()
+    {
+        // Arrange
+        var provider = TestProviders.Build();
+        var urn = provider.GetUrn(typeof(TestMessage));
+        var envelope = MessageEnvelopeFactory.Create(
+            new TestMessage("payload"), new PublishContext(), "message-id-4", "corr-4", urn, provider.JsonSerializerOptions);
+        var consumer = await StartWorkerAsync(provider);
+
+        // Act
+        await consumer.HandleBasicDeliverAsync(
+            "consumer-tag",
+            1,
+            false,
+            "orders",
+            "orders",
+            new BasicProperties { Type = urn.AbsoluteUri, MessageId = "message-id-4", Headers = FaultAddressHeader() },
+            JsonSerializer.SerializeToUtf8Bytes(envelope, provider.JsonSerializerOptions),
+            CancellationToken);
+
+        // Assert
+        var published = _fault.ShouldNotBeNull();
+        published.Exchange.ShouldBe("Fault.Exchange");
+        published.RoutingKey.ShouldBe(urn.AbsoluteUri);
+    }
+
+    [Fact]
+    public async Task AFaultForABareJsonDeliveryGoesToTheFaultAddressOfItsHeader()
+    {
+        // Arrange
+        var provider = TestProviders.Build();
+        var consumer = await StartWorkerAsync(provider);
+
+        // Act
+        await consumer.HandleBasicDeliverAsync(
+            "consumer-tag",
+            1,
+            false,
+            "orders",
+            "orders",
+            new BasicProperties { Type = typeof(TestMessage).FullName, MessageId = "message-id-5", Headers = FaultAddressHeader() },
+            JsonSerializer.SerializeToUtf8Bytes(new TestMessage("bare"), provider.JsonSerializerOptions),
+            CancellationToken);
+
+        // Assert
+        var published = _fault.ShouldNotBeNull();
+        published.Exchange.ShouldBe(string.Empty);
+        published.RoutingKey.ShouldBe(FaultQueue);
+    }
+
+    private static Dictionary<string, object?> FaultAddressHeader()
+        => new() { [MessageHeaders.FaultAddress] = Encoding.UTF8.GetBytes(FaultQueue) };
 
     private async Task<IAsyncBasicConsumer> StartWorkerAsync(IMessageConfigurationProvider provider)
     {

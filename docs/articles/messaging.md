@@ -142,6 +142,11 @@ Values without a JSON primitive form keep their JSON shape: objects and arrays s
 `JsonElement`, and types JSON serializes as strings (e.g. `Guid`, `DateTimeOffset`) surface as
 that string.
 
+`IMessageContext.Headers` holds custom headers only. The reserved metadata keys of `MessageHeaders`
+(`ConversationId`, `InitiatorId`, `SourceAddress`, `DestinationAddress`, `ResponseAddress` and
+`FaultAddress`) surface as the typed context properties instead, on every path — also when a
+bare-AMQP producer sends them as AMQP headers.
+
 ## Point-to-point Send
 
 `IPublisher.PublishAsync` fans a message out via its per-type exchange to any number of
@@ -466,6 +471,10 @@ broker delivers it again: no fault is published for the interrupted attempt, and
 request consumer sends no reply. A consumer's own `OperationCanceledException` while the host keeps
 running is an ordinary failure and is retried.
 
+The worker writes `x-retry-count` as a number. A delivery can also carry it as text — the RabbitMQ
+management UI, for example, sends header values as strings by default — and the text counts when it
+is a whole number. Any other value counts as round 0, so the consumers run as on a first delivery.
+
 ### Ignored exceptions
 
 `r.Ignore<TException>()` (or the `IgnoreExceptions` list in configuration) exempts exception
@@ -520,7 +529,9 @@ any AMQP consumer bound to the exchange — rather than a typed `IConsumer<Fault
 A message can override the routing per-message: if it carries an explicit `FaultAddress`, the fault is
 routed **point-to-point** to that address (through the broker's default exchange) instead of being
 broadcast to the fault exchange — exactly one fault per terminally-failed consumer is emitted either
-way. Set it on publish:
+way. The address is the one the consumer sees as `IMessageContext.FaultAddress`: the envelope's
+`faultAddress` for a Vulthil message, the `FaultAddress` header for a bare-JSON message. Set it on
+publish:
 
 ```csharp
 await publisher.PublishAsync(new OrderCreatedEvent(orderId), ctx =>
@@ -543,6 +554,11 @@ no `Fault<T>` is published for them:
 - **Undeserializable body** (malformed JSON, or a body that deserializes to `null`): the delivery is
   **nacked without requeue**, with an error log. When the queue has a dead-letter queue configured
   (`q.UseDeadLetterQueue()`), the broker moves it there; otherwise it is discarded.
+- **Unreadable metadata** (a header or an envelope field the worker cannot parse, such as an address
+  that is not a valid URI): the delivery is **nacked without requeue**, with an error log, like an
+  undeserializable body. Any other failure outside the consumers that would leave the delivery
+  unsettled is handled the same way. During shutdown the delivery is left unsettled instead, so the
+  broker delivers it again.
 
 ## Routing Keys
 
@@ -876,7 +892,10 @@ public sealed class OrderLookupService(IRequester requester)
 ```
 
 The reply queue is created lazily on the first request, so producer-only services
-that never call `RequestAsync` do not declare any reply infrastructure.
+that never call `RequestAsync` do not declare any reply infrastructure. The request's timeout
+also bounds the wait for the reply queue: a request whose reply queue is not ready in time fails
+with `Messaging.Request.Timeout`, and one whose reply queue cannot be declared fails with
+`Messaging.Request.TransportUnavailable`.
 
 ### Configuring the request
 

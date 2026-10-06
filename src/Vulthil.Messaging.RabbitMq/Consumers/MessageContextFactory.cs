@@ -130,7 +130,7 @@ internal static class MessageContextFactory
             CorrelationId: props.CorrelationId,
             RequestId: props.CorrelationId,
             RoutingKey: ea.RoutingKey,
-            Headers: AmqpHeaderValueNormalizer.Normalize(headers),
+            Headers: NormalizeCustomHeaders(headers),
             Redelivered: ea.Redelivered,
             RetryCount: RabbitMqConstants.GetRetryCount(headers),
             ConversationId: RabbitMqConstants.GetHeaderString(headers, MessageHeaders.ConversationId),
@@ -142,6 +142,22 @@ internal static class MessageContextFactory
             FaultAddress: RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.FaultAddress),
             SentTime: sentTime,
             ExpirationTime: RabbitMqConstants.TryParseExpiration(props.Expiration, sentTime));
+    }
+
+    /// <summary>
+    /// Normalizes the delivery's headers for <see cref="IMessageContext.Headers"/> without the
+    /// <see cref="MessageHeaders"/> reserved keys: the context carries those as typed properties, and the envelope path
+    /// leaves them out of the headers too, because the producer promotes them to envelope fields.
+    /// </summary>
+    private static Dictionary<string, object?> NormalizeCustomHeaders(IDictionary<string, object?> headers)
+    {
+        var customHeaders = AmqpHeaderValueNormalizer.Normalize(headers);
+        foreach (var key in headers.Keys.Where(MessageHeaders.IsReserved))
+        {
+            customHeaders.Remove(key);
+        }
+
+        return customHeaders;
     }
 
     private static DateTimeOffset? GetSentTime(IReadOnlyBasicProperties props)

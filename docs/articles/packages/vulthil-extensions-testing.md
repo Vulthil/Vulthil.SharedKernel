@@ -39,6 +39,32 @@ result.IsSuccess.ShouldBeTrue();
 
 When polling times out, `PollingResult.PollingError` exposes the individual errors collected from each failed attempt.
 
+### Polling on a fake clock
+
+The timer and the timeout of a poll run on a `TimeProvider`. To drive a poll from a test, pass a fake clock, such as
+`FakeTimeProvider` from `Microsoft.Extensions.TimeProvider.Testing`. Pass it in `PollingOptions`, or to the overload
+that takes `timerTick` and `timeProvider`. The poll then ticks and times out only when the test advances that clock.
+`PollingOptions` takes the timeout; `TimerTick` defaults to one second and `TimeProvider` to `TimeProvider.System`.
+
+```csharp
+var clock = new FakeTimeProvider();
+var options = new PollingOptions(TimeSpan.FromMinutes(5))
+{
+    TimerTick = TimeSpan.FromMinutes(1),
+    TimeProvider = clock,
+};
+
+var polling = Polling.WaitAsync(options, ct => ProbeAsync(ct), cancellationToken);
+clock.Advance(TimeSpan.FromMinutes(5));
+
+var result = await polling;
+```
+
+The first attempt runs at once, each tick starts the next attempt, and the timeout ends the poll. An advance that
+crosses several ticks can start fewer attempts than ticks, because `PeriodicTimer` merges a tick that fires before
+the poll has taken the previous one. To run exactly one attempt per tick, advance by one tick, wait until that
+attempt has run, and then advance again.
+
 ## HTTP responses
 
 `GetResponseAsync<T>` asserts an `HttpResponseMessage` indicates success and deserializes its JSON body:

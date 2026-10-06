@@ -59,7 +59,7 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task InSequenceEachMessageIsDispatchedInTheRelayScope()
+    public async Task InSequenceEachMessageIsDispatchedInTheRelayScopeAsAStepOfTheUnit()
     {
         // Arrange
         UseOptions(new OutboxProcessingOptions { EnableParallelPublishing = false });
@@ -73,12 +73,13 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
         // Assert
         cycle.ShouldBe(new OutboxRelayCycleResult(Claimed: 3, Relayed: 3));
         dispatcher.CallCount.ShouldBe(3);
+        store.StepCount.ShouldBe(3);
         store.RelayedIds.ShouldBe(store.Messages.Select(message => message.Id));
         GetMock<IServiceScopeFactory>().Verify(factory => factory.CreateScope(), Times.Never);
     }
 
     [Fact]
-    public async Task InParallelEachMessageIsDispatchedInItsOwnScope()
+    public async Task InParallelEachMessageIsDispatchedInItsOwnScopeOutsideTheUnitsSteps()
     {
         // Arrange
         const int messageCount = 3;
@@ -92,13 +93,14 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
             return new SingleDispatcherServiceProvider(dispatcher);
         });
         Use<IServiceScopeFactory>(scopeFactory);
-        UseStore(new InMemoryRelayStore(messageCount));
+        var store = UseStore(new InMemoryRelayStore(messageCount));
 
         // Act
         var cycle = await Target.RunAsync(CancellationToken);
 
         // Assert
         cycle.Relayed.ShouldBe(messageCount);
+        store.StepCount.ShouldBe(0);
         scopeFactory.ScopesCreated.ShouldBe(messageCount);
         scopedDispatchers.ShouldAllBe(dispatcher => dispatcher.CallCount == 1);
         relayScope.Verify(provider => provider.GetService(It.IsAny<Type>()), Times.Never);
@@ -153,6 +155,24 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
         var failure = store.Failures.ShouldHaveSingleItem();
         failure.Id.ShouldBe(failingMessageId);
         failure.Error.ShouldContain("Simulated dispatch failure.");
+    }
+
+    [Fact]
+    public async Task InSequenceAFailedDispatchFailsItsStepSoTheStoreCanUndoIt()
+    {
+        // Arrange
+        var messages = InMemoryRelayStore.CreateMessages(3);
+        UseRootDispatchers(new FailingForOneMessageDispatcher(messages[1].Id));
+        var store = UseStore(new InMemoryRelayStore(messages));
+
+        // Act
+        var cycle = await Target.RunAsync(CancellationToken);
+
+        // Assert
+        cycle.ShouldBe(new OutboxRelayCycleResult(Claimed: 3, Relayed: 2));
+        store.StepCount.ShouldBe(3);
+        store.FailedStepCount.ShouldBe(1);
+        store.Failures.ShouldHaveSingleItem().Id.ShouldBe(messages[1].Id);
     }
 
     [Fact]

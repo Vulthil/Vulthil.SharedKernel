@@ -42,6 +42,41 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task AFailedStepForgetsTheChangesItLeftPendingWhileASucceededStepSavesThem()
+    {
+        // Arrange
+        var baseTime = DateTimeOffset.UtcNow;
+        var failing = NewMessage(Guid.CreateVersion7(), baseTime);
+        var succeeding = NewMessage(Guid.CreateVersion7(), baseTime.AddSeconds(1));
+        await using var seed = NewContext();
+        seed.OutboxMessages.AddRange(failing, succeeding);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewContext();
+        var store = NewStore(context);
+        var leftOver = NewMessage(Guid.CreateVersion7(), baseTime.AddSeconds(2));
+        var kept = NewMessage(Guid.CreateVersion7(), baseTime.AddSeconds(3));
+
+        // Act
+        var processed = await store.RelayBatchAsync((data, _) =>
+        {
+            if (data.Id == failing.Id)
+            {
+                context.OutboxMessages.Add(leftOver);
+                return Task.FromResult<string?>("boom");
+            }
+
+            context.OutboxMessages.Add(kept);
+            return Task.FromResult<string?>(null);
+        }, CancellationToken);
+
+        // Assert
+        processed.ShouldBe(1);
+        await using var verify = NewContext();
+        var ids = await verify.OutboxMessages.Select(message => message.Id).ToListAsync(CancellationToken);
+        ids.ShouldBe([failing.Id, succeeding.Id, kept.Id], ignoreOrder: true);
+    }
+
+    [Fact]
     public async Task DoesNotFetchADeadLetteredMessage()
     {
         // Arrange

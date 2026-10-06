@@ -10,8 +10,9 @@ namespace Vulthil.SharedKernel.Outbox;
 /// store (see <see cref="IOutboxStore.RunRelayUnitAsync{TResult}"/>). It owns the dispatch rules:
 /// <list type="bullet">
 /// <item><description>Each message goes to the <see cref="IOutboxDispatcher"/> that handles its destination.</description></item>
-/// <item><description>In sequence, a message is dispatched in the relay's own scope, so a handler's writes and its
-/// transactional publishes join the relay transaction and commit with the batch.</description></item>
+/// <item><description>In sequence, a message is dispatched in the relay's own scope as a step of the unit (see
+/// <see cref="IOutboxRelayUnit.RunStepAsync"/>), so a handler's writes and its transactional publishes join the relay
+/// transaction and commit with the batch, and a failed handler's work is undone without ending the transaction.</description></item>
 /// <item><description>With <see cref="OutboxProcessingOptions.EnableParallelPublishing"/>, each message is dispatched in its
 /// own scope, so handlers never share the relay's <c>DbContext</c>, and at most
 /// <see cref="OutboxProcessingOptions.MaxDegreeOfParallelism"/> dispatches run at once.</description></item>
@@ -40,7 +41,7 @@ internal sealed class OutboxRelayCycle(
 
         var errors = settings.EnableParallelPublishing
             ? await DispatchInParallelAsync(batch, settings.MaxDegreeOfParallelism, cancellationToken).ConfigureAwait(false)
-            : await DispatchInSequenceAsync(batch, cancellationToken).ConfigureAwait(false);
+            : await DispatchInSequenceAsync(unit, batch, cancellationToken).ConfigureAwait(false);
 
         var relayedIds = new List<Guid>(batch.Count);
         var failures = new List<OutboxMessageFailure>();
@@ -60,12 +61,12 @@ internal sealed class OutboxRelayCycle(
         return new OutboxRelayCycleResult(batch.Count, relayedIds.Count);
     }
 
-    private async Task<string?[]> DispatchInSequenceAsync(IReadOnlyList<OutboxMessageData> batch, CancellationToken cancellationToken)
+    private async Task<string?[]> DispatchInSequenceAsync(IOutboxRelayUnit unit, IReadOnlyList<OutboxMessageData> batch, CancellationToken cancellationToken)
     {
         var errors = new string?[batch.Count];
         for (var index = 0; index < batch.Count; index++)
         {
-            errors[index] = await DispatchAsync(serviceProvider, batch[index], cancellationToken).ConfigureAwait(false);
+            errors[index] = await DispatchAsync(serviceProvider, batch[index], unit, cancellationToken).ConfigureAwait(false);
         }
 
         return errors;
@@ -84,7 +85,7 @@ internal sealed class OutboxRelayCycle(
         {
             var scope = scopeFactory.CreateAsyncScope();
             await using var _ = scope.ConfigureAwait(false);
-            return await DispatchAsync(scope.ServiceProvider, message, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(scope.ServiceProvider, message, unit: null, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -94,9 +95,11 @@ internal sealed class OutboxRelayCycle(
 
     /// <summary>
     /// Dispatches one message and returns <see langword="null"/> when it was delivered, or the error to record against
-    /// it. A cancellation of the cycle itself propagates instead, so the unit is abandoned without recording.
+    /// it. A cancellation of the cycle itself propagates instead, so the unit is abandoned without recording. When
+    /// <paramref name="unit"/> is given, the dispatch shares the relay's scope and runs as a step of that unit; a message
+    /// dispatched in a scope of its own passes <see langword="null"/>.
     /// </summary>
-    private async Task<string?> DispatchAsync(IServiceProvider services, OutboxMessageData message, CancellationToken cancellationToken)
+    private async Task<string?> DispatchAsync(IServiceProvider services, OutboxMessageData message, IOutboxRelayUnit? unit, CancellationToken cancellationToken)
     {
         Activity? activity = null;
         try
@@ -108,7 +111,14 @@ internal sealed class OutboxRelayCycle(
             }
 
             var dispatcher = ResolveDispatcher(services, message.Destination);
-            await dispatcher.DispatchAsync(message, cancellationToken).ConfigureAwait(false);
+            if (unit is null)
+            {
+                await dispatcher.DispatchAsync(message, cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await unit.RunStepAsync(token => dispatcher.DispatchAsync(message, token), cancellationToken).ConfigureAwait(false);
+            }
 
             Telemetry.Relayed.Add(1);
             return null;

@@ -62,12 +62,24 @@ public sealed class OutboxRelayBackoffTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void AFaultedCycleWaitsTheBaseDelay()
+    public void AFirstFaultWaitsTheBaseDelay()
     {
         // Act
-        var delay = OutboxRelayBackoff.AfterFault(RelayOptions);
+        var delay = OutboxRelayBackoff.AfterFault(TimeSpan.Zero, RelayOptions);
 
         // Assert
         delay.ShouldBe(TimeSpan.FromSeconds(2));
+    }
+
+    [Theory]
+    [InlineData(8, 16)]
+    [InlineData(40, 60)]
+    public void ARepeatedFaultDoublesTheWaitUpToTheMaximum(int previousSeconds, int expectedSeconds)
+    {
+        // Act
+        var delay = OutboxRelayBackoff.AfterFault(TimeSpan.FromSeconds(previousSeconds), RelayOptions);
+
+        // Assert
+        delay.ShouldBe(TimeSpan.FromSeconds(expectedSeconds));
     }
 }

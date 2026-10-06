@@ -1,15 +1,31 @@
 #nullable enable
+override sealed Vulthil.Extensions.Testing.PollingExceptionError.Equals(Vulthil.Results.Error? other) -> bool
+override Vulthil.Extensions.Testing.PollingExceptionError.<Clone>$() -> Vulthil.Extensions.Testing.PollingExceptionError!
+override Vulthil.Extensions.Testing.PollingExceptionError.Equals(object? obj) -> bool
+override Vulthil.Extensions.Testing.PollingExceptionError.GetHashCode() -> int
+override Vulthil.Extensions.Testing.PollingExceptionError.ToString() -> string!
 override Vulthil.Extensions.Testing.PollingOptions.Equals(object? obj) -> bool
 override Vulthil.Extensions.Testing.PollingOptions.GetHashCode() -> int
 override Vulthil.Extensions.Testing.PollingOptions.ToString() -> string!
+static readonly Vulthil.Extensions.Testing.Polling.ConditionNotMet -> Vulthil.Results.Error!
+static Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan timeout, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<bool>!>! func, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult!>!
 static Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan timeout, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! func, System.TimeSpan timerTick, System.TimeProvider! timeProvider, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult!>!
+static Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions! options, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<bool>!>! func, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult!>!
 static Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions! options, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Vulthil.Results.Result!>!>! func, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult!>!
 static Vulthil.Extensions.Testing.Polling.WaitAsync<T>(System.TimeSpan timeout, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!>! func, System.TimeSpan timerTick, System.TimeProvider! timeProvider, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult<T>!>!
 static Vulthil.Extensions.Testing.Polling.WaitAsync<T>(Vulthil.Extensions.Testing.PollingOptions! options, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Vulthil.Results.Result<T>!>!>! func, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vulthil.Extensions.Testing.PollingResult<T>!>!
+static Vulthil.Extensions.Testing.PollingExceptionError.operator !=(Vulthil.Extensions.Testing.PollingExceptionError? left, Vulthil.Extensions.Testing.PollingExceptionError? right) -> bool
+static Vulthil.Extensions.Testing.PollingExceptionError.operator ==(Vulthil.Extensions.Testing.PollingExceptionError? left, Vulthil.Extensions.Testing.PollingExceptionError? right) -> bool
 static Vulthil.Extensions.Testing.PollingOptions.operator !=(Vulthil.Extensions.Testing.PollingOptions? left, Vulthil.Extensions.Testing.PollingOptions? right) -> bool
 static Vulthil.Extensions.Testing.PollingOptions.operator ==(Vulthil.Extensions.Testing.PollingOptions? left, Vulthil.Extensions.Testing.PollingOptions? right) -> bool
 Vulthil.Extensions.Testing.IResettableTestState
 Vulthil.Extensions.Testing.IResettableTestState.ResetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Vulthil.Extensions.Testing.PollingExceptionError
+Vulthil.Extensions.Testing.PollingExceptionError.Deconstruct(out System.Exception! Exception) -> void
+Vulthil.Extensions.Testing.PollingExceptionError.Equals(Vulthil.Extensions.Testing.PollingExceptionError? other) -> bool
+Vulthil.Extensions.Testing.PollingExceptionError.Exception.get -> System.Exception!
+Vulthil.Extensions.Testing.PollingExceptionError.Exception.init -> void
+Vulthil.Extensions.Testing.PollingExceptionError.PollingExceptionError(System.Exception! Exception) -> void
 Vulthil.Extensions.Testing.PollingOptions
 Vulthil.Extensions.Testing.PollingOptions.<Clone>$() -> Vulthil.Extensions.Testing.PollingOptions!
 Vulthil.Extensions.Testing.PollingOptions.Deconstruct(out System.TimeSpan Timeout) -> void
@@ -21,3 +37,5 @@ Vulthil.Extensions.Testing.PollingOptions.TimeProvider.get -> System.TimeProvide
 Vulthil.Extensions.Testing.PollingOptions.TimeProvider.init -> void
 Vulthil.Extensions.Testing.PollingOptions.TimerTick.get -> System.TimeSpan
 Vulthil.Extensions.Testing.PollingOptions.TimerTick.init -> void
+Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt.get -> System.Func<System.Exception!, bool>?
+Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt.init -> void

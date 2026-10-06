@@ -10758,6 +10758,22 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync
   nameWithType: IOutboxRelayUnit.RecordAsync
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RunStepAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken)
+  name: RunStepAsync(Func<CancellationToken, Task>, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html#Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_RunStepAsync_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RunStepAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken)
+  name.vb: RunStepAsync(Func(Of CancellationToken, Task), CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RunStepAsync(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RunStepAsync(System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task), System.Threading.CancellationToken)
+  nameWithType: IOutboxRelayUnit.RunStepAsync(Func<CancellationToken, Task>, CancellationToken)
+  nameWithType.vb: IOutboxRelayUnit.RunStepAsync(Func(Of CancellationToken, Task), CancellationToken)
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RunStepAsync*
+  name: RunStepAsync
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.html#Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_RunStepAsync_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RunStepAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RunStepAsync
+  nameWithType: IOutboxRelayUnit.RunStepAsync
 - uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
   name: IOutboxRetentionStore
   href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html

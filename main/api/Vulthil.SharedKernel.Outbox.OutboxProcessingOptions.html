@@ -161,7 +161,7 @@ Class OutboxProcessingOptions  <a class="header-action link-secondary" title="Vi
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_BatchSize" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.BatchSize">
   BatchSize
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the maximum number of outbox messages to process per cycle. Default is 10.</p>
@@ -193,7 +193,7 @@ Class OutboxProcessingOptions  <a class="header-action link-secondary" title="Vi
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableMetrics" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableMetrics">
   EnableMetrics
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether outbox relay metrics (the <code>vulthil.outbox.*</code> counters on the
@@ -226,7 +226,7 @@ Class OutboxProcessingOptions  <a class="header-action link-secondary" title="Vi
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableParallelPublishing" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableParallelPublishing">
   EnableParallelPublishing
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether messages within a batch should be published in parallel.
@@ -260,7 +260,7 @@ relay's <code>DbContext</code>, and concurrency is bounded by <a class="xref" hr
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableTracing" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.EnableTracing">
   EnableTracing
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether Trace Identifiers should be included when publishing outbox messages.
@@ -297,7 +297,7 @@ Default: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/b
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxDegreeOfParallelism" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism">
   MaxDegreeOfParallelism
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the maximum number of messages dispatched concurrently when <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_EnableParallelPublishing">EnableParallelPublishing</a> is
@@ -330,10 +330,11 @@ enabled. Default is 4. Ignored when parallel publishing is disabled.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxDelaySeconds" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds">
   MaxDelaySeconds
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets the maximum back-off delay in seconds when no messages are found. Default is 60.</p>
+  <div class="markdown level1 summary"><p>Gets the maximum back-off delay in seconds: the wait doubles up to this value after a cycle that relays nothing
+(no pending message, or every claimed message failed) and after a cycle that faults. Default is 60.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -362,7 +363,7 @@ enabled. Default is 4. Ignored when parallel publishing is disabled.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxRetries" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries">
   MaxRetries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the maximum number of delivery attempts before a message is dead-lettered — its <code>FailedOnUtc</code>
@@ -427,7 +428,7 @@ is set and it is no longer relayed. Default is 3.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_Retention" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention">
   Retention
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the retention sweep configuration. Set <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled">Enabled</a> to periodically

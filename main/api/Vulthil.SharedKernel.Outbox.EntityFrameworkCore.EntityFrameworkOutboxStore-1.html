@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class EntityFrameworkOutboxStore&lt;TContext&gt; | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Entity Framework Core implementation of . It owns the relay&#39;s transactional boundary — runs each relay unit inside the context&#39;s execution strategy, opens the transaction, claims and records through the unit, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from this type to add row-level locking (), set-based updates (), or a no-op transaction ().">
+      <meta name="description" content="Entity Framework Core implementation of . It owns the relay&#39;s transactional boundary — runs each relay unit inside the context&#39;s execution strategy, opens the transaction, claims, runs each in-scope dispatch as a step behind a savepoint, records through the unit, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from this type to add row-level locking (), set-based updates (), or a no-op transaction ().">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1" class="text-break">
-Class EntityFrameworkOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L16"><i class="bi bi-code-slash"></i></a>
+Class EntityFrameworkOutboxStore&lt;TContext&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -98,8 +98,9 @@ Class EntityFrameworkOutboxStore&lt;TContext&gt;  <a class="header-action link-s
   </div>
 
   <div class="markdown summary"><p>Entity Framework Core implementation of <a class="xref" href="Vulthil.SharedKernel.Outbox.IOutboxStore.html">IOutboxStore</a>. It owns the relay's transactional boundary —
-runs each relay unit inside the context's execution strategy, opens the transaction, claims and records through
-the unit, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from
+runs each relay unit inside the context's execution strategy, opens the transaction, claims, runs each in-scope
+dispatch as a step behind a savepoint, records through the unit, and commits — and exposes the capture surface used
+by bus-publish filters. Provider packages derive from
 this type to add row-level locking (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_">FetchMessagesAsync(int, int, CancellationToken)</a>), set-based updates
 (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_">UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, DateTimeOffset, CancellationToken)</a>), or a no-op transaction (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_BeginTransactionAsync_System_Threading_CancellationToken_">BeginTransactionAsync(CancellationToken)</a>).</p>
 </div>
@@ -188,7 +189,7 @@ this type to add row-level locking (<a class="xref" href="Vulthil.SharedKernel.O
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1__ctor__0_System_TimeProvider_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.#ctor(`0,System.TimeProvider)">
   EntityFrameworkOutboxStore(TContext, TimeProvider)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html">EntityFrameworkOutboxStore&lt;TContext&gt;</a> class.</p>
@@ -228,7 +229,7 @@ this type to add row-level locking (<a class="xref" href="Vulthil.SharedKernel.O
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DbContext" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DbContext">
   DbContext
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the application's persistence context.</p>
@@ -260,7 +261,7 @@ this type to add row-level locking (<a class="xref" href="Vulthil.SharedKernel.O
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_IsInTransaction" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.IsInTransaction">
   IsInTransaction
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether a database transaction is currently active. Capture uses this to decide
@@ -293,7 +294,7 @@ whether an outgoing message is enlisted in the ambient transaction or published 
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_Logger" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.Logger">
   Logger
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a logger resolved from the persistence context's logging integration.</p>
@@ -325,7 +326,7 @@ whether an outgoing message is enlisted in the ambient transaction or published 
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_OutboxMessages" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.OutboxMessages">
   OutboxMessages
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the tracked outbox message set.</p>
@@ -361,7 +362,7 @@ whether an outgoing message is enlisted in the ambient transaction or published 
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_AddOutboxMessage_Vulthil_SharedKernel_Outbox_OutboxMessage_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.AddOutboxMessage(Vulthil.SharedKernel.Outbox.OutboxMessage)">
   AddOutboxMessage(OutboxMessage)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Stages an outbox message for persistence. Used by capture (e.g. a transactional bus-publish filter) to enlist
@@ -395,7 +396,7 @@ the message in the ambient business transaction; call <a class="xref" href="Vult
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_BeginTransactionAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.BeginTransactionAsync(System.Threading.CancellationToken)">
   BeginTransactionAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L150"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Begins the transaction for a relay unit. The default enlists the context's <a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWork.html">IUnitOfWork</a>;
@@ -435,7 +436,7 @@ providers without ambient transactions (e.g. Cosmos) override this.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)">
   DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L226"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Deletes up to <code class="paramref">batchSize</code> outbox rows that were processed or dead-lettered before
@@ -481,7 +482,7 @@ providers without ambient transactions (e.g. Cosmos) override this.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_FetchMessagesAsync_System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.FetchMessagesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)">
   FetchMessagesAsync(int, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L168"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Fetches a batch of unprocessed messages for a relay unit's claim. Providers override this to add row-level
@@ -527,7 +528,7 @@ locking (e.g. <code>FOR UPDATE SKIP LOCKED</code>).</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_RunRelayUnitAsync__1_System_Func_Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_System_Threading_CancellationToken_System_Threading_Tasks_Task___0___System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.RunRelayUnitAsync``1(System.Func{Vulthil.SharedKernel.Outbox.IOutboxRelayUnit,System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)">
   RunRelayUnitAsync&lt;TResult&gt;(Func&lt;IOutboxRelayUnit, CancellationToken, Task&lt;TResult&gt;&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Runs one relay unit inside the store's transactional boundary: opens the transaction (inside any retrying
@@ -582,7 +583,7 @@ already dispatched are dispatched again, which the outbox's at-least-once delive
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_SaveChangesAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.SaveChangesAsync(System.Threading.CancellationToken)">
   SaveChangesAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Persists pending staged outbox messages.</p>
@@ -621,7 +622,7 @@ already dispatched are dispatched again, which the outbox's at-least-once delive
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.DateTimeOffset,System.Threading.CancellationToken)">
   UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, DateTimeOffset, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L187"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Records processed and failed messages, dead-lettering any that reach <code class="paramref">maxRetries</code>. The default
@@ -673,7 +674,7 @@ providers override this with set-based <code>ExecuteUpdate</code> calls.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L16" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L18" class="edit-link">Edit this page</a>
         </div>
 
 

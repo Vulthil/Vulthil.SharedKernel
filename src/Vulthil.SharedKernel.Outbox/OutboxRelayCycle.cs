@@ -106,8 +106,7 @@ internal sealed class OutboxRelayCycle(
         {
             if (!string.IsNullOrWhiteSpace(message.TraceParent))
             {
-                var parent = ActivityContext.Parse(message.TraceParent, message.TraceState);
-                activity = Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
+                activity = StartPublishingActivity(message);
             }
 
             var dispatcher = ResolveDispatcher(services, message.Destination);
@@ -133,6 +132,26 @@ internal sealed class OutboxRelayCycle(
         {
             activity?.Dispose();
         }
+    }
+
+    /// <summary>
+    /// Starts the relay span of a message, parented on the trace that captured it. A stored trace parent that is not a
+    /// W3C trace context — an old hierarchical activity ID, or a value that other code wrote — starts a new trace
+    /// instead, so trace data never fails a delivery.
+    /// </summary>
+    private Activity? StartPublishingActivity(OutboxMessageData message)
+    {
+        if (ActivityContext.TryParse(message.TraceParent, message.TraceState, out var parent))
+        {
+            return Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
+        }
+
+        if (logger.IsEnabled(LogLevel.Debug))
+        {
+            logger.LogDebug("The trace parent of outbox message {MessageId} is not a W3C trace context; its relay span starts a new trace", message.Id);
+        }
+
+        return Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer);
     }
 
     private static IOutboxDispatcher ResolveDispatcher(IServiceProvider services, OutboxDestination destination) =>

@@ -22,24 +22,27 @@ internal static class OutboxRelayBackoff
             return TimeSpan.Zero;
         }
 
-        var baseDelay = BaseDelay(options);
-        if (cycle.Relayed > 0)
-        {
-            return baseDelay;
-        }
+        return cycle.Relayed > 0 ? BaseDelay(options) : Doubled(previousDelay, options);
+    }
 
+    /// <summary>
+    /// Returns the wait after a cycle that faulted before it completed: twice the previous wait — at least the base delay
+    /// and at most the maximum delay — so a store or broker that stays unavailable is tried less and less often. The
+    /// next completed cycle that relays something brings the wait back to the base delay.
+    /// </summary>
+    /// <param name="previousDelay">The wait before the cycle that faulted.</param>
+    /// <param name="options">The relay options that set the delays.</param>
+    /// <returns>The wait before the next cycle.</returns>
+    public static TimeSpan AfterFault(TimeSpan previousDelay, OutboxProcessingOptions options) => Doubled(previousDelay, options);
+
+    private static TimeSpan Doubled(TimeSpan previousDelay, OutboxProcessingOptions options)
+    {
+        var baseDelay = BaseDelay(options);
         var doubled = previousDelay * 2;
         var atLeastBase = doubled < baseDelay ? baseDelay : doubled;
         var maxDelay = TimeSpan.FromSeconds(options.MaxDelaySeconds);
         return atLeastBase > maxDelay ? maxDelay : atLeastBase;
     }
-
-    /// <summary>
-    /// Returns the wait after a cycle that faulted before it completed: the base delay.
-    /// </summary>
-    /// <param name="options">The relay options that set the delays.</param>
-    /// <returns>The wait before the next cycle.</returns>
-    public static TimeSpan AfterFault(OutboxProcessingOptions options) => BaseDelay(options);
 
     private static TimeSpan BaseDelay(OutboxProcessingOptions options) => TimeSpan.FromSeconds(options.OutboxProcessingDelaySeconds);
 }

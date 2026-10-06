@@ -164,6 +164,91 @@ public sealed class NpgsqlOutboxStoreIntegrationTests(NpgsqlOutboxHostFixture fi
         remaining.ShouldHaveSingleItem().Id.ShouldBe(pending.Id);
     }
 
+    [Fact]
+    public async Task AFailedStatementInOneDispatchStillLetsTheBatchBeRecorded()
+    {
+        // Arrange
+        var baseTime = DateTimeOffset.UtcNow;
+        var failing = NewMessage(baseTime);
+        var succeeding = NewMessage(baseTime.AddSeconds(1));
+        await SeedAsync([failing, succeeding]);
+        await using var relayScope = fixture.Services.CreateAsyncScope();
+        var context = relayScope.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>();
+        var store = NewStore(context);
+        var probeId = Guid.CreateVersion7();
+
+        // Act
+        var processed = await store.RelayBatchAsync(async (message, cancellationToken) =>
+        {
+            if (message.Id == failing.Id)
+            {
+                await context.Database.ExecuteSqlRawAsync("SELECT 1 / 0", cancellationToken);
+            }
+            else
+            {
+                context.Probes.Add(new OutboxProbe(probeId));
+            }
+
+            return null;
+        }, CancellationToken);
+
+        // Assert
+        processed.ShouldBe(1);
+        var rows = await QueryMessagesAsync();
+        var failed = rows.Single(row => row.Id == failing.Id);
+        failed.RetryCount.ShouldBe(1);
+        failed.Error.ShouldNotBeNull().ShouldContain("22012");
+        rows.Single(row => row.Id == succeeding.Id).ProcessedOnUtc.ShouldNotBeNull();
+        (await QueryProbeIdsAsync()).ShouldBe([probeId]);
+    }
+
+    [Fact]
+    public async Task AFailedSaveInOneDispatchDoesNotFailTheNextDispatch()
+    {
+        // Arrange
+        var baseTime = DateTimeOffset.UtcNow;
+        var failing = NewMessage(baseTime);
+        var succeeding = NewMessage(baseTime.AddSeconds(1));
+        await SeedAsync([failing, succeeding]);
+        var existingProbeId = await SeedProbeAsync();
+        await using var relayScope = fixture.Services.CreateAsyncScope();
+        var context = relayScope.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>();
+        var store = NewStore(context);
+        var newProbeId = Guid.CreateVersion7();
+
+        // Act
+        var processed = await store.RelayBatchAsync(async (message, cancellationToken) =>
+        {
+            context.Probes.Add(new OutboxProbe(message.Id == failing.Id ? existingProbeId : newProbeId));
+            await context.SaveChangesAsync(cancellationToken);
+            return null;
+        }, CancellationToken);
+
+        // Assert
+        processed.ShouldBe(1);
+        var rows = await QueryMessagesAsync();
+        rows.Single(row => row.Id == failing.Id).RetryCount.ShouldBe(1);
+        rows.Single(row => row.Id == succeeding.Id).ProcessedOnUtc.ShouldNotBeNull();
+        (await QueryProbeIdsAsync()).ShouldBe([existingProbeId, newProbeId], ignoreOrder: true);
+    }
+
+    private async Task<Guid> SeedProbeAsync()
+    {
+        await using var scope = fixture.Services.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>();
+        var probe = new OutboxProbe(Guid.CreateVersion7());
+        context.Probes.Add(probe);
+        await context.SaveChangesAsync(CancellationToken);
+        return probe.Id;
+    }
+
+    private async Task<List<Guid>> QueryProbeIdsAsync()
+    {
+        await using var scope = fixture.Services.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<NpgsqlOutboxDbContext>();
+        return await context.Probes.AsNoTracking().Select(probe => probe.Id).ToListAsync(CancellationToken);
+    }
+
     private async Task SeedAsync(IEnumerable<OutboxMessage> messages)
     {
         await using var scope = fixture.Services.CreateAsyncScope();

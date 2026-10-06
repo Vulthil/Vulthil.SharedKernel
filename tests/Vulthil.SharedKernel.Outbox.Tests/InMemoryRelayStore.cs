@@ -29,6 +29,10 @@ internal sealed class InMemoryRelayStore : IOutboxStore
 
     public int RecordedMaxRetries { get; private set; }
 
+    public int StepCount { get; private set; }
+
+    public int FailedStepCount { get; private set; }
+
     public Task SecondRunStarted => _secondRunStarted.Task;
 
     public bool IsInTransaction => false;
@@ -60,6 +64,20 @@ internal sealed class InMemoryRelayStore : IOutboxStore
         {
             store._claims.Add((batchSize, maxRetries));
             return Task.FromResult<IReadOnlyList<OutboxMessageData>>(store.Messages.Take(batchSize).ToList());
+        }
+
+        public async Task RunStepAsync(Func<CancellationToken, Task> step, CancellationToken cancellationToken)
+        {
+            store.StepCount++;
+            try
+            {
+                await step(cancellationToken);
+            }
+            catch
+            {
+                store.FailedStepCount++;
+                throw;
+            }
         }
 
         public Task RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken)

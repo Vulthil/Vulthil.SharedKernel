@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Vulthil.SharedKernel.Application.Data;
 
@@ -7,8 +8,9 @@ namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 
 /// <summary>
 /// Entity Framework Core implementation of <see cref="IOutboxStore"/>. It owns the relay's transactional boundary —
-/// runs each relay unit inside the context's execution strategy, opens the transaction, claims and records through
-/// the unit, and commits — and exposes the capture surface used by bus-publish filters. Provider packages derive from
+/// runs each relay unit inside the context's execution strategy, opens the transaction, claims, runs each in-scope
+/// dispatch as a step behind a savepoint, records through the unit, and commits — and exposes the capture surface used
+/// by bus-publish filters. Provider packages derive from
 /// this type to add row-level locking (<see cref="FetchMessagesAsync"/>), set-based updates
 /// (<see cref="UpdateMessagesAsync"/>), or a no-op transaction (<see cref="BeginTransactionAsync"/>).
 /// </summary>
@@ -16,6 +18,8 @@ namespace Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetentionStore
     where TContext : DbContext, ISaveOutboxMessages
 {
+    private const string RelayStepSavepoint = "vulthil_outbox_relay_step";
+
     private readonly TimeProvider _timeProvider;
 
     /// <summary>
@@ -76,7 +80,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
 
         try
         {
-            var result = await unit(new RelayUnit(this), cancellationToken).ConfigureAwait(false);
+            var result = await unit(new RelayUnit(this, transaction is not null), cancellationToken).ConfigureAwait(false);
 
             if (transaction is not null)
             {
@@ -92,6 +96,49 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
                 await transaction.DisposeAsync().ConfigureAwait(false);
             }
         }
+    }
+
+    /// <summary>
+    /// Runs one in-scope dispatch as a step of the open relay unit: a savepoint before it, a save of the changes it left
+    /// pending after it, and an undo when either throws.
+    /// </summary>
+    private async Task RunRelayStepAsync(Func<CancellationToken, Task> step, bool inTransaction, CancellationToken cancellationToken)
+    {
+        var transaction = inTransaction ? DbContext.Database.CurrentTransaction : null;
+        var savepoint = transaction is { SupportsSavepoints: true } ? transaction : null;
+        if (savepoint is not null)
+        {
+            await savepoint.CreateSavepointAsync(RelayStepSavepoint, cancellationToken).ConfigureAwait(false);
+        }
+
+        try
+        {
+            await step(cancellationToken).ConfigureAwait(false);
+            await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception) when (!cancellationToken.IsCancellationRequested)
+        {
+            await UndoRelayStepAsync(savepoint, cancellationToken).ConfigureAwait(false);
+            throw;
+        }
+
+        if (savepoint is not null)
+        {
+            await savepoint.ReleaseSavepointAsync(RelayStepSavepoint, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private async Task UndoRelayStepAsync(IDbContextTransaction? savepoint, CancellationToken cancellationToken)
+    {
+        // A failed statement leaves a PostgreSQL transaction aborted until it rolls back to a savepoint, and a failed
+        // save leaves its entities tracked, so a later save would retry them; both would fail every step after this one.
+        if (savepoint is not null)
+        {
+            await savepoint.RollbackToSavepointAsync(RelayStepSavepoint, cancellationToken).ConfigureAwait(false);
+            await savepoint.ReleaseSavepointAsync(RelayStepSavepoint, cancellationToken).ConfigureAwait(false);
+        }
+
+        DbContext.ChangeTracker.Clear();
     }
 
     /// <summary>
@@ -196,12 +243,15 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     }
 
     /// <summary>
-    /// The claim and record operations of one relay unit, run on the store's open transaction.
+    /// The claim, step and record operations of one relay unit, run on the store's open transaction, if any.
     /// </summary>
-    private sealed class RelayUnit(EntityFrameworkOutboxStore<TContext> store) : IOutboxRelayUnit
+    private sealed class RelayUnit(EntityFrameworkOutboxStore<TContext> store, bool inTransaction) : IOutboxRelayUnit
     {
         public async Task<IReadOnlyList<OutboxMessageData>> ClaimAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
             await store.FetchMessagesAsync(batchSize, maxRetries, cancellationToken).ConfigureAwait(false);
+
+        public Task RunStepAsync(Func<CancellationToken, Task> step, CancellationToken cancellationToken) =>
+            store.RunRelayStepAsync(step, inTransaction, cancellationToken);
 
         public Task RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken) =>
             store.UpdateMessagesAsync(relayedIds, failures, maxRetries, store._timeProvider.GetUtcNow(), cancellationToken);

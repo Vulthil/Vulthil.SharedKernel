@@ -1,7 +1,7 @@
 namespace Vulthil.SharedKernel.Outbox;
 
 /// <summary>
-/// The claim and record operations of one relay unit, bound to the transaction the store opened for it (see
+/// The claim, step and record operations of one relay unit, bound to the transaction the store opened for it (see
 /// <see cref="IOutboxStore.RunRelayUnitAsync{TResult}"/>).
 /// </summary>
 public interface IOutboxRelayUnit
@@ -16,6 +16,18 @@ public interface IOutboxRelayUnit
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The claimed messages, oldest first.</returns>
     Task<IReadOnlyList<OutboxMessageData>> ClaimAsync(int batchSize, int maxRetries, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Runs the dispatch of one claimed message as a step of this unit, for a dispatch that shares the relay's scope and
+    /// so the unit's transaction. When <paramref name="step"/> completes, the store saves the changes the step left
+    /// pending, so they commit with the batch. When the step or that save throws, the store undoes the step's work
+    /// without ending the unit's transaction — it rolls back to a savepoint where the provider supports one, and forgets
+    /// the step's tracked changes — and then rethrows, so the unit can still record the outcomes of the batch.
+    /// </summary>
+    /// <param name="step">The dispatch to run; it receives the unit's cancellation token.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <returns>A task that completes when the step's changes are saved.</returns>
+    Task RunStepAsync(Func<CancellationToken, Task> step, CancellationToken cancellationToken);
 
     /// <summary>
     /// Records the outcomes of claimed messages: each message in <paramref name="relayedIds"/> is marked processed, and

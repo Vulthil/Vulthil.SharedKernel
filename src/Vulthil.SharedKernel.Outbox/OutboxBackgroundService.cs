@@ -53,7 +53,7 @@ internal sealed class OutboxBackgroundService(
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error processing outbox messages");
-                delay = OutboxRelayBackoff.AfterFault(options.Value);
+                delay = OutboxRelayBackoff.AfterFault(delay, options.Value);
             }
         }
     }

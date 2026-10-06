@@ -89,17 +89,22 @@ running unprotected.
 | `EnableParallelPublishing` | `false` | Publish messages in parallel within a batch (each dispatch runs in its own DI scope) |
 | `MaxDegreeOfParallelism` | 4 | Maximum concurrent dispatches when `EnableParallelPublishing` is enabled |
 | `OutboxProcessingDelaySeconds` | 2 | Base polling delay between processing cycles |
-| `MaxDelaySeconds` | 60 | Maximum back-off delay when a cycle relays nothing (no pending messages, or every fetched message failed) |
+| `MaxDelaySeconds` | 60 | Maximum back-off delay. The wait doubles up to it after a cycle that relays nothing (no pending messages, or every fetched message failed) and after a cycle that faults (for example while the database is unavailable) |
 | `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 
 ### Dispatch scope
 
 Each relay cycle runs in its own DI scope, and the store opens the relay transaction on that scope's `DbContext`.
 
-- **In sequence** (the default), every message is dispatched in the relay's scope. The changes a handler saves and the
-  messages it publishes transactionally join the relay transaction, so they commit together with the batch's processed
-  marks, or roll back with them and the message is relayed again. A failed handler's unsaved changes also stay tracked
-  on that shared `DbContext`, so the batch can save them; keep relayed handlers idempotent.
+- **In sequence** (the default), every message is dispatched in the relay's scope, as one step of the relay
+  transaction. When a handler completes, the relay saves the changes it left pending. So the changes a handler makes
+  and the messages it publishes transactionally commit together with the batch's processed marks, or roll back with
+  them and the message is relayed again. When a handler fails, the relay rolls the transaction back to the savepoint it
+  set before the handler ran and clears the change tracker: the failed handler's writes and publishes are undone, the
+  next handler starts clean, and the failure is recorded and retried like any other. On PostgreSQL this also keeps the
+  transaction usable after a failed statement, so one failing handler cannot stop the batch from being recorded. A
+  store without transactions (Cosmos DB) only clears the change tracker, so it cannot undo what a failed handler saved
+  before it failed; keep relayed handlers idempotent.
 - **In parallel** (`EnableParallelPublishing`), every message is dispatched in its own scope, so concurrent handlers
   never share the relay's `DbContext`. Their work is not part of the relay transaction: a handler saves its own
   changes, and a publish with no open transaction in its scope is sent directly.

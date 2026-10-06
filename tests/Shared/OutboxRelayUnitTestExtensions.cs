@@ -1,9 +1,9 @@
 namespace Vulthil.SharedKernel.Outbox.Testing;
 
 /// <summary>
-/// Drives one relay unit of a store the way the relay cycle does — claim a batch, dispatch each claimed message in
-/// turn, record the outcomes — so store tests exercise a store's transactional boundary without the engine. Linked
-/// into every test project that tests a store directly.
+/// Drives one relay unit of a store the way the relay cycle does in sequence — claim a batch, dispatch each claimed
+/// message in turn as a step of the unit, record the outcomes — so store tests exercise a store's transactional boundary
+/// without the engine. Linked into every test project that tests a store directly.
 /// </summary>
 internal static class OutboxRelayUnitTestExtensions
 {
@@ -11,7 +11,10 @@ internal static class OutboxRelayUnitTestExtensions
     /// Runs one relay unit and returns the number of messages <paramref name="dispatch"/> delivered.
     /// </summary>
     /// <param name="store">The store under test.</param>
-    /// <param name="dispatch">Delivers one message; returns <see langword="null"/> on success or the error to record.</param>
+    /// <param name="dispatch">
+    /// Delivers one message as a step of the unit; returns <see langword="null"/> on success, or the error to record, or
+    /// throws. A returned error or an exception fails the step, so the store undoes it.
+    /// </param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <param name="batchSize">The maximum number of messages to claim.</param>
     /// <param name="maxRetries">The retry limit for claiming and dead-lettering.</param>
@@ -34,13 +37,22 @@ internal static class OutboxRelayUnitTestExtensions
                 var failures = new List<OutboxMessageFailure>();
                 foreach (var message in batch)
                 {
-                    if (await dispatch(message, token) is { } error)
+                    try
                     {
-                        failures.Add(new OutboxMessageFailure(message.Id, error));
-                    }
-                    else
-                    {
+                        await unit.RunStepAsync(
+                            async stepToken =>
+                            {
+                                if (await dispatch(message, stepToken) is { } error)
+                                {
+                                    throw new InvalidOperationException(error);
+                                }
+                            },
+                            token);
                         relayedIds.Add(message.Id);
+                    }
+                    catch (Exception exception) when (exception is not OperationCanceledException || !token.IsCancellationRequested)
+                    {
+                        failures.Add(new OutboxMessageFailure(message.Id, exception.Message));
                     }
                 }
 

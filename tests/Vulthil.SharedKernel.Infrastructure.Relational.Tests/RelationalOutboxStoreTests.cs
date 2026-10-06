@@ -69,6 +69,83 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
         message.ProcessedOnUtc.ShouldNotBeNull();
     }
 
+    [Fact]
+    public async Task AFailedStepIsRolledBackToItsSavepointSoWhatItSavedDoesNotCommit()
+    {
+        // Arrange
+        var failing = NewMessage();
+        var succeeding = NewMessage();
+        await using var seed = NewUnitOfWorkContext();
+        seed.OutboxMessages.AddRange(failing, succeeding);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewUnitOfWorkContext();
+        var store = NewUnitOfWorkStore(context);
+        var savedThenFailed = NewMessage();
+        var kept = NewMessage();
+
+        // Act
+        var processed = await store.RelayBatchAsync(async (data, token) =>
+        {
+            if (data.Id == failing.Id)
+            {
+                context.OutboxMessages.Add(savedThenFailed);
+                await context.SaveChangesAsync(token);
+                return "boom";
+            }
+
+            context.OutboxMessages.Add(kept);
+            return null;
+        }, CancellationToken);
+
+        // Assert
+        processed.ShouldBe(1);
+        await using var verify = NewUnitOfWorkContext();
+        var rows = await verify.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
+        rows.Select(row => row.Id).ShouldBe([failing.Id, succeeding.Id, kept.Id], ignoreOrder: true);
+        rows.Single(row => row.Id == failing.Id).RetryCount.ShouldBe(1);
+        rows.Single(row => row.Id == succeeding.Id).ProcessedOnUtc.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public async Task AFailedSaveInOneStepDoesNotFailTheNextStep()
+    {
+        // Arrange
+        var existing = NewMessage();
+        existing.ProcessedOnUtc = DateTimeOffset.UtcNow;
+        var failing = NewMessage();
+        var succeeding = NewMessage();
+        await using var seed = NewUnitOfWorkContext();
+        seed.OutboxMessages.AddRange(existing, failing, succeeding);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewUnitOfWorkContext();
+        var store = NewUnitOfWorkStore(context);
+
+        // Act
+        var processed = await store.RelayBatchAsync(async (data, token) =>
+        {
+            context.OutboxMessages.Add(data.Id == failing.Id ? NewMessage(existing.Id) : NewMessage());
+            await context.SaveChangesAsync(token);
+            return null;
+        }, CancellationToken);
+
+        // Assert
+        processed.ShouldBe(1);
+        await using var verify = NewUnitOfWorkContext();
+        var rows = await verify.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
+        rows.Single(row => row.Id == failing.Id).RetryCount.ShouldBe(1);
+        rows.Single(row => row.Id == succeeding.Id).ProcessedOnUtc.ShouldNotBeNull();
+        rows.Count.ShouldBe(4);
+    }
+
+    private static OutboxMessage NewMessage(Guid id) => new()
+    {
+        Id = id,
+        Type = "Test",
+        Content = "{}",
+        OccurredOnUtc = DateTimeOffset.UtcNow,
+        Destination = OutboxDestination.DomainEvent,
+    };
+
     private static OutboxMessage NewMessage() => new()
     {
         Id = Guid.CreateVersion7(),

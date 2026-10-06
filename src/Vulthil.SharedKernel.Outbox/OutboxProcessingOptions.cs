@@ -10,7 +10,8 @@ public sealed class OutboxProcessingOptions
     /// </summary>
     public int OutboxProcessingDelaySeconds { get; set; } = 2;
     /// <summary>
-    /// Gets the maximum back-off delay in seconds when no messages are found. Default is 60.
+    /// Gets the maximum back-off delay in seconds: the wait doubles up to this value after a cycle that relays nothing
+    /// (no pending message, or every claimed message failed) and after a cycle that faults. Default is 60.
     /// </summary>
     public int MaxDelaySeconds { get; set; } = 60;
     /// <summary>

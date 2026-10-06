@@ -13025,6 +13025,217 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixture(Of TBuilderEntity, TContainerEntity).CreateScope
   nameWithType: TestContainerFixture<TBuilderEntity, TContainerEntity>.CreateScope
   nameWithType.vb: TestContainerFixture(Of TBuilderEntity, TContainerEntity).CreateScope
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1
+  name: TestContainerScope<TContainer>
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html
+  commentId: T:Vulthil.xUnit.Fixtures.TestContainerScope`1
+  name.vb: TestContainerScope(Of TContainer)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer)
+  nameWithType: TestContainerScope<TContainer>
+  nameWithType.vb: TestContainerScope(Of TContainer)
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.#ctor(`0,System.String)
+  name: TestContainerScope(TContainer, string?)
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1__ctor__0_System_String_
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerScope`1.#ctor(`0,System.String)
+  name.vb: New(TContainer, String)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.TestContainerScope(TContainer, string?)
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).New(TContainer, String)
+  nameWithType: TestContainerScope<TContainer>.TestContainerScope(TContainer, string?)
+  nameWithType.vb: TestContainerScope(Of TContainer).New(TContainer, String)
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.#ctor*
+  name: TestContainerScope
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1__ctor_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.TestContainerScope
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).New
+  nameWithType: TestContainerScope<TContainer>.TestContainerScope
+  nameWithType.vb: TestContainerScope(Of TContainer).New
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  name: ConfigureServices(IServiceCollection)
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_ConfigureServices_Microsoft_Extensions_DependencyInjection_IServiceCollection_
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  nameWithType: TestContainerScope<TContainer>.ConfigureServices(IServiceCollection)
+  nameWithType.vb: TestContainerScope(Of TContainer).ConfigureServices(IServiceCollection)
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureServices*
+  name: ConfigureServices
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_ConfigureServices_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureServices
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.ConfigureServices
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).ConfigureServices
+  nameWithType: TestContainerScope<TContainer>.ConfigureServices
+  nameWithType.vb: TestContainerScope(Of TContainer).ConfigureServices
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  name: ConfigureWebHost(IWebHostBuilder)
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_ConfigureWebHost_Microsoft_AspNetCore_Hosting_IWebHostBuilder_
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  nameWithType: TestContainerScope<TContainer>.ConfigureWebHost(IWebHostBuilder)
+  nameWithType.vb: TestContainerScope(Of TContainer).ConfigureWebHost(IWebHostBuilder)
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureWebHost*
+  name: ConfigureWebHost
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_ConfigureWebHost_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.ConfigureWebHost
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.ConfigureWebHost
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).ConfigureWebHost
+  nameWithType: TestContainerScope<TContainer>.ConfigureWebHost
+  nameWithType.vb: TestContainerScope(Of TContainer).ConfigureWebHost
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.Container
+  name: Container
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_Container
+  commentId: P:Vulthil.xUnit.Fixtures.TestContainerScope`1.Container
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.Container
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).Container
+  nameWithType: TestContainerScope<TContainer>.Container
+  nameWithType.vb: TestContainerScope(Of TContainer).Container
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.Container*
+  name: Container
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_Container_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.Container
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.Container
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).Container
+  nameWithType: TestContainerScope<TContainer>.Container
+  nameWithType.vb: TestContainerScope(Of TContainer).Container
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.CreateNamespaceAsync(System.String)
+  name: CreateNamespaceAsync(string)
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_CreateNamespaceAsync_System_String_
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerScope`1.CreateNamespaceAsync(System.String)
+  name.vb: CreateNamespaceAsync(String)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.CreateNamespaceAsync(string)
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).CreateNamespaceAsync(String)
+  nameWithType: TestContainerScope<TContainer>.CreateNamespaceAsync(string)
+  nameWithType.vb: TestContainerScope(Of TContainer).CreateNamespaceAsync(String)
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.CreateNamespaceAsync*
+  name: CreateNamespaceAsync
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_CreateNamespaceAsync_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.CreateNamespaceAsync
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.CreateNamespaceAsync
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).CreateNamespaceAsync
+  nameWithType: TestContainerScope<TContainer>.CreateNamespaceAsync
+  nameWithType.vb: TestContainerScope(Of TContainer).CreateNamespaceAsync
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.DeleteNamespaceAsync(System.String)
+  name: DeleteNamespaceAsync(string)
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_DeleteNamespaceAsync_System_String_
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerScope`1.DeleteNamespaceAsync(System.String)
+  name.vb: DeleteNamespaceAsync(String)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DeleteNamespaceAsync(string)
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).DeleteNamespaceAsync(String)
+  nameWithType: TestContainerScope<TContainer>.DeleteNamespaceAsync(string)
+  nameWithType.vb: TestContainerScope(Of TContainer).DeleteNamespaceAsync(String)
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.DeleteNamespaceAsync*
+  name: DeleteNamespaceAsync
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_DeleteNamespaceAsync_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.DeleteNamespaceAsync
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DeleteNamespaceAsync
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).DeleteNamespaceAsync
+  nameWithType: TestContainerScope<TContainer>.DeleteNamespaceAsync
+  nameWithType.vb: TestContainerScope(Of TContainer).DeleteNamespaceAsync
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.DisposeAsync
+  name: DisposeAsync()
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_DisposeAsync
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerScope`1.DisposeAsync
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DisposeAsync()
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).DisposeAsync()
+  nameWithType: TestContainerScope<TContainer>.DisposeAsync()
+  nameWithType.vb: TestContainerScope(Of TContainer).DisposeAsync()
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.DisposeAsync*
+  name: DisposeAsync
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_DisposeAsync_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.DisposeAsync
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DisposeAsync
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).DisposeAsync
+  nameWithType: TestContainerScope<TContainer>.DisposeAsync
+  nameWithType.vb: TestContainerScope(Of TContainer).DisposeAsync
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.InitializeAsync
+  name: InitializeAsync()
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_InitializeAsync
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerScope`1.InitializeAsync
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.InitializeAsync()
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).InitializeAsync()
+  nameWithType: TestContainerScope<TContainer>.InitializeAsync()
+  nameWithType.vb: TestContainerScope(Of TContainer).InitializeAsync()
+- uid: Vulthil.xUnit.Fixtures.TestContainerScope`1.InitializeAsync*
+  name: InitializeAsync
+  href: api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_InitializeAsync_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerScope`1.InitializeAsync
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.InitializeAsync
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerScope(Of TContainer).InitializeAsync
+  nameWithType: TestContainerScope<TContainer>.InitializeAsync
+  nameWithType.vb: TestContainerScope(Of TContainer).InitializeAsync
+- uid: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1
+  name: TestContainerWithConnectionStringScope<TContainer>
+  href: api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html
+  commentId: T:Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1
+  name.vb: TestContainerWithConnectionStringScope(Of TContainer)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope(Of TContainer)
+  nameWithType: TestContainerWithConnectionStringScope<TContainer>
+  nameWithType.vb: TestContainerWithConnectionStringScope(Of TContainer)
+- uid: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.#ctor(`0,System.String)
+  name: TestContainerWithConnectionStringScope(TContainer, string?)
+  href: api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html#Vulthil_xUnit_Fixtures_TestContainerWithConnectionStringScope_1__ctor__0_System_String_
+  commentId: M:Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.#ctor(`0,System.String)
+  name.vb: New(TContainer, String)
+  fullName: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.TestContainerWithConnectionStringScope(TContainer, string?)
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope(Of TContainer).New(TContainer, String)
+  nameWithType: TestContainerWithConnectionStringScope<TContainer>.TestContainerWithConnectionStringScope(TContainer, string?)
+  nameWithType.vb: TestContainerWithConnectionStringScope(Of TContainer).New(TContainer, String)
+- uid: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.#ctor*
+  name: TestContainerWithConnectionStringScope
+  href: api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html#Vulthil_xUnit_Fixtures_TestContainerWithConnectionStringScope_1__ctor_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.TestContainerWithConnectionStringScope
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope(Of TContainer).New
+  nameWithType: TestContainerWithConnectionStringScope<TContainer>.TestContainerWithConnectionStringScope
+  nameWithType.vb: TestContainerWithConnectionStringScope(Of TContainer).New
+- uid: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionString
+  name: ConnectionString
+  href: api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html#Vulthil_xUnit_Fixtures_TestContainerWithConnectionStringScope_1_ConnectionString
+  commentId: P:Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionString
+  fullName: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionString
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope(Of TContainer).ConnectionString
+  nameWithType: TestContainerWithConnectionStringScope<TContainer>.ConnectionString
+  nameWithType.vb: TestContainerWithConnectionStringScope(Of TContainer).ConnectionString
+- uid: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionString*
+  name: ConnectionString
+  href: api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html#Vulthil_xUnit_Fixtures_TestContainerWithConnectionStringScope_1_ConnectionString_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionString
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionString
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope(Of TContainer).ConnectionString
+  nameWithType: TestContainerWithConnectionStringScope<TContainer>.ConnectionString
+  nameWithType.vb: TestContainerWithConnectionStringScope(Of TContainer).ConnectionString
+- uid: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionStringKey
+  name: ConnectionStringKey
+  href: api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html#Vulthil_xUnit_Fixtures_TestContainerWithConnectionStringScope_1_ConnectionStringKey
+  commentId: P:Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionStringKey
+  fullName: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionStringKey
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope(Of TContainer).ConnectionStringKey
+  nameWithType: TestContainerWithConnectionStringScope<TContainer>.ConnectionStringKey
+  nameWithType.vb: TestContainerWithConnectionStringScope(Of TContainer).ConnectionStringKey
+- uid: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionStringKey*
+  name: ConnectionStringKey
+  href: api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html#Vulthil_xUnit_Fixtures_TestContainerWithConnectionStringScope_1_ConnectionStringKey_
+  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope`1.ConnectionStringKey
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionStringKey
+  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope(Of TContainer).ConnectionStringKey
+  nameWithType: TestContainerWithConnectionStringScope<TContainer>.ConnectionStringKey
+  nameWithType.vb: TestContainerWithConnectionStringScope(Of TContainer).ConnectionStringKey
 - uid: Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture`3
   name: TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
   href: api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html

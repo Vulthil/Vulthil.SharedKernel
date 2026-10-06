@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Fixtures_ITestContainerScopeProvider" data-uid="Vulthil.xUnit.Fixtures.ITestContainerScopeProvider" class="text-break">
-Interface ITestContainerScopeProvider  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ITestContainerScopeProvider.cs/#L9"><i class="bi bi-code-slash"></i></a>
+Interface ITestContainerScopeProvider  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ITestContainerScopeProvider.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -125,6 +125,12 @@ named database on a database server, a virtual host on a message broker, or a ke
 
 
 
+  <h2 id="Vulthil_xUnit_Fixtures_ITestContainerScopeProvider_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Derive the returned view from <a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html">TestContainerScope&lt;TContainer&gt;</a>, or from
+<a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html">TestContainerWithConnectionStringScope&lt;TContainer&gt;</a> for a container with a connection string. The base
+view forwards the host configuration to the shared container and creates and deletes the namespace, so the view only
+describes its namespace operations.</p>
+</div>
 
 
   <h2 class="section" id="methods">Methods
@@ -135,13 +141,13 @@ named database on a database server, a virtual host on a message broker, or a ke
 
   <h3 id="Vulthil_xUnit_Fixtures_ITestContainerScopeProvider_CreateScope_System_String_" data-uid="Vulthil.xUnit.Fixtures.ITestContainerScopeProvider.CreateScope(System.String)">
   CreateScope(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ITestContainerScopeProvider.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ITestContainerScopeProvider.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a view of this container that is isolated under <code class="paramref">scopeId</code>. The returned view's
 <span class="xref">Xunit.IAsyncLifetime.InitializeAsync()</span> provisions the namespace (for example <code>CREATE DATABASE</code>)
-and its <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable.disposeasync">DisposeAsync()</a> removes it again; the underlying container's own
-lifecycle is never affected by the view.</p>
+and its <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable.disposeasync">DisposeAsync()</a> removes it again, best-effort; the underlying container's
+own lifecycle is never affected by the view.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -177,7 +183,7 @@ lifecycle is never affected by the view.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ITestContainerScopeProvider.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ITestContainerScopeProvider.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -297,11 +297,34 @@ public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebAppli
 <li><code>TestDatabaseContainerFixture</code> creates a uniquely named database per scope on the shared server, migrates it during host startup, resets it with Respawn between tests, and drops it (best-effort) when the class finishes. Database DDL is engine-aware through the fixture's <code>DbAdapter</code> (PostgreSQL drops use <code>WITH (FORCE)</code>, SQL Server switches to single-user); <code>BuildScopedConnectionString</code>, <code>CreateDatabaseAsync</code>, and <code>DropDatabaseAsync</code> are overridable for exotic engines.</li>
 <li><code>RabbitMqTestContainerFixture</code> creates a <strong>virtual host</strong> per scope on the shared broker (via <code>rabbitmqctl</code> inside the container), so parallel classes never see each other's exchanges, queues, or messages.</li>
 <li><code>CosmosTestContainerFixture</code> (in the <code>Vulthil.xUnit.Cosmos</code> package) starts one Cosmos emulator and gives each scope its own <strong>emulator database</strong>, recreated between tests. It provisions and resets each database through your <code>DbContext</code> resolved from the test host's DI container — so a context whose constructor takes more than its options just works — while a bare <code>DbContext</code> is used only to probe the emulator for readiness and to drop a scope's database on teardown.</li>
-<li>Any other <code>TestContainerFixtureWithConnectionString</code> returns a pass-through scope by default — consumers share the container's namespace; override <code>CreateScope</code> only when the service offers some other isolation unit.</li>
+<li>Any other <code>TestContainerFixtureWithConnectionString</code> returns a pass-through scope by default — consumers share the container's namespace; override <code>CreateScope</code> only when the service offers some other isolation unit (see below).</li>
 <li>Containers start <strong>lazily</strong> on first use: a filtered run only pays for the containers its factories actually consume, and concurrent factories share one startup task per container.</li>
 <li>A factory that should not consume every host container overrides <code>ShouldUseContainer</code> (e.g. a factory that swaps the broker for the in-memory test harness consumes only the database container).</li>
 </ul>
 <p>The scope identifier defaults to the factory type name plus a random suffix (override <code>CreateScopeId()</code> to change it), so two classes using the same factory type still get distinct databases and virtual hosts.</p>
+<p>To give your own container per-scope isolation, return a view from <code>CreateScope</code> that derives from <code>TestContainerWithConnectionStringScope&lt;TContainer&gt;</code> (or <code>TestContainerScope&lt;TContainer&gt;</code> for a container without a connection string). The base view forwards the host configuration and the connection string key to the shared container, so the view only describes its namespace:</p>
+<pre><code class="lang-csharp">public sealed class SearchTestContainer : TestContainerFixtureWithConnectionString&lt;SearchBuilder, SearchContainer&gt;
+{
+    public override string ConnectionString =&gt; Container.GetConnectionString();
+    public override string ConnectionStringKey =&gt; &quot;search&quot;;
+
+    public override ITestContainer CreateScope(string scopeId) =&gt; new IndexScope(this, scopeId);
+
+    private sealed class IndexScope(SearchTestContainer container, string index)
+        : TestContainerWithConnectionStringScope&lt;SearchTestContainer&gt;(container, index)
+    {
+        private readonly string _index = index;
+
+        // Point the scope's consumers at their own index.
+        public override string ConnectionString =&gt; $&quot;{Container.ConnectionString};DefaultIndex={_index}&quot;;
+
+        protected override ValueTask CreateNamespaceAsync(string namespaceName) =&gt; Container.CreateIndexAsync(namespaceName);
+
+        protected override ValueTask DeleteNamespaceAsync(string namespaceName) =&gt; Container.DeleteIndexAsync(namespaceName);
+    }
+}
+</code></pre>
+<p>The view creates the namespace when the factory starts and deletes it when the class finishes. Deleting is best-effort: a failure becomes a diagnostic message instead of a test failure, because the namespace goes away with the container anyway. The base view never resets the shared container; implement <code>IResettableResource</code> on the view when its namespace can be reset between tests.</p>
 <p>A scope lives as long as its factory: one test class. All tests of the class — and the per-test hosts they build — share its database and virtual host. The database is reset after each test, but the queues are not purged, so a message that one test leaves in a queue is delivered during the next test of the class. Wait for the messages a test publishes before the test ends.</p>
 <h3 id="mocking-outbound-http-dependencies">Mocking outbound HTTP dependencies</h3>
 <p>For a service that calls an external API through an <code>HttpClient</code> from <code>IHttpClientFactory</code>, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both <strong>typed</strong> clients (<code>AddHttpClient&lt;TClient, ...&gt;()</code>) and <strong>named</strong> clients (<code>AddHttpClient(&quot;name&quot;)</code>) are supported; for typed clients the implementation type does not need to be accessible:</p>

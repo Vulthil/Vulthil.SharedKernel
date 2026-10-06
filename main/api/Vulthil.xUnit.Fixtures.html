@@ -119,6 +119,24 @@ messages. Derived classes only configure the container and supply the connection
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html">TestContainerScope&lt;TContainer&gt;</a></dt>
+      <dd><p>A view of a shared test container for one scope: one consuming factory, so one test class. The view forwards the
+host configuration to the shared container, creates the scope's namespace when it initializes, and deletes the
+namespace when it is disposed; the shared container's own lifecycle is never affected, because a
+<a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a> owns it. Derive from this class to isolate a scope in a namespace of the containerized
+service (a database, a virtual host, a key prefix): override <a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_CreateNamespaceAsync_System_String_">CreateNamespaceAsync(string)</a> and
+<a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html#Vulthil_xUnit_Fixtures_TestContainerScope_1_DeleteNamespaceAsync_System_String_">DeleteNamespaceAsync(string)</a>, and implement <a class="xref" href="Vulthil.xUnit.IResettableResource.html">IResettableResource</a> when the namespace can be reset
+between tests.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html">TestContainerWithConnectionStringScope&lt;TContainer&gt;</a></dt>
+      <dd><p>A <a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html">TestContainerScope&lt;TContainer&gt;</a> of a shared container that has a connection string. The view
+forwards the container's connection string key, and by default its connection string; a view whose namespace has
+an address of its own (a database name, a virtual host) overrides <a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html#Vulthil_xUnit_Fixtures_TestContainerWithConnectionStringScope_1_ConnectionString">ConnectionString</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html">TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;</a></dt>
       <dd><p>Fixture that wraps a database container, applies EF Core migrations, and supports Respawn-based data resets between
 tests. When owned by a <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html">ContainerHost</a>, <a class="xref" href="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_CreateScope_System_String_">CreateScope(string)</a> gives every consuming factory its own

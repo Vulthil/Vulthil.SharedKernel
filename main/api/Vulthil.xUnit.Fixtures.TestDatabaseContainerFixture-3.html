@@ -542,10 +542,10 @@ view creates the database when it initializes, applies migrations through
   </h3>
 
   <div class="markdown level1 summary"><p>Drops the database <code class="paramref">databaseName</code> on the server. Invoked best-effort when a scope is
-disposed; failures are reported as diagnostics rather than test failures, because the server container is
-torn down with the host anyway. The default issues engine-appropriate DDL based on <a class="xref" href="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_DbAdapter">DbAdapter</a> —
-PostgreSQL terminates lingering (pooled) sessions with <code>WITH (FORCE)</code>, SQL Server switches the database
-to single-user first — so consumers normally never override this.</p>
+disposed; any failure is reported as a diagnostic message rather than a test failure, because the server
+container is torn down with the host anyway. The default issues engine-appropriate DDL based on
+<a class="xref" href="Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.html#Vulthil_xUnit_Fixtures_TestDatabaseContainerFixture_3_DbAdapter">DbAdapter</a> — PostgreSQL terminates lingering (pooled) sessions with <code>WITH (FORCE)</code>, SQL Server
+switches the database to single-user first — so consumers normally never override this.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

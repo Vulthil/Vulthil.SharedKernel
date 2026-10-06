@@ -312,12 +312,14 @@ during host build, after connection strings are injected and before the factory'
 
   <h3 id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_CreateScope_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.CreateScope(System.String)">
   CreateScope(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a pass-through scope view over this container, sharing its state with every consumer. Override to
 return a view that is isolated under <code class="paramref">scopeId</code> when the containerized service supports
-namespacing (databases, virtual hosts, key prefixes, ...).</p>
+namespacing (databases, virtual hosts, key prefixes, ...); derive that view from
+<a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html">TestContainerScope&lt;TContainer&gt;</a>, which forwards the host configuration and creates and deletes the
+namespace.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

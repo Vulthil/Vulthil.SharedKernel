@@ -3499,6 +3499,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerScope-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerScope-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.TestContainerScope-1.yml\" sourcestartlinenumber=\"1\">A view of a shared test container for one scope: one consuming factory, so one test class. The view forwards the\nhost configuration to the shared container, creates the scope's namespace when it initializes, and deletes the\nnamespace when it is disposed; the shared container's own lifecycle is never affected, because a\n<xref href=\"Vulthil.xUnit.Fixtures.ContainerHost\" data-throw-if-not-resolved=\"false\"></xref> owns it. Derive from this class to isolate a scope in a namespace of the containerized\nservice (a database, a virtual host, a key prefix): override <xref href=\"Vulthil.xUnit.Fixtures.TestContainerScope%601.CreateNamespaceAsync(System.String)\" data-throw-if-not-resolved=\"false\"></xref> and\n<xref href=\"Vulthil.xUnit.Fixtures.TestContainerScope%601.DeleteNamespaceAsync(System.String)\" data-throw-if-not-resolved=\"false\"></xref>, and implement <xref href=\"Vulthil.xUnit.IResettableResource\" data-throw-if-not-resolved=\"false\"></xref> when the namespace can be reset\nbetween tests.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>",
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.yml\" sourcestartlinenumber=\"1\">A <xref href=\"Vulthil.xUnit.Fixtures.TestContainerScope%601\" data-throw-if-not-resolved=\"false\"></xref> of a shared container that has a connection string. The view\nforwards the container's connection string key, and by default its connection string; a view whose namespace has\nan address of its own (a database name, a virtual host) overrides <xref href=\"Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope%601.ConnectionString\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture-3.yml",
       "output": {
         ".html": {

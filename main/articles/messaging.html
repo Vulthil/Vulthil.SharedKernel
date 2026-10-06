@@ -223,6 +223,10 @@ header published as <code>AddHeader(&quot;tenant&quot;, &quot;acme&quot;)</code>
 Values without a JSON primitive form keep their JSON shape: objects and arrays surface as
 <code>JsonElement</code>, and types JSON serializes as strings (e.g. <code>Guid</code>, <code>DateTimeOffset</code>) surface as
 that string.</p>
+<p><code>IMessageContext.Headers</code> holds custom headers only. The reserved metadata keys of <code>MessageHeaders</code>
+(<code>ConversationId</code>, <code>InitiatorId</code>, <code>SourceAddress</code>, <code>DestinationAddress</code>, <code>ResponseAddress</code> and
+<code>FaultAddress</code>) surface as the typed context properties instead, on every path — also when a
+bare-AMQP producer sends them as AMQP headers.</p>
 <h2 id="point-to-point-send">Point-to-point Send</h2>
 <p><code>IPublisher.PublishAsync</code> fans a message out via its per-type exchange to any number of
 interested consumers. When you need to address a single, named destination — typically
@@ -490,6 +494,9 @@ dead-letter queue.</p>
 broker delivers it again: no fault is published for the interrupted attempt, and an interrupted
 request consumer sends no reply. A consumer's own <code>OperationCanceledException</code> while the host keeps
 running is an ordinary failure and is retried.</p>
+<p>The worker writes <code>x-retry-count</code> as a number. A delivery can also carry it as text — the RabbitMQ
+management UI, for example, sends header values as strings by default — and the text counts when it
+is a whole number. Any other value counts as round 0, so the consumers run as on a first delivery.</p>
 <h3 id="ignored-exceptions">Ignored exceptions</h3>
 <p><code>r.Ignore&lt;TException&gt;()</code> (or the <code>IgnoreExceptions</code> list in configuration) exempts exception
 types from retrying — a matching failure is immediately terminal. The ignore list is resolved
@@ -535,7 +542,9 @@ any AMQP consumer bound to the exchange — rather than a typed <code>IConsumer&
 <p>A message can override the routing per-message: if it carries an explicit <code>FaultAddress</code>, the fault is
 routed <strong>point-to-point</strong> to that address (through the broker's default exchange) instead of being
 broadcast to the fault exchange — exactly one fault per terminally-failed consumer is emitted either
-way. Set it on publish:</p>
+way. The address is the one the consumer sees as <code>IMessageContext.FaultAddress</code>: the envelope's
+<code>faultAddress</code> for a Vulthil message, the <code>FaultAddress</code> header for a bare-JSON message. Set it on
+publish:</p>
 <pre><code class="lang-csharp">await publisher.PublishAsync(new OrderCreatedEvent(orderId), ctx =&gt;
 {
     ctx.SetFaultAddress(new Uri(&quot;queue:order-faults&quot;));
@@ -553,6 +562,11 @@ no <code>Fault&lt;T&gt;</code> is published for them:</p>
 <li><strong>Undeserializable body</strong> (malformed JSON, or a body that deserializes to <code>null</code>): the delivery is
 <strong>nacked without requeue</strong>, with an error log. When the queue has a dead-letter queue configured
 (<code>q.UseDeadLetterQueue()</code>), the broker moves it there; otherwise it is discarded.</li>
+<li><strong>Unreadable metadata</strong> (a header or an envelope field the worker cannot parse, such as an address
+that is not a valid URI): the delivery is <strong>nacked without requeue</strong>, with an error log, like an
+undeserializable body. Any other failure outside the consumers that would leave the delivery
+unsettled is handled the same way. During shutdown the delivery is left unsettled instead, so the
+broker delivers it again.</li>
 </ul>
 <h2 id="routing-keys">Routing Keys</h2>
 <p>Routing keys flow through two distinct configuration sites, one on each side of the wire:</p>
@@ -814,7 +828,10 @@ health check.</p>
 }
 </code></pre>
 <p>The reply queue is created lazily on the first request, so producer-only services
-that never call <code>RequestAsync</code> do not declare any reply infrastructure.</p>
+that never call <code>RequestAsync</code> do not declare any reply infrastructure. The request's timeout
+also bounds the wait for the reply queue: a request whose reply queue is not ready in time fails
+with <code>Messaging.Request.Timeout</code>, and one whose reply queue cannot be declared fails with
+<code>Messaging.Request.TransportUnavailable</code>.</p>
 <h3 id="configuring-the-request">Configuring the request</h3>
 <p><code>RequestAsync</code> accepts an optional <code>Func&lt;IRequestContext, Task&gt;</code> to configure the
 outgoing request. <code>IRequestContext</code> extends <code>IPublishContext</code> — so the routing key,

@@ -101,6 +101,10 @@ var response = await client.GetAsync("/weather/london");
 var forecast = await response.GetResponseAsync<Forecast>();
 ```
 
+When the status code is not a success, `GetResponseAsync<T>` throws an `HttpRequestException` whose message holds the
+status code, the reason phrase and the response body (its first 4,096 characters). A failing test then shows why the
+call failed, for example the ProblemDetails that the API returned.
+
 ## Resettable test state
 
 `IResettableTestState` marks state that a test double keeps in a test host's services — captured messages, stubs,

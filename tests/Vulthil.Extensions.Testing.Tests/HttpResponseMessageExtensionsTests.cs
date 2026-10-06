@@ -37,7 +37,7 @@ public sealed class HttpResponseMessageExtensionsTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task NonSuccessStatusCodeThrows()
+    public async Task NonSuccessStatusCodeThrowsWithTheStatusAndTheBodyInTheMessage()
     {
         // Arrange
         using var response = new HttpResponseMessage(HttpStatusCode.NotFound)
@@ -50,7 +50,43 @@ public sealed class HttpResponseMessageExtensionsTests : BaseUnitTestCase
             () => response.GetResponseAsync<TestPayload>(CancellationToken));
 
         // Assert
-        exception.ShouldNotBeNull();
+        exception.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        exception.Message.ShouldBe("""Response status code does not indicate success: 404 (Not Found). Response body: {"name":"Ada"}""");
+    }
+
+    [Fact]
+    public async Task NonSuccessStatusCodeWithoutABodyThrowsWithTheStatusOnly()
+    {
+        // Arrange
+        using var response = new HttpResponseMessage(HttpStatusCode.BadGateway);
+
+        // Act
+        var exception = await Should.ThrowAsync<HttpRequestException>(
+            () => response.GetResponseAsync<TestPayload>(CancellationToken));
+
+        // Assert
+        exception.StatusCode.ShouldBe(HttpStatusCode.BadGateway);
+        exception.Message.ShouldBe("Response status code does not indicate success: 502 (Bad Gateway).");
+    }
+
+    [Fact]
+    public async Task NonSuccessBodyIsCutToItsFirst4096CharactersInTheMessage()
+    {
+        // Arrange
+        using var response = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+        {
+            Content = new StringContent(new string('x', 5000)),
+        };
+
+        // Act
+        var exception = await Should.ThrowAsync<HttpRequestException>(
+            () => response.GetResponseAsync<TestPayload>(CancellationToken));
+
+        // Assert
+        exception.Message.ShouldBe(
+            "Response status code does not indicate success: 500 (Internal Server Error). Response body: "
+            + new string('x', 4096)
+            + "... (truncated from 5000 characters)");
     }
 
     [Fact]

@@ -79,14 +79,15 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
     /// <summary>
     /// Registers an in-process HTTP mock for the typed client <typeparamref name="TClient"/> (as registered with
-    /// <c>AddHttpClient&lt;TClient, ...&gt;()</c>), keyed by its logical client name. The implementation type does not
-    /// need to be accessible. See <see cref="AddHttpMock(string)"/>.
+    /// <c>AddHttpClient&lt;TClient, ...&gt;()</c>), keyed by the logical client name that <c>AddHttpClient</c> gives it,
+    /// generic client types included. The implementation type does not need to be accessible.
+    /// See <see cref="AddHttpMock(string)"/>.
     /// </summary>
     /// <typeparam name="TClient">The typed client service type registered with <c>AddHttpClient</c>.</typeparam>
     /// <returns>The registered mock; configure it per test with <see cref="GetHttpMock{TClient}()"/>, since a reset clears every rule.</returns>
     protected IHttpMock AddHttpMock<TClient>()
         where TClient : class
-        => AddHttpMock(typeof(TClient).Name);
+        => AddHttpMock(TypedClientName<TClient>());
 
     /// <summary>
     /// Gets the HTTP mock registered for the named HTTP client <paramref name="name"/>.
@@ -108,7 +109,13 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
     /// <exception cref="InvalidOperationException">No mock was registered for <typeparamref name="TClient"/>.</exception>
     public IHttpMock GetHttpMock<TClient>()
         where TClient : class
-        => GetHttpMock(typeof(TClient).Name);
+        => GetHttpMock(TypedClientName<TClient>());
+
+    // AddHttpClient<TClient>() derives the logical client name itself and writes generic arguments in C# syntax (such
+    // as Client<int>), so asking it keeps the mock on the name that the real registration uses.
+    private static string TypedClientName<TClient>()
+        where TClient : class
+        => new ServiceCollection().AddHttpClient<TClient>().Name;
 
     /// <summary>
     /// Decides whether a container registered on the <see cref="ContainerHost"/> is consumed by this factory. All

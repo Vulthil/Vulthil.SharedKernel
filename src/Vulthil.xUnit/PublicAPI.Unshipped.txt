@@ -63,3 +63,5 @@ virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.ConfigureWebHost(M
 virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.CreateNamespaceAsync(string! namespaceName) -> System.Threading.Tasks.ValueTask
 virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DeleteNamespaceAsync(string! namespaceName) -> System.Threading.Tasks.ValueTask
 virtual Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionString.get -> string!
+Vulthil.xUnit.Http.CapturedHttpRequest.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>!
+Vulthil.xUnit.Http.CapturedHttpRequest.Headers.init -> void

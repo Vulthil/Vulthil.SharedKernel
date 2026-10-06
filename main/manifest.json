@@ -167,6 +167,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.PollingOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.PollingOptions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.PollingOptions",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.PollingOptions.yml\" sourcestartlinenumber=\"1\">Configures a <xref href=\"Vulthil.Extensions.Testing.Polling\" data-throw-if-not-resolved=\"false\"></xref> wait: how long to poll, how often to poll, and the clock the poll runs on.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Extensions.Testing.PollingResult-1.yml",
       "output": {
         ".html": {

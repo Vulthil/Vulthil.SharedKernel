@@ -197,7 +197,7 @@ results.</p>
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result}},System.Threading.CancellationToken)">
   WaitAsync(TimeSpan, Func&lt;CancellationToken, Task&lt;Result&gt;&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L236"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
@@ -237,6 +237,12 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -244,7 +250,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___System_TimeSpan_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result}},System.TimeSpan,System.Threading.CancellationToken)">
   WaitAsync(TimeSpan, Func&lt;CancellationToken, Task&lt;Result&gt;&gt;, TimeSpan, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L219"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L255"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at regular intervals until it returns a successful result or the timeout expires.
@@ -287,6 +293,76 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Vulthil_Extensions_Testing_Polling_WaitAsync_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync*"></a>
+
+  <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___System_TimeSpan_System_TimeProvider_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result}},System.TimeSpan,System.TimeProvider,System.Threading.CancellationToken)">
+  WaitAsync(TimeSpan, Func&lt;CancellationToken, Task&lt;Result&gt;&gt;, TimeSpan, TimeProvider, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Polls the provided function at regular intervals on <code class="paramref">timeProvider</code> until it returns a successful
+result or the timeout expires.
+The combined polling/timeout cancellation token is forwarded to the function so it can short-circuit work in progress.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;PollingResult&gt; WaitAsync(TimeSpan timeout, Func&lt;CancellationToken, Task&lt;Result&gt;&gt; func, TimeSpan timerTick, TimeProvider timeProvider, CancellationToken cancellationToken)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>timeout</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
+    <dd><p>The maximum duration to poll.</p>
+</dd>
+    <dt><code>func</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Results.Result.html">Result</a>&gt;&gt;</dt>
+    <dd><p>The function to invoke each tick. Receives the shared cancellation token.</p>
+</dd>
+    <dt><code>timerTick</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
+    <dd><p>The interval between polls.</p>
+</dd>
+    <dt><code>timeProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeprovider">TimeProvider</a></dt>
+    <dd><p>The clock that the timer and the timeout run on.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation. Linked internally with the polling timeout.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Extensions.Testing.PollingResult.html">PollingResult</a>&gt;</dt>
+    <dd><p>A <a class="xref" href="Vulthil.Extensions.Testing.PollingResult.html">PollingResult</a> containing a success indication,
+or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">PollingError</a> with all errors collected during polling.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___System_TimeSpan_System_TimeProvider_System_Threading_CancellationToken__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The timer and the timeout both run on <code class="paramref">timeProvider</code>. With a fake clock, such as
+<code>FakeTimeProvider</code>, the poll ticks and times out only when the test advances that clock.</p>
+</div>
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> or <code class="paramref">timeProvider</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -294,7 +370,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_Tasks_Task_Vulthil_Results_Result___" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.Tasks.Task{Vulthil.Results.Result}})">
   WaitAsync(TimeSpan, Func&lt;Task&lt;Result&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L183"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.</p>
@@ -330,6 +406,12 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -337,7 +419,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_Tasks_Task_Vulthil_Results_Result___System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.Tasks.Task{Vulthil.Results.Result}},System.Threading.CancellationToken)">
   WaitAsync(TimeSpan, Func&lt;Task&lt;Result&gt;&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L199"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.</p>
@@ -376,6 +458,12 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -383,7 +471,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_Tasks_Task_Vulthil_Results_Result___System_TimeSpan_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.Tasks.Task{Vulthil.Results.Result}},System.TimeSpan,System.Threading.CancellationToken)">
   WaitAsync(TimeSpan, Func&lt;Task&lt;Result&gt;&gt;, TimeSpan, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L217"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at regular intervals until it returns a successful result or the timeout expires.</p>
@@ -425,6 +513,67 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Vulthil_Extensions_Testing_Polling_WaitAsync_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync*"></a>
+
+  <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync_Vulthil_Extensions_Testing_PollingOptions_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result}},System.Threading.CancellationToken)">
+  WaitAsync(PollingOptions, Func&lt;CancellationToken, Task&lt;Result&gt;&gt;, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L307"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Polls the provided function with the timeout, the interval and the clock of <code class="paramref">options</code> until it
+returns a successful result or the timeout expires.
+The combined polling/timeout cancellation token is forwarded to the function so it can short-circuit work in progress.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;PollingResult&gt; WaitAsync(PollingOptions options, Func&lt;CancellationToken, Task&lt;Result&gt;&gt; func, CancellationToken cancellationToken)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>options</code> <a class="xref" href="Vulthil.Extensions.Testing.PollingOptions.html">PollingOptions</a></dt>
+    <dd><p>The timeout, the interval between polls, and the clock to poll on.</p>
+</dd>
+    <dt><code>func</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Results.Result.html">Result</a>&gt;&gt;</dt>
+    <dd><p>The function to invoke each tick. Receives the shared cancellation token.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation. Linked internally with the polling timeout.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Extensions.Testing.PollingResult.html">PollingResult</a>&gt;</dt>
+    <dd><p>A <a class="xref" href="Vulthil.Extensions.Testing.PollingResult.html">PollingResult</a> containing a success indication,
+or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">PollingError</a> with all errors collected during polling.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">options</code>, its <a class="xref" href="Vulthil.Extensions.Testing.PollingOptions.html#Vulthil_Extensions_Testing_PollingOptions_TimeProvider">TimeProvider</a>, or <code class="paramref">func</code> is
+<a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -432,7 +581,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync__1_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___0____System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync``1(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}},System.Threading.CancellationToken)">
   WaitAsync&lt;T&gt;(TimeSpan, Func&lt;CancellationToken, Task&lt;Result&lt;T&gt;&gt;&gt;, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L88"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
@@ -478,6 +627,12 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -485,7 +640,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync__1_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___0____System_TimeSpan_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync``1(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}},System.TimeSpan,System.Threading.CancellationToken)">
   WaitAsync&lt;T&gt;(TimeSpan, Func&lt;CancellationToken, Task&lt;Result&lt;T&gt;&gt;&gt;, TimeSpan, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L108"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at regular intervals until it returns a successful result or the timeout expires.
@@ -534,6 +689,82 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Vulthil_Extensions_Testing_Polling_WaitAsync_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync*"></a>
+
+  <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync__1_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___0____System_TimeSpan_System_TimeProvider_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync``1(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}},System.TimeSpan,System.TimeProvider,System.Threading.CancellationToken)">
+  WaitAsync&lt;T&gt;(TimeSpan, Func&lt;CancellationToken, Task&lt;Result&lt;T&gt;&gt;&gt;, TimeSpan, TimeProvider, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Polls the provided function at regular intervals on <code class="paramref">timeProvider</code> until it returns a successful
+result or the timeout expires.
+The combined polling/timeout cancellation token is forwarded to the function so it can short-circuit work in progress.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;PollingResult&lt;T&gt;&gt; WaitAsync&lt;T&gt;(TimeSpan timeout, Func&lt;CancellationToken, Task&lt;Result&lt;T&gt;&gt;&gt; func, TimeSpan timerTick, TimeProvider timeProvider, CancellationToken cancellationToken)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>timeout</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
+    <dd><p>The maximum duration to poll.</p>
+</dd>
+    <dt><code>func</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Results.Result-1.html">Result</a>&lt;T&gt;&gt;&gt;</dt>
+    <dd><p>The function to invoke each tick. Receives the shared cancellation token.</p>
+</dd>
+    <dt><code>timerTick</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
+    <dd><p>The interval between polls.</p>
+</dd>
+    <dt><code>timeProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeprovider">TimeProvider</a></dt>
+    <dd><p>The clock that the timer and the timeout run on.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation. Linked internally with the polling timeout.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Extensions.Testing.PollingResult-1.html">PollingResult</a>&lt;T&gt;&gt;</dt>
+    <dd><p>A <a class="xref" href="Vulthil.Extensions.Testing.PollingResult-1.html">PollingResult&lt;T&gt;</a> containing the first successful result,
+or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">PollingError</a> with all errors collected during polling.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the expected value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+  <h4 class="section" id="Vulthil_Extensions_Testing_Polling_WaitAsync__1_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___0____System_TimeSpan_System_TimeProvider_System_Threading_CancellationToken__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The timer and the timeout both run on <code class="paramref">timeProvider</code>. With a fake clock, such as
+<code>FakeTimeProvider</code>, the poll ticks and times out only when the test advances that clock.</p>
+</div>
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> or <code class="paramref">timeProvider</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -541,7 +772,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync__1_System_TimeSpan_System_Func_System_Threading_Tasks_Task_Vulthil_Results_Result___0____" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync``1(System.TimeSpan,System.Func{System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}})">
   WaitAsync&lt;T&gt;(TimeSpan, Func&lt;Task&lt;Result&lt;T&gt;&gt;&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.</p>
@@ -583,6 +814,12 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -635,6 +872,12 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 
@@ -642,7 +885,7 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
   <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync__1_System_TimeSpan_System_Func_System_Threading_Tasks_Task_Vulthil_Results_Result___0____System_TimeSpan_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync``1(System.TimeSpan,System.Func{System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}},System.TimeSpan,System.Threading.CancellationToken)">
   WaitAsync&lt;T&gt;(TimeSpan, Func&lt;Task&lt;Result&lt;T&gt;&gt;&gt;, TimeSpan, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Polls the provided function at regular intervals until it returns a successful result or the timeout expires.</p>
@@ -690,6 +933,73 @@ or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">Polling
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">func</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Vulthil_Extensions_Testing_Polling_WaitAsync_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync*"></a>
+
+  <h3 id="Vulthil_Extensions_Testing_Polling_WaitAsync__1_Vulthil_Extensions_Testing_PollingOptions_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___0____System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.Polling.WaitAsync``1(Vulthil.Extensions.Testing.PollingOptions,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result{``0}}},System.Threading.CancellationToken)">
+  WaitAsync&lt;T&gt;(PollingOptions, Func&lt;CancellationToken, Task&lt;Result&lt;T&gt;&gt;&gt;, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/Polling.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Polls the provided function with the timeout, the interval and the clock of <code class="paramref">options</code> until it
+returns a successful result or the timeout expires.
+The combined polling/timeout cancellation token is forwarded to the function so it can short-circuit work in progress.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;PollingResult&lt;T&gt;&gt; WaitAsync&lt;T&gt;(PollingOptions options, Func&lt;CancellationToken, Task&lt;Result&lt;T&gt;&gt;&gt; func, CancellationToken cancellationToken)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>options</code> <a class="xref" href="Vulthil.Extensions.Testing.PollingOptions.html">PollingOptions</a></dt>
+    <dd><p>The timeout, the interval between polls, and the clock to poll on.</p>
+</dd>
+    <dt><code>func</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Results.Result-1.html">Result</a>&lt;T&gt;&gt;&gt;</dt>
+    <dd><p>The function to invoke each tick. Receives the shared cancellation token.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>A token to observe for cancellation. Linked internally with the polling timeout.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.Extensions.Testing.PollingResult-1.html">PollingResult</a>&lt;T&gt;&gt;</dt>
+    <dd><p>A <a class="xref" href="Vulthil.Extensions.Testing.PollingResult-1.html">PollingResult&lt;T&gt;</a> containing the first successful result,
+or a <a class="xref" href="Vulthil.Extensions.Testing.PollingError.html">PollingError</a> with all errors collected during polling.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the expected value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">options</code>, its <a class="xref" href="Vulthil.Extensions.Testing.PollingOptions.html#Vulthil_Extensions_Testing_PollingOptions_TimeProvider">TimeProvider</a>, or <code class="paramref">func</code> is
+<a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 

@@ -43,6 +43,10 @@ internal static partial class MessagingLog
         Message = "Poison message on queue '{Queue}' (type='{MessageType}', routingKey='{RoutingKey}'): payload could not be deserialized. Nacking without requeue.")]
     public static partial void PoisonMessage(ILogger logger, Exception exception, string queue, string messageType, string routingKey);
 
+    [LoggerMessage(EventId = 1103, Level = LogLevel.Error,
+        Message = "Delivery on queue '{Queue}' (type='{MessageType}', routingKey='{RoutingKey}') could not be processed. Nacking without requeue.")]
+    public static partial void UnprocessableDelivery(ILogger logger, Exception exception, string queue, string messageType, string routingKey);
+
     [LoggerMessage(EventId = 1106, Level = LogLevel.Error,
         Message = "Failed to publish fault to exchange '{FaultExchange}' (routingKey='{RoutingKey}'). Original exception preserved.")]
     public static partial void FaultPublishFailed(ILogger logger, Exception exception, string faultExchange, string routingKey);

@@ -100,6 +100,12 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
             CancellationToken);
     }
 
+    private static async Task<QueueDeclareOk> HangUntilCancelledAsync(CancellationToken cancellationToken)
+    {
+        await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
+        return new QueueDeclareOk(ReplyQueue, 0, 0);
+    }
+
     [Fact]
     public async Task RequestAsyncReturnsTimeoutFailureWhenNoResponseArrivesWithinPerRequestTimeout()
     {
@@ -232,6 +238,49 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
         result.IsFailure.ShouldBeTrue();
         result.Error.Code.ShouldBe("Messaging.Request.Timeout");
         _published.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task RequestAsyncTimesOutWhileItsReplyQueueIsStillBeingDeclared()
+    {
+        // Arrange
+        _startupStatus.MarkStarted();
+        GetMock<IChannel>()
+            .Setup(c => c.QueueDeclareAsync(
+                It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.IsAny<IDictionary<string, object?>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .Returns((string _, bool _, bool _, bool _, IDictionary<string, object?> _, bool _, bool _, CancellationToken cancellationToken) =>
+                HangUntilCancelledAsync(cancellationToken));
+
+        // Act
+        var pending = SendRequestAsync();
+        _timeProvider.Advance(RequestTimeout);
+        var result = await pending.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.Code.ShouldBe(RequestErrorCodes.Timeout);
+        _published.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task RequestAsyncFailsWithTransportUnavailableWhenItsReplyQueueCannotBeDeclared()
+    {
+        // Arrange
+        _startupStatus.MarkStarted();
+        GetMock<IChannel>()
+            .Setup(c => c.QueueDeclareAsync(
+                It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.IsAny<IDictionary<string, object?>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("The broker refused the declaration."));
+
+        // Act
+        var result = await SendRequestAsync().WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.Code.ShouldBe(RequestErrorCodes.TransportUnavailable);
+        _published.ShouldBeEmpty();
     }
 
     [Fact]

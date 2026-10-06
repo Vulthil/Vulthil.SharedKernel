@@ -245,11 +245,8 @@ public sealed class RabbitMqOutgoingMessagesTests : BaseUnitTestCase
     [Fact]
     public void ResolveFaultRouteBroadcastsToTheFaultExchangeWhenNoFaultAddressIsPresent()
     {
-        // Arrange
-        var headers = new Dictionary<string, object?>();
-
         // Act
-        var (exchange, routingKey) = RabbitMqOutgoingMessages.ResolveFaultRoute(headers, FaultExchange, MessageUrn);
+        var (exchange, routingKey) = RabbitMqOutgoingMessages.ResolveFaultRoute(faultAddress: null, FaultExchange, MessageUrn);
 
         // Assert
         exchange.ShouldBe(FaultExchange);
@@ -259,11 +256,8 @@ public sealed class RabbitMqOutgoingMessagesTests : BaseUnitTestCase
     [Fact]
     public void ResolveFaultRouteRoutesPointToPointThroughTheDefaultExchangeWhenFaultAddressIsPresent()
     {
-        // Arrange
-        var headers = new Dictionary<string, object?> { ["FaultAddress"] = "queue:order-faults" };
-
         // Act
-        var (exchange, routingKey) = RabbitMqOutgoingMessages.ResolveFaultRoute(headers, FaultExchange, MessageUrn);
+        var (exchange, routingKey) = RabbitMqOutgoingMessages.ResolveFaultRoute(new Uri("queue:order-faults"), FaultExchange, MessageUrn);
 
         // Assert
         exchange.ShouldBe(string.Empty);
@@ -271,17 +265,22 @@ public sealed class RabbitMqOutgoingMessagesTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void ResolveFaultRouteReadsTheFaultAddressFromAWireEncodedHeaderValue()
+    public void AFaultGoesToTheFaultAddressOfItsOriginalContextNotToOneInTheDeliveryHeaders()
     {
         // Arrange
-        var headers = new Dictionary<string, object?> { ["FaultAddress"] = Encoding.UTF8.GetBytes("queue:order-faults") };
+        var delivery = Delivery(new BasicProperties
+        {
+            Type = MessageUrn,
+            Headers = new Dictionary<string, object?> { ["FaultAddress"] = Encoding.UTF8.GetBytes("queue:header-faults") },
+        });
 
         // Act
-        var (exchange, routingKey) = RabbitMqOutgoingMessages.ResolveFaultRoute(headers, FaultExchange, MessageUrn);
+        var fault = RabbitMqOutgoingMessages.Fault(
+            NewFault(new Uri("queue:order-faults")), envelopeMessage: null, delivery, FaultExchange, MessageUrn, JsonOptions);
 
         // Assert
-        exchange.ShouldBe(string.Empty);
-        routingKey.ShouldBe("order-faults");
+        fault.Exchange.ShouldBe(string.Empty);
+        fault.RoutingKey.ShouldBe("order-faults");
     }
 
     [Fact]
@@ -325,14 +324,14 @@ public sealed class RabbitMqOutgoingMessagesTests : BaseUnitTestCase
     private static MessageEnvelope Envelope(RabbitMqOutgoingMessage message) =>
         JsonSerializer.Deserialize<MessageEnvelope>(message.Body.Span, JsonOptions).ShouldNotBeNull();
 
-    private static Fault<OrderPlaced> NewFault() => new()
+    private static Fault<OrderPlaced> NewFault(Uri? faultAddress = null) => new()
     {
         Message = new OrderPlaced("A-1"),
         ExceptionMessage = "boom",
         StackTrace = null,
         ExceptionType = typeof(InvalidOperationException).FullName!,
         FaultedAt = DateTimeOffset.UnixEpoch,
-        OriginalContext = new MessageContextSnapshot { CorrelationId = "order-42" },
+        OriginalContext = new MessageContextSnapshot { CorrelationId = "order-42", FaultAddress = faultAddress },
     };
 
     private static BasicDeliverEventArgs Delivery(BasicProperties properties, byte[]? body = null) =>

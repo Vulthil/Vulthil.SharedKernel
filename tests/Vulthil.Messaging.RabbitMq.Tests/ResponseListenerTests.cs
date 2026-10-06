@@ -142,6 +142,27 @@ public sealed class ResponseListenerTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task AFailedFirstUseClosesItsChannelAndTheNextUseStartsOverOnANewOne()
+    {
+        // Arrange
+        _channel
+            .SetupSequence(c => c.QueueDeclareAsync(
+                It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.IsAny<IDictionary<string, object?>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new OperationCanceledException())
+            .ReturnsAsync(new QueueDeclareOk(DeclaredReplyQueue, 0, 0));
+
+        // Act
+        await Should.ThrowAsync<OperationCanceledException>(GetReplyToQueueNameAsync);
+        var replyQueue = await GetReplyToQueueNameAsync();
+
+        // Assert
+        replyQueue.ShouldBe(DeclaredReplyQueue);
+        _channel.Verify(c => c.DisposeAsync(), Times.Once);
+        GetMock<IConnection>().Verify(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+    }
+
+    [Fact]
     public async Task AReplyWithAKnownCorrelationIdCompletesItsWaiterAndIsAcked()
     {
         // Arrange

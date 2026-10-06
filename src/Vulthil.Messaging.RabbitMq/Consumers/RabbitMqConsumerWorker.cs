@@ -125,19 +125,35 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
 
         Task work;
-        if (prepared.Plan.Partition is { } partition)
+        try
         {
-            var key = partition.ExtractKey(prepared.Message, ea, prepared.Envelope);
-            work = string.IsNullOrEmpty(key)
-                ? ProcessAsync(prepared, ea)
-                : partition.Partitioner.RunSequentialAsync(key, () => ProcessAsync(prepared, ea));
+            work = StartPartitionedProcessing(prepared, ea);
         }
-        else
+        catch (Exception exception) when (!ea.CancellationToken.IsCancellationRequested)
         {
-            work = ProcessAsync(prepared, ea);
+            await RejectUnprocessableAsync(ea, prepared.DiagnosticTypeName, exception).ConfigureAwait(false);
+            return;
         }
 
         TrackInFlight(ea.DeliveryTag, work);
+    }
+
+    /// <summary>
+    /// Starts processing a delivery on a partitioned queue: on its partition's lane when its message type is
+    /// partitioned and the delivery has a key, otherwise at once. Reading the key builds a context from the delivery's
+    /// metadata, so it throws on metadata the worker cannot parse.
+    /// </summary>
+    private Task StartPartitionedProcessing(PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    {
+        if (prepared.Plan.Partition is not { } partition)
+        {
+            return ProcessAsync(prepared, ea);
+        }
+
+        var key = partition.ExtractKey(prepared.Message, ea, prepared.Envelope);
+        return string.IsNullOrEmpty(key)
+            ? ProcessAsync(prepared, ea)
+            : partition.Partitioner.RunSequentialAsync(key, () => ProcessAsync(prepared, ea));
     }
 
     private void TrackInFlight(ulong deliveryTag, Task work)
@@ -154,7 +170,8 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// Runs a prepared delivery through the <see cref="DeliveryDispatcher"/> and settles it the way the outcome
     /// says: ack it, nack it for dead-lettering, re-publish it through the retry queue and ack it, or leave it
     /// unsettled when shutdown ended the delivery, so the broker delivers it again. A delayed-retry re-delivery
-    /// dispatches only the handlers it names.
+    /// dispatches only the handlers it names. A dispatch that throws instead of returning an outcome — for example on
+    /// metadata the worker cannot parse — rejects the delivery (see <see cref="RejectUnprocessableAsync"/>).
     /// </summary>
     private async Task ProcessAsync(PreparedDelivery prepared, BasicDeliverEventArgs ea)
     {
@@ -167,9 +184,19 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
 
         DeliveryOutcome outcome;
-        using (MessagingLog.BeginDelivery(_logger, _queueDefinition.Name, ea.RoutingKey, prepared.DiagnosticTypeName))
+        try
         {
-            outcome = await _dispatcher.DispatchAsync(pending, prepared.Message, new DeliveryPort(this, prepared, ea)).ConfigureAwait(false);
+            using (MessagingLog.BeginDelivery(_logger, _queueDefinition.Name, ea.RoutingKey, prepared.DiagnosticTypeName))
+            {
+                outcome = await _dispatcher.DispatchAsync(pending, prepared.Message, new DeliveryPort(this, prepared, ea)).ConfigureAwait(false);
+            }
+        }
+        catch (Exception exception) when (!ea.CancellationToken.IsCancellationRequested)
+        {
+            activity?.AddException(exception);
+            activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+            await RejectUnprocessableAsync(ea, prepared.DiagnosticTypeName, exception).ConfigureAwait(false);
+            return;
         }
 
         RecordOutcome(activity, outcome);
@@ -186,6 +213,18 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
                 await AckAsync(ea).ConfigureAwait(false);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Rejects a delivery whose processing failed outside its consumers, for example on a header or an envelope field
+    /// the worker cannot parse. Like a body the worker cannot deserialize, the delivery is logged and nacked without
+    /// requeue: left unsettled, it would hold its prefetch slot and fail the same way after every restart. The callers
+    /// let a failure during shutdown propagate instead, so the broker delivers that delivery again.
+    /// </summary>
+    private async Task RejectUnprocessableAsync(BasicDeliverEventArgs ea, string messageTypeName, Exception exception)
+    {
+        MessagingLog.UnprocessableDelivery(_logger, exception, _queueDefinition.Name, messageTypeName, ea.RoutingKey);
+        await NackAsync(ea).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -290,7 +329,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         catch (Exception faultEx)
         {
             var (exchange, routingKey) = RabbitMqOutgoingMessages.ResolveFaultRoute(
-                ea.BasicProperties.Headers ?? new Dictionary<string, object?>(), faultExchangeName, prepared.DiagnosticTypeName);
+                fault.OriginalContext.FaultAddress, faultExchangeName, prepared.DiagnosticTypeName);
             MessagingLog.FaultPublishFailed(_logger, faultEx, exchange, routingKey);
         }
     }

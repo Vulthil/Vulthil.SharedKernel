@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,7 @@ using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
+using Vulthil.Messaging.RabbitMq.Telemetry;
 using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
@@ -17,7 +19,9 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
     private const string QueueName = "orders";
     private const string ReplyQueue = "reply.queue";
     private const string RequestCorrelationId = "corr-1";
+    private const string UnparsableAddress = "//[";
     private const int ConsumerFailedEventId = 2202;
+    private const int UnprocessableDeliveryEventId = 1103;
 
     private readonly Mock<IChannel> _channel;
     private readonly List<CapturedPublish> _publishes = [];
@@ -171,6 +175,112 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
         failure.Scope["MessageType"].ShouldBe(typeof(TestMessage).FullName);
     }
 
+    [Theory]
+    [InlineData("2", 2)]
+    [InlineData("not a number", 0)]
+    public async Task ADeliveryWithATextRetryCountRunsItsConsumerAtTheRoundTheTextNamesAndIsAcked(string retryCount, int expectedRound)
+    {
+        // Arrange
+        var consumer = new RoundRecordingConsumer();
+        Use(consumer);
+        await StartWorkerAsync(QueueConsuming<RoundRecordingConsumer, TestMessage>());
+
+        // Act
+        await DeliverAsync(new TestMessage("payload"), CancellationToken, headers: TextHeader(RabbitMqConstants.RetryCountHeader, retryCount));
+
+        // Assert
+        consumer.Round.ShouldBe(expectedRound);
+        _channel.Verify(c => c.BasicAckAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
+        _channel.Verify(c => c.BasicNackAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task TheReceiveSpanOfADeliveryWithATextRetryCountCarriesTheRoundTheTextNames()
+    {
+        // Arrange
+        var messageId = Guid.NewGuid().ToString();
+        Activity? receiveSpan = null;
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == MessagingInstrumentation.ActivitySourceName,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStopped = activity =>
+            {
+                if (Equals(activity.GetTagItem(MessagingInstrumentation.Tags.MessagingMessageId), messageId))
+                {
+                    receiveSpan = activity;
+                }
+            },
+        };
+        ActivitySource.AddActivityListener(listener);
+        Use(new RoundRecordingConsumer());
+        await StartWorkerAsync(QueueConsuming<RoundRecordingConsumer, TestMessage>());
+
+        // Act
+        await DeliverAsync(new TestMessage("payload"), CancellationToken, headers: TextHeader(RabbitMqConstants.RetryCountHeader, "2"), messageId: messageId);
+
+        // Assert
+        receiveSpan.ShouldNotBeNull().GetTagItem(MessagingInstrumentation.Tags.RetryCount).ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task ADeliveryWithAnAddressTheWorkerCannotParseIsNackedAndLoggedWithoutRunningItsConsumer()
+    {
+        // Arrange
+        using var logs = new ScopeCapturingLoggerProvider();
+        using var loggerFactory = LoggerFactory.Create(builder => builder.AddProvider(logs));
+        Use(loggerFactory.CreateLogger<RabbitMqConsumerWorker>());
+        var consumer = new RoundRecordingConsumer();
+        Use(consumer);
+        await StartWorkerAsync(QueueConsuming<RoundRecordingConsumer, TestMessage>());
+
+        // Act
+        await DeliverAsync(new TestMessage("payload"), CancellationToken, headers: TextHeader(MessageHeaders.FaultAddress, UnparsableAddress));
+
+        // Assert
+        consumer.Round.ShouldBeNull();
+        _channel.Verify(c => c.BasicNackAsync(It.IsAny<ulong>(), false, false, It.IsAny<CancellationToken>()), Times.Once);
+        _channel.Verify(c => c.BasicAckAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+        logs.Entries.ShouldContain(entry => entry.EventId == UnprocessableDeliveryEventId);
+    }
+
+    [Fact]
+    public async Task ADeliveryWithAnAddressTheWorkerCannotParseIsLeftUnsettledDuringShutdown()
+    {
+        // Arrange
+        var consumer = new RoundRecordingConsumer();
+        Use(consumer);
+        await StartWorkerAsync(QueueConsuming<RoundRecordingConsumer, TestMessage>());
+        using var cancelledSource = new CancellationTokenSource();
+        await cancelledSource.CancelAsync();
+
+        // Act
+        await Should.ThrowAsync<UriFormatException>(
+            () => DeliverAsync(new TestMessage("payload"), cancelledSource.Token, headers: TextHeader(MessageHeaders.FaultAddress, UnparsableAddress)));
+
+        // Assert
+        consumer.Round.ShouldBeNull();
+        VerifyUnsettled();
+    }
+
+    [Fact]
+    public async Task ADeliveryWhosePartitionKeyCannotBeReadIsNackedWithoutRunningItsConsumer()
+    {
+        // Arrange
+        Use(TestProviders.Build(messaging => messaging.UsePartitioner<TestMessage>(2, context => context.Message.Value)));
+        var consumer = new RoundRecordingConsumer();
+        Use(consumer);
+        await StartWorkerAsync(QueueConsuming<RoundRecordingConsumer, TestMessage>());
+
+        // Act
+        await DeliverAsync(new TestMessage("payload"), CancellationToken, headers: TextHeader(MessageHeaders.FaultAddress, UnparsableAddress));
+
+        // Assert
+        consumer.Round.ShouldBeNull();
+        _channel.Verify(c => c.BasicNackAsync(It.IsAny<ulong>(), false, false, It.IsAny<CancellationToken>()), Times.Once);
+        _channel.Verify(c => c.BasicAckAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
     private static QueueDefinition QueueConsuming<TConsumer, TMessage>()
         where TConsumer : class, IConsumer<TMessage>
         where TMessage : notnull
@@ -207,7 +317,13 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
         _capturedConsumer.ShouldNotBeNull();
     }
 
-    private Task DeliverAsync<TMessage>(TMessage message, CancellationToken cancellationToken, string? replyTo = null, string? correlationId = null)
+    private Task DeliverAsync<TMessage>(
+        TMessage message,
+        CancellationToken cancellationToken,
+        string? replyTo = null,
+        string? correlationId = null,
+        IDictionary<string, object?>? headers = null,
+        string? messageId = null)
         where TMessage : notnull
         => _capturedConsumer!.HandleBasicDeliverAsync(
             "consumer-tag",
@@ -218,12 +334,16 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
             new BasicProperties
             {
                 Type = typeof(TMessage).FullName,
+                MessageId = messageId,
                 ReplyTo = replyTo,
                 CorrelationId = correlationId,
-                Headers = new Dictionary<string, object?>(),
+                Headers = headers ?? new Dictionary<string, object?>(),
             },
             JsonSerializer.SerializeToUtf8Bytes(message),
             cancellationToken);
+
+    private static Dictionary<string, object?> TextHeader(string key, string value)
+        => new() { [key] = Encoding.UTF8.GetBytes(value) };
 
     private void VerifyUnsettled()
     {
@@ -249,6 +369,17 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
     {
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
             => throw new InvalidOperationException("consumer exploded");
+    }
+
+    private sealed class RoundRecordingConsumer : IConsumer<TestMessage>
+    {
+        public int? Round { get; private set; }
+
+        public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default)
+        {
+            Round = messageContext.RetryCount;
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class CancellingRequestConsumer : IRequestConsumer<TestRequest, TestResponse>

@@ -182,11 +182,12 @@ internal static class RabbitMqOutgoingMessages
     }
 
     /// <summary>
-    /// Builds the fault of a consumer that failed for good, routed by <see cref="ResolveFaultRoute"/>. The fault's
-    /// <c>Message</c> is the payload as delivered — the envelope's message for an envelope-wrapped delivery, otherwise
-    /// the whole body — because re-serializing the consumer's message type would drop the fields that a polymorphic
-    /// registration's interface does not declare. Its <c>Type</c> is <c>Fault&lt;…&gt;</c> of the delivered type, the
-    /// name the receiving side resolves faults by.
+    /// Builds the fault of a consumer that failed for good, routed by <see cref="ResolveFaultRoute"/> from the fault
+    /// address of the fault's original context: the address the consumer saw, which an envelope-wrapped delivery
+    /// takes from its envelope. The fault's <c>Message</c> is the payload as delivered — the envelope's message for an
+    /// envelope-wrapped delivery, otherwise the whole body — because re-serializing the consumer's message type would
+    /// drop the fields that a polymorphic registration's interface does not declare. Its <c>Type</c> is
+    /// <c>Fault&lt;…&gt;</c> of the delivered type, the name the receiving side resolves faults by.
     /// </summary>
     /// <typeparam name="TMessage">The consumer's message type.</typeparam>
     /// <param name="fault">The fault the dispatcher produced.</param>
@@ -218,7 +219,7 @@ internal static class RabbitMqOutgoingMessages
         var properties = CreateProperties($"Fault<{delivery.BasicProperties.Type}>", NewMessageId(), headers: null);
         properties.CorrelationId = delivery.BasicProperties.CorrelationId;
 
-        var (exchange, routingKey) = ResolveFaultRoute(delivery.BasicProperties.Headers ?? new Dictionary<string, object?>(), faultExchangeName, messageTypeName);
+        var (exchange, routingKey) = ResolveFaultRoute(fault.OriginalContext.FaultAddress, faultExchangeName, messageTypeName);
         return new RabbitMqOutgoingMessage(exchange, routingKey, Mandatory: false, properties, JsonSerializer.SerializeToUtf8Bytes(deliveredFault, jsonOptions));
     }
 
@@ -245,25 +246,22 @@ internal static class RabbitMqOutgoingMessages
     }
 
     /// <summary>
-    /// Resolves the broker route for a fault. A delivery carrying an explicit <c>FaultAddress</c> routes
-    /// point-to-point through the broker's default exchange (empty exchange, the address's queue name as the
-    /// routing key); otherwise the fault is published by convention to <paramref name="faultExchangeName"/> with
-    /// the faulted message's URN (<paramref name="messageTypeName"/>) as the routing key.
+    /// Resolves the broker route for a fault. A faulted delivery with a fault address routes point-to-point through
+    /// the broker's default exchange (empty exchange, the address's queue name as the routing key); otherwise the
+    /// fault is published by convention to <paramref name="faultExchangeName"/> with the faulted message's URN
+    /// (<paramref name="messageTypeName"/>) as the routing key.
     /// </summary>
-    /// <param name="headers">The faulted delivery's headers.</param>
+    /// <param name="faultAddress">The faulted delivery's fault address, or <see langword="null"/> when it has none.</param>
     /// <param name="faultExchangeName">The shared fault exchange.</param>
     /// <param name="messageTypeName">The faulted message's URN.</param>
     /// <returns>The exchange and routing key of the fault.</returns>
     public static (string Exchange, string RoutingKey) ResolveFaultRoute(
-        IDictionary<string, object?> headers,
+        Uri? faultAddress,
         string faultExchangeName,
         string messageTypeName)
-    {
-        var faultAddress = RabbitMqConstants.GetHeaderUri(headers, MessageHeaders.FaultAddress);
-        return faultAddress is null
+        => faultAddress is null
             ? (faultExchangeName, messageTypeName)
             : (string.Empty, RabbitMqAddress.ResolveRoutingKey(faultAddress) ?? string.Empty);
-    }
 
     /// <summary>
     /// Copies the delivery's headers into a dictionary of their own. AMQP properties copied from a delivery share its

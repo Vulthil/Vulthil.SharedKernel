@@ -230,11 +230,38 @@ Every container on the host is consumed automatically, so containers are managed
 - `TestDatabaseContainerFixture` creates a uniquely named database per scope on the shared server, migrates it during host startup, resets it with Respawn between tests, and drops it (best-effort) when the class finishes. Database DDL is engine-aware through the fixture's `DbAdapter` (PostgreSQL drops use `WITH (FORCE)`, SQL Server switches to single-user); `BuildScopedConnectionString`, `CreateDatabaseAsync`, and `DropDatabaseAsync` are overridable for exotic engines.
 - `RabbitMqTestContainerFixture` creates a **virtual host** per scope on the shared broker (via `rabbitmqctl` inside the container), so parallel classes never see each other's exchanges, queues, or messages.
 - `CosmosTestContainerFixture` (in the `Vulthil.xUnit.Cosmos` package) starts one Cosmos emulator and gives each scope its own **emulator database**, recreated between tests. It provisions and resets each database through your `DbContext` resolved from the test host's DI container — so a context whose constructor takes more than its options just works — while a bare `DbContext` is used only to probe the emulator for readiness and to drop a scope's database on teardown.
-- Any other `TestContainerFixtureWithConnectionString` returns a pass-through scope by default — consumers share the container's namespace; override `CreateScope` only when the service offers some other isolation unit.
+- Any other `TestContainerFixtureWithConnectionString` returns a pass-through scope by default — consumers share the container's namespace; override `CreateScope` only when the service offers some other isolation unit (see below).
 - Containers start **lazily** on first use: a filtered run only pays for the containers its factories actually consume, and concurrent factories share one startup task per container.
 - A factory that should not consume every host container overrides `ShouldUseContainer` (e.g. a factory that swaps the broker for the in-memory test harness consumes only the database container).
 
 The scope identifier defaults to the factory type name plus a random suffix (override `CreateScopeId()` to change it), so two classes using the same factory type still get distinct databases and virtual hosts.
+
+To give your own container per-scope isolation, return a view from `CreateScope` that derives from `TestContainerWithConnectionStringScope<TContainer>` (or `TestContainerScope<TContainer>` for a container without a connection string). The base view forwards the host configuration and the connection string key to the shared container, so the view only describes its namespace:
+
+```csharp
+public sealed class SearchTestContainer : TestContainerFixtureWithConnectionString<SearchBuilder, SearchContainer>
+{
+    public override string ConnectionString => Container.GetConnectionString();
+    public override string ConnectionStringKey => "search";
+
+    public override ITestContainer CreateScope(string scopeId) => new IndexScope(this, scopeId);
+
+    private sealed class IndexScope(SearchTestContainer container, string index)
+        : TestContainerWithConnectionStringScope<SearchTestContainer>(container, index)
+    {
+        private readonly string _index = index;
+
+        // Point the scope's consumers at their own index.
+        public override string ConnectionString => $"{Container.ConnectionString};DefaultIndex={_index}";
+
+        protected override ValueTask CreateNamespaceAsync(string namespaceName) => Container.CreateIndexAsync(namespaceName);
+
+        protected override ValueTask DeleteNamespaceAsync(string namespaceName) => Container.DeleteIndexAsync(namespaceName);
+    }
+}
+```
+
+The view creates the namespace when the factory starts and deletes it when the class finishes. Deleting is best-effort: a failure becomes a diagnostic message instead of a test failure, because the namespace goes away with the container anyway. The base view never resets the shared container; implement `IResettableResource` on the view when its namespace can be reset between tests.
 
 A scope lives as long as its factory: one test class. All tests of the class — and the per-test hosts they build — share its database and virtual host. The database is reset after each test, but the queues are not purged, so a message that one test leaves in a queue is delivered during the next test of the class. Wait for the messages a test publishes before the test ends.
 

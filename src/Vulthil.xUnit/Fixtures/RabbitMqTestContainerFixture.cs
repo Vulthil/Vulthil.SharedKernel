@@ -1,8 +1,6 @@
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit.Sdk;
 
 namespace Vulthil.xUnit.Fixtures;
@@ -71,33 +69,20 @@ public abstract class RabbitMqTestContainerFixture<TBuilderEntity, TContainerEnt
 
     private sealed class VirtualHostScope(
         RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity> fixture,
-        string virtualHost) : ITestContainerWithConnectionString
+        string virtualHost)
+        : TestContainerWithConnectionStringScope<RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>>(fixture, virtualHost)
     {
-        public string ConnectionString => fixture.BuildScopedConnectionString(virtualHost);
+        private readonly string _virtualHost = virtualHost;
 
-        public string ConnectionStringKey => fixture.ConnectionStringKey;
+        public override string ConnectionString => Container.BuildScopedConnectionString(_virtualHost);
 
-        public void ConfigureWebHost(IWebHostBuilder builder) => fixture.ConfigureWebHost(builder);
-
-        public void ConfigureServices(IServiceCollection services) => fixture.ConfigureServices(services);
-
-        public async ValueTask InitializeAsync()
+        protected override async ValueTask CreateNamespaceAsync(string namespaceName)
         {
-            await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "add_vhost", virtualHost).ConfigureAwait(false);
-            await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "set_permissions", "-p", virtualHost, fixture.VirtualHostUsername, ".*", ".*", ".*").ConfigureAwait(false);
+            await Container.ExecuteBrokerCommandAsync("rabbitmqctl", "add_vhost", namespaceName).ConfigureAwait(false);
+            await Container.ExecuteBrokerCommandAsync("rabbitmqctl", "set_permissions", "-p", namespaceName, Container.VirtualHostUsername, ".*", ".*", ".*").ConfigureAwait(false);
         }
 
-        public async ValueTask DisposeAsync()
-        {
-            try
-            {
-                await fixture.ExecuteBrokerCommandAsync("rabbitmqctl", "delete_vhost", virtualHost).ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                TestContext.Current.SendDiagnosticMessage(
-                    $"Deleting virtual host '{virtualHost}' failed; it is removed with the container: {exception.Message}");
-            }
-        }
+        protected override ValueTask DeleteNamespaceAsync(string namespaceName) =>
+            new(Container.ExecuteBrokerCommandAsync("rabbitmqctl", "delete_vhost", namespaceName));
     }
 }

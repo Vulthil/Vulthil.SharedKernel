@@ -171,8 +171,8 @@ internal sealed class TestHostScope : IAsyncDisposable
     private static ITestContainer CreateScopeView(ITestContainer container, string scopeId) => container switch
     {
         ITestContainerScopeProvider scopeProvider => scopeProvider.CreateScope(scopeId),
-        ITestContainerWithConnectionString withConnectionString => new TestContainerWithConnectionStringScope(withConnectionString),
-        _ => new TestContainerScope(container),
+        ITestContainerWithConnectionString withConnectionString => new SharedContainerWithConnectionStringScope(withConnectionString),
+        _ => new SharedContainerScope(container),
     };
 
     /// <summary>

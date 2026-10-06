@@ -131,10 +131,10 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
     /// <summary>
     /// Drops the database <paramref name="databaseName"/> on the server. Invoked best-effort when a scope is
-    /// disposed; failures are reported as diagnostics rather than test failures, because the server container is
-    /// torn down with the host anyway. The default issues engine-appropriate DDL based on <see cref="DbAdapter"/> —
-    /// PostgreSQL terminates lingering (pooled) sessions with <c>WITH (FORCE)</c>, SQL Server switches the database
-    /// to single-user first — so consumers normally never override this.
+    /// disposed; any failure is reported as a diagnostic message rather than a test failure, because the server
+    /// container is torn down with the host anyway. The default issues engine-appropriate DDL based on
+    /// <see cref="DbAdapter"/> — PostgreSQL terminates lingering (pooled) sessions with <c>WITH (FORCE)</c>, SQL Server
+    /// switches the database to single-user first — so consumers normally never override this.
     /// </summary>
     /// <param name="databaseName">The name of the database to drop.</param>
     /// <returns>A task representing the asynchronous work.</returns>
@@ -197,7 +197,9 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     private sealed class DatabaseScope(
         TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity> fixture,
         string connectionString,
-        string? databaseName) : ITestDatabaseContainer
+        string? databaseName)
+        : TestContainerWithConnectionStringScope<TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>>(fixture, databaseName),
+            ITestDatabaseContainer
     {
         private const int MaxMigrationAttempts = 10;
         private const int MigrationRetryDelayMilliseconds = 250;
@@ -205,39 +207,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
         private Respawner? _respawner;
         private bool _hasBeenMigrated;
 
-        public string ConnectionString => connectionString;
-
-        public string ConnectionStringKey => fixture.ConnectionStringKey;
-
-        public void ConfigureWebHost(IWebHostBuilder builder) => fixture.ConfigureWebHost(builder);
-
-        public void ConfigureServices(IServiceCollection services) => fixture.ConfigureServices(services);
-
-        public async ValueTask InitializeAsync()
-        {
-            if (databaseName is not null)
-            {
-                await fixture.CreateDatabaseAsync(databaseName).ConfigureAwait(false);
-            }
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (databaseName is null)
-            {
-                return;
-            }
-
-            try
-            {
-                await fixture.DropDatabaseAsync(databaseName).ConfigureAwait(false);
-            }
-            catch (DbException exception)
-            {
-                TestContext.Current.SendDiagnosticMessage(
-                    $"Dropping scoped database '{databaseName}' failed; it is removed with the container: {exception.Message}");
-            }
-        }
+        public override string ConnectionString => connectionString;
 
         public async ValueTask MigrateDatabase(IServiceProvider serviceProvider)
         {
@@ -286,6 +256,10 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
             await respawner.ResetAsync(connection).ConfigureAwait(false);
         }
 
+        protected override ValueTask CreateNamespaceAsync(string namespaceName) => new(Container.CreateDatabaseAsync(namespaceName));
+
+        protected override ValueTask DeleteNamespaceAsync(string namespaceName) => new(Container.DropDatabaseAsync(namespaceName));
+
         private async ValueTask<Respawner> GetOrCreateRespawnerAsync()
         {
             if (_respawner is not null)
@@ -297,7 +271,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
             await using var _ = connection.ConfigureAwait(false);
             _respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
             {
-                DbAdapter = fixture.DbAdapter,
+                DbAdapter = Container.DbAdapter,
                 WithReseed = true,
                 TablesToIgnore = ["__EFMigrationsHistory"],
             }).ConfigureAwait(false);
@@ -306,9 +280,9 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
         private async Task<DbConnection> OpenScopedConnectionAsync()
         {
-            var connection = fixture.DbProviderFactory.CreateConnection()
+            var connection = Container.DbProviderFactory.CreateConnection()
                 ?? throw new InvalidOperationException(
-                    $"'{fixture.DbProviderFactory.GetType().Name}' does not supply a DbConnection.");
+                    $"'{Container.DbProviderFactory.GetType().Name}' does not supply a DbConnection.");
 
             try
             {

@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.CosmosDb;
 using Vulthil.xUnit.Fixtures;
-using Xunit;
 using Xunit.Sdk;
 
 namespace Vulthil.xUnit.Cosmos;
@@ -164,34 +162,17 @@ public abstract class CosmosTestContainerFixture<TDbContext>
     }
 
     private sealed class CosmosDatabaseScope(CosmosTestContainerFixture<TDbContext> fixture, string databaseName)
-        : ITestContainerWithConnectionString, IStartupResource, IResettableResource
+        : TestContainerWithConnectionStringScope<CosmosTestContainerFixture<TDbContext>>(fixture, databaseName), IStartupResource, IResettableResource
     {
-        public string ConnectionString => fixture.ConnectionString;
+        private readonly string _databaseName = databaseName;
 
-        public string ConnectionStringKey => fixture.ConnectionStringKey;
-
-        public void ConfigureWebHost(IWebHostBuilder builder) => fixture.ConfigureWebHost(builder);
-
-        public void ConfigureServices(IServiceCollection services) =>
-            services.AddDbContext<TDbContext>(options => fixture.ApplyCosmosOptions(options, databaseName));
-
-        public ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public override void ConfigureServices(IServiceCollection services) =>
+            services.AddDbContext<TDbContext>(options => Container.ApplyCosmosOptions(options, _databaseName));
 
         public ValueTask InitializeAsync(IServiceProvider serviceProvider) => EnsureDatabaseCreatedAsync(serviceProvider);
 
         public ValueTask ResetAsync(IServiceProvider serviceProvider) => RecreateDatabaseAsync(serviceProvider);
 
-        public async ValueTask DisposeAsync()
-        {
-            try
-            {
-                await fixture.DropDatabaseAsync(databaseName).ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                TestContext.Current.SendDiagnosticMessage(
-                    $"Deleting scoped Cosmos database '{databaseName}' failed; it is removed with the container: {exception.Message}");
-            }
-        }
+        protected override ValueTask DeleteNamespaceAsync(string namespaceName) => Container.DropDatabaseAsync(namespaceName);
     }
 }

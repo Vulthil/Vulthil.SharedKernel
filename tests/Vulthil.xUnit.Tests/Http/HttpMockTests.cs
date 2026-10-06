@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Vulthil.xUnit.Http;
 
@@ -239,6 +240,28 @@ public sealed class HttpMockTests : BaseUnitTestCase
         captured.Method.ShouldBe(HttpMethod.Put);
         captured.RequestUri.ShouldBe(uri);
         captured.Body.ShouldBe("body");
+    }
+
+    [Fact]
+    public async Task ReceivedRequestsCaptureTheRequestAndContentHeaders()
+    {
+        // Arrange
+        Target.On(HttpMethod.Post, "/orders").RespondWith(HttpStatusCode.Accepted);
+        using var client = CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Post, Url("/orders"))
+        {
+            Content = JsonContent.Create(new TestPayload("Ada")),
+        };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "test-token");
+
+        // Act
+        using var response = await client.SendAsync(request, CancellationToken);
+
+        // Assert
+        var captured = Target.ReceivedRequests.ShouldHaveSingleItem();
+        captured.Headers["authorization"].ShouldHaveSingleItem().ShouldBe("Bearer test-token");
+        captured.Headers["Content-Type"].ShouldHaveSingleItem().ShouldBe("application/json; charset=utf-8");
+        captured.Headers.ContainsKey("X-Not-Sent").ShouldBeFalse();
     }
 
     private static Uri Url(string path) => new($"http://localhost{path}");

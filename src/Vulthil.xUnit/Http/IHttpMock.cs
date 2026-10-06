@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Net;
 
 namespace Vulthil.xUnit.Http;
@@ -19,6 +20,9 @@ public interface IHttpMock : IResettableResource
     /// Begins configuring a stubbed response for requests whose method and absolute path match.
     /// The <paramref name="pathPattern"/> is matched against the request's absolute path and supports <c>*</c> wildcards.
     /// </summary>
+    /// <remarks>
+    /// When several rules match a request, the rule registered first wins, so register specific rules before general ones.
+    /// </remarks>
     /// <param name="method">The HTTP method to match.</param>
     /// <param name="pathPattern">The absolute-path pattern to match, e.g. <c>/users/*/repos</c>.</param>
     /// <returns>A builder for configuring the response.</returns>
@@ -27,6 +31,9 @@ public interface IHttpMock : IResettableResource
     /// <summary>
     /// Begins configuring a stubbed response for requests matching a custom predicate.
     /// </summary>
+    /// <remarks>
+    /// When several rules match a request, the rule registered first wins, so register specific rules before general ones.
+    /// </remarks>
     /// <param name="predicate">The request predicate to match.</param>
     /// <returns>A builder for configuring the response.</returns>
     IHttpMockResponseBuilder On(Func<HttpRequestMessage, bool> predicate);
@@ -102,4 +109,10 @@ public sealed class CapturedHttpRequest(HttpMethod method, Uri? requestUri, stri
     /// Gets the body of the captured request as a string, or <see langword="null"/> if there was no body.
     /// </summary>
     public string? Body { get; } = body;
+    /// <summary>
+    /// Gets the headers of the captured request, content headers such as <c>Content-Type</c> included. Header names are
+    /// matched case-insensitively.
+    /// </summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> Headers { get; init; } =
+        ReadOnlyDictionary<string, IReadOnlyList<string>>.Empty;
 }

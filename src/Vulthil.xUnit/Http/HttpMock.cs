@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -65,11 +66,12 @@ internal sealed class HttpMock : IHttpMock
     private async Task<HttpResponseMessage> HandleAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var body = request.Content is null ? null : await request.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        var captured = new CapturedHttpRequest(request.Method, request.RequestUri, body) { Headers = CaptureHeaders(request) };
 
         MockRule? matched;
         lock (_gate)
         {
-            _received.Add(new CapturedHttpRequest(request.Method, request.RequestUri, body));
+            _received.Add(captured);
             matched = _rules.FirstOrDefault(rule => rule.Matches(request));
         }
 
@@ -86,6 +88,25 @@ internal sealed class HttpMock : IHttpMock
         }
 
         return await matched.RespondAsync(request, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static ReadOnlyDictionary<string, IReadOnlyList<string>> CaptureHeaders(HttpRequestMessage request)
+    {
+        var headers = new Dictionary<string, IReadOnlyList<string>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (name, values) in request.Headers)
+        {
+            headers[name] = [.. values];
+        }
+
+        if (request.Content is not null)
+        {
+            foreach (var (name, values) in request.Content.Headers)
+            {
+                headers[name] = [.. values];
+            }
+        }
+
+        return headers.AsReadOnly();
     }
 
     private static Regex BuildPathRegex(string pathPattern)

@@ -267,7 +267,7 @@ A scope lives as long as its factory: one test class. All tests of the class —
 
 ### Mocking outbound HTTP dependencies
 
-For a service that calls an external API through an `HttpClient` from `IHttpClientFactory`, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both **typed** clients (`AddHttpClient<TClient, ...>()`) and **named** clients (`AddHttpClient("name")`) are supported; for typed clients the implementation type does not need to be accessible:
+For a service that calls an external API through an `HttpClient` from `IHttpClientFactory`, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both **typed** clients (`AddHttpClient<TClient, ...>()`, generic client types included) and **named** clients (`AddHttpClient("name")`) are supported; for typed clients the implementation type does not need to be accessible:
 
 ```csharp
 public sealed class AppWebFactory : BaseWebApplicationFactory<Program>
@@ -304,6 +304,18 @@ public async Task Uses_external_forecast()
     HttpMock<IWeatherClient>().ReceivedRequests
         .ShouldContain(r => r.RequestUri!.AbsolutePath == "/forecast/london");
 }
+```
+
+> [!IMPORTANT]
+> When several rules match a request, the rule registered **first** wins. Moq and NSubstitute work the other way
+> around: there the last setup wins. Register specific rules before general ones.
+
+`ReceivedRequests` keeps the method, the URI, the headers and the body of each request. Header names are
+case-insensitive:
+
+```csharp
+var request = HttpMock<IWeatherClient>().ReceivedRequests.ShouldHaveSingleItem();
+request.Headers["Authorization"].ShouldHaveSingleItem().ShouldBe("Bearer test-token");
 ```
 
 Mock state is reset after each test (like the database), so stubs and captured requests never leak between tests. Under the hood the mock implements `IResettableResource`; database containers implement it too, and the test case resets every registered resettable resource in its teardown. A WireMock-based or other `IHttpMock` implementation can be substituted if you need richer matching, but the built-in mock has no external dependency.

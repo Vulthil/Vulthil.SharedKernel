@@ -141,6 +141,28 @@ var result = await polling;
 crosses several ticks can start fewer attempts than ticks, because <code>PeriodicTimer</code> merges a tick that fires before
 the poll has taken the previous one. To run exactly one attempt per tick, advance by one tick, wait until that
 attempt has run, and then advance again.</p>
+<h3 id="exceptions-as-failed-attempts">Exceptions as failed attempts</h3>
+<p>An exception from the polled function ends the poll and reaches the caller. To poll through expected, temporary
+failures, such as a refused connection while a service starts, set <code>PollingOptions.TreatAsFailedAttempt</code> to a filter.
+An exception that the filter accepts counts as a failed attempt: the poll records it as a <code>PollingExceptionError</code>,
+which keeps the exception and its stack trace, and tries again at the next tick. Cancellation by the poll's own
+timeout or by your token never counts as a failed attempt.</p>
+<p>A check that is a plain yes or no can return <code>bool</code>. Each <code>false</code> records <code>Polling.ConditionNotMet</code>.</p>
+<pre><code class="lang-csharp">var options = new PollingOptions(TimeSpan.FromSeconds(30))
+{
+    TimerTick = TimeSpan.FromMilliseconds(500),
+    TreatAsFailedAttempt = exception =&gt; exception is HttpRequestException,
+};
+
+var result = await Polling.WaitAsync(
+    options,
+    async ct =&gt;
+    {
+        using var response = await httpClient.GetAsync(&quot;/health&quot;, ct);
+        return response.IsSuccessStatusCode;
+    },
+    TestContext.Current.CancellationToken);
+</code></pre>
 <h2 id="http-responses">HTTP responses</h2>
 <p><code>GetResponseAsync&lt;T&gt;</code> asserts an <code>HttpResponseMessage</code> indicates success and deserializes its JSON body:</p>
 <pre><code class="lang-csharp">var response = await client.GetAsync(&quot;/weather/london&quot;);

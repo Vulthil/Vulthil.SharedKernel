@@ -167,6 +167,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Vulthil.Extensions.Testing.PollingExceptionError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Vulthil.Extensions.Testing.PollingExceptionError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Vulthil.Extensions.Testing.PollingExceptionError",
+      "Summary": "<p sourcefile=\"api/Vulthil.Extensions.Testing.PollingExceptionError.yml\" sourcestartlinenumber=\"1\">Represents a polling attempt in which the polled function threw an exception that\n<xref href=\"Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt\" data-throw-if-not-resolved=\"false\"></xref> accepted as a failed attempt.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Extensions.Testing.PollingOptions.yml",
       "output": {
         ".html": {

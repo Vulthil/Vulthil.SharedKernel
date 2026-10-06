@@ -276,12 +276,27 @@ references:
   commentId: T:Vulthil.Extensions.Testing.Polling
   fullName: Vulthil.Extensions.Testing.Polling
   nameWithType: Polling
+- uid: Vulthil.Extensions.Testing.Polling.ConditionNotMet
+  name: ConditionNotMet
+  href: api/Vulthil.Extensions.Testing.Polling.html#Vulthil_Extensions_Testing_Polling_ConditionNotMet
+  commentId: F:Vulthil.Extensions.Testing.Polling.ConditionNotMet
+  fullName: Vulthil.Extensions.Testing.Polling.ConditionNotMet
+  nameWithType: Polling.ConditionNotMet
 - uid: Vulthil.Extensions.Testing.Polling.Timeout
   name: Timeout
   href: api/Vulthil.Extensions.Testing.Polling.html#Vulthil_Extensions_Testing_Polling_Timeout
   commentId: F:Vulthil.Extensions.Testing.Polling.Timeout
   fullName: Vulthil.Extensions.Testing.Polling.Timeout
   nameWithType: Polling.Timeout
+- uid: Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)
+  name: WaitAsync(TimeSpan, Func<CancellationToken, Task<bool>>, CancellationToken)
+  href: api/Vulthil.Extensions.Testing.Polling.html#Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_Boolean___System_Threading_CancellationToken_
+  commentId: M:Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)
+  name.vb: WaitAsync(TimeSpan, Func(Of CancellationToken, Task(Of Boolean)), CancellationToken)
+  fullName: Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<bool>>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task(Of Boolean)), System.Threading.CancellationToken)
+  nameWithType: Polling.WaitAsync(TimeSpan, Func<CancellationToken, Task<bool>>, CancellationToken)
+  nameWithType.vb: Polling.WaitAsync(TimeSpan, Func(Of CancellationToken, Task(Of Boolean)), CancellationToken)
 - uid: Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result}},System.Threading.CancellationToken)
   name: WaitAsync(TimeSpan, Func<CancellationToken, Task<Result>>, CancellationToken)
   href: api/Vulthil.Extensions.Testing.Polling.html#Vulthil_Extensions_Testing_Polling_WaitAsync_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___System_Threading_CancellationToken_
@@ -336,6 +351,15 @@ references:
   fullName.vb: Vulthil.Extensions.Testing.Polling.WaitAsync(System.TimeSpan, System.Func(Of System.Threading.Tasks.Task(Of Vulthil.Results.Result)), System.TimeSpan, System.Threading.CancellationToken)
   nameWithType: Polling.WaitAsync(TimeSpan, Func<Task<Result>>, TimeSpan, CancellationToken)
   nameWithType.vb: Polling.WaitAsync(TimeSpan, Func(Of Task(Of Result)), TimeSpan, CancellationToken)
+- uid: Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)
+  name: WaitAsync(PollingOptions, Func<CancellationToken, Task<bool>>, CancellationToken)
+  href: api/Vulthil.Extensions.Testing.Polling.html#Vulthil_Extensions_Testing_Polling_WaitAsync_Vulthil_Extensions_Testing_PollingOptions_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_System_Boolean___System_Threading_CancellationToken_
+  commentId: M:Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)
+  name.vb: WaitAsync(PollingOptions, Func(Of CancellationToken, Task(Of Boolean)), CancellationToken)
+  fullName: Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<bool>>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task(Of Boolean)), System.Threading.CancellationToken)
+  nameWithType: Polling.WaitAsync(PollingOptions, Func<CancellationToken, Task<bool>>, CancellationToken)
+  nameWithType.vb: Polling.WaitAsync(PollingOptions, Func(Of CancellationToken, Task(Of Boolean)), CancellationToken)
 - uid: Vulthil.Extensions.Testing.Polling.WaitAsync(Vulthil.Extensions.Testing.PollingOptions,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Vulthil.Results.Result}},System.Threading.CancellationToken)
   name: WaitAsync(PollingOptions, Func<CancellationToken, Task<Result>>, CancellationToken)
   href: api/Vulthil.Extensions.Testing.Polling.html#Vulthil_Extensions_Testing_Polling_WaitAsync_Vulthil_Extensions_Testing_PollingOptions_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Vulthil_Results_Result___System_Threading_CancellationToken_
@@ -469,6 +493,44 @@ references:
   isSpec: "True"
   fullName: Vulthil.Extensions.Testing.PollingError.FromErrors
   nameWithType: PollingError.FromErrors
+- uid: Vulthil.Extensions.Testing.PollingExceptionError
+  name: PollingExceptionError
+  href: api/Vulthil.Extensions.Testing.PollingExceptionError.html
+  commentId: T:Vulthil.Extensions.Testing.PollingExceptionError
+  fullName: Vulthil.Extensions.Testing.PollingExceptionError
+  nameWithType: PollingExceptionError
+- uid: Vulthil.Extensions.Testing.PollingExceptionError.#ctor(System.Exception)
+  name: PollingExceptionError(Exception)
+  href: api/Vulthil.Extensions.Testing.PollingExceptionError.html#Vulthil_Extensions_Testing_PollingExceptionError__ctor_System_Exception_
+  commentId: M:Vulthil.Extensions.Testing.PollingExceptionError.#ctor(System.Exception)
+  name.vb: New(Exception)
+  fullName: Vulthil.Extensions.Testing.PollingExceptionError.PollingExceptionError(System.Exception)
+  fullName.vb: Vulthil.Extensions.Testing.PollingExceptionError.New(System.Exception)
+  nameWithType: PollingExceptionError.PollingExceptionError(Exception)
+  nameWithType.vb: PollingExceptionError.New(Exception)
+- uid: Vulthil.Extensions.Testing.PollingExceptionError.#ctor*
+  name: PollingExceptionError
+  href: api/Vulthil.Extensions.Testing.PollingExceptionError.html#Vulthil_Extensions_Testing_PollingExceptionError__ctor_
+  commentId: Overload:Vulthil.Extensions.Testing.PollingExceptionError.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Vulthil.Extensions.Testing.PollingExceptionError.PollingExceptionError
+  fullName.vb: Vulthil.Extensions.Testing.PollingExceptionError.New
+  nameWithType: PollingExceptionError.PollingExceptionError
+  nameWithType.vb: PollingExceptionError.New
+- uid: Vulthil.Extensions.Testing.PollingExceptionError.Exception
+  name: Exception
+  href: api/Vulthil.Extensions.Testing.PollingExceptionError.html#Vulthil_Extensions_Testing_PollingExceptionError_Exception
+  commentId: P:Vulthil.Extensions.Testing.PollingExceptionError.Exception
+  fullName: Vulthil.Extensions.Testing.PollingExceptionError.Exception
+  nameWithType: PollingExceptionError.Exception
+- uid: Vulthil.Extensions.Testing.PollingExceptionError.Exception*
+  name: Exception
+  href: api/Vulthil.Extensions.Testing.PollingExceptionError.html#Vulthil_Extensions_Testing_PollingExceptionError_Exception_
+  commentId: Overload:Vulthil.Extensions.Testing.PollingExceptionError.Exception
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Testing.PollingExceptionError.Exception
+  nameWithType: PollingExceptionError.Exception
 - uid: Vulthil.Extensions.Testing.PollingOptions
   name: PollingOptions
   href: api/Vulthil.Extensions.Testing.PollingOptions.html
@@ -533,6 +595,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.Extensions.Testing.PollingOptions.TimerTick
   nameWithType: PollingOptions.TimerTick
+- uid: Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt
+  name: TreatAsFailedAttempt
+  href: api/Vulthil.Extensions.Testing.PollingOptions.html#Vulthil_Extensions_Testing_PollingOptions_TreatAsFailedAttempt
+  commentId: P:Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt
+  fullName: Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt
+  nameWithType: PollingOptions.TreatAsFailedAttempt
+- uid: Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt*
+  name: TreatAsFailedAttempt
+  href: api/Vulthil.Extensions.Testing.PollingOptions.html#Vulthil_Extensions_Testing_PollingOptions_TreatAsFailedAttempt_
+  commentId: Overload:Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt
+  isSpec: "True"
+  fullName: Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt
+  nameWithType: PollingOptions.TreatAsFailedAttempt
 - uid: Vulthil.Extensions.Testing.PollingResult
   name: PollingResult
   href: api/Vulthil.Extensions.Testing.PollingResult.html

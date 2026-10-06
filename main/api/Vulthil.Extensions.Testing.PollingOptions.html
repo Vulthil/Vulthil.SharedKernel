@@ -304,6 +304,43 @@ the poll then ticks and times out only when the test advances that clock.</p>
 
 
 
+  <a id="Vulthil_Extensions_Testing_PollingOptions_TreatAsFailedAttempt_" data-uid="Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt*"></a>
+
+  <h3 id="Vulthil_Extensions_Testing_PollingOptions_TreatAsFailedAttempt" data-uid="Vulthil.Extensions.Testing.PollingOptions.TreatAsFailedAttempt">
+  TreatAsFailedAttempt
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/PollingOptions.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the filter that decides which exceptions from the polled function count as failed attempts.
+Default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>: any exception ends the poll and reaches the caller.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Func&lt;Exception, bool&gt;? TreatAsFailedAttempt { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception">Exception</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="Vulthil_Extensions_Testing_PollingOptions_TreatAsFailedAttempt_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>An exception that the filter accepts is recorded as a <a class="xref" href="Vulthil.Extensions.Testing.PollingExceptionError.html">PollingExceptionError</a>, and the poll tries again
+at the next tick. Cancellation by the poll's own timeout or by the caller's token never counts as a failed attempt.</p>
+</div>
+
+
+
+
 
 </article>
 

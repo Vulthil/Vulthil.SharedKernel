@@ -157,7 +157,7 @@ Class HttpResponseMessageExtensions  <a class="header-action link-secondary" tit
 
   <h3 id="Vulthil_Extensions_Testing_HttpResponseMessageExtensions_GetResponseAsync__1_System_Net_Http_HttpResponseMessage_System_Threading_CancellationToken_" data-uid="Vulthil.Extensions.Testing.HttpResponseMessageExtensions.GetResponseAsync``1(System.Net.Http.HttpResponseMessage,System.Threading.CancellationToken)">
   GetResponseAsync&lt;TResponse&gt;(HttpResponseMessage?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/HttpResponseMessageExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Extensions.Testing/HttpResponseMessageExtensions.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Asserts the response indicates success, then reads its JSON content and deserializes it into
@@ -200,6 +200,19 @@ non-success status code, or its body is empty or deserializes to <a href="https:
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p><code class="paramref">response</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httprequestexception">HttpRequestException</a></dt>
+    <dd><p>The response has a non-success status code. The message holds the status code, the reason phrase and the
+response body (its first 4,096 characters), so a failing test shows why the call failed.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>The body is empty or deserializes to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
 
 
 

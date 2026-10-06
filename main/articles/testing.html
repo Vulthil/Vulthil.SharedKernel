@@ -327,7 +327,7 @@ public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebAppli
 <p>The view creates the namespace when the factory starts and deletes it when the class finishes. Deleting is best-effort: a failure becomes a diagnostic message instead of a test failure, because the namespace goes away with the container anyway. The base view never resets the shared container; implement <code>IResettableResource</code> on the view when its namespace can be reset between tests.</p>
 <p>A scope lives as long as its factory: one test class. All tests of the class — and the per-test hosts they build — share its database and virtual host. The database is reset after each test, but the queues are not purged, so a message that one test leaves in a queue is delivered during the next test of the class. Wait for the messages a test publishes before the test ends.</p>
 <h3 id="mocking-outbound-http-dependencies">Mocking outbound HTTP dependencies</h3>
-<p>For a service that calls an external API through an <code>HttpClient</code> from <code>IHttpClientFactory</code>, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both <strong>typed</strong> clients (<code>AddHttpClient&lt;TClient, ...&gt;()</code>) and <strong>named</strong> clients (<code>AddHttpClient(&quot;name&quot;)</code>) are supported; for typed clients the implementation type does not need to be accessible:</p>
+<p>For a service that calls an external API through an <code>HttpClient</code> from <code>IHttpClientFactory</code>, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both <strong>typed</strong> clients (<code>AddHttpClient&lt;TClient, ...&gt;()</code>, generic client types included) and <strong>named</strong> clients (<code>AddHttpClient(&quot;name&quot;)</code>) are supported; for typed clients the implementation type does not need to be accessible:</p>
 <pre><code class="lang-csharp">public sealed class AppWebFactory : BaseWebApplicationFactory&lt;Program&gt;
 {
     public AppWebFactory(AppContainerHost containerHost) : base(containerHost)
@@ -358,6 +358,16 @@ public async Task Uses_external_forecast()
     HttpMock&lt;IWeatherClient&gt;().ReceivedRequests
         .ShouldContain(r =&gt; r.RequestUri!.AbsolutePath == &quot;/forecast/london&quot;);
 }
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>When several rules match a request, the rule registered <strong>first</strong> wins. Moq and NSubstitute work the other way
+around: there the last setup wins. Register specific rules before general ones.</p>
+</div>
+<p><code>ReceivedRequests</code> keeps the method, the URI, the headers and the body of each request. Header names are
+case-insensitive:</p>
+<pre><code class="lang-csharp">var request = HttpMock&lt;IWeatherClient&gt;().ReceivedRequests.ShouldHaveSingleItem();
+request.Headers[&quot;Authorization&quot;].ShouldHaveSingleItem().ShouldBe(&quot;Bearer test-token&quot;);
 </code></pre>
 <p>Mock state is reset after each test (like the database), so stubs and captured requests never leak between tests. Under the hood the mock implements <code>IResettableResource</code>; database containers implement it too, and the test case resets every registered resettable resource in its teardown. A WireMock-based or other <code>IHttpMock</code> implementation can be substituted if you need richer matching, but the built-in mock has no external dependency.</p>
 <h3 id="resetting-your-own-test-doubles">Resetting your own test doubles</h3>

@@ -168,6 +168,9 @@ var result = await Polling.WaitAsync(
 <pre><code class="lang-csharp">var response = await client.GetAsync(&quot;/weather/london&quot;);
 var forecast = await response.GetResponseAsync&lt;Forecast&gt;();
 </code></pre>
+<p>When the status code is not a success, <code>GetResponseAsync&lt;T&gt;</code> throws an <code>HttpRequestException</code> whose message holds the
+status code, the reason phrase and the response body (its first 4,096 characters). A failing test then shows why the
+call failed, for example the ProblemDetails that the API returned.</p>
 <h2 id="resettable-test-state">Resettable test state</h2>
 <p><code>IResettableTestState</code> marks state that a test double keeps in a test host's services — captured messages, stubs,
 an in-memory store. Register the double as an <code>IResettableTestState</code>, and a test framework adapter resets it after

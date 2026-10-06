@@ -13593,6 +13593,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.xUnit.Http.CapturedHttpRequest.Body
   nameWithType: CapturedHttpRequest.Body
+- uid: Vulthil.xUnit.Http.CapturedHttpRequest.Headers
+  name: Headers
+  href: api/Vulthil.xUnit.Http.CapturedHttpRequest.html#Vulthil_xUnit_Http_CapturedHttpRequest_Headers
+  commentId: P:Vulthil.xUnit.Http.CapturedHttpRequest.Headers
+  fullName: Vulthil.xUnit.Http.CapturedHttpRequest.Headers
+  nameWithType: CapturedHttpRequest.Headers
+- uid: Vulthil.xUnit.Http.CapturedHttpRequest.Headers*
+  name: Headers
+  href: api/Vulthil.xUnit.Http.CapturedHttpRequest.html#Vulthil_xUnit_Http_CapturedHttpRequest_Headers_
+  commentId: Overload:Vulthil.xUnit.Http.CapturedHttpRequest.Headers
+  isSpec: "True"
+  fullName: Vulthil.xUnit.Http.CapturedHttpRequest.Headers
+  nameWithType: CapturedHttpRequest.Headers
 - uid: Vulthil.xUnit.Http.CapturedHttpRequest.Method
   name: Method
   href: api/Vulthil.xUnit.Http.CapturedHttpRequest.html#Vulthil_xUnit_Http_CapturedHttpRequest_Method

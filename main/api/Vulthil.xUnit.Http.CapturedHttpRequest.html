@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Http_CapturedHttpRequest" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest" class="text-break">
-Class CapturedHttpRequest  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L91"><i class="bi bi-code-slash"></i></a>
+Class CapturedHttpRequest  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -161,7 +161,7 @@ Class CapturedHttpRequest  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_xUnit_Http_CapturedHttpRequest__ctor_System_Net_Http_HttpMethod_System_Uri_System_String_" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest.#ctor(System.Net.Http.HttpMethod,System.Uri,System.String)">
   CapturedHttpRequest(HttpMethod, Uri?, string?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>A snapshot of a request received by an <a class="xref" href="Vulthil.xUnit.Http.IHttpMock.html">IHttpMock</a>, captured for assertions.</p>
@@ -204,7 +204,7 @@ Class CapturedHttpRequest  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_xUnit_Http_CapturedHttpRequest_Body" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest.Body">
   Body
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the body of the captured request as a string, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if there was no body.</p>
@@ -232,11 +232,44 @@ Class CapturedHttpRequest  <a class="header-action link-secondary" title="View s
 
 
 
+  <a id="Vulthil_xUnit_Http_CapturedHttpRequest_Headers_" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest.Headers*"></a>
+
+  <h3 id="Vulthil_xUnit_Http_CapturedHttpRequest_Headers" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest.Headers">
+  Headers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the headers of the captured request, content headers such as <code>Content-Type</code> included. Header names are
+matched case-insensitively.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyDictionary&lt;string, IReadOnlyList&lt;string&gt;&gt; Headers { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlydictionary-2">IReadOnlyDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Vulthil_xUnit_Http_CapturedHttpRequest_Method_" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest.Method*"></a>
 
   <h3 id="Vulthil_xUnit_Http_CapturedHttpRequest_Method" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest.Method">
   Method
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L103"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the HTTP method of the captured request.</p>
@@ -268,7 +301,7 @@ Class CapturedHttpRequest  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_xUnit_Http_CapturedHttpRequest_RequestUri" data-uid="Vulthil.xUnit.Http.CapturedHttpRequest.RequestUri">
   RequestUri
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L107"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the URI of the captured request, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if none was set.</p>
@@ -300,7 +333,7 @@ Class CapturedHttpRequest  <a class="header-action link-secondary" title="View s
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L91" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L98" class="edit-link">Edit this page</a>
         </div>
 
 

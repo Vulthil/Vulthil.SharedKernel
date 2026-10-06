@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_xUnit_Http_IHttpMock" data-uid="Vulthil.xUnit.Http.IHttpMock" class="text-break">
-Interface IHttpMock  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Interface IHttpMock  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -142,7 +142,7 @@ retrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot
 
   <h3 id="Vulthil_xUnit_Http_IHttpMock_ReceivedRequests" data-uid="Vulthil.xUnit.Http.IHttpMock.ReceivedRequests">
   ReceivedRequests
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the requests received by this mock since the last reset, in the order they were sent.</p>
@@ -178,7 +178,7 @@ retrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot
 
   <h3 id="Vulthil_xUnit_Http_IHttpMock_On_System_Func_System_Net_Http_HttpRequestMessage_System_Boolean__" data-uid="Vulthil.xUnit.Http.IHttpMock.On(System.Func{System.Net.Http.HttpRequestMessage,System.Boolean})">
   On(Func&lt;HttpRequestMessage, bool&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Begins configuring a stubbed response for requests matching a custom predicate.</p>
@@ -209,6 +209,9 @@ retrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot
 
 
 
+  <h4 class="section" id="Vulthil_xUnit_Http_IHttpMock_On_System_Func_System_Net_Http_HttpRequestMessage_System_Boolean___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>When several rules match a request, the rule registered first wins, so register specific rules before general ones.</p>
+</div>
 
 
 
@@ -217,7 +220,7 @@ retrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot
 
   <h3 id="Vulthil_xUnit_Http_IHttpMock_On_System_Net_Http_HttpMethod_System_String_" data-uid="Vulthil.xUnit.Http.IHttpMock.On(System.Net.Http.HttpMethod,System.String)">
   On(HttpMethod, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Begins configuring a stubbed response for requests whose method and absolute path match.
@@ -252,6 +255,9 @@ The <code class="paramref">pathPattern</code> is matched against the request's a
 
 
 
+  <h4 class="section" id="Vulthil_xUnit_Http_IHttpMock_On_System_Net_Http_HttpMethod_System_String__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>When several rules match a request, the rule registered first wins, so register specific rules before general ones.</p>
+</div>
 
 
 
@@ -260,7 +266,7 @@ The <code class="paramref">pathPattern</code> is matched against the request's a
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Http/IHttpMock.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

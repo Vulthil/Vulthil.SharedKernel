@@ -19,6 +19,12 @@ public static class Polling
         Error.Failure("Polling.Timeout", "The poll timed out.");
 
     /// <summary>
+    /// Represents a failed attempt of a condition poll: the condition returned <see langword="false"/>.
+    /// </summary>
+    public static readonly Error ConditionNotMet =
+        Error.Failure("Polling.ConditionNotMet", "The condition was not met.");
+
+    /// <summary>
     /// Polls the provided function at one-second intervals until it returns a successful result or the timeout expires.
     /// </summary>
     /// <typeparam name="T">The type of the expected value.</typeparam>
@@ -143,12 +149,18 @@ public static class Polling
         => PollAsync<T>(timeout, func, timerTick, timeProvider, cancellationToken);
 
     /// <summary>
-    /// Polls the provided function with the timeout, the interval and the clock of <paramref name="options"/> until it
-    /// returns a successful result or the timeout expires.
+    /// Polls the provided function with the settings of <paramref name="options"/> until it returns a successful result
+    /// or the timeout expires.
     /// The combined polling/timeout cancellation token is forwarded to the function so it can short-circuit work in progress.
     /// </summary>
+    /// <remarks>
+    /// An exception that <see cref="PollingOptions.TreatAsFailedAttempt"/> accepts counts as a failed attempt and is
+    /// recorded as a <see cref="PollingExceptionError"/>; any other exception ends the poll and reaches the caller.
+    /// </remarks>
     /// <typeparam name="T">The type of the expected value.</typeparam>
-    /// <param name="options">The timeout, the interval between polls, and the clock to poll on.</param>
+    /// <param name="options">
+    /// The timeout, the interval between polls, the clock to poll on, and the exceptions that count as failed attempts.
+    /// </param>
     /// <param name="func">The function to invoke each tick. Receives the shared cancellation token.</param>
     /// <param name="cancellationToken">A token to observe for cancellation. Linked internally with the polling timeout.</param>
     /// <returns>
@@ -166,7 +178,13 @@ public static class Polling
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        return await PollAsync<T>(options.Timeout, func, options.TimerTick, options.TimeProvider, cancellationToken)
+        return await PollAsync<T>(
+                options.Timeout,
+                func,
+                options.TimerTick,
+                options.TimeProvider,
+                options.TreatAsFailedAttempt,
+                cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -289,11 +307,17 @@ public static class Polling
         => PollAsync(timeout, func, timerTick, timeProvider, cancellationToken);
 
     /// <summary>
-    /// Polls the provided function with the timeout, the interval and the clock of <paramref name="options"/> until it
-    /// returns a successful result or the timeout expires.
+    /// Polls the provided function with the settings of <paramref name="options"/> until it returns a successful result
+    /// or the timeout expires.
     /// The combined polling/timeout cancellation token is forwarded to the function so it can short-circuit work in progress.
     /// </summary>
-    /// <param name="options">The timeout, the interval between polls, and the clock to poll on.</param>
+    /// <remarks>
+    /// An exception that <see cref="PollingOptions.TreatAsFailedAttempt"/> accepts counts as a failed attempt and is
+    /// recorded as a <see cref="PollingExceptionError"/>; any other exception ends the poll and reaches the caller.
+    /// </remarks>
+    /// <param name="options">
+    /// The timeout, the interval between polls, the clock to poll on, and the exceptions that count as failed attempts.
+    /// </param>
     /// <param name="func">The function to invoke each tick. Receives the shared cancellation token.</param>
     /// <param name="cancellationToken">A token to observe for cancellation. Linked internally with the polling timeout.</param>
     /// <returns>
@@ -311,7 +335,71 @@ public static class Polling
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        return await PollAsync(options.Timeout, func, options.TimerTick, options.TimeProvider, cancellationToken)
+        return await PollAsync(
+                options.Timeout,
+                func,
+                options.TimerTick,
+                options.TimeProvider,
+                options.TreatAsFailedAttempt,
+                cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Polls the provided condition at one-second intervals until it returns <see langword="true"/> or the timeout expires.
+    /// The combined polling/timeout cancellation token is forwarded to the condition so it can short-circuit work in progress.
+    /// </summary>
+    /// <param name="timeout">The maximum duration to poll.</param>
+    /// <param name="func">The condition to check each tick. Receives the shared cancellation token.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation. Linked internally with the polling timeout.</param>
+    /// <returns>
+    /// A <see cref="PollingResult"/> containing a success indication, or a <see cref="PollingError"/> that holds
+    /// <see cref="ConditionNotMet"/> for each check that returned <see langword="false"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="func"/> is <see langword="null"/>.</exception>
+    public static Task<PollingResult> WaitAsync(
+        TimeSpan timeout,
+        Func<CancellationToken, Task<bool>> func,
+        CancellationToken cancellationToken)
+        => PollAsync(timeout, ToResult(func), PollingOptions.DefaultTimerTick, TimeProvider.System, cancellationToken);
+
+    /// <summary>
+    /// Polls the provided condition with the settings of <paramref name="options"/> until it returns
+    /// <see langword="true"/> or the timeout expires.
+    /// The combined polling/timeout cancellation token is forwarded to the condition so it can short-circuit work in progress.
+    /// </summary>
+    /// <remarks>
+    /// An exception that <see cref="PollingOptions.TreatAsFailedAttempt"/> accepts counts as a failed attempt and is
+    /// recorded as a <see cref="PollingExceptionError"/>; any other exception ends the poll and reaches the caller.
+    /// </remarks>
+    /// <param name="options">
+    /// The timeout, the interval between polls, the clock to poll on, and the exceptions that count as failed attempts.
+    /// </param>
+    /// <param name="func">The condition to check each tick. Receives the shared cancellation token.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation. Linked internally with the polling timeout.</param>
+    /// <returns>
+    /// A <see cref="PollingResult"/> containing a success indication, or a <see cref="PollingError"/> that holds
+    /// <see cref="ConditionNotMet"/> for each check that returned <see langword="false"/> and a
+    /// <see cref="PollingExceptionError"/> for each exception that counted as a failed attempt.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="options"/>, its <see cref="PollingOptions.TimeProvider"/>, or <paramref name="func"/> is
+    /// <see langword="null"/>.
+    /// </exception>
+    public static async Task<PollingResult> WaitAsync(
+        PollingOptions options,
+        Func<CancellationToken, Task<bool>> func,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        return await PollAsync(
+                options.Timeout,
+                ToResult(func),
+                options.TimerTick,
+                options.TimeProvider,
+                options.TreatAsFailedAttempt,
+                cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -321,11 +409,21 @@ public static class Polling
         TimeSpan timerTick,
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
+        => PollAsync<T>(timeout, func, timerTick, timeProvider, treatAsFailedAttempt: null, cancellationToken);
+
+    private static Task<PollingResult<T>> PollAsync<T>(
+        TimeSpan timeout,
+        Func<CancellationToken, Task<Result<T>>>? func,
+        TimeSpan timerTick,
+        TimeProvider timeProvider,
+        Func<Exception, bool>? treatAsFailedAttempt,
+        CancellationToken cancellationToken)
         => PollAsync(
             timeout,
             func,
             timerTick,
             timeProvider,
+            treatAsFailedAttempt,
             static result => PollingResult<T>.CreateSuccess(result.Value),
             PollingResult<T>.CreateTimeout,
             cancellationToken);
@@ -336,11 +434,21 @@ public static class Polling
         TimeSpan timerTick,
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
+        => PollAsync(timeout, func, timerTick, timeProvider, treatAsFailedAttempt: null, cancellationToken);
+
+    private static Task<PollingResult> PollAsync(
+        TimeSpan timeout,
+        Func<CancellationToken, Task<Result>>? func,
+        TimeSpan timerTick,
+        TimeProvider timeProvider,
+        Func<Exception, bool>? treatAsFailedAttempt,
+        CancellationToken cancellationToken)
         => PollAsync(
             timeout,
             func,
             timerTick,
             timeProvider,
+            treatAsFailedAttempt,
             static _ => PollingResult.CreateSuccess(),
             PollingResult.CreateTimeout,
             cancellationToken);
@@ -350,6 +458,7 @@ public static class Polling
         Func<CancellationToken, Task<TResult>>? func,
         TimeSpan timerTick,
         TimeProvider timeProvider,
+        Func<Exception, bool>? treatAsFailedAttempt,
         Func<TResult, TPollingResult> onSuccess,
         Func<PollingError, TPollingResult> onTimeout,
         CancellationToken cancellationToken)
@@ -368,7 +477,17 @@ public static class Polling
         {
             do
             {
-                TResult result = await func(linkedCts.Token).ConfigureAwait(false);
+                TResult result;
+
+                try
+                {
+                    result = await func(linkedCts.Token).ConfigureAwait(false);
+                }
+                catch (Exception exception) when (IsFailedAttempt(exception, treatAsFailedAttempt, linkedCts.Token))
+                {
+                    errors.Add(new PollingExceptionError(exception));
+                    continue;
+                }
 
                 if (result.IsSuccess)
                 {
@@ -387,8 +506,25 @@ public static class Polling
         return onTimeout(PollingError.FromErrors(errors));
     }
 
-    // A null func passes through, so the core rejects it with ArgumentNullException when the poll is awaited,
-    // as it does for every other overload.
+    // The poll's own cancellation, by its timeout or by the caller's token, decides how the poll ends, so it never
+    // counts as a failed attempt.
+    private static bool IsFailedAttempt(
+        Exception exception,
+        Func<Exception, bool>? treatAsFailedAttempt,
+        CancellationToken pollToken)
+        => treatAsFailedAttempt is not null
+            && !(exception is OperationCanceledException && pollToken.IsCancellationRequested)
+            && treatAsFailedAttempt(exception);
+
+    // Both adapters pass a null func through, so the core rejects it with ArgumentNullException when the poll is
+    // awaited, as it does for every other overload.
     private static Func<CancellationToken, Task<TResult>>? IgnoreToken<TResult>(Func<Task<TResult>>? func)
         => func is null ? null : _ => func();
+
+    private static Func<CancellationToken, Task<Result>>? ToResult(Func<CancellationToken, Task<bool>>? func)
+        => func is null
+            ? null
+            : async cancellationToken => await func(cancellationToken).ConfigureAwait(false)
+                ? Result.Success()
+                : Result.Failure(ConditionNotMet);
 }

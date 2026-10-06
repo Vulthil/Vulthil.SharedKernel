@@ -65,6 +65,33 @@ crosses several ticks can start fewer attempts than ticks, because `PeriodicTime
 the poll has taken the previous one. To run exactly one attempt per tick, advance by one tick, wait until that
 attempt has run, and then advance again.
 
+### Exceptions as failed attempts
+
+An exception from the polled function ends the poll and reaches the caller. To poll through expected, temporary
+failures, such as a refused connection while a service starts, set `PollingOptions.TreatAsFailedAttempt` to a filter.
+An exception that the filter accepts counts as a failed attempt: the poll records it as a `PollingExceptionError`,
+which keeps the exception and its stack trace, and tries again at the next tick. Cancellation by the poll's own
+timeout or by your token never counts as a failed attempt.
+
+A check that is a plain yes or no can return `bool`. Each `false` records `Polling.ConditionNotMet`.
+
+```csharp
+var options = new PollingOptions(TimeSpan.FromSeconds(30))
+{
+    TimerTick = TimeSpan.FromMilliseconds(500),
+    TreatAsFailedAttempt = exception => exception is HttpRequestException,
+};
+
+var result = await Polling.WaitAsync(
+    options,
+    async ct =>
+    {
+        using var response = await httpClient.GetAsync("/health", ct);
+        return response.IsSuccessStatusCode;
+    },
+    TestContext.Current.CancellationToken);
+```
+
 ## HTTP responses
 
 `GetResponseAsync<T>` asserts an `HttpResponseMessage` indicates success and deserializes its JSON body:

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -176,6 +177,47 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task AStoredW3CTraceParentParentsTheRelaySpanOnTheCapturingTrace()
+    {
+        // Arrange
+        using var spans = new RelaySpanRecorder();
+        UseRootDispatchers(new RecordingDispatcher());
+        var store = UseStore(new InMemoryRelayStore([MessageTracedBy("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01")]));
+
+        // Act
+        var cycle = await Target.RunAsync(CancellationToken);
+
+        // Assert
+        cycle.Relayed.ShouldBe(1);
+        store.Failures.ShouldBeEmpty();
+        var span = spans.Started.ShouldHaveSingleItem();
+        span.OperationName.ShouldBe("OutboxPublishing");
+        span.TraceId.ToHexString().ShouldBe("0af7651916cd43dd8448eb211c80319c");
+        span.ParentSpanId.ToHexString().ShouldBe("b7ad6b7169203331");
+    }
+
+    [Theory]
+    [InlineData("|4bf92f35.b7ad6b7169203331.fcc528e8_")]
+    [InlineData("not a trace parent")]
+    public async Task AStoredTraceParentThatIsNotW3CStartsANewTraceInsteadOfFailingTheDelivery(string traceParent)
+    {
+        // Arrange
+        using var spans = new RelaySpanRecorder();
+        UseRootDispatchers(new RecordingDispatcher());
+        var store = UseStore(new InMemoryRelayStore([MessageTracedBy(traceParent)]));
+
+        // Act
+        var cycle = await Target.RunAsync(CancellationToken);
+
+        // Assert
+        cycle.Relayed.ShouldBe(1);
+        store.Failures.ShouldBeEmpty();
+        var span = spans.Started.ShouldHaveSingleItem();
+        span.OperationName.ShouldBe("OutboxPublishing");
+        span.ParentSpanId.ShouldBe(default);
+    }
+
+    [Fact]
     public async Task AMessageWithoutADispatcherForItsDestinationIsRecordedAsAFailure()
     {
         // Arrange
@@ -245,6 +287,9 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
 
     private void UseOptions(OutboxProcessingOptions options) => Use<IOptions<OutboxProcessingOptions>>(Options.Create(options));
 
+    private static OutboxMessageData MessageTracedBy(string traceParent) =>
+        new(Guid.NewGuid(), "Some.Event", "{}", traceParent, null, OutboxDestination.DomainEvent, null);
+
     private InMemoryRelayStore UseStore(InMemoryRelayStore store)
     {
         Use<IOutboxStore>(store);
@@ -308,6 +353,27 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
     {
         public object? GetService(Type serviceType) =>
             serviceType == typeof(IEnumerable<IOutboxDispatcher>) ? new[] { dispatcher } : null;
+    }
+
+    public sealed class RelaySpanRecorder : IDisposable
+    {
+        private readonly ConcurrentQueue<Activity> _started = new();
+        private readonly ActivityListener _listener;
+
+        public RelaySpanRecorder()
+        {
+            _listener = new ActivityListener
+            {
+                ShouldListenTo = source => source.Name == Telemetry.ActivitySourceName,
+                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+                ActivityStarted = _started.Enqueue,
+            };
+            ActivitySource.AddActivityListener(_listener);
+        }
+
+        public IReadOnlyCollection<Activity> Started => _started;
+
+        public void Dispose() => _listener.Dispose();
     }
 
     private sealed class RecordingDispatcher : IOutboxDispatcher

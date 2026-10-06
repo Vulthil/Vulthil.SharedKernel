@@ -111,7 +111,7 @@ Each relay cycle runs in its own DI scope, and the store opens the relay transac
 
 ## Observability
 
-The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (exposed as `Telemetry.ActivitySourceName`). When `EnableTracing` is on (the default), each relayed message starts an `OutboxPublishing` span parented on the trace that captured the row — the originating trace is carried forward through the `OutboxMessage.TraceParent`/`TraceState` columns stamped at capture — so the relay, which runs later on its own background service, still correlates back to the request that produced the message.
+The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (exposed as `Telemetry.ActivitySourceName`). When `EnableTracing` is on (the default), each relayed message starts an `OutboxPublishing` span parented on the trace that captured the row — the originating trace is carried forward through the `OutboxMessage.TraceParent`/`TraceState` columns stamped at capture — so the relay, which runs later on its own background service, still correlates back to the request that produced the message. A stored trace parent that is not a W3C trace context (an old hierarchical activity ID, or a value that other code wrote) never fails the delivery: the relay span then starts a new trace.
 
 `AddOutboxEngine` (called by `EnableOutboxProcessing`) registers the source with OpenTelemetry automatically when `EnableTracing` is on (the default), so the spans reach whatever tracer the application has configured without extra wiring. If you build a `TracerProviderBuilder` yourself, the same registration is available as `tracing.AddVulthilOutboxInstrumentation()` — sugar for `AddSource(Telemetry.ActivitySourceName)`.
 

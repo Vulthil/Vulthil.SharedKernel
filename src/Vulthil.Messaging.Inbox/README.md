@@ -25,10 +25,12 @@ builder.AddMessaging(messaging =>
     // Guard OrderPlaced deliveries; dedupes on MessageId by default.
     messaging.AddIdempotentInbox<OrderPlaced>();
 
-    // Or key off a stable business field:
-    messaging.AddIdempotentInbox<OrderPlaced>(ctx => ctx.Message.OrderId.ToString());
+    // Guard OrderShipped deliveries; dedupes on a stable business field.
+    messaging.AddIdempotentInbox<OrderShipped>(ctx => ctx.Message.OrderId.ToString());
 });
 ```
+
+Each message type has one key: calling `AddIdempotentInbox<T>` again with a different key selector throws at startup.
 
 Deliveries with no resolvable key throw `MissingIdempotencyKeyException` by default. To process them without
 deduplication instead, set it on the store registration: `services.AddRelationalInbox<AppDbContext>(o => o.RejectMessagesWithoutKey = false)`.

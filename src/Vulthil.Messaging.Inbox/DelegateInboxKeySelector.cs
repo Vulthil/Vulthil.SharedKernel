@@ -11,5 +11,10 @@ internal sealed class DelegateInboxKeySelector<TMessage>(Func<IMessageContext<TM
     : IInboxKeySelector<TMessage>
     where TMessage : notnull
 {
-    public string? GetKey(IMessageContext<TMessage> context) => keySelector?.Invoke(context);
+    /// <summary>
+    /// Gets the delegate this selector was registered with, or <see langword="null"/> for the message-id default.
+    /// </summary>
+    public Func<IMessageContext<TMessage>, string?>? KeySelector { get; } = keySelector;
+
+    public string? GetKey(IMessageContext<TMessage> context) => KeySelector?.Invoke(context);
 }

@@ -6,15 +6,15 @@ namespace Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing;
 
 /// <summary>
 /// MySQL-specific additions on top of the provider-agnostic <see cref="OutboxMessage"/> mapping, which
-/// <c>ApplyMySqlOutbox</c> applies first: a bounded type column, <c>longtext</c> content, and a composite index over
-/// the relay's pending-state and ordering columns.
+/// <c>ApplyMySqlOutbox</c> applies first: <c>longtext</c> content and a composite index over the relay's
+/// pending-state and ordering columns. The type column keeps the agnostic mapping's unbounded length, because it
+/// stores a type's full name, which includes the full assembly name of every generic type argument.
 /// </summary>
 internal sealed class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
-        builder.Property(o => o.Type).HasMaxLength(256);
         builder.Property(o => o.Content).HasColumnType("longtext");
         // MySQL lacks filtered indexes, so lead with the pending-state columns then the relay's (OccurredOnUtc, Id) ordering.
         builder.HasIndex(o => new { o.ProcessedOnUtc, o.FailedOnUtc, o.OccurredOnUtc, o.Id })

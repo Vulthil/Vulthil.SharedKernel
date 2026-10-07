@@ -14,17 +14,21 @@ public sealed class OutboxProbe : AggregateRoot<Guid>
     {
     }
 
-    public static OutboxProbe Create()
+    public static OutboxProbe Create() => Create(static id => new OutboxProbeCreated(id));
+
+    /// <summary>
+    /// Creates a probe that raises the domain event <paramref name="createdEvent"/> makes from the probe's ID, for a
+    /// test that needs a domain event type of its own.
+    /// </summary>
+    public static OutboxProbe Create(Func<Guid, IDomainEvent> createdEvent)
     {
         var probe = new OutboxProbe(Guid.CreateVersion7());
-        probe.RaiseCreated();
+        probe.Raise(createdEvent(probe.Id));
         return probe;
     }
-
-    private void RaiseCreated() => Raise(new OutboxProbeCreated(Id));
 }
 
 /// <summary>
-/// The domain event raised by <see cref="OutboxProbe.Create"/>; its serialized form is what the relay dispatches.
+/// The domain event raised by <see cref="OutboxProbe.Create()"/>; its serialized form is what the relay dispatches.
 /// </summary>
 public sealed record OutboxProbeCreated(Guid ProbeId) : IDomainEvent;

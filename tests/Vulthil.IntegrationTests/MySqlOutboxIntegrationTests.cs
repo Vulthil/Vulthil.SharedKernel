@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.IntegrationTests.Fixtures;
+using Vulthil.SharedKernel.Events;
 using Vulthil.SharedKernel.Infrastructure.MySql.OutboxProcessing;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.Testing;
@@ -11,7 +12,8 @@ namespace Vulthil.IntegrationTests;
 /// <summary>
 /// Exercises the MySQL outbox path end to end against a real MySQL server: domain-event capture on
 /// <c>SaveChangesAsync</c>, the <c>FOR UPDATE SKIP LOCKED</c> relay fetch, set-based success and failure recording,
-/// dead-lettering at the retry limit, the retention-sweep batch contract, and the 256-character Type column cap.
+/// dead-lettering at the retry limit, the retention-sweep batch contract, and a domain event whose type name is longer
+/// than 256 characters.
 /// </summary>
 public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) : BaseUnitTestCase, IClassFixture<MySqlOutboxHostFixture>
 {
@@ -21,7 +23,7 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
     public async Task ResolvesTheMySqlStoreAndRelaysACapturedDomainEvent()
     {
         // Arrange
-        var probeId = await CaptureProbeCreatedEventAsync();
+        var probeId = await CaptureAsync(OutboxProbe.Create());
         await using var relayScope = fixture.Services.CreateAsyncScope();
         var store = relayScope.ServiceProvider.GetRequiredService<IOutboxStore>();
         var dispatched = new List<OutboxMessageData>();
@@ -123,28 +125,33 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
     }
 
     [Fact]
-    public async Task TypeColumnAcceptsExactly256CharactersAndRejectsLonger()
+    public async Task ADomainEventWhoseTypeNameIsLongerThan256CharactersIsCapturedAndRelayed()
     {
         // Arrange
-        await SeedAsync([NewMessage(DateTimeOffset.UtcNow, type: new string('t', 256))]);
-        await using var captureScope = fixture.Services.CreateAsyncScope();
-        var context = captureScope.ServiceProvider.GetRequiredService<MySqlOutboxDbContext>();
-        context.OutboxMessages.Add(NewMessage(DateTimeOffset.UtcNow, type: new string('t', 257)));
+        var eventType = typeof(ProbeStatusChanged<Pending, Settled>);
+        await using var relayScope = fixture.Services.CreateAsyncScope();
+        var store = relayScope.ServiceProvider.GetRequiredService<IOutboxStore>();
+        var dispatched = new List<OutboxMessageData>();
 
         // Act
-        var overflow = await Should.ThrowAsync<DbUpdateException>(() => context.SaveChangesAsync(CancellationToken));
+        await CaptureAsync(OutboxProbe.Create(static probeId =>
+            new ProbeStatusChanged<Pending, Settled>(probeId, new Pending("Awaiting payment"), new Settled("PAY-1"))));
+        var processed = await store.RelayBatchAsync(RecordingDispatch(dispatched), CancellationToken);
 
         // Assert
-        overflow.InnerException.ShouldNotBeNull();
-        var stored = await QueryMessagesAsync();
-        stored.ShouldHaveSingleItem().Type.Length.ShouldBe(256);
+        eventType.FullName.ShouldNotBeNull().Length.ShouldBeGreaterThan(256);
+        processed.ShouldBe(1);
+        var message = dispatched.ShouldHaveSingleItem();
+        message.Type.ShouldBe(eventType.FullName);
+        OutboxMessageTypes.Resolve(message.Type).ShouldBe(eventType);
+        var row = await QuerySingleMessageAsync();
+        row.ProcessedOnUtc.ShouldNotBeNull();
     }
 
-    private async Task<Guid> CaptureProbeCreatedEventAsync()
+    private async Task<Guid> CaptureAsync(OutboxProbe probe)
     {
         await using var captureScope = fixture.Services.CreateAsyncScope();
         var context = captureScope.ServiceProvider.GetRequiredService<MySqlOutboxDbContext>();
-        var probe = OutboxProbe.Create();
         context.Probes.Add(probe);
         await context.SaveChangesAsync(CancellationToken);
         return probe.Id;
@@ -174,9 +181,9 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
     private static MySqlOutboxStore<MySqlOutboxDbContext> NewStore(MySqlOutboxDbContext context) =>
         new(context, TimeProvider.System);
 
-    private static OutboxMessage NewMessage(DateTimeOffset occurredOnUtc, string type = "TestMessage") => new()
+    private static OutboxMessage NewMessage(DateTimeOffset occurredOnUtc) => new()
     {
-        Type = type,
+        Type = "TestMessage",
         Content = "{}",
         OccurredOnUtc = occurredOnUtc,
         Destination = OutboxDestination.DomainEvent,
@@ -191,4 +198,10 @@ public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) 
 
     private static Func<OutboxMessageData, CancellationToken, Task<string?>> FailingDispatch(string error) =>
         (_, _) => Task.FromResult<string?>(error);
+
+    public sealed record ProbeStatusChanged<TFrom, TTo>(Guid ProbeId, TFrom From, TTo To) : IDomainEvent;
+
+    public sealed record Pending(string Reason);
+
+    public sealed record Settled(string Reference);
 }

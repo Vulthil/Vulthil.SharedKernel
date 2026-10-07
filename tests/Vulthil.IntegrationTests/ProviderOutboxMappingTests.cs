@@ -117,7 +117,7 @@ public sealed class ProviderOutboxMappingTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void ApplyMySqlOutboxAddsLongtextContentABoundedTypeAndAPendingIndexToTheAgnosticMapping()
+    public void ApplyMySqlOutboxAddsLongtextContentAndAPendingIndexAndLeavesTheTypeUnbounded()
     {
         // Arrange
         using var context = new MySqlMappedDbContext(
@@ -128,7 +128,9 @@ public sealed class ProviderOutboxMappingTests : BaseUnitTestCase
 
         // Assert
         AssertAgnosticMapping(entity);
-        entity.FindProperty(nameof(OutboxMessage.Type))!.GetMaxLength().ShouldBe(256);
+        var type = entity.FindProperty(nameof(OutboxMessage.Type))!;
+        type.GetMaxLength().ShouldBeNull();
+        type.GetColumnType().ShouldBe("longtext");
         entity.FindProperty(nameof(OutboxMessage.Content))!.GetColumnType().ShouldBe("longtext");
         var index = entity.GetIndexes().ShouldHaveSingleItem();
         index.GetDatabaseName().ShouldBe("IX_OutboxMessages_Pending");

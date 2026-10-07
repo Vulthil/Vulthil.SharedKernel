@@ -157,7 +157,7 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.UseNpgsql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Npgsql.EntityFrameworkCore.PostgreSQL.NpgsqlEntityFrameworkCorePostgreSQLSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})">
   UseNpgsql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/DependencyInjectionExtensions.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/DependencyInjectionExtensions.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the database infrastructure to use the PostgreSQL-optimized outbox strategy and
@@ -213,7 +213,11 @@ PostgreSQL-optimized outbox store is applied as a default, so a custom store sel
 The outbox processor runs its transactional unit inside the context's execution strategy
 (<code>Database.CreateExecutionStrategy().ExecuteAsync</code>), so a retrying execution strategy is fully
 supported and there is no need to force <code>DisableRetry</code>. All settings — including
-<code>CommandTimeout</code> — are left to the caller.</p>
+<code>CommandTimeout</code> — are left to the caller.
+The context options also get a model convention that writes the filter of the pending-message index from the
+final column mapping, so the outbox columns of a context mapped with
+<a class="xref" href="Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_NpgsqlOutboxModelBuilderExtensions_ApplyNpgsqlOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_">ApplyNpgsqlOutbox(ModelBuilder)</a> can be renamed before or after that call
+(see its remarks).</p>
 </div>
 
 

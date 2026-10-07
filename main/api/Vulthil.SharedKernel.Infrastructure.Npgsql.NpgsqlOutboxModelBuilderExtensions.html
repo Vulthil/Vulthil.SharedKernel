@@ -157,7 +157,7 @@ Class NpgsqlOutboxModelBuilderExtensions  <a class="header-action link-secondary
 
   <h3 id="Vulthil_SharedKernel_Infrastructure_Npgsql_NpgsqlOutboxModelBuilderExtensions_ApplyNpgsqlOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_" data-uid="Vulthil.SharedKernel.Infrastructure.Npgsql.NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox(Microsoft.EntityFrameworkCore.ModelBuilder)">
   ApplyNpgsqlOutbox(ModelBuilder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/NpgsqlOutboxModelBuilderExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.Npgsql/NpgsqlOutboxModelBuilderExtensions.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Applies the provider-agnostic <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessage.html">OutboxMessage</a> mapping (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxModelBuilderExtensions_ApplyOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_">ApplyOutbox(ModelBuilder)</a>)
@@ -191,6 +191,15 @@ are neither processed nor dead-lettered).</p>
 
 
 
+  <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_Npgsql_NpgsqlOutboxModelBuilderExtensions_ApplyNpgsqlOutbox_Microsoft_EntityFrameworkCore_ModelBuilder__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The index filter names the mapped <code>ProcessedOnUtc</code> and <code>FailedOnUtc</code> columns, so renamed outbox
+columns are supported. A naming convention (for example <code>UseSnakeCaseNamingConvention</code>) has renamed them
+before this call runs. For a context registered through
+<a class="xref" href="Vulthil.SharedKernel.Infrastructure.Npgsql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Npgsql_DependencyInjectionExtensions_UseNpgsql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Npgsql_EntityFrameworkCore_PostgreSQL_NpgsqlEntityFrameworkCorePostgreSQLSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__">UseNpgsql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;NpgsqlEntityFrameworkCorePostgreSQLSettings&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)</a>, a model convention writes the filter again
+from the final mapping, so <code>HasColumnName</code> renames can come before or after this call. For a context
+registered another way, the filter uses the names mapped when this call runs, so apply <code>HasColumnName</code>
+renames first. A filter that the application sets on the index itself is kept.</p>
+</div>
 
 
 

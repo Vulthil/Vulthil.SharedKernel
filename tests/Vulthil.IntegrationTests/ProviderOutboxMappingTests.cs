@@ -1,11 +1,16 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Vulthil.IntegrationTests.Fixtures;
+using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Cosmos;
 using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.MySql;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
 using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
 using Vulthil.xUnit;
 
 namespace Vulthil.IntegrationTests;
@@ -17,12 +22,17 @@ namespace Vulthil.IntegrationTests;
 /// </summary>
 public sealed class ProviderOutboxMappingTests : BaseUnitTestCase
 {
+    private const string NpgsqlConnectionStringKey = "outbox-mapping";
+    private const string NpgsqlConnectionString = "Host=localhost;Database=mapping";
+    private const string DefaultPendingFilter = "\"ProcessedOnUtc\" IS NULL AND \"FailedOnUtc\" IS NULL";
+    private const string SnakeCasePendingFilter = "\"processed_on_utc\" IS NULL AND \"failed_on_utc\" IS NULL";
+
     [Fact]
     public void ApplyNpgsqlOutboxAddsJsonbContentAndAFilteredPendingIndexToTheAgnosticMapping()
     {
         // Arrange
         using var context = new NpgsqlMappedDbContext(
-            new DbContextOptionsBuilder<NpgsqlMappedDbContext>().UseNpgsql("Host=localhost;Database=mapping").Options);
+            new DbContextOptionsBuilder<NpgsqlMappedDbContext>().UseNpgsql(NpgsqlConnectionString).Options);
 
         // Act
         var entity = context.Model.FindEntityType(typeof(OutboxMessage)).ShouldNotBeNull();
@@ -33,7 +43,77 @@ public sealed class ProviderOutboxMappingTests : BaseUnitTestCase
         var index = entity.GetIndexes().ShouldHaveSingleItem();
         index.GetDatabaseName().ShouldBe("IX_OutboxMessages_OccurredOnUtc_Id");
         index.Properties.Select(property => property.Name).ShouldBe([nameof(OutboxMessage.OccurredOnUtc), nameof(OutboxMessage.Id)]);
-        index.GetFilter().ShouldBe("\"ProcessedOnUtc\" IS NULL AND \"FailedOnUtc\" IS NULL");
+        index.GetFilter().ShouldBe(DefaultPendingFilter);
+    }
+
+    [Fact]
+    public void ApplyNpgsqlOutboxFiltersThePendingIndexOnTheColumnsANamingConventionMaps()
+    {
+        // Arrange
+        using var context = new NpgsqlMappedDbContext(
+            new DbContextOptionsBuilder<NpgsqlMappedDbContext>().UseNpgsql(NpgsqlConnectionString).UseSnakeCaseNamingConvention().Options);
+
+        // Act
+        var index = PendingIndex(context);
+
+        // Assert
+        index.GetFilter().ShouldBe(SnakeCasePendingFilter);
+    }
+
+    [Fact]
+    public void UseNpgsqlKeepsTheDefaultPendingIndexFilterForTheDefaultColumnNames()
+    {
+        // Arrange
+        using var host = BuildUseNpgsqlHost<NpgsqlMappedDbContext>();
+        using var scope = host.Services.CreateScope();
+
+        // Act
+        var index = PendingIndex(scope.ServiceProvider.GetRequiredService<NpgsqlMappedDbContext>());
+
+        // Assert
+        index.GetFilter().ShouldBe(DefaultPendingFilter);
+    }
+
+    [Fact]
+    public void UseNpgsqlFiltersThePendingIndexOnColumnsRenamedAfterApplyNpgsqlOutbox()
+    {
+        // Arrange
+        using var host = BuildUseNpgsqlHost<RenamedAfterMappingDbContext>();
+        using var scope = host.Services.CreateScope();
+
+        // Act
+        var index = PendingIndex(scope.ServiceProvider.GetRequiredService<RenamedAfterMappingDbContext>());
+
+        // Assert
+        index.GetFilter().ShouldBe(SnakeCasePendingFilter);
+    }
+
+    [Fact]
+    public void UseNpgsqlKeepsAFilterTheApplicationSetsOnThePendingIndex()
+    {
+        // Arrange
+        using var host = BuildUseNpgsqlHost<ExplicitPendingFilterDbContext>();
+        using var scope = host.Services.CreateScope();
+
+        // Act
+        var index = PendingIndex(scope.ServiceProvider.GetRequiredService<ExplicitPendingFilterDbContext>());
+
+        // Assert
+        index.GetFilter().ShouldBe(ExplicitPendingFilterDbContext.Filter);
+    }
+
+    [Fact]
+    public void UseNpgsqlLeavesAnApplicationIndexOverThePendingColumnsUnfiltered()
+    {
+        // Arrange
+        using var host = BuildUseNpgsqlHost<AgnosticPendingIndexDbContext>();
+        using var scope = host.Services.CreateScope();
+
+        // Act
+        var index = PendingIndex(scope.ServiceProvider.GetRequiredService<AgnosticPendingIndexDbContext>());
+
+        // Assert
+        index.GetFilter().ShouldBeNull();
     }
 
     [Fact]
@@ -79,6 +159,18 @@ public sealed class ProviderOutboxMappingTests : BaseUnitTestCase
         entity.FindProperty(nameof(OutboxMessage.Content))!.IsNullable.ShouldBeFalse();
     }
 
+    private static IIndex PendingIndex(DbContext context) =>
+        context.Model.FindEntityType(typeof(OutboxMessage)).ShouldNotBeNull().GetIndexes().ShouldHaveSingleItem();
+
+    private static IHost BuildUseNpgsqlHost<TDbContext>()
+        where TDbContext : BaseDbContext
+    {
+        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
+        builder.Configuration[$"ConnectionStrings:{NpgsqlConnectionStringKey}"] = NpgsqlConnectionString;
+        builder.AddDbContext<TDbContext>(database => database.UseNpgsql(NpgsqlConnectionStringKey));
+        return builder.Build();
+    }
+
     internal sealed class NpgsqlMappedDbContext(DbContextOptions<NpgsqlMappedDbContext> options) : BaseDbContext(options)
     {
         protected override Assembly? ConfigurationAssembly => null;
@@ -87,6 +179,44 @@ public sealed class ProviderOutboxMappingTests : BaseUnitTestCase
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyNpgsqlOutbox();
+        }
+    }
+
+    internal sealed class RenamedAfterMappingDbContext(DbContextOptions<RenamedAfterMappingDbContext> options) : BaseDbContext(options)
+    {
+        protected override Assembly? ConfigurationAssembly => null;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyNpgsqlOutbox();
+            OutboxTableRenames.Apply(modelBuilder);
+        }
+    }
+
+    internal sealed class ExplicitPendingFilterDbContext(DbContextOptions<ExplicitPendingFilterDbContext> options) : BaseDbContext(options)
+    {
+        public const string Filter = "\"RetryCount\" < 3";
+
+        protected override Assembly? ConfigurationAssembly => null;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyNpgsqlOutbox();
+            modelBuilder.Entity<OutboxMessage>().HasIndex(message => new { message.OccurredOnUtc, message.Id }).HasFilter(Filter);
+        }
+    }
+
+    internal sealed class AgnosticPendingIndexDbContext(DbContextOptions<AgnosticPendingIndexDbContext> options) : BaseDbContext(options)
+    {
+        protected override Assembly? ConfigurationAssembly => null;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyOutbox();
+            modelBuilder.Entity<OutboxMessage>().HasIndex(message => new { message.OccurredOnUtc, message.Id });
         }
     }
 

@@ -13,6 +13,11 @@
     <FrameworkVersion>10.0.12</FrameworkVersion>
     <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">$(Net9FrameworkVersion)</FrameworkVersion>
     <AspireVersion>13.6.0</AspireVersion>
+    <!-- Test-only. Each EFCore.NamingConventions major requires the matching EF Core major (10.x needs
+         [10.0.1, 11.0.0)), so each TFM leg takes the line of its own EF train. It is hand-managed with the
+         train (see .github/dependabot.yml). -->
+    <NamingConventionsVersion>10.0.1</NamingConventionsVersion>
+    <NamingConventionsVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.0</NamingConventionsVersion>
     <!-- Consumer opt-up EF floor for the non-provider src packages, applied via VersionOverride on
          their EF Core PackageReference items: they compile against the EF 9 line (EF Core 9 targets
          net8.0, so it is referenceable from every TFM we ship) and their published dependency groups
@@ -36,6 +41,7 @@
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.RabbitMQ.Client" Version="$(AspireVersion)" />
+    <PackageVersion Include="EFCore.NamingConventions" Version="$(NamingConventionsVersion)" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.3" />

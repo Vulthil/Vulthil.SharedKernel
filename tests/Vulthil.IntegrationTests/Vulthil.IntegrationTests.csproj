@@ -3,6 +3,7 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Vulthil.TestRunner.props', '$(MSBuildThisFileDirectory)'))" />
 
 	<ItemGroup>
+		<PackageReference Include="EFCore.NamingConventions" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" />
 		<PackageReference Include="Testcontainers.CosmosDb" />
 		<PackageReference Include="Testcontainers.MySql" />

@@ -5,8 +5,8 @@ namespace Vulthil.IntegrationTests.Fixtures;
 
 /// <summary>
 /// Renames the outbox table and every column to snake_case, simulating a consumer that applies a naming convention
-/// or maps the outbox entity to custom identifiers. The provider stores' fetch SQL must keep working against such a
-/// model, so these renames back the renamed-model relay tests.
+/// or maps the outbox entity to custom identifiers. The provider stores' fetch SQL and the PostgreSQL pending-message
+/// index filter must keep working against such a model, so these renames back the renamed-model tests.
 /// </summary>
 internal static class OutboxTableRenames
 {

@@ -39,6 +39,10 @@ updates:
       # level, so bumping it ahead of the hand-managed train is an NU1605 downgrade error; it moves
       # with the train.
       - dependency-name: "Microting.EntityFrameworkCore.MySql"
+      # EFCore.NamingConventions (test-only) versions from the TFM-conditional NamingConventionsVersion property in
+      # Directory.Packages.props: each major supports one EF Core major (10.x on net10.0, 9.x on net9.0), so
+      # Dependabot would tear the legs apart for the same reason as the train; it moves with the train.
+      - dependency-name: "EFCore.NamingConventions"
     groups:
       xunit:
         patterns:

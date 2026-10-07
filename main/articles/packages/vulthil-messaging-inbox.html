@@ -102,6 +102,7 @@ giving <strong>exactly-once processing</strong>; without one (e.g. Cosmos) the g
 <ul>
 <li>Opt-in per message type with <code>AddIdempotentInbox&lt;TMessage&gt;()</code></li>
 <li>Dedupes on <code>MessageId</code> by default; pass a key selector to dedupe on a stable business field</li>
+<li>One key per message type: a second <code>AddIdempotentInbox&lt;T&gt;</code> call with a different key selector throws at startup; register your own <code>IInboxKeySelector&lt;T&gt;</code> to compute the key with services from DI</li>
 <li>The store owns the transactional unit (the filter hands it the consumer invocation); the consumer keeps calling <code>SaveChanges</code> as usual</li>
 <li>Deliveries with no resolvable key are rejected (<code>MissingIdempotencyKeyException</code>) unless you opt out</li>
 <li>Prune markers with an opt-in background sweep — enable it on the store registration via <code>AddRelationalInbox&lt;T&gt;(o =&gt; o.Retention.Enabled = true)</code> (or <code>AddCosmosInbox&lt;T&gt;</code>)</li>

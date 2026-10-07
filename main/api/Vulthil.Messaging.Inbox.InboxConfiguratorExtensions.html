@@ -162,7 +162,7 @@ registered <a class="xref" href="Vulthil.Messaging.Inbox.IIdempotencyStore.html"
 
   <h3 id="Vulthil_Messaging_Inbox_InboxConfiguratorExtensions_AddIdempotentInbox__1_Vulthil_Messaging_IMessagingConfigurator_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__" data-uid="Vulthil.Messaging.Inbox.InboxConfiguratorExtensions.AddIdempotentInbox``1(Vulthil.Messaging.IMessagingConfigurator,System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.String})">
   AddIdempotentInbox&lt;TMessage&gt;(IMessagingConfigurator, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxConfiguratorExtensions.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Inbox/InboxConfiguratorExtensions.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Enables idempotent processing for deliveries of <code class="typeparamref">TMessage</code>. The guard skips messages
@@ -181,8 +181,9 @@ whose idempotency key has already been processed and otherwise runs the consumer
     <dd><p>The messaging configurator.</p>
 </dd>
     <dt><code>keySelector</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext-1.html">IMessageContext</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
-    <dd><p>An optional selector for the idempotency key. When omitted (or when it returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>), the
-delivery's <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_MessageId">MessageId</a> is used.</p>
+    <dd><p>An optional selector for the idempotency key. When omitted, an <a class="xref" href="Vulthil.Messaging.Inbox.IInboxKeySelector-1.html">IInboxKeySelector&lt;TMessage&gt;</a> the
+application registered itself supplies the key, if there is one. Without one, or when the key resolves to
+<a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> or an empty string, the delivery's <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_MessageId">MessageId</a> is used.</p>
 </dd>
   </dl>
 
@@ -205,7 +206,24 @@ delivery's <a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessa
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_Inbox_InboxConfiguratorExtensions_AddIdempotentInbox__1_Vulthil_Messaging_IMessagingConfigurator_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A message type is deduplicated on one key, so every call for the same <code class="typeparamref">TMessage</code>, from any
+module, must agree on it: all pass no selector, or all pass the same one (the same method on the same target,
+such as one static lambda or method group). Any other combination throws instead of silently keeping one key,
+which could skip distinct messages as duplicates or process a duplicate twice. To compute the key with services
+from dependency injection, register your own <a class="xref" href="Vulthil.Messaging.Inbox.IInboxKeySelector-1.html">IInboxKeySelector&lt;TMessage&gt;</a> and call this method
+without a selector; an <a class="xref" href="Vulthil.Messaging.Inbox.IInboxKeySelector-1.html">IInboxKeySelector&lt;TMessage&gt;</a> registered after this call replaces the
+selector it registered, because dependency injection resolves the last registration.</p>
+</div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>An earlier call for <code class="typeparamref">TMessage</code> passed a different key selector, or passed none where this
+call passes one (or the reverse); or <code class="paramref">keySelector</code> is passed while the application has
+registered its own <a class="xref" href="Vulthil.Messaging.Inbox.IInboxKeySelector-1.html">IInboxKeySelector&lt;TMessage&gt;</a>.</p>
+</dd>
+  </dl>
 
 
 

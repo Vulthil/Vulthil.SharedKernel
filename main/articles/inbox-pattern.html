@@ -143,6 +143,17 @@ package <code>Vulthil.Messaging.Inbox.EntityFrameworkCore</code>, so you impleme
 });
 </code></pre>
 <p>A registered <code>IIdempotencyStore</code> is required at consume time. Reference <code>Vulthil.Messaging.Inbox.Relational</code> for the relational implementation, or implement <code>IIdempotencyStore</code> yourself.</p>
+<h3 id="one-key-per-message-type">One key per message type</h3>
+<p>A message type is deduplicated on one key, so every <code>AddIdempotentInbox&lt;T&gt;()</code> call for the same <code>T</code> — from any module — must agree on it. Calling it again with no selector, or with the same selector (the same method on the same target, such as one static lambda or method group), changes nothing. Any other combination — two different selectors, or one call with a selector and one without — throws <code>InvalidOperationException</code> at startup instead of silently keeping one key, because a kept key that is coarser than the dropped one would skip distinct messages as duplicates. Two lambdas with the same body in two modules are two different selectors, so define the key in one place.</p>
+<p>To compute the key with services from dependency injection, register your own <code>IInboxKeySelector&lt;T&gt;</code> and opt the message type in without a selector:</p>
+<pre><code class="lang-csharp">builder.Services.AddScoped&lt;IInboxKeySelector&lt;OrderPlaced&gt;, OrderPlacedKeySelector&gt;();
+
+builder.AddMessaging(messaging =&gt;
+{
+    messaging.AddIdempotentInbox&lt;OrderPlaced&gt;(); // the registered OrderPlacedKeySelector supplies the key
+});
+</code></pre>
+<p>Passing a selector while your own <code>IInboxKeySelector&lt;T&gt;</code> is registered throws. An <code>IInboxKeySelector&lt;T&gt;</code> registered <em>after</em> <code>AddIdempotentInbox&lt;T&gt;()</code> replaces the selector, because dependency injection resolves the last registration.</p>
 <h3 id="messages-without-a-key">Messages without a key</h3>
 <p>By default a delivery with no resolvable key is rejected with <code>MissingIdempotencyKeyException</code>, so it cannot silently bypass the guard. To process such messages without deduplication instead, set it on the inbox store registration:</p>
 <pre><code class="lang-csharp">builder.Services.AddRelationalInbox&lt;AppDbContext&gt;(o =&gt; o.RejectMessagesWithoutKey = false);

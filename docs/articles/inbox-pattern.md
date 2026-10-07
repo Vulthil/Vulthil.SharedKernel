@@ -64,6 +64,23 @@ builder.AddMessaging(messaging =>
 
 A registered `IIdempotencyStore` is required at consume time. Reference `Vulthil.Messaging.Inbox.Relational` for the relational implementation, or implement `IIdempotencyStore` yourself.
 
+### One key per message type
+
+A message type is deduplicated on one key, so every `AddIdempotentInbox<T>()` call for the same `T` — from any module — must agree on it. Calling it again with no selector, or with the same selector (the same method on the same target, such as one static lambda or method group), changes nothing. Any other combination — two different selectors, or one call with a selector and one without — throws `InvalidOperationException` at startup instead of silently keeping one key, because a kept key that is coarser than the dropped one would skip distinct messages as duplicates. Two lambdas with the same body in two modules are two different selectors, so define the key in one place.
+
+To compute the key with services from dependency injection, register your own `IInboxKeySelector<T>` and opt the message type in without a selector:
+
+```csharp
+builder.Services.AddScoped<IInboxKeySelector<OrderPlaced>, OrderPlacedKeySelector>();
+
+builder.AddMessaging(messaging =>
+{
+    messaging.AddIdempotentInbox<OrderPlaced>(); // the registered OrderPlacedKeySelector supplies the key
+});
+```
+
+Passing a selector while your own `IInboxKeySelector<T>` is registered throws. An `IInboxKeySelector<T>` registered *after* `AddIdempotentInbox<T>()` replaces the selector, because dependency injection resolves the last registration.
+
 ### Messages without a key
 
 By default a delivery with no resolvable key is rejected with `MissingIdempotencyKeyException`, so it cannot silently bypass the guard. To process such messages without deduplication instead, set it on the inbox store registration:

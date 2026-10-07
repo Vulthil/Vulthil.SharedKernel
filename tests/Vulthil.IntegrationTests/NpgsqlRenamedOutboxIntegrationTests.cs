@@ -9,11 +9,26 @@ using Vulthil.xUnit;
 namespace Vulthil.IntegrationTests;
 
 /// <summary>
-/// Proves the PostgreSQL relay fetch works against a model whose outbox table and columns are renamed (as
-/// <c>UseSnakeCaseNamingConvention</c> or a custom mapping would), instead of assuming the default identifiers.
+/// Proves the PostgreSQL outbox works against a model whose outbox table and columns are renamed after
+/// <c>ApplyNpgsqlOutbox</c> (as a custom mapping would), instead of assuming the default identifiers: the database
+/// builds the pending-message index over the renamed columns, and the relay fetches and marks messages on that table.
 /// </summary>
 public sealed class NpgsqlRenamedOutboxIntegrationTests(RenamedNpgsqlOutboxHostFixture fixture) : BaseUnitTestCase, IClassFixture<RenamedNpgsqlOutboxHostFixture>
 {
+    [Fact]
+    public async Task EnsureCreatedBuildsThePendingIndexOverTheRenamedColumns()
+    {
+        // Arrange
+        await using var scope = fixture.Services.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<RenamedNpgsqlOutboxDbContext>();
+
+        // Act
+        var predicate = await NpgsqlIndexes.ReadPredicateAsync(context, "IX_OutboxMessages_OccurredOnUtc_Id", CancellationToken);
+
+        // Assert
+        predicate.ShouldBe("((processed_on_utc IS NULL) AND (failed_on_utc IS NULL))");
+    }
+
     [Fact]
     public async Task RelayFetchesAndMarksMessagesOnARenamedOutboxTable()
     {

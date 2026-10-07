@@ -13,6 +13,7 @@ Use `Vulthil.SharedKernel.Infrastructure.Npgsql` to wire a PostgreSQL-backed `Db
 - Call `UseNpgsql("ConnectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Npgsql outbox store
 - Order between `UseNpgsql`, `EnableOutboxProcessing`, and `UseOutboxStore` does not matter; the configurator defers the underlying registrations until the full chain has executed, and the Npgsql outbox store is applied only as a default – a custom store selected via `UseOutboxStore` is always preserved
 - The relay's locking fetch SQL is composed from the model's mapped identifiers, so custom outbox table or column names (a naming convention such as `UseSnakeCaseNamingConvention`, `ToTable`, or `HasColumnName`) are supported, and the relay dispatches strictly in `(OccurredOnUtc, Id)` order
+- The filter of the pending-message index that `ApplyNpgsqlOutbox` adds names the mapped columns too. Through `UseNpgsql`, a model convention writes it from the final mapping, so `HasColumnName` renames can come before or after `ApplyNpgsqlOutbox`. A context registered another way gets the names mapped when `ApplyNpgsqlOutbox` runs (a naming convention has renamed them by then), so put `HasColumnName` renames first. A filter you set on that index yourself is kept
 - Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (`Database.CreateExecutionStrategy().ExecuteAsync`), so there is no need to force `DisableRetry`
 
 ## Usage
@@ -39,6 +40,15 @@ builder.AddDbContext<AppDbContext>(config => config
         o.BatchSize = 50;
         o.MaxRetries = 5;
     }));
+```
+
+### With a naming convention
+
+```csharp
+// UseSnakeCaseNamingConvention comes from the EFCore.NamingConventions package.
+builder.AddDbContext<AppDbContext>(config => config
+    .UseNpgsql("Default", configureDbContextOptions: options => options.UseSnakeCaseNamingConvention())
+    .EnableOutboxProcessing());
 ```
 
 ### Applying migrations on startup

@@ -27,6 +27,10 @@ public static class DependencyInjectionExtensions
     /// (<c>Database.CreateExecutionStrategy().ExecuteAsync</c>), so a retrying execution strategy is fully
     /// supported and there is no need to force <c>DisableRetry</c>. All settings — including
     /// <c>CommandTimeout</c> — are left to the caller.
+    /// The context options also get a model convention that writes the filter of the pending-message index from the
+    /// final column mapping, so the outbox columns of a context mapped with
+    /// <see cref="NpgsqlOutboxModelBuilderExtensions.ApplyNpgsqlOutbox"/> can be renamed before or after that call
+    /// (see its remarks).
     /// </remarks>
     /// <param name="configurator">The database infrastructure configurator.</param>
     /// <param name="connectionStringKey">The key for the connection string.</param>
@@ -46,7 +50,14 @@ public static class DependencyInjectionExtensions
 
         configurator.OnConfigured(c =>
         {
-            c.HostApplicationBuilder.AddNpgsqlDbContext<TDbContext>(connectionStringKey, configureSettings, configureDbContextOptions);
+            c.HostApplicationBuilder.AddNpgsqlDbContext<TDbContext>(connectionStringKey, configureSettings, options =>
+            {
+                configureDbContextOptions?.Invoke(options);
+
+                // Added after the caller's options so the filter convention runs after any model-finalizing
+                // convention the caller adds, and sees the column names that convention leaves.
+                NpgsqlOutboxOptionsExtension.AddTo(options);
+            });
 
             if (c.OutboxProcessingEnabled)
             {

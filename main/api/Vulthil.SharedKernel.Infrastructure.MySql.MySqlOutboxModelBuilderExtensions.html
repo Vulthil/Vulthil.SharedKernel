@@ -161,9 +161,9 @@ Class MySqlOutboxModelBuilderExtensions  <a class="header-action link-secondary"
   </h3>
 
   <div class="markdown level1 summary"><p>Applies the provider-agnostic <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessage.html">OutboxMessage</a> mapping (<a class="xref" href="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.OutboxModelBuilderExtensions.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_OutboxModelBuilderExtensions_ApplyOutbox_Microsoft_EntityFrameworkCore_ModelBuilder_">ApplyOutbox(ModelBuilder)</a>)
-and the MySQL-optimized additions on top of it: a bounded type column, <code>longtext</code> content, and a
-composite index over the relay's pending-state and ordering columns. MySQL has no filtered (partial) indexes,
-so the index is unfiltered.</p>
+and the MySQL-optimized additions on top of it: <code>longtext</code> content and a composite index over the relay's
+pending-state and ordering columns. MySQL has no filtered (partial) indexes, so the index is unfiltered. The
+type column has no length limit, so the full name of a generic message type always fits.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

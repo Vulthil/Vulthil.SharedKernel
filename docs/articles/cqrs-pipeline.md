@@ -60,7 +60,13 @@ public static IServiceCollection AddInfrastructure(this IServiceCollection servi
 }
 ```
 
-Both entry points compose safely: `ISender` and `IDomainEventPublisher` are registered with `TryAddScoped`, so calling `AddHandlers` from more than one module never duplicates or conflicts with the host's own registration — each call only scans the assemblies it was given, and handlers discovered by every call resolve side by side. The same goes for validation types: a module's `AddFluentValidation` call registers only its own validators, additively alongside whatever the host or any other module already registered.
+Both entry points compose safely: `ISender` and `IDomainEventPublisher` are registered with `TryAddScoped`, so calling `AddHandlers` from more than one module never duplicates or conflicts with the host's own registration — each call only scans the assemblies it was given, and handlers discovered by every call resolve side by side, one per request (see [One handler per request](#one-handler-per-request)). The same goes for validation types: a module's `AddFluentValidation` call registers only its own validators, additively alongside whatever the host or any other module already registered.
+
+### One handler per request
+
+A request and response type pair has exactly one handler, because `ISender` and every injected handler interface return one answer. Scanning the same assembly again — for example from `AddApplication` and from a module's `AddHandlers` — changes nothing. A second, different handler type for the same request and response throws `InvalidOperationException` at startup, naming the request, the response and both handlers, instead of silently keeping one of them and letting the scan order decide which code runs. This includes a handler that derives from another, non-abstract handler, because both implement the handler interface: make the shared base class `abstract`. Domain events are different: every `IDomainEventHandler<T>` of an event is registered and runs.
+
+Handler discovery loads every type of each registered assembly. When a type cannot be loaded — usually because a dependency assembly is missing or has the wrong version — registration throws `InvalidOperationException` with the loader errors instead of skipping the types that failed, because a skipped handler would only surface later, as a missing service on the first request for it.
 
 ## Defining Commands and Handlers
 

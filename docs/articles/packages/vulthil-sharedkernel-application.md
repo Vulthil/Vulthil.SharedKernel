@@ -31,6 +31,8 @@ services.AddApplication(options =>
 });
 ```
 
+Each request and response pair has exactly one handler. Scanning an assembly again changes nothing, but a second, different handler for the same request and response throws `InvalidOperationException` at startup. A domain event can have many handlers. See [One handler per request](../cqrs-pipeline.md#one-handler-per-request).
+
 ### Defining a command and handler
 
 ```csharp

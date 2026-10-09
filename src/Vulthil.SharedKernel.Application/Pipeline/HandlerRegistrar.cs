@@ -19,6 +19,11 @@ namespace Vulthil.SharedKernel.Application.Pipeline;
 /// or <see cref="IQueryHandler{TQuery, TResponse}"/> registrations. Pipeline composition
 /// happens at resolve time, so behaviors added after handler registration still apply
 /// uniformly to every handler that is resolved later.
+/// <para>
+/// A request and response pair has exactly one handler: registering the same handler type again
+/// changes nothing, and a second, different handler type throws instead of silently losing one of
+/// them. Domain event handlers fan out, so every handler of an event is kept.
+/// </para>
 /// </remarks>
 internal static class HandlerRegistrar
 {
@@ -57,17 +62,20 @@ internal static class HandlerRegistrar
 
     private static Type[] GetCandidateTypes(Assembly assembly)
     {
-        Type[] types;
         try
         {
-            types = assembly.GetTypes();
+            return Array.FindAll(assembly.GetTypes(), IsConcreteCandidate);
         }
         catch (ReflectionTypeLoadException ex)
         {
-            types = Array.FindAll(ex.Types, t => t is not null)!;
+            var loaderErrors = ex.LoaderExceptions.OfType<Exception>().Select(static error => error.Message).Distinct();
+            throw new InvalidOperationException(
+                $"Could not load every type in handler assembly '{assembly.FullName}', so a handler among the types " +
+                "that failed to load would be missing without notice until a request for it fails. Fix the load " +
+                "errors, which usually point to a missing or mismatched dependency assembly:" +
+                $"{Environment.NewLine}{string.Join(Environment.NewLine, loaderErrors)}",
+                ex);
         }
-
-        return Array.FindAll(types, IsConcreteCandidate);
     }
 
     private static bool IsConcreteCandidate(Type type) =>
@@ -89,9 +97,11 @@ internal static class HandlerRegistrar
         var requestType = handlerInterface.GenericTypeArguments[0];
         var responseType = handlerInterface.GenericTypeArguments[1];
 
+        // Without DoNotWrapExceptions, a conflicting handler would surface as a TargetInvocationException that hides
+        // the InvalidOperationException describing the conflict.
         RegisterInnerAndDecoratorMethod
-            .MakeGenericMethod(requestType, responseType)
-            .Invoke(null, [services, implType]);
+            .MakeGenericMethod(requestType, responseType, implType)
+            .Invoke(null, BindingFlags.DoNotWrapExceptions, binder: null, [services], culture: null);
 
         if (typeof(ICommand<>).MakeGenericType(responseType).IsAssignableFrom(requestType))
         {
@@ -115,16 +125,34 @@ internal static class HandlerRegistrar
         }
     }
 
-    private static void RegisterInnerAndDecoratorTyped<TRequest, TResponse>(IServiceCollection services, Type implType)
+    private static void RegisterInnerAndDecoratorTyped<TRequest, TResponse, THandler>(IServiceCollection services)
         where TRequest : IRequest<TResponse>
+        where THandler : class, IHandler<TRequest, TResponse>
     {
-        services.TryAdd(ServiceDescriptor.Scoped<IInnerHandler<TRequest, TResponse>>(sp =>
-        {
-            var inner = (IHandler<TRequest, TResponse>)ActivatorUtilities.CreateInstance(sp, implType);
-            return new InnerHandlerAdapter<TRequest, TResponse>(inner);
-        }));
+        ThrowIfAnotherHandlerIsRegistered<TRequest, TResponse, THandler>(services);
 
+        services.TryAdd(ServiceDescriptor.Scoped<IInnerHandler<TRequest, TResponse>, InnerHandlerAdapter<TRequest, TResponse, THandler>>());
         services.TryAdd(ServiceDescriptor.Scoped<IHandler<TRequest, TResponse>, PipelineHandlerDecorator<TRequest, TResponse>>());
+    }
+
+    private static void ThrowIfAnotherHandlerIsRegistered<TRequest, TResponse, THandler>(IServiceCollection services)
+        where TRequest : IRequest<TResponse>
+        where THandler : class, IHandler<TRequest, TResponse>
+    {
+        var registered = services.FirstOrDefault(static descriptor =>
+            descriptor.ServiceType == typeof(IInnerHandler<TRequest, TResponse>) && !descriptor.IsKeyedService);
+
+        if (registered is null || registered.ImplementationType == typeof(InnerHandlerAdapter<TRequest, TResponse, THandler>))
+        {
+            return;
+        }
+
+        var registeredHandler = registered.ImplementationType!.GenericTypeArguments[2];
+        throw new InvalidOperationException(
+            $"Both '{registeredHandler}' and '{typeof(THandler)}' handle request '{typeof(TRequest)}' with response " +
+            $"'{typeof(TResponse)}'. A request has exactly one handler, so keeping one and dropping the other would " +
+            "decide without notice, by scan order, which code runs. Keep one handler for this request and response; " +
+            "when one handler derives from the other, make the base class abstract.");
     }
 
     private static void RegisterCommandAdapterTyped<TCommand, TResponse>(IServiceCollection services)

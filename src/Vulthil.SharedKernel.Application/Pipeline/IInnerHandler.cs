@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.Application.Messaging;
 
 namespace Vulthil.SharedKernel.Application.Pipeline;
@@ -15,16 +16,27 @@ internal interface IInnerHandler<in TRequest, TResponse>
     Task<TResponse> HandleAsync(TRequest request, CancellationToken cancellationToken = default);
 }
 
-internal sealed class InnerHandlerAdapter<TRequest, TResponse>(IHandler<TRequest, TResponse> handler)
+/// <summary>
+/// Creates the concrete <typeparamref name="THandler"/> for the current scope and forwards to it.
+/// </summary>
+/// <remarks>
+/// The handler is a type argument rather than a captured value, so the implementation type of a registration names
+/// the handler it resolves. <see cref="HandlerRegistrar"/> relies on that to tell a repeated registration of the same
+/// handler from a second, different handler for the same request.
+/// </remarks>
+internal sealed class InnerHandlerAdapter<TRequest, TResponse, THandler>(IServiceProvider serviceProvider)
     : IInnerHandler<TRequest, TResponse>, IDisposable, IAsyncDisposable
     where TRequest : IRequest<TResponse>
+    where THandler : class, IHandler<TRequest, TResponse>
 {
+    private readonly THandler _handler = ActivatorUtilities.CreateInstance<THandler>(serviceProvider);
+
     public Task<TResponse> HandleAsync(TRequest request, CancellationToken cancellationToken = default) =>
-        handler.HandleAsync(request, cancellationToken);
+        _handler.HandleAsync(request, cancellationToken);
 
     public void Dispose()
     {
-        switch (handler)
+        switch (_handler)
         {
             case IDisposable disposable:
                 disposable.Dispose();
@@ -37,7 +49,7 @@ internal sealed class InnerHandlerAdapter<TRequest, TResponse>(IHandler<TRequest
 
     public async ValueTask DisposeAsync()
     {
-        switch (handler)
+        switch (_handler)
         {
             case IAsyncDisposable asyncDisposable:
                 await asyncDisposable.DisposeAsync().ConfigureAwait(false);

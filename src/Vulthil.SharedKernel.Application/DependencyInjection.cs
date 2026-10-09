@@ -19,6 +19,10 @@ public static class DependencyInjection
     /// <param name="services">The service collection.</param>
     /// <param name="applicationOptionsAction">An action to configure application options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+    /// different handler type, or when a handler assembly contains types that cannot be loaded.
+    /// </exception>
     /// <remarks>
     /// This is the host's application-composition entry point: call it once from the project that owns the
     /// composition root, and register handler and validator assemblies from anywhere in the solution — including
@@ -43,6 +47,10 @@ public static class DependencyInjection
     /// <param name="services">The service collection.</param>
     /// <param name="applicationOptions">The pre-configured application options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+    /// different handler type, or when a handler assembly contains types that cannot be loaded.
+    /// </exception>
     public static IServiceCollection AddApplication(this IServiceCollection services, ApplicationOptions applicationOptions)
     {
         services.AddFluentValidation(applicationOptions.FluentValidationOptions);
@@ -93,13 +101,20 @@ public static class DependencyInjection
     /// <param name="services">The service collection.</param>
     /// <param name="handlerOptionsAction">An optional action to configure handler options.</param>
     /// <returns>The service collection for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+    /// different handler type, or when a handler assembly contains types that cannot be loaded.
+    /// </exception>
     /// <remarks>
     /// A supported modular entry point: call this from a project that does not own the host (for example, an
     /// Infrastructure project's own registration extension) to additively register that project's own handler
     /// assemblies without re-calling <see cref="AddApplication(IServiceCollection, Action{ApplicationOptions})"/>.
     /// Registration only scans the assemblies configured in <paramref name="handlerOptionsAction"/>, and the
     /// shared <see cref="ISender"/>/<see cref="IDomainEventPublisher"/> registrations use <c>TryAddScoped</c>, so
-    /// calling this from multiple independent modules composes additively instead of conflicting.
+    /// calling this from multiple independent modules composes additively instead of conflicting. A request and
+    /// response pair has exactly one handler: scanning an assembly again changes nothing, but a second, different
+    /// handler type for the same pair throws instead of silently dropping one of them. Every handler of a domain
+    /// event is kept.
     /// </remarks>
     public static IServiceCollection AddHandlers(this IServiceCollection services, Action<HandlerOptions> handlerOptionsAction)
     {
@@ -120,9 +135,15 @@ public static class DependencyInjection
     /// and <see cref="AddHandlers(IServiceCollection, Action{HandlerOptions})"/> delegate to. Safe to call from
     /// multiple independent modules: registration only scans <see cref="HandlerOptions.HandlerAssemblies"/>, and
     /// the shared <see cref="ISender"/>/<see cref="IDomainEventPublisher"/> registrations use
-    /// <c>TryAddScoped</c>, so calling it more than once composes additively instead of conflicting.
+    /// <c>TryAddScoped</c>, so calling it more than once composes additively instead of conflicting. A request and
+    /// response pair has exactly one handler: scanning an assembly again changes nothing, but a second, different
+    /// handler type for the same pair throws instead of silently dropping one of them. Every handler of a domain
+    /// event is kept.
     /// </remarks>
-    /// <exception cref="InvalidOperationException">Thrown when no handler assemblies have been registered.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+    /// different handler type, or when a handler assembly contains types that cannot be loaded.
+    /// </exception>
     public static IServiceCollection AddHandlers(this IServiceCollection services, HandlerOptions handlerOptions)
     {
         if (handlerOptions.HandlerAssemblies.Count == 0)

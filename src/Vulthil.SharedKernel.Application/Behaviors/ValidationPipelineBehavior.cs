@@ -60,23 +60,21 @@ internal sealed class ValidationPipelineBehavior<TCommand, TResponse>(IEnumerabl
         return openValidationFailureMethod.MakeGenericMethod(resultType);
     }
 
+    /// <summary>
+    /// Runs the validators one after another, each on a validation context of its own, and returns the failures of
+    /// all of them. A FluentValidation result shares its context's failure list, so validators that shared one context
+    /// would each report every failure. Validators also often use scoped services, such as a <c>DbContext</c>, that
+    /// allow only one operation at a time.
+    /// </summary>
     private async Task<ValidationFailure[]> ValidateAsync(TCommand command, CancellationToken cancellationToken)
     {
-        if (!_validators.Any())
+        List<ValidationFailure> failures = [];
+        foreach (var validator in _validators)
         {
-            return [];
+            var result = await validator.ValidateAsync(new ValidationContext<TCommand>(command), cancellationToken).ConfigureAwait(false);
+            failures.AddRange(result.Errors);
         }
 
-        var context = new ValidationContext<TCommand>(command);
-
-        var validationResults = await Task.WhenAll(_validators
-            .Select(v => v.ValidateAsync(context, cancellationToken))).ConfigureAwait(false);
-
-        var validationFailures = validationResults
-            .Where(validationResult => !validationResult.IsValid)
-            .SelectMany(validationResult => validationResult.Errors)
-            .ToArray();
-
-        return validationFailures;
+        return [.. failures];
     }
 }

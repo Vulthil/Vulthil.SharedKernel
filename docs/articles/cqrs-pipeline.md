@@ -110,7 +110,7 @@ Pipeline behaviors wrap every handler invocation, allowing you to add cross-cutt
 
 ### Validation
 
-`ValidationPipelineBehavior` runs all registered `IValidator<TCommand>` instances before the handler executes. When validation fails it short-circuits: a command returning `Result` or `Result<T>` receives a failed result containing a `ValidationError`, while a command with any other response type throws a `CommandValidationException` (there is no in-band way to represent failure for a non-result response). It is a FluentValidation `ValidationException` that carries the same `ValidationError`, so `Vulthil.SharedKernel.Api` answers it with the same `400` validation problem as a failed result:
+`ValidationPipelineBehavior` runs all registered `IValidator<TCommand>` instances before the handler executes, one after another in registration order. Each validator gets a validation context of its own, and the failures of all validators are returned together, so every failure appears once, and validators can share a scoped service, such as a `DbContext`, that allows only one operation at a time. When validation fails it short-circuits: a command returning `Result` or `Result<T>` receives a failed result containing a `ValidationError`, while a command with any other response type throws a `CommandValidationException` (there is no in-band way to represent failure for a non-result response). It is a FluentValidation `ValidationException` that carries the same `ValidationError`, so `Vulthil.SharedKernel.Api` answers it with the same `400` validation problem as a failed result:
 
 ```csharp
 public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>

@@ -74,6 +74,105 @@ public class TestCommand : ICommand<Result>
     public string Name { get; set; } = string.Empty;
 }
 
+public sealed class ValidationPipelineBehaviorWithSeveralValidatorsTests : BaseUnitTestCase
+{
+    private readonly Lazy<ValidationPipelineBehavior<TestCommand, Result>> _lazyTarget;
+    private ValidationPipelineBehavior<TestCommand, Result> Target => _lazyTarget.Value;
+
+    public ValidationPipelineBehaviorWithSeveralValidatorsTests()
+    {
+        _lazyTarget = new(CreateInstance<ValidationPipelineBehavior<TestCommand, Result>>);
+    }
+
+    [Fact]
+    public async Task EveryValidatorRunsAndEachFailureIsReturnedOnce()
+    {
+        // Arrange
+        Use<IEnumerable<IValidator<TestCommand>>>([new NameRequiredValidator(), new NameLongEnoughValidator()]);
+        var request = new TestCommand { Name = string.Empty };
+        PipelineDelegate<Result> next = _ => Task.FromResult(Result.Success());
+
+        // Act
+        var result = await Target.HandleAsync(request, next, CancellationToken);
+
+        // Assert
+        var validationError = Assert.IsType<ValidationError>(result.Error);
+        Assert.Collection(
+            validationError.Errors,
+            error => Assert.Equal("Name.Required", error.Code),
+            error => Assert.Equal("Name.TooShort", error.Code));
+    }
+
+    [Fact]
+    public async Task ValidatorsThatShareAServiceRunOneAfterAnother()
+    {
+        // Arrange
+        var sharedService = new SingleUseService();
+        Use<IEnumerable<IValidator<TestCommand>>>([new SharedServiceValidator(sharedService), new SharedServiceValidator(sharedService)]);
+        var request = new TestCommand { Name = "Test" };
+        var called = false;
+        PipelineDelegate<Result> next = _ =>
+        {
+            called = true;
+            return Task.FromResult(Result.Success());
+        };
+
+        // Act
+        var result = await Target.HandleAsync(request, next, CancellationToken);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.True(called);
+        Assert.Equal(2, sharedService.Uses);
+        Assert.Equal(1, sharedService.MostUsesAtOnce);
+    }
+
+    public sealed class NameRequiredValidator : AbstractValidator<TestCommand>
+    {
+        public NameRequiredValidator() => RuleFor(command => command.Name).NotEmpty().WithErrorCode("Name.Required");
+    }
+
+    public sealed class NameLongEnoughValidator : AbstractValidator<TestCommand>
+    {
+        public NameLongEnoughValidator() => RuleFor(command => command.Name).MinimumLength(3).WithErrorCode("Name.TooShort");
+    }
+
+    public sealed class SharedServiceValidator : AbstractValidator<TestCommand>
+    {
+        public SharedServiceValidator(SingleUseService service) =>
+            RuleFor(command => command.Name).MustAsync((_, cancellationToken) => service.CheckAsync(cancellationToken));
+    }
+
+    public sealed class SingleUseService
+    {
+        private readonly Lock _gate = new();
+        private int _usesNow;
+
+        public int Uses { get; private set; }
+
+        public int MostUsesAtOnce { get; private set; }
+
+        public async Task<bool> CheckAsync(CancellationToken cancellationToken)
+        {
+            lock (_gate)
+            {
+                Uses++;
+                _usesNow++;
+                MostUsesAtOnce = Math.Max(MostUsesAtOnce, _usesNow);
+            }
+
+            await Task.Delay(TimeSpan.FromMilliseconds(50), cancellationToken);
+
+            lock (_gate)
+            {
+                _usesNow--;
+            }
+
+            return true;
+        }
+    }
+}
+
 public sealed class ValidationPipelineBehaviorWithResultOfTResponseTests : BaseUnitTestCase
 {
     private readonly Lazy<ValidationPipelineBehavior<TestCommandWithValue, Result<string>>> _lazyTarget;

@@ -79,6 +79,17 @@ public interface IMessagingConfigurator
     /// key is <see langword="null"/> or empty bypasses the partitioner.
     /// </param>
     /// <returns>The current configurator instance for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// <typeparamref name="TMessage"/> is already partitioned with a different partitioner, partition count, or key
+    /// selector.
+    /// </exception>
+    /// <remarks>
+    /// A message type has one partition registration, and this overload gives it a partitioner of its own. Repeating the
+    /// call with the same <paramref name="partitionCount"/> and the same <paramref name="keySelector"/> (the same method on
+    /// the same target, such as one static lambda) changes nothing; any other second registration for
+    /// <typeparamref name="TMessage"/>, from any module, throws instead of silently replacing the first and dropping the
+    /// ordering it relies on.
+    /// </remarks>
     IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount, Func<IMessageContext<TMessage>, string?> keySelector)
         where TMessage : notnull;
 
@@ -90,6 +101,16 @@ public interface IMessagingConfigurator
     /// <typeparam name="TMessage">The message type to partition.</typeparam>
     /// <param name="partitionCount">The number of partitions (lanes) to distribute keys across.</param>
     /// <returns>The current configurator instance for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// <typeparamref name="TMessage"/> is already partitioned with a different partitioner, partition count, or key
+    /// selector.
+    /// </exception>
+    /// <remarks>
+    /// A message type has one partition registration, and this overload gives it a partitioner of its own. Repeating the
+    /// call with the same <paramref name="partitionCount"/> changes nothing; any other second registration for
+    /// <typeparamref name="TMessage"/>, from any module, throws instead of silently replacing the first, including one
+    /// that passes its own <c>CorrelationId</c> key selector.
+    /// </remarks>
     IMessagingConfigurator UsePartitioner<TMessage>(int partitionCount)
         where TMessage : notnull;
 
@@ -105,6 +126,16 @@ public interface IMessagingConfigurator
     /// key is <see langword="null"/> or empty bypasses the partitioner.
     /// </param>
     /// <returns>The current configurator instance for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// <typeparamref name="TMessage"/> is already partitioned with a different partitioner, partition count, or key
+    /// selector.
+    /// </exception>
+    /// <remarks>
+    /// A message type has one partition registration. Repeating the call with the same <paramref name="partitioner"/>
+    /// instance and the same <paramref name="keySelector"/> (the same method on the same target, such as one static
+    /// lambda) changes nothing; any other second registration for <typeparamref name="TMessage"/>, from any module,
+    /// throws instead of silently replacing the first and dropping the ordering it relies on.
+    /// </remarks>
     IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner, Func<IMessageContext<TMessage>, string?> keySelector)
         where TMessage : notnull;
 
@@ -118,6 +149,16 @@ public interface IMessagingConfigurator
     /// <typeparam name="TMessage">The message type to partition.</typeparam>
     /// <param name="partitioner">The partitioner whose lanes serialize same-key processing.</param>
     /// <returns>The current configurator instance for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// <typeparamref name="TMessage"/> is already partitioned with a different partitioner, partition count, or key
+    /// selector.
+    /// </exception>
+    /// <remarks>
+    /// A message type has one partition registration. Repeating the call with the same <paramref name="partitioner"/>
+    /// instance changes nothing; any other second registration for <typeparamref name="TMessage"/>, from any module,
+    /// throws instead of silently replacing the first, including one that passes its own <c>CorrelationId</c> key
+    /// selector.
+    /// </remarks>
     IMessagingConfigurator UsePartitioner<TMessage>(Partitioner partitioner)
         where TMessage : notnull;
 }

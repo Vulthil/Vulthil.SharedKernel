@@ -20,6 +20,7 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
     private readonly ConcurrentDictionary<Uri, Type> _urnToType = new();
     private readonly HashSet<MessageType> _registeredRequestTypes = [];
     private readonly Dictionary<Type, PartitionSpec> _partitions = [];
+    private readonly Dictionary<Type, Partitioner> _dedicatedPartitioners = [];
     internal Dictionary<string, MessageConfiguration> MessageConfigurations { get; } = new(StringComparer.Ordinal);
     internal Dictionary<string, QueueDefinition> QueueDefinitions { get; } = new(StringComparer.OrdinalIgnoreCase);
 
@@ -73,8 +74,43 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
 
     internal bool RegisterRequestType(MessageType messageType) => _registeredRequestTypes.Add(messageType);
 
-    /// <summary>Records the partition configuration for a message type (overwrites any prior registration).</summary>
-    internal void RegisterPartition(Type messageType, PartitionSpec spec) => _partitions[messageType] = spec;
+    /// <summary>
+    /// Partitions <paramref name="messageType"/> over <paramref name="partitioner"/>. Repeating the registration with
+    /// the same partitioner instance and an equal key selector changes nothing; any other second registration for the
+    /// type throws, because the transport honors one partition per message type and replacing it would silently drop
+    /// the ordering the first registration relies on.
+    /// </summary>
+    internal void RegisterPartition(Type messageType, Partitioner partitioner, Delegate keySelector)
+    {
+        var spec = new PartitionSpec(partitioner, keySelector);
+        if (_partitions.TryAdd(messageType, spec) || _partitions[messageType] == spec)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"UsePartitioner was already called for '{messageType.FullName}' with a different partitioner or key selector. " +
+            "A message type has one partition registration, so replacing it would silently drop the ordering the earlier " +
+            "call relies on. Partition the message type in one place, or repeat the call with the same Partitioner instance " +
+            "(or the same partition count) and the same key selector (the same method on the same target).");
+    }
+
+    /// <summary>
+    /// Partitions <paramref name="messageType"/> over a partitioner dedicated to it, with
+    /// <paramref name="partitionCount"/> lanes. No other message type shares that partitioner, so a repeat with the
+    /// same count and an equal key selector asks for identical lanes: it reuses the first partitioner and changes
+    /// nothing. Any other second registration for the type throws.
+    /// </summary>
+    internal void RegisterPartition(Type messageType, int partitionCount, Delegate keySelector)
+    {
+        if (!_dedicatedPartitioners.TryGetValue(messageType, out var partitioner) || partitioner.PartitionCount != partitionCount)
+        {
+            partitioner = new Partitioner(partitionCount);
+        }
+
+        RegisterPartition(messageType, partitioner, keySelector);
+        _dedicatedPartitioners[messageType] = partitioner;
+    }
 
     /// <inheritdoc />
     public PartitionSpec? GetPartition(Type messageType) => _partitions.GetValueOrDefault(messageType);

@@ -337,12 +337,15 @@ builder.AddMessaging(m =>
     // Order OrderUpdated deliveries per OrderId across 16 lanes.
     m.UsePartitioner<OrderUpdated>(partitionCount: 16, ctx => ctx.Message.OrderId.ToString());
 
-    // Shorthand: omit the selector to key on CorrelationId (the natural key when it
-    // carries the aggregate id). Equivalent to passing ctx => ctx.CorrelationId.
-    m.UsePartitioner<OrderUpdated>(16);
-
     m.ConfigureQueue("orders", q => q.AddConsumer<OrderUpdatedConsumer>());
 });
+```
+
+Or omit the selector to key on `CorrelationId` instead (the natural key when it carries
+the aggregate id). This is equivalent to passing `ctx => ctx.CorrelationId`:
+
+```csharp
+m.UsePartitioner<OrderUpdated>(16);
 ```
 
 Share one `Partitioner` across several message types to serialize messages correlated
@@ -354,6 +357,17 @@ var orders = new Partitioner(16);
 m.UsePartitioner<OrderUpdated>(orders);
 m.UsePartitioner<OrderShipped>(orders);
 ```
+
+### One partition registration per message type
+
+A message type is partitioned one way, so every `UsePartitioner<T>` call for the same `T`
+— from any module — must agree. Repeating a call with the same `Partitioner` instance (or
+the same partition count) and the same key selector (the same method on the same target,
+such as one static lambda) changes nothing. Any other second call throws
+`InvalidOperationException` at startup instead of silently replacing the first, which would
+drop the ordering the first call relies on. Two lambdas with the same body in two modules
+are two different selectors, and the shorthand differs from an explicit
+`ctx => ctx.CorrelationId`, so partition a message type in one place.
 
 ### How it works
 

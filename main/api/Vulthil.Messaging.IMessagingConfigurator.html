@@ -433,7 +433,7 @@ sending it immediately. The filter is resolved from the caller's scope, so it ma
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(System.Int32)">
   UsePartitioner&lt;TMessage&gt;(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries by their <code>CorrelationId</code> —
@@ -472,7 +472,20 @@ Deliveries with no correlation id bypass the partitioner.</p>
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A message type has one partition registration, and this overload gives it a partitioner of its own. Repeating the
+call with the same <code class="paramref">partitionCount</code> changes nothing; any other second registration for
+<code class="typeparamref">TMessage</code>, from any module, throws instead of silently replacing the first, including one
+that passes its own <code>CorrelationId</code> key selector.</p>
+</div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p><code class="typeparamref">TMessage</code> is already partitioned with a different partitioner, partition count, or key
+selector.</p>
+</dd>
+  </dl>
 
 
 
@@ -480,7 +493,7 @@ Deliveries with no correlation id bypass the partitioner.</p>
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(System.Int32,System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.String})">
   UsePartitioner&lt;TMessage&gt;(int, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries that share a partition key, so
@@ -524,7 +537,21 @@ key is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/key
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_System_Int32_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A message type has one partition registration, and this overload gives it a partitioner of its own. Repeating the
+call with the same <code class="paramref">partitionCount</code> and the same <code class="paramref">keySelector</code> (the same method on
+the same target, such as one static lambda) changes nothing; any other second registration for
+<code class="typeparamref">TMessage</code>, from any module, throws instead of silently replacing the first and dropping the
+ordering it relies on.</p>
+</div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p><code class="typeparamref">TMessage</code> is already partitioned with a different partitioner, partition count, or key
+selector.</p>
+</dd>
+  </dl>
 
 
 
@@ -532,7 +559,7 @@ key is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/key
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner_" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(Vulthil.Messaging.Partitioner)">
   UsePartitioner&lt;TMessage&gt;(Partitioner)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L162"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries by their <code>CorrelationId</code> using a
@@ -573,7 +600,20 @@ no correlation id bypass the partitioner.</p>
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A message type has one partition registration. Repeating the call with the same <code class="paramref">partitioner</code>
+instance changes nothing; any other second registration for <code class="typeparamref">TMessage</code>, from any module,
+throws instead of silently replacing the first, including one that passes its own <code>CorrelationId</code> key
+selector.</p>
+</div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p><code class="typeparamref">TMessage</code> is already partitioned with a different partitioner, partition count, or key
+selector.</p>
+</dd>
+  </dl>
 
 
 
@@ -581,7 +621,7 @@ no correlation id bypass the partitioner.</p>
 
   <h3 id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String__" data-uid="Vulthil.Messaging.IMessagingConfigurator.UsePartitioner``1(Vulthil.Messaging.Partitioner,System.Func{Vulthil.Messaging.Abstractions.Consumers.IMessageContext{``0},System.String})">
   UsePartitioner&lt;TMessage&gt;(Partitioner, Func&lt;IMessageContext&lt;TMessage&gt;, string?&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/IMessagingConfigurator.cs/#L139"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes processing of <code class="typeparamref">TMessage</code> deliveries that share a partition key using a
@@ -624,7 +664,20 @@ key is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/key
 
 
 
+  <h4 class="section" id="Vulthil_Messaging_IMessagingConfigurator_UsePartitioner__1_Vulthil_Messaging_Partitioner_System_Func_Vulthil_Messaging_Abstractions_Consumers_IMessageContext___0__System_String___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A message type has one partition registration. Repeating the call with the same <code class="paramref">partitioner</code>
+instance and the same <code class="paramref">keySelector</code> (the same method on the same target, such as one static
+lambda) changes nothing; any other second registration for <code class="typeparamref">TMessage</code>, from any module,
+throws instead of silently replacing the first and dropping the ordering it relies on.</p>
+</div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p><code class="typeparamref">TMessage</code> is already partitioned with a different partitioner, partition count, or key
+selector.</p>
+</dd>
+  </dl>
 
 
 

@@ -376,12 +376,12 @@ with different keys run concurrently.</p>
     // Order OrderUpdated deliveries per OrderId across 16 lanes.
     m.UsePartitioner&lt;OrderUpdated&gt;(partitionCount: 16, ctx =&gt; ctx.Message.OrderId.ToString());
 
-    // Shorthand: omit the selector to key on CorrelationId (the natural key when it
-    // carries the aggregate id). Equivalent to passing ctx =&gt; ctx.CorrelationId.
-    m.UsePartitioner&lt;OrderUpdated&gt;(16);
-
     m.ConfigureQueue(&quot;orders&quot;, q =&gt; q.AddConsumer&lt;OrderUpdatedConsumer&gt;());
 });
+</code></pre>
+<p>Or omit the selector to key on <code>CorrelationId</code> instead (the natural key when it carries
+the aggregate id). This is equivalent to passing <code>ctx =&gt; ctx.CorrelationId</code>:</p>
+<pre><code class="lang-csharp">m.UsePartitioner&lt;OrderUpdated&gt;(16);
 </code></pre>
 <p>Share one <code>Partitioner</code> across several message types to serialize messages correlated
 to the same key regardless of their type (e.g. a saga). The selector is optional here too
@@ -390,6 +390,15 @@ and defaults to <code>CorrelationId</code>:</p>
 m.UsePartitioner&lt;OrderUpdated&gt;(orders);
 m.UsePartitioner&lt;OrderShipped&gt;(orders);
 </code></pre>
+<h3 id="one-partition-registration-per-message-type">One partition registration per message type</h3>
+<p>A message type is partitioned one way, so every <code>UsePartitioner&lt;T&gt;</code> call for the same <code>T</code>
+— from any module — must agree. Repeating a call with the same <code>Partitioner</code> instance (or
+the same partition count) and the same key selector (the same method on the same target,
+such as one static lambda) changes nothing. Any other second call throws
+<code>InvalidOperationException</code> at startup instead of silently replacing the first, which would
+drop the ordering the first call relies on. Two lambdas with the same body in two modules
+are two different selectors, and the shorthand differs from an explicit
+<code>ctx =&gt; ctx.CorrelationId</code>, so partition a message type in one place.</p>
 <h3 id="how-it-works">How it works</h3>
 <p>Ordering is enforced by the RabbitMQ transport, not a consume filter. When a queue
 consumes a partitioned message type, its worker:</p>

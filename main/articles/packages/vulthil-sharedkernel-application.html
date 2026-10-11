@@ -113,6 +113,7 @@
     options.AddTransactionalPipelineBehavior();
 });
 </code></pre>
+<p>Each request and response pair has exactly one handler. Scanning an assembly again changes nothing, but a second, different handler for the same request and response throws <code>InvalidOperationException</code> at startup. A domain event can have many handlers. See <a href="../cqrs-pipeline.html#one-handler-per-request">One handler per request</a>.</p>
 <h3 id="defining-a-command-and-handler">Defining a command and handler</h3>
 <pre><code class="lang-csharp">public sealed record CreateUserCommand(string Email) : ICommand&lt;Result&lt;Guid&gt;&gt;;
 
@@ -169,7 +170,7 @@ public sealed class GetUserQueryHandler(IUserRepository users)
         =&gt; handler.HandleAsync(command, ct);
 }
 </code></pre>
-<p>Custom behaviors registered from any assembly with <code>services.AddOpenPipelineHandler(typeof(MyBehavior&lt;,&gt;))</code> apply to every handler resolved afterwards — order of registration relative to <code>AddApplication</code> does not matter.</p>
+<p>Custom behaviors registered from any assembly with <code>services.AddOpenPipelineHandler(typeof(MyBehavior&lt;,&gt;))</code> apply to every handler, whether the handler was registered before or after the behavior. Registration order still sets the nesting: behaviors nest in registration order across all calls, so one registered after <code>AddApplication</code> runs inside the behaviors that <code>AddApplication</code> registered, and one registered before it runs outside them. See <a href="../cqrs-pipeline.html#behaviors-across-assemblies">Behaviors across assemblies</a>.</p>
 
 </article>
 

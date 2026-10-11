@@ -157,7 +157,7 @@ Class DependencyInjection  <a class="header-action link-secondary" title="View s
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_ApplicationOptions__" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.SharedKernel.Application.ApplicationOptions})">
   AddApplication(IServiceCollection, Action&lt;ApplicationOptions&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers application-layer services including handlers and FluentValidation validators.</p>
@@ -202,6 +202,13 @@ assemblies owned by other projects — via <a class="xref" href="Vulthil.SharedK
 that project's own assemblies additively, without re-calling this method.</p>
 </div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+different handler type, or when a handler assembly contains types that cannot be loaded.</p>
+</dd>
+  </dl>
 
 
 
@@ -209,7 +216,7 @@ that project's own assemblies additively, without re-calling this method.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_Vulthil_SharedKernel_Application_ApplicationOptions_" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddApplication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Vulthil.SharedKernel.Application.ApplicationOptions)">
   AddApplication(IServiceCollection, ApplicationOptions)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers application-layer services using a pre-configured <a class="xref" href="Vulthil.SharedKernel.Application.ApplicationOptions.html">ApplicationOptions</a> instance.</p>
@@ -244,6 +251,13 @@ that project's own assemblies additively, without re-calling this method.</p>
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+different handler type, or when a handler assembly contains types that cannot be loaded.</p>
+</dd>
+  </dl>
 
 
 
@@ -251,7 +265,7 @@ that project's own assemblies additively, without re-calling this method.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddFluentValidation_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_FluentValidationOptions__" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.SharedKernel.Application.FluentValidationOptions})">
   AddFluentValidation(IServiceCollection, Action&lt;FluentValidationOptions&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers FluentValidation validators from the configured assemblies.</p>
@@ -301,7 +315,7 @@ independent modules composes additively instead of conflicting.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddFluentValidation_Microsoft_Extensions_DependencyInjection_IServiceCollection_Vulthil_SharedKernel_Application_FluentValidationOptions_" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddFluentValidation(Microsoft.Extensions.DependencyInjection.IServiceCollection,Vulthil.SharedKernel.Application.FluentValidationOptions)">
   AddFluentValidation(IServiceCollection, FluentValidationOptions)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L88"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers FluentValidation validators using a pre-configured <a class="xref" href="Vulthil.SharedKernel.Application.FluentValidationOptions.html">FluentValidationOptions</a> instance.</p>
@@ -343,7 +357,7 @@ independent modules composes additively instead of conflicting.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddHandlers_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_HandlerOptions__" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Vulthil.SharedKernel.Application.HandlerOptions})">
   AddHandlers(IServiceCollection, Action&lt;HandlerOptions&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L119"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers request handlers, domain event handlers, and pipeline handlers from the configured assemblies.</p>
@@ -383,9 +397,19 @@ Infrastructure project's own registration extension) to additively register that
 assemblies without re-calling <a class="xref" href="Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddApplication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_ApplicationOptions__">AddApplication(IServiceCollection, Action&lt;ApplicationOptions&gt;)</a>.
 Registration only scans the assemblies configured in <code class="paramref">handlerOptionsAction</code>, and the
 shared <a class="xref" href="Vulthil.SharedKernel.Application.Messaging.ISender.html">ISender</a>/<a class="xref" href="Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html">IDomainEventPublisher</a> registrations use <code>TryAddScoped</code>, so
-calling this from multiple independent modules composes additively instead of conflicting.</p>
+calling this from multiple independent modules composes additively instead of conflicting. A request and
+response pair has exactly one handler: scanning an assembly again changes nothing, but a second, different
+handler type for the same pair throws instead of silently dropping one of them. Every handler of a domain
+event is kept.</p>
 </div>
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+different handler type, or when a handler assembly contains types that cannot be loaded.</p>
+</dd>
+  </dl>
 
 
 
@@ -393,7 +417,7 @@ calling this from multiple independent modules composes additively instead of co
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddHandlers_Microsoft_Extensions_DependencyInjection_IServiceCollection_Vulthil_SharedKernel_Application_HandlerOptions_" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddHandlers(Microsoft.Extensions.DependencyInjection.IServiceCollection,Vulthil.SharedKernel.Application.HandlerOptions)">
   AddHandlers(IServiceCollection, HandlerOptions)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L147"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers request handlers, domain event handlers, and pipeline handlers using a pre-configured <a class="xref" href="Vulthil.SharedKernel.Application.HandlerOptions.html">HandlerOptions</a> instance.</p>
@@ -432,13 +456,17 @@ calling this from multiple independent modules composes additively instead of co
 and <a class="xref" href="Vulthil.SharedKernel.Application.DependencyInjection.html#Vulthil_SharedKernel_Application_DependencyInjection_AddHandlers_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Vulthil_SharedKernel_Application_HandlerOptions__">AddHandlers(IServiceCollection, Action&lt;HandlerOptions&gt;)</a> delegate to. Safe to call from
 multiple independent modules: registration only scans <a class="xref" href="Vulthil.SharedKernel.Application.HandlerOptions.html#Vulthil_SharedKernel_Application_HandlerOptions_HandlerAssemblies">HandlerAssemblies</a>, and
 the shared <a class="xref" href="Vulthil.SharedKernel.Application.Messaging.ISender.html">ISender</a>/<a class="xref" href="Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html">IDomainEventPublisher</a> registrations use
-<code>TryAddScoped</code>, so calling it more than once composes additively instead of conflicting.</p>
+<code>TryAddScoped</code>, so calling it more than once composes additively instead of conflicting. A request and
+response pair has exactly one handler: scanning an assembly again changes nothing, but a second, different
+handler type for the same pair throws instead of silently dropping one of them. Every handler of a domain
+event is kept.</p>
 </div>
 
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
-    <dd><p>Thrown when no handler assemblies have been registered.</p>
+    <dd><p>Thrown when no handler assemblies have been registered, when a request and response type pair gets a second,
+different handler type, or when a handler assembly contains types that cannot be loaded.</p>
 </dd>
   </dl>
 
@@ -448,7 +476,7 @@ the shared <a class="xref" href="Vulthil.SharedKernel.Application.Messaging.ISen
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddOpenDomainEventPipelineHandler_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Type_" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddOpenDomainEventPipelineHandler(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
   AddOpenDomainEventPipelineHandler(IServiceCollection, Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L199"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an open-generic domain event pipeline behavior. Behaviors registered through this
@@ -497,7 +525,7 @@ method apply lazily and are independent of when handlers were registered.</p>
 
   <h3 id="Vulthil_SharedKernel_Application_DependencyInjection_AddOpenPipelineHandler_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Type_" data-uid="Vulthil.SharedKernel.Application.DependencyInjection.AddOpenPipelineHandler(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
   AddOpenPipelineHandler(IServiceCollection, Type)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/DependencyInjection.cs/#L181"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an open-generic request pipeline behavior. Behaviors are composed when a handler is resolved, so the

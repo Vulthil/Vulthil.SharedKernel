@@ -31,6 +31,8 @@ services.AddApplication(options =>
 });
 ```
 
+Each request and response pair has exactly one handler. Scanning an assembly again changes nothing, but a second, different handler for the same request and response throws `InvalidOperationException` at startup. A domain event can have many handlers. See [One handler per request](../cqrs-pipeline.md#one-handler-per-request).
+
 ### Defining a command and handler
 
 ```csharp
@@ -104,4 +106,4 @@ public sealed class CreateUserEndpoint(ICommandHandler<CreateUserCommand, Result
 }
 ```
 
-Custom behaviors registered from any assembly with `services.AddOpenPipelineHandler(typeof(MyBehavior<,>))` apply to every handler resolved afterwards — order of registration relative to `AddApplication` does not matter.
+Custom behaviors registered from any assembly with `services.AddOpenPipelineHandler(typeof(MyBehavior<,>))` apply to every handler, whether the handler was registered before or after the behavior. Registration order still sets the nesting: behaviors nest in registration order across all calls, so one registered after `AddApplication` runs inside the behaviors that `AddApplication` registered, and one registered before it runs outside them. See [Behaviors across assemblies](../cqrs-pipeline.md#behaviors-across-assemblies).

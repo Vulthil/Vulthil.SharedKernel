@@ -1,19 +1,36 @@
 [changelog]
 header = "# Changelog\n\nAll notable changes to this project will be documented in this file.\n"
+# Groups render in the order of their numbered comment prefix, which striptags removes. A typed
+# change shows its description; a subject without a known type shows whole under "Other changes".
+# Dependabot pull requests are counted, not listed. GitHub renders the notes as Markdown and drops
+# a generic argument such as <T> as an unknown HTML tag, so "<" is escaped.
 body = """
-{% for group, commits in commits | group_by(attribute="group") %}
-### {{ group | upper_first }}
-{% for commit in commits %}
-- {{ commit.message | upper_first }} ({{ commit.id | truncate(length=7, end="") }})\
-{% endfor %}
+{% for group, group_commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim | upper_first }}
+{% if group is ending_with("Dependencies") %}
+- {{ group_commits | length }} dependency update{% if group_commits | length != 1 %}s{% endif %} from Dependabot\
+{% else %}{% for commit in group_commits %}\
+{% if group is ending_with("Other changes") %}{% set subject = commit.raw_message %}{% else %}{% set subject = commit.message %}{% endif %}
+- {{ subject | split(pat="\n") | first | trim | upper_first | replace(from="<", to="&lt;") }} ({{ commit.id | truncate(length=7, end="") }})\
+{% endfor %}{% endif %}
 {% endfor %}
 """
 trim = true
 
 [git]
+# Subjects use the Conventional Commits form, so changes are grouped by type. A subject without a
+# type is kept rather than filtered out; git-cliff fills every key this file leaves out from its
+# built-in default config, which filters such subjects, so filter_unconventional is set.
 conventional_commits = true
-filter_unconventional = true
+filter_unconventional = false
+# The notes start after the newest stable tag on the released branch, so a preview tag or a tag on
+# another branch (a servicing line or a preview train) cannot cut them short or repeat an older
+# release. tag_pattern is a regex.
+tag_pattern = '^v[0-9]+\.[0-9]+\.[0-9]+$'
+use_branch_tags = true
 commit_parsers = [
+    # A merge commit only joins a pull request whose own commits are listed.
+    { field = "merge_commit", pattern = "^true$", skip = true },
     # Release-automation commits (mark-api-shipped, version-bump, and baseline-propagation PRs) are
     # process noise in consumer-facing notes. Parsers are first-match-wins, so these skips must stay
     # above the generic ^chore parser; the patterns anchor to the exact commit-message templates in
@@ -21,15 +38,21 @@ commit_parsers = [
     { message = "^chore: mark public API shipped", skip = true },
     { message = "^chore: bump version to", skip = true },
     { message = "^chore: validate packages against", skip = true },
-    { message = "^feat", group = "Features" },
-    { message = "^fix", group = "Bug Fixes" },
-    { message = "^docs", group = "Documentation" },
-    { message = "^perf", group = "Performance" },
-    { message = "^refactor", group = "Refactoring" },
-    { message = "^test", group = "Testing" },
-    { message = "^chore", group = "Miscellaneous" },
-    { message = "^ci", group = "CI/CD" },
-    { message = "^build", group = "Build & Dependencies" },
-    { message = "^style", group = "Styling" },
-    { message = "^revert", group = "Reverts" },
+    # Matched by author, not subject: Dependabot uses a chore(deps) or build(deps) type or none.
+    { field = "author.name", pattern = '^dependabot\[bot\]$', group = "<!-- 12 -->Dependencies" },
+    # A subject without a type must not reach the type parsers, which match the start of the raw
+    # message.
+    { field = "conventional", pattern = "^false$", group = "<!-- 11 -->Other changes" },
+    { message = "^feat", group = "<!-- 00 -->Features" },
+    { message = "^fix", group = "<!-- 01 -->Bug Fixes" },
+    { message = "^perf", group = "<!-- 02 -->Performance" },
+    { message = "^refactor", group = "<!-- 03 -->Refactoring" },
+    { message = "^revert", group = "<!-- 04 -->Reverts" },
+    { message = "^docs", group = "<!-- 05 -->Documentation" },
+    { message = "^test", group = "<!-- 06 -->Testing" },
+    { message = "^build", group = "<!-- 07 -->Build" },
+    { message = "^ci", group = "<!-- 08 -->CI/CD" },
+    { message = "^style", group = "<!-- 09 -->Styling" },
+    { message = "^chore", group = "<!-- 10 -->Miscellaneous" },
+    { message = ".", group = "<!-- 11 -->Other changes" },
 ]

@@ -3,6 +3,7 @@
 ## Git Guidelines
 - Do not commit without an explicit permission. Allow the developers a change to review the code to provide feedback before commiting.
 - Do not create commit descriptions. Only suggest the one line commit message that describes the change.
+- Write the commit message and the PR title in the Conventional Commits form `<type>(<scope>): <description>` (types in `.github/CONTRIBUTING.md`); the squash merge takes its subject from one of them, and the release notes group changes by that type.
 - Do not add Co-Authored-By trailers.
 
 ## Project Guidelines

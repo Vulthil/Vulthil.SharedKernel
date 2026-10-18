@@ -10,11 +10,15 @@ namespace Vulthil.SharedKernel.Application.Behaviors;
 internal static class ValidationFailureConversion
 {
     /// <summary>
-    /// Creates one <see cref="ValidationError"/> with one inner error per failure: the failure's error code as the code
-    /// and the failure's message as the description.
+    /// Creates one <see cref="ValidationError"/> with one inner error per failure: the failure's error code as the code,
+    /// its message as the description, and its property name as the <see cref="Error.Field"/>. A failure without a
+    /// property name, which a rule on the whole object reports, gets no field.
     /// </summary>
     /// <param name="failures">The validation failures. Must contain at least one failure.</param>
     /// <returns>The validation error.</returns>
     public static ValidationError ToValidationError(IEnumerable<ValidationFailure> failures)
-        => new(failures.Select(failure => Error.Validation(failure.ErrorCode, failure.ErrorMessage)));
+        => new(failures.Select(static failure => Error.Validation(failure.ErrorCode, failure.ErrorMessage) with
+        {
+            Field = string.IsNullOrEmpty(failure.PropertyName) ? null : failure.PropertyName,
+        }));
 }

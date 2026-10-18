@@ -34,7 +34,8 @@ public sealed class GetUserEndpoint : IEndpoint
 
 `ToIResult()` returns `Results<Ok<T>, ProblemHttpResult>`: the success member documents itself, and every failure is
 returned as one problem response (RFC 7807) with the status mapped from the `ErrorType` and the error's description
-as `detail`. Declare the errors an endpoint can produce with `ProducesErrors(...)` (or `[ProducesError(...)]`), in
+as `detail`; a validation failure is the standard validation problem, with the messages by field in `errors` and their
+codes in `errorCodes`. Declare the errors an endpoint can produce with `ProducesErrors(...)` (or `[ProducesError(...)]`), in
 error terms, and OpenAPI documents exactly those problem responses plus a `500` on every operation. See
 [Result Pattern — Mapping to HTTP Responses](../result-pattern.md#mapping-to-http-responses).
 

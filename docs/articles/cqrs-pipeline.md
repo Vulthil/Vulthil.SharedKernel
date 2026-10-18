@@ -132,6 +132,8 @@ public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCom
 
 No additional wiring is needed – the validator is picked up automatically from the registered assemblies.
 
+Each failure becomes one inner error of the `ValidationError`: the failure's error code is its `Code`, its message the `Description`, and its property name the `Field` (for example `Email`, `Address.Street` or `Items[0].Name`). A rule on the whole object reports no property name, so its error has no field. The API answers with the standard validation problem: `errors` lists the messages by field, and `errorCodes` lists the codes under the same keys (see [Result Pattern — Mapping to HTTP Responses](result-pattern.md#mapping-to-http-responses)). A rule's default code is its validator name, such as `NotEmptyValidator`; set your own with `WithErrorCode(...)`, or take the code and the message from an `Error` with `WithError(...)`. To send camelCase field names, set FluentValidation's `ValidatorOptions.Global.PropertyNameResolver`.
+
 ### Request Logging
 
 `RequestLoggingPipelineBehavior` logs the start and completion of requests whose response type is `Result` (or `Result<T>`), attaching the serialised error to the logging scope when the result is a failure. Requests with any other response type are not covered by this behavior.

@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddOpenApi(documentName, options =>
         {
             options.AddOperationTransformer(new ProblemDetailsOperationTransformer());
+            options.AddSchemaTransformer(new ValidationProblemDetailsSchemaTransformer());
             configure(options);
         });
 

@@ -1,4 +1,6 @@
+using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -30,6 +32,22 @@ public sealed class MainEntityIntegrationTests(CustomWebApplicationFactory facto
 
         // Assert
         result.Id.ShouldNotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public async Task Test_Create_Endpoint_Rejects_An_Empty_Name_With_A_Validation_Problem_Keyed_By_The_Field()
+    {
+        // Arrange
+        var client = Client;
+
+        // Act
+        using var response = await client.PostAsJsonAsync("api/main-entities", new Create.Request(string.Empty), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var problem = JsonNode.Parse(await response.Content.ReadAsStringAsync(CancellationToken))!;
+        problem["errors"]!["Name"]!.AsArray().Select(message => (string?)message).ShouldBe(["'Name' must not be empty."]);
+        problem["errorCodes"]!["Name"]!.AsArray().Select(code => (string?)code).ShouldBe(["NotEmptyValidator"]);
     }
 
     [Fact]

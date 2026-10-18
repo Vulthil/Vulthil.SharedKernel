@@ -14,6 +14,8 @@ namespace Vulthil.SharedKernel.Api.Tests;
 
 public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
 {
+    private static readonly Error FieldIsRequired = Error.Validation("Entity.FieldRequired", "Field is required") with { Field = "Field" };
+
     public static TheoryData<Error, int> NonValidationErrors => new()
     {
         { Error.NotFound("Entity.NotFound", "Entity was not found"), StatusCodes.Status404NotFound },
@@ -102,7 +104,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
     public void ResultOfTToIResultOnValidationFailureReturnsValidationProblemWithFieldErrors()
     {
         // Arrange
-        var validationError = new ValidationError([Error.Validation("Entity.Field", "Field is required")]);
+        var validationError = new ValidationError([FieldIsRequired]);
         var result = Result.Failure<string>(validationError);
 
         // Act
@@ -112,7 +114,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var problemResult = Assert.IsType<ProblemHttpResult>(httpResult.Result);
         Assert.Equal(StatusCodes.Status400BadRequest, problemResult.StatusCode);
         var validationProblem = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
-        Assert.Contains("Entity.Field", validationProblem.Errors.Keys);
+        Assert.Contains("Field", validationProblem.Errors.Keys);
     }
 
     [Theory]
@@ -137,7 +139,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
     {
         // Arrange
         var controller = CreateController();
-        var validationError = new ValidationError([Error.Validation("Entity.Field", "Field is required")]);
+        var validationError = new ValidationError([FieldIsRequired]);
 
         // Act
         var actionResult = validationError.ToActionResult(controller);
@@ -146,7 +148,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var problem = ProblemOf(actionResult);
         Assert.Equal(StatusCodes.Status400BadRequest, problem.StatusCode);
         var problemDetails = Assert.IsType<HttpValidationProblemDetails>(problem.ProblemDetails);
-        Assert.Contains("Entity.Field", problemDetails.Errors.Keys);
+        Assert.Contains("Field", problemDetails.Errors.Keys);
         Assert.Equal(validationError.Description, problemDetails.Detail);
     }
 
@@ -388,7 +390,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
     public void ToCreatedAtRouteHttpResultOnValidationFailureReturnsValidationProblemWithFieldErrors()
     {
         // Arrange
-        var validationError = new ValidationError([Error.Validation("Entity.Field", "Field is required")]);
+        var validationError = new ValidationError([FieldIsRequired]);
         var result = Result.Failure<string>(validationError);
 
         // Act
@@ -398,7 +400,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var problemResult = Assert.IsType<ProblemHttpResult>(httpResult.Result);
         Assert.Equal(StatusCodes.Status400BadRequest, problemResult.StatusCode);
         var validationProblem = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
-        Assert.Contains("Entity.Field", validationProblem.Errors.Keys);
+        Assert.Contains("Field", validationProblem.Errors.Keys);
     }
 
     [Fact]
@@ -415,7 +417,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
     public void ErrorToIResultOnValidationErrorReturnsTheSameValidationProblemBodyAsAFailedResult()
     {
         // Arrange
-        var validationError = new ValidationError([Error.Validation("Entity.Field", "Field is required")]);
+        var validationError = new ValidationError([FieldIsRequired]);
 
         // Act
         var fromError = validationError.ToIResult();
@@ -434,7 +436,7 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
     public void ValidationProblemBodyKeepsTheStandardTitleAndCarriesTheDescriptionAsDetail()
     {
         // Arrange
-        var validationError = new ValidationError([Error.Validation("Entity.Field", "Field is required")]);
+        var validationError = new ValidationError([FieldIsRequired]);
 
         // Act
         var problemResult = validationError.ToIResult();
@@ -443,7 +445,66 @@ public sealed class ResultHttpExtensionsTests : BaseUnitTestCase
         var body = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
         Assert.Equal("One or more validation errors occurred.", body.Title);
         Assert.Equal(validationError.Description, body.Detail);
-        Assert.Equal(["Field is required"], body.Errors["Entity.Field"]);
+        Assert.Equal(["Field is required"], body.Errors["Field"]);
+    }
+
+    [Fact]
+    public void AValidationProblemListsTheMessagesByFieldAndTheCodesUnderTheSameKeysInTheSameOrder()
+    {
+        // Arrange
+        var validationError = new ValidationError([
+            Error.Validation("Email.Required", "Email is required") with { Field = "Email" },
+            Error.Validation("Name.Required", "Name is required") with { Field = "Name" },
+            Error.Validation("Name.TooShort", "Name is too short") with { Field = "Name" },
+        ]);
+
+        // Act
+        var problemResult = validationError.ToIResult();
+
+        // Assert
+        var body = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
+        Assert.Equal(["Email", "Name"], body.Errors.Keys.ToArray());
+        Assert.Equal(["Email is required"], body.Errors["Email"]);
+        Assert.Equal(["Name is required", "Name is too short"], body.Errors["Name"]);
+        var codes = Assert.IsType<Dictionary<string, string[]>>(body.Extensions["errorCodes"]);
+        Assert.Equal(["Email", "Name"], codes.Keys.ToArray());
+        Assert.Equal(["Email.Required"], codes["Email"]);
+        Assert.Equal(["Name.Required", "Name.TooShort"], codes["Name"]);
+    }
+
+    [Fact]
+    public void ValidationErrorsWithoutAFieldAreListedUnderTheEmptyKey()
+    {
+        // Arrange
+        var validationError = new ValidationError([
+            Error.Validation("Order.NoLines", "The order needs at least one line"),
+            Error.NotFound("Customer.NotFound", "The customer was not found"),
+        ]);
+
+        // Act
+        var problemResult = validationError.ToIResult();
+
+        // Assert
+        var body = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
+        Assert.Equal(["The order needs at least one line", "The customer was not found"], body.Errors[string.Empty]);
+        var codes = Assert.IsType<Dictionary<string, string[]>>(body.Extensions["errorCodes"]);
+        Assert.Equal(["Order.NoLines", "Customer.NotFound"], codes[string.Empty]);
+    }
+
+    [Fact]
+    public void ASingleValidationErrorIsListedUnderItsField()
+    {
+        // Arrange
+        var error = Error.Validation("Email.Taken", "Email is already taken") with { Field = "Email" };
+
+        // Act
+        var problemResult = error.ToIResult();
+
+        // Assert
+        var body = Assert.IsType<HttpValidationProblemDetails>(problemResult.ProblemDetails);
+        Assert.Equal(["Email is already taken"], body.Errors["Email"]);
+        var codes = Assert.IsType<Dictionary<string, string[]>>(body.Extensions["errorCodes"]);
+        Assert.Equal(["Email.Taken"], codes["Email"]);
     }
 
     public static TheoryData<ErrorType, int, Type> DeclaredErrorMetadata => new()

@@ -64,6 +64,22 @@ public sealed class DeclaredErrorsOpenApiDocumentTests : BaseUnitTestCase
         notFound.GetProperty("content").TryGetProperty("application/problem+json", out _).ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task TheValidationProblemSchemaDocumentsTheErrorCodesLikeTheErrors()
+    {
+        // Arrange
+        await using var app = await StartHostAsync(host =>
+            host.MapGet("/declared", () => Result.Success(1).ToIResult()).ProducesErrors(ErrorType.Validation));
+
+        // Act
+        using var document = await ReadDocumentAsync(app);
+
+        // Assert
+        var properties = document.RootElement
+            .GetProperty("components").GetProperty("schemas").GetProperty("HttpValidationProblemDetails").GetProperty("properties");
+        properties.GetProperty("errorCodes").GetRawText().ShouldBe(properties.GetProperty("errors").GetRawText());
+    }
+
     private static async Task<WebApplication> StartHostAsync(Action<WebApplication> mapEndpoints)
     {
         var builder = WebApplication.CreateBuilder();

@@ -44,6 +44,9 @@
     <PackageVersion Include="EFCore.NamingConventions" Version="$(NamingConventionsVersion)" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <!-- Aspire.Hosting depends on MessagePack 2.5.302, which has advisory GHSA-qhrr-8q5h-9q3h, so the Aspire AppHost and
+         test projects reference MessagePack directly to lift it to a patched 2.5.x until Aspire.Hosting depends on one. -->
+    <PackageVersion Include="MessagePack" Version="2.5.307" />
     <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.3" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />

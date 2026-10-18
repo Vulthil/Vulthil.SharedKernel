@@ -43,6 +43,10 @@ updates:
       # Directory.Packages.props: each major supports one EF Core major (10.x on net10.0, 9.x on net9.0), so
       # Dependabot would tear the legs apart for the same reason as the train; it moves with the train.
       - dependency-name: "EFCore.NamingConventions"
+      # MessagePack is referenced directly only to lift the MessagePack that Aspire.Hosting brings in to a patched
+      # version. Aspire.Hosting is built against MessagePack 2.x, so a major update waits for Aspire.
+      - dependency-name: "MessagePack"
+        update-types: ["version-update:semver-major"]
     groups:
       xunit:
         patterns:

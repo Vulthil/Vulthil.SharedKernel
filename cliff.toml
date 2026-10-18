@@ -1,35 +1,47 @@
 [changelog]
 header = "# Changelog\n\nAll notable changes to this project will be documented in this file.\n"
+# Pull requests from people are squash-merged with one plain-English subject line that ends in its
+# "(#number)", so the notes list that line for each change. Dependabot pull requests are counted,
+# not listed. GitHub renders the notes as Markdown and drops a generic argument such as <T> as an
+# unknown HTML tag, so "<" is escaped.
 body = """
-{% for group, commits in commits | group_by(attribute="group") %}
-### {{ group | upper_first }}
-{% for commit in commits %}
-- {{ commit.message | upper_first }} ({{ commit.id | truncate(length=7, end="") }})\
+{% set changes = commits | filter(attribute="group", value="Changes") %}\
+{% set dependencies = commits | filter(attribute="group", value="Dependencies") %}\
+{% if changes | length > 0 %}
+### Changes
+{% for commit in changes %}
+- {{ commit.message | split(pat="\n") | first | trim | upper_first | replace(from="<", to="&lt;") }}\
 {% endfor %}
-{% endfor %}
+{% endif %}\
+{% if dependencies | length > 0 %}
+### Dependencies
+
+- {{ dependencies | length }} dependency update{% if dependencies | length != 1 %}s{% endif %} from Dependabot\
+{% endif %}
 """
 trim = true
 
 [git]
-conventional_commits = true
-filter_unconventional = true
+# Commit subjects are plain English, not Conventional Commits. git-cliff fills every key this file
+# leaves out from its built-in default config, which parses Conventional Commits, so both are set.
+conventional_commits = false
+filter_unconventional = false
+# The notes start after the newest stable tag on the released branch, so a preview tag or a tag on
+# another branch (a servicing line or a preview train) cannot cut them short or repeat an older
+# release. tag_pattern is a regex.
+tag_pattern = '^v[0-9]+\.[0-9]+\.[0-9]+$'
+use_branch_tags = true
 commit_parsers = [
+    # A merge commit only joins a pull request whose own commits are listed.
+    { field = "merge_commit", pattern = "^true$", skip = true },
     # Release-automation commits (mark-api-shipped, version-bump, and baseline-propagation PRs) are
     # process noise in consumer-facing notes. Parsers are first-match-wins, so these skips must stay
-    # above the generic ^chore parser; the patterns anchor to the exact commit-message templates in
+    # above the catch-all parser; the patterns anchor to the exact commit-message templates in
     # release.yml and version-bump.yml.
     { message = "^chore: mark public API shipped", skip = true },
     { message = "^chore: bump version to", skip = true },
     { message = "^chore: validate packages against", skip = true },
-    { message = "^feat", group = "Features" },
-    { message = "^fix", group = "Bug Fixes" },
-    { message = "^docs", group = "Documentation" },
-    { message = "^perf", group = "Performance" },
-    { message = "^refactor", group = "Refactoring" },
-    { message = "^test", group = "Testing" },
-    { message = "^chore", group = "Miscellaneous" },
-    { message = "^ci", group = "CI/CD" },
-    { message = "^build", group = "Build & Dependencies" },
-    { message = "^style", group = "Styling" },
-    { message = "^revert", group = "Reverts" },
+    # Matched by author, not subject: a subject written by a person can also start with "Bump".
+    { field = "author.name", pattern = '^dependabot\[bot\]$', group = "Dependencies" },
+    { message = ".", group = "Changes" },
 ]

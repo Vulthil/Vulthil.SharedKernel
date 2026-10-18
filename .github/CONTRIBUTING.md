@@ -47,16 +47,17 @@ dotnet test Vulthil.SharedKernel.slnx -c Release
 
 ### Commit Messages
 
-Pull requests are squash-merged. The release notes list the subject of each squash commit, so
-the subject must be one plain-English line that describes the change, for example:
+This repository follows the [Conventional Commits](https://www.conventionalcommits.org/)
+specification — the changelog and version bumps are generated from commit history. Use a
+single-line message in the form `<type>(<scope>): <description>`, for example:
 
 ```
-Wake the outbox relay only when a unit that inserted outbox rows becomes durable
-Write per-message TTLs as whole milliseconds so a jittered delayed retry no longer closes the consumer channel
+feat(messaging): add publisher confirms to RabbitMQ transport
+fix(results): preserve error metadata when mapping
+docs(readme): clarify package responsibilities
 ```
 
-GitHub takes that subject from the pull request title, or from the commit subject when the pull
-request has one commit. The package version comes from `version.json`, not from commit messages.
+Recognized types: `feat`, `fix`, `docs`, `perf`, `refactor`, `test`, `chore`, `ci`.
 
 ## Coding Guidelines
 
@@ -93,8 +94,7 @@ Before opening a PR, please confirm:
 - [ ] The solution builds without warnings (`dotnet build -c Release`).
 - [ ] All tests pass (`dotnet test -c Release`).
 - [ ] Public API, XML documentation, and docs are updated where applicable.
-- [ ] The PR title (and the commit subject, for a single-commit PR) is one plain-English line
-  that describes the change.
+- [ ] Commits follow the Conventional Commits format.
 
 Fill out the [pull request template](PULL_REQUEST_TEMPLATE.md) so reviewers have the
 context they need. Continuous integration runs the build and full test suite on every PR;

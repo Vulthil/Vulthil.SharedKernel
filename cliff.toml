@@ -1,30 +1,27 @@
 [changelog]
 header = "# Changelog\n\nAll notable changes to this project will be documented in this file.\n"
-# Pull requests from people are squash-merged with one plain-English subject line that ends in its
-# "(#number)", so the notes list that line for each change. Dependabot pull requests are counted,
-# not listed. GitHub renders the notes as Markdown and drops a generic argument such as <T> as an
-# unknown HTML tag, so "<" is escaped.
+# Groups render in the order of their numbered comment prefix, which striptags removes. A typed
+# change shows its description; a subject without a known type shows whole under "Other changes".
+# Dependabot pull requests are counted, not listed. GitHub renders the notes as Markdown and drops
+# a generic argument such as <T> as an unknown HTML tag, so "<" is escaped.
 body = """
-{% set changes = commits | filter(attribute="group", value="Changes") %}\
-{% set dependencies = commits | filter(attribute="group", value="Dependencies") %}\
-{% if changes | length > 0 %}
-### Changes
-{% for commit in changes %}
-- {{ commit.message | split(pat="\n") | first | trim | upper_first | replace(from="<", to="&lt;") }}\
+{% for group, group_commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim | upper_first }}
+{% if group is ending_with("Dependencies") %}
+- {{ group_commits | length }} dependency update{% if group_commits | length != 1 %}s{% endif %} from Dependabot\
+{% else %}{% for commit in group_commits %}\
+{% if group is ending_with("Other changes") %}{% set subject = commit.raw_message %}{% else %}{% set subject = commit.message %}{% endif %}
+- {{ subject | split(pat="\n") | first | trim | upper_first | replace(from="<", to="&lt;") }} ({{ commit.id | truncate(length=7, end="") }})\
+{% endfor %}{% endif %}
 {% endfor %}
-{% endif %}\
-{% if dependencies | length > 0 %}
-### Dependencies
-
-- {{ dependencies | length }} dependency update{% if dependencies | length != 1 %}s{% endif %} from Dependabot\
-{% endif %}
 """
 trim = true
 
 [git]
-# Commit subjects are plain English, not Conventional Commits. git-cliff fills every key this file
-# leaves out from its built-in default config, which parses Conventional Commits, so both are set.
-conventional_commits = false
+# Subjects use the Conventional Commits form, so changes are grouped by type. A subject without a
+# type is kept rather than filtered out; git-cliff fills every key this file leaves out from its
+# built-in default config, which filters such subjects, so filter_unconventional is set.
+conventional_commits = true
 filter_unconventional = false
 # The notes start after the newest stable tag on the released branch, so a preview tag or a tag on
 # another branch (a servicing line or a preview train) cannot cut them short or repeat an older
@@ -36,12 +33,26 @@ commit_parsers = [
     { field = "merge_commit", pattern = "^true$", skip = true },
     # Release-automation commits (mark-api-shipped, version-bump, and baseline-propagation PRs) are
     # process noise in consumer-facing notes. Parsers are first-match-wins, so these skips must stay
-    # above the catch-all parser; the patterns anchor to the exact commit-message templates in
+    # above the generic ^chore parser; the patterns anchor to the exact commit-message templates in
     # release.yml and version-bump.yml.
     { message = "^chore: mark public API shipped", skip = true },
     { message = "^chore: bump version to", skip = true },
     { message = "^chore: validate packages against", skip = true },
-    # Matched by author, not subject: a subject written by a person can also start with "Bump".
-    { field = "author.name", pattern = '^dependabot\[bot\]$', group = "Dependencies" },
-    { message = ".", group = "Changes" },
+    # Matched by author, not subject: Dependabot uses a chore(deps) or build(deps) type or none.
+    { field = "author.name", pattern = '^dependabot\[bot\]$', group = "<!-- 12 -->Dependencies" },
+    # A subject without a type must not reach the type parsers, which match the start of the raw
+    # message.
+    { field = "conventional", pattern = "^false$", group = "<!-- 11 -->Other changes" },
+    { message = "^feat", group = "<!-- 00 -->Features" },
+    { message = "^fix", group = "<!-- 01 -->Bug Fixes" },
+    { message = "^perf", group = "<!-- 02 -->Performance" },
+    { message = "^refactor", group = "<!-- 03 -->Refactoring" },
+    { message = "^revert", group = "<!-- 04 -->Reverts" },
+    { message = "^docs", group = "<!-- 05 -->Documentation" },
+    { message = "^test", group = "<!-- 06 -->Testing" },
+    { message = "^build", group = "<!-- 07 -->Build" },
+    { message = "^ci", group = "<!-- 08 -->CI/CD" },
+    { message = "^style", group = "<!-- 09 -->Styling" },
+    { message = "^chore", group = "<!-- 10 -->Miscellaneous" },
+    { message = ".", group = "<!-- 11 -->Other changes" },
 ]

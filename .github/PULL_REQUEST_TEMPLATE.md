@@ -21,7 +21,7 @@ Please fill out the sections below so reviewers have the context they need.
 
 ## Checklist
 
-- [ ] The PR title (and the commit subject, for a single-commit PR) is one plain-English line that describes the change.
+- [ ] My commits follow the [Conventional Commits](https://www.conventionalcommits.org/) format.
 - [ ] The solution builds without warnings (`dotnet build -c Release`).
 - [ ] All tests pass locally (`dotnet test -c Release`).
 - [ ] I added or updated tests covering my change.

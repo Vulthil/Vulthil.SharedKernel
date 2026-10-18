@@ -654,6 +654,27 @@ The URN is the dispatch key on the receive side — it appears in the message
 envelope's `messageType` field, and `MessageExecutionRegistry<THandler>` keys its
 execution plans by URN.
 
+### Configuring a base type
+
+`ConfigureMessage<TBase>` on a base class also sets the defaults of every derived
+message type that has no configuration of its own: the exchange type, `Durable`,
+`AutoDelete`, `Arguments`, and the routing-key and correlation-id selectors. A
+derived type keeps its own identity: its exchange and its URN come from its own
+type name, so a receiver can tell sibling types apart, and a queue binds to each
+concrete type's own exchange. An `Exchange` or `Urn` set on the base applies to
+the base type itself only. The nearest configured base wins, and a derived type's
+own `ConfigureMessage` call replaces the inherited settings.
+
+```csharp
+messaging.ConfigureMessage<OrderEvent>(m =>
+{
+    m.ExchangeType = MessagingExchangeType.Topic;
+    m.UseRoutingKey(e => $"order.{e.Region}");
+});
+// OrderPlaced : OrderEvent publishes to its own topic exchange, Acme.Orders.OrderPlaced,
+// as urn:message:Acme.Orders:OrderPlaced, with the order.{Region} routing key.
+```
+
 ### Message envelope (wire format)
 
 Vulthil-produced messages are wrapped in a JSON envelope with explicit metadata

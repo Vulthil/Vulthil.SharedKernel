@@ -171,6 +171,32 @@ public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExec
     }
 
     [Fact]
+    public void RegisterQueueGivesSiblingTypesOfAConfiguredBaseTheirOwnPlans()
+    {
+        // Arrange
+        var options = new MessagingOptions();
+        var baseConfiguration = new MessageConfiguration<OrderEvent> { Exchange = "orders" };
+        options.MessageConfigurations[typeof(OrderEvent).FullName!] = baseConfiguration;
+        options.RegisterMessageType(typeof(OrderEvent), baseConfiguration);
+        Use<IMessageConfigurationProvider>(options);
+        var queue = Queue();
+        queue.AddSubscription(new Subscription(new MessageType(typeof(OrderPlaced))));
+        queue.AddSubscription(new Subscription(new MessageType(typeof(OrderShipped))));
+        queue.AddConsumer(new ConsumerRegistration
+        {
+            ConsumerType = new ConsumerType(typeof(OrderConsumer)),
+            MessageType = new MessageType(typeof(OrderEvent)),
+        });
+
+        // Act
+        Target.RegisterQueue(queue);
+
+        // Assert
+        Target.GetPlanByUrn(options.GetUrn(typeof(OrderPlaced))).ShouldNotBeNull().MessageType.Type.ShouldBe(typeof(OrderPlaced));
+        Target.GetPlanByUrn(options.GetUrn(typeof(OrderShipped))).ShouldNotBeNull().MessageType.Type.ShouldBe(typeof(OrderShipped));
+    }
+
+    [Fact]
     public void GetPlanReturnsNullForAnUnregisteredMessageType()
     {
         // Act

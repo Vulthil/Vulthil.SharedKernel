@@ -73,6 +73,32 @@ public record MessageConfiguration
     /// When set this will be used by transports instead of separately-registered correlation formatters.
     /// </summary>
     public Func<object, string>? CorrelationIdFormatter { get; set; }
+
+    /// <summary>
+    /// Creates the configuration of a message type that derives from this configuration's message type and has no
+    /// configuration of its own. The derived type keeps its own identity: its exchange and its URN come from its own
+    /// full name, so receivers can tell sibling types apart and every concrete type has its own exchange. Every other
+    /// setting is copied from this configuration.
+    /// </summary>
+    /// <param name="derivedType">The derived message type.</param>
+    /// <returns>A new configuration for <paramref name="derivedType"/>.</returns>
+    internal MessageConfiguration InheritedBy(Type derivedType)
+    {
+        var inherited = new MessageConfiguration(derivedType.FullName!)
+        {
+            ExchangeType = ExchangeType,
+            Durable = Durable,
+            AutoDelete = AutoDelete,
+            RoutingKeyFormatter = RoutingKeyFormatter,
+            CorrelationIdFormatter = CorrelationIdFormatter,
+        };
+        foreach (var (key, value) in Arguments)
+        {
+            inherited.Arguments[key] = value;
+        }
+
+        return inherited;
+    }
 }
 
 /// <summary>

@@ -640,6 +640,23 @@ URN even if their C# class names diverge:</p>
 <p>The URN is the dispatch key on the receive side — it appears in the message
 envelope's <code>messageType</code> field, and <code>MessageExecutionRegistry&lt;THandler&gt;</code> keys its
 execution plans by URN.</p>
+<h3 id="configuring-a-base-type">Configuring a base type</h3>
+<p><code>ConfigureMessage&lt;TBase&gt;</code> on a base class also sets the defaults of every derived
+message type that has no configuration of its own: the exchange type, <code>Durable</code>,
+<code>AutoDelete</code>, <code>Arguments</code>, and the routing-key and correlation-id selectors. A
+derived type keeps its own identity: its exchange and its URN come from its own
+type name, so a receiver can tell sibling types apart, and a queue binds to each
+concrete type's own exchange. An <code>Exchange</code> or <code>Urn</code> set on the base applies to
+the base type itself only. The nearest configured base wins, and a derived type's
+own <code>ConfigureMessage</code> call replaces the inherited settings.</p>
+<pre><code class="lang-csharp">messaging.ConfigureMessage&lt;OrderEvent&gt;(m =&gt;
+{
+    m.ExchangeType = MessagingExchangeType.Topic;
+    m.UseRoutingKey(e =&gt; $&quot;order.{e.Region}&quot;);
+});
+// OrderPlaced : OrderEvent publishes to its own topic exchange, Acme.Orders.OrderPlaced,
+// as urn:message:Acme.Orders:OrderPlaced, with the order.{Region} routing key.
+</code></pre>
 <h3 id="message-envelope-wire-format">Message envelope (wire format)</h3>
 <p>Vulthil-produced messages are wrapped in a JSON envelope with explicit metadata
 fields rather than relying on AMQP <code>BasicProperties</code> headers:</p>

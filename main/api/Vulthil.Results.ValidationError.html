@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Results_ValidationError" data-uid="Vulthil.Results.ValidationError" class="text-break">
-Class ValidationError  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L100"><i class="bi bi-code-slash"></i></a>
+Class ValidationError  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L108"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -143,6 +143,9 @@ Class ValidationError  <a class="header-action link-secondary" title="View sourc
     </div>
     <div>
       <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_Type">Error.Type</a>
+    </div>
+    <div>
+      <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_Field">Error.Field</a>
     </div>
     <div>
       <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_Failure_System_String_System_String_">Error.Failure(string, string)</a>
@@ -202,7 +205,7 @@ Class ValidationError  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Results_ValidationError__ctor_System_Collections_Generic_IEnumerable_Vulthil_Results_Error__" data-uid="Vulthil.Results.ValidationError.#ctor(System.Collections.Generic.IEnumerable{Vulthil.Results.Error})">
   ValidationError(IEnumerable&lt;Error&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> record.</p>
@@ -248,11 +251,11 @@ Class ValidationError  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Results_ValidationError_Errors" data-uid="Vulthil.Results.ValidationError.Errors">
   Errors
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the individual validation errors collected during validation. Always contains at least one error;
-each element represents a single field or rule violation.</p>
+each element represents a single field or rule violation, and its <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_Field">Field</a> names the field.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -285,7 +288,7 @@ each element represents a single field or rule violation.</p>
 
   <h3 id="Vulthil_Results_ValidationError_Equals_Vulthil_Results_ValidationError_" data-uid="Vulthil.Results.ValidationError.Equals(Vulthil.Results.ValidationError)">
   Equals(ValidationError?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L152"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified validation error contains an equal, equally-ordered sequence of inner errors.</p>
@@ -324,7 +327,7 @@ each element represents a single field or rule violation.</p>
 
   <h3 id="Vulthil_Results_ValidationError_FromResults_System_Collections_Generic_IEnumerable_Vulthil_Results_Result__" data-uid="Vulthil.Results.ValidationError.FromResults(System.Collections.Generic.IEnumerable{Vulthil.Results.Result})">
   FromResults(IEnumerable&lt;Result&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L144"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a> from a collection of failed results.</p>
@@ -369,7 +372,7 @@ each element represents a single field or rule violation.</p>
 
   <h3 id="Vulthil_Results_ValidationError_GetHashCode" data-uid="Vulthil.Results.ValidationError.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L156"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -402,7 +405,7 @@ each element represents a single field or rule violation.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L100" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L108" class="edit-link">Edit this page</a>
         </div>
 
 

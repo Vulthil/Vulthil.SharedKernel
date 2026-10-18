@@ -6373,6 +6373,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.Results.Error.Failure
   nameWithType: Error.Failure
+- uid: Vulthil.Results.Error.Field
+  name: Field
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Field
+  commentId: P:Vulthil.Results.Error.Field
+  fullName: Vulthil.Results.Error.Field
+  nameWithType: Error.Field
+- uid: Vulthil.Results.Error.Field*
+  name: Field
+  href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Field_
+  commentId: Overload:Vulthil.Results.Error.Field
+  isSpec: "True"
+  fullName: Vulthil.Results.Error.Field
+  nameWithType: Error.Field
 - uid: Vulthil.Results.Error.Forbidden(System.String,System.String)
   name: Forbidden(string, string)
   href: api/Vulthil.Results.Error.html#Vulthil_Results_Error_Forbidden_System_String_System_String_

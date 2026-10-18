@@ -116,7 +116,8 @@
 </code></pre>
 <p><code>ToIResult()</code> returns <code>Results&lt;Ok&lt;T&gt;, ProblemHttpResult&gt;</code>: the success member documents itself, and every failure is
 returned as one problem response (RFC 7807) with the status mapped from the <code>ErrorType</code> and the error's description
-as <code>detail</code>. Declare the errors an endpoint can produce with <code>ProducesErrors(...)</code> (or <code>[ProducesError(...)]</code>), in
+as <code>detail</code>; a validation failure is the standard validation problem, with the messages by field in <code>errors</code> and their
+codes in <code>errorCodes</code>. Declare the errors an endpoint can produce with <code>ProducesErrors(...)</code> (or <code>[ProducesError(...)]</code>), in
 error terms, and OpenAPI documents exactly those problem responses plus a <code>500</code> on every operation. See
 <a href="../result-pattern.html#mapping-to-http-responses">Result Pattern — Mapping to HTTP Responses</a>.</p>
 <h3 id="registration-and-mapping">Registration and mapping</h3>

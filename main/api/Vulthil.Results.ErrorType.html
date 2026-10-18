@@ -90,7 +90,7 @@
 
 
   <h1 id="Vulthil_Results_ErrorType" data-uid="Vulthil.Results.ErrorType" class="text-break">
-Enum ErrorType  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L164"><i class="bi bi-code-slash"></i></a>
+Enum ErrorType  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L172"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -149,7 +149,8 @@ failure). Maps to HTTP 400 Bad Request with the error's full detail in the probl
   
   <dd><p>One or more input values failed validation (e.g. FluentValidation rule failures). Carried by
 <a class="xref" href="Vulthil.Results.ValidationError.html">ValidationError</a>, whose <a class="xref" href="Vulthil.Results.ValidationError.html#Vulthil_Results_ValidationError_Errors">Errors</a> lists every individual violation.
-Maps to HTTP 400 Bad Request as a validation-problem response with per-field details.</p>
+Maps to HTTP 400 Bad Request as a validation-problem response that groups the messages and codes of the inner
+errors by <a class="xref" href="Vulthil.Results.Error.html#Vulthil_Results_Error_Field">Field</a>.</p>
 </dd>
   </dl>
 
@@ -158,7 +159,7 @@ Maps to HTTP 400 Bad Request as a validation-problem response with per-field det
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L164" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Results/Error.cs/#L172" class="edit-link">Edit this page</a>
         </div>
 
 

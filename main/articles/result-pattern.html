@@ -124,10 +124,10 @@ Result&lt;int&gt; typed = Result.Success(42);
 Error error = Error.NotFound(&quot;User.NotFound&quot;, &quot;User was not found&quot;);
 Result&lt;User&gt; failed = Result.Failure&lt;User&gt;(error);
 
-// Validation failure
+// Validation failure: Field names the input that each inner error is about
 var validation = new ValidationError([
-    Error.Validation(&quot;Email.Required&quot;, &quot;Email is required&quot;),
-    Error.Validation(&quot;Name.TooLong&quot;, &quot;Name exceeds 100 characters&quot;)
+    Error.Validation(&quot;Email.Required&quot;, &quot;Email is required&quot;) with { Field = &quot;Email&quot; },
+    Error.Validation(&quot;Name.TooLong&quot;, &quot;Name exceeds 100 characters&quot;) with { Field = &quot;Name&quot; }
 ]);
 Result invalidCommand = Result.ValidationFailure(validation);
 Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
@@ -184,7 +184,7 @@ Result&lt;User&gt; invalid = Result.ValidationFailure&lt;User&gt;(validation);
 <td><code>Validation</code></td>
 <td><code>Error.Validation(...)</code> / <code>ValidationError</code></td>
 <td>400 Bad Request</td>
-<td>Input validation failure; <code>ValidationError.Errors</code> carries the per-field details</td>
+<td>Input validation failure; <code>ValidationError.Errors</code> carries the per-field details, each inner error naming its <code>Field</code></td>
 </tr>
 </tbody>
 </table>
@@ -431,11 +431,28 @@ public async Task&lt;IActionResult&gt; Get(Guid id)
 <p>Success maps to <code>200 Ok&lt;T&gt;</code> (<code>Result&lt;T&gt;</code>), <code>204 NoContent</code> (non-generic <code>Result</code>), or <code>201 CreatedAtRoute&lt;T&gt;</code>
 via <code>ToCreatedAtRouteHttpResult</code>. Every failure returns one <code>ProblemHttpResult</code>: an RFC 7807 problem body with the
 status from the <a href="#error-classifications">table above</a> and the error's <code>Description</code> as <code>detail</code>. For a
-<code>Validation</code> error the body is an <code>HttpValidationProblemDetails</code> whose per-field <code>errors</code> dictionary is built from
-the <code>ValidationError</code>'s inner errors; for every other error type the error's <code>Code</code> appears as a key in the problem
-<code>extensions</code> (mapped to the description). A failed result, a bare <code>error.ToIResult()</code> and a controller's
+<code>Validation</code> error the body is the standard ASP.NET Core <code>HttpValidationProblemDetails</code>: its <code>errors</code> map lists the
+messages of the inner errors by their <code>Field</code>, and an <code>errorCodes</code> member lists their codes under the same keys, in
+the same order. An inner error without a <code>Field</code> is listed under the empty key <code>&quot;&quot;</code>. For every other error type the
+error's <code>Code</code> appears as a key in the problem <code>extensions</code> (mapped to the description). A failed result, a bare
+<code>error.ToIResult()</code> and a controller's
 <code>ToActionResult(this)</code> all send the same response for the same error: one builder creates the body, and the
 problem-details service completes it with <code>type</code>, <code>title</code>, <code>instance</code> and the trace identifiers.</p>
+<p>A validation problem for a missing email and a name that is too short:</p>
+<pre><code class="lang-json">{
+  &quot;title&quot;: &quot;One or more validation errors occurred.&quot;,
+  &quot;status&quot;: 400,
+  &quot;detail&quot;: &quot;One or more validation errors occurred&quot;,
+  &quot;errors&quot;: {
+    &quot;Email&quot;: [&quot;Email is required&quot;],
+    &quot;Name&quot;: [&quot;Name is required&quot;, &quot;Name is too short&quot;]
+  },
+  &quot;errorCodes&quot;: {
+    &quot;Email&quot;: [&quot;Email.Required&quot;],
+    &quot;Name&quot;: [&quot;Name.Required&quot;, &quot;Name.TooShort&quot;]
+  }
+}
+</code></pre>
 <h3 id="exceptions-that-carry-an-error">Exceptions that carry an error</h3>
 <p><code>AddProblemDetailsHandling()</code> registers an exception handler for exceptions nothing else caught. An exception that
 implements <code>IHasError</code> is answered with the same problem response as a failed result with its error:</p>

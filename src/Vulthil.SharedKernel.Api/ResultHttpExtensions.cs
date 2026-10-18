@@ -160,10 +160,18 @@ public static class ResultHttpExtensions
 public static class CustomResults
 {
     /// <summary>
+    /// The name of the problem member that lists the codes of a validation problem's errors, keyed like its
+    /// <c>errors</c> map.
+    /// </summary>
+    internal const string ErrorCodesMember = "errorCodes";
+
+    /// <summary>
     /// Creates the RFC 7807 problem response for an <see cref="Error"/>, with the status code mapped from its
     /// <see cref="ErrorType"/> and the description as <c>detail</c>. A <see cref="ErrorType.Validation"/> error produces
-    /// an <see cref="HttpValidationProblemDetails"/> body whose <c>errors</c> map lists each inner error by code; every
-    /// other error type produces a <see cref="ProblemDetails"/> body carrying the error code as an extension. Every
+    /// the standard <see cref="HttpValidationProblemDetails"/> body: its <c>errors</c> map lists the messages of the
+    /// inner errors by <see cref="Error.Field"/>, and an <c>errorCodes</c> member lists their codes under the same keys,
+    /// in the same order; an error without a field is listed under the empty key. Every other error type produces a
+    /// <see cref="ProblemDetails"/> body carrying the error code as an extension. Every
     /// failure path of the typed-result and action-result extensions goes through this method, so a failed result and a
     /// bare error yield the same response on the minimal-API and the MVC path.
     /// </summary>
@@ -185,16 +193,20 @@ public static class CustomResults
     /// <returns>The problem body, with its <see cref="ProblemDetails.Status"/> set.</returns>
     internal static ProblemDetails CreateProblemDetails(Error error)
     {
-        var errors = GetErrorsDictionary(error);
         var statusCode = GetStatusCode(error.Type);
 
         if (error.Type == ErrorType.Validation)
         {
-            return new HttpValidationProblemDetails(errors)
+            IReadOnlyList<Error> fieldErrors = error is ValidationError validationError ? validationError.Errors : [error];
+            var messages = GroupByField(fieldErrors, static fieldError => fieldError.Description);
+            var validationProblem = new HttpValidationProblemDetails(messages)
             {
                 Detail = error.Description,
                 Status = statusCode,
             };
+            validationProblem.Extensions[ErrorCodesMember] = GroupByField(fieldErrors, static fieldError => fieldError.Code);
+
+            return validationProblem;
         }
 
         var problemDetails = new ProblemDetails
@@ -202,29 +214,23 @@ public static class CustomResults
             Detail = error.Description,
             Status = statusCode,
         };
-
-        foreach (var (code, descriptions) in errors)
-        {
-            problemDetails.Extensions[code] = descriptions;
-        }
+        problemDetails.Extensions[error.Code] = new[] { error.Description };
 
         return problemDetails;
     }
 
     /// <summary>
-    /// Builds a dictionary of error codes and their descriptions from the given <see cref="Error"/>.
+    /// Groups the selected text of the errors by <see cref="Error.Field"/>, with the empty key for an error without a
+    /// field. Both maps of a validation problem come from this grouping, so they have the same keys, and each key lists
+    /// its values in the order of the errors.
     /// </summary>
-    /// <param name="error">The error to extract details from.</param>
-    /// <returns>A dictionary mapping error codes to arrays of descriptions.</returns>
-    internal static Dictionary<string, string[]> GetErrorsDictionary(Error error) =>
-        error is ValidationError validationError
-            ? validationError.Errors
-                .GroupBy(e => e.Code, s => s.Description)
-                .ToDictionary(e => e.Key, errors => errors.ToArray())
-            : new Dictionary<string, string[]>
-            {
-                [error.Code] = [error.Description]
-            };
+    /// <param name="errors">The inner errors of a validation problem.</param>
+    /// <param name="select">The text to list for each error: its description or its code.</param>
+    /// <returns>A map from each field to the selected texts of its errors.</returns>
+    private static Dictionary<string, string[]> GroupByField(IEnumerable<Error> errors, Func<Error, string> select) =>
+        errors
+            .GroupBy(static error => error.Field ?? string.Empty, select, StringComparer.Ordinal)
+            .ToDictionary(static group => group.Key, static group => group.ToArray(), StringComparer.Ordinal);
 
     /// <summary>
     /// Maps an <see cref="ErrorType"/> to the HTTP status code used across both the typed-<see cref="IResult"/> and

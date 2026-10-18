@@ -16,7 +16,8 @@ public record Error
 
     /// <summary>
     /// Gets the machine-readable error code used to identify the error category (e.g., "User.NotFound").
-    /// Appears in validation problem details and can be used for programmatic error handling.
+    /// A validation problem response lists it under <c>errorCodes</c>, keyed by <see cref="Field"/>; it can also be used
+    /// for programmatic error handling.
     /// </summary>
     public string Code { get; }
     /// <summary>
@@ -28,6 +29,13 @@ public record Error
     /// and problem-detail responses in the API layer.
     /// </summary>
     public ErrorType Type { get; }
+    /// <summary>
+    /// Gets the input field the error is about, such as <c>Email</c> or <c>Address.Street</c>, or <see langword="null"/>
+    /// when the error is not about one field. A validation problem response groups its messages and codes by this field,
+    /// and lists an error without a field under the empty key. Set it with a <see langword="with"/> expression:
+    /// <c>Error.Validation("Email.Required", "Email is required") with { Field = "Email" }</c>.
+    /// </summary>
+    public string? Field { get; init; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Error"/> record.
@@ -101,7 +109,7 @@ public sealed record ValidationError : Error
 {
     /// <summary>
     /// Gets the individual validation errors collected during validation. Always contains at least one error;
-    /// each element represents a single field or rule violation.
+    /// each element represents a single field or rule violation, and its <see cref="Error.Field"/> names the field.
     /// </summary>
     public IReadOnlyList<Error> Errors { get; }
 
@@ -171,7 +179,8 @@ public enum ErrorType
     /// <summary>
     /// One or more input values failed validation (e.g. FluentValidation rule failures). Carried by
     /// <see cref="ValidationError"/>, whose <see cref="ValidationError.Errors"/> lists every individual violation.
-    /// Maps to HTTP 400 Bad Request as a validation-problem response with per-field details.
+    /// Maps to HTTP 400 Bad Request as a validation-problem response that groups the messages and codes of the inner
+    /// errors by <see cref="Error.Field"/>.
     /// </summary>
     Validation = 1,
     /// <summary>

@@ -27,8 +27,8 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
     internal static readonly Error WidgetNotFound = Error.NotFound("Widget.NotFound", "Widget 1 was not found.");
     private static readonly Error WidgetGone = Error.Conflict("Widget.Gone", "Widget 1 is gone.");
     internal static readonly ValidationError InvalidWidget = new([
-        Error.Validation("Name", "Name is required."),
-        Error.Validation("Size", "Size must be positive."),
+        Error.Validation("Widget.NameRequired", "Name is required.") with { Field = "Name" },
+        Error.Validation("Widget.SizeNotPositive", "Size must be positive.") with { Field = "Size" },
     ]);
     private static readonly ValidationFailure NameMissing = new("Name", "Name is required.") { ErrorCode = "NotEmptyValidator" };
 
@@ -52,7 +52,7 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
         _app.MapGet("/minimal/not-found", () => WidgetNotFound.ToIResult());
         _app.MapGet("/minimal/gone", () => WidgetGone.ToIResult());
         _app.MapGet("/minimal/validation", () => InvalidWidget.ToIResult());
-        _app.MapGet("/minimal/name-missing", () => Result.Failure<string>(new ValidationError([Error.Validation(NameMissing.ErrorCode, NameMissing.ErrorMessage)])).ToIResult());
+        _app.MapGet("/minimal/name-missing", () => Result.Failure<string>(new ValidationError([Error.Validation(NameMissing.ErrorCode, NameMissing.ErrorMessage) with { Field = NameMissing.PropertyName }])).ToIResult());
         _app.MapGet("/throws/domain", IResult () => throw new WidgetGoneException());
         _app.MapGet("/throws/validation", IResult () => throw new CommandValidationException([NameMissing]));
         _app.MapGet("/throws/unexpected", IResult () => throw new InvalidOperationException(UnexpectedMessage));
@@ -105,7 +105,7 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task AControllerAnswersAValidationErrorWithItsDetail()
+    public async Task AControllerAnswersAValidationErrorWithItsDetailAndItsMessagesAndCodesByField()
     {
         // Act
         var problem = await GetProblemAsync("/mvc/validation");
@@ -113,8 +113,10 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
         // Assert
         Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
         Assert.Equal(InvalidWidget.Description, (string?)problem.Body["detail"]);
-        Assert.NotNull(problem.Body["errors"]?["Name"]);
-        Assert.NotNull(problem.Body["errors"]?["Size"]);
+        Assert.Equal("Name is required.", (string?)problem.Body["errors"]?["Name"]?[0]);
+        Assert.Equal("Size must be positive.", (string?)problem.Body["errors"]?["Size"]?[0]);
+        Assert.Equal("Widget.NameRequired", (string?)problem.Body["errorCodes"]?["Name"]?[0]);
+        Assert.Equal("Widget.SizeNotPositive", (string?)problem.Body["errorCodes"]?["Size"]?[0]);
     }
 
     [Fact]
@@ -139,6 +141,8 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
         // Assert
         Assert.Equal(StatusCodes.Status400BadRequest, thrown.Status);
         Assert.True(JsonNode.DeepEquals(returned.Body, thrown.Body), $"returned: {returned.Body}{Environment.NewLine}thrown: {thrown.Body}");
+        Assert.Equal(NameMissing.ErrorMessage, (string?)thrown.Body["errors"]?[NameMissing.PropertyName]?[0]);
+        Assert.Equal(NameMissing.ErrorCode, (string?)thrown.Body["errorCodes"]?[NameMissing.PropertyName]?[0]);
     }
 
     [Fact]

@@ -22,10 +22,10 @@ Result<int> typed = Result.Success(42);
 Error error = Error.NotFound("User.NotFound", "User was not found");
 Result<User> failed = Result.Failure<User>(error);
 
-// Validation failure
+// Validation failure: Field names the input that each inner error is about
 var validation = new ValidationError([
-    Error.Validation("Email.Required", "Email is required"),
-    Error.Validation("Name.TooLong", "Name exceeds 100 characters")
+    Error.Validation("Email.Required", "Email is required") with { Field = "Email" },
+    Error.Validation("Name.TooLong", "Name exceeds 100 characters") with { Field = "Name" }
 ]);
 Result invalidCommand = Result.ValidationFailure(validation);
 Result<User> invalid = Result.ValidationFailure<User>(validation);
@@ -43,7 +43,7 @@ Result<User> invalid = Result.ValidationFailure<User>(validation);
 | `Conflict` | `Error.Conflict(...)` | 409 Conflict | The request conflicts with current state |
 | `Unauthorized` | `Error.Unauthorized(...)` | 401 Unauthorized | The caller is not authenticated (missing or invalid credentials) |
 | `Forbidden` | `Error.Forbidden(...)` | 403 Forbidden | The caller is authenticated but not allowed to perform the operation |
-| `Validation` | `Error.Validation(...)` / `ValidationError` | 400 Bad Request | Input validation failure; `ValidationError.Errors` carries the per-field details |
+| `Validation` | `Error.Validation(...)` / `ValidationError` | 400 Bad Request | Input validation failure; `ValidationError.Errors` carries the per-field details, each inner error naming its `Field` |
 
 `Error.Validation` mints the *inner* errors of a `ValidationError` (this is what `ValidationPipelineBehavior` uses for
 FluentValidation failures). `Error.Problem` is for a single, standalone business-rule error — it is a different
@@ -238,11 +238,31 @@ public async Task<IActionResult> Get(Guid id)
 Success maps to `200 Ok<T>` (`Result<T>`), `204 NoContent` (non-generic `Result`), or `201 CreatedAtRoute<T>`
 via `ToCreatedAtRouteHttpResult`. Every failure returns one `ProblemHttpResult`: an RFC 7807 problem body with the
 status from the [table above](#error-classifications) and the error's `Description` as `detail`. For a
-`Validation` error the body is an `HttpValidationProblemDetails` whose per-field `errors` dictionary is built from
-the `ValidationError`'s inner errors; for every other error type the error's `Code` appears as a key in the problem
-`extensions` (mapped to the description). A failed result, a bare `error.ToIResult()` and a controller's
+`Validation` error the body is the standard ASP.NET Core `HttpValidationProblemDetails`: its `errors` map lists the
+messages of the inner errors by their `Field`, and an `errorCodes` member lists their codes under the same keys, in
+the same order. An inner error without a `Field` is listed under the empty key `""`. For every other error type the
+error's `Code` appears as a key in the problem `extensions` (mapped to the description). A failed result, a bare
+`error.ToIResult()` and a controller's
 `ToActionResult(this)` all send the same response for the same error: one builder creates the body, and the
 problem-details service completes it with `type`, `title`, `instance` and the trace identifiers.
+
+A validation problem for a missing email and a name that is too short:
+
+```json
+{
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "detail": "One or more validation errors occurred",
+  "errors": {
+    "Email": ["Email is required"],
+    "Name": ["Name is required", "Name is too short"]
+  },
+  "errorCodes": {
+    "Email": ["Email.Required"],
+    "Name": ["Name.Required", "Name.TooShort"]
+  }
+}
+```
 
 ### Exceptions that carry an error
 

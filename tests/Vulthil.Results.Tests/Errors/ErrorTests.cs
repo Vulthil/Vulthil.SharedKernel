@@ -63,4 +63,36 @@ public sealed class ErrorTests : BaseUnitTestCase
         validationError.Type.ShouldBe(ErrorType.Validation);
         validationError.Errors.ShouldBe([Error.NullValue]);
     }
+
+    [Fact]
+    public void AnErrorHasNoFieldUntilOneIsSet()
+    {
+        // Arrange
+        var error = Error.Validation("Email.Required", "Email is required");
+
+        // Act
+        var forEmail = error with { Field = "Email" };
+
+        // Assert
+        error.Field.ShouldBeNull();
+        forEmail.Field.ShouldBe("Email");
+        forEmail.Code.ShouldBe(error.Code);
+        forEmail.Description.ShouldBe(error.Description);
+        forEmail.Type.ShouldBe(ErrorType.Validation);
+    }
+
+    [Fact]
+    public void ErrorsThatDifferOnlyInTheirFieldAreNotEqual()
+    {
+        // Arrange
+        var error = Error.Validation("Name.Required", "Name is required");
+
+        // Act
+        var forFirstName = error with { Field = "FirstName" };
+        var forLastName = error with { Field = "LastName" };
+
+        // Assert
+        forFirstName.ShouldNotBe(forLastName);
+        forFirstName.ShouldBe(error with { Field = "FirstName" });
+    }
 }

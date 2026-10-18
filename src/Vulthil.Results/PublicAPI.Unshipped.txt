@@ -13,3 +13,5 @@ Vulthil.Results.ErrorType.Forbidden = 6 -> Vulthil.Results.ErrorType
 Vulthil.Results.ErrorType.Unauthorized = 5 -> Vulthil.Results.ErrorType
 Vulthil.Results.IHasError
 Vulthil.Results.IHasError.Error.get -> Vulthil.Results.Error!
+Vulthil.Results.Error.Field.get -> string?
+Vulthil.Results.Error.Field.init -> void

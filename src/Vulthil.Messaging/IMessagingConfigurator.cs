@@ -24,6 +24,8 @@ public interface IMessagingConfigurator
 
     /// <summary>
     /// Registers a publish definition for messages of type <typeparamref name="TMessage"/>. This allows you to specify exchange and routing configurations for outgoing messages of that type.
+    /// For a base class, the settings are also the defaults of every derived message type that has no configuration of
+    /// its own, except the exchange and the URN: a derived type takes those from its own name.
     /// </summary>
     /// <typeparam name="TMessage">The type of the message to publish.</typeparam>
     /// <param name="configureMessageAction">An action to configure the message's publish settings.</param>

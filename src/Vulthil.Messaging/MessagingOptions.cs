@@ -37,27 +37,28 @@ internal sealed class MessagingOptions : IMessagingOptionsConfigurator, IMessage
             return cached;
         }
 
-        var registered = _typeConfigurations.GetOrAdd(messageType, ResolveConfiguration);
-        IndexUrn(messageType, registered.Urn);
-        return registered;
+        // The URN is indexed before the configuration is cached, so a URN conflict fails every lookup of the type
+        // instead of only the first one.
+        var resolved = ResolveConfiguration(messageType);
+        IndexUrn(messageType, resolved.Urn);
+        return _typeConfigurations.GetOrAdd(messageType, resolved);
     }
 
     /// <summary>
-    /// Resolves the configuration for a message type that has no cached entry yet: walks the type hierarchy for
-    /// the nearest explicitly configured base, falling back to a fresh default configuration. Pure — safe to run
-    /// concurrently as a <see cref="ConcurrentDictionary{TKey,TValue}.GetOrAdd(TKey,Func{TKey,TValue})"/> factory.
+    /// Resolves the configuration for a message type that has no cached entry yet: the type's own configuration, or
+    /// else the one that the nearest configured base type passes on through
+    /// <see cref="MessageConfiguration.InheritedBy"/>, or else a fresh default configuration. A derived type never
+    /// shares its base type's configuration object, so it keeps its own URN and exchange. Pure — safe to run
+    /// concurrently.
     /// </summary>
     private MessageConfiguration ResolveConfiguration(Type messageType)
     {
-        var current = messageType;
-        while (current != null && current != typeof(object))
+        for (var current = messageType; current != null && current != typeof(object); current = current.BaseType)
         {
             if (current.FullName is { } fullName && MessageConfigurations.TryGetValue(fullName, out var configured))
             {
-                return configured;
+                return current == messageType ? configured : configured.InheritedBy(messageType);
             }
-
-            current = current.BaseType;
         }
 
         return new MessageConfiguration(messageType.FullName!);

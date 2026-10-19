@@ -3755,6 +3755,22 @@ references:
   commentId: T:Vulthil.Messaging.Queues.RetryPolicyDefinition
   fullName: Vulthil.Messaging.Queues.RetryPolicyDefinition
   nameWithType: RetryPolicyDefinition
+- uid: Vulthil.Messaging.Queues.RetryPolicyDefinition.Equals(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name: Equals(RetryPolicyDefinition?)
+  href: api/Vulthil.Messaging.Queues.RetryPolicyDefinition.html#Vulthil_Messaging_Queues_RetryPolicyDefinition_Equals_Vulthil_Messaging_Queues_RetryPolicyDefinition_
+  commentId: M:Vulthil.Messaging.Queues.RetryPolicyDefinition.Equals(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  name.vb: Equals(RetryPolicyDefinition)
+  fullName: Vulthil.Messaging.Queues.RetryPolicyDefinition.Equals(Vulthil.Messaging.Queues.RetryPolicyDefinition?)
+  fullName.vb: Vulthil.Messaging.Queues.RetryPolicyDefinition.Equals(Vulthil.Messaging.Queues.RetryPolicyDefinition)
+  nameWithType: RetryPolicyDefinition.Equals(RetryPolicyDefinition?)
+  nameWithType.vb: RetryPolicyDefinition.Equals(RetryPolicyDefinition)
+- uid: Vulthil.Messaging.Queues.RetryPolicyDefinition.Equals*
+  name: Equals
+  href: api/Vulthil.Messaging.Queues.RetryPolicyDefinition.html#Vulthil_Messaging_Queues_RetryPolicyDefinition_Equals_
+  commentId: Overload:Vulthil.Messaging.Queues.RetryPolicyDefinition.Equals
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Queues.RetryPolicyDefinition.Equals
+  nameWithType: RetryPolicyDefinition.Equals
 - uid: Vulthil.Messaging.Queues.RetryPolicyDefinition.GetDelay(System.Int32)
   name: GetDelay(int)
   href: api/Vulthil.Messaging.Queues.RetryPolicyDefinition.html#Vulthil_Messaging_Queues_RetryPolicyDefinition_GetDelay_System_Int32_
@@ -3771,6 +3787,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Queues.RetryPolicyDefinition.GetDelay
   nameWithType: RetryPolicyDefinition.GetDelay
+- uid: Vulthil.Messaging.Queues.RetryPolicyDefinition.GetHashCode
+  name: GetHashCode()
+  href: api/Vulthil.Messaging.Queues.RetryPolicyDefinition.html#Vulthil_Messaging_Queues_RetryPolicyDefinition_GetHashCode
+  commentId: M:Vulthil.Messaging.Queues.RetryPolicyDefinition.GetHashCode
+  fullName: Vulthil.Messaging.Queues.RetryPolicyDefinition.GetHashCode()
+  nameWithType: RetryPolicyDefinition.GetHashCode()
+- uid: Vulthil.Messaging.Queues.RetryPolicyDefinition.GetHashCode*
+  name: GetHashCode
+  href: api/Vulthil.Messaging.Queues.RetryPolicyDefinition.html#Vulthil_Messaging_Queues_RetryPolicyDefinition_GetHashCode_
+  commentId: Overload:Vulthil.Messaging.Queues.RetryPolicyDefinition.GetHashCode
+  isSpec: "True"
+  fullName: Vulthil.Messaging.Queues.RetryPolicyDefinition.GetHashCode
+  nameWithType: RetryPolicyDefinition.GetHashCode
 - uid: Vulthil.Messaging.Queues.RetryPolicyDefinition.GetIgnoredExceptionTypes
   name: GetIgnoredExceptionTypes()
   href: api/Vulthil.Messaging.Queues.RetryPolicyDefinition.html#Vulthil_Messaging_Queues_RetryPolicyDefinition_GetIgnoredExceptionTypes

@@ -470,6 +470,12 @@ deleted (best-effort) when disposed; the emulator container keeps running for ot
 
 
 
+  <h4 class="section" id="Vulthil_xUnit_Cosmos_CosmosTestContainerFixture_1_InitializeAsync_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If this method throws an exception, then <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable.disposeasync">DisposeAsync()</a>
+will not be called. This mirrors the behavior of constructors and usage of
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>/<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a>, since this method
+is intended as the equivalent of an async constructor.</p>
+</div>
 
 
 

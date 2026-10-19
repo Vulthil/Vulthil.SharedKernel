@@ -169,6 +169,11 @@ then merged with whatever code-side calls add; code wins on conflict.</p>
     });
 });
 </code></pre>
+<p>A queue name can be configured in more than one place, for example by two modules: every <code>ConfigureQueue</code> call
+with that name adds to the same queue. A consumer runs once per delivery. Registering the same consumer again with
+equal retry settings has no effect, and registering it with a different retry policy throws during configuration.
+Retry policies compare by their settings. A second queue-level <code>UseRetry</code> follows the same rule; a default retry
+policy bound from configuration is still replaced by code.</p>
 <h2 id="publishing-messages">Publishing Messages</h2>
 <p>Inject <code>IPublisher</code> to send one-way messages, or <code>IRequester</code> for request/reply:</p>
 <pre><code class="lang-csharp">public sealed class PlaceOrderHandler(IPublisher publisher)
@@ -468,11 +473,14 @@ to them. Retry a failed request on the requesting side if needed.</p>
 <ul>
 <li><strong>Delayed re-delivery (default):</strong> a failed message is re-published to the queue's retry
 exchange with a delay and re-delivered later. Good for back-off without holding a consumer,
-but it <strong>reorders</strong> relative to other messages.</li>
+but it <strong>reorders</strong> relative to other messages. <code>r.Immediate(n)</code> without <code>r.InMemory()</code> also
+uses this mode: each attempt goes through the broker, only with no delay.</li>
 <li><strong>In-memory:</strong> the consumer is re-invoked in-process while the delivery is held, preserving
 order. Opt in with <code>q.UseRetry(r =&gt; { r.Immediate(3); r.InMemory(); })</code>. Partitioned queues
 use in-memory retry <strong>automatically</strong>, since ordering requires it.</li>
 </ul>
+<p>The RabbitMQ transport declares the <code>{queue}.Retry</code> exchange and queue only when the queue can use
+them: the queue is not partitioned, and at least one one-way consumer has a delayed re-delivery policy.</p>
 <h3 id="several-consumers-on-one-delivery">Several consumers on one delivery</h3>
 <p>When a queue runs several consumers for the same message, one consumer's failure neither skips
 the others in that attempt nor re-runs the ones that already succeeded:</p>
@@ -595,6 +603,9 @@ which is where <code>Subscribe</code> binding patterns filter. The queue's <stro
 and retry re-deliveries dead-letter back into it carrying the original routing key, so a Direct, Topic,
 or Headers queue exchange would silently drop both normal and retry deliveries. The RabbitMQ transport
 rejects a non-fanout queue exchange when the host starts.</p>
+<p>The same startup check rejects <code>Exclusive = true</code> on a quorum queue (<code>IsQuorum</code> is <code>true</code> by default),
+because RabbitMQ cannot declare an exclusive quorum queue. Set <code>IsQuorum = false</code> for an exclusive
+classic queue.</p>
 <pre><code class="lang-csharp">// Producer side: what the publisher writes on the wire.
 messaging.ConfigureMessage&lt;OrderCreatedEvent&gt;(message =&gt;
 {
@@ -951,8 +962,9 @@ background consumers.</p>
 <p><code>DeliveryHandlerFactory</code> turns each consumer registration into a <code>DeliveryHandler</code>: it resolves the consumer from
 the attempt's scope, runs the consume filter pipeline, and, for a request consumer, builds the reply. Let
 <code>MessageExecutionRegistry&lt;DeliveryHandler&gt;</code> assemble the per-message-type plans from the configured queues — it
-handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness (at most one per message type
-per queue), each consumer's effective retry policy, and partition attachment:</p>
+handles URN keying, polymorphic fan-out (one handler per registration; the queue definition holds each registration
+once), request-consumer uniqueness (at most one per message type per queue), each consumer's effective retry policy,
+and partition attachment:</p>
 <pre><code class="lang-csharp">var registry = new MessageExecutionRegistry&lt;DeliveryHandler&gt;(provider, new DeliveryHandlerFactory());
 foreach (var queue in provider.QueueDefinitions)
 {

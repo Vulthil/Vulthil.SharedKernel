@@ -12,7 +12,9 @@ public interface IQueueConfigurator
     /// Registers a one-way consumer on this queue with optional per-consumer configuration.
     /// If the consumer's <c>TMessage</c> is concrete, the queue is auto-subscribed to it at build time;
     /// for polymorphic consumers (e.g. <c>IConsumer&lt;IOrderEvent&gt;</c>) the caller must explicitly
-    /// <see cref="Subscribe{TMessage}"/> the concrete implementers.
+    /// <see cref="Subscribe{TMessage}"/> the concrete implementers. Registering the same consumer on this queue
+    /// again (for example from a second <c>ConfigureQueue</c> call with the same queue name) has no effect when the
+    /// retry settings are equal; a different retry policy throws an <see cref="InvalidOperationException"/>.
     /// </summary>
     IQueueConfigurator AddConsumer<TConsumer>(Action<IConsumerConfigurator<TConsumer>>? configure = null) where TConsumer : class, IConsumer;
     /// <summary>
@@ -59,7 +61,10 @@ public interface IQueueConfigurator
     /// Configures the default retry policy for this queue's one-way consumers. A consumer-level
     /// <see cref="IBaseConfigurator{TConfigurator}.UseRetry"/> takes precedence over this default.
     /// Request consumers never retry (a thrown exception is returned to the requester as an RPC
-    /// fault reply), so this default does not apply to them.
+    /// fault reply), so this default does not apply to them. Calling it again for this queue (for example from a
+    /// second <c>ConfigureQueue</c> call with the same queue name) has no effect when the settings are equal; different
+    /// settings throw an <see cref="InvalidOperationException"/>. A default retry policy bound from configuration is
+    /// replaced.
     /// </summary>
     IQueueConfigurator UseRetry(Action<RetryPolicyConfigurator> configure);
     /// <summary>

@@ -6,7 +6,8 @@ namespace Vulthil.Messaging.Transport;
 /// Transport-agnostic registry that turns <see cref="QueueDefinition"/> registrations into per-message-type
 /// <see cref="MessageExecutionPlan{THandler}"/> instances. It keys plans by wire URN (and CLR full name for the
 /// bare-JSON receive path), fans a polymorphic registration out across every matching concrete subscription,
-/// dedupes handlers, rejects a second request consumer for the same message type on the same queue, and attaches
+/// builds one handler per registration (<see cref="QueueDefinition"/> holds each registration once), rejects a
+/// second request consumer for the same message type on the same queue, and attaches
 /// the partition specification read from <see cref="IMessageConfigurationProvider.GetPartition"/>. A transport
 /// drives it by supplying an <see cref="IMessageHandlerFactory{THandler}"/> that builds its own delivery closures.
 /// </summary>

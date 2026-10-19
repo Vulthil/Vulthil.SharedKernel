@@ -49,6 +49,9 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         }
         catch
         {
+            // The exchange may be gone (an auto-delete exchange, or one deleted on the broker), and a publish does not
+            // recreate it, so the next publish declares it again; declaring an exchange is idempotent.
+            _knownExchanges.TryRemove(message.Exchange, out _);
             await ReturnOrDiscardAsync(channel).ConfigureAwait(false);
             throw;
         }

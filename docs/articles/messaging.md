@@ -78,6 +78,12 @@ builder.AddMessaging(messaging =>
 });
 ```
 
+A queue name can be configured in more than one place, for example by two modules: every `ConfigureQueue` call
+with that name adds to the same queue. A consumer runs once per delivery. Registering the same consumer again with
+equal retry settings has no effect, and registering it with a different retry policy throws during configuration.
+Retry policies compare by their settings. A second queue-level `UseRetry` follows the same rule; a default retry
+policy bound from configuration is still replaced by code.
+
 ## Publishing Messages
 
 Inject `IPublisher` to send one-way messages, or `IRequester` for request/reply:
@@ -447,10 +453,14 @@ There are two execution modes:
 
 - **Delayed re-delivery (default):** a failed message is re-published to the queue's retry
   exchange with a delay and re-delivered later. Good for back-off without holding a consumer,
-  but it **reorders** relative to other messages.
+  but it **reorders** relative to other messages. `r.Immediate(n)` without `r.InMemory()` also
+  uses this mode: each attempt goes through the broker, only with no delay.
 - **In-memory:** the consumer is re-invoked in-process while the delivery is held, preserving
   order. Opt in with `q.UseRetry(r => { r.Immediate(3); r.InMemory(); })`. Partitioned queues
   use in-memory retry **automatically**, since ordering requires it.
+
+The RabbitMQ transport declares the `{queue}.Retry` exchange and queue only when the queue can use
+them: the queue is not partitioned, and at least one one-way consumer has a delayed re-delivery policy.
 
 ### Several consumers on one delivery
 
@@ -594,6 +604,10 @@ which is where `Subscribe` binding patterns filter. The queue's **own** exchange
 and retry re-deliveries dead-letter back into it carrying the original routing key, so a Direct, Topic,
 or Headers queue exchange would silently drop both normal and retry deliveries. The RabbitMQ transport
 rejects a non-fanout queue exchange when the host starts.
+
+The same startup check rejects `Exclusive = true` on a quorum queue (`IsQuorum` is `true` by default),
+because RabbitMQ cannot declare an exclusive quorum queue. Set `IsQuorum = false` for an exclusive
+classic queue.
 
 ```csharp
 // Producer side: what the publisher writes on the wire.
@@ -1014,8 +1028,9 @@ background consumers.
 `DeliveryHandlerFactory` turns each consumer registration into a `DeliveryHandler`: it resolves the consumer from
 the attempt's scope, runs the consume filter pipeline, and, for a request consumer, builds the reply. Let
 `MessageExecutionRegistry<DeliveryHandler>` assemble the per-message-type plans from the configured queues — it
-handles URN keying, polymorphic fan-out, deduplication, request-consumer uniqueness (at most one per message type
-per queue), each consumer's effective retry policy, and partition attachment:
+handles URN keying, polymorphic fan-out (one handler per registration; the queue definition holds each registration
+once), request-consumer uniqueness (at most one per message type per queue), each consumer's effective retry policy,
+and partition attachment:
 
 ```csharp
 var registry = new MessageExecutionRegistry<DeliveryHandler>(provider, new DeliveryHandlerFactory());

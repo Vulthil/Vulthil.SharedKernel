@@ -84,6 +84,7 @@ public sealed record QueueDefinition(string Name)
 {
     private readonly HashSet<Registration> _registrations = [];
     private readonly HashSet<Subscription> _subscriptions = [];
+    private RetryPolicyDefinition? _codeDefaultRetryPolicy;
 
     /// <summary>
     /// Gets or sets the default retry policy applied to all consumers on this queue.
@@ -185,11 +186,54 @@ public sealed record QueueDefinition(string Name)
                     Registrations.Any(r => r.RetryPolicy is not null);
 
     /// <summary>
-    /// Adds a consumer registration to this queue. Duplicate registrations (by value) are ignored.
+    /// Adds a consumer registration to this queue. Duplicate registrations (by value, including the retry settings)
+    /// are ignored, so a queue that is configured in several places can register the same consumer again. A consumer
+    /// runs once per delivery, so it has one retry policy per queue: a <see cref="ConsumerRegistration"/> for a
+    /// consumer and message type that the queue already registers with a different retry policy throws.
     /// </summary>
     /// <param name="registration">The consumer-to-message binding to add.</param>
+    /// <exception cref="InvalidOperationException">
+    /// The queue already has a <see cref="ConsumerRegistration"/> for the same consumer and message type with a
+    /// different <see cref="Registration.RetryPolicy"/>.
+    /// </exception>
     public void AddConsumer(Registration registration)
-        => _registrations.Add(registration);
+    {
+        if (registration is ConsumerRegistration && _registrations.Any(existing => HasOtherRetryPolicy(existing, registration)))
+        {
+            throw new InvalidOperationException(
+                $"Queue '{Name}' already registers consumer '{registration.ConsumerType.Name}' for message type " +
+                $"'{registration.MessageType.Name}' with a different retry policy. A consumer runs once per delivery, so it " +
+                "has one retry policy per queue: register the consumer in one place, or use the same retry settings in each place.");
+        }
+
+        _registrations.Add(registration);
+    }
+
+    /// <summary>
+    /// Sets <see cref="DefaultRetryPolicy"/> from code (<see cref="IQueueConfigurator.UseRetry"/>). A policy bound
+    /// from configuration is replaced, because code takes precedence; a second policy from code must be equal to the
+    /// first, because the queue has one default policy.
+    /// </summary>
+    /// <param name="policy">The default retry policy built from code.</param>
+    /// <exception cref="InvalidOperationException">Code already set a different default retry policy for this queue.</exception>
+    internal void UseDefaultRetryPolicy(RetryPolicyDefinition policy)
+    {
+        if (_codeDefaultRetryPolicy is not null && _codeDefaultRetryPolicy != policy)
+        {
+            throw new InvalidOperationException(
+                $"Queue '{Name}' already has a different default retry policy (UseRetry). The queue has one default " +
+                "retry policy: call UseRetry in one place, or use the same retry settings in each place.");
+        }
+
+        _codeDefaultRetryPolicy = policy;
+        DefaultRetryPolicy = policy;
+    }
+
+    private static bool HasOtherRetryPolicy(Registration existing, Registration added) =>
+        existing is ConsumerRegistration
+        && existing.ConsumerType == added.ConsumerType
+        && existing.MessageType == added.MessageType
+        && existing.RetryPolicy != added.RetryPolicy;
 
     /// <summary>
     /// Adds an exchange→queue binding to this queue. Duplicate subscriptions (by value) are ignored.

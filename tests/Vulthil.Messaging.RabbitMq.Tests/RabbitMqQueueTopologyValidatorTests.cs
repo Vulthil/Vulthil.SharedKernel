@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Vulthil.Messaging.Abstractions.Consumers;
+using Vulthil.Messaging.Queues;
 using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.RabbitMq.Tests;
@@ -13,11 +14,11 @@ public sealed class RabbitMqQueueTopologyValidatorTests : BaseUnitTestCase
 
     public RabbitMqQueueTopologyValidatorTests() => _lazyTarget = new(CreateInstance<RabbitMqQueueTopologyValidator>);
 
-    private static IMessageConfigurationProvider BuildProvider(MessagingExchangeType exchangeType)
+    private static IMessageConfigurationProvider BuildProvider(Action<QueueDefinition> configureQueue)
         => TestProviders.Build(cfg => cfg.ConfigureQueue("orders", queue =>
         {
             queue.AddConsumer<OrderNoteConsumer>();
-            queue.ConfigureQueue(definition => definition.ExchangeType = exchangeType);
+            queue.ConfigureQueue(configureQueue);
         }));
 
     [Theory]
@@ -27,7 +28,7 @@ public sealed class RabbitMqQueueTopologyValidatorTests : BaseUnitTestCase
     public void NonFanoutQueueExchangeTypeFailsStartupValidation(MessagingExchangeType exchangeType)
     {
         // Arrange
-        Use(BuildProvider(exchangeType));
+        Use(BuildProvider(definition => definition.ExchangeType = exchangeType));
 
         // Act
         var result = Target.Validate(null, new RabbitMqTransportOptions());
@@ -43,13 +44,63 @@ public sealed class RabbitMqQueueTopologyValidatorTests : BaseUnitTestCase
     public void FanoutQueueExchangeTypePassesStartupValidation()
     {
         // Arrange
-        Use(BuildProvider(MessagingExchangeType.Fanout));
+        Use(BuildProvider(definition => definition.ExchangeType = MessagingExchangeType.Fanout));
 
         // Act
         var result = Target.Validate(null, new RabbitMqTransportOptions());
 
         // Assert
         result.Succeeded.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void ExclusiveQuorumQueueFailsStartupValidation()
+    {
+        // Arrange
+        Use(BuildProvider(definition => definition.Exclusive = true));
+
+        // Act
+        var result = Target.Validate(null, new RabbitMqTransportOptions());
+
+        // Assert
+        result.Failed.ShouldBeTrue();
+        result.FailureMessage.ShouldContain("orders");
+        result.FailureMessage.ShouldContain("sets Exclusive");
+        result.FailureMessage.ShouldContain("quorum queue");
+    }
+
+    [Fact]
+    public void ExclusiveClassicQueuePassesStartupValidation()
+    {
+        // Arrange
+        Use(BuildProvider(definition =>
+        {
+            definition.IsQuorum = false;
+            definition.Exclusive = true;
+        }));
+
+        // Act
+        var result = Target.Validate(null, new RabbitMqTransportOptions());
+
+        // Assert
+        result.Succeeded.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void QueueWithANonFanoutExchangeThatIsAlsoAnExclusiveQuorumQueueReportsBothFailures()
+    {
+        // Arrange
+        Use(BuildProvider(definition =>
+        {
+            definition.ExchangeType = MessagingExchangeType.Direct;
+            definition.Exclusive = true;
+        }));
+
+        // Act
+        var result = Target.Validate(null, new RabbitMqTransportOptions());
+
+        // Assert
+        result.Failures.ShouldNotBeNull().Count().ShouldBe(2);
     }
 
     [Fact]

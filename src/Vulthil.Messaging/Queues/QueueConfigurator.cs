@@ -130,7 +130,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         var builder = new RetryPolicyConfigurator();
         configure(builder);
 
-        _queueDefinition.DefaultRetryPolicy = builder.Build();
+        _queueDefinition.UseDefaultRetryPolicy(builder.Build());
 
         return this;
     }

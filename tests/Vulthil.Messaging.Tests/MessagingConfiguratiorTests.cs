@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.xUnit;
 
@@ -191,6 +192,75 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicati
         ex.Message.ShouldContain(typeof(UrnBeta).FullName!);
     }
 
+    [Fact]
+    public void ConfiguringAQueueTwiceWithTheSameConsumerAndEqualRetrySettingsRegistersTheConsumerOnce()
+    {
+        // Act
+        Target.AddMessaging(x =>
+        {
+            x.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>(c => c.UseRetry(r => r.Immediate(3))));
+            x.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>(c => c.UseRetry(r => r.Immediate(3))));
+        });
+
+        // Assert
+        GetQueueDefinitions(Target).ShouldHaveSingleItem().Registrations.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void ConfiguringAQueueTwiceWithTheSameConsumerAndADifferentRetryPolicyThrows()
+    {
+        // Act
+        var exception = Should.Throw<InvalidOperationException>(() => Target.AddMessaging(x =>
+        {
+            x.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>(c => c.UseRetry(r => r.Immediate(3))));
+            x.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>(c => c.UseRetry(r => r.Immediate(5))));
+        }));
+
+        // Assert
+        exception.Message.ShouldContain("different retry policy");
+    }
+
+    [Fact]
+    public void ConfiguringAQueueTwiceWithEqualQueueLevelRetrySettingsKeepsThatPolicy()
+    {
+        // Act
+        Target.AddMessaging(x =>
+        {
+            x.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>().UseRetry(r => r.Immediate(3)));
+            x.ConfigureQueue("orders", q => q.UseRetry(r => r.Immediate(3)));
+        });
+
+        // Assert
+        GetQueueDefinitions(Target).ShouldHaveSingleItem().DefaultRetryPolicy.ShouldNotBeNull().MaxRetryCount.ShouldBe(3);
+    }
+
+    [Fact]
+    public void ConfiguringAQueueTwiceWithADifferentQueueLevelRetryPolicyThrows()
+    {
+        // Act
+        var exception = Should.Throw<InvalidOperationException>(() => Target.AddMessaging(x =>
+        {
+            x.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>().UseRetry(r => r.Immediate(3)));
+            x.ConfigureQueue("orders", q => q.UseRetry(r => r.Immediate(5)));
+        }));
+
+        // Assert
+        exception.Message.ShouldContain("different default retry policy");
+    }
+
+    [Fact]
+    public void QueueLevelUseRetryReplacesARetryPolicyBoundFromConfiguration()
+    {
+        // Arrange
+        Target.Configuration["Messaging:Queues:orders:DefaultRetryPolicy:MaxRetryCount"] = "5";
+
+        // Act
+        Target.AddMessaging(x => x.ConfigureQueue("orders", q => q.AddConsumer<OrderPlacedConsumer>().UseRetry(r => r.Immediate(3))));
+
+        // Assert
+        GetQueueDefinitions(Target).ShouldHaveSingleItem().DefaultRetryPolicy.ShouldNotBeNull().MaxRetryCount.ShouldBe(3);
+    }
+
     private sealed record TestMessage
     {
         public string Id { get; set; } = string.Empty;
@@ -199,4 +269,12 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicati
     private sealed record UrnAlpha(string Value);
 
     private sealed record UrnBeta(string Value);
+
+    private sealed record OrderPlaced(string OrderId);
+
+    private sealed class OrderPlacedConsumer : IConsumer<OrderPlaced>
+    {
+        public Task ConsumeAsync(IMessageContext<OrderPlaced> messageContext, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
+    }
 }

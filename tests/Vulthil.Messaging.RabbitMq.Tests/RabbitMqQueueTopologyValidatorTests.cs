@@ -107,7 +107,7 @@ public sealed class RabbitMqQueueTopologyValidatorTests : BaseUnitTestCase
     public void UseRabbitMqRegistersTheTopologyValidator()
     {
         // Arrange
-        var builder = Host.CreateApplicationBuilder();
+        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
 
         // Act
         builder.AddMessaging(cfg => cfg.UseRabbitMq());

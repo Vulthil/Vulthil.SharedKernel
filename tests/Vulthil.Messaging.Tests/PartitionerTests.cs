@@ -95,7 +95,7 @@ public sealed class PartitionerTests : BaseUnitTestCase
     {
         // Arrange
         var options = new MessagingOptions();
-        var configurator = new MessagingConfigurator(Host.CreateApplicationBuilder(), options);
+        var configurator = new MessagingConfigurator(Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings()), options);
 
         // Act
         configurator.UsePartitioner<PartitionTestMessage>(8, context => context.CorrelationId);
@@ -109,7 +109,7 @@ public sealed class PartitionerTests : BaseUnitTestCase
     {
         // Arrange
         var options = new MessagingOptions();
-        var configurator = new MessagingConfigurator(Host.CreateApplicationBuilder(), options);
+        var configurator = new MessagingConfigurator(Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings()), options);
         var context = new Mock<IMessageContext<PartitionTestMessage>>();
         context.SetupGet(c => c.CorrelationId).Returns("corr-1");
 
@@ -128,7 +128,7 @@ public sealed class PartitionerTests : BaseUnitTestCase
     {
         // Arrange
         var options = new MessagingOptions();
-        var configurator = new MessagingConfigurator(Host.CreateApplicationBuilder(), options);
+        var configurator = new MessagingConfigurator(Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings()), options);
         var partitioner = new Partitioner(4);
         var context = new Mock<IMessageContext<PartitionTestMessage>>();
         context.SetupGet(c => c.CorrelationId).Returns("corr-2");

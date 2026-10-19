@@ -8,7 +8,7 @@ namespace Vulthil.Messaging.Tests.Filters;
 
 public sealed class DefaultFilterRegistrationTests : BaseUnitTestCase
 {
-    private static HostApplicationBuilder CreateHostBuilder() => Host.CreateApplicationBuilder();
+    private static HostApplicationBuilder CreateHostBuilder() => Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
 
     [Fact]
     public void LoggingFilterIsRegisteredByDefault()

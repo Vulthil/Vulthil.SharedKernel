@@ -8,7 +8,7 @@ namespace Vulthil.Messaging.Tests;
 
 public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicationBuilder>
 {
-    protected override HostApplicationBuilder CreateInstance() => Host.CreateApplicationBuilder();
+    protected override HostApplicationBuilder CreateInstance() => Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
 
     private static IReadOnlyCollection<QueueDefinition> GetQueueDefinitions(HostApplicationBuilder builder)
     {

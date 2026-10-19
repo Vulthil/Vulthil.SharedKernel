@@ -98,6 +98,39 @@ public sealed class RabbitMqPublisherTests : BaseUnitTestCase
         _channelMock.Verify(channel => channel.DisposeAsync(), Times.Once);
     }
 
+    [Fact]
+    public async Task PublishDeclaresTheExchangeOnceForRepeatedPublishes()
+    {
+        // Act
+        await Target.PublishAsync(new TestMessage(), new PublishContext(), CancellationToken);
+        await Target.PublishAsync(new TestMessage(), new PublishContext(), CancellationToken);
+
+        // Assert
+        VerifyExchangeDeclared(Times.Once());
+    }
+
+    [Fact]
+    public async Task PublishDeclaresTheExchangeAgainAfterAFailedPublish()
+    {
+        // Arrange
+        _channelMock.SetupSequence(x => x.BasicPublishAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<BasicProperties>(), It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()))
+            .Returns(() => ValueTask.FromException(new InvalidOperationException("exchange gone")))
+            .Returns(ValueTask.CompletedTask);
+        await Should.ThrowAsync<InvalidOperationException>(() => Target.PublishAsync(new TestMessage(), new PublishContext(), CancellationToken));
+
+        // Act
+        await Target.PublishAsync(new TestMessage(), new PublishContext(), CancellationToken);
+
+        // Assert
+        VerifyExchangeDeclared(Times.Exactly(2));
+    }
+
+    private void VerifyExchangeDeclared(Times times)
+        => _channelMock.Verify(x => x.ExchangeDeclareAsync(
+            typeof(TestMessage).FullName!, It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(),
+            It.IsAny<IDictionary<string, object?>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), times);
+
     private sealed class TestMessage
     {
         public string Content { get; set; } = string.Empty;

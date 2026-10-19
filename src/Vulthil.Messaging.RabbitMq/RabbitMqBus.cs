@@ -156,6 +156,15 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     }
 
     /// <remarks>
+    /// The retry exchange and queue carry delayed re-deliveries only. A partitioned queue and an in-memory policy
+    /// retry in-process, and request consumers never retry, so none of them needs the retry topology.
+    /// </remarks>
+    private static bool NeedsRetryTopology(QueueDefinition queue, QueueDispatchPlans plans) =>
+        !plans.IsPartitioned && queue.Registrations
+            .Where(static registration => registration is not RequestConsumerRegistration)
+            .Any(registration => (registration.RetryPolicy ?? queue.DefaultRetryPolicy) is { InMemory: false });
+
+    /// <remarks>
     /// A partitioned queue's per-key order only holds within one process; a single active consumer keeps one instance
     /// active (others stand by for failover) so ordering survives across load-balanced consumers. Partitioned queues
     /// opt in automatically; any queue can request it explicitly.
@@ -195,7 +204,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             args.Add("x-dead-letter-exchange", dlx);
         }
 
-        if (queue.RetryEnabled)
+        if (NeedsRetryTopology(queue, plans))
         {
             var retryExchange = $"{queue.Name}.Retry";
             var retryQueue = $"{queue.Name}.Retry";

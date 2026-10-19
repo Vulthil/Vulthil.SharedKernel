@@ -157,8 +157,126 @@ public sealed class QueueDefinitionTests : BaseUnitTestCase
         registrations.Count.ShouldBe(1);
     }
 
+    [Fact]
+    public void AddConsumerIgnoresTheSameConsumerWithEqualRetrySettings()
+    {
+        // Arrange
+        var queue = new QueueDefinition("TestQueue");
+        queue.AddConsumer(ConsumerRegistrationWith(ImmediateRetry(3)));
+
+        // Act
+        queue.AddConsumer(ConsumerRegistrationWith(ImmediateRetry(3)));
+
+        // Assert
+        queue.Registrations.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void AddConsumerThrowsForTheSameConsumerWithADifferentRetryPolicy()
+    {
+        // Arrange
+        var queue = new QueueDefinition("TestQueue");
+        queue.AddConsumer(ConsumerRegistrationWith(ImmediateRetry(3)));
+
+        // Act
+        var exception = Should.Throw<InvalidOperationException>(() => queue.AddConsumer(ConsumerRegistrationWith(ImmediateRetry(5))));
+
+        // Assert
+        exception.Message.ShouldContain("TestQueue");
+        exception.Message.ShouldContain(typeof(TestConsumer).FullName!);
+        exception.Message.ShouldContain("different retry policy");
+        queue.Registrations.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void AddConsumerThrowsWhenOnlyTheNewRegistrationOfTheConsumerHasARetryPolicy()
+    {
+        // Arrange
+        var queue = new QueueDefinition("TestQueue");
+        queue.AddConsumer(ConsumerRegistrationWith(retryPolicy: null));
+
+        // Act & Assert
+        Should.Throw<InvalidOperationException>(() => queue.AddConsumer(ConsumerRegistrationWith(ImmediateRetry(3))));
+    }
+
+    [Fact]
+    public void AddConsumerAcceptsAnotherConsumerOfTheSameMessageWithItsOwnRetryPolicy()
+    {
+        // Arrange
+        var queue = new QueueDefinition("TestQueue");
+        queue.AddConsumer(ConsumerRegistrationWith(ImmediateRetry(3)));
+
+        // Act
+        queue.AddConsumer(ConsumerRegistrationWith(ImmediateRetry(5), typeof(OtherTestConsumer)));
+
+        // Assert
+        queue.Registrations.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public void UseDefaultRetryPolicyAcceptsAnEqualPolicyAgain()
+    {
+        // Arrange
+        var queue = new QueueDefinition("TestQueue");
+        queue.UseDefaultRetryPolicy(ImmediateRetry(3));
+
+        // Act
+        queue.UseDefaultRetryPolicy(ImmediateRetry(3));
+
+        // Assert
+        queue.DefaultRetryPolicy.ShouldBe(ImmediateRetry(3));
+    }
+
+    [Fact]
+    public void UseDefaultRetryPolicyThrowsForADifferentPolicy()
+    {
+        // Arrange
+        var queue = new QueueDefinition("TestQueue");
+        queue.UseDefaultRetryPolicy(ImmediateRetry(3));
+
+        // Act
+        var exception = Should.Throw<InvalidOperationException>(() => queue.UseDefaultRetryPolicy(ImmediateRetry(5)));
+
+        // Assert
+        exception.Message.ShouldContain("TestQueue");
+        exception.Message.ShouldContain("different default retry policy");
+        queue.DefaultRetryPolicy.ShouldBe(ImmediateRetry(3));
+    }
+
+    [Fact]
+    public void UseDefaultRetryPolicyReplacesAPolicyThatCodeDidNotSet()
+    {
+        // Arrange
+        var queue = new QueueDefinition("TestQueue") { DefaultRetryPolicy = ImmediateRetry(5) };
+
+        // Act
+        queue.UseDefaultRetryPolicy(ImmediateRetry(3));
+
+        // Assert
+        queue.DefaultRetryPolicy.ShouldBe(ImmediateRetry(3));
+    }
+
+    private static ConsumerRegistration ConsumerRegistrationWith(RetryPolicyDefinition? retryPolicy, Type? consumerType = null) => new()
+    {
+        ConsumerType = new ConsumerType(consumerType ?? typeof(TestConsumer)),
+        MessageType = new MessageType(typeof(TestMessage)),
+        RetryPolicy = retryPolicy,
+    };
+
+    private static RetryPolicyDefinition ImmediateRetry(int retryCount)
+    {
+        var configurator = new RetryPolicyConfigurator();
+        configurator.Immediate(retryCount);
+        return configurator.Build();
+    }
+
     private class TestMessage { }
     private class TestConsumer : IConsumer<TestMessage>
+    {
+        public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default) => Task.CompletedTask;
+    }
+
+    private sealed class OtherTestConsumer : IConsumer<TestMessage>
     {
         public Task ConsumeAsync(IMessageContext<TestMessage> messageContext, CancellationToken cancellationToken = default) => Task.CompletedTask;
     }

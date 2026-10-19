@@ -93,4 +93,40 @@ public sealed record RetryPolicyDefinition
         var index = Math.Min(attempt, Intervals.Count - 1);
         return Intervals is IList<TimeSpan> list ? list[index] : Intervals.ElementAt(index);
     }
+
+    /// <summary>
+    /// Determines whether <paramref name="other"/> has the same retry settings: the same <see cref="MaxRetryCount"/>,
+    /// <see cref="JitterFactor"/>, and <see cref="InMemory"/> values, the same <see cref="Intervals"/> in the same
+    /// order, and the same ignored exceptions in any order. Policies compare by their settings, so a consumer that is
+    /// registered twice with equal <c>UseRetry</c> settings counts once.
+    /// </summary>
+    /// <param name="other">The policy to compare with this policy.</param>
+    /// <returns><see langword="true"/> when both policies have the same retry settings; otherwise <see langword="false"/>.</returns>
+    public bool Equals(RetryPolicyDefinition? other) =>
+        other is not null
+        && MaxRetryCount == other.MaxRetryCount
+        && EqualityComparer<double>.Default.Equals(JitterFactor, other.JitterFactor)
+        && InMemory == other.InMemory
+        && Intervals.SequenceEqual(other.Intervals)
+        && IgnoreExceptions.ToHashSet(StringComparer.Ordinal).SetEquals(other.IgnoreExceptions)
+        && _ignoredTypes.SetEquals(other._ignoredTypes);
+
+    /// <summary>
+    /// Returns a hash code that is the same for policies with the same retry settings
+    /// (see <see cref="Equals(RetryPolicyDefinition)"/>).
+    /// </summary>
+    /// <returns>The hash code of the retry settings.</returns>
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(MaxRetryCount);
+        hash.Add(JitterFactor);
+        hash.Add(InMemory);
+        foreach (var interval in Intervals)
+        {
+            hash.Add(interval);
+        }
+
+        return hash.ToHashCode();
+    }
 }

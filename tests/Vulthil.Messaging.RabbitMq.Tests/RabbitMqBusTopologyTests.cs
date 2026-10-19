@@ -132,11 +132,133 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
         _declaredQueues["ordered"][SingleActiveConsumerArgument].ShouldBe(true);
     }
 
+    [Fact]
+    public async Task QueueWithOnlyAnInMemoryRetryPolicyIsDeclaredWithoutTheRetryTopology()
+    {
+        // Arrange
+        var provider = ProviderConsumingOrderedEvents("in-memory", configureQueue: queue => queue.UseRetry(retry =>
+        {
+            retry.Immediate(3);
+            retry.InMemory();
+        }));
+
+        // Act
+        await DeclareTopologyAsync(provider);
+
+        // Assert
+        _declaredQueues.ShouldContainKey("in-memory");
+        _declaredQueues.ShouldNotContainKey("in-memory.Retry");
+        _declaredExchanges.ShouldNotContainKey("in-memory.Retry");
+    }
+
+    [Fact]
+    public async Task QueueWithADelayedRetryPolicyIsDeclaredWithTheRetryTopology()
+    {
+        // Arrange
+        var provider = ProviderConsumingOrderedEvents("delayed", configureQueue: queue => queue.UseRetry(retry => retry.Immediate(3)));
+
+        // Act
+        await DeclareTopologyAsync(provider);
+
+        // Assert
+        _declaredQueues.ShouldContainKey("delayed.Retry");
+        _declaredExchanges.ShouldContainKeyAndValue("delayed.Retry", ExchangeType.Topic);
+    }
+
+    [Fact]
+    public async Task ConsumerWithADelayedRetryPolicyOnAQueueWithAnInMemoryDefaultGetsTheRetryTopology()
+    {
+        // Arrange
+        var provider = TestProviders.Build(cfg => cfg.ConfigureQueue("mixed", queue =>
+        {
+            queue.UseRetry(retry =>
+            {
+                retry.Immediate(3);
+                retry.InMemory();
+            });
+            queue.AddConsumer<OrderedConsumer>(consumer => consumer.UseRetry(retry => retry.Immediate(2)));
+        }));
+
+        // Act
+        await DeclareTopologyAsync(provider);
+
+        // Assert
+        _declaredQueues.ShouldContainKey("mixed.Retry");
+    }
+
+    [Fact]
+    public async Task ConsumerWithAnInMemoryRetryPolicyOnAQueueWithADelayedDefaultGetsNoRetryTopology()
+    {
+        // Arrange
+        var provider = TestProviders.Build(cfg => cfg.ConfigureQueue("mixed", queue =>
+        {
+            queue.UseRetry(retry => retry.Immediate(3));
+            queue.AddConsumer<OrderedConsumer>(consumer => consumer.UseRetry(retry =>
+            {
+                retry.Immediate(2);
+                retry.InMemory();
+            }));
+        }));
+
+        // Act
+        await DeclareTopologyAsync(provider);
+
+        // Assert
+        _declaredQueues.ShouldContainKey("mixed");
+        _declaredQueues.ShouldNotContainKey("mixed.Retry");
+    }
+
+    [Fact]
+    public async Task PartitionedQueueWithADelayedRetryPolicyIsDeclaredWithoutTheRetryTopology()
+    {
+        // Arrange
+        var provider = ProviderConsumingOrderedEvents(
+            "ordered",
+            configureQueue: queue => queue.UseRetry(retry => retry.Immediate(3)),
+            configure: cfg => cfg.UsePartitioner<OrderedMessage>(new Partitioner(4), context => context.CorrelationId));
+
+        // Act
+        await DeclareTopologyAsync(provider);
+
+        // Assert
+        _declaredQueues.ShouldContainKey("ordered");
+        _declaredQueues.ShouldNotContainKey("ordered.Retry");
+        _declaredExchanges.ShouldNotContainKey("ordered.Retry");
+    }
+
+    [Fact]
+    public async Task RequestConsumerQueueWithADelayedQueueDefaultIsDeclaredWithoutTheRetryTopology()
+    {
+        // Arrange
+        var provider = TestProviders.Build(cfg => cfg.ConfigureQueue("quotes", queue =>
+        {
+            queue.UseRetry(retry => retry.Immediate(3));
+            queue.AddRequestConsumer<QuoteConsumer>();
+        }));
+
+        // Act
+        await DeclareTopologyAsync(provider);
+
+        // Assert
+        _declaredQueues.ShouldContainKey("quotes");
+        _declaredQueues.ShouldNotContainKey("quotes.Retry");
+    }
+
     internal sealed record OrderedMessage(string Key);
+
+    internal sealed record QuoteRequest(string Sku);
+
+    internal sealed record Quote(string Sku);
 
     private sealed class OrderedConsumer : IConsumer<OrderedMessage>
     {
         public Task ConsumeAsync(IMessageContext<OrderedMessage> messageContext, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
+    }
+
+    private sealed class QuoteConsumer : IRequestConsumer<QuoteRequest, Quote>
+    {
+        public Task<Quote> ConsumeAsync(IMessageContext<QuoteRequest> messageContext, CancellationToken cancellationToken = default)
+            => Task.FromResult(new Quote("sku"));
     }
 }

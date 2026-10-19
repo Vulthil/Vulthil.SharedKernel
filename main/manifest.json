@@ -3215,7 +3215,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.SharedKernel.Outbox.OutboxRetentionOptions",
-      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.yml\" sourcestartlinenumber=\"1\">Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows\nonce they are older than <xref href=\"Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref> so the outbox table does not grow unbounded.</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.yml\" sourcestartlinenumber=\"1\">Configuration for the outbox retention sweep, which periodically deletes processed rows once they are older than\n<xref href=\"Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref> and dead-lettered rows once they are older than <xref href=\"Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod\" data-throw-if-not-resolved=\"false\"></xref>,\nso the outbox table does not grow unbounded.</p>\n"
     },
     {
       "type": "ManagedReference",

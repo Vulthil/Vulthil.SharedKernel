@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class OutboxRetentionOptions | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows once they are older than  so the outbox table does not grow unbounded.">
+      <meta name="description" content="Configuration for the outbox retention sweep, which periodically deletes processed rows once they are older than  and dead-lettered rows once they are older than , so the outbox table does not grow unbounded.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions" class="text-break">
-Class OutboxRetentionOptions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class OutboxRetentionOptions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L8"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,8 +97,9 @@ Class OutboxRetentionOptions  <a class="header-action link-secondary" title="Vie
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Outbox.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows
-once they are older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> so the outbox table does not grow unbounded.</p>
+  <div class="markdown summary"><p>Configuration for the outbox retention sweep, which periodically deletes processed rows once they are older than
+<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> and dead-lettered rows once they are older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod">DeadLetterRetentionPeriod</a>,
+so the outbox table does not grow unbounded.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -162,7 +163,7 @@ once they are older than <a class="xref" href="Vulthil.SharedKernel.Outbox.Outbo
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_BatchSize" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize">
   BatchSize
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the maximum number of rows deleted per batch within a sweep; a sweep keeps deleting batches until
@@ -191,11 +192,50 @@ fewer than this many rows remain. Default is 1000.</p>
 
 
 
+  <a id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod_" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod*"></a>
+
+  <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod">
+  DeadLetterRetentionPeriod
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets how long a dead-lettered row is kept before it becomes eligible for deletion. Default is
+<a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, which keeps a dead-lettered row for <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a>, like a processed row.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan? DeadLetterRetentionPeriod { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A dead-lettered row holds the only copy of a message the outbox gave up on: the error log names the message,
+but does not carry its content. Set a period longer than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> to keep the row available
+for inspection or replay after the <code>vulthil.outbox.dead_lettered</code> counter reports it, without keeping every
+processed row as long. <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan.maxvalue">MaxValue</a> keeps dead-lettered rows until you delete them.</p>
+</div>
+
+
+
+
   <a id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled_" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled*"></a>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled">
   Enabled
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the retention sweep runs. Default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
@@ -227,11 +267,11 @@ fewer than this many rows remain. Default is 1000.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.RetentionPeriod">
   RetentionPeriod
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets or sets how long a processed or dead-lettered row is kept before it becomes eligible for deletion.
-Default is 7 days.</p>
+  <div class="markdown level1 summary"><p>Gets or sets how long a processed row is kept before it becomes eligible for deletion. A dead-lettered row is
+kept this long too, unless <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod">DeadLetterRetentionPeriod</a> is set. Default is 7 days.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -260,7 +300,7 @@ Default is 7 days.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_SweepInterval" data-uid="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval">
   SweepInterval
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the delay between retention sweeps. Default is 1 hour.</p>
@@ -292,7 +332,7 @@ Default is 7 days.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxRetentionOptions.cs/#L8" class="edit-link">Edit this page</a>
         </div>
 
 

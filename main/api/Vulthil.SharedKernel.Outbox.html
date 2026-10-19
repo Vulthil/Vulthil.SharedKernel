@@ -125,8 +125,9 @@ type again when the relay reads the row. Every capture and every dispatcher uses
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html">OutboxRetentionOptions</a></dt>
-      <dd><p>Configuration for the outbox retention sweep, which periodically deletes processed and dead-lettered outbox rows
-once they are older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> so the outbox table does not grow unbounded.</p>
+      <dd><p>Configuration for the outbox retention sweep, which periodically deletes processed rows once they are older than
+<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> and dead-lettered rows once they are older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod">DeadLetterRetentionPeriod</a>,
+so the outbox table does not grow unbounded.</p>
 </dd>
     </dl>
     <dl class="jumplist">

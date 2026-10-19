@@ -434,24 +434,29 @@ providers without ambient transactions (e.g. Cosmos) override this.</p>
 
   <a id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)">
-  DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)">
+  DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, int, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L240"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Deletes up to <code class="paramref">batchSize</code> outbox rows that were processed or dead-lettered before
-<code class="paramref">olderThanUtc</code>. Pending rows are never deleted.</p>
+  <div class="markdown level1 summary"><p>Deletes up to <code class="paramref">batchSize</code> outbox rows that were processed before
+<code class="paramref">processedOlderThanUtc</code> or dead-lettered before <code class="paramref">deadLetteredOlderThanUtc</code>.
+Pending rows are never deleted.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task&lt;int&gt; DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual Task&lt;int&gt; DeleteProcessedAsync(DateTimeOffset processedOlderThanUtc, DateTimeOffset deadLetteredOlderThanUtc, int batchSize, CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>olderThanUtc</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></dt>
-    <dd><p>The cutoff; only terminal rows whose <code>ProcessedOnUtc</code> or <code>FailedOnUtc</code> is older than this are deleted.</p>
+    <dt><code>processedOlderThanUtc</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></dt>
+    <dd><p>The cutoff for processed rows; only a row whose <code>ProcessedOnUtc</code> is older than this is deleted.</p>
+</dd>
+    <dt><code>deadLetteredOlderThanUtc</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></dt>
+    <dd><p>The cutoff for dead-lettered rows; only a row whose <code>FailedOnUtc</code> is older than this is deleted. Pass
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset.minvalue">MinValue</a> to keep every dead-lettered row.</p>
 </dd>
     <dt><code>batchSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd><p>The maximum number of rows to delete in this call.</p>
@@ -622,7 +627,7 @@ already dispatched are dispatched again, which the outbox's at-least-once delive
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_UpdateMessagesAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_DateTimeOffset_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.DateTimeOffset,System.Threading.CancellationToken)">
   UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, DateTimeOffset, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/EntityFrameworkOutboxStore.cs/#L188"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Records processed and failed messages, dead-lettering any that reach <code class="paramref">maxRetries</code>. The default
@@ -632,7 +637,7 @@ providers override this with set-based <code>ExecuteUpdate</code> calls.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Task UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt; successIds, IReadOnlyList&lt;OutboxMessageFailure&gt; failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task&lt;IReadOnlyList&lt;Guid&gt;&gt; UpdateMessagesAsync(IReadOnlyList&lt;Guid&gt; successIds, IReadOnlyList&lt;OutboxMessageFailure&gt; failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -656,8 +661,9 @@ providers override this with set-based <code>ExecuteUpdate</code> calls.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
-    <dd></dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;&gt;</dt>
+    <dd><p>The identifiers of the messages this call dead-lettered.</p>
+</dd>
   </dl>
 
 

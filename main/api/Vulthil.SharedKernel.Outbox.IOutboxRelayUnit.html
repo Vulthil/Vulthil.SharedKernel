@@ -180,7 +180,7 @@ rows that no concurrent relay unit can claim until this unit's transaction ends.
 
   <h3 id="Vulthil_SharedKernel_Outbox_IOutboxRelayUnit_RecordAsync_System_Collections_Generic_IReadOnlyList_System_Guid__System_Collections_Generic_IReadOnlyList_Vulthil_SharedKernel_Outbox_OutboxMessageFailure__System_Int32_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.IOutboxRelayUnit.RecordAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.Threading.CancellationToken)">
   RecordAsync(IReadOnlyList&lt;Guid&gt;, IReadOnlyList&lt;OutboxMessageFailure&gt;, int, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxRelayUnit.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/IOutboxRelayUnit.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Records the outcomes of claimed messages: each message in <code class="paramref">relayedIds</code> is marked processed, and
@@ -190,7 +190,7 @@ to <code class="paramref">maxRetries</code> dead-letters the message.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task RecordAsync(IReadOnlyList&lt;Guid&gt; relayedIds, IReadOnlyList&lt;OutboxMessageFailure&gt; failures, int maxRetries, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;IReadOnlyList&lt;Guid&gt;&gt; RecordAsync(IReadOnlyList&lt;Guid&gt; relayedIds, IReadOnlyList&lt;OutboxMessageFailure&gt; failures, int maxRetries, CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -211,8 +211,9 @@ to <code class="paramref">maxRetries</code> dead-letters the message.</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
-    <dd><p>A task that completes when the outcomes are recorded.</p>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;&gt;</dt>
+    <dd><p>The identifiers of the messages this call dead-lettered, or an empty list when it dead-lettered none. The engine
+counts them on the <code>vulthil.outbox.dead_lettered</code> counter once the unit commits.</p>
 </dd>
   </dl>
 

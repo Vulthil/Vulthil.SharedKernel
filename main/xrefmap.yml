@@ -10184,15 +10184,15 @@ references:
   fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).BeginTransactionAsync
   nameWithType: RelationalOutboxStore<TContext>.BeginTransactionAsync
   nameWithType.vb: RelationalOutboxStore(Of TContext).BeginTransactionAsync
-- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
-  name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
-  name.vb: DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
-  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.DeleteProcessedAsync(System.DateTimeOffset, int, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).DeleteProcessedAsync(System.DateTimeOffset, Integer, System.Threading.CancellationToken)
-  nameWithType: RelationalOutboxStore<TContext>.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  nameWithType.vb: RelationalOutboxStore(Of TContext).DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name: DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name.vb: DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore<TContext>.DeleteProcessedAsync(System.DateTimeOffset, System.DateTimeOffset, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore(Of TContext).DeleteProcessedAsync(System.DateTimeOffset, System.DateTimeOffset, Integer, System.Threading.CancellationToken)
+  nameWithType: RelationalOutboxStore<TContext>.DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, int, CancellationToken)
+  nameWithType.vb: RelationalOutboxStore(Of TContext).DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, Integer, CancellationToken)
 - uid: Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore`1.DeleteProcessedAsync*
   name: DeleteProcessedAsync
   href: api/Vulthil.SharedKernel.Infrastructure.Relational.OutboxProcessing.RelationalOutboxStore-1.html#Vulthil_SharedKernel_Infrastructure_Relational_OutboxProcessing_RelationalOutboxStore_1_DeleteProcessedAsync_
@@ -10437,15 +10437,15 @@ references:
   fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).DbContext
   nameWithType: EntityFrameworkOutboxStore<TContext>.DbContext
   nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).DbContext
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
-  name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
-  name.vb: DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync(System.DateTimeOffset, int, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync(System.DateTimeOffset, Integer, System.Threading.CancellationToken)
-  nameWithType: EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name: DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_System_DateTimeOffset_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name.vb: DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync(System.DateTimeOffset, System.DateTimeOffset, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync(System.DateTimeOffset, System.DateTimeOffset, Integer, System.Threading.CancellationToken)
+  nameWithType: EntityFrameworkOutboxStore<TContext>.DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, int, CancellationToken)
+  nameWithType.vb: EntityFrameworkOutboxStore(Of TContext).DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, Integer, CancellationToken)
 - uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync*
   name: DeleteProcessedAsync
   href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore-1.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_EntityFrameworkOutboxStore_1_DeleteProcessedAsync_
@@ -10822,15 +10822,15 @@ references:
   commentId: T:Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
   fullName: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore
   nameWithType: IOutboxRetentionStore
-- uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
-  name: DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html#Vulthil_SharedKernel_Outbox_IOutboxRetentionStore_DeleteProcessedAsync_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
-  name.vb: DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
-  fullName: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, int, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, Integer, System.Threading.CancellationToken)
-  nameWithType: IOutboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, int, CancellationToken)
-  nameWithType.vb: IOutboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, Integer, CancellationToken)
+- uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name: DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, int, CancellationToken)
+  href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html#Vulthil_SharedKernel_Outbox_IOutboxRetentionStore_DeleteProcessedAsync_System_DateTimeOffset_System_DateTimeOffset_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)
+  name.vb: DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, Integer, CancellationToken)
+  fullName: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, System.DateTimeOffset, int, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset, System.DateTimeOffset, Integer, System.Threading.CancellationToken)
+  nameWithType: IOutboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, int, CancellationToken)
+  nameWithType.vb: IOutboxRetentionStore.DeleteProcessedAsync(DateTimeOffset, DateTimeOffset, Integer, CancellationToken)
 - uid: Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync*
   name: DeleteProcessedAsync
   href: api/Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.html#Vulthil_SharedKernel_Outbox_IOutboxRetentionStore_DeleteProcessedAsync_
@@ -11502,6 +11502,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.BatchSize
   nameWithType: OutboxRetentionOptions.BatchSize
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod
+  name: DeadLetterRetentionPeriod
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod
+  nameWithType: OutboxRetentionOptions.DeadLetterRetentionPeriod
+- uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod*
+  name: DeadLetterRetentionPeriod
+  href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod
+  nameWithType: OutboxRetentionOptions.DeadLetterRetentionPeriod
 - uid: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.Enabled
   name: Enabled
   href: api/Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled

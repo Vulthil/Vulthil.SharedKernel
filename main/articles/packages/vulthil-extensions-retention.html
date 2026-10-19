@@ -106,14 +106,14 @@ sweep when it is enabled — the sweep itself has no <code>Enabled</code> flag</
 stays idle instead of failing</li>
 </ul>
 <h2 id="usage">Usage</h2>
-<pre><code class="lang-csharp">services.AddRetentionSweep&lt;IOutboxStore&gt;(
-    &quot;Outbox&quot;,
+<pre><code class="lang-csharp">services.AddRetentionSweep&lt;IIdempotencyStore&gt;(
+    &quot;Inbox&quot;,
     provider =&gt;
     {
-        var retention = provider.GetRequiredService&lt;IOptions&lt;OutboxProcessingOptions&gt;&gt;().Value.Retention;
+        var retention = provider.GetRequiredService&lt;IOptions&lt;InboxOptions&gt;&gt;().Value.Retention;
         return new RetentionSweepSettings(retention.RetentionPeriod, retention.SweepInterval, retention.BatchSize);
     },
-    store =&gt; store is IOutboxRetentionStore retention
+    store =&gt; store is IInboxRetentionStore retention
         ? new RetentionSweepDeleter(retention.DeleteProcessedAsync)
         : null);
 </code></pre>

@@ -428,11 +428,12 @@ is set and it is no longer relayed. Default is 3.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_Retention" data-uid="Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention">
   Retention
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/OutboxProcessingOptions.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the retention sweep configuration. Set <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_Enabled">Enabled</a> to periodically
-delete processed and dead-lettered rows older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a>.</p>
+delete processed rows older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_RetentionPeriod">RetentionPeriod</a> and dead-lettered rows
+older than <a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.html#Vulthil_SharedKernel_Outbox_OutboxRetentionOptions_DeadLetterRetentionPeriod">DeadLetterRetentionPeriod</a> (or the same period when it is not set).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

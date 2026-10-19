@@ -23,6 +23,7 @@
 - Use the methods on the BaseUnitTestCase class for modifying the AutoMocker instance, such as `Use<T>(T instance)` or `Use<T>()` for registering dependencies, and `GetMock<T>()` for retrieving mocks from the AutoMocker.
 - Override the CreateInstance or CreateInstance<T> methods and use the Target property to lazily create the instance under test.
 - Do not add comments inside test methods except Arrange, Act and Assert; rename the test method to be descriptive of the behavior being tested instead of adding comments.
+- Do not use `Host.CreateApplicationBuilder()` for a test builder that never becomes a host the test disposes (for example one that only feeds `BuildServiceProvider()` or a configurator); use `Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings())` instead. The default builder watches `appsettings.json` for changes, and Linux CI allows only 128 file watchers (inotify instances) per user across all test processes that run at the same time.
 
 ## Documentation Guidelines
 - When generating package README files, keep them short and concise, and use the docs folder for more elaborate usage patterns.

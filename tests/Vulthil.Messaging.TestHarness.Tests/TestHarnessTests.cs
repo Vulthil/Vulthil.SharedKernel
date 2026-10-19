@@ -329,7 +329,7 @@ public sealed class TestHarnessTests : BaseUnitTestCase
     public void UseTestHarnessRegistersARequesterThatASingletonCanDependOn()
     {
         // Arrange
-        var builder = Host.CreateApplicationBuilder();
+        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
         builder.AddMessaging(messaging => messaging.UseTestHarness());
         builder.Services.AddSingleton<RequesterClient>();
 

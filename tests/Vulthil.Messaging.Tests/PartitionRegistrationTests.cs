@@ -31,7 +31,7 @@ public sealed class PartitionRegistrationTests : BaseUnitTestCase<HostApplicatio
         PartitionerByCorrelationId,
     }
 
-    protected override HostApplicationBuilder CreateInstance() => Host.CreateApplicationBuilder();
+    protected override HostApplicationBuilder CreateInstance() => Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
 
     [Theory]
     [InlineData(Registration.CountByOrderId, "order-1")]

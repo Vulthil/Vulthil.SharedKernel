@@ -10,7 +10,7 @@ public sealed class ConsumerRegistrationTests : BaseUnitTestCase
 {
     private static HostApplicationBuilder CreateHostBuilder()
     {
-        return Host.CreateApplicationBuilder();
+        return Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
     }
 
     private static IReadOnlyCollection<QueueDefinition> GetQueueDefinitions(HostApplicationBuilder builder)

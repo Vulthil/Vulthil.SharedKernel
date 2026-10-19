@@ -15,7 +15,7 @@ public sealed class InboxConfiguratorExtensionsTests : BaseUnitTestCase<HostAppl
         _context.SetupGet(context => context.Message).Returns(new TestMessage("order-1", "customer-1"));
     }
 
-    protected override HostApplicationBuilder CreateInstance() => Host.CreateApplicationBuilder();
+    protected override HostApplicationBuilder CreateInstance() => Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
 
     [Fact]
     public void WithoutAKeySelectorTheRegisteredSelectorDefersToTheMessageId()

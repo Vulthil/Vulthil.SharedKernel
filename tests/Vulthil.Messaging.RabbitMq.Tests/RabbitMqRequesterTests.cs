@@ -287,7 +287,7 @@ public sealed class RabbitMqRequesterTests : BaseUnitTestCase
     public void UseRabbitMqRegistersARequesterThatASingletonCanDependOn()
     {
         // Arrange
-        var builder = Host.CreateApplicationBuilder();
+        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
         builder.AddMessaging(messaging => messaging.UseRabbitMq());
         builder.Services.AddSingleton<RequesterClient>();
 

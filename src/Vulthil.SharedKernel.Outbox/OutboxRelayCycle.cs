@@ -27,8 +27,19 @@ internal sealed class OutboxRelayCycle(
     IOptions<OutboxProcessingOptions> options,
     ILogger<OutboxRelayCycle> logger)
 {
-    internal Task<OutboxRelayCycleResult> RunAsync(CancellationToken cancellationToken) =>
-        store.RunRelayUnitAsync(RunUnitAsync, cancellationToken);
+    internal async Task<OutboxRelayCycleResult> RunAsync(CancellationToken cancellationToken)
+    {
+        var cycle = await store.RunRelayUnitAsync(RunUnitAsync, cancellationToken).ConfigureAwait(false);
+
+        // Counted only after the store commits the unit: a run that its execution strategy retries records the same
+        // dead letters again, and the dead letters of a run that never commits are rolled back.
+        if (cycle.DeadLettered > 0)
+        {
+            Telemetry.DeadLettered.Add(cycle.DeadLettered);
+        }
+
+        return cycle;
+    }
 
     private async Task<OutboxRelayCycleResult> RunUnitAsync(IOutboxRelayUnit unit, CancellationToken cancellationToken)
     {
@@ -57,8 +68,8 @@ internal sealed class OutboxRelayCycle(
             }
         }
 
-        await unit.RecordAsync(relayedIds, failures, settings.MaxRetries, cancellationToken).ConfigureAwait(false);
-        return new OutboxRelayCycleResult(batch.Count, relayedIds.Count);
+        var deadLetteredIds = await unit.RecordAsync(relayedIds, failures, settings.MaxRetries, cancellationToken).ConfigureAwait(false);
+        return new OutboxRelayCycleResult(batch.Count, relayedIds.Count, deadLetteredIds.Count);
     }
 
     private async Task<string?[]> DispatchInSequenceAsync(IOutboxRelayUnit unit, IReadOnlyList<OutboxMessageData> batch, CancellationToken cancellationToken)
@@ -164,4 +175,5 @@ internal sealed class OutboxRelayCycle(
 /// </summary>
 /// <param name="Claimed">The number of messages the cycle claimed.</param>
 /// <param name="Relayed">The number of claimed messages that were delivered.</param>
-internal readonly record struct OutboxRelayCycleResult(int Claimed, int Relayed);
+/// <param name="DeadLettered">The number of claimed messages that the store dead-lettered.</param>
+internal readonly record struct OutboxRelayCycleResult(int Claimed, int Relayed, int DeadLettered = 0);

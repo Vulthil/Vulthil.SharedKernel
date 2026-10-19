@@ -38,6 +38,9 @@ public interface IOutboxRelayUnit
     /// <param name="failures">The messages whose delivery failed, with the error to record.</param>
     /// <param name="maxRetries">A failed message whose retry count reaches this value is dead-lettered.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <returns>A task that completes when the outcomes are recorded.</returns>
-    Task RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken);
+    /// <returns>
+    /// The identifiers of the messages this call dead-lettered, or an empty list when it dead-lettered none. The engine
+    /// counts them on the <c>vulthil.outbox.dead_lettered</c> counter once the unit commits.
+    /// </returns>
+    Task<IReadOnlyList<Guid>> RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken);
 }

@@ -22,14 +22,14 @@ One retention sweep for any store that can delete entries older than a cutoff. T
 ## Usage
 
 ```csharp
-services.AddRetentionSweep<IOutboxStore>(
-    "Outbox",
+services.AddRetentionSweep<IIdempotencyStore>(
+    "Inbox",
     provider =>
     {
-        var retention = provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value.Retention;
+        var retention = provider.GetRequiredService<IOptions<InboxOptions>>().Value.Retention;
         return new RetentionSweepSettings(retention.RetentionPeriod, retention.SweepInterval, retention.BatchSize);
     },
-    store => store is IOutboxRetentionStore retention
+    store => store is IInboxRetentionStore retention
         ? new RetentionSweepDeleter(retention.DeleteProcessedAsync)
         : null);
 ```

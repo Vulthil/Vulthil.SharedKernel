@@ -33,6 +33,15 @@ internal sealed class InMemoryRelayStore : IOutboxStore
 
     public int FailedStepCount { get; private set; }
 
+    /// <summary>Gets a value indicating whether the relay unit dead-letters every failure it records.</summary>
+    public bool DeadLettersFailures { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether each relay unit runs twice, like a store whose execution strategy runs the unit
+    /// again after its commit failed.
+    /// </summary>
+    public bool RunsEachUnitTwice { get; init; }
+
     public Task SecondRunStarted => _secondRunStarted.Task;
 
     public bool IsInTransaction => false;
@@ -43,14 +52,19 @@ internal sealed class InMemoryRelayStore : IOutboxStore
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
-    public Task<TResult> RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken)
+    public async Task<TResult> RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken)
     {
         if (Interlocked.Increment(ref _runCount) == 2)
         {
             _secondRunStarted.TrySetResult();
         }
 
-        return unit(new RelayUnit(this), cancellationToken);
+        if (RunsEachUnitTwice)
+        {
+            await unit(new RelayUnit(this), cancellationToken);
+        }
+
+        return await unit(new RelayUnit(this), cancellationToken);
     }
 
     public static List<OutboxMessageData> CreateMessages(int count) =>
@@ -80,13 +94,14 @@ internal sealed class InMemoryRelayStore : IOutboxStore
             }
         }
 
-        public Task RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken)
+        public Task<IReadOnlyList<Guid>> RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken)
         {
             store.RecordCount++;
             store.RelayedIds = relayedIds;
             store.Failures = failures;
             store.RecordedMaxRetries = maxRetries;
-            return Task.CompletedTask;
+            IReadOnlyList<Guid> deadLetteredIds = store.DeadLettersFailures ? failures.Select(failure => failure.Id).ToList() : [];
+            return Task.FromResult(deadLetteredIds);
         }
     }
 }

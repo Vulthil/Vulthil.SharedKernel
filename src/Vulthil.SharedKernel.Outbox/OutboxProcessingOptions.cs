@@ -53,7 +53,8 @@ public sealed class OutboxProcessingOptions
 
     /// <summary>
     /// Gets the retention sweep configuration. Set <see cref="OutboxRetentionOptions.Enabled"/> to periodically
-    /// delete processed and dead-lettered rows older than <see cref="OutboxRetentionOptions.RetentionPeriod"/>.
+    /// delete processed rows older than <see cref="OutboxRetentionOptions.RetentionPeriod"/> and dead-lettered rows
+    /// older than <see cref="OutboxRetentionOptions.DeadLetterRetentionPeriod"/> (or the same period when it is not set).
     /// </summary>
     public OutboxRetentionOptions Retention { get; } = new();
 }

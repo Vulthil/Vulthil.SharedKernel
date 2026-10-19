@@ -8,12 +8,17 @@ namespace Vulthil.SharedKernel.Outbox;
 public interface IOutboxRetentionStore
 {
     /// <summary>
-    /// Deletes up to <paramref name="batchSize"/> outbox rows that were processed or dead-lettered before
-    /// <paramref name="olderThanUtc"/>. Pending rows are never deleted.
+    /// Deletes up to <paramref name="batchSize"/> outbox rows that were processed before
+    /// <paramref name="processedOlderThanUtc"/> or dead-lettered before <paramref name="deadLetteredOlderThanUtc"/>.
+    /// Pending rows are never deleted.
     /// </summary>
-    /// <param name="olderThanUtc">The cutoff; only terminal rows whose <c>ProcessedOnUtc</c> or <c>FailedOnUtc</c> is older than this are deleted.</param>
+    /// <param name="processedOlderThanUtc">The cutoff for processed rows; only a row whose <c>ProcessedOnUtc</c> is older than this is deleted.</param>
+    /// <param name="deadLetteredOlderThanUtc">
+    /// The cutoff for dead-lettered rows; only a row whose <c>FailedOnUtc</c> is older than this is deleted. Pass
+    /// <see cref="DateTimeOffset.MinValue"/> to keep every dead-lettered row.
+    /// </param>
     /// <param name="batchSize">The maximum number of rows to delete in this call.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The number of rows deleted.</returns>
-    Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken);
+    Task<int> DeleteProcessedAsync(DateTimeOffset processedOlderThanUtc, DateTimeOffset deadLetteredOlderThanUtc, int batchSize, CancellationToken cancellationToken);
 }

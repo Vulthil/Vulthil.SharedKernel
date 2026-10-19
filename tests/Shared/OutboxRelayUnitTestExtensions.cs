@@ -18,7 +18,27 @@ internal static class OutboxRelayUnitTestExtensions
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <param name="batchSize">The maximum number of messages to claim.</param>
     /// <param name="maxRetries">The retry limit for claiming and dead-lettering.</param>
-    public static Task<int> RelayBatchAsync(
+    public static async Task<int> RelayBatchAsync(
+        this IOutboxStore store,
+        Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch,
+        CancellationToken cancellationToken,
+        int batchSize = 10,
+        int maxRetries = 3)
+        => (await store.RelayBatchWithOutcomeAsync(dispatch, cancellationToken, batchSize, maxRetries)).Relayed;
+
+    /// <summary>
+    /// Runs one relay unit like <see cref="RelayBatchAsync"/> and returns its outcome, including the messages the store
+    /// dead-lettered.
+    /// </summary>
+    /// <param name="store">The store under test.</param>
+    /// <param name="dispatch">
+    /// Delivers one message as a step of the unit; returns <see langword="null"/> on success, or the error to record, or
+    /// throws. A returned error or an exception fails the step, so the store undoes it.
+    /// </param>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <param name="batchSize">The maximum number of messages to claim.</param>
+    /// <param name="maxRetries">The retry limit for claiming and dead-lettering.</param>
+    public static Task<RelayBatchOutcome> RelayBatchWithOutcomeAsync(
         this IOutboxStore store,
         Func<OutboxMessageData, CancellationToken, Task<string?>> dispatch,
         CancellationToken cancellationToken,
@@ -30,7 +50,7 @@ internal static class OutboxRelayUnitTestExtensions
                 var batch = await unit.ClaimAsync(batchSize, maxRetries, token);
                 if (batch.Count == 0)
                 {
-                    return 0;
+                    return new RelayBatchOutcome(0, []);
                 }
 
                 var relayedIds = new List<Guid>();
@@ -56,8 +76,15 @@ internal static class OutboxRelayUnitTestExtensions
                     }
                 }
 
-                await unit.RecordAsync(relayedIds, failures, maxRetries, token);
-                return relayedIds.Count;
+                var deadLetteredIds = await unit.RecordAsync(relayedIds, failures, maxRetries, token);
+                return new RelayBatchOutcome(relayedIds.Count, deadLetteredIds);
             },
             cancellationToken);
+
+    /// <summary>
+    /// The outcome of one relay unit that <see cref="RelayBatchWithOutcomeAsync"/> ran.
+    /// </summary>
+    /// <param name="Relayed">The number of messages the dispatch delivered.</param>
+    /// <param name="DeadLetteredIds">The identifiers of the messages the store dead-lettered.</param>
+    public sealed record RelayBatchOutcome(int Relayed, IReadOnlyList<Guid> DeadLetteredIds);
 }

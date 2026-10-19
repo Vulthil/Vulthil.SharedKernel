@@ -27,10 +27,12 @@ seam. It has **no EF Core dependency**; the EF implementation lives in
   the engine's own internals.
 - Relay spans are emitted on the `ActivitySource` `"Vulthil.SharedKernel.Outbox"` (`Telemetry.ActivitySourceName`),
   auto-registered with OpenTelemetry by `AddOutboxEngine` (manual: `tracing.AddVulthilOutboxInstrumentation()`).
-- Relay metrics (counters `vulthil.outbox.relayed`/`vulthil.outbox.failed`) are emitted on a `Meter` (`Telemetry.MeterName`),
+- Relay metrics (counters `vulthil.outbox.relayed`, `vulthil.outbox.failed` and `vulthil.outbox.dead_lettered`) are emitted on a `Meter` (`Telemetry.MeterName`),
   auto-registered by `AddOutboxEngine` when `EnableMetrics` is on (manual: `metrics.AddVulthilOutboxInstrumentation()`).
+  Alert on `vulthil.outbox.dead_lettered`: it counts each message the relay gave up on.
 - Opt into a retention sweep via `EnableOutboxProcessing(o => o.Retention.Enabled = true)` to periodically delete processed and dead-lettered rows
-  older than a window (relational set-based `ExecuteDelete`; the same sweep covers Cosmos).
+  older than a window (relational set-based `ExecuteDelete`; the same sweep covers Cosmos). `Retention.DeadLetterRetentionPeriod`
+  can keep dead-lettered rows longer than processed ones.
 
 See the [Outbox Pattern](../outbox-pattern.md)
 article for the design, the pluggable-sink model, and the commit-time trigger.

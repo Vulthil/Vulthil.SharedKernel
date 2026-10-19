@@ -170,11 +170,12 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
     }
 
     [Fact]
-    public async Task TheRetentionSweepDeletesThroughTheRegisteredOutboxStore()
+    public async Task TheRetentionSweepDeletesThroughTheRegisteredOutboxStoreWithTheConfiguredCutoffs()
     {
         // Arrange
         var now = new DateTimeOffset(2026, 1, 15, 12, 0, 0, TimeSpan.Zero);
         var retentionPeriod = TimeSpan.FromDays(3);
+        var deadLetterRetentionPeriod = TimeSpan.FromDays(30);
         var store = new RecordingRetentionStore();
         var services = new ServiceCollection();
         services.AddLogging();
@@ -185,6 +186,7 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
             o.EnableMetrics = false;
             o.Retention.Enabled = true;
             o.Retention.RetentionPeriod = retentionPeriod;
+            o.Retention.DeadLetterRetentionPeriod = deadLetterRetentionPeriod;
         });
         services.AddScoped<IOutboxStore>(_ => store);
         await using var provider = services.BuildServiceProvider();
@@ -196,26 +198,26 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         await sweep.StopAsync(CancellationToken);
 
         // Assert
-        store.ObservedCutoffs.ShouldHaveSingleItem().ShouldBe(now - retentionPeriod);
+        store.ObservedCutoffs.ShouldHaveSingleItem().ShouldBe((now - retentionPeriod, now - deadLetterRetentionPeriod));
     }
 
     /// <summary>
     /// The sweep's hosted service type lives in Vulthil.Extensions.Retention and is internal there, so it is recognised
-    /// by the shape of its factory registration: a hosted service built for the outbox store type.
+    /// by the shape of its factory registration: a hosted service built for the outbox's sweep target.
     /// </summary>
     private static bool IsOutboxRetentionSweep(ServiceDescriptor descriptor) =>
         descriptor.ServiceType == typeof(IHostedService)
         && descriptor.ImplementationFactory?.GetType().GenericTypeArguments is [_, { IsGenericType: true } sweepType]
-        && sweepType.GetGenericArguments()[0] == typeof(IOutboxStore);
+        && sweepType.GetGenericArguments()[0] == typeof(OutboxRetentionSweepTarget);
 
     private sealed class RecordingRetentionStore : IOutboxStore, IOutboxRetentionStore
     {
         private readonly TaskCompletionSource _firstDelete = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private readonly List<DateTimeOffset> _observedCutoffs = [];
+        private readonly List<(DateTimeOffset Processed, DateTimeOffset DeadLettered)> _observedCutoffs = [];
 
         public Task FirstDelete => _firstDelete.Task;
 
-        public IReadOnlyList<DateTimeOffset> ObservedCutoffs => _observedCutoffs;
+        public IReadOnlyList<(DateTimeOffset Processed, DateTimeOffset DeadLettered)> ObservedCutoffs => _observedCutoffs;
 
         public bool IsInTransaction => false;
 
@@ -228,9 +230,9 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         public Task<TResult> RunRelayUnitAsync<TResult>(Func<IOutboxRelayUnit, CancellationToken, Task<TResult>> unit, CancellationToken cancellationToken) =>
             throw new NotSupportedException("This store backs registration tests and never relays.");
 
-        public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+        public Task<int> DeleteProcessedAsync(DateTimeOffset processedOlderThanUtc, DateTimeOffset deadLetteredOlderThanUtc, int batchSize, CancellationToken cancellationToken)
         {
-            _observedCutoffs.Add(olderThanUtc);
+            _observedCutoffs.Add((processedOlderThanUtc, deadLetteredOlderThanUtc));
             _firstDelete.TrySetResult();
             return Task.FromResult(0);
         }
@@ -250,6 +252,23 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
 
         // Act & Assert
         Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value);
+    }
+
+    [Fact]
+    public void RetentionEnabledWithAZeroDeadLetterRetentionPeriodFailsValidationAtStartup()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddOutboxEngine(o =>
+        {
+            o.Retention.Enabled = true;
+            o.Retention.DeadLetterRetentionPeriod = TimeSpan.Zero;
+        });
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value)
+            .Message.ShouldContain("DeadLetterRetentionPeriod");
     }
 
     [Theory]

@@ -184,22 +184,27 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     /// <param name="maxRetries">Failed messages reaching this retry count are dead-lettered (their <c>FailedOnUtc</c> is set).</param>
     /// <param name="processedOnUtc">The timestamp to record for processed or dead-lettered messages.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    protected virtual async Task UpdateMessagesAsync(IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
+    /// <returns>The identifiers of the messages this call dead-lettered.</returns>
+    protected virtual async Task<IReadOnlyList<Guid>> UpdateMessagesAsync(IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
     {
         if (successIds.Count == 0 && failures.Count == 0)
         {
-            return;
+            return [];
         }
 
         var errorsById = failures.ToDictionary(failure => failure.Id, failure => failure.Error);
         var ids = successIds.Concat(errorsById.Keys).ToList();
         var messages = await OutboxMessages.Where(x => ids.Contains(x.Id)).ToArrayAsync(cancellationToken).ConfigureAwait(false);
+        var deadLetteredIds = new List<Guid>();
 
         foreach (var message in messages)
         {
             if (errorsById.TryGetValue(message.Id, out var error))
             {
-                RecordFailure(message, error, maxRetries, processedOnUtc);
+                if (RecordFailure(message, error, maxRetries, processedOnUtc))
+                {
+                    deadLetteredIds.Add(message.Id);
+                }
             }
             else
             {
@@ -208,9 +213,15 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         }
 
         await DbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return deadLetteredIds;
     }
 
-    private void RecordFailure(OutboxMessage message, string error, int maxRetries, DateTimeOffset processedOnUtc)
+    /// <summary>
+    /// Records a failed delivery of <paramref name="message"/> and dead-letters it when its retry count reaches
+    /// <paramref name="maxRetries"/>.
+    /// </summary>
+    /// <returns><see langword="true"/> when the failure dead-lettered the message.</returns>
+    private bool RecordFailure(OutboxMessage message, string error, int maxRetries, DateTimeOffset processedOnUtc)
     {
         message.RetryCount++;
         message.Error = error;
@@ -219,15 +230,18 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         {
             message.FailedOnUtc = processedOnUtc;
             Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", message.Id, message.RetryCount, message.Error);
+            return true;
         }
+
+        return false;
     }
 
     /// <inheritdoc />
-    public virtual async Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+    public virtual async Task<int> DeleteProcessedAsync(DateTimeOffset processedOlderThanUtc, DateTimeOffset deadLetteredOlderThanUtc, int batchSize, CancellationToken cancellationToken)
     {
         var rows = await OutboxMessages
-            .Where(o => o.ProcessedOnUtc != null && o.ProcessedOnUtc < olderThanUtc
-                || o.FailedOnUtc != null && o.FailedOnUtc < olderThanUtc)
+            .Where(o => o.ProcessedOnUtc != null && o.ProcessedOnUtc < processedOlderThanUtc
+                || o.FailedOnUtc != null && o.FailedOnUtc < deadLetteredOlderThanUtc)
             .OrderBy(o => o.OccurredOnUtc)
             .Take(batchSize)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
@@ -253,7 +267,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
         public Task RunStepAsync(Func<CancellationToken, Task> step, CancellationToken cancellationToken) =>
             store.RunRelayStepAsync(step, inTransaction, cancellationToken);
 
-        public Task RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken) =>
+        public Task<IReadOnlyList<Guid>> RecordAsync(IReadOnlyList<Guid> relayedIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, CancellationToken cancellationToken) =>
             store.UpdateMessagesAsync(relayedIds, failures, maxRetries, store._timeProvider.GetUtcNow(), cancellationToken);
     }
 }

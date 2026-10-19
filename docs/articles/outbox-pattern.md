@@ -8,7 +8,7 @@ The transactional outbox pattern guarantees that domain events raised by aggrega
 2. The aggregate root's event collection is cleared.
 3. A background service (`OutboxBackgroundService`) relays unprocessed outbox messages — woken once as soon as newly inserted outbox rows are durable (when the transaction that saved them commits, or right after a `SaveChanges` that ran outside a transaction) for low latency, and polling on an interval as the backstop. A save or commit that inserted no outbox rows never wakes it, so the relay's own bookkeeping cannot cut its failure back-off short.
 4. Each message is routed by its `OutboxDestination` to the registered `IOutboxDispatcher` that handles it (in-process domain events by default, or the broker — see below).
-5. Successfully relayed messages are marked as processed; failures are retried up to the configured maximum, after which the message is dead-lettered — its `FailedOnUtc` timestamp is set, it is no longer relayed, and an error is logged with the last failure (the `Error` column).
+5. Successfully relayed messages are marked as processed; failures are retried up to the configured maximum, after which the message is dead-lettered — its `FailedOnUtc` timestamp is set, it is no longer relayed, an error is logged with the last failure (the `Error` column), and the `vulthil.outbox.dead_lettered` counter counts it (see [Observability](#observability)).
 
 This guarantees **at-least-once delivery** because the event and the business data are committed atomically.
 
@@ -115,7 +115,15 @@ The relay emits an `ActivitySource` named `"Vulthil.SharedKernel.Outbox"` (expos
 
 `AddOutboxEngine` (called by `EnableOutboxProcessing`) registers the source with OpenTelemetry automatically when `EnableTracing` is on (the default), so the spans reach whatever tracer the application has configured without extra wiring. If you build a `TracerProviderBuilder` yourself, the same registration is available as `tracing.AddVulthilOutboxInstrumentation()` — sugar for `AddSource(Telemetry.ActivitySourceName)`.
 
-The relay also emits **metrics** on a `Meter` named `Telemetry.MeterName` (`"Vulthil.SharedKernel.Outbox"`): the counters `vulthil.outbox.relayed` and `vulthil.outbox.failed`. `AddOutboxEngine` auto-registers the meter with OpenTelemetry when `EnableMetrics` is on (the default); for a hand-built `MeterProviderBuilder`, use `metrics.AddVulthilOutboxInstrumentation()`.
+The relay also emits **metrics** on a `Meter` named `Telemetry.MeterName` (`"Vulthil.SharedKernel.Outbox"`). `AddOutboxEngine` auto-registers the meter with OpenTelemetry when `EnableMetrics` is on (the default); for a hand-built `MeterProviderBuilder`, use `metrics.AddVulthilOutboxInstrumentation()`.
+
+| Counter | Counts |
+|---|---|
+| `vulthil.outbox.relayed` | Each message the relay delivered |
+| `vulthil.outbox.failed` | Each failed delivery attempt; a message that fails several times is counted each time |
+| `vulthil.outbox.dead_lettered` | Each message the relay gave up on: its last allowed attempt failed, so it is dead-lettered and no longer relayed |
+
+Alert on `vulthil.outbox.dead_lettered`: each increase is a message that is not delivered unless someone acts on it. The error log names the message but does not carry its content; only the dead-lettered row does, so keep it long enough to act on (see `DeadLetterRetentionPeriod` under [Retention](#retention)).
 
 ## Retention
 
@@ -124,8 +132,9 @@ Processed and dead-lettered rows remain in the `OutboxMessages` table after rela
 ```csharp
 .EnableOutboxProcessing(o =>
 {
-    o.Retention.Enabled = true;                          // turn the sweep on
-    o.Retention.RetentionPeriod = TimeSpan.FromDays(7);  // delete processed/dead-lettered rows older than this
+    o.Retention.Enabled = true;                                    // turn the sweep on
+    o.Retention.RetentionPeriod = TimeSpan.FromDays(7);            // delete processed rows older than this
+    o.Retention.DeadLetterRetentionPeriod = TimeSpan.FromDays(30); // delete dead-lettered rows older than this
     o.Retention.SweepInterval = TimeSpan.FromHours(1);
     o.Retention.BatchSize = 1000;
 });
@@ -136,11 +145,14 @@ Processed and dead-lettered rows remain in the `OutboxMessages` table after rela
 | `Retention` property | Default | Description |
 |---|---|---|
 | `Enabled` | `false` | Whether the retention sweep runs |
-| `RetentionPeriod` | 7 days | How long a processed or dead-lettered row is kept |
+| `RetentionPeriod` | 7 days | How long a processed row is kept, and a dead-lettered row when `DeadLetterRetentionPeriod` is not set |
+| `DeadLetterRetentionPeriod` | not set | How long a dead-lettered row is kept; `TimeSpan.MaxValue` keeps dead-lettered rows until you delete them |
 | `SweepInterval` | 1 hour | Delay between sweeps |
 | `BatchSize` | 1000 | Rows deleted per batch within a sweep |
 
-The sweep deletes rows whose `ProcessedOnUtc` **or** `FailedOnUtc` is older than `RetentionPeriod`; **pending rows are never touched**. It runs through the registered `IOutboxStore` when it implements `IOutboxRetentionStore` (the EF Core store does; a custom store that doesn't gets a one-time warning and the sweep is skipped) — every store deletes at most `BatchSize` rows per call (relational providers select the oldest eligible keys and delete them set-based with `ExecuteDelete`), so a large backlog is drained in bounded, short-lived batches, and the **same sweep covers Cosmos** (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).
+A dead-lettered row is the only copy of a message the outbox gave up on, so set `DeadLetterRetentionPeriod` longer than the time your team needs to act on the `vulthil.outbox.dead_lettered` alert; processed rows can still go after the shorter `RetentionPeriod`.
+
+The sweep deletes rows whose `ProcessedOnUtc` is older than `RetentionPeriod` and rows whose `FailedOnUtc` is older than `DeadLetterRetentionPeriod` (or `RetentionPeriod` when it is not set); **pending rows are never touched**. It runs through the registered `IOutboxStore` when it implements `IOutboxRetentionStore` (the EF Core store does; a custom store that doesn't gets a one-time warning and the sweep is skipped) — every store deletes at most `BatchSize` rows per call (relational providers select the oldest eligible keys and delete them set-based with `ExecuteDelete`), so a large backlog is drained in bounded, short-lived batches, and the **same sweep covers Cosmos** (a Cosmos container TTL is not used, because it cannot tell a pending row from a relayed one and could expire an undelivered message).
 
 ## Custom Outbox Store
 
@@ -173,15 +185,16 @@ The store owns the relay's transactional boundary; the engine owns the relay cyc
 1. Open the transaction (inside the store's retrying execution strategy, if it uses one).
 2. Call the unit with an `IOutboxRelayUnit`. Its `ClaimAsync` fetches up to the requested number of pending messages
    below the retry limit, and locks them where the provider can. Its `RecordAsync` marks the relayed messages
-   processed, records each failure, and dead-letters a message that reaches the retry limit.
+   processed, records each failure, dead-letters a message that reaches the retry limit, and returns the ids of the
+   messages it dead-lettered. The engine counts them on `vulthil.outbox.dead_lettered` once the unit commits.
 3. Commit when the unit returns.
 
 The engine decides the batch size, the dispatch (in sequence or in parallel, see [Dispatch scope](#dispatch-scope)),
 the retry limit, and when the next cycle runs. A retrying execution strategy can run the unit more than once, so start
 each run from a clean state. Messages that an abandoned run already dispatched are dispatched again, which
 at-least-once delivery allows. Deriving from `EntityFrameworkOutboxStore<TContext>` gives you all of this; override
-`FetchMessagesAsync` for row locking, `UpdateMessagesAsync` for set-based marking, or `BeginTransactionAsync` for a
-provider without transactions.
+`FetchMessagesAsync` for row locking, `UpdateMessagesAsync` for set-based marking (it returns the ids of the messages
+it dead-lettered), or `BeginTransactionAsync` for a provider without transactions.
 
 ## One outbox, multiple sinks
 

@@ -83,7 +83,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
     }
 
     /// <inheritdoc />
-    protected override async Task UpdateMessagesAsync(IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
+    protected override async Task<IReadOnlyList<Guid>> UpdateMessagesAsync(IReadOnlyList<Guid> successIds, IReadOnlyList<OutboxMessageFailure> failures, int maxRetries, DateTimeOffset processedOnUtc, CancellationToken cancellationToken)
     {
         if (successIds.Count > 0)
         {
@@ -127,7 +127,11 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
                     Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", item.Id, item.RetryCount, item.Error);
                 }
             }
+
+            return deadLettered.ConvertAll(item => item.Id);
         }
+
+        return [];
     }
 
     /// <inheritdoc />
@@ -136,11 +140,11 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
     /// than <paramref name="batchSize"/> rows — a large backlog is drained in bounded, short-lived deletes instead
     /// of one long-locking statement.
     /// </remarks>
-    public override async Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
+    public override async Task<int> DeleteProcessedAsync(DateTimeOffset processedOlderThanUtc, DateTimeOffset deadLetteredOlderThanUtc, int batchSize, CancellationToken cancellationToken)
     {
         var ids = await OutboxMessages
-            .Where(o => o.ProcessedOnUtc != null && o.ProcessedOnUtc < olderThanUtc
-                || o.FailedOnUtc != null && o.FailedOnUtc < olderThanUtc)
+            .Where(o => o.ProcessedOnUtc != null && o.ProcessedOnUtc < processedOlderThanUtc
+                || o.FailedOnUtc != null && o.FailedOnUtc < deadLetteredOlderThanUtc)
             .OrderBy(o => o.OccurredOnUtc)
             .Take(batchSize)
             .Select(o => o.Id)

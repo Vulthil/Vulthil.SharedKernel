@@ -42,6 +42,47 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task RecordingReturnsTheIdsOfTheMessagesItDeadLetters()
+    {
+        // Arrange
+        var baseTime = DateTimeOffset.UtcNow;
+        var failing = NewMessage(Guid.CreateVersion7(), baseTime);
+        var succeeding = NewMessage(Guid.CreateVersion7(), baseTime.AddSeconds(1));
+        await using var seed = NewContext();
+        seed.OutboxMessages.AddRange(failing, succeeding);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewContext();
+        var store = NewStore(context);
+
+        // Act
+        var outcome = await store.RelayBatchWithOutcomeAsync(
+            (data, _) => Task.FromResult<string?>(data.Id == failing.Id ? "boom" : null),
+            CancellationToken,
+            maxRetries: 1);
+
+        // Assert
+        outcome.Relayed.ShouldBe(1);
+        outcome.DeadLetteredIds.ShouldBe([failing.Id]);
+    }
+
+    [Fact]
+    public async Task RecordingAFailureBelowTheRetryLimitReturnsNoDeadLetteredIds()
+    {
+        // Arrange
+        await using var seed = NewContext();
+        seed.OutboxMessages.Add(NewMessage(Guid.CreateVersion7(), DateTimeOffset.UtcNow));
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewContext();
+        var store = NewStore(context);
+
+        // Act
+        var outcome = await store.RelayBatchWithOutcomeAsync((_, _) => Task.FromResult<string?>("boom"), CancellationToken, maxRetries: 2);
+
+        // Assert
+        outcome.DeadLetteredIds.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task AFailedStepForgetsTheChangesItLeftPendingWhileASucceededStepSavesThem()
     {
         // Arrange
@@ -200,7 +241,7 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         var store = NewStore(context);
 
         // Act
-        var deleted = await store.DeleteProcessedAsync(now.AddDays(-7), batchSize: 100, CancellationToken);
+        var deleted = await store.DeleteProcessedAsync(now.AddDays(-7), now.AddDays(-7), batchSize: 100, CancellationToken);
 
         // Assert
         deleted.ShouldBe(2);
@@ -209,6 +250,52 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
         remaining.Count.ShouldBe(2);
         remaining.ShouldContain(message => message.ProcessedOnUtc == null);
         remaining.ShouldContain(message => message.ProcessedOnUtc >= now.AddDays(-7));
+    }
+
+    [Fact]
+    public async Task DeleteProcessedKeepsADeadLetteredRowNewerThanTheDeadLetteredCutoff()
+    {
+        // Arrange
+        var now = DateTimeOffset.UtcNow;
+        var processed = NewMessage(Guid.CreateVersion7(), now.AddDays(-10), processedOnUtc: now.AddDays(-10));
+        var deadLettered = NewMessage(Guid.CreateVersion7(), now.AddDays(-10), failedOnUtc: now.AddDays(-10));
+        await using var seed = NewContext();
+        seed.OutboxMessages.AddRange(processed, deadLettered);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewContext();
+        var store = NewStore(context);
+
+        // Act
+        var deleted = await store.DeleteProcessedAsync(now.AddDays(-7), now.AddDays(-30), batchSize: 100, CancellationToken);
+
+        // Assert
+        deleted.ShouldBe(1);
+        await using var verify = NewContext();
+        var remaining = await verify.OutboxMessages.ToListAsync(CancellationToken);
+        remaining.ShouldHaveSingleItem().Id.ShouldBe(deadLettered.Id);
+    }
+
+    [Fact]
+    public async Task DeleteProcessedRemovesADeadLetteredRowOlderThanTheDeadLetteredCutoff()
+    {
+        // Arrange
+        var now = DateTimeOffset.UtcNow;
+        var processed = NewMessage(Guid.CreateVersion7(), now.AddDays(-10), processedOnUtc: now.AddDays(-10));
+        var deadLettered = NewMessage(Guid.CreateVersion7(), now.AddDays(-10), failedOnUtc: now.AddDays(-10));
+        await using var seed = NewContext();
+        seed.OutboxMessages.AddRange(processed, deadLettered);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewContext();
+        var store = NewStore(context);
+
+        // Act
+        var deleted = await store.DeleteProcessedAsync(now.AddDays(-30), now.AddDays(-7), batchSize: 100, CancellationToken);
+
+        // Assert
+        deleted.ShouldBe(1);
+        await using var verify = NewContext();
+        var remaining = await verify.OutboxMessages.ToListAsync(CancellationToken);
+        remaining.ShouldHaveSingleItem().Id.ShouldBe(processed.Id);
     }
 
     private static EntityFrameworkOutboxStore<TestDbContext> NewStore(TestDbContext context) =>

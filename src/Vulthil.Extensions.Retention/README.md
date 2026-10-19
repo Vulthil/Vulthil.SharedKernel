@@ -15,10 +15,10 @@ sweep resolves `TStore` from a fresh scope, asks your adapter for its delete ope
 the retention period in bounded batches until fewer than a full batch remain.
 
 ```csharp
-services.AddRetentionSweep<IOutboxStore>(
-    "Outbox",
+services.AddRetentionSweep<IIdempotencyStore>(
+    "Inbox",
     provider => new RetentionSweepSettings(TimeSpan.FromDays(7), TimeSpan.FromHours(1), batchSize: 1000),
-    store => store is IOutboxRetentionStore retention ? new RetentionSweepDeleter(retention.DeleteProcessedAsync) : null);
+    store => store is IInboxRetentionStore retention ? new RetentionSweepDeleter(retention.DeleteProcessedAsync) : null);
 ```
 
 A store for which the adapter returns `null` is logged once and never swept. Every other failure is logged and retried

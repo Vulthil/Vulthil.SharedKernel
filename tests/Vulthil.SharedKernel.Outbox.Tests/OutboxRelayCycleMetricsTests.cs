@@ -55,6 +55,47 @@ public sealed class OutboxRelayCycleMetricsTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task AMessageTheStoreDeadLettersIncrementsTheDeadLetteredCounter()
+    {
+        // Arrange
+        Use<IOutboxStore>(new InMemoryRelayStore(messageCount: 1) { DeadLettersFailures = true });
+        SetupDispatcher(succeeds: false);
+
+        // Act
+        var count = await MeasureCounterAsync("vulthil.outbox.dead_lettered", () => Target.RunAsync(CancellationToken));
+
+        // Assert
+        count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task AFailureTheStoreDoesNotDeadLetterLeavesTheDeadLetteredCounterUnchanged()
+    {
+        // Arrange
+        SetupDispatcher(succeeds: false);
+
+        // Act
+        var count = await MeasureCounterAsync("vulthil.outbox.dead_lettered", () => Target.RunAsync(CancellationToken));
+
+        // Assert
+        count.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task ARelayUnitTheStoreRunsTwiceCountsItsDeadLettersOnce()
+    {
+        // Arrange
+        Use<IOutboxStore>(new InMemoryRelayStore(messageCount: 1) { DeadLettersFailures = true, RunsEachUnitTwice = true });
+        SetupDispatcher(succeeds: false);
+
+        // Act
+        var count = await MeasureCounterAsync("vulthil.outbox.dead_lettered", () => Target.RunAsync(CancellationToken));
+
+        // Assert
+        count.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task CancellingMidBatchDoesNotIncrementTheFailedCounterOrLogAnError()
     {
         // Arrange

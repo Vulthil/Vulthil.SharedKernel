@@ -27,4 +27,6 @@ public static class Telemetry
         "vulthil.outbox.relayed", unit: "{message}", description: "Outbox messages successfully relayed.");
     internal static readonly Counter<long> Failed = Meter.CreateCounter<long>(
         "vulthil.outbox.failed", unit: "{message}", description: "Outbox message relay attempts that failed.");
+    internal static readonly Counter<long> DeadLettered = Meter.CreateCounter<long>(
+        "vulthil.outbox.dead_lettered", unit: "{message}", description: "Outbox messages dead-lettered after their last allowed relay attempt failed; they are no longer relayed.");
 }

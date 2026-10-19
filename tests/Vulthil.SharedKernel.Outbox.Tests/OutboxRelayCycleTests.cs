@@ -159,6 +159,21 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task TheCycleReportsHowManyMessagesTheStoreDeadLettered()
+    {
+        // Arrange
+        var messages = InMemoryRelayStore.CreateMessages(2);
+        UseRootDispatchers(new FailingForOneMessageDispatcher(messages[0].Id));
+        UseStore(new InMemoryRelayStore(messages) { DeadLettersFailures = true });
+
+        // Act
+        var cycle = await Target.RunAsync(CancellationToken);
+
+        // Assert
+        cycle.ShouldBe(new OutboxRelayCycleResult(Claimed: 2, Relayed: 1, DeadLettered: 1));
+    }
+
+    [Fact]
     public async Task InSequenceAFailedDispatchFailsItsStepSoTheStoreCanUndoIt()
     {
         // Arrange

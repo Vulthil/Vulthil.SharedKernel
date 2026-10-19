@@ -43,25 +43,28 @@ public sealed class CosmosOutboxIntegrationTests(CosmosWebApplicationFactory fac
     public async Task FailuresIncrementRetryCountAndDeadLetterAtMaxRetriesThroughTheBaseUpdatePath()
     {
         // Arrange
-        await SeedAsync([NewMessage(DateTimeOffset.UtcNow)]);
+        var message = NewMessage(DateTimeOffset.UtcNow);
+        await SeedAsync([message]);
         await using var relayScope = Factory.Services.CreateAsyncScope();
         var store = NewStore(relayScope.ServiceProvider.GetRequiredService<CosmosProbeDbContext>());
         var dispatchedAfterDeadLetter = new List<OutboxMessageData>();
 
         // Act
-        var firstBatch = await store.RelayBatchAsync(FailingDispatch("first failure"), CancellationToken, maxRetries: 2);
+        var firstBatch = await store.RelayBatchWithOutcomeAsync(FailingDispatch("first failure"), CancellationToken, maxRetries: 2);
         var afterFirst = await QuerySingleMessageAsync();
-        var secondBatch = await store.RelayBatchAsync(FailingDispatch("second failure"), CancellationToken, maxRetries: 2);
+        var secondBatch = await store.RelayBatchWithOutcomeAsync(FailingDispatch("second failure"), CancellationToken, maxRetries: 2);
         var afterSecond = await QuerySingleMessageAsync();
         await store.RelayBatchAsync(RecordingDispatch(dispatchedAfterDeadLetter), CancellationToken, maxRetries: 2);
 
         // Assert
-        firstBatch.ShouldBe(0);
+        firstBatch.Relayed.ShouldBe(0);
+        firstBatch.DeadLetteredIds.ShouldBeEmpty();
         afterFirst.RetryCount.ShouldBe(1);
         afterFirst.Error.ShouldBe("first failure");
         afterFirst.ProcessedOnUtc.ShouldBeNull();
         afterFirst.FailedOnUtc.ShouldBeNull();
-        secondBatch.ShouldBe(0);
+        secondBatch.Relayed.ShouldBe(0);
+        secondBatch.DeadLetteredIds.ShouldBe([message.Id]);
         afterSecond.RetryCount.ShouldBe(2);
         afterSecond.Error.ShouldBe("second failure");
         afterSecond.ProcessedOnUtc.ShouldBeNull();
@@ -87,14 +90,42 @@ public sealed class CosmosOutboxIntegrationTests(CosmosWebApplicationFactory fac
         var cutoff = terminalTime.AddDays(1);
 
         // Act
-        var firstSweep = await store.DeleteProcessedAsync(cutoff, 2, CancellationToken);
-        var secondSweep = await store.DeleteProcessedAsync(cutoff, 2, CancellationToken);
-        var thirdSweep = await store.DeleteProcessedAsync(cutoff, 2, CancellationToken);
+        var firstSweep = await store.DeleteProcessedAsync(cutoff, cutoff, 2, CancellationToken);
+        var secondSweep = await store.DeleteProcessedAsync(cutoff, cutoff, 2, CancellationToken);
+        var thirdSweep = await store.DeleteProcessedAsync(cutoff, cutoff, 2, CancellationToken);
 
         // Assert
         firstSweep.ShouldBe(2);
         secondSweep.ShouldBe(1);
         thirdSweep.ShouldBe(0);
+        var remaining = await QueryMessagesAsync();
+        remaining.ShouldHaveSingleItem().Id.ShouldBe(pending.Id);
+    }
+
+    [Fact]
+    public async Task RetentionDeleteKeepsADeadLetteredRowUntilItIsOlderThanTheDeadLetteredCutoff()
+    {
+        // Arrange
+        var terminalTime = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var processed = NewMessage(terminalTime);
+        processed.ProcessedOnUtc = terminalTime;
+        var deadLettered = NewMessage(terminalTime);
+        deadLettered.FailedOnUtc = terminalTime;
+        var pending = NewMessage(terminalTime);
+        await SeedAsync([processed, deadLettered, pending]);
+        await using var relayScope = Factory.Services.CreateAsyncScope();
+        var store = NewStore(relayScope.ServiceProvider.GetRequiredService<CosmosProbeDbContext>());
+        var afterTerminal = terminalTime.AddDays(1);
+
+        // Act
+        var firstSweep = await store.DeleteProcessedAsync(afterTerminal, terminalTime.AddDays(-1), 10, CancellationToken);
+        var afterFirstSweep = await QueryMessagesAsync();
+        var secondSweep = await store.DeleteProcessedAsync(afterTerminal, afterTerminal, 10, CancellationToken);
+
+        // Assert
+        firstSweep.ShouldBe(1);
+        afterFirstSweep.Select(row => row.Id).ShouldBe([deadLettered.Id, pending.Id], ignoreOrder: true);
+        secondSweep.ShouldBe(1);
         var remaining = await QueryMessagesAsync();
         remaining.ShouldHaveSingleItem().Id.ShouldBe(pending.Id);
     }

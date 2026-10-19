@@ -62,6 +62,11 @@ public static class OutboxEngineServiceCollectionExtensions
                     && o.Retention.BatchSize >= 1,
                 "Outbox retention requires RetentionPeriod and SweepInterval greater than zero and BatchSize of at least 1 when enabled.")
             .Validate(
+                o => !o.Retention.Enabled
+                    || o.Retention.DeadLetterRetentionPeriod is not { } deadLetterRetentionPeriod
+                    || deadLetterRetentionPeriod > TimeSpan.Zero,
+                "Outbox retention requires DeadLetterRetentionPeriod, when set, to be greater than zero.")
+            .Validate(
                 o => o.MaxDelaySeconds >= o.OutboxProcessingDelaySeconds,
                 "MaxDelaySeconds must be greater than or equal to OutboxProcessingDelaySeconds.")
             .Validate(
@@ -108,12 +113,11 @@ public static class OutboxEngineServiceCollectionExtensions
 
         if (options.Retention.Enabled)
         {
-            services.AddRetentionSweep<IOutboxStore>(
+            services.TryAddTransient<OutboxRetentionSweepTarget>();
+            services.AddRetentionSweep<OutboxRetentionSweepTarget>(
                 "Outbox",
                 static provider => ToSweepSettings(provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value.Retention),
-                static store => store is IOutboxRetentionStore retentionStore
-                    ? new RetentionSweepDeleter(retentionStore.DeleteProcessedAsync)
-                    : null);
+                static target => target.CreateDeleter());
         }
 
         return services;

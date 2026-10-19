@@ -137,6 +137,96 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
         rows.Count.ShouldBe(4);
     }
 
+    [Fact]
+    public async Task RecordingReturnsTheIdsOfTheMessagesItDeadLetters()
+    {
+        // Arrange
+        var failing = NewMessage();
+        var succeeding = NewMessage();
+        await using var seed = NewUnitOfWorkContext();
+        seed.OutboxMessages.AddRange(failing, succeeding);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewUnitOfWorkContext();
+        var store = NewUnitOfWorkStore(context);
+
+        // Act
+        var outcome = await store.RelayBatchWithOutcomeAsync(
+            (data, _) => Task.FromResult<string?>(data.Id == failing.Id ? "boom" : null),
+            CancellationToken,
+            maxRetries: 1);
+
+        // Assert
+        outcome.Relayed.ShouldBe(1);
+        outcome.DeadLetteredIds.ShouldBe([failing.Id]);
+    }
+
+    [Fact]
+    public async Task RecordingAFailureBelowTheRetryLimitReturnsNoDeadLetteredIds()
+    {
+        // Arrange
+        await using var seed = NewUnitOfWorkContext();
+        seed.OutboxMessages.Add(NewMessage());
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewUnitOfWorkContext();
+        var store = NewUnitOfWorkStore(context);
+
+        // Act
+        var outcome = await store.RelayBatchWithOutcomeAsync((_, _) => Task.FromResult<string?>("boom"), CancellationToken, maxRetries: 2);
+
+        // Assert
+        outcome.DeadLetteredIds.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task DeleteProcessedKeepsADeadLetteredRowNewerThanTheDeadLetteredCutoff()
+    {
+        // Arrange
+        var now = DateTimeOffset.UtcNow;
+        var processed = NewMessage();
+        processed.ProcessedOnUtc = now.AddDays(-10);
+        var deadLettered = NewMessage();
+        deadLettered.FailedOnUtc = now.AddDays(-10);
+        await using var seed = NewUnitOfWorkContext();
+        seed.OutboxMessages.AddRange(processed, deadLettered);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewUnitOfWorkContext();
+        var store = NewUnitOfWorkStore(context);
+
+        // Act
+        var deleted = await store.DeleteProcessedAsync(now.AddDays(-7), now.AddDays(-30), batchSize: 100, CancellationToken);
+
+        // Assert
+        deleted.ShouldBe(1);
+        await using var verify = NewUnitOfWorkContext();
+        var remaining = await verify.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
+        remaining.ShouldHaveSingleItem().Id.ShouldBe(deadLettered.Id);
+    }
+
+    [Fact]
+    public async Task DeleteProcessedRemovesADeadLetteredRowOlderThanTheDeadLetteredCutoff()
+    {
+        // Arrange
+        var now = DateTimeOffset.UtcNow;
+        var processed = NewMessage();
+        processed.ProcessedOnUtc = now.AddDays(-10);
+        var deadLettered = NewMessage();
+        deadLettered.FailedOnUtc = now.AddDays(-10);
+        await using var seed = NewUnitOfWorkContext();
+        seed.OutboxMessages.AddRange(processed, deadLettered);
+        await seed.SaveChangesAsync(CancellationToken);
+        await using var context = NewUnitOfWorkContext();
+        var store = NewUnitOfWorkStore(context);
+
+        // Act
+        var deleted = await store.DeleteProcessedAsync(now.AddDays(-30), now.AddDays(-7), batchSize: 100, CancellationToken);
+
+        // Assert
+        deleted.ShouldBe(1);
+        await using var verify = NewUnitOfWorkContext();
+        var remaining = await verify.OutboxMessages.AsNoTracking().ToListAsync(CancellationToken);
+        remaining.ShouldHaveSingleItem().Id.ShouldBe(processed.Id);
+    }
+
     private static OutboxMessage NewMessage(Guid id) => new()
     {
         Id = id,

@@ -19,6 +19,7 @@
 	<!-- The UseMySql overload differs per target framework, so its public API is tracked in per-TFM PublicAPI files instead of the auto-included root ones. Keep both the Shipped and Unshipped file wired: the release promotion (eng/mark_api_shipped.py) folds Unshipped into the sibling Shipped, which must also be an AdditionalFile or the analyzer reports RS0016. -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
 		<PackageReference Include="Aspire.Pomelo.EntityFrameworkCore.MySql" />
+		<PackageReference Include="MySqlConnector" />
 		<AdditionalFiles Include="PublicAPI\net9.0\PublicAPI.Shipped.txt" />
 		<AdditionalFiles Include="PublicAPI\net9.0\PublicAPI.Unshipped.txt" />
 	</ItemGroup>

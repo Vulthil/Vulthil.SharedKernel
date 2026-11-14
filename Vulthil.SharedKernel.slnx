@@ -1,14 +1,14 @@
 <Solution>
+  <Folder Name="/.claude/rules/">
+    <File Path=".claude/rules/csharp-style.md" />
+    <File Path=".claude/rules/documentation.md" />
+    <File Path=".claude/rules/testing.md" />
+  </Folder>
   <Folder Name="/.config/">
     <File Path=".config/dotnet-tools.json" />
   </Folder>
   <Folder Name="/.github/">
-    <File Path=".github/copilot-instructions.md" />
     <File Path=".github/dependabot.yml" />
-  </Folder>
-  <Folder Name="/.github/instructions/">
-    <File Path=".github/instructions/documentation-guidelines.instructions.md" />
-    <File Path=".github/instructions/style-guidelines.instructions.md" />
   </Folder>
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/backport.yml" />

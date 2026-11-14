@@ -61,13 +61,13 @@ Recognized types: `feat`, `fix`, `docs`, `perf`, `refactor`, `test`, `chore`, `c
 
 ## Coding Guidelines
 
-The full conventions live in [`.github/copilot-instructions.md`](copilot-instructions.md)
-and [`.github/instructions/`](instructions). The essentials:
+The full conventions live in [`CLAUDE.md`](../CLAUDE.md) and the path-scoped rules in
+[`.claude/rules/`](../.claude/rules). The essentials:
 
 - Use **file-scoped namespaces** that match the directory structure.
 - Prefer **immutable types** and use `record` for immutable data.
-- Do **not** add comments inside methods. For complex logic, extract a well-named method
-  instead.
+- Comments inside methods explain **why**, never **what**. For complex logic, extract a
+  well-named method instead.
 - When you change a **public member**, update its **XML documentation**, the relevant docs
   in the [`docs/`](../docs) folder, and the README if applicable.
 - Do not suppress **CS1591** — add the missing XML comments instead.

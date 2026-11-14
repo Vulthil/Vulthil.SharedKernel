@@ -1,6 +1,9 @@
 ---
-apply-to: "**/*.cs"
+paths:
+  - "**/*.cs"
 ---
+
+# C# style
 
 ## Namespaces
 - Use file-scoped namespaces that match the directory structure.
@@ -12,19 +15,12 @@ apply-to: "**/*.cs"
 ## Files Organization
 - Define one type per file.
 
-## Record Design
-- Define record's properties on the same line as the record declaration.
-- Use immutable collections in records unless requested otherwise.
-- Use `ImmutableList<T>` in records whenever possible.
-- Define record behavior in extension methods in other static classes.
-
 ## Discriminated Unions Design
 - Prefer using records for discriminated unions.
 - Derive specific types from a base abstract record.
 - Define the entire discriminated union in one file.
 - Define one static factory class per discriminated union.
 - Expose one static factory method per variant.
-- Follow all rules for record design when designing a discriminated union.
 
 ## Domain Models Design
 - Use a private constructor for domain models.

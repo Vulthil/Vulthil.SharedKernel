@@ -11,6 +11,13 @@ namespace Vulthil.Messaging.TestHarness;
 /// <para>The harness dispatches synchronously: by the time a publish, send, or request call completes, every
 /// consumer (and registered <see cref="Handle{TMessage}"/>/<see cref="Respond{TRequest, TResponse}"/> stub)
 /// it triggered has run, so assertions need no polling.</para>
+/// <para>Messages are routed as the broker routes them. A publish reaches every queue that consumes the message, and
+/// each queue gets its own copy, with its own retry rounds. A send reaches only the queue that its address names: the
+/// name of a <c>queue:</c> address, or the path of an <c>amqp:</c>, <c>amqps:</c>, or <c>rabbitmq:</c> address,
+/// matched case-sensitively. A send to a queue that the application does not configure runs none of its consumers,
+/// because on a broker that queue can belong to another service. <see cref="Sent{TMessage}"/> still captures it, with
+/// its <see cref="CapturedMessage{TMessage}.DestinationAddress"/>, and the <see cref="Handle{TMessage}"/> stubs still
+/// run.</para>
 /// <para>Consumers run with the same delivery rules as the broker transport. A one-way consumer that throws is
 /// retried per its configured policy, in rounds: each round runs only the consumers that failed in the round before,
 /// and the retries run back-to-back with no back-off. Once a consumer has failed for good, a <c>Fault&lt;T&gt;</c> is
@@ -28,7 +35,10 @@ public interface ITestHarness
     /// <typeparam name="TMessage">The message type to filter by.</typeparam>
     IReadOnlyList<CapturedMessage<TMessage>> Published<TMessage>() where TMessage : notnull;
 
-    /// <summary>Gets the messages sent via <c>ISendEndpoint.SendAsync</c> that are assignable to <typeparamref name="TMessage"/>, in order.</summary>
+    /// <summary>
+    /// Gets the messages sent via <c>ISendEndpoint.SendAsync</c> that are assignable to <typeparamref name="TMessage"/>,
+    /// in order. The <see cref="CapturedMessage{TMessage}.DestinationAddress"/> of each one is the address it was sent to.
+    /// </summary>
     /// <typeparam name="TMessage">The message type to filter by.</typeparam>
     IReadOnlyList<CapturedMessage<TMessage>> Sent<TMessage>() where TMessage : notnull;
 
@@ -41,8 +51,8 @@ public interface ITestHarness
     IReadOnlyList<CapturedMessage<TMessage>> Requested<TMessage>() where TMessage : notnull;
 
     /// <summary>
-    /// Registers a stub that runs whenever a <typeparamref name="TMessage"/> is published or sent, in addition to
-    /// any registered consumers. Use it to stand in for a downstream service — the stub can publish or send
+    /// Registers a stub that runs whenever a <typeparamref name="TMessage"/> is published or sent (to any address), in
+    /// addition to any registered consumers. Use it to stand in for a downstream service — the stub can publish or send
     /// follow-up messages through its context.
     /// </summary>
     /// <typeparam name="TMessage">The message type to react to.</typeparam>

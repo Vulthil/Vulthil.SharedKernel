@@ -371,9 +371,16 @@ per-consumer retry resolution — from your queue configuration that a real tran
 synchronous — by the time a publish/send/request call returns, every consumer (and stub) it triggered has run,
 so assertions need no polling.
 
-Two fidelity limits to keep in mind: the harness dispatches each produced message **once** to all matching
-consumers (a real broker delivers a distinct copy per subscribed queue), and partition lanes are not simulated
-(dispatch is inline and ordered by call).
+The harness routes messages as the broker does:
+
+- A publish reaches every queue that consumes the message. Each queue gets its own copy and retries its consumers
+  in rounds of its own.
+- A send reaches only the queue that its address names: `queue:<name>`, or the path of an `amqp://`, `amqps://`, or
+  `rabbitmq://` address. Queue names match case-sensitively.
+- A send to a queue that the application does not configure runs none of its consumers, because on a broker that
+  queue can belong to another service. `Sent<T>()` still captures the message, and the `Handle<T>` stubs still run.
+
+Partition lanes are not simulated: dispatch is inline and ordered by call.
 
 The harness runs each delivery through the core `DeliveryDispatcher`, the same delivery rules the RabbitMQ transport
 and any custom transport use (see [Writing a Custom Transport](messaging.md#writing-a-custom-transport)):
@@ -413,6 +420,17 @@ harness.Consumed<OrderCreatedEvent>().ShouldHaveSingleItem();
 
 `ITestHarness` exposes `Published<T>()`, `Sent<T>()`, `Consumed<T>()`, and `Requested<T>()` (each returns the
 matching `CapturedMessage<T>` items — `.Message` is the payload, `.Envelope` the wire metadata), plus `Clear()`.
+
+A send does not write its address into the envelope, so a `Sent<T>()` item carries it as `.DestinationAddress`. A
+test can check where a message was sent, also when the address names a queue of another service:
+
+```csharp
+var sendEndpoints = host.Services.GetRequiredService<ISendEndpointProvider>();
+var endpoint = await sendEndpoints.GetSendEndpointAsync(new Uri("queue:billing-commands"));
+await endpoint.SendAsync(new ChargeOrderCommand(orderId));
+
+harness.Sent<ChargeOrderCommand>().ShouldHaveSingleItem().DestinationAddress.ShouldBe(new Uri("queue:billing-commands"));
+```
 
 ### Resetting between tests
 

@@ -1038,18 +1038,21 @@ once), request-consumer uniqueness (at most one per message type per queue), eac
 and partition attachment:
 
 ```csharp
-var registry = new MessageExecutionRegistry<DeliveryHandler>(provider, new DeliveryHandlerFactory());
+var handlerFactory = new DeliveryHandlerFactory();
+var registries = new Dictionary<string, MessageExecutionRegistry<DeliveryHandler>>();
 foreach (var queue in provider.QueueDefinitions)
 {
+    var registry = new MessageExecutionRegistry<DeliveryHandler>(provider, handlerFactory);
     registry.RegisterQueue(queue);
+    registries.Add(queue.Name, registry);
 }
 ```
 
 Plans are keyed by URN within a registry instance, so queues registered into the same instance accumulate their
-handlers into one plan per message type. Register every queue in a single instance only when your transport
-dispatches each produced message exactly once (as the in-memory test harness does); a transport that receives a
-distinct delivery per queue (as the RabbitMQ transport does) must build one registry per queue so a delivery
-dispatches only the handlers its own queue registered.
+handlers into one plan per message type. A broker delivers a distinct copy to each queue, so build one registry per
+queue (as the RabbitMQ transport and the in-memory test harness do): a delivery then dispatches only the handlers
+that its own queue registered. Register several queues in a single instance only when your transport dispatches
+each produced message exactly once to all their consumers.
 
 A transport that needs its own handler type can derive from `MessageHandlerFactory<THandler>` (or implement
 `IMessageHandlerFactory<THandler>`) instead, but it then owns every delivery rule of step 3 itself.

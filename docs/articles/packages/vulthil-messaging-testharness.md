@@ -14,6 +14,9 @@ queue configuration that a real transport would.
 ## Pattern
 
 - Dispatch is synchronous: when a publish/send/request call returns, every consumer it triggered has run — no polling
+- Routing follows the broker: a publish reaches every queue that consumes the message, each with its own copy; a send
+  reaches only the queue that its address names, and a send to a queue that the application does not configure runs
+  none of its consumers. `Sent<T>()` captures every send with its `DestinationAddress`
 - A one-way consumer's exception does **not** propagate to the publisher/sender: the consumer is retried per its
   resolved retry policy, in rounds that re-run only the consumers that failed (attempts run back-to-back, without
   the configured delays), then a `Fault<T>` is published and captured — assert it via

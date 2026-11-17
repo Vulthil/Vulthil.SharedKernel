@@ -1,1 +1,3 @@
 #nullable enable
+Vulthil.Messaging.TestHarness.CapturedMessage<TMessage>.DestinationAddress.get -> System.Uri?
+Vulthil.Messaging.TestHarness.CapturedMessage<TMessage>.DestinationAddress.init -> void

@@ -6,10 +6,13 @@ using Vulthil.Messaging.Transport;
 namespace Vulthil.Messaging.TestHarness;
 
 /// <summary>
-/// In-memory <see cref="ITransport"/>. Assembles the same <see cref="MessageExecutionRegistry{THandler}"/> a
-/// broker transport would from the configured queues, then runs produced messages through the matching consumers
-/// in-process with the shared <see cref="DeliveryDispatcher"/> — no broker. Dispatch is synchronous: a
-/// publish/send/request completes only after every triggered consumer and stub has run.
+/// In-memory <see cref="ITransport"/>. Assembles one <see cref="MessageExecutionRegistry{THandler}"/> per configured
+/// queue, as a broker transport does, then runs produced messages through the matching consumers in-process with the
+/// shared <see cref="DeliveryDispatcher"/> — no broker. Delivery follows the broker's routing: a publish reaches every
+/// queue that consumes the message, each queue with its own copy and its own retry rounds, and a send reaches only the
+/// queue its address names. A send to a queue that is not configured here runs no consumer, because on a broker that
+/// queue can belong to another service. Dispatch is synchronous: a publish/send/request completes only after every
+/// triggered consumer and stub has run.
 /// </summary>
 internal sealed class InMemoryTransport : ITransport
 {
@@ -17,7 +20,10 @@ internal sealed class InMemoryTransport : ITransport
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly DeliveryDispatcher _dispatcher;
     private readonly TestHarness _harness;
-    private readonly MessageExecutionRegistry<DeliveryHandler> _registry;
+
+    // A broker matches a send's queue name exactly, so the names compare ordinally; the order is the configuration's,
+    // so a publish runs the queues in the same order on every run.
+    private readonly OrderedDictionary<string, MessageExecutionRegistry<DeliveryHandler>> _queues = new(StringComparer.Ordinal);
 
     public InMemoryTransport(
         IMessageConfigurationProvider provider,
@@ -29,30 +35,41 @@ internal sealed class InMemoryTransport : ITransport
         _scopeFactory = scopeFactory;
         _dispatcher = dispatcher;
         _harness = harness;
-        _registry = new MessageExecutionRegistry<DeliveryHandler>(provider, new DeliveryHandlerFactory());
 
         // The plans are built eagerly from the configured queues so the harness works whether or not the host's
         // hosted services are started — a unit test can resolve IPublisher/ITestHarness and assert immediately.
+        var handlerFactory = new DeliveryHandlerFactory();
         foreach (var queue in provider.QueueDefinitions)
         {
-            _registry.RegisterQueue(queue);
+            var registry = new MessageExecutionRegistry<DeliveryHandler>(provider, handlerFactory);
+            registry.RegisterQueue(queue);
+            _queues.Add(queue.Name, registry);
         }
     }
 
     public Task StartAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     /// <summary>
-    /// Delivers a published or sent message: runs every registered one-way consumer for the message URN through the
-    /// dispatcher, then any ad-hoc <see cref="ITestHarness.Handle{TMessage}"/> stub for that URN.
+    /// Delivers a published message: runs the one-way consumers of every queue that consumes the message URN through
+    /// the dispatcher, one dispatch per queue, then any ad-hoc <see cref="ITestHarness.Handle{TMessage}"/> stub for that
+    /// URN.
     /// </summary>
     /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> ended the delivery.</exception>
-    public async Task DeliverAsync(MessageEnvelope envelope, CancellationToken cancellationToken)
+    public async Task DeliverPublishedAsync(MessageEnvelope envelope, CancellationToken cancellationToken)
     {
-        var plan = _registry.GetPlanByUrn(envelope.MessageType);
-        if (plan is not null)
+        foreach (var queue in _queues.Values)
         {
-            var consumers = plan.Handlers.Where(handler => handler.Kind == HandlerKind.Consumer).ToList();
-            await DispatchAsync(consumers, plan, envelope, cancellationToken).ConfigureAwait(false);
+            await DeliverToQueueAsync(queue, envelope, cancellationToken).ConfigureAwait(false);
+        }
+
+        await RunStubsAsync(envelope, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task DeliverSentAsync(MessageEnvelope envelope, string queueName, CancellationToken cancellationToken)
+    {
+        if (_queues.TryGetValue(queueName, out var queue))
+        {
+            await DeliverToQueueAsync(queue, envelope, cancellationToken).ConfigureAwait(false);
         }
 
         await RunStubsAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -60,7 +77,9 @@ internal sealed class InMemoryTransport : ITransport
 
     /// <summary>
     /// Delivers a request and returns the reply envelope: a registered <see cref="ITestHarness.Respond{TRequest, TResponse}"/>
-    /// responder takes precedence, then a real request consumer; returns <see langword="null"/> when neither exists.
+    /// responder takes precedence, then the request consumer of the first queue that has one for the request URN
+    /// (<c>AddRequestConsumer</c> rejects a second request consumer for a request type, so normally only one queue has
+    /// one); returns <see langword="null"/> when neither exists.
     /// </summary>
     /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> ended the delivery before the
     /// request consumer answered.</exception>
@@ -74,15 +93,32 @@ internal sealed class InMemoryTransport : ITransport
             return responder(scope.ServiceProvider, envelope, cancellationToken);
         }
 
-        var plan = _registry.GetPlanByUrn(envelope.MessageType);
-        var handler = plan?.Handlers.FirstOrDefault(h => h.Kind == HandlerKind.RequestConsumer);
-        if (plan is null || handler is null)
+        foreach (var queue in _queues.Values)
         {
-            return null;
+            if (queue.GetPlanByUrn(envelope.MessageType) is { } plan
+                && plan.Handlers.FirstOrDefault(handler => handler.Kind == HandlerKind.RequestConsumer) is { } requestConsumer)
+            {
+                var port = await DispatchAsync([requestConsumer], plan, envelope, cancellationToken).ConfigureAwait(false);
+                return port.Reply;
+            }
         }
 
-        var port = await DispatchAsync([handler], plan, envelope, cancellationToken).ConfigureAwait(false);
-        return port.Reply;
+        return null;
+    }
+
+    private async Task DeliverToQueueAsync(
+        MessageExecutionRegistry<DeliveryHandler> queue,
+        MessageEnvelope envelope,
+        CancellationToken cancellationToken)
+    {
+        var plan = queue.GetPlanByUrn(envelope.MessageType);
+        if (plan is null)
+        {
+            return;
+        }
+
+        var consumers = plan.Handlers.Where(handler => handler.Kind == HandlerKind.Consumer).ToList();
+        await DispatchAsync(consumers, plan, envelope, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<DeliveryPort> DispatchAsync(

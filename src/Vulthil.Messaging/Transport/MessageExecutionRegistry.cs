@@ -42,8 +42,8 @@ public sealed class MessageExecutionRegistry<THandler>
     /// Plans are keyed by URN within this registry instance, so registering several queues that consume the same
     /// message type accumulates all their handlers in one plan. A transport that delivers per queue must therefore
     /// build one registry per queue so a queue's deliveries dispatch only its own handlers (as the RabbitMQ
-    /// transport does); a transport that dispatches each produced message exactly once can register every queue in
-    /// a single instance (as the in-memory test harness does). A message type can have at most one request
+    /// transport and the in-memory test harness do); a transport that dispatches each produced message exactly once
+    /// to every consumer can register every queue in a single instance. A message type can have at most one request
     /// consumer per queue. Each handler is built with the registration's effective retry policy — the
     /// per-registration policy when set, otherwise the queue's <see cref="QueueDefinition.DefaultRetryPolicy"/> —
     /// which also applies to polymorphic registrations fanned out across their concrete implementers; request

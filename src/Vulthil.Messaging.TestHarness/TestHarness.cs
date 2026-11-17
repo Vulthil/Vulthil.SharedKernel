@@ -71,7 +71,8 @@ internal sealed class TestHarness : ITestHarness, IResettableTestState
     }
 
     internal void RecordPublished(object message, MessageEnvelope envelope) => _published.Enqueue(new RecordedMessage(message, envelope));
-    internal void RecordSent(object message, MessageEnvelope envelope) => _sent.Enqueue(new RecordedMessage(message, envelope));
+    internal void RecordSent(object message, MessageEnvelope envelope, Uri destinationAddress)
+        => _sent.Enqueue(new RecordedMessage(message, envelope, destinationAddress));
     internal void RecordConsumed(object message, MessageEnvelope envelope) => _consumed.Enqueue(new RecordedMessage(message, envelope));
     internal void RecordRequested(object message, MessageEnvelope envelope) => _requested.Enqueue(new RecordedMessage(message, envelope));
 
@@ -109,8 +110,8 @@ internal sealed class TestHarness : ITestHarness, IResettableTestState
 
     private static List<CapturedMessage<TMessage>> Project<TMessage>(ConcurrentQueue<RecordedMessage> log) where TMessage : notnull
         => log.Where(entry => entry.Message is TMessage)
-            .Select(entry => new CapturedMessage<TMessage>((TMessage)entry.Message, entry.Envelope))
+            .Select(entry => new CapturedMessage<TMessage>((TMessage)entry.Message, entry.Envelope) { DestinationAddress = entry.DestinationAddress })
             .ToList();
 
-    private sealed record RecordedMessage(object Message, MessageEnvelope Envelope);
+    private sealed record RecordedMessage(object Message, MessageEnvelope Envelope, Uri? DestinationAddress = null);
 }

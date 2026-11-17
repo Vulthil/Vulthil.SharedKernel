@@ -23,6 +23,6 @@ internal sealed class InMemoryPublisher : ITransportPublisher
 
         var envelope = OutgoingEnvelope.Build(_provider, message, context);
         _harness.RecordPublished(message, envelope);
-        await _transport.DeliverAsync(envelope, cancellationToken).ConfigureAwait(false);
+        await _transport.DeliverPublishedAsync(envelope, cancellationToken).ConfigureAwait(false);
     }
 }

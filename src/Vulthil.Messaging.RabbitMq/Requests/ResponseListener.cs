@@ -13,10 +13,17 @@ internal sealed class ResponseListener : IAsyncDisposable
     private readonly IMessageConfigurationProvider _messageConfigurationProvider;
     private readonly ILogger<ResponseListener> _logger;
     private readonly ConcurrentDictionary<string, IResponseWaiter> _waiters = new();
+
+    // Never disposed: a first request can still wait for the lock when the listener is disposed, and it must then
+    // fail with ObjectDisposedException instead of waiting on a semaphore that nobody releases. A SemaphoreSlim whose
+    // AvailableWaitHandle is never read holds no unmanaged resource.
+#pragma warning disable CA2213
     private readonly SemaphoreSlim _initLock = new(1, 1);
+#pragma warning restore CA2213
 
     private IChannel? _channel;
     private string _replyToQueueName = string.Empty;
+    private bool _disposed;
 
     public ResponseListener(
         IConnection connection,
@@ -32,6 +39,7 @@ internal sealed class ResponseListener : IAsyncDisposable
     /// Gets the name of the exclusive reply-to queue this listener subscribes to.
     /// Awaits initialization on first access if the listener has not started yet.
     /// </summary>
+    /// <exception cref="ObjectDisposedException">The listener is disposed and has no reply queue.</exception>
     public async ValueTask<string> GetReplyToQueueNameAsync(CancellationToken cancellationToken = default)
     {
         if (_channel is not null)
@@ -58,6 +66,7 @@ internal sealed class ResponseListener : IAsyncDisposable
         await _initLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
+            ObjectDisposedException.ThrowIf(_disposed, this);
 #pragma warning disable CA1508 // Double-check after acquiring the lock; another thread may have initialized.
             if (_channel is not null)
             {
@@ -78,7 +87,7 @@ internal sealed class ResponseListener : IAsyncDisposable
                 _replyToQueueName = declareResult.QueueName;
 
                 var consumer = new AsyncEventingBasicConsumer(channel);
-                consumer.ReceivedAsync += OnResponseReceivedAsync;
+                consumer.ReceivedAsync += (_, delivery) => OnResponseReceivedAsync(channel, delivery);
 
                 await channel.BasicConsumeAsync(
                     queue: _replyToQueueName,
@@ -103,7 +112,7 @@ internal sealed class ResponseListener : IAsyncDisposable
         }
     }
 
-    private async Task OnResponseReceivedAsync(object sender, BasicDeliverEventArgs ea)
+    private async Task OnResponseReceivedAsync(IChannel channel, BasicDeliverEventArgs ea)
     {
         var correlationId = ea.BasicProperties.CorrelationId;
         if (!string.IsNullOrEmpty(correlationId) && _waiters.TryGetValue(correlationId, out var waiter))
@@ -115,21 +124,35 @@ internal sealed class ResponseListener : IAsyncDisposable
             MessagingLog.ResponseWaiterNotFound(_logger, correlationId);
         }
 
-        if (_channel is not null)
-        {
-            await _channel.BasicAckAsync(ea.DeliveryTag, false).ConfigureAwait(false);
-        }
+        // The ack goes to the channel the reply arrived on, not to _channel: disposing the listener clears _channel
+        // while a reply can still be handled.
+        await channel.BasicAckAsync(ea.DeliveryTag, false).ConfigureAwait(false);
     }
 
+    /// <remarks>
+    /// Waits for a first request that is opening the reply channel, then closes that channel. A later first request
+    /// throws <see cref="ObjectDisposedException"/> instead of opening a channel that nobody closes.
+    /// </remarks>
     public async ValueTask DisposeAsync()
     {
-        if (_channel is not null)
+        await _initLock.WaitAsync().ConfigureAwait(false);
+        try
         {
-            await _channel.DisposeAsync().ConfigureAwait(false);
-            _channel = null;
+            if (!_disposed)
+            {
+                _disposed = true;
+                if (_channel is { } channel)
+                {
+                    _channel = null;
+                    await channel.DisposeAsync().ConfigureAwait(false);
+                }
+            }
+        }
+        finally
+        {
+            _initLock.Release();
         }
 
-        _initLock.Dispose();
         GC.SuppressFinalize(this);
     }
 }

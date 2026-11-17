@@ -403,6 +403,11 @@ Notes:
 - **Failure path:** a partitioned queue retries **in-memory** automatically — the consumer
   is re-invoked in-process while the delivery (and its lane) is held — so a failing message
   cannot be overtaken by a later same-key message. See *Retries* below.
+- **Stopping:** the worker cancels its consumer and waits up to 30 seconds for the lanes, so
+  their deferred acks complete before the channel closes. A lane that still runs after that
+  keeps the channel open: it finishes and acks its delivery in the background, and the
+  channel closes after the last lane. A delivery that is still unacked when the connection
+  closes is delivered again by the broker.
 
 ### Ordering across instances (single active consumer)
 

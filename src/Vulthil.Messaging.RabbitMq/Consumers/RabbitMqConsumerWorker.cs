@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -429,47 +430,101 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
     /// <remarks>
     /// Cancels the consumer through the channel gate (in-flight lanes may still be settling on the shared channel),
-    /// then drains in-flight partitioned work so deferred acks complete before the channel closes. An
-    /// <see cref="ObjectDisposedException"/> (the channel was already disposed by AutoRecovery) and a
-    /// <see cref="TimeoutException"/> (draining ran long) are both ignored on shutdown — any still-unacked deliveries
-    /// are requeued by the broker when the channel closes.
+    /// then waits up to the drain timeout for in-flight partitioned work, so deferred acks complete before the channel
+    /// closes. Work that still runs at the timeout keeps the channel and the gate: it finishes and settles its
+    /// delivery, and the channel closes in the background after the last of it. A failed lane does not stop the
+    /// drain: its delivery stays unsettled and the broker delivers it again. A failed cancel never skips the channel
+    /// close; the failure is thrown after the close. An <see cref="ObjectDisposedException"/> (AutoRecovery already
+    /// disposed the channel) is ignored.
     /// </remarks>
     public async ValueTask DisposeAsync()
     {
+        var cancelFailure = await TryCancelConsumerAsync().ConfigureAwait(false);
+
+        var pending = _inFlight.Values.ToArray();
+        var drain = Task.WhenAll(pending);
+        await drain.WaitAsync(DrainTimeout, _timeProvider).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+
+        Exception? closeFailure = null;
+        if (drain.IsCompleted)
+        {
+            closeFailure = await TryCloseChannelAsync().ConfigureAwait(false);
+        }
+        else
+        {
+            MessagingLog.DrainTimedOut(_logger, _queueDefinition.Name, _channelIndex, pending.Count(static work => !work.IsCompleted), DrainTimeout.TotalSeconds);
+            _ = CloseChannelAfterDrainAsync(drain);
+        }
+
+        ThrowIfFailed(cancelFailure, closeFailure);
+    }
+
+    private async Task<Exception?> TryCancelConsumerAsync()
+    {
+        if (_consumerTag is not { Length: > 0 } consumerTag)
+        {
+            return null;
+        }
+
         try
         {
-            if (!string.IsNullOrEmpty(_consumerTag))
-            {
-                await _channelGate.WaitAsync().ConfigureAwait(false);
-                try
-                {
-                    await _channel.BasicCancelAsync(_consumerTag).ConfigureAwait(false);
-                }
-                finally
-                {
-                    _channelGate.Release();
-                }
-            }
-
-            var pending = _inFlight.Values.ToArray();
-            if (pending.Length > 0)
-            {
-                await Task.WhenAll(pending).WaitAsync(DrainTimeout, _timeProvider).ConfigureAwait(false);
-            }
-
-            await _channel.DisposeAsync().ConfigureAwait(false);
+            await OnChannelAsync(() => new ValueTask(_channel.BasicCancelAsync(consumerTag))).ConfigureAwait(false);
+            return null;
         }
         catch (ObjectDisposedException)
         {
-            // Already disposed by AutoRecovery; ignored on shutdown (see remarks).
+            // AutoRecovery already disposed the channel, so no consumer is left to cancel.
+            return null;
         }
-        catch (TimeoutException)
+        catch (Exception exception)
         {
-            // Drain timed out; unacked deliveries are requeued on channel close (see remarks).
+            return exception;
+        }
+    }
+
+    private async Task CloseChannelAfterDrainAsync(Task drain)
+    {
+        // The work that outlived the drain timeout settles its deliveries on this channel, so the close waits for it.
+        // The disposal that started this close has already returned, so a failure can only be logged.
+        await drain.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        if (await TryCloseChannelAsync().ConfigureAwait(false) is { } failure)
+        {
+            MessagingLog.ChannelCloseFailed(_logger, failure, _queueDefinition.Name, _channelIndex);
+        }
+    }
+
+    private async Task<Exception?> TryCloseChannelAsync()
+    {
+        try
+        {
+            await _channel.DisposeAsync().ConfigureAwait(false);
+            return null;
+        }
+        catch (ObjectDisposedException)
+        {
+            // AutoRecovery already disposed the channel.
+            return null;
+        }
+        catch (Exception exception)
+        {
+            return exception;
         }
         finally
         {
             _channelGate.Dispose();
+        }
+    }
+
+    private static void ThrowIfFailed(Exception? cancelFailure, Exception? closeFailure)
+    {
+        if (cancelFailure is not null && closeFailure is not null)
+        {
+            throw new AggregateException(cancelFailure, closeFailure);
+        }
+
+        if ((cancelFailure ?? closeFailure) is { } failure)
+        {
+            ExceptionDispatchInfo.Throw(failure);
         }
     }
 

@@ -59,6 +59,14 @@ internal static partial class MessagingLog
         Message = "Retry policy on queue '{Queue}' ignores exception type '{TypeName}', which cannot be resolved to a CLR type; matching exceptions WILL be retried. Use the assembly-qualified type name.")]
     public static partial void IgnoredExceptionUnresolvable(ILogger logger, string queue, string typeName);
 
+    [LoggerMessage(EventId = 1109, Level = LogLevel.Warning,
+        Message = "Consumer worker stopping: queue='{Queue}', channel={ChannelIndex} still has {InFlightCount} delivery(ies) in flight after {DrainTimeoutSeconds}s. They finish in the background, and the channel closes after the last one.")]
+    public static partial void DrainTimedOut(ILogger logger, string queue, int channelIndex, int inFlightCount, double drainTimeoutSeconds);
+
+    [LoggerMessage(EventId = 1110, Level = LogLevel.Warning,
+        Message = "Consumer worker stopping: closing the channel of queue='{Queue}', channel={ChannelIndex} failed.")]
+    public static partial void ChannelCloseFailed(ILogger logger, Exception exception, string queue, int channelIndex);
+
     [LoggerMessage(EventId = 1200, Level = LogLevel.Debug,
         Message = "Publishing {MessageType} to exchange '{Exchange}' (routingKey='{RoutingKey}', messageId='{MessageId}')")]
     public static partial void Publishing(ILogger logger, string messageType, string exchange, string routingKey, string messageId);

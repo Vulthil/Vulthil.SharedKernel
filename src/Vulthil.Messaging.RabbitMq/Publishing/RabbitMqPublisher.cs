@@ -45,7 +45,6 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
             await EnsureExchangeTopologyAsync(channel, message.Exchange, messageConfiguration, cancellationToken).ConfigureAwait(false);
 
             await PublishOnAsync(channel, message, cancellationToken).ConfigureAwait(false);
-            _channelPool.Return(channel);
         }
         catch
         {
@@ -55,6 +54,8 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
             await ReturnOrDiscardAsync(channel).ConfigureAwait(false);
             throw;
         }
+
+        await _channelPool.ReturnAsync(channel).ConfigureAwait(false);
     }
 
     /// <remarks>
@@ -70,13 +71,14 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
         try
         {
             await PublishOnAsync(channel, message, cancellationToken).ConfigureAwait(false);
-            _channelPool.Return(channel);
         }
         catch
         {
             await ReturnOrDiscardAsync(channel).ConfigureAwait(false);
             throw;
         }
+
+        await _channelPool.ReturnAsync(channel).ConfigureAwait(false);
     }
 
     public async Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)
@@ -134,13 +136,5 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
     /// must not be reused.
     /// </summary>
     private ValueTask ReturnOrDiscardAsync(IChannel channel)
-    {
-        if (channel.IsOpen)
-        {
-            _channelPool.Return(channel);
-            return ValueTask.CompletedTask;
-        }
-
-        return _channelPool.DiscardAsync(channel);
-    }
+        => channel.IsOpen ? _channelPool.ReturnAsync(channel) : _channelPool.DiscardAsync(channel);
 }

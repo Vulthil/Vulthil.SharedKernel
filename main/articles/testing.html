@@ -414,9 +414,16 @@ captures every produced and consumed message for assertion. It is built entirely
 per-consumer retry resolution — from your queue configuration that a real transport would. Dispatch is
 synchronous — by the time a publish/send/request call returns, every consumer (and stub) it triggered has run,
 so assertions need no polling.</p>
-<p>Two fidelity limits to keep in mind: the harness dispatches each produced message <strong>once</strong> to all matching
-consumers (a real broker delivers a distinct copy per subscribed queue), and partition lanes are not simulated
-(dispatch is inline and ordered by call).</p>
+<p>The harness routes messages as the broker does:</p>
+<ul>
+<li>A publish reaches every queue that consumes the message. Each queue gets its own copy and retries its consumers
+in rounds of its own.</li>
+<li>A send reaches only the queue that its address names: <code>queue:&lt;name&gt;</code>, or the path of an <code>amqp://</code>, <code>amqps://</code>, or
+<code>rabbitmq://</code> address. Queue names match case-sensitively.</li>
+<li>A send to a queue that the application does not configure runs none of its consumers, because on a broker that
+queue can belong to another service. <code>Sent&lt;T&gt;()</code> still captures the message, and the <code>Handle&lt;T&gt;</code> stubs still run.</li>
+</ul>
+<p>Partition lanes are not simulated: dispatch is inline and ordered by call.</p>
 <p>The harness runs each delivery through the core <code>DeliveryDispatcher</code>, the same delivery rules the RabbitMQ transport
 and any custom transport use (see <a href="messaging.html#writing-a-custom-transport">Writing a Custom Transport</a>):</p>
 <ul>
@@ -451,6 +458,14 @@ harness.Consumed&lt;OrderCreatedEvent&gt;().ShouldHaveSingleItem();
 </code></pre>
 <p><code>ITestHarness</code> exposes <code>Published&lt;T&gt;()</code>, <code>Sent&lt;T&gt;()</code>, <code>Consumed&lt;T&gt;()</code>, and <code>Requested&lt;T&gt;()</code> (each returns the
 matching <code>CapturedMessage&lt;T&gt;</code> items — <code>.Message</code> is the payload, <code>.Envelope</code> the wire metadata), plus <code>Clear()</code>.</p>
+<p>A send does not write its address into the envelope, so a <code>Sent&lt;T&gt;()</code> item carries it as <code>.DestinationAddress</code>. A
+test can check where a message was sent, also when the address names a queue of another service:</p>
+<pre><code class="lang-csharp">var sendEndpoints = host.Services.GetRequiredService&lt;ISendEndpointProvider&gt;();
+var endpoint = await sendEndpoints.GetSendEndpointAsync(new Uri(&quot;queue:billing-commands&quot;));
+await endpoint.SendAsync(new ChargeOrderCommand(orderId));
+
+harness.Sent&lt;ChargeOrderCommand&gt;().ShouldHaveSingleItem().DestinationAddress.ShouldBe(new Uri(&quot;queue:billing-commands&quot;));
+</code></pre>
 <h3 id="resetting-between-tests">Resetting between tests</h3>
 <p><code>ITestHarness</code> is registered as a singleton, so one host keeps one harness for every test it serves. The harness is
 also registered as an <code>IResettableTestState</code>, so <code>BaseIntegrationTestCase</code> resets it after each test: it clears the

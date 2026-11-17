@@ -4053,6 +4053,23 @@ references:
   fullName.vb: Vulthil.Messaging.TestHarness.CapturedMessage(Of TMessage).New
   nameWithType: CapturedMessage<TMessage>.CapturedMessage
   nameWithType.vb: CapturedMessage(Of TMessage).New
+- uid: Vulthil.Messaging.TestHarness.CapturedMessage`1.DestinationAddress
+  name: DestinationAddress
+  href: api/Vulthil.Messaging.TestHarness.CapturedMessage-1.html#Vulthil_Messaging_TestHarness_CapturedMessage_1_DestinationAddress
+  commentId: P:Vulthil.Messaging.TestHarness.CapturedMessage`1.DestinationAddress
+  fullName: Vulthil.Messaging.TestHarness.CapturedMessage<TMessage>.DestinationAddress
+  fullName.vb: Vulthil.Messaging.TestHarness.CapturedMessage(Of TMessage).DestinationAddress
+  nameWithType: CapturedMessage<TMessage>.DestinationAddress
+  nameWithType.vb: CapturedMessage(Of TMessage).DestinationAddress
+- uid: Vulthil.Messaging.TestHarness.CapturedMessage`1.DestinationAddress*
+  name: DestinationAddress
+  href: api/Vulthil.Messaging.TestHarness.CapturedMessage-1.html#Vulthil_Messaging_TestHarness_CapturedMessage_1_DestinationAddress_
+  commentId: Overload:Vulthil.Messaging.TestHarness.CapturedMessage`1.DestinationAddress
+  isSpec: "True"
+  fullName: Vulthil.Messaging.TestHarness.CapturedMessage<TMessage>.DestinationAddress
+  fullName.vb: Vulthil.Messaging.TestHarness.CapturedMessage(Of TMessage).DestinationAddress
+  nameWithType: CapturedMessage<TMessage>.DestinationAddress
+  nameWithType.vb: CapturedMessage(Of TMessage).DestinationAddress
 - uid: Vulthil.Messaging.TestHarness.CapturedMessage`1.Envelope
   name: Envelope
   href: api/Vulthil.Messaging.TestHarness.CapturedMessage-1.html#Vulthil_Messaging_TestHarness_CapturedMessage_1_Envelope

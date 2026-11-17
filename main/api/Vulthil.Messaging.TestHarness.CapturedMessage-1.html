@@ -211,6 +211,42 @@ Class CapturedMessage&lt;TMessage&gt;  <a class="header-action link-secondary" t
 </h2>
 
 
+  <a id="Vulthil_Messaging_TestHarness_CapturedMessage_1_DestinationAddress_" data-uid="Vulthil.Messaging.TestHarness.CapturedMessage`1.DestinationAddress*"></a>
+
+  <h3 id="Vulthil_Messaging_TestHarness_CapturedMessage_1_DestinationAddress" data-uid="Vulthil.Messaging.TestHarness.CapturedMessage`1.DestinationAddress">
+  DestinationAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.TestHarness/CapturedMessage.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the address the message was sent to: the send endpoint's address for a message that
+<a class="xref" href="Vulthil.Messaging.TestHarness.ITestHarness.html#Vulthil_Messaging_TestHarness_ITestHarness_Sent__1">Sent&lt;TMessage&gt;()</a> returns, and <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for a published, consumed, or
+requested message. A send does not write its address into the <a class="xref" href="Vulthil.Messaging.TestHarness.CapturedMessage-1.html#Vulthil_Messaging_TestHarness_CapturedMessage_1_Envelope">Envelope</a>, on the broker or in the
+harness, so this property is how a test checks where a message was sent, also when the address names a queue of
+another service.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Uri? DestinationAddress { get; init; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uri">Uri</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Vulthil_Messaging_TestHarness_CapturedMessage_1_Envelope_" data-uid="Vulthil.Messaging.TestHarness.CapturedMessage`1.Envelope*"></a>
 
   <h3 id="Vulthil_Messaging_TestHarness_CapturedMessage_1_Envelope" data-uid="Vulthil.Messaging.TestHarness.CapturedMessage`1.Envelope">

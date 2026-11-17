@@ -9,6 +9,8 @@ namespace Vulthil.Messaging.RabbitMq.Publishing;
 /// non-concurrently (a RabbitMQ.Client v7 requirement); concurrency comes from leasing distinct channels, capped
 /// at the configured size. Channels are created lazily with publisher confirms enabled and reused on return; a
 /// channel that faults during publish is discarded rather than returned, so a poisoned channel is never reused.
+/// A publish can still hold a lease when the pool is disposed at shutdown: the pool then closes that channel when it
+/// comes back, instead of keeping it or failing the publish that already succeeded.
 /// </summary>
 internal sealed class RabbitMqChannelPool : IAsyncDisposable
 {
@@ -16,6 +18,11 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
     private readonly IOptions<RabbitMqTransportOptions> _options;
     private readonly Lazy<SemaphoreSlim> _lazySemaphore;
     private readonly ConcurrentQueue<IChannel> _idle = new();
+
+    // Serializes the disposed flag with every capacity release and every enqueue, so no slot is released on the
+    // disposed semaphore and no returned channel lands in the idle queue after DisposeAsync has emptied it.
+    private readonly Lock _sync = new();
+
     private SemaphoreSlim Capacity => _lazySemaphore.Value;
     private bool _disposed;
 
@@ -27,14 +34,17 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
     }
 
     /// <summary>
-    /// Leases a channel, waiting if the pool is at capacity. The caller must return it via <see cref="Return"/>
+    /// Leases a channel, waiting if the pool is at capacity. The caller must return it via <see cref="ReturnAsync"/>
     /// (on success) or <see cref="DiscardAsync"/> (if the channel faulted) so the capacity slot is released.
     /// </summary>
+    /// <exception cref="ObjectDisposedException">The pool is disposed.</exception>
     public async ValueTask<IChannel> LeaseAsync(CancellationToken cancellationToken)
     {
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed), this);
         await Capacity.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
+            ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed), this);
             if (_idle.TryDequeue(out var pooled))
             {
                 return pooled;
@@ -49,16 +59,28 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
         }
         catch
         {
-            Capacity.Release();
+            ReleaseSlot();
             throw;
         }
     }
 
-    /// <summary>Returns a healthy leased channel to the pool for reuse and frees its capacity slot.</summary>
-    public void Return(IChannel channel)
+    /// <summary>
+    /// Returns a healthy leased channel to the pool for reuse and frees its capacity slot. After the pool is disposed,
+    /// it closes the channel instead.
+    /// </summary>
+    public ValueTask ReturnAsync(IChannel channel)
     {
-        _idle.Enqueue(channel);
-        Capacity.Release();
+        lock (_sync)
+        {
+            if (!_disposed)
+            {
+                _idle.Enqueue(channel);
+                Capacity.Release();
+                return ValueTask.CompletedTask;
+            }
+        }
+
+        return channel.DisposeAsync();
     }
 
     /// <summary>Disposes a faulted leased channel instead of reusing it, freeing its capacity slot.</summary>
@@ -70,17 +92,32 @@ internal sealed class RabbitMqChannelPool : IAsyncDisposable
         }
         finally
         {
-            Capacity.Release();
+            ReleaseSlot();
+        }
+    }
+
+    private void ReleaseSlot()
+    {
+        lock (_sync)
+        {
+            if (!_disposed)
+            {
+                Capacity.Release();
+            }
         }
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (_disposed)
+        lock (_sync)
         {
-            return;
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
         }
-        _disposed = true;
 
         while (_idle.TryDequeue(out var channel))
         {

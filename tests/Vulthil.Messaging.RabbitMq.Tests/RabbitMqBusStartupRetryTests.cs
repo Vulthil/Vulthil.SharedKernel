@@ -80,6 +80,30 @@ public sealed class RabbitMqBusStartupRetryTests : BaseUnitTestCase
         handlerHits.ShouldBe(1);
     }
 
+    [Fact]
+    public async Task AConsumerChannelWhosePrefetchSetupFailsIsClosed()
+    {
+        // Arrange
+        Use(new RecordingConsumer(() => { }));
+        Use<IEnumerable<IConsumeFilter<TestMessage>>>([]);
+        Use(TestProviders.Build(cfg => cfg.ConfigureQueue("orders", queue => queue.AddConsumer<RecordingConsumer>())));
+
+        var consumerChannel = new Mock<IChannel>();
+        consumerChannel
+            .Setup(c => c.BasicQosAsync(It.IsAny<uint>(), It.IsAny<ushort>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("channel closed"));
+        GetMock<IConnection>()
+            .SetupSequence(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_channel.Object)
+            .ReturnsAsync(consumerChannel.Object);
+
+        // Act
+        await Should.ThrowAsync<InvalidOperationException>(() => Target.StartAsync(CancellationToken));
+
+        // Assert
+        consumerChannel.Verify(c => c.DisposeAsync(), Times.Once);
+    }
+
     internal sealed record TestMessage(string Value);
     internal sealed record TestRequest(string Query);
     internal sealed record TestResponse(string Result);

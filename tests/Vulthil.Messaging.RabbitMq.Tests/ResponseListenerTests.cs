@@ -249,6 +249,54 @@ public sealed class ResponseListenerTests : BaseUnitTestCase
         GetMock<IConnection>().Verify(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Fact]
+    public async Task AReplyHandledAfterDisposeIsAckedOnTheChannelItArrivedOn()
+    {
+        // Arrange
+        await Target.GetReplyToQueueNameAsync(CancellationToken);
+        await Target.DisposeAsync();
+
+        // Act
+        await DeliverReplyAsync("req-1");
+
+        // Assert
+        VerifyAckedOnce();
+    }
+
+    [Fact]
+    public async Task DisposeAsyncWaitsForAFirstUseThatOpensTheChannelAndThenClosesIt()
+    {
+        // Arrange
+        var channelReady = new TaskCompletionSource<IChannel>(TaskCreationOptions.RunContinuationsAsynchronously);
+        GetMock<IConnection>()
+            .Setup(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()))
+            .Returns(channelReady.Task);
+        var firstUse = GetReplyToQueueNameAsync();
+
+        // Act
+        var disposal = Target.DisposeAsync().AsTask();
+        var disposedBeforeTheChannelOpened = disposal.IsCompleted;
+        channelReady.SetResult(_channel.Object);
+        var replyQueue = await firstUse.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+        await disposal.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        disposedBeforeTheChannelOpened.ShouldBeFalse();
+        replyQueue.ShouldBe(DeclaredReplyQueue);
+        _channel.Verify(c => c.DisposeAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task AFirstUseAfterDisposeThrowsAndOpensNoChannel()
+    {
+        // Arrange
+        await Target.DisposeAsync();
+
+        // Act & Assert
+        await Should.ThrowAsync<ObjectDisposedException>(GetReplyToQueueNameAsync);
+        GetMock<IConnection>().Verify(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
     private sealed record QueueDeclaration(string Queue, bool Durable, bool Exclusive, bool AutoDelete);
 
     private sealed record Consumption(string Queue, bool AutoAck);

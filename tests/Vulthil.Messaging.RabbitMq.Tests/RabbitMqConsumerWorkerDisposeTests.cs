@@ -20,6 +20,7 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
     private readonly QueueDefinition _queue = new(QueueName);
     private readonly FakeTimeProvider _timeProvider = new();
     private readonly BlockingConsumer _consumer = new();
+    private readonly TaskCompletionSource _channelClosed = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly Mock<IChannel> _channel;
 
     private IAsyncBasicConsumer? _capturedConsumer;
@@ -54,6 +55,10 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
         _channel
             .Setup(c => c.BasicAckAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
             .Callback(() => _ackCount++)
+            .Returns(ValueTask.CompletedTask);
+        _channel
+            .Setup(c => c.DisposeAsync())
+            .Callback(() => _channelClosed.TrySetResult())
             .Returns(ValueTask.CompletedTask);
     }
 
@@ -101,7 +106,7 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task DisposeAsyncStopsWaitingAtTheDrainTimeoutAndLeavesTheChannelToTheConnection()
+    public async Task DisposeAsyncReturnsAtTheDrainTimeoutAndALaneStillRunningAcksBeforeTheChannelCloses()
     {
         // Arrange
         var worker = await StartWorkerAsync();
@@ -113,11 +118,51 @@ public sealed class RabbitMqConsumerWorkerDisposeTests : BaseUnitTestCase
         var returnedBeforeTheTimeout = disposal.IsCompleted;
         _timeProvider.Advance(TimeSpan.FromSeconds(1));
         await disposal.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+        var closedAtTheTimeout = _channelClosed.Task.IsCompleted;
+        _consumer.Release.SetResult();
+        await _channelClosed.Task.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
 
         // Assert
         returnedBeforeTheTimeout.ShouldBeFalse();
-        _ackCount.ShouldBe(0);
-        _channel.Verify(c => c.DisposeAsync(), Times.Never);
+        closedAtTheTimeout.ShouldBeFalse();
+        _ackCount.ShouldBe(1);
+        _channel.Verify(c => c.DisposeAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DisposeAsyncClosesTheChannelWhenALaneFailsDuringTheDrain()
+    {
+        // Arrange
+        _channel
+            .Setup(c => c.BasicAckAsync(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .Returns(() => ValueTask.FromException(new InvalidOperationException("connection closed")));
+        var worker = await StartWorkerAsync();
+        await DeliverAndBlockAsync();
+
+        // Act
+        var disposal = worker.DisposeAsync().AsTask();
+        _consumer.Release.SetResult();
+        await disposal.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
+
+        // Assert
+        _channel.Verify(c => c.DisposeAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DisposeAsyncClosesTheChannelAndThenThrowsWhenCancellingTheConsumerFails()
+    {
+        // Arrange
+        _channel
+            .Setup(c => c.BasicCancelAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("connection closed"));
+        var worker = await StartWorkerAsync();
+
+        // Act
+        var exception = await Should.ThrowAsync<InvalidOperationException>(() => worker.DisposeAsync().AsTask());
+
+        // Assert
+        exception.Message.ShouldBe("connection closed");
+        _channel.Verify(c => c.DisposeAsync(), Times.Once);
     }
 
     [Fact]

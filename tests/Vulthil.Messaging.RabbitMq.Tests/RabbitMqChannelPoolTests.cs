@@ -47,7 +47,7 @@ public sealed class RabbitMqChannelPoolTests : BaseUnitTestCase
 
         // Act
         var first = await Target.LeaseAsync(CancellationToken);
-        Target.Return(first);
+        await Target.ReturnAsync(first);
         var second = await Target.LeaseAsync(CancellationToken);
 
         // Assert
@@ -66,7 +66,7 @@ public sealed class RabbitMqChannelPoolTests : BaseUnitTestCase
         var secondLease = Target.LeaseAsync(CancellationToken).AsTask();
         secondLease.IsCompleted.ShouldBeFalse();
 
-        Target.Return(first);
+        await Target.ReturnAsync(first);
 
         // Assert — returning the channel frees the slot and unblocks the waiter.
         var second = await secondLease.WaitAsync(TimeSpan.FromSeconds(5), CancellationToken);
@@ -100,12 +100,51 @@ public sealed class RabbitMqChannelPoolTests : BaseUnitTestCase
     {
         // Arrange
         Use(Options.Create(new RabbitMqTransportOptions { PublishChannelPoolSize = 1 }));
-        Target.Return(await Target.LeaseAsync(CancellationToken));
+        await Target.ReturnAsync(await Target.LeaseAsync(CancellationToken));
 
         // Act
         await Target.DisposeAsync();
 
         // Assert
         _channelMock.Verify(c => c.DisposeAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task AChannelReturnedAfterDisposeIsClosedInsteadOfPooled()
+    {
+        // Arrange
+        var leased = await Target.LeaseAsync(CancellationToken);
+        await Target.DisposeAsync();
+
+        // Act
+        await Target.ReturnAsync(leased);
+
+        // Assert
+        _channelMock.Verify(c => c.DisposeAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task AChannelDiscardedAfterDisposeIsClosedWithoutAnError()
+    {
+        // Arrange
+        var leased = await Target.LeaseAsync(CancellationToken);
+        await Target.DisposeAsync();
+
+        // Act
+        await Target.DiscardAsync(leased);
+
+        // Assert
+        _channelMock.Verify(c => c.DisposeAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task ALeaseAfterDisposeThrowsAndOpensNoChannel()
+    {
+        // Arrange
+        await Target.DisposeAsync();
+
+        // Act & Assert
+        await Should.ThrowAsync<ObjectDisposedException>(() => Target.LeaseAsync(CancellationToken).AsTask());
+        _connectionMock.Verify(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

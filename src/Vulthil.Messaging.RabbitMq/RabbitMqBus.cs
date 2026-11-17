@@ -38,12 +38,12 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     }
 
     /// <remarks>
-    /// A failed start disposes any partially-created consumer workers and rethrows without faulting the readiness
-    /// signal, so the hosting consumer service can retry a transient failure (such as a broker that is still coming
-    /// up) while <see cref="RabbitMqBusStartupStatus.Ready"/> stays pending until a start attempt succeeds. Fresh
-    /// per-queue dispatch plans are built for every attempt (rather than kept as instance state) so a retry after a
-    /// partial failure starts each queue from an empty registry instead of the handlers (or request-consumer
-    /// bookkeeping) left over from the attempt that failed.
+    /// A failed start disposes any partially-created consumer workers, closes a consumer channel that no worker owns
+    /// yet, and rethrows without faulting the readiness signal, so the hosting consumer service can retry a transient
+    /// failure (such as a broker that is still coming up) while <see cref="RabbitMqBusStartupStatus.Ready"/> stays
+    /// pending until a start attempt succeeds. Fresh per-queue dispatch plans are built for every attempt (rather than
+    /// kept as instance state) so a retry after a partial failure starts each queue from an empty registry instead of
+    /// the handlers (or request-consumer bookkeeping) left over from the attempt that failed.
     /// </remarks>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
@@ -114,17 +114,28 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
                 );
 
                 var channel = await _connection.CreateChannelAsync(options, cancellationToken).ConfigureAwait(false);
-                await channel.BasicQosAsync(0, queue.PrefetchCount, false, cancellationToken).ConfigureAwait(false);
+                RabbitMqConsumerWorker worker;
+                try
+                {
+                    await channel.BasicQosAsync(0, queue.PrefetchCount, false, cancellationToken).ConfigureAwait(false);
 
-                var worker = new RabbitMqConsumerWorker(
-                    _dispatcher,
-                    queue,
-                    channel,
-                    plans,
-                    _messageConfigurationProvider,
-                    workerLogger,
-                    _timeProvider,
-                    i);
+                    worker = new RabbitMqConsumerWorker(
+                        _dispatcher,
+                        queue,
+                        channel,
+                        plans,
+                        _messageConfigurationProvider,
+                        workerLogger,
+                        _timeProvider,
+                        i);
+                }
+                catch
+                {
+                    // The failed start disposes only the tracked workers, and a retry opens new channels, so a channel
+                    // that no worker owns yet would stay open on the connection.
+                    await channel.DisposeAsync().ConfigureAwait(false);
+                    throw;
+                }
 
                 _workers.Add(worker);
             }

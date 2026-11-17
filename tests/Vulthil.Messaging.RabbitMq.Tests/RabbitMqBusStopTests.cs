@@ -88,6 +88,7 @@ public sealed class RabbitMqBusStopTests : BaseUnitTestCase
 
         // Assert
         exception.InnerExceptions.ShouldHaveSingleItem().ShouldBeOfType<InvalidOperationException>();
+        _consumerChannels[0].Disposals.ShouldBe(1);
         _consumerChannels[1].Disposals.ShouldBe(1);
         _consumerChannels.Count.ShouldBe(4);
         _consumerChannels[0].Cancels.ShouldBe(1);

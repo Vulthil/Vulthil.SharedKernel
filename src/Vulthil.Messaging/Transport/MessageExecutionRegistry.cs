@@ -82,7 +82,7 @@ public sealed class MessageExecutionRegistry<THandler>
                 }
 
                 var handler = registration is RequestConsumerRegistration rpc
-                    ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType, retryPolicy: null)
+                    ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType)
                     : _handlerFactory.ForConsumer(registration.ConsumerType.Type, registration.MessageType.Type, registration.RetryPolicy ?? queue.DefaultRetryPolicy);
 
                 plan.Handlers.Add(handler);

@@ -1054,8 +1054,8 @@ queue (as the RabbitMQ transport and the in-memory test harness do): a delivery 
 that its own queue registered. Register several queues in a single instance only when your transport dispatches
 each produced message exactly once to all their consumers.
 
-A transport that needs its own handler type can derive from `MessageHandlerFactory<THandler>` (or implement
-`IMessageHandlerFactory<THandler>`) instead, but it then owns every delivery rule of step 3 itself.
+A transport that needs its own handler type can implement `IMessageHandlerFactory<THandler>` instead, but it then owns
+every delivery rule of step 3 itself.
 
 ### 2. Produce
 

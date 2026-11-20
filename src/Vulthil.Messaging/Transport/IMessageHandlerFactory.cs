@@ -25,15 +25,12 @@ public interface IMessageHandlerFactory<out THandler>
     THandler ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy);
 
     /// <summary>
-    /// Builds a handler for a request/reply consumer.
+    /// Builds a handler for a request/reply consumer. The handler never retries: a failed request consumer replies with
+    /// an RPC fault instead, so it has no retry policy.
     /// </summary>
     /// <param name="consumerType">The CLR type of the <c>IRequestConsumer&lt;TRequest, TResponse&gt;</c> implementation.</param>
     /// <param name="requestType">The CLR type of the consumed request.</param>
     /// <param name="responseType">The CLR type of the produced response.</param>
-    /// <param name="retryPolicy">
-    /// Always <see langword="null"/> when called by <see cref="MessageExecutionRegistry{THandler}"/>: a request consumer
-    /// replies with an RPC fault instead of retrying.
-    /// </param>
     /// <returns>The handler that runs the request consumer for a delivered request and replies.</returns>
-    THandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy);
+    THandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType);
 }

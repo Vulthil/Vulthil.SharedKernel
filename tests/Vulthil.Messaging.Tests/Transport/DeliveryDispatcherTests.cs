@@ -392,17 +392,6 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
     }
 
     [Fact]
-    public void ARequestConsumersHandlerNeverCarriesARetryPolicy()
-    {
-        // Act
-        var handler = HandlerFactory.ForRequestConsumer(typeof(PriceConsumer), typeof(PriceRequest), typeof(PriceQuote), Retry(3));
-
-        // Assert
-        handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
-        handler.RetryPolicy.ShouldBeNull();
-    }
-
-    [Fact]
     public void AHandlersIdentityJoinsTheConsumerAndMessageFullNames()
     {
         // Act
@@ -422,13 +411,13 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
         => HandlerFactory.ForConsumer(typeof(FilteredConsumer), typeof(FilteredEvent), retryPolicy: null);
 
     private static DeliveryHandler PriceHandler()
-        => HandlerFactory.ForRequestConsumer(typeof(PriceConsumer), typeof(PriceRequest), typeof(PriceQuote), retryPolicy: null);
+        => HandlerFactory.ForRequestConsumer(typeof(PriceConsumer), typeof(PriceRequest), typeof(PriceQuote));
 
     private static DeliveryHandler FilteredPriceHandler()
-        => HandlerFactory.ForRequestConsumer(typeof(FilteredPriceConsumer), typeof(FilteredPriceRequest), typeof(PriceQuote), retryPolicy: null);
+        => HandlerFactory.ForRequestConsumer(typeof(FilteredPriceConsumer), typeof(FilteredPriceRequest), typeof(PriceQuote));
 
     private static DeliveryHandler TracedPriceHandler()
-        => HandlerFactory.ForRequestConsumer(typeof(TracedPriceConsumer), typeof(TracedPriceRequest), typeof(PriceQuote), retryPolicy: null);
+        => HandlerFactory.ForRequestConsumer(typeof(TracedPriceConsumer), typeof(TracedPriceRequest), typeof(PriceQuote));
 
     private static RetryPolicyDefinition Retry(int maxRetryCount, params TimeSpan[] intervals)
     {

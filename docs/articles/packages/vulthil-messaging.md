@@ -104,10 +104,8 @@ transport builds its plans with `MessageExecutionRegistry<DeliveryHandler>` and 
 `DeliverySettlement` the dispatcher returns. `AddMessaging` registers the dispatcher. The RabbitMQ transport and the
 test harness both run on it.
 
-A transport that needs its own handler type can instead derive from `MessageHandlerFactory<THandler>` and override its
-two generic methods (`CreateConsumerHandler<TConsumer, TMessage>` and
-`CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>`): the base class binds every registration's CLR types to
-those overrides and caches the binding per consumer/message shape. See
+A transport that needs its own handler type can instead implement `IMessageHandlerFactory<THandler>`, but it then owns
+every delivery rule of the dispatcher itself. See
 [Messaging — Writing a Custom Transport](../messaging.md#writing-a-custom-transport).
 
 ### Request/reply codec

@@ -14,13 +14,13 @@ var postgres = builder.AddPostgres("postgres-instance")
 
 var postgresDb = postgres.AddDatabase(ServiceNames.PostgresSqlServerServiceName);
 
-var wepApi = builder.AddProject<Projects.WebApi>(ServiceNames.WebApiServiceName)
+var wepApi = builder.AddDotnetProject(ServiceNames.WebApiServiceName, "../../WebApi/WebApi/WebApi.csproj")
         .WithReference(rmq)
         .WithReference(postgresDb)
         .WaitFor(rmq)
         .WaitFor(postgresDb);
 
-builder.AddProject<Projects.WebApp>(ServiceNames.WebAppServiceName)
+builder.AddDotnetProject(ServiceNames.WebAppServiceName, "../../WebApp/WebApp/WebApp.csproj")
     .WithReference(wepApi)
     .WaitFor(wepApi);
 

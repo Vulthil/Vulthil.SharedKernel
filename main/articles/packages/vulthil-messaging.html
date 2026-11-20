@@ -169,10 +169,8 @@ transport builds its plans with <code>MessageExecutionRegistry&lt;DeliveryHandle
 <code>IDeliveryPort</code> for each delivery (the receive context, the retry wait, and the fault and reply routes), and applies the
 <code>DeliverySettlement</code> the dispatcher returns. <code>AddMessaging</code> registers the dispatcher. The RabbitMQ transport and the
 test harness both run on it.</p>
-<p>A transport that needs its own handler type can instead derive from <code>MessageHandlerFactory&lt;THandler&gt;</code> and override its
-two generic methods (<code>CreateConsumerHandler&lt;TConsumer, TMessage&gt;</code> and
-<code>CreateRequestConsumerHandler&lt;TConsumer, TRequest, TResponse&gt;</code>): the base class binds every registration's CLR types to
-those overrides and caches the binding per consumer/message shape. See
+<p>A transport that needs its own handler type can instead implement <code>IMessageHandlerFactory&lt;THandler&gt;</code>, but it then owns
+every delivery rule of the dispatcher itself. See
 <a href="../messaging.html#writing-a-custom-transport">Messaging — Writing a Custom Transport</a>.</p>
 <h3 id="requestreply-codec">Request/reply codec</h3>
 <p><code>Vulthil.Messaging.Transport.RpcReply</code> owns the reply wire contract. A transport builds a reply with

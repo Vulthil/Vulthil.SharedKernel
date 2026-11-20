@@ -769,20 +769,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.yml\" sourcestartlinenumber=\"1\">Service-collection extension that enables the inbox retention sweep.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Vulthil.Messaging.Inbox.InboxTelemetry.yml",
       "output": {
         ".html": {
@@ -1606,20 +1592,6 @@
       "IsMRef": true,
       "Title": "Vulthil.Messaging.Transport.MessageExecutionRegistry<THandler>",
       "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageExecutionRegistry-1.yml\" sourcestartlinenumber=\"1\">Transport-agnostic registry that turns <xref href=\"Vulthil.Messaging.Queues.QueueDefinition\" data-throw-if-not-resolved=\"false\"></xref> registrations into per-message-type\n<xref href=\"Vulthil.Messaging.Transport.MessageExecutionPlan%601\" data-throw-if-not-resolved=\"false\"></xref> instances. It keys plans by wire URN (and CLR full name for the\nbare-JSON receive path), fans a polymorphic registration out across every matching concrete subscription,\nbuilds one handler per registration (<xref href=\"Vulthil.Messaging.Queues.QueueDefinition\" data-throw-if-not-resolved=\"false\"></xref> holds each registration once), rejects a\nsecond request consumer for the same message type on the same queue, and attaches\nthe partition specification read from <xref href=\"Vulthil.Messaging.IMessageConfigurationProvider.GetPartition(System.Type)\" data-throw-if-not-resolved=\"false\"></xref>. A transport\ndrives it by supplying an <xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> that builds its own delivery closures.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>",
-      "Summary": "<p sourcefile=\"api/Vulthil.Messaging.Transport.MessageHandlerFactory-1.yml\" sourcestartlinenumber=\"1\">Base <xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> for a transport that builds its dispatch handlers in\nopen-generic methods. Override <xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateConsumerHandler%60%602(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref> and\n<xref href=\"Vulthil.Messaging.Transport.MessageHandlerFactory%601.CreateRequestConsumerHandler%60%603(Vulthil.Messaging.Queues.RetryPolicyDefinition)\" data-throw-if-not-resolved=\"false\"></xref>: the consumer and message types\nare statically known there, so the receive context and the consume pipeline compose with full typing. This\nclass binds the CLR types of each registration to those overrides through generic binders cached per\nconsumer/message shape, so the reflection cost is paid once per shape. Implement\n<xref href=\"Vulthil.Messaging.Transport.IMessageHandlerFactory%601\" data-throw-if-not-resolved=\"false\"></xref> directly instead when handlers are not built generically.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3679,11 +3651,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "api/toc.json"
-        },
         ".html": {
           "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
         }
       },
       "version": ""
@@ -3772,11 +3744,11 @@
       "type": "Toc",
       "source_relative_path": "articles/packages/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/packages/toc.json"
-        },
         ".html": {
           "relative_path": "articles/packages/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/packages/toc.json"
         }
       },
       "version": ""
@@ -4055,11 +4027,11 @@
       "type": "Toc",
       "source_relative_path": "articles/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/toc.json"
-        },
         ".html": {
           "relative_path": "articles/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/toc.json"
         }
       },
       "version": ""
@@ -4108,11 +4080,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "toc.json"
-        },
         ".html": {
           "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
         }
       },
       "version": ""

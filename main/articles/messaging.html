@@ -984,8 +984,8 @@ handlers into one plan per message type. A broker delivers a distinct copy to ea
 queue (as the RabbitMQ transport and the in-memory test harness do): a delivery then dispatches only the handlers
 that its own queue registered. Register several queues in a single instance only when your transport dispatches
 each produced message exactly once to all their consumers.</p>
-<p>A transport that needs its own handler type can derive from <code>MessageHandlerFactory&lt;THandler&gt;</code> (or implement
-<code>IMessageHandlerFactory&lt;THandler&gt;</code>) instead, but it then owns every delivery rule of step 3 itself.</p>
+<p>A transport that needs its own handler type can implement <code>IMessageHandlerFactory&lt;THandler&gt;</code> instead, but it then owns
+every delivery rule of step 3 itself.</p>
 <h3 id="2-produce">2. Produce</h3>
 <p>Implement the two raw terminals and register them: <code>ITransportPublisher</code>, and <code>ITransportSendEndpointProvider</code>,
 which hands out one <code>ITransportSendEndpoint</code> per destination address. <code>AddPublishFiltering</code> then puts the public

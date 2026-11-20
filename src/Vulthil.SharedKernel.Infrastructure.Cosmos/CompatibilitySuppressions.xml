@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
@@ -9,10 +9,7 @@
     <IsBaselineSuppression>true</IsBaselineSuppression>
   </Suppression>
   <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.CosmosOutboxStore`1.#ctor(`0,System.TimeProvider,Microsoft.Extensions.Options.IOptions{Vulthil.SharedKernel.Outbox.OutboxProcessingOptions})</Target>
-    <Left>lib/net9.0/Vulthil.SharedKernel.Infrastructure.Cosmos.dll</Left>
-    <Right>lib/net9.0/Vulthil.SharedKernel.Infrastructure.Cosmos.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
+    <DiagnosticId>PKV006</DiagnosticId>
+    <Target>net9.0</Target>
   </Suppression>
 </Suppressions>

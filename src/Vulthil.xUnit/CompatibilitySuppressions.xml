@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
@@ -9,13 +9,6 @@
     <IsBaselineSuppression>true</IsBaselineSuppression>
   </Suppression>
   <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Vulthil.xUnit.BaseIntegrationTestCase`2</Target>
-    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
-    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor</Target>
     <Left>lib/net10.0/Vulthil.xUnit.dll</Left>
@@ -51,38 +44,7 @@
     <IsBaselineSuppression>true</IsBaselineSuppression>
   </Suppression>
   <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Vulthil.xUnit.BaseWebApplicationFactory`1.#ctor</Target>
-    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
-    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Vulthil.xUnit.BaseWebApplicationFactory`1.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer)</Target>
-    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
-    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Vulthil.xUnit.BaseWebApplicationFactory`1.ConfigureContainers</Target>
-    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
-    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Vulthil.xUnit.BaseWebApplicationFactory`1.get_ContainersWithConnectionStrings</Target>
-    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
-    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Vulthil.xUnit.BaseWebApplicationFactory`1.get_DatabaseContainers</Target>
-    <Left>lib/net9.0/Vulthil.xUnit.dll</Left>
-    <Right>lib/net9.0/Vulthil.xUnit.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
+    <DiagnosticId>PKV006</DiagnosticId>
+    <Target>net9.0</Target>
   </Suppression>
 </Suppressions>

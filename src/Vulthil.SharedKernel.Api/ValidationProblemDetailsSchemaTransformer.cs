@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
-#if NET10_0_OR_GREATER
 using Microsoft.OpenApi;
-#else
-using Microsoft.OpenApi.Models;
-#endif
 
 namespace Vulthil.SharedKernel.Api;
 

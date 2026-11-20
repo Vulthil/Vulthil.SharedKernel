@@ -1,17 +1,17 @@
 name: Backport
 
 # Backport a merged PR to a servicing branch by adding a "backport <branch>"
-# label to it (e.g. "backport v1.0"). The action cherry-picks the PR's commits
+# label to it (e.g. "backport v2.0"). The action cherry-picks the PR's commits
 # onto the target branch and opens a PR. The label can be added before or after
 # merge -- nothing happens until the PR is actually merged.
 #
 # End-to-end patch flow this enables:
 #   1. Fix merges to main.
-#   2. Label the PR "backport v1.0"  -> this workflow opens the patch PR on v1.0.
+#   2. Label the PR "backport vX.Y"  -> this workflow opens the patch PR on vX.Y.
 #   3. CI validates the patch PR (ci.yml runs on v* servicing branches).
-#   4. Merge the patch PR into v1.0.
-#   5. Bump the patch version: dispatch "Manual Version Bump" (patch) against v1.0.
-#   6. Publish: dispatch "Release" against v1.0.
+#   4. Merge the patch PR into vX.Y.
+#   5. Bump the patch version: dispatch "Manual Version Bump" (patch) against vX.Y.
+#   6. Publish: dispatch "Release" against vX.Y.
 on:
   pull_request_target:
     types: [closed, labeled]
@@ -41,7 +41,7 @@ jobs:
           # run on the created PR; pushes made with the default GITHUB_TOKEN do
           # not trigger CI. Mirrors version-bump.yml / release.yml.
           github_token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
-          # Label form: "backport <target-branch>", e.g. "backport v1.0".
+          # Label form: "backport <target-branch>", e.g. "backport v2.0".
           label_pattern: '^backport ([^ ]+)$'
           pull_title: '[Backport ${target_branch}] ${pull_title}'
           pull_description: |-

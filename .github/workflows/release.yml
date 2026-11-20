@@ -249,7 +249,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Each branch's mark-api-shipped bumps ITS OWN PackageValidationBaselineVersion
-  # only. After a servicing release (e.g. 1.0.2 from v1.0), main should also
+  # only. After a servicing release (e.g. X.Y.1 from vX.Y), main should also
   # move to the new version -- every branch validates its packages against the
   # newest release it must stay compatible with. This is one-directional by
   # construction: it only ever targets main, and eng/propagate_baseline.py only

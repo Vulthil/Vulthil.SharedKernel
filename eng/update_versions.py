@@ -14,8 +14,8 @@ Registering a stable slug also prunes every other stable entry that shares its
 --make-default is still accepted, since docs.yml always passes it, but is
 otherwise ignored: the default is always recomputed as the highest stable
 version present after pruning, falling back to "main" when none exists. This
-stops a servicing release (e.g. 1.0.3) from stealing the site default away
-from a newer minor line (e.g. 1.1.0).
+stops a servicing release (e.g. 2.0.3) from stealing the site default away
+from a newer minor line (e.g. 2.1.0).
 """
 import argparse
 import json

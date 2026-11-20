@@ -22,31 +22,35 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 25
     ignore:
-      # The .NET servicing train (ASP.NET Core + EF Core) versions from the TFM-conditional
-      # FrameworkVersion property in Directory.Packages.props (10.0.x on net10.0, 9.0.x on net9.0).
-      # Dependabot cannot evaluate the conditions: it rewrites only the last FrameworkVersion
-      # definition it resolves, tearing the legs apart (PR #378 moved the net9.0 leg to 9.0.19 and
-      # left net10.0 at 10.0.10) — or forcing one TFM's major onto the other. The train is hand-managed as a single lockstep bump of both legs (see #355);
-      # NuGetAudit still fails CI on advisories. The EF ignore also protects the consumer floor:
-      # EfCoreMinimumVersion in Directory.Packages.props derives from the train's net9.0 leg
-      # ($(Net9FrameworkVersion)), so the lockstep bump moves the floor automatically and only a
-      # deliberate edit can move it across an EF major.
+      # The .NET servicing train (ASP.NET Core, EF Core, and the in-box Microsoft.Extensions.* packages) versions
+      # from properties in Directory.Packages.props. FrameworkVersion is TFM-conditional (10.0.x on net10.0, 11.0.x on
+      # net11.0); Dependabot cannot evaluate the conditions, so it rewrites only one definition and tears the legs
+      # apart or forces one TFM's major onto the other. EfCoreVersion and the consumer EF floor
+      # (EfCoreMinimumVersion) derive from the net10.0 leg, so only a deliberate edit moves EF Core across a major.
+      # The train is hand-managed as a single lockstep bump of every leg; NuGetAudit still fails CI on advisories.
       - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
       - dependency-name: "Microsoft.AspNetCore.OpenApi"
       - dependency-name: "Microsoft.AspNetCore.TestHost"
       - dependency-name: "Microsoft.EntityFrameworkCore*"
-      # The Microting Pomelo fork floors Microsoft.EntityFrameworkCore.Relational at its own patch
-      # level, so bumping it ahead of the hand-managed train is an NU1605 downgrade error; it moves
-      # with the train.
+      - dependency-name: "Microsoft.Extensions.Configuration.Abstractions"
+      - dependency-name: "Microsoft.Extensions.DependencyInjection.Abstractions"
+      - dependency-name: "Microsoft.Extensions.Diagnostics.HealthChecks"
+      - dependency-name: "Microsoft.Extensions.Hosting.Abstractions"
+      - dependency-name: "Microsoft.Extensions.Http"
+      - dependency-name: "Microsoft.Extensions.Logging.Abstractions"
+      - dependency-name: "Microsoft.Extensions.Options.ConfigurationExtensions"
+      - dependency-name: "Microsoft.Extensions.Options.DataAnnotations"
+      # Microting.EntityFrameworkCore.MySql floors Microsoft.EntityFrameworkCore.Relational at its own patch level,
+      # and each major requires the matching EF Core major, so it moves with the train.
       - dependency-name: "Microting.EntityFrameworkCore.MySql"
-      # EFCore.NamingConventions (test-only) versions from the TFM-conditional NamingConventionsVersion property in
-      # Directory.Packages.props: each major supports one EF Core major (10.x on net10.0, 9.x on net9.0), so
-      # Dependabot would tear the legs apart for the same reason as the train; it moves with the train.
+      # EFCore.NamingConventions (test-only): each major requires the matching EF Core major, so it moves with the
+      # train.
       - dependency-name: "EFCore.NamingConventions"
-      # MySqlConnector is referenced directly only on net9.0, to lift the MySqlConnector that Pomelo brings in to a
-      # patched version. Pomelo and the Microting fork are built against MySqlConnector 2.x, so a major update waits
-      # for them.
-      - dependency-name: "MySqlConnector"
+      # From Aspire 17.0.0, the EF Core client integrations take EF Core 11 on net11.0 (Cosmos) or exist only as a
+      # preview (Npgsql), so they move to a new major with EF Core, by hand (AspireEfCoreVersion).
+      - dependency-name: "Aspire.Microsoft.EntityFrameworkCore.Cosmos"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"
         update-types: ["version-update:semver-major"]
     groups:
       xunit:

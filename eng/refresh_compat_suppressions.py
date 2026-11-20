@@ -3,7 +3,7 @@
 
 Package validation (APICompat) diffs each package against two things: the
 published nupkg pinned by Directory.Build.props' PackageValidationBaselineVersion,
-and (for multi-targeted packages) the package's own net9.0 vs. net10.0 surface.
+and (for multi-targeted packages) the package's own net10.0 vs. net11.0 surface.
 Both kinds of findings that a maintainer has accepted live side by side in the
 same per-project CompatibilitySuppressions.xml, distinguished only by whether
 IsBaselineSuppression is true.

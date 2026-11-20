@@ -18,13 +18,7 @@ public static class ResultHttpExtensions
         ArgumentNullException.ThrowIfNull(resultTask);
         ArgumentNullException.ThrowIfNull(controller);
 
-        var result = await resultTask.ConfigureAwait(false);
-        if (result.IsSuccess)
-        {
-            return controller.NoContent();
-        }
-
-        return result.Error.ToActionResult(controller);
+        return (await resultTask.ConfigureAwait(false)).ToActionResult(controller);
     }
 
     /// <summary>
@@ -35,13 +29,7 @@ public static class ResultHttpExtensions
         ArgumentNullException.ThrowIfNull(resultTask);
         ArgumentNullException.ThrowIfNull(controller);
 
-        var result = await resultTask.ConfigureAwait(false);
-        if (result.IsSuccess)
-        {
-            return controller.Ok(result.Value);
-        }
-
-        return result.Error.ToActionResult(controller);
+        return (await resultTask.ConfigureAwait(false)).ToActionResult(controller);
     }
 
     /// <summary>

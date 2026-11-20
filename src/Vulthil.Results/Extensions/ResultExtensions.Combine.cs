@@ -40,14 +40,10 @@ public static partial class ResultExtensions
     public static Result<IReadOnlyList<T>> Combine<T>(this IEnumerable<Result<T>> results)
     {
         Result<T>[] items = [.. results];
-        Error[] failedErrors = [.. items.Where(result => result.IsFailure).Select(result => result.Error)];
-        if (failedErrors.Length > 0)
-        {
-            return Result.Failure<IReadOnlyList<T>>(failedErrors.Length == 1 ? failedErrors[0] : new ValidationError(failedErrors));
-        }
-
-        T[] values = [.. items.Select(result => result.Value)];
-        return Result.Success<IReadOnlyList<T>>(values);
+        var combined = ((IEnumerable<Result>)items).Combine();
+        return combined.IsSuccess
+            ? Result.Success<IReadOnlyList<T>>(Array.ConvertAll(items, static result => result.Value))
+            : Result.Failure<IReadOnlyList<T>>(combined.Error);
     }
 
     /// <summary>

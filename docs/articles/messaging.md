@@ -891,8 +891,8 @@ m.ConfigureQueue("order-events", q => q.AddConsumer<OrderCreatedConsumer>());
 The RabbitMQ transport emits an `ActivitySource` named `"Vulthil.Messaging.RabbitMq"`
 with `Producer`/`Consumer` spans for publish, request, and receive operations. Tag
 conventions follow the OpenTelemetry messaging semantic conventions, with a few
-Vulthil-specific tags (`vulthil.messaging.message_type`, `.consumer_type`,
-`.retry_count`, `.queue`).
+Vulthil-specific tags (`vulthil.messaging.message_type`, `.retry_count`,
+`.queue`).
 
 `UseRabbitMq` registers the source with the application's `TracerProvider`
 automatically, gated on the Aspire client's `DisableTracing` setting — so disabling

@@ -56,9 +56,7 @@ internal sealed class TransactionalPublishFilter(
             CorrelationId = context.Context.CorrelationId,
             RoutingKey = context.Context.RoutingKey,
             DestinationAddress = context.DestinationAddress?.ToString(),
-            Headers = context.Context.Headers.Count > 0
-                ? new Dictionary<string, object?>(context.Context.Headers)
-                : null,
+            Headers = BrokerOutboxMetadata.CaptureHeaders(context.Context.Headers, messageConfigurationProvider.JsonSerializerOptions),
         };
 
         return new OutboxMessage

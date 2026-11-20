@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -88,6 +89,11 @@ public static class DependencyInjection
     {
         var dbContextLifetime = configurator.DbContextLifetime;
 
+        services.Add(new ServiceDescriptor(
+            typeof(IDbContextOptionsConfiguration<TDbContext>),
+            typeof(OutboxInterceptorDbContextOptionsConfiguration<TDbContext>),
+            configurator.DbContextOptionsLifetime));
+
         // The engine (options, signal, processor, background service, in-process domain-event sink) registers its own
         // internals; the EF-specific store, capture interceptor, relay wake-up, and context marker are wired here.
         services.AddOutboxEngine(configurator.OutboxOptionsAction, dbContextLifetime);
@@ -100,10 +106,7 @@ public static class DependencyInjection
             sp => sp.GetRequiredService<TDbContext>(),
             dbContextLifetime));
 
-        var storeType = configurator.OutboxStoreType.IsGenericTypeDefinition
-            ? configurator.OutboxStoreType.MakeGenericType(typeof(TDbContext))
-            : configurator.OutboxStoreType;
-
+        var storeType = configurator.OutboxStoreType ?? typeof(EntityFrameworkOutboxStore<TDbContext>);
         services.Add(new ServiceDescriptor(typeof(IOutboxStore), storeType, dbContextLifetime));
     }
 

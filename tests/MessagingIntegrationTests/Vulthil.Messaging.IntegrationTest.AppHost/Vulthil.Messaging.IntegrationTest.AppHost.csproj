@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<UserSecretsId>f7b7f8ec-0e80-44c4-bf3f-6bbdcf5d7b64</UserSecretsId>
@@ -7,13 +7,15 @@
 
 	<PropertyGroup>
 		<!-- DCP and the dashboard come from the Aspire CLI bundle, which the build prepares through dnx when the
-		     machine has none; the CLI version follows Aspire.AppHost.Sdk in global.json, so no Aspire CLI install
-		     is required anywhere, CI included. -->
+		     machine has none; DnxPinned pins the CLI to the Aspire.Hosting.AppHost package version, so no Aspire CLI
+		     install is required anywhere, CI included. -->
 		<AspireUseCliBundle>true</AspireUseCliBundle>
 		<AspireCliInvocationMode>DnxPinned</AspireCliInvocationMode>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+		<PackageReference Include="Aspire.Hosting.Dotnet" />
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
@@ -21,11 +23,6 @@
 		<PackageReference Include="Microsoft.Extensions.Http" />
 		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ProducerService\Vulthil.Messaging.IntegrationTest.ProducerService.csproj" />
-		<ProjectReference Include="..\Vulthil.Messaging.IntegrationTest.ConsumerService\Vulthil.Messaging.IntegrationTest.ConsumerService.csproj" />
 	</ItemGroup>
 
 </Project>

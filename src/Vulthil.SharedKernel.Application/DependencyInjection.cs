@@ -182,9 +182,7 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IPipelineHandler<,>));
-
-        services.TryAddEnumerable(new ServiceDescriptor(typeof(IPipelineHandler<,>), pipelineHandler, ServiceLifetime.Scoped));
+        services.TryAddEnumerable(OpenGenericPipelineHandler.CreateDescriptor(pipelineHandler, typeof(IPipelineHandler<,>)));
         return services;
     }
 
@@ -200,9 +198,7 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IDomainEventPipelineHandler<>));
-
-        services.TryAddEnumerable(new ServiceDescriptor(typeof(IDomainEventPipelineHandler<>), pipelineHandler, ServiceLifetime.Scoped));
+        services.TryAddEnumerable(OpenGenericPipelineHandler.CreateDescriptor(pipelineHandler, typeof(IDomainEventPipelineHandler<>)));
         return services;
     }
 }

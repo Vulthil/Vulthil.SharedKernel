@@ -30,11 +30,9 @@ public static class MessagingInstrumentation
         public const string MessagingOperation = "messaging.operation";
         public const string MessagingDestination = "messaging.destination.name";
         public const string MessagingMessageId = "messaging.message.id";
-        public const string MessagingConversationId = "messaging.message.conversation_id";
         public const string MessagingCorrelationId = "messaging.rabbitmq.correlation_id";
         public const string MessagingRoutingKey = "messaging.rabbitmq.routing_key";
         public const string MessageType = "vulthil.messaging.message_type";
-        public const string ConsumerType = "vulthil.messaging.consumer_type";
         public const string QueueName = "vulthil.messaging.queue";
         public const string RetryCount = "vulthil.messaging.retry_count";
     }

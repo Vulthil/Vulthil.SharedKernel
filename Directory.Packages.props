@@ -24,14 +24,21 @@
          $(EfCoreVersion) because its compiled ExecuteUpdate setter calls are EF-major-coupled. Provider packages also
          track $(EfCoreVersion) because their EF Core providers are EF-major-locked. -->
     <EfCoreMinimumVersion>$(Net10FrameworkVersion)</EfCoreMinimumVersion>
-    <AspireVersion>13.6.5</AspireVersion>
+    <!-- .github/actions/setup-build reads AspireVersion to prepare the matching Aspire CLI bundle. -->
+    <AspireVersion>17.0.0</AspireVersion>
+    <!-- The Aspire EF Core client integrations follow EF Core, not Aspire: from Aspire 17.0.0 the Cosmos integration
+         takes EF Core 11 on net11.0 and the Npgsql one is only a preview, and EF Core is on the 10.x line on every
+         TFM. -->
+    <AspireEfCoreVersion>13.6.5</AspireEfCoreVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.Dotnet" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="$(AspireVersion)" />
-    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="$(AspireVersion)" />
-    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="$(AspireEfCoreVersion)" />
+    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(AspireEfCoreVersion)" />
     <PackageVersion Include="Aspire.RabbitMQ.Client" Version="$(AspireVersion)" />
     <!-- Test-only. Each EFCore.NamingConventions major requires the matching EF Core major, so it moves with $(EfCoreVersion). -->
     <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />

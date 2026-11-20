@@ -45,7 +45,7 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
             MessageId = "stable-message-id",
             CorrelationId = "correlation-1",
             RoutingKey = "routing-key-1",
-            Headers = new Dictionary<string, object?> { ["tenant"] = "acme" },
+            Headers = BrokerOutboxMetadata.CaptureHeaders(new Dictionary<string, object?> { ["tenant"] = "acme" }, jsonOptions),
         };
         var dispatcher = CreateInstance<BrokerOutboxDispatcher>();
         var message = new OutboxMessageData(
@@ -91,7 +91,7 @@ public sealed class BrokerOutboxDispatcherTests : BaseUnitTestCase
         {
             MessageId = "stable-send-id",
             DestinationAddress = destinationAddress.ToString(),
-            Headers = new Dictionary<string, object?> { ["tenant"] = "acme" },
+            Headers = BrokerOutboxMetadata.CaptureHeaders(new Dictionary<string, object?> { ["tenant"] = "acme" }, jsonOptions),
         };
         var dispatcher = CreateInstance<BrokerOutboxDispatcher>();
         var message = new OutboxMessageData(

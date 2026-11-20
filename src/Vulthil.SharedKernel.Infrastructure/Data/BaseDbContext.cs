@@ -60,32 +60,12 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
         }
 
         var hadUnsavedChanges = ChangeTracker.HasChanges();
-        var isRetry = false;
-        var strategy = Database.CreateExecutionStrategy();
-        return await strategy.ExecuteAsync(
-            async token =>
-            {
-                // Only a retry starts clean: the first attempt saves what the caller changed before the call.
-                if (isRetry)
-                {
-                    UnitOfWorkRetry.Prepare([this], hadUnsavedChanges);
-                }
-
-                isRetry = true;
-                var transaction = await Database.BeginTransactionAsync(token).ConfigureAwait(false);
-                await using var _ = transaction.ConfigureAwait(false);
-                var result = await operation(token).ConfigureAwait(false);
-                if (shouldCommit(result))
-                {
-                    await transaction.CommitAsync(token).ConfigureAwait(false);
-                }
-                else
-                {
-                    await transaction.RollbackAsync(token).ConfigureAwait(false);
-                }
-
-                return result;
-            },
+        return await UnitOfWorkRetry.ExecuteAsync(
+            Database.CreateExecutionStrategy(),
+            BeginTransactionAsync,
+            () => UnitOfWorkRetry.Prepare([this], hadUnsavedChanges),
+            operation,
+            shouldCommit,
             cancellationToken).ConfigureAwait(false);
     }
 }

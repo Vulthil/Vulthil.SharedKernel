@@ -12,13 +12,9 @@ namespace Vulthil.Messaging.TestHarness;
 /// </summary>
 internal static class InMemoryContext
 {
-    public static TMessage Deserialize<TMessage>(IServiceProvider scope, MessageEnvelope envelope)
-        where TMessage : notnull
-    {
-        var options = scope.GetRequiredService<IMessageConfigurationProvider>().JsonSerializerOptions;
-        return envelope.Message.Deserialize<TMessage>(options)
+    public static object Deserialize(MessageEnvelope envelope, Type messageType, IMessageConfigurationProvider provider)
+        => envelope.Message.Deserialize(messageType, provider.JsonSerializerOptions)
             ?? throw new InvalidOperationException($"The in-memory transport could not deserialize a '{envelope.MessageType}' payload.");
-    }
 
     public static MessageContext<TMessage> Create<TMessage>(IServiceProvider scope, TMessage message, MessageEnvelope envelope, CancellationToken cancellationToken, int retryCount = 0)
         where TMessage : notnull

@@ -26,6 +26,7 @@ Vulthil.xUnit.Fixtures.ContainerHost.AddContainer<TContainer>() -> void
 *REMOVED*virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
 *REMOVED*virtual Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.Initialize() -> System.Threading.Tasks.ValueTask
 *REMOVED*virtual Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ConfigureContainers() -> System.Threading.Tasks.Task!
+*REMOVED*override Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.CreateScope(string! scopeId) -> Vulthil.xUnit.Fixtures.ITestContainer!
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.BaseIntegrationTestCase(Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint!>! factory, Xunit.ITestOutputHelper? testOutputHelper = null) -> void
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Client.get -> System.Net.Http.HttpClient!

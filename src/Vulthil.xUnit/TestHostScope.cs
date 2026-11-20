@@ -168,12 +168,8 @@ internal sealed class TestHostScope : IAsyncDisposable
         }
     }
 
-    private static ITestContainer CreateScopeView(ITestContainer container, string scopeId) => container switch
-    {
-        ITestContainerScopeProvider scopeProvider => scopeProvider.CreateScope(scopeId),
-        ITestContainerWithConnectionString withConnectionString => new SharedContainerWithConnectionStringScope(withConnectionString),
-        _ => new SharedContainerScope(container),
-    };
+    private static ITestContainer CreateScopeView(ITestContainer container, string scopeId)
+        => container is ITestContainerScopeProvider scopeProvider ? scopeProvider.CreateScope(scopeId) : SharedContainerScope.Create(container);
 
     /// <summary>
     /// Registers a starting host: pauses the restartable services of every other running live host, applies pending

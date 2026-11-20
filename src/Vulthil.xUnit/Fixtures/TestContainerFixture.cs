@@ -41,13 +41,15 @@ public abstract class TestContainerFixture<TBuilderEntity, TContainerEntity>
     }
 
     /// <summary>
-    /// Creates a pass-through scope view over this container, sharing its state with every consumer. Override to
+    /// Creates a pass-through scope view over this container, sharing its state with every consumer; a container with
+    /// a connection string forwards it unchanged, so every consumer shares the container's namespace. Override to
     /// return a view that is isolated under <paramref name="scopeId"/> when the containerized service supports
     /// namespacing (databases, virtual hosts, key prefixes, ...); derive that view from
-    /// <see cref="TestContainerScope{TContainer}"/>, which forwards the host configuration and creates and deletes the
+    /// <see cref="TestContainerScope{TContainer}"/>, or from <see cref="TestContainerWithConnectionStringScope{TContainer}"/>
+    /// for a container with a connection string, which forward the host configuration and create and delete the
     /// namespace.
     /// </summary>
     /// <param name="scopeId">A short, unique, lowercase identifier for the scope, safe to embed in names.</param>
     /// <returns>The scoped container view.</returns>
-    public virtual ITestContainer CreateScope(string scopeId) => new SharedContainerScope(this);
+    public virtual ITestContainer CreateScope(string scopeId) => SharedContainerScope.Create(this);
 }

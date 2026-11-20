@@ -18,15 +18,16 @@ namespace Vulthil.xUnit.Cosmos;
 /// emulator image via <c>Configure</c>).
 /// </summary>
 /// <remarks>
-/// The database is created and reset through the application's own <typeparamref name="TDbContext"/> resolved from the
-/// test host's service provider — so a context whose constructor takes more than its options works without extra
-/// plumbing. It is created once during host startup through <see cref="IStartupResource.InitializeAsync"/> and
-/// recreated after each test through <see cref="IResettableResource.ResetAsync"/>. Only the emulator readiness probe
-/// and the best-effort scope teardown use a bare <see cref="DbContext"/>, because neither needs the model.
+/// Each scope's database is created and reset through the application's own <typeparamref name="TDbContext"/>
+/// resolved from the test host's service provider — so a context whose constructor takes more than its options works
+/// without extra plumbing. The scope creates it once during host startup through
+/// <see cref="IStartupResource.InitializeAsync"/> and recreates it after each test through
+/// <see cref="IResettableResource.ResetAsync"/>. Only the emulator readiness probe and the best-effort scope teardown
+/// use a bare <see cref="DbContext"/>, because neither needs the model.
 /// </remarks>
 /// <typeparam name="TDbContext">The Cosmos-mapped <see cref="DbContext"/> to register against the emulator.</typeparam>
 public abstract class CosmosTestContainerFixture<TDbContext>
-    : TestContainerFixtureWithConnectionString<CosmosDbBuilder, CosmosDbContainer>, IStartupResource, IResettableResource
+    : TestContainerFixtureWithConnectionString<CosmosDbBuilder, CosmosDbContainer>
     where TDbContext : DbContext
 {
     private const string DefaultCosmosDbImage = "mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-latest";
@@ -47,8 +48,8 @@ public abstract class CosmosTestContainerFixture<TDbContext>
     }
 
     /// <summary>
-    /// Gets the name of the emulator database used when this fixture is consumed without a scope; scopes append
-    /// their scope identifier to it. Defaults to <c>test-db</c>.
+    /// Gets the base name of the emulator databases: each scope's database is this name followed by the scope
+    /// identifier, and the emulator readiness probe uses this name itself. Defaults to <c>test-db</c>.
     /// </summary>
     protected virtual string DatabaseName => "test-db";
 
@@ -61,26 +62,6 @@ public abstract class CosmosTestContainerFixture<TDbContext>
 
     /// <inheritdoc />
     public override string ConnectionString => Container.GetConnectionString();
-
-    /// <summary>
-    /// Registers <typeparamref name="TDbContext"/> in the test host, pointed at the emulator's default database.
-    /// Invoked through the container extension point when this fixture is consumed without a scope.
-    /// </summary>
-    /// <param name="services">The service collection to configure.</param>
-    public override void ConfigureServices(IServiceCollection services) =>
-        services.AddDbContext<TDbContext>(options => ApplyCosmosOptions(options, DatabaseName));
-
-    /// <inheritdoc />
-    public ValueTask InitializeAsync(IServiceProvider serviceProvider) => EnsureDatabaseCreatedAsync(serviceProvider);
-
-    /// <summary>
-    /// Drops and recreates the default database after each test, giving every test a clean slate. The
-    /// <typeparamref name="TDbContext"/> is resolved from <paramref name="serviceProvider"/>, so its model — and any
-    /// constructor dependencies — come from the test host rather than being constructed here.
-    /// </summary>
-    /// <param name="serviceProvider">The application's root service provider.</param>
-    /// <returns>A task representing the asynchronous reset work.</returns>
-    public ValueTask ResetAsync(IServiceProvider serviceProvider) => RecreateDatabaseAsync(serviceProvider);
 
     /// <summary>
     /// Creates a scope backed by its own database inside the shared emulator, named after
@@ -96,23 +77,6 @@ public abstract class CosmosTestContainerFixture<TDbContext>
     {
         await base.InitializeAsync().ConfigureAwait(false);
         await WaitForEmulatorAsync().ConfigureAwait(false);
-    }
-
-    private static async ValueTask EnsureDatabaseCreatedAsync(IServiceProvider serviceProvider)
-    {
-        var scope = serviceProvider.CreateAsyncScope();
-        await using var _ = scope.ConfigureAwait(false);
-        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
-    }
-
-    private static async ValueTask RecreateDatabaseAsync(IServiceProvider serviceProvider)
-    {
-        var scope = serviceProvider.CreateAsyncScope();
-        await using var _ = scope.ConfigureAwait(false);
-        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        await context.Database.EnsureDeletedAsync().ConfigureAwait(false);
-        await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
     }
 
     private void ApplyCosmosOptions(DbContextOptionsBuilder options, string databaseName)
@@ -169,9 +133,22 @@ public abstract class CosmosTestContainerFixture<TDbContext>
         public override void ConfigureServices(IServiceCollection services) =>
             services.AddDbContext<TDbContext>(options => Container.ApplyCosmosOptions(options, _databaseName));
 
-        public ValueTask InitializeAsync(IServiceProvider serviceProvider) => EnsureDatabaseCreatedAsync(serviceProvider);
+        public async ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        {
+            var scope = serviceProvider.CreateAsyncScope();
+            await using var _ = scope.ConfigureAwait(false);
+            var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
+            await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
+        }
 
-        public ValueTask ResetAsync(IServiceProvider serviceProvider) => RecreateDatabaseAsync(serviceProvider);
+        public async ValueTask ResetAsync(IServiceProvider serviceProvider)
+        {
+            var scope = serviceProvider.CreateAsyncScope();
+            await using var _ = scope.ConfigureAwait(false);
+            var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
+            await context.Database.EnsureDeletedAsync().ConfigureAwait(false);
+            await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
+        }
 
         protected override ValueTask DeleteNamespaceAsync(string namespaceName) => Container.DropDatabaseAsync(namespaceName);
     }

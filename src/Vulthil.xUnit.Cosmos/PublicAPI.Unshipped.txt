@@ -1,3 +1,6 @@
 #nullable enable
 *REMOVED*Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(Xunit.Sdk.IMessageSink! messageSink) -> void
 Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.CosmosTestContainerFixture(Xunit.Sdk.IMessageSink? messageSink = null) -> void
+*REMOVED*override Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+*REMOVED*Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.InitializeAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.Cosmos.CosmosTestContainerFixture<TDbContext>.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask

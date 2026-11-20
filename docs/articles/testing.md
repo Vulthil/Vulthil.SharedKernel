@@ -143,7 +143,7 @@ Key features:
 
 - `TestContainerFixture<TBuilderEntity, TContainerEntity>` – a plain container with a managed lifecycle (`ITestContainer`).
 - `TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>` – adds a connection string that is injected into the host's configuration under `ConnectionStrings:{ConnectionStringKey}` (`ITestContainerWithConnectionString`). Give `ConnectionStringKey` the bare name (e.g. `"AppDb"`); the factory adds the `ConnectionStrings:` prefix. Every container a factory consumes needs its own key: when two consumed containers use the same key (compared case-insensitively, like configuration keys), the factory's `InitializeAsync` throws instead of letting one connection string overwrite the other.
-- `TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>` – adds EF Core migrations and Respawn-based data reset between tests (`ITestDatabaseContainer`).
+- `TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>` – gives each scope its own database (an `ITestDatabaseContainer` view), which gets EF Core migrations and a Respawn-based data reset between tests.
 
 None of them needs constructor arguments. Pass an `IMessageSink` to route Testcontainers' own log output somewhere
 specific; without one it is forwarded to xUnit's diagnostic messages (visible with `diagnosticMessages` enabled).

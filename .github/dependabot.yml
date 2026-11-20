@@ -40,8 +40,8 @@ updates:
       - dependency-name: "Microsoft.Extensions.Logging.Abstractions"
       - dependency-name: "Microsoft.Extensions.Options.ConfigurationExtensions"
       - dependency-name: "Microsoft.Extensions.Options.DataAnnotations"
-      # The Microting Pomelo fork floors Microsoft.EntityFrameworkCore.Relational at its own patch level, and each
-      # major requires the matching EF Core major, so it moves with the train.
+      # Microting.EntityFrameworkCore.MySql floors Microsoft.EntityFrameworkCore.Relational at its own patch level,
+      # and each major requires the matching EF Core major, so it moves with the train.
       - dependency-name: "Microting.EntityFrameworkCore.MySql"
       # EFCore.NamingConventions (test-only): each major requires the matching EF Core major, so it moves with the
       # train.

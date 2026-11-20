@@ -20,15 +20,15 @@ public static class DependencyInjectionExtensions
     /// processing is enabled, the commit-time relay trigger is wired as well.
     /// </summary>
     /// <remarks>
-    /// The Pomelo-compatible EF Core provider is registered directly and the MySQL server version is detected from
-    /// the connection at startup (<c>ServerVersion.AutoDetect</c>), so the database must be reachable when the host
-    /// starts. The underlying registrations are deferred until the configuration chain has executed, so the order of
-    /// <c>UseMySql</c>, <c>EnableOutboxProcessing</c>, and <c>UseOutboxStore</c> does not matter.
+    /// The <c>Microting.EntityFrameworkCore.MySql</c> provider is registered directly and the MySQL server version is
+    /// detected from the connection at startup (<c>ServerVersion.AutoDetect</c>), so the database must be reachable
+    /// when the host starts. The underlying registrations are deferred until the configuration chain has executed, so
+    /// the order of <c>UseMySql</c>, <c>EnableOutboxProcessing</c>, and <c>UseOutboxStore</c> does not matter.
     /// </remarks>
     /// <typeparam name="TDbContext">The application's <c>DbContext</c>; it must expose the outbox set via <c>ISaveOutboxMessages</c>.</typeparam>
     /// <param name="configurator">The database infrastructure configurator.</param>
     /// <param name="connectionStringKey">The connection-string name resolved from the host's configuration.</param>
-    /// <param name="configureSettings">An optional action to configure the EF Core/Pomelo options (e.g. command timeout).</param>
+    /// <param name="configureSettings">An optional action to configure the MySQL provider options (e.g. command timeout).</param>
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TDbContext> UseMySql<TDbContext>(
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,

@@ -17,7 +17,7 @@ Use `Vulthil.SharedKernel.Infrastructure.MySql` to wire a MySQL-backed `DbContex
 
 ## Provider
 
-The MySQL EF Core provider is the API-compatible [`Microting.EntityFrameworkCore.MySql`](https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql) fork of Pomelo, registered directly: the official Pomelo and Aspire MySQL packages support EF Core 9 at most.
+The MySQL EF Core provider is [`Microting.EntityFrameworkCore.MySql`](https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql), registered directly.
 
 The MySQL server version is detected from the connection at startup via `ServerVersion.AutoDetect`, so the database must be reachable when the host starts.
 
@@ -37,7 +37,7 @@ builder.AddDbContext<AppDbContext>(config => config
 
 ### Configuring the provider
 
-`UseMySql` takes an optional `configureSettings` delegate that configures the EF Core/Pomelo options (`MySqlDbContextOptionsBuilder`):
+`UseMySql` takes an optional `configureSettings` delegate that configures the MySQL provider options (`MySqlDbContextOptionsBuilder`):
 
 ```csharp
 config.UseMySql("Default", mySql => mySql.CommandTimeout(30));

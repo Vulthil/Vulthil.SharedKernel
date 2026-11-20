@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Provider-specific EF Core mapping and optimizations for MySql.</Description>
-		<PackageTags>mysql;pomelo;efcore;entity-framework-core;outbox</PackageTags>
+		<PackageTags>mysql;microting;efcore;entity-framework-core;outbox</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,11 +13,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
-	</ItemGroup>
-
-	<!-- The MySQL EF Core provider is the Microting fork of Pomelo (same API): the official Pomelo and Aspire MySQL
-	     packages support EF Core 9 at most. -->
-	<ItemGroup>
 		<PackageReference Include="Microting.EntityFrameworkCore.MySql" />
 	</ItemGroup>
 

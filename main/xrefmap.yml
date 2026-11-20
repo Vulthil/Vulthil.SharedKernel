@@ -13090,24 +13090,6 @@ references:
   fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).ConnectionStringKey
   nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.ConnectionStringKey
   nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).ConnectionStringKey
-- uid: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.CreateScope(System.String)
-  name: CreateScope(string)
-  href: api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html#Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2_CreateScope_System_String_
-  commentId: M:Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.CreateScope(System.String)
-  name.vb: CreateScope(String)
-  fullName: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.CreateScope(string)
-  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).CreateScope(String)
-  nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.CreateScope(string)
-  nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).CreateScope(String)
-- uid: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.CreateScope*
-  name: CreateScope
-  href: api/Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString-2.html#Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2_CreateScope_
-  commentId: Overload:Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.CreateScope
-  isSpec: "True"
-  fullName: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.CreateScope
-  fullName.vb: Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).CreateScope
-  nameWithType: TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.CreateScope
-  nameWithType.vb: TestContainerFixtureWithConnectionString(Of TBuilderEntity, TContainerEntity).CreateScope
 - uid: Vulthil.xUnit.Fixtures.TestContainerFixture`2
   name: TestContainerFixture<TBuilderEntity, TContainerEntity>
   href: api/Vulthil.xUnit.Fixtures.TestContainerFixture-2.html

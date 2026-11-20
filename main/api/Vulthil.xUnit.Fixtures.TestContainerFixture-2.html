@@ -312,13 +312,15 @@ during host build, after connection strings are injected and before the factory'
 
   <h3 id="Vulthil_xUnit_Fixtures_TestContainerFixture_2_CreateScope_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixture`2.CreateScope(System.String)">
   CreateScope(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixture.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Creates a pass-through scope view over this container, sharing its state with every consumer. Override to
+  <div class="markdown level1 summary"><p>Creates a pass-through scope view over this container, sharing its state with every consumer; a container with
+a connection string forwards it unchanged, so every consumer shares the container's namespace. Override to
 return a view that is isolated under <code class="paramref">scopeId</code> when the containerized service supports
 namespacing (databases, virtual hosts, key prefixes, ...); derive that view from
-<a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html">TestContainerScope&lt;TContainer&gt;</a>, which forwards the host configuration and creates and deletes the
+<a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerScope-1.html">TestContainerScope&lt;TContainer&gt;</a>, or from <a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html">TestContainerWithConnectionStringScope&lt;TContainer&gt;</a>
+for a container with a connection string, which forward the host configuration and create and delete the
 namespace.</p>
 </div>
   <div class="markdown level1 conceptual"></div>

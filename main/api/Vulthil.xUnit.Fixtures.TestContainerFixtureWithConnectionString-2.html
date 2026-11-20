@@ -314,54 +314,6 @@ context's diagnostic messages.</p>
 
 
 
-  <h2 class="section" id="methods">Methods
-</h2>
-
-
-  <a id="Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2_CreateScope_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.CreateScope*"></a>
-
-  <h3 id="Vulthil_xUnit_Fixtures_TestContainerFixtureWithConnectionString_2_CreateScope_System_String_" data-uid="Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString`2.CreateScope(System.String)">
-  CreateScope(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/TestContainerFixtureWithConnectionString.cs/#L48"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Creates a pass-through scope view over this container that forwards its connection string unchanged, so every
-consumer shares the container's namespace. Override to return a view that is isolated under
-<code class="paramref">scopeId</code> when the containerized service supports namespacing (for example one virtual host
-per scope on a message broker); derive that view from
-<a class="xref" href="Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope-1.html">TestContainerWithConnectionStringScope&lt;TContainer&gt;</a>, which forwards the host configuration and the
-connection string key, and creates and deletes the namespace.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override ITestContainer CreateScope(string scopeId)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>scopeId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd><p>A short, unique, lowercase identifier for the scope, safe to embed in names.</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Vulthil.xUnit.Fixtures.ITestContainer.html">ITestContainer</a></dt>
-    <dd><p>The scoped container view.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
 
 </article>
 

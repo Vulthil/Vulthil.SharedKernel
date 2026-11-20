@@ -227,7 +227,7 @@ factories are disposed after each test.</li>
 <ul>
 <li><code>TestContainerFixture&lt;TBuilderEntity, TContainerEntity&gt;</code> – a plain container with a managed lifecycle (<code>ITestContainer</code>).</li>
 <li><code>TestContainerFixtureWithConnectionString&lt;TBuilderEntity, TContainerEntity&gt;</code> – adds a connection string that is injected into the host's configuration under <code>ConnectionStrings:{ConnectionStringKey}</code> (<code>ITestContainerWithConnectionString</code>). Give <code>ConnectionStringKey</code> the bare name (e.g. <code>&quot;AppDb&quot;</code>); the factory adds the <code>ConnectionStrings:</code> prefix. Every container a factory consumes needs its own key: when two consumed containers use the same key (compared case-insensitively, like configuration keys), the factory's <code>InitializeAsync</code> throws instead of letting one connection string overwrite the other.</li>
-<li><code>TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;</code> – adds EF Core migrations and Respawn-based data reset between tests (<code>ITestDatabaseContainer</code>).</li>
+<li><code>TestDatabaseContainerFixture&lt;TDbContext, TBuilderEntity, TContainerEntity&gt;</code> – gives each scope its own database (an <code>ITestDatabaseContainer</code> view), which gets EF Core migrations and a Respawn-based data reset between tests.</li>
 </ul>
 <p>None of them needs constructor arguments. Pass an <code>IMessageSink</code> to route Testcontainers' own log output somewhere
 specific; without one it is forwarded to xUnit's diagnostic messages (visible with <code>diagnosticMessages</code> enabled).</p>

@@ -102,12 +102,8 @@
 <li>Retrying execution strategies are fully supported – the outbox processor runs its transactional unit inside the context's execution strategy (<code>Database.CreateExecutionStrategy().ExecuteAsync</code>)</li>
 </ul>
 <h2 id="provider">Provider</h2>
-<p>The MySQL EF Core provider is resolved per target framework:</p>
-<ul>
-<li><strong>.NET 9</strong> – the Aspire client integration <a href="https://www.nuget.org/packages/Aspire.Pomelo.EntityFrameworkCore.MySql"><code>Aspire.Pomelo.EntityFrameworkCore.MySql</code></a>, which resolves the connection string and adds health checks, telemetry, and connection resiliency (parity with the Npgsql and Cosmos integrations)</li>
-<li><strong>.NET 10</strong> – the API-compatible <a href="https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql"><code>Microting.EntityFrameworkCore.MySql</code></a> fork of Pomelo, registered directly, until the official Pomelo and Aspire packages ship EF Core 10 support</li>
-</ul>
-<p>On .NET 10 the MySQL server version is detected from the connection at startup via <code>ServerVersion.AutoDetect</code>, so the database must be reachable when the host starts.</p>
+<p>The MySQL EF Core provider is <a href="https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql"><code>Microting.EntityFrameworkCore.MySql</code></a>, registered directly.</p>
+<p>The MySQL server version is detected from the connection at startup via <code>ServerVersion.AutoDetect</code>, so the database must be reachable when the host starts.</p>
 <h2 id="usage">Usage</h2>
 <h3 id="registration">Registration</h3>
 <pre><code class="lang-csharp">builder.AddDbContext&lt;AppDbContext&gt;(config =&gt; config
@@ -118,13 +114,9 @@
         o.MaxRetries = 3;
     }));
 </code></pre>
-<h3 id="configuring-the-integration">Configuring the integration</h3>
-<p><code>UseMySql</code> takes an optional <code>configureSettings</code> delegate. Because the Aspire integration only exists on .NET 9, its type differs per target framework — the Aspire <code>PomeloEntityFrameworkCoreMySqlSettings</code> on .NET 9, and the EF Core <code>MySqlDbContextOptionsBuilder</code> on .NET 10:</p>
-<pre><code class="lang-csharp">// .NET 9 (Aspire) — toggle health checks, tracing, retries, command timeout:
-config.UseMySql(&quot;Default&quot;, settings =&gt; settings.DisableHealthChecks = true);
-
-// .NET 10 (Microting) — configure EF Core/Pomelo options:
-config.UseMySql(&quot;Default&quot;, mySql =&gt; mySql.CommandTimeout(30));
+<h3 id="configuring-the-provider">Configuring the provider</h3>
+<p><code>UseMySql</code> takes an optional <code>configureSettings</code> delegate that configures the MySQL provider options (<code>MySqlDbContextOptionsBuilder</code>):</p>
+<pre><code class="lang-csharp">config.UseMySql(&quot;Default&quot;, mySql =&gt; mySql.CommandTimeout(30));
 </code></pre>
 <h3 id="applying-migrations-on-startup">Applying migrations on startup</h3>
 <p><code>Vulthil.SharedKernel.Infrastructure.Relational</code> (pulled in transitively) exposes <code>MigrateAsync</code>:</p>

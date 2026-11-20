@@ -57,6 +57,24 @@ public sealed class BrokerOutboxMetadataTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void HeaderNamesRoundTripVerbatimUnderADictionaryKeyPolicy()
+    {
+        // Arrange
+        var options = new JsonSerializerOptions { DictionaryKeyPolicy = JsonNamingPolicy.CamelCase };
+        var published = new Dictionary<string, object?> { ["ConversationId"] = "conv-1", ["Tenant"] = "acme" };
+        var metadata = new BrokerOutboxMetadata { Headers = BrokerOutboxMetadata.CaptureHeaders(published, options) };
+
+        // Act
+        var roundTripped = JsonSerializer.Deserialize<BrokerOutboxMetadata>(JsonSerializer.Serialize(metadata, options), options)!;
+
+        // Assert
+        var headers = roundTripped.RestoreHeaders().ShouldNotBeNull();
+        headers.ShouldContainKey("ConversationId");
+        headers.ShouldContainKey("Tenant");
+        headers.ShouldNotContainKey("conversationId");
+    }
+
+    [Fact]
     public void RelayedHeadersRestoreTypedPublishContextGetters()
     {
         // Arrange

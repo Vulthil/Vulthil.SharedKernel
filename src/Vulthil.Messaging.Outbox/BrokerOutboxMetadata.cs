@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Vulthil.Messaging.Outbox;
 
@@ -22,6 +23,7 @@ internal sealed record BrokerOutboxMetadata
     /// but CLR types with no JSON representation (e.g. <see cref="Guid"/>) are not rematerialized as their original
     /// type.
     /// </summary>
+    [JsonConverter(typeof(VerbatimKeysConverter))]
     public Dictionary<string, JsonElement>? Headers { get; init; }
 
     public static Dictionary<string, JsonElement>? CaptureHeaders(IReadOnlyDictionary<string, object?> headers, JsonSerializerOptions options)
@@ -46,4 +48,24 @@ internal sealed record BrokerOutboxMetadata
         JsonValueKind.Number => value.GetDouble(),
         _ => value,
     };
+
+    // The built-in dictionary converter renames keys by the options' DictionaryKeyPolicy when it writes them and keeps
+    // them as they are when it reads them, so a relayed header would come back under another name.
+    private sealed class VerbatimKeysConverter : JsonConverter<Dictionary<string, JsonElement>>
+    {
+        public override Dictionary<string, JsonElement>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(ref reader);
+
+        public override void Write(Utf8JsonWriter writer, Dictionary<string, JsonElement> value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+            foreach (var (key, element) in value)
+            {
+                writer.WritePropertyName(key);
+                element.WriteTo(writer);
+            }
+
+            writer.WriteEndObject();
+        }
+    }
 }

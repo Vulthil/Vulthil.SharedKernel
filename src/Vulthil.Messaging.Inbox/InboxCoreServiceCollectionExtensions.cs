@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+using Vulthil.Extensions.Retention;
 
 namespace Vulthil.Messaging.Inbox;
 
@@ -37,7 +39,25 @@ public static class InboxCoreServiceCollectionExtensions
         configure?.Invoke(options);
 
         services.TryAddSingleton(TimeProvider.System);
-        services.RegisterInboxRetention(configure, options);
+        services.AddOptions<InboxOptions>()
+            .Configure(configure ?? (static _ => { }))
+            .Validate(
+                o => !o.Retention.Enabled
+                    || o.Retention.RetentionPeriod > TimeSpan.Zero
+                    && o.Retention.SweepInterval > TimeSpan.Zero
+                    && o.Retention.BatchSize >= 1,
+                "Inbox retention requires RetentionPeriod and SweepInterval greater than zero and BatchSize of at least 1 when enabled.")
+            .ValidateOnStart();
+
+        if (options.Retention.Enabled)
+        {
+            services.AddRetentionSweep<IIdempotencyStore>(
+                "Inbox",
+                static provider => ToSweepSettings(provider.GetRequiredService<IOptions<InboxOptions>>().Value.Retention),
+                static store => store is IInboxRetentionStore retentionStore
+                    ? new RetentionSweepDeleter(retentionStore.DeleteProcessedAsync)
+                    : null);
+        }
 
         if (options.EnableMetrics)
         {
@@ -46,4 +66,7 @@ public static class InboxCoreServiceCollectionExtensions
 
         return services;
     }
+
+    private static RetentionSweepSettings ToSweepSettings(InboxRetentionOptions retention) =>
+        new(retention.RetentionPeriod, retention.SweepInterval, retention.BatchSize);
 }

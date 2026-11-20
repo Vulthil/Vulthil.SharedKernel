@@ -1,6 +1,4 @@
 #nullable enable
-abstract Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.CreateConsumerHandler<TConsumer, TMessage>(Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
-abstract Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
 const Vulthil.Messaging.Transport.MessageHeaders.ConversationId = "ConversationId" -> string!
 const Vulthil.Messaging.Transport.MessageHeaders.DestinationAddress = "DestinationAddress" -> string!
 const Vulthil.Messaging.Transport.MessageHeaders.FaultAddress = "FaultAddress" -> string!
@@ -13,8 +11,6 @@ static Vulthil.Messaging.Transport.MessageAddress.QueueName(System.Uri! address)
 static Vulthil.Messaging.Transport.MessageAddress.ToHeaderValue(System.Uri! address) -> string!
 static Vulthil.Messaging.Transport.MessageHeaders.IsReserved(string! key) -> bool
 Vulthil.Messaging.Transport.MessageAddress
-Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>
-Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.MessageHandlerFactory() -> void
 Vulthil.Messaging.Transport.MessageHeaders
 *REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>
 *REMOVED*Vulthil.Messaging.Transport.HandlerEntry<THandler>.<Clone>$() -> Vulthil.Messaging.Transport.HandlerEntry<THandler>!
@@ -35,9 +31,7 @@ Vulthil.Messaging.Transport.MessageHeaders
 *REMOVED*static Vulthil.Messaging.Transport.HandlerEntry<THandler>.operator ==(Vulthil.Messaging.Transport.HandlerEntry<THandler>? left, Vulthil.Messaging.Transport.HandlerEntry<THandler>? right) -> bool
 *REMOVED*static Vulthil.Messaging.Transport.PublishPipelineFactory.Build(System.IServiceProvider! serviceProvider, Vulthil.Messaging.Transport.PublishFilterDelegate! terminal) -> Vulthil.Messaging.Transport.PublishFilterDelegate!
 Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
-Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
-Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
-Vulthil.Messaging.Transport.MessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> THandler
+Vulthil.Messaging.Transport.IMessageHandlerFactory<THandler>.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType) -> THandler
 Vulthil.Messaging.Transport.RpcReply
 static Vulthil.Messaging.Transport.RpcReply.Fault(System.Exception! exception, Vulthil.Messaging.IMessageConfigurationProvider! provider, string? requestId, string? correlationId) -> Vulthil.Messaging.Transport.MessageEnvelope!
 static Vulthil.Messaging.Transport.RpcReply.ShortCircuited(Vulthil.Messaging.IMessageConfigurationProvider! provider, string? requestId, string? correlationId) -> Vulthil.Messaging.Transport.MessageEnvelope!
@@ -52,6 +46,8 @@ Vulthil.Messaging.Transport.DeliveryHandler.Kind.get -> Vulthil.Messaging.Transp
 Vulthil.Messaging.Transport.DeliveryHandler.RetryPolicy.get -> Vulthil.Messaging.Queues.RetryPolicyDefinition?
 Vulthil.Messaging.Transport.DeliveryHandlerFactory
 Vulthil.Messaging.Transport.DeliveryHandlerFactory.DeliveryHandlerFactory() -> void
+Vulthil.Messaging.Transport.DeliveryHandlerFactory.ForConsumer(System.Type! consumerType, System.Type! messageType, Vulthil.Messaging.Queues.RetryPolicyDefinition? retryPolicy) -> Vulthil.Messaging.Transport.DeliveryHandler!
+Vulthil.Messaging.Transport.DeliveryHandlerFactory.ForRequestConsumer(System.Type! consumerType, System.Type! requestType, System.Type! responseType) -> Vulthil.Messaging.Transport.DeliveryHandler!
 Vulthil.Messaging.Transport.DeliveryOutcome
 Vulthil.Messaging.Transport.DeliveryOutcome.Consumed.get -> System.Collections.Generic.IReadOnlyList<Vulthil.Messaging.Transport.DeliveryHandler!>!
 Vulthil.Messaging.Transport.DeliveryOutcome.Failures.get -> System.Collections.Generic.IReadOnlyList<System.Exception!>!

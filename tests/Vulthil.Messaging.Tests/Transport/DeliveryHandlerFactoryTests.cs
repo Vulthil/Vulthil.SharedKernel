@@ -5,21 +5,8 @@ using Vulthil.xUnit;
 
 namespace Vulthil.Messaging.Tests.Transport;
 
-public sealed class MessageHandlerFactoryTests : BaseUnitTestCase<MessageHandlerFactoryTests.RecordingHandlerFactory>
+public sealed class DeliveryHandlerFactoryTests : BaseUnitTestCase<DeliveryHandlerFactory>
 {
-    /// <summary>A handler stand-in that records the type arguments and policy the factory bound it with.</summary>
-    public sealed record BuiltHandler(Type ConsumerType, Type MessageType, Type? ResponseType, RetryPolicyDefinition? RetryPolicy);
-
-    /// <summary>Exercises the base class through its two generic overrides, recording what each was bound with.</summary>
-    public sealed class RecordingHandlerFactory : MessageHandlerFactory<BuiltHandler>
-    {
-        protected override BuiltHandler CreateConsumerHandler<TConsumer, TMessage>(RetryPolicyDefinition? retryPolicy)
-            => new(typeof(TConsumer), typeof(TMessage), ResponseType: null, retryPolicy);
-
-        protected override BuiltHandler CreateRequestConsumerHandler<TConsumer, TRequest, TResponse>(RetryPolicyDefinition? retryPolicy)
-            => new(typeof(TConsumer), typeof(TRequest), typeof(TResponse), retryPolicy);
-    }
-
     private abstract record OrderEvent(string Id);
     private sealed record OrderPlaced(string Id) : OrderEvent(Id);
     private sealed record Ping(string Id);
@@ -38,7 +25,7 @@ public sealed class MessageHandlerFactoryTests : BaseUnitTestCase<MessageHandler
     }
 
     [Fact]
-    public void ForConsumerBindsTheRegistrationTypesAndPassesTheRetryPolicy()
+    public void ForConsumerBuildsAConsumerHandlerWithTheRegistrationsRetryPolicy()
     {
         // Arrange
         var policy = new RetryPolicyDefinition { MaxRetryCount = 3 };
@@ -47,22 +34,20 @@ public sealed class MessageHandlerFactoryTests : BaseUnitTestCase<MessageHandler
         var handler = Target.ForConsumer(typeof(OrderConsumer), typeof(OrderEvent), policy);
 
         // Assert
-        handler.ConsumerType.ShouldBe(typeof(OrderConsumer));
-        handler.MessageType.ShouldBe(typeof(OrderEvent));
-        handler.ResponseType.ShouldBeNull();
+        handler.Kind.ShouldBe(HandlerKind.Consumer);
+        handler.Identity.ShouldBe($"{typeof(OrderConsumer).FullName}:{typeof(OrderEvent).FullName}");
         handler.RetryPolicy.ShouldBeSameAs(policy);
     }
 
     [Fact]
-    public void ForRequestConsumerBindsTheRequestAndResponseTypes()
+    public void ForRequestConsumerBuildsARequestConsumerHandlerWithoutARetryPolicy()
     {
         // Act
-        var handler = Target.ForRequestConsumer(typeof(PingConsumer), typeof(Ping), typeof(Pong), retryPolicy: null);
+        var handler = Target.ForRequestConsumer(typeof(PingConsumer), typeof(Ping), typeof(Pong));
 
         // Assert
-        handler.ConsumerType.ShouldBe(typeof(PingConsumer));
-        handler.MessageType.ShouldBe(typeof(Ping));
-        handler.ResponseType.ShouldBe(typeof(Pong));
+        handler.Kind.ShouldBe(HandlerKind.RequestConsumer);
+        handler.Identity.ShouldBe($"{typeof(PingConsumer).FullName}:{typeof(Ping).FullName}");
         handler.RetryPolicy.ShouldBeNull();
     }
 
@@ -94,6 +79,6 @@ public sealed class MessageHandlerFactoryTests : BaseUnitTestCase<MessageHandler
     public void ForRequestConsumerRejectsAConsumerThatDoesNotProduceTheResponseType()
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Target.ForRequestConsumer(typeof(PingConsumer), typeof(Ping), typeof(OrderPlaced), retryPolicy: null));
+        Should.Throw<ArgumentException>(() => Target.ForRequestConsumer(typeof(PingConsumer), typeof(Ping), typeof(OrderPlaced)));
     }
 }

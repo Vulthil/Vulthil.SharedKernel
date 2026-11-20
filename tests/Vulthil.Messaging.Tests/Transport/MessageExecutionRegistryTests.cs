@@ -14,8 +14,8 @@ public sealed class FakeHandlerFactory : IMessageHandlerFactory<FakeHandler>
     public FakeHandler ForConsumer(Type consumerType, Type messageType, RetryPolicyDefinition? retryPolicy)
         => new($"consumer:{consumerType.Name}:{messageType.Name}", retryPolicy);
 
-    public FakeHandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType, RetryPolicyDefinition? retryPolicy)
-        => new($"request:{consumerType.Name}:{requestType.Name}", retryPolicy);
+    public FakeHandler ForRequestConsumer(Type consumerType, Type requestType, Type responseType)
+        => new($"request:{consumerType.Name}:{requestType.Name}");
 }
 
 public sealed class MessageExecutionRegistryTests : BaseUnitTestCase<MessageExecutionRegistry<FakeHandler>>

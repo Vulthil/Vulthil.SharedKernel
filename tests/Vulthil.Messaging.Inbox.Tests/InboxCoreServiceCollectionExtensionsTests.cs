@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using OpenTelemetry.Metrics;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.xUnit;
@@ -140,6 +141,57 @@ public sealed class InboxCoreServiceCollectionExtensionsTests : BaseUnitTestCase
 
         // Act & Assert
         Should.Throw<ArgumentNullException>(() => services.AddInboxCore());
+    }
+
+    [Fact]
+    public void RetentionEnabledWithAZeroRetentionPeriodFailsValidationAtStartup()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddInboxCore(o =>
+        {
+            o.Retention.Enabled = true;
+            o.Retention.RetentionPeriod = TimeSpan.Zero;
+        });
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<InboxOptions>>().Value);
+    }
+
+    [Fact]
+    public void RetentionEnabledWithAValidPeriodPassesValidation()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddInboxCore(o =>
+        {
+            o.Retention.Enabled = true;
+            o.Retention.RetentionPeriod = TimeSpan.FromDays(1);
+        });
+        using var provider = services.BuildServiceProvider();
+
+        // Act
+        var options = provider.GetRequiredService<IOptions<InboxOptions>>().Value;
+
+        // Assert
+        options.Retention.Enabled.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void RetentionEnabledWithAZeroBatchSizeFailsValidationAtStartup()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddInboxCore(o =>
+        {
+            o.Retention.Enabled = true;
+            o.Retention.BatchSize = 0;
+        });
+        using var provider = services.BuildServiceProvider();
+
+        // Act & Assert
+        Should.Throw<OptionsValidationException>(() => provider.GetRequiredService<IOptions<InboxOptions>>().Value);
     }
 
     private sealed class FakeIdempotencyStore : IIdempotencyStore, IInboxRetentionStore

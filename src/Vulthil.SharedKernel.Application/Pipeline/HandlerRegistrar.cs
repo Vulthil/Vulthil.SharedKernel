@@ -27,35 +27,13 @@ namespace Vulthil.SharedKernel.Application.Pipeline;
 /// </remarks>
 internal static class HandlerRegistrar
 {
-    // Reflection over our own private generic helpers — the only way to open the constrained
-    // generic methods at runtime once the (TRequest, TResponse) types are known. The bypass is
-    // confined to this file.
-#pragma warning disable S3011
-    private static readonly MethodInfo RegisterInnerAndDecoratorMethod =
-        typeof(HandlerRegistrar)
-            .GetMethod(nameof(RegisterInnerAndDecoratorTyped), BindingFlags.NonPublic | BindingFlags.Static)!;
-
-    private static readonly MethodInfo RegisterCommandAdapterMethod =
-        typeof(HandlerRegistrar)
-            .GetMethod(nameof(RegisterCommandAdapterTyped), BindingFlags.NonPublic | BindingFlags.Static)!;
-
-    private static readonly MethodInfo RegisterCommandUnitAdapterMethod =
-        typeof(HandlerRegistrar)
-            .GetMethod(nameof(RegisterCommandUnitAdapterTyped), BindingFlags.NonPublic | BindingFlags.Static)!;
-
-    private static readonly MethodInfo RegisterQueryAdapterMethod =
-        typeof(HandlerRegistrar)
-            .GetMethod(nameof(RegisterQueryAdapterTyped), BindingFlags.NonPublic | BindingFlags.Static)!;
-#pragma warning restore S3011
-
     public static void RegisterHandlersFromAssemblies(IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         foreach (var assembly in assemblies)
         {
             foreach (var implType in GetCandidateTypes(assembly))
             {
-                RegisterRequestHandlerInterfaces(services, implType);
-                RegisterDomainEventHandlerInterfaces(services, implType);
+                RegisterHandlerInterfaces(services, implType);
             }
         }
     }
@@ -81,100 +59,71 @@ internal static class HandlerRegistrar
     private static bool IsConcreteCandidate(Type type) =>
         type is { IsClass: true, IsAbstract: false, IsGenericTypeDefinition: false };
 
-    private static void RegisterRequestHandlerInterfaces(IServiceCollection services, Type implType)
+    private static void RegisterHandlerInterfaces(IServiceCollection services, Type implType)
     {
         foreach (var iface in implType.GetInterfaces())
         {
-            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IHandler<,>))
+            if (!iface.IsGenericType)
             {
-                RegisterRequestHandlerInterface(services, implType, iface);
+                continue;
+            }
+
+            var definition = iface.GetGenericTypeDefinition();
+            if (definition == typeof(IHandler<,>))
+            {
+                RegisterRequestHandler(services, implType, iface.GenericTypeArguments[0], iface.GenericTypeArguments[1]);
+            }
+            else if (definition == typeof(IDomainEventHandler<>))
+            {
+                services.TryAddEnumerable(new ServiceDescriptor(iface, implType, ServiceLifetime.Scoped));
             }
         }
     }
 
-    private static void RegisterRequestHandlerInterface(IServiceCollection services, Type implType, Type handlerInterface)
+    private static void RegisterRequestHandler(IServiceCollection services, Type handlerType, Type requestType, Type responseType)
     {
-        var requestType = handlerInterface.GenericTypeArguments[0];
-        var responseType = handlerInterface.GenericTypeArguments[1];
+        var innerHandlerService = typeof(IInnerHandler<,>).MakeGenericType(requestType, responseType);
+        var innerHandler = typeof(InnerHandlerAdapter<,,>).MakeGenericType(requestType, responseType, handlerType);
+        ThrowIfAnotherHandlerIsRegistered(services, innerHandlerService, innerHandler);
 
-        // Without DoNotWrapExceptions, a conflicting handler would surface as a TargetInvocationException that hides
-        // the InvalidOperationException describing the conflict.
-        RegisterInnerAndDecoratorMethod
-            .MakeGenericMethod(requestType, responseType, implType)
-            .Invoke(null, BindingFlags.DoNotWrapExceptions, binder: null, [services], culture: null);
+        services.TryAdd(ServiceDescriptor.Scoped(innerHandlerService, innerHandler));
+        TryAddScoped(services, typeof(IHandler<,>), typeof(PipelineHandlerDecorator<,>), requestType, responseType);
 
         if (typeof(ICommand<>).MakeGenericType(responseType).IsAssignableFrom(requestType))
         {
-            RegisterCommandAdapterMethod
-                .MakeGenericMethod(requestType, responseType)
-                .Invoke(null, [services]);
+            TryAddScoped(services, typeof(ICommandHandler<,>), typeof(CommandHandlerAdapter<,>), requestType, responseType);
         }
 
         if (typeof(IQuery<>).MakeGenericType(responseType).IsAssignableFrom(requestType))
         {
-            RegisterQueryAdapterMethod
-                .MakeGenericMethod(requestType, responseType)
-                .Invoke(null, [services]);
+            TryAddScoped(services, typeof(IQueryHandler<,>), typeof(QueryHandlerAdapter<,>), requestType, responseType);
         }
 
         if (responseType == typeof(Result) && typeof(ICommand).IsAssignableFrom(requestType))
         {
-            RegisterCommandUnitAdapterMethod
-                .MakeGenericMethod(requestType)
-                .Invoke(null, [services]);
+            TryAddScoped(services, typeof(ICommandHandler<>), typeof(CommandHandlerUnitAdapter<>), requestType);
         }
     }
 
-    private static void RegisterInnerAndDecoratorTyped<TRequest, TResponse, THandler>(IServiceCollection services)
-        where TRequest : IRequest<TResponse>
-        where THandler : class, IHandler<TRequest, TResponse>
+    private static void TryAddScoped(IServiceCollection services, Type openService, Type openImplementation, params Type[] typeArguments) =>
+        services.TryAdd(ServiceDescriptor.Scoped(openService.MakeGenericType(typeArguments), openImplementation.MakeGenericType(typeArguments)));
+
+    private static void ThrowIfAnotherHandlerIsRegistered(IServiceCollection services, Type innerHandlerService, Type innerHandler)
     {
-        ThrowIfAnotherHandlerIsRegistered<TRequest, TResponse, THandler>(services);
+        var registered = services.FirstOrDefault(descriptor =>
+            descriptor.ServiceType == innerHandlerService && !descriptor.IsKeyedService);
 
-        services.TryAdd(ServiceDescriptor.Scoped<IInnerHandler<TRequest, TResponse>, InnerHandlerAdapter<TRequest, TResponse, THandler>>());
-        services.TryAdd(ServiceDescriptor.Scoped<IHandler<TRequest, TResponse>, PipelineHandlerDecorator<TRequest, TResponse>>());
-    }
-
-    private static void ThrowIfAnotherHandlerIsRegistered<TRequest, TResponse, THandler>(IServiceCollection services)
-        where TRequest : IRequest<TResponse>
-        where THandler : class, IHandler<TRequest, TResponse>
-    {
-        var registered = services.FirstOrDefault(static descriptor =>
-            descriptor.ServiceType == typeof(IInnerHandler<TRequest, TResponse>) && !descriptor.IsKeyedService);
-
-        if (registered is null || registered.ImplementationType == typeof(InnerHandlerAdapter<TRequest, TResponse, THandler>))
+        if (registered is null || registered.ImplementationType == innerHandler)
         {
             return;
         }
 
         var registeredHandler = registered.ImplementationType!.GenericTypeArguments[2];
+        var (request, response, handler) = (innerHandler.GenericTypeArguments[0], innerHandler.GenericTypeArguments[1], innerHandler.GenericTypeArguments[2]);
         throw new InvalidOperationException(
-            $"Both '{registeredHandler}' and '{typeof(THandler)}' handle request '{typeof(TRequest)}' with response " +
-            $"'{typeof(TResponse)}'. A request has exactly one handler, so keeping one and dropping the other would " +
+            $"Both '{registeredHandler}' and '{handler}' handle request '{request}' with response " +
+            $"'{response}'. A request has exactly one handler, so keeping one and dropping the other would " +
             "decide without notice, by scan order, which code runs. Keep one handler for this request and response; " +
             "when one handler derives from the other, make the base class abstract.");
-    }
-
-    private static void RegisterCommandAdapterTyped<TCommand, TResponse>(IServiceCollection services)
-        where TCommand : ICommand<TResponse> => services.TryAdd(ServiceDescriptor.Scoped<ICommandHandler<TCommand, TResponse>>(sp =>
-                                                         new CommandHandlerAdapter<TCommand, TResponse>(sp.GetRequiredService<IHandler<TCommand, TResponse>>())));
-
-    private static void RegisterCommandUnitAdapterTyped<TCommand>(IServiceCollection services)
-        where TCommand : ICommand => services.TryAdd(ServiceDescriptor.Scoped<ICommandHandler<TCommand>>(sp =>
-                                              new CommandHandlerUnitAdapter<TCommand>(sp.GetRequiredService<IHandler<TCommand, Result>>())));
-
-    private static void RegisterQueryAdapterTyped<TQuery, TResponse>(IServiceCollection services)
-        where TQuery : IQuery<TResponse> => services.TryAdd(ServiceDescriptor.Scoped<IQueryHandler<TQuery, TResponse>>(sp =>
-                                                     new QueryHandlerAdapter<TQuery, TResponse>(sp.GetRequiredService<IHandler<TQuery, TResponse>>())));
-
-    private static void RegisterDomainEventHandlerInterfaces(IServiceCollection services, Type implType)
-    {
-        foreach (var iface in implType.GetInterfaces())
-        {
-            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>))
-            {
-                services.TryAddEnumerable(new ServiceDescriptor(iface, implType, ServiceLifetime.Scoped));
-            }
-        }
     }
 }

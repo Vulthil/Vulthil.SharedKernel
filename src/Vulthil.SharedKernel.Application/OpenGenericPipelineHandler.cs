@@ -1,22 +1,25 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Vulthil.SharedKernel.Application;
 
 /// <summary>
-/// Shared validation for open-generic pipeline handler registrations, ensuring a registered type is an open
+/// Builds the scoped registration of an open-generic pipeline handler, after checking that the type is an open
 /// generic type definition that implements the expected open-generic handler interface.
 /// </summary>
 internal static class OpenGenericPipelineHandler
 {
     /// <summary>
-    /// Validates that <paramref name="pipelineHandler"/> is a usable open-generic implementation of
+    /// Returns the scoped <see cref="ServiceDescriptor"/> that registers <paramref name="pipelineHandler"/> as
     /// <paramref name="openHandlerInterface"/>.
     /// </summary>
     /// <param name="pipelineHandler">The candidate pipeline handler type.</param>
     /// <param name="openHandlerInterface">The open-generic handler interface it must implement.</param>
+    /// <returns>The registration of <paramref name="pipelineHandler"/>.</returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when <paramref name="pipelineHandler"/> is not an open generic type definition, or does not implement
     /// <paramref name="openHandlerInterface"/>.
     /// </exception>
-    public static void EnsureValid(Type pipelineHandler, Type openHandlerInterface)
+    public static ServiceDescriptor CreateDescriptor(Type pipelineHandler, Type openHandlerInterface)
     {
         ArgumentNullException.ThrowIfNull(pipelineHandler);
 
@@ -29,6 +32,8 @@ internal static class OpenGenericPipelineHandler
         {
             throw new InvalidOperationException($"{pipelineHandler.Name} must implement {openHandlerInterface.FullName}.");
         }
+
+        return new ServiceDescriptor(openHandlerInterface, pipelineHandler, ServiceLifetime.Scoped);
     }
 
     private static bool ImplementsOpenInterface(Type pipelineHandler, Type openHandlerInterface) =>

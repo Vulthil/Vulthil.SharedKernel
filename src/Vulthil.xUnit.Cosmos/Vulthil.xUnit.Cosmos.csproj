@@ -12,6 +12,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" VersionOverride="$(EfCoreMinimumVersion)" />
 		<PackageReference Include="Testcontainers.CosmosDb" />
+		<PackageReference Include="xunit.v3.extensibility.core" />
 	</ItemGroup>
 
 </Project>

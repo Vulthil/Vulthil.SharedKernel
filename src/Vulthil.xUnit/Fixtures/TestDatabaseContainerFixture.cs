@@ -18,16 +18,11 @@ namespace Vulthil.xUnit.Fixtures;
 /// uniquely named database on the shared server, so parallel test classes never see each other's data.
 /// </summary>
 public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>
-    : DbContainerFixture<TBuilderEntity, TContainerEntity>, ITestDatabaseContainer, ITestContainerScopeProvider
+    : DbContainerFixture<TBuilderEntity, TContainerEntity>, ITestContainerWithConnectionString, ITestContainerScopeProvider
     where TDbContext : DbContext
     where TBuilderEntity : IContainerBuilder<TBuilderEntity, TContainerEntity, IContainerConfiguration>, new()
     where TContainerEntity : IContainer, IDatabaseContainer
 {
-#pragma warning disable IDE0032 // Created lazily because ConnectionString requires a started container.
-    private DatabaseScope? _defaultScope;
-#pragma warning restore IDE0032
-    private DatabaseScope DefaultScope => _defaultScope ??= new DatabaseScope(this, ConnectionString, databaseName: null);
-
     /// <summary>
     /// Initializes the fixture. Container logs go to <paramref name="messageSink"/> when one is given, otherwise to
     /// the current test context's diagnostic messages, so nothing has to be injected.
@@ -81,12 +76,6 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 .Options,
             optionsDescriptor.Lifetime));
     }
-
-    /// <inheritdoc />
-    public ValueTask MigrateDatabase(IServiceProvider serviceProvider) => DefaultScope.MigrateDatabase(serviceProvider);
-
-    /// <inheritdoc />
-    public ValueTask ResetAsync(IServiceProvider serviceProvider) => DefaultScope.ResetAsync(serviceProvider);
 
     /// <summary>
     /// Creates a scope view backed by its own database on this server, named after <paramref name="scopeId"/>. The
@@ -197,7 +186,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     private sealed class DatabaseScope(
         TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity> fixture,
         string connectionString,
-        string? databaseName)
+        string databaseName)
         : TestContainerWithConnectionStringScope<TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>>(fixture, databaseName),
             ITestDatabaseContainer
     {

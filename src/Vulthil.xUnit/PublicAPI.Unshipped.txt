@@ -66,3 +66,5 @@ virtual Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DeleteNamespaceAsy
 virtual Vulthil.xUnit.Fixtures.TestContainerWithConnectionStringScope<TContainer>.ConnectionString.get -> string!
 Vulthil.xUnit.Http.CapturedHttpRequest.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>!
 Vulthil.xUnit.Http.CapturedHttpRequest.Headers.init -> void
+*REMOVED*Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask

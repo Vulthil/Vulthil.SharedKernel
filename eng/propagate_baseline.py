@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Propagates a servicing release's baseline version upward to main.
 
-After a servicing branch (e.g. v1.0) ships a patch, eng/mark_api_shipped.py
+After a servicing branch (e.g. vX.Y) ships a patch, eng/mark_api_shipped.py
 bumps that branch's own PackageValidationBaselineVersion. Main should also
 move to the new version -- each branch validates its packages against the
 newest release it must stay compatible with -- but nothing does that

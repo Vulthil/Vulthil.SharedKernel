@@ -41,7 +41,7 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
 
     internal sealed class TestEventHandler(TextWriter textWriter) : IDomainEventHandler<TestEvent>
     {
-        public Task HandleAsync(TestEvent notification, CancellationToken cancellationToken = default) => textWriter.WriteLineAsync("Success");
+        public Task HandleAsync(TestEvent notification, CancellationToken cancellationToken = default) => textWriter.WriteLineAsync("Success".AsMemory(), cancellationToken);
     }
     internal sealed class TestEventHandlerPipeline : IDomainEventPipelineHandler<TestEvent>
     {

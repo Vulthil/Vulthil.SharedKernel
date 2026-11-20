@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.xUnit;
-#if NET10_0_OR_GREATER
 using Microsoft.OpenApi;
+#if NET11_0_OR_GREATER
+using ContentMediaType = Microsoft.OpenApi.IOpenApiMediaType;
 #else
-using Microsoft.OpenApi.Models;
+using ContentMediaType = Microsoft.OpenApi.OpenApiMediaType;
 #endif
 
 namespace Vulthil.SharedKernel.Api.Tests;
@@ -64,7 +65,7 @@ public sealed class ProblemDetailsOperationTransformerTests : BaseUnitTestCase
     public async Task TransformAsyncMergesExisting500ResponseWithContentPreservingDescriptionAndExistingMediaTypes()
     {
         // Arrange
-        var existingContent = new Dictionary<string, OpenApiMediaType>(StringComparer.Ordinal)
+        var existingContent = new Dictionary<string, ContentMediaType>(StringComparer.Ordinal)
         {
             ["application/json"] = new OpenApiMediaType()
         };
@@ -87,7 +88,32 @@ public sealed class ProblemDetailsOperationTransformerTests : BaseUnitTestCase
         Assert.NotNull(mediaType.Schema);
     }
 
-#if NET10_0_OR_GREATER
+#if NET11_0_OR_GREATER
+    [Fact]
+    public async Task TransformAsyncKeepsExistingProblemJsonMediaTypeReference()
+    {
+        // Arrange
+        var reference = new OpenApiMediaTypeReference("ProblemJson", null, null);
+        var operation = new OpenApiOperation
+        {
+            Responses = new OpenApiResponses
+            {
+                ["500"] = new OpenApiResponse
+                {
+                    Description = "Custom description",
+                    Content = new Dictionary<string, ContentMediaType>(StringComparer.Ordinal) { [ProblemJsonMediaType] = reference },
+                }
+            }
+        };
+
+        // Act
+        await Target.TransformAsync(operation, CreateContext(), CancellationToken);
+
+        // Assert
+        Assert.Same(reference, operation.Responses["500"].Content![ProblemJsonMediaType]);
+    }
+#endif
+
     [Fact]
     public async Task TransformAsyncAttachesObjectSchemaWithProblemDetailsProperties()
     {
@@ -103,23 +129,6 @@ public sealed class ProblemDetailsOperationTransformerTests : BaseUnitTestCase
         Assert.Contains("detail", schema.Properties!.Keys);
         Assert.Contains("status", schema.Properties.Keys);
     }
-#else
-    [Fact]
-    public async Task TransformAsyncAttachesObjectSchemaWithProblemDetailsProperties()
-    {
-        // Arrange
-        var operation = new OpenApiOperation();
-
-        // Act
-        await Target.TransformAsync(operation, CreateContext(), CancellationToken);
-
-        // Assert
-        var schema = operation.Responses!["500"].Content![ProblemJsonMediaType].Schema;
-        Assert.Equal("object", schema.Type);
-        Assert.Contains("detail", schema.Properties.Keys);
-        Assert.Contains("status", schema.Properties.Keys);
-    }
-#endif
 
     [Fact]
     public async Task TransformAsyncThrowsOnNullOperation()

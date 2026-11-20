@@ -9,15 +9,17 @@ namespace Vulthil.Messaging.Inbox.Relational;
 public static class RelationalInboxModelBuilderExtensions
 {
     /// <summary>
-    /// Applies the relational <see cref="InboxMessage"/> entity configuration, mapping the idempotency key as the
-    /// primary key (which gives the uniqueness guarantee the idempotency store relies on). Call this from the
-    /// application <see cref="DbContext"/>'s <c>OnModelCreating</c>.
+    /// Adds the <see cref="InboxMessage"/> entity to the model, so a context that exposes no set of it still maps it.
+    /// The entity's annotations map the idempotency key as the bounded primary key (which gives the uniqueness
+    /// guarantee the idempotency store relies on). Call this from the application <see cref="DbContext"/>'s
+    /// <c>OnModelCreating</c>.
     /// </summary>
     /// <param name="modelBuilder">The model builder to configure.</param>
     /// <returns>The same <see cref="ModelBuilder"/> instance, for chaining.</returns>
     public static ModelBuilder ApplyRelationalInbox(this ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
-        return modelBuilder.ApplyConfiguration(new InboxMessageEntityConfiguration());
+        modelBuilder.Entity<InboxMessage>();
+        return modelBuilder;
     }
 }

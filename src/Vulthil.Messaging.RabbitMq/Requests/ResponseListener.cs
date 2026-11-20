@@ -42,11 +42,6 @@ internal sealed class ResponseListener : IAsyncDisposable
     /// <exception cref="ObjectDisposedException">The listener is disposed and has no reply queue.</exception>
     public async ValueTask<string> GetReplyToQueueNameAsync(CancellationToken cancellationToken = default)
     {
-        if (_channel is not null)
-        {
-            return _replyToQueueName;
-        }
-
         await EnsureStartedAsync(cancellationToken).ConfigureAwait(false);
         return _replyToQueueName;
     }

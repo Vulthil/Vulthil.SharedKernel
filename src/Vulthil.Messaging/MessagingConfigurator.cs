@@ -33,8 +33,6 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         return this;
     }
 
-    internal static string ConstructQueueSectionName(string queueName) => $"{DefaultSectionName}:Queues:{queueName}";
-
     public IMessagingConfigurator ConfigureQueue(string queueName, Action<IQueueConfigurator> queueConfigurationAction)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName);
@@ -42,7 +40,7 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         if (!_messagingOptions.QueueDefinitions.TryGetValue(queueName, out var queueDefinition))
         {
             queueDefinition = new QueueDefinition(queueName);
-            Configuration.GetSection(ConstructQueueSectionName(queueName)).Bind(queueDefinition);
+            Configuration.GetSection($"{DefaultSectionName}:Queues:{queueName}").Bind(queueDefinition);
             _messagingOptions.QueueDefinitions[queueName] = queueDefinition;
         }
 
@@ -53,54 +51,24 @@ internal sealed class MessagingConfigurator : IMessagingConfigurator
         return this;
     }
 
-    internal static string ConstructMessageSectionName(string fullName) => $"{DefaultSectionName}:Messages:{fullName}";
-
     public IMessagingConfigurator ConfigureMessage<TMessage>(Action<MessageConfiguration<TMessage>> configureMessageAction)
         where TMessage : notnull
     {
         var fullName = typeof(TMessage).FullName
             ?? throw new InvalidOperationException($"Cannot derive a message configuration key for type '{typeof(TMessage)}'.");
 
-        MessageConfiguration<TMessage> typed;
-
-        if (_messagingOptions.MessageConfigurations.TryGetValue(fullName, out var existing))
-        {
-            if (existing is MessageConfiguration<TMessage> alreadyTyped)
-            {
-                typed = alreadyTyped;
-            }
-            else
-            {
-                typed = new MessageConfiguration<TMessage>();
-                CopyMessageConfiguration(existing, typed);
-                _messagingOptions.MessageConfigurations[fullName] = typed;
-            }
-        }
-        else
+        // The configuration loaded from appsettings at startup is untyped, so the first call replaces it with a typed
+        // one bound from the same section.
+        if (_messagingOptions.MessageConfigurations.GetValueOrDefault(fullName) is not MessageConfiguration<TMessage> typed)
         {
             typed = new MessageConfiguration<TMessage>();
-            Configuration.GetSection(ConstructMessageSectionName(fullName)).Bind(typed);
+            Configuration.GetSection($"{DefaultSectionName}:Messages:{fullName}").Bind(typed);
             _messagingOptions.MessageConfigurations[fullName] = typed;
         }
 
         configureMessageAction(typed);
         _messagingOptions.RegisterMessageType(typeof(TMessage), typed);
         return this;
-    }
-
-    private static void CopyMessageConfiguration(MessageConfiguration src, MessageConfiguration dst)
-    {
-        dst.Exchange = src.Exchange;
-        dst.Urn = src.Urn;
-        dst.ExchangeType = src.ExchangeType;
-        dst.Durable = src.Durable;
-        dst.AutoDelete = src.AutoDelete;
-        foreach (var kvp in src.Arguments)
-        {
-            dst.Arguments[kvp.Key] = kvp.Value;
-        }
-        dst.RoutingKeyFormatter = src.RoutingKeyFormatter;
-        dst.CorrelationIdFormatter = src.CorrelationIdFormatter;
     }
 
     public IMessagingConfigurator AddConsumeFilter<TFilter>() where TFilter : class

@@ -6,6 +6,23 @@ description: >-
   included here -- each workflow checks out with its own options
   (fetch-depth, persist-credentials) before calling this action.
 
+inputs:
+  nuget-cache-fallback:
+    description: >-
+      Whether a NuGet cache miss restores the newest cache of another package
+      set. A run that saves the cache passes 'false': the saved cache then
+      holds only the packages of its own package set, instead of every package
+      of every earlier set.
+    default: 'true'
+
+outputs:
+  nuget-cache-hit:
+    description: Whether the NuGet package cache was restored from an exact key match.
+    value: ${{ steps.nuget-cache.outputs.cache-hit }}
+  nuget-cache-key:
+    description: The NuGet package cache key for this commit's package set, for a later actions/cache/save step.
+    value: ${{ steps.nuget-cache.outputs.cache-primary-key }}
+
 runs:
   using: composite
   steps:
@@ -16,11 +33,16 @@ runs:
         global-json-file: global.json
         dotnet-version: 10.0.x
 
-    - uses: actions/cache@v6
+    # Restore only: a cache saved from a pull request is scoped to that pull request's ref and evicts the
+    # repository-wide caches every run restores from, so only ci.yml's main-branch runs save it, after the build.
+    # The key covers every input that adds packages to ~/.nuget/packages: the projects, the central package
+    # versions, and the local tools restored below.
+    - uses: actions/cache/restore@v6
+      id: nuget-cache
       with:
         path: ~/.nuget/packages
-        key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
-        restore-keys: nuget-
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '.config/dotnet-tools.json') }}
+        restore-keys: ${{ inputs.nuget-cache-fallback == 'true' && format('nuget-{0}-', runner.os) || '' }}
 
     # The AppHost projects resolve DCP and the dashboard from the Aspire CLI bundle
     # (AspireUseCliBundle) in ~/.aspire. Their AspireCliInvocationMode=DnxPinned pins the CLI

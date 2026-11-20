@@ -17,9 +17,9 @@ internal sealed class FilteringSendEndpointProvider(IServiceProvider serviceProv
 }
 
 /// <summary>
-/// Wraps a transport <see cref="ITransportSendEndpoint"/>: builds the publish context, assigns a stable message id,
-/// runs the registered <see cref="IPublishFilter"/> pipeline (as <see cref="PublishKind.Send"/>), and hands the message
-/// and the resolved context to the inner endpoint.
+/// Wraps a transport <see cref="ITransportSendEndpoint"/>: runs the message through the registered
+/// <see cref="IPublishFilter"/> pipeline (as <see cref="PublishKind.Send"/>, see <see cref="PublishPipelineFactory"/>)
+/// and hands the message and the resolved context to the inner endpoint.
 /// </summary>
 internal sealed class FilteringSendEndpoint(IServiceProvider serviceProvider, ITransportSendEndpoint inner) : ISendEndpoint
 {
@@ -29,39 +29,17 @@ internal sealed class FilteringSendEndpoint(IServiceProvider serviceProvider, IT
         where TMessage : notnull
         => SendAsync(message, null, cancellationToken);
 
-    public async Task SendAsync<TMessage>(
+    public Task SendAsync<TMessage>(
         TMessage message,
         Func<IPublishContext, ValueTask>? configureContext = null,
         CancellationToken cancellationToken = default)
         where TMessage : notnull
-    {
-        ArgumentNullException.ThrowIfNull(message);
-
-        var context = new PublishContext();
-        if (configureContext is not null)
-        {
-            await configureContext(context).ConfigureAwait(false);
-        }
-
-        if (string.IsNullOrEmpty(context.MessageId))
-        {
-            context.SetMessageId(Guid.CreateVersion7().ToString());
-        }
-
-        var filterContext = new PublishFilterContext
-        {
-            Message = message,
-            MessageType = message.GetType(),
-            Context = context,
-            Kind = PublishKind.Send,
-            DestinationAddress = inner.Address,
-            CancellationToken = cancellationToken,
-        };
-
-        var pipeline = PublishPipelineFactory.Build(
+        => PublishPipelineFactory.RunAsync(
             serviceProvider,
-            _ => inner.SendAsync(message, context, cancellationToken));
-
-        await pipeline(filterContext).ConfigureAwait(false);
-    }
+            message,
+            PublishKind.Send,
+            inner.Address,
+            configureContext,
+            context => inner.SendAsync(message, context, cancellationToken),
+            cancellationToken);
 }

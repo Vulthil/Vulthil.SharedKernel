@@ -1,34 +1,61 @@
 using Microsoft.Extensions.DependencyInjection;
+using Vulthil.Messaging.Abstractions.Publishers;
 
 namespace Vulthil.Messaging.Transport;
 
 /// <summary>
-/// Composes the registered <see cref="IPublishFilter"/> instances around a terminal delegate (the transport send).
-/// The filtering publisher/send-endpoint call this in their publish path to wrap the transport with the configured
-/// middleware. Internal on purpose: consumers extend the publish path by registering an <see cref="IPublishFilter"/>,
-/// and a transport never composes this pipeline itself — the filtering wrappers registered by
-/// <c>AddPublishFiltering</c> do.
+/// Runs a publish or a send through the registered <see cref="IPublishFilter"/> pipeline: builds the publish context,
+/// assigns a stable message id, and composes the filters around the transport call. The filtering publisher and send
+/// endpoint call this in their publish path. Internal on purpose: consumers extend the publish path by registering an
+/// <see cref="IPublishFilter"/>, and a transport never composes this pipeline itself — the filtering wrappers
+/// registered by <c>AddPublishFiltering</c> do.
 /// </summary>
 internal static class PublishPipelineFactory
 {
+    public static async Task RunAsync<TMessage>(
+        IServiceProvider serviceProvider,
+        TMessage message,
+        PublishKind kind,
+        Uri? destinationAddress,
+        Func<IPublishContext, ValueTask>? configureContext,
+        Func<PublishContext, Task> transport,
+        CancellationToken cancellationToken)
+        where TMessage : notnull
+    {
+        ArgumentNullException.ThrowIfNull(message);
+
+        var context = new PublishContext();
+        if (configureContext is not null)
+        {
+            await configureContext(context).ConfigureAwait(false);
+        }
+
+        if (string.IsNullOrEmpty(context.MessageId))
+        {
+            context.SetMessageId(Guid.CreateVersion7().ToString());
+        }
+
+        var filterContext = new PublishFilterContext
+        {
+            Message = message,
+            MessageType = message.GetType(),
+            Context = context,
+            Kind = kind,
+            DestinationAddress = destinationAddress,
+            CancellationToken = cancellationToken,
+        };
+
+        var pipeline = Build(serviceProvider, _ => transport(context));
+        await pipeline(filterContext).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// Composes the registered <see cref="IPublishFilter"/> instances around <paramref name="terminal"/>. The first
     /// filter resolved from DI becomes the outermost; the terminal delegate runs innermost.
     /// </summary>
-    /// <param name="serviceProvider">The scope's service provider used to resolve the filters.</param>
-    /// <param name="terminal">The innermost delegate, typically the transport publish/send.</param>
-    /// <returns>A delegate that runs all filters in order and then the terminal.</returns>
-    public static PublishFilterDelegate Build(IServiceProvider serviceProvider, PublishFilterDelegate terminal)
+    private static PublishFilterDelegate Build(IServiceProvider serviceProvider, PublishFilterDelegate terminal)
     {
-        ArgumentNullException.ThrowIfNull(serviceProvider);
-        ArgumentNullException.ThrowIfNull(terminal);
-
         var filters = serviceProvider.GetServices<IPublishFilter>().ToArray();
-        if (filters.Length == 0)
-        {
-            return terminal;
-        }
-
         var pipeline = terminal;
         for (var i = filters.Length - 1; i >= 0; i--)
         {

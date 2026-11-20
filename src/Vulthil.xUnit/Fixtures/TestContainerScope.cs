@@ -142,19 +142,26 @@ public abstract class TestContainerWithConnectionStringScope<TContainer>
 /// Pass-through scope view over a shared container that offers no per-scope isolation: the view shares the container's
 /// namespace, and a reset is forwarded to the container. State inside the container is therefore shared by every test
 /// class consuming it concurrently, so a stateful container should return a view of its own from
-/// <see cref="ITestContainerScopeProvider.CreateScope"/> instead.
+/// <see cref="ITestContainerScopeProvider.CreateScope"/> instead. <see cref="Create"/> picks the pass-through view for
+/// a container: this one, or <see cref="SharedContainerWithConnectionStringScope"/> when the container has a
+/// connection string to forward.
 /// </summary>
 /// <param name="container">The shared container to delegate to.</param>
 internal sealed class SharedContainerScope(ITestContainer container)
     : TestContainerScope<ITestContainer>(container, namespaceName: null), IResettableResource
 {
+    public static ITestContainer Create(ITestContainer container) => container is ITestContainerWithConnectionString withConnectionString
+        ? new SharedContainerWithConnectionStringScope(withConnectionString)
+        : new SharedContainerScope(container);
+
     /// <summary>
     /// Forwards the reset to the shared container when it is resettable; otherwise does nothing. The reset acts on
     /// shared state and therefore also affects other test classes using the container.
     /// </summary>
     /// <param name="serviceProvider">The application's root service provider, forwarded to the container.</param>
     /// <returns>A task representing the asynchronous reset work.</returns>
-    public ValueTask ResetAsync(IServiceProvider serviceProvider) => SharedContainerReset.ResetAsync(Container, serviceProvider);
+    public ValueTask ResetAsync(IServiceProvider serviceProvider)
+        => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
 }
 
 /// <summary>
@@ -171,14 +178,6 @@ internal sealed class SharedContainerWithConnectionStringScope(ITestContainerWit
     /// </summary>
     /// <param name="serviceProvider">The application's root service provider, forwarded to the container.</param>
     /// <returns>A task representing the asynchronous reset work.</returns>
-    public ValueTask ResetAsync(IServiceProvider serviceProvider) => SharedContainerReset.ResetAsync(Container, serviceProvider);
-}
-
-/// <summary>
-/// The reset rule of the pass-through views: the shared container is reset when it is resettable.
-/// </summary>
-internal static class SharedContainerReset
-{
-    public static ValueTask ResetAsync(ITestContainer container, IServiceProvider serviceProvider) =>
-        container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
+    public ValueTask ResetAsync(IServiceProvider serviceProvider)
+        => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
 }

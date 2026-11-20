@@ -1,8 +1,6 @@
-using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
-using Vulthil.Messaging.RabbitMq.Telemetry;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Sending;
@@ -38,19 +36,10 @@ internal sealed class RabbitMqSendEndpoint : ITransportSendEndpoint
         var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(message.GetType());
         var send = RabbitMqOutgoingMessages.Send(message, context, messageConfiguration, _queueName, _messageConfigurationProvider.JsonSerializerOptions);
 
-        using var activity = send.StartActivity();
-        MessagingLog.Sending(_logger, send.Ids.UrnString, _queueName, send.Ids.MessageId, send.Ids.CorrelationId);
-
-        try
+        await send.RunInActivityAsync(() =>
         {
-            await _publisher.InternalSendAsync(send.Message, cancellationToken).ConfigureAwait(false);
-            activity?.SetStatus(ActivityStatusCode.Ok);
-        }
-        catch (Exception ex)
-        {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.AddException(ex);
-            throw;
-        }
+            MessagingLog.Sending(_logger, send.Ids.UrnString, _queueName, send.Ids.MessageId, send.Ids.CorrelationId);
+            return _publisher.InternalSendAsync(send.Message, cancellationToken);
+        }).ConfigureAwait(false);
     }
 }

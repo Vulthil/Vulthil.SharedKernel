@@ -10,13 +10,13 @@ namespace Vulthil.SharedKernel.Application;
 /// </summary>
 public class FluentValidationOptions
 {
-    private readonly HashSet<Assembly> _fluentValidationAssemblies = [];
+    private readonly List<Assembly> _fluentValidationAssemblies = [];
 
     /// <summary>
     /// Gets the assemblies registered for FluentValidation validator scanning.
     /// Validators discovered in these assemblies are registered automatically.
     /// </summary>
-    public IReadOnlyList<Assembly> FluentValidationAssemblies { get; private set; } = [];
+    public IReadOnlyList<Assembly> FluentValidationAssemblies => _fluentValidationAssemblies.AsReadOnly();
 
     /// <summary>
     /// Registers assemblies to scan for FluentValidation validators.
@@ -25,12 +25,7 @@ public class FluentValidationOptions
     /// <returns>The current options instance for chaining.</returns>
     public FluentValidationOptions RegisterFluentValidationAssemblies(params Assembly[] assemblies)
     {
-        foreach (var item in assemblies)
-        {
-            _fluentValidationAssemblies.Add(item);
-        }
-
-        FluentValidationAssemblies = _fluentValidationAssemblies.ToList().AsReadOnly();
+        _fluentValidationAssemblies.AddRange(assemblies.Except(_fluentValidationAssemblies));
         return this;
     }
 }
@@ -39,13 +34,13 @@ public class FluentValidationOptions
 /// </summary>
 public class HandlerOptions
 {
-    private readonly HashSet<Assembly> _handlerAssemblies = [];
+    private readonly List<Assembly> _handlerAssemblies = [];
     private readonly List<ServiceDescriptor> _pipelineHandlers = [];
     /// <summary>
     /// Gets the assemblies registered for handler scanning.
     /// Request handlers and domain event handlers in these assemblies are registered automatically.
     /// </summary>
-    public IReadOnlyList<Assembly> HandlerAssemblies { get; private set; } = [];
+    public IReadOnlyList<Assembly> HandlerAssemblies => _handlerAssemblies.AsReadOnly();
     /// <summary>
     /// Gets the pipeline handler service descriptors registered via <see cref="AddOpenPipelineHandler"/> or <see cref="AddOpenDomainEventPipelineHandler"/>.
     /// </summary>
@@ -57,12 +52,7 @@ public class HandlerOptions
     /// <returns>The current options instance for chaining.</returns>
     public HandlerOptions RegisterHandlerAssemblies(params Assembly[] assemblies)
     {
-        foreach (var assembly in assemblies)
-        {
-            _handlerAssemblies.Add(assembly);
-        }
-
-        HandlerAssemblies = _handlerAssemblies.ToList().AsReadOnly();
+        _handlerAssemblies.AddRange(assemblies.Except(_handlerAssemblies));
         return this;
     }
 
@@ -74,10 +64,7 @@ public class HandlerOptions
     /// <exception cref="InvalidOperationException">Thrown when <paramref name="pipelineHandler"/> is not a valid open-generic type.</exception>
     public HandlerOptions AddOpenDomainEventPipelineHandler(Type pipelineHandler)
     {
-        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IDomainEventPipelineHandler<>));
-
-        _pipelineHandlers.Add(new ServiceDescriptor(typeof(IDomainEventPipelineHandler<>), pipelineHandler, ServiceLifetime.Scoped));
-
+        _pipelineHandlers.Add(OpenGenericPipelineHandler.CreateDescriptor(pipelineHandler, typeof(IDomainEventPipelineHandler<>)));
         return this;
     }
 
@@ -90,10 +77,7 @@ public class HandlerOptions
     /// <exception cref="InvalidOperationException">Thrown when <paramref name="pipelineHandler"/> is not a valid open-generic type.</exception>
     public HandlerOptions AddOpenPipelineHandler(Type pipelineHandler)
     {
-        OpenGenericPipelineHandler.EnsureValid(pipelineHandler, typeof(IPipelineHandler<,>));
-
-        _pipelineHandlers.Add(new ServiceDescriptor(typeof(IPipelineHandler<,>), pipelineHandler, ServiceLifetime.Scoped));
-
+        _pipelineHandlers.Add(OpenGenericPipelineHandler.CreateDescriptor(pipelineHandler, typeof(IPipelineHandler<,>)));
         return this;
     }
 

@@ -105,33 +105,33 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
                     cancellationToken).ConfigureAwait(false);
         }
 
-        if (failures.Count > 0)
+        if (failures.Count == 0)
         {
-            var failedIds = failures.Select(f => f.Id).ToList();
-
-            var deadLettered = await OutboxMessages
-                .Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries)
-                .Select(x => new { x.Id, x.RetryCount, x.Error })
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            if (deadLettered.Count > 0)
-            {
-                await OutboxMessages
-                    .Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries)
-                    .ExecuteUpdateAsync(
-                        setter => setter.SetProperty(o => o.FailedOnUtc, processedOnUtc),
-                        cancellationToken).ConfigureAwait(false);
-
-                foreach (var item in deadLettered)
-                {
-                    Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", item.Id, item.RetryCount, item.Error);
-                }
-            }
-
-            return deadLettered.ConvertAll(item => item.Id);
+            return [];
         }
 
-        return [];
+        var failedIds = failures.Select(f => f.Id).ToList();
+        var reachedMaxRetries = OutboxMessages.Where(x => failedIds.Contains(x.Id) && x.RetryCount >= maxRetries);
+        var deadLettered = await reachedMaxRetries
+            .Select(x => new { x.Id, x.RetryCount, x.Error })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        if (deadLettered.Count == 0)
+        {
+            return [];
+        }
+
+        await reachedMaxRetries
+            .ExecuteUpdateAsync(
+                setter => setter.SetProperty(o => o.FailedOnUtc, processedOnUtc),
+                cancellationToken).ConfigureAwait(false);
+
+        foreach (var item in deadLettered)
+        {
+            Logger.LogError("Outbox message {OutboxMessageId} dead-lettered after {RetryCount} failed attempts: {OutboxError}", item.Id, item.RetryCount, item.Error);
+        }
+
+        return deadLettered.ConvertAll(item => item.Id);
     }
 
     /// <inheritdoc />

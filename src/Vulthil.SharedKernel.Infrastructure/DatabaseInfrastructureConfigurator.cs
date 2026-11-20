@@ -16,24 +16,23 @@ internal sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabase
     where TDbContext : DbContext
 {
     private readonly List<Action<IDatabaseInfrastructureConfigurator<TDbContext>>> _configuredCallbacks = [];
-    private bool _outboxStoreSelected;
+    private Type? _selectedOutboxStoreType;
+    private Type? _defaultOutboxStoreType;
 
     /// <inheritdoc />
     public bool OutboxProcessingEnabled { get; private set; }
 
     /// <summary>
-    /// Gets the outbox processing options configuration action, or <see langword="null"/> if outbox processing was
-    /// not enabled.
+    /// Gets the outbox processing options configuration action, or <see langword="null"/> when none was given.
     /// </summary>
     public Action<OutboxProcessingOptions>? OutboxOptionsAction { get; private set; }
 
     /// <summary>
-    /// Gets the outbox store type used by outbox processing. Defaults to the open generic
-    /// <see cref="EntityFrameworkOutboxStore{TContext}"/> (closed over the context type at registration); a provider
-    /// proposes a closed store type via <see cref="UseDefaultOutboxStore{TStore}"/> and the application overrides
-    /// both via <see cref="UseOutboxStore{TStore}"/>.
+    /// Gets the outbox store type used by outbox processing: the application's choice from
+    /// <see cref="UseOutboxStore{TStore}"/>, else a provider's from <see cref="UseDefaultOutboxStore{TStore}"/>, else
+    /// <see langword="null"/> for <see cref="EntityFrameworkOutboxStore{TContext}"/>.
     /// </summary>
-    public Type OutboxStoreType { get; private set; } = typeof(EntityFrameworkOutboxStore<>);
+    public Type? OutboxStoreType => _selectedOutboxStoreType ?? _defaultOutboxStoreType;
 
     /// <inheritdoc />
     public IHostApplicationBuilder HostApplicationBuilder { get; }
@@ -68,7 +67,7 @@ internal sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabase
     public IDatabaseInfrastructureConfigurator<TDbContext> EnableOutboxProcessing(Action<OutboxProcessingOptions>? optionsAction = null)
     {
         OutboxProcessingEnabled = true;
-        OutboxOptionsAction = optionsAction ?? (static _ => { });
+        OutboxOptionsAction = optionsAction;
 
         return this;
     }
@@ -77,9 +76,7 @@ internal sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabase
     public IDatabaseInfrastructureConfigurator<TDbContext> UseOutboxStore<TStore>()
         where TStore : class, IOutboxStore
     {
-        OutboxStoreType = typeof(TStore);
-        _outboxStoreSelected = true;
-
+        _selectedOutboxStoreType = typeof(TStore);
         return this;
     }
 
@@ -87,11 +84,7 @@ internal sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabase
     public IDatabaseInfrastructureConfigurator<TDbContext> UseDefaultOutboxStore<TStore>()
         where TStore : class, IOutboxStore
     {
-        if (!_outboxStoreSelected)
-        {
-            OutboxStoreType = typeof(TStore);
-        }
-
+        _defaultOutboxStoreType = typeof(TStore);
         return this;
     }
 
@@ -104,25 +97,14 @@ internal sealed class DatabaseInfrastructureConfigurator<TDbContext> : IDatabase
     }
 
     /// <summary>
-    /// Finalises the configuration: runs every <see cref="OnConfigured"/> callback in registration order
-    /// and, when outbox processing is enabled, registers an <see cref="IDbContextOptionsConfiguration{TContext}"/>
-    /// that attaches the outbox <see cref="DomainEventsToOutboxMessageSaveChangesInterceptor"/> to the
-    /// DbContext options. The configuration uses <see cref="DbContextOptionsLifetime"/> so it matches
-    /// the lifetime EF Core has chosen for the options themselves.
+    /// Finalises the configuration: runs every <see cref="OnConfigured"/> callback in registration order, so the
+    /// provider has registered the DbContext before the lifetimes are read.
     /// </summary>
     public void FinalizeConfiguration()
     {
         foreach (var callback in _configuredCallbacks)
         {
             callback(this);
-        }
-
-        if (OutboxProcessingEnabled)
-        {
-            HostApplicationBuilder.Services.Add(new ServiceDescriptor(
-                typeof(IDbContextOptionsConfiguration<TDbContext>),
-                typeof(OutboxInterceptorDbContextOptionsConfiguration<TDbContext>),
-                DbContextOptionsLifetime));
         }
     }
 }

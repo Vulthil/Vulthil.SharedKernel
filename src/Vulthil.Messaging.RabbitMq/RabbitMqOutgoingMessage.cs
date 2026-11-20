@@ -57,6 +57,22 @@ internal sealed record RabbitMqProducedMessage(
 
         return activity;
     }
+
+    public async Task RunInActivityAsync(Func<Task> produce)
+    {
+        using var activity = StartActivity();
+        try
+        {
+            await produce().ConfigureAwait(false);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            throw;
+        }
+    }
 }
 
 /// <summary>The identifiers resolved for one message a producer creates.</summary>

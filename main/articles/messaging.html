@@ -827,8 +827,8 @@ shape is owned by ops:</p>
 <p>The RabbitMQ transport emits an <code>ActivitySource</code> named <code>&quot;Vulthil.Messaging.RabbitMq&quot;</code>
 with <code>Producer</code>/<code>Consumer</code> spans for publish, request, and receive operations. Tag
 conventions follow the OpenTelemetry messaging semantic conventions, with a few
-Vulthil-specific tags (<code>vulthil.messaging.message_type</code>, <code>.consumer_type</code>,
-<code>.retry_count</code>, <code>.queue</code>).</p>
+Vulthil-specific tags (<code>vulthil.messaging.message_type</code>, <code>.retry_count</code>,
+<code>.queue</code>).</p>
 <p><code>UseRabbitMq</code> registers the source with the application's <code>TracerProvider</code>
 automatically, gated on the Aspire client's <code>DisableTracing</code> setting — so disabling
 RabbitMQ tracing in Aspire suppresses the Vulthil spans too. If you bring your own

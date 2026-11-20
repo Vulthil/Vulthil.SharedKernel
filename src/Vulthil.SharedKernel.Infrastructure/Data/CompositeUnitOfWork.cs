@@ -47,8 +47,8 @@ internal sealed class CompositeUnitOfWork : IUnitOfWork
     }
 
     /// <inheritdoc />
-    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) =>
-        await BeginTransactionsAsync(_commitOrder, cancellationToken).ConfigureAwait(false);
+    public Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) =>
+        BeginTransactionsAsync(_commitOrder, cancellationToken);
 
     /// <inheritdoc />
     public Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) =>
@@ -70,31 +70,12 @@ internal sealed class CompositeUnitOfWork : IUnitOfWork
 
         var joinsOpenTransactions = unitContexts.Count < _commitOrder.Count;
         var hadUnsavedChanges = _contexts.Any(static context => context.ChangeTracker.HasChanges());
-        var isRetry = false;
-        var strategy = _contexts.First(unitContexts.Contains).Database.CreateExecutionStrategy();
-        return await strategy.ExecuteAsync(
-            async token =>
-            {
-                if (isRetry)
-                {
-                    PrepareRetry(joinsOpenTransactions, hadUnsavedChanges);
-                }
-
-                isRetry = true;
-                var transaction = await BeginTransactionsAsync(unitContexts, token).ConfigureAwait(false);
-                await using var _ = transaction.ConfigureAwait(false);
-                var result = await operation(token).ConfigureAwait(false);
-                if (shouldCommit(result))
-                {
-                    await transaction.CommitAsync(token).ConfigureAwait(false);
-                }
-                else
-                {
-                    await transaction.RollbackAsync(token).ConfigureAwait(false);
-                }
-
-                return result;
-            },
+        return await UnitOfWorkRetry.ExecuteAsync(
+            _contexts.First(unitContexts.Contains).Database.CreateExecutionStrategy(),
+            token => BeginTransactionsAsync(unitContexts, token),
+            () => PrepareRetry(joinsOpenTransactions, hadUnsavedChanges),
+            operation,
+            shouldCommit,
             cancellationToken).ConfigureAwait(false);
     }
 
@@ -113,7 +94,7 @@ internal sealed class CompositeUnitOfWork : IUnitOfWork
         UnitOfWorkRetry.Prepare(_contexts, hadUnsavedChanges);
     }
 
-    private static async Task<CompositeTransaction> BeginTransactionsAsync(IEnumerable<DbContext> contexts, CancellationToken cancellationToken)
+    private static async Task<IDbTransaction> BeginTransactionsAsync(IEnumerable<DbContext> contexts, CancellationToken cancellationToken)
     {
         var transaction = new CompositeTransaction();
         try

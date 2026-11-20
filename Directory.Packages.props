@@ -4,35 +4,27 @@
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- The oldest supported TFM's servicing-train version. The net9.0 FrameworkVersion leg and the
-         EF consumer floor below both derive from it, so the hand-managed lockstep train bump moves
-         the EF floor automatically (the .NET train ships ASP.NET Core and EF patches in lockstep).
-         When net9.0 is dropped, repoint the floor at the then-oldest train and revisit the floored
-         set. -->
-    <Net9FrameworkVersion>9.0.23</Net9FrameworkVersion>
-    <FrameworkVersion>10.0.15</FrameworkVersion>
-    <FrameworkVersion Condition="'$(TargetFramework)' == 'net9.0'">$(Net9FrameworkVersion)</FrameworkVersion>
+    <!-- The .NET servicing train. ASP.NET Core and the in-box Microsoft.Extensions.* packages ship in lockstep with
+         their runtime, so each TFM leg takes the train of its own runtime. Microsoft.AspNetCore.Mvc.Testing and
+         Microsoft.AspNetCore.OpenApi floor the in-box packages at their own TFM's train and the Aspire client
+         integrations floor them at a 10.0.x patch, so a lower direct reference is an NU1605 downgrade error. The train
+         is hand-managed (see .github/dependabot.yml). -->
+    <Net10FrameworkVersion>10.0.15</Net10FrameworkVersion>
+    <FrameworkVersion>$(Net10FrameworkVersion)</FrameworkVersion>
+    <FrameworkVersion Condition="'$(TargetFramework)' == 'net11.0'">11.0.0</FrameworkVersion>
+    <!-- EF Core is on the 10.x line on every TFM; EF Core 10 runs on .NET 11. The Npgsql provider has no EF Core 11
+         release (its 11.0.0 release candidate requires exactly the matching EF Core release candidate), and a provider
+         package, a test project, and EFCore.NamingConventions each need one EF Core major per TFM. -->
+    <EfCoreVersion>$(Net10FrameworkVersion)</EfCoreVersion>
+    <!-- Consumer opt-up EF floor for the non-provider src packages, applied via VersionOverride on their EF Core
+         PackageReference items: they compile against the EF line of the oldest TFM and their published dependency
+         groups floor there, so consumers on a newer TFM can keep that EF line or opt up to a newer EF themselves. The
+         floor must equal the compile version AND the compiled assembly must run on every EF version the floor admits.
+         Not every non-provider package qualifies: Vulthil.SharedKernel.Infrastructure.Relational tracks
+         $(EfCoreVersion) because its compiled ExecuteUpdate setter calls are EF-major-coupled. Provider packages also
+         track $(EfCoreVersion) because their EF Core providers are EF-major-locked. -->
+    <EfCoreMinimumVersion>$(Net10FrameworkVersion)</EfCoreMinimumVersion>
     <AspireVersion>13.6.5</AspireVersion>
-    <!-- Test-only. Each EFCore.NamingConventions major requires the matching EF Core major (10.x needs
-         [10.0.1, 11.0.0)), so each TFM leg takes the line of its own EF train. It is hand-managed with the
-         train (see .github/dependabot.yml). -->
-    <NamingConventionsVersion>10.0.1</NamingConventionsVersion>
-    <NamingConventionsVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.0</NamingConventionsVersion>
-    <!-- Consumer opt-up EF floor for the non-provider src packages, applied via VersionOverride on
-         their EF Core PackageReference items: they compile against the EF 9 line (EF Core 9 targets
-         net8.0, so it is referenceable from every TFM we ship) and their published dependency groups
-         floor there, so consumers can keep EF Core 9 on net10+ (e.g. with the official Pomelo
-         provider) or opt up to a newer EF themselves. The floor must equal the compile version AND
-         the compiled assembly must run on every EF version the floor admits; it rides the oldest
-         TFM's servicing train via $(Net9FrameworkVersion), so the lockstep train bump moves it, and
-         it crosses an EF major only when the oldest TFM is dropped. The train, EF ids included, is
-         dependabot-ignored and hand-managed (see .github/dependabot.yml).
-         Not every non-provider package qualifies: Vulthil.SharedKernel.Infrastructure.Relational
-         stays on $(FrameworkVersion) because its compiled ExecuteUpdate setter calls are
-         EF-major-coupled (EF Core 10 removed SetPropertyCalls without a type forward). Provider
-         packages also stay on $(FrameworkVersion) because their Aspire EF integrations floor EF at
-         the current train. -->
-    <EfCoreMinimumVersion>$(Net9FrameworkVersion)</EfCoreMinimumVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
@@ -41,43 +33,35 @@
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(AspireVersion)" />
     <PackageVersion Include="Aspire.RabbitMQ.Client" Version="$(AspireVersion)" />
-    <PackageVersion Include="EFCore.NamingConventions" Version="$(NamingConventionsVersion)" />
+    <!-- Test-only. Each EFCore.NamingConventions major requires the matching EF Core major, so it moves with $(EfCoreVersion). -->
+    <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="2.0.3" />
+    <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="3.0.12" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="$(FrameworkVersion)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(FrameworkVersion)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(FrameworkVersion)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(FrameworkVersion)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(FrameworkVersion)" />
-    <!-- MySQL: Aspire/Pomelo integration on net9; the Microting fork (a Pomelo fork) fills the EF Core 10 / net10 gap until the official Pomelo/Aspire packages ship it. -->
-    <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="$(AspireVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(EfCoreVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(EfCoreVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(EfCoreVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EfCoreVersion)" />
+    <!-- Each Microting.EntityFrameworkCore.MySql major requires the matching EF Core major, so it moves with $(EfCoreVersion). -->
     <PackageVersion Include="Microting.EntityFrameworkCore.MySql" Version="10.0.14" />
-    <!-- Pomelo.EntityFrameworkCore.MySql 9.0.0, which Aspire.Pomelo.EntityFrameworkCore.MySql brings in on net9.0, depends on
-         MySqlConnector 2.4.0, which has advisory GHSA-473q-m89c-ghf8, so the net9.0 MySQL leg references MySqlConnector
-         directly to lift it to a patched version until Pomelo depends on one. The Microting fork already depends on this
-         version on net10.0. -->
-    <PackageVersion Include="MySqlConnector" Version="2.6.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(EfCoreVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
-    <!-- The in-box Microsoft.Extensions.* packages are deliberately literal, NOT $(FrameworkVersion):
-         the Aspire 13.x client integrations shipped in src (Aspire.RabbitMQ.Client and the three EF
-         provider integrations) floor them at a 10.0.x patch on BOTH TFMs, so a 9.x net9.0 leg is an NU1605
-         downgrade error, and an Aspire update can require a newer 10.0.x patch here. Http.Resilience and
-         ServiceDiscovery version on their own out-of-band minor cadence. -->
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.10.0" />
-    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.10.0" />
+    <!-- The in-box Microsoft.Extensions.* packages are part of the .NET servicing train. Http.Resilience,
+         ServiceDiscovery, and TimeProvider.Testing version on their own out-of-band cadence. -->
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="$(FrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="11.0.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <!-- Scoped to the Aspire DCP integration-test project only (via eng/coverage.ps1's
          split test invocation); retrying failed unit-suite tests would mask real flake. -->
@@ -93,7 +77,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.19.0" />
     <PackageVersion Include="ReportGenerator" Version="5.5.11" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
-    <PackageVersion Include="Scalar.Aspire" Version="0.11.30" />
+    <PackageVersion Include="Scalar.Aspire" Version="1.1.1" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
     <PackageVersion Include="Testcontainers" Version="4.16.0" />

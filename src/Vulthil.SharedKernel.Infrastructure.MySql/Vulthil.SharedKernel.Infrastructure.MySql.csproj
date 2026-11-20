@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Provider-specific EF Core mapping and optimizations for MySql.</Description>
-		<PackageTags>mysql;pomelo;efcore;entity-framework-core;outbox;aspire</PackageTags>
+		<PackageTags>mysql;pomelo;efcore;entity-framework-core;outbox</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,18 +15,10 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
 	</ItemGroup>
 
-	<!-- The MySQL EF Core integration: the Aspire/Pomelo client integration on net9; the Microting fork (a Pomelo fork with the same API) on net10 until the official Pomelo/Aspire packages ship EF Core 10 support. -->
-	<!-- The UseMySql overload differs per target framework, so its public API is tracked in per-TFM PublicAPI files instead of the auto-included root ones. Keep both the Shipped and Unshipped file wired: the release promotion (eng/mark_api_shipped.py) folds Unshipped into the sibling Shipped, which must also be an AdditionalFile or the analyzer reports RS0016. -->
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<PackageReference Include="Aspire.Pomelo.EntityFrameworkCore.MySql" />
-		<PackageReference Include="MySqlConnector" />
-		<AdditionalFiles Include="PublicAPI\net9.0\PublicAPI.Shipped.txt" />
-		<AdditionalFiles Include="PublicAPI\net9.0\PublicAPI.Unshipped.txt" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+	<!-- The MySQL EF Core provider is the Microting fork of Pomelo (same API): the official Pomelo and Aspire MySQL
+	     packages support EF Core 9 at most. -->
+	<ItemGroup>
 		<PackageReference Include="Microting.EntityFrameworkCore.MySql" />
-		<AdditionalFiles Include="PublicAPI\net10.0\PublicAPI.Shipped.txt" />
-		<AdditionalFiles Include="PublicAPI\net10.0\PublicAPI.Unshipped.txt" />
 	</ItemGroup>
 
 </Project>

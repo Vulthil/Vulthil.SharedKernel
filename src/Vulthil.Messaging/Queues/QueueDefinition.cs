@@ -159,11 +159,7 @@ public sealed record QueueDefinition(string Name)
     /// Gets the collection of consumer-to-message bindings configured for this queue.
     /// </summary>
     public IReadOnlyCollection<Registration> Registrations =>
-#if NET10_0_OR_GREATER
         _registrations.AsReadOnly();
-#else
-        _registrations.ToList().AsReadOnly();
-#endif
 
     /// <summary>
     /// Gets the exchange bindings configured for this queue — each <see cref="Subscription"/> becomes one
@@ -173,11 +169,7 @@ public sealed record QueueDefinition(string Name)
     /// (the consumer's routing-key pattern is carried into the subscription).
     /// </summary>
     public IReadOnlyCollection<Subscription> Subscriptions =>
-#if NET10_0_OR_GREATER
         _subscriptions.AsReadOnly();
-#else
-        _subscriptions.ToList().AsReadOnly();
-#endif
 
     /// <summary>
     /// Gets a value indicating whether any retry policy is configured, either at the queue or consumer level.

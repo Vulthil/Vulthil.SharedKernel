@@ -31,10 +31,10 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     where TEntryPoint : class
 {
     private readonly Lazy<WebApplicationFactory<TEntryPoint>> _lazyFactory;
+    private readonly Lazy<HttpClient> _client;
     private readonly HashSet<Type> _testCaseServices = [];
     private readonly object _gate = new();
     private AsyncServiceScope? _scope;
-    private HttpClient? _client;
 
     /// <summary>
     /// Initializes a new instance with the shared web application factory and optional test output.
@@ -48,6 +48,10 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
         FactoryFixture = factory;
         TestOutputHelper = testOutputHelper;
         _lazyFactory = new(CreateFactory);
+
+        // Creating the client builds the host, which calls back into this instance (ConfigureTestCaseServices), so it
+        // runs without a lock. A client that loses a creation race stays with the factory, which disposes it.
+        _client = new(() => Factory.CreateClient(), LazyThreadSafetyMode.PublicationOnly);
     }
 
     /// <summary>
@@ -89,35 +93,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     /// <summary>
     /// Gets an <see cref="HttpClient"/> connected to the test server, created on first access.
     /// </summary>
-    protected HttpClient Client
-    {
-        get
-        {
-            lock (_gate)
-            {
-                if (_client is not null)
-                {
-                    return _client;
-                }
-            }
-
-            // Same as ScopedServices: creating the client builds the host, so it must happen outside _gate.
-            var client = Factory.CreateClient();
-            lock (_gate)
-            {
-                if (_client is null)
-                {
-                    _client = client;
-                }
-                else
-                {
-                    client.Dispose();
-                }
-
-                return _client;
-            }
-        }
-    }
+    protected HttpClient Client => _client.Value;
 
     /// <summary>
     /// Creates the <see cref="WebApplicationFactory{TEntryPoint}"/> this test runs against. By default this is the
@@ -251,7 +227,11 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
         finally
         {
             await ResetScope().ConfigureAwait(false);
-            _client?.Dispose();
+            if (_client.IsValueCreated)
+            {
+                _client.Value.Dispose();
+            }
+
             if (_lazyFactory.IsValueCreated && !ReferenceEquals(_lazyFactory.Value, FactoryFixture))
             {
                 await _lazyFactory.Value.DisposeAsync().ConfigureAwait(false);

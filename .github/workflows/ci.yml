@@ -101,6 +101,10 @@ jobs:
 
       - uses: ./.github/actions/setup-build
         id: setup
+        with:
+          # Main pushes save the NuGet cache below. Starting from another package set's cache would carry its
+          # packages into the saved cache, so the cache would only ever grow.
+          nuget-cache-fallback: ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
 
       - name: Build
         run: dotnet build -c Release

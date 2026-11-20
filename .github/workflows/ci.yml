@@ -100,13 +100,23 @@ jobs:
           persist-credentials: false
 
       - uses: ./.github/actions/setup-build
+        id: setup
 
       - name: Build
         run: dotnet build -c Release
 
-      - name: Test with coverage
+      - name: Save NuGet package cache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.setup.outputs.nuget-cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.nuget/packages
+          key: ${{ steps.setup.outputs.nuget-cache-key }}
+
+      # Coverage is published only from main pushes (the report artifact and the badge below), so every other run
+      # skips collecting it.
+      - name: Test
         shell: pwsh
-        run: ./eng/coverage.ps1 -NoBuild
+        run: ./eng/coverage.ps1 -NoBuild ${{ (github.event_name != 'push' || github.ref != 'refs/heads/main') && '-NoCoverage' || '' }}
 
       - name: Upload coverage report
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -136,7 +146,7 @@ jobs:
       # commit where tests already failed and this step didn't run.
       - name: Pack preview
         if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/preview/'))) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
-        run: dotnet pack -c Release -o ./artifacts
+        run: dotnet pack -c Release --no-build -o ./artifacts
 
       - name: Upload artifacts
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository

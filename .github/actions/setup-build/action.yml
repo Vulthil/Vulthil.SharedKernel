@@ -6,6 +6,14 @@ description: >-
   included here -- each workflow checks out with its own options
   (fetch-depth, persist-credentials) before calling this action.
 
+outputs:
+  nuget-cache-hit:
+    description: Whether the NuGet package cache was restored from an exact key match.
+    value: ${{ steps.nuget-cache.outputs.cache-hit }}
+  nuget-cache-key:
+    description: The NuGet package cache key for this commit's package set, for a later actions/cache/save step.
+    value: ${{ steps.nuget-cache.outputs.cache-primary-key }}
+
 runs:
   using: composite
   steps:
@@ -16,7 +24,10 @@ runs:
         global-json-file: global.json
         dotnet-version: 10.0.x
 
-    - uses: actions/cache@v6
+    # Restore only: a cache saved from a pull request is scoped to that pull request's ref and evicts the
+    # repository-wide caches every run restores from, so only ci.yml's main-branch runs save it, after the build.
+    - uses: actions/cache/restore@v6
+      id: nuget-cache
       with:
         path: ~/.nuget/packages
         key: nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}

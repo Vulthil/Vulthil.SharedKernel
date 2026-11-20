@@ -1,24 +1,35 @@
-# Single source of truth for the coverage commands run by ci.yml's "Test with
-# coverage" step -- keep this script and that step in sync; ci.yml invokes
-# this script directly instead of duplicating the commands below.
+# Single source of truth for the test commands run by ci.yml's "Test" step --
+# keep this script and that step in sync; ci.yml invokes this script directly
+# instead of duplicating the commands below.
 #
-# The Aspire DCP-hosted suite under tests/MessagingIntegrationTests
-# intermittently times out starting its host in CI, so it runs as its own
-# dotnet test invocation with Microsoft.Testing.Extensions.Retry's
-# --retry-failed-tests, instead of joining the shared invocation used for
-# every other project. A Microsoft.Testing.Platform module fails outright on
-# any CLI option it doesn't recognize, so a single solution-wide invocation
-# could not pass --retry-failed-tests to just one project anyway -- and
-# referencing the Retry package from every test project, just to allow that,
-# would let it silently retry (mask) real flake in the unit suites too.
+# The test projects run as three dotnet test invocations at the same time, so
+# the slow suites start right away instead of waiting in one shared queue
+# (dotnet test runs only as many test modules at once as the machine has CPU
+# threads):
 #
-# Both project sets below are computed fresh from `dotnet sln list` on every
-# run -- never hardcode project names/paths here. Other test projects land in
-# this solution independently of this script, and must fall into the shared
-# invocation automatically.
+#   - Container suites: every test project that registers a Vulthil.xUnit
+#     ContainerHost subclass as an assembly fixture, the documented way to
+#     share test containers. They mostly wait on Docker, so xUnit runs their
+#     test classes on twice as many threads as the machine has CPU threads.
+#   - The Aspire DCP-hosted suite under tests/MessagingIntegrationTests. It
+#     intermittently times out starting its host in CI, so its invocation adds
+#     Microsoft.Testing.Extensions.Retry's --retry-failed-tests. A
+#     Microsoft.Testing.Platform module fails outright on any CLI option it
+#     doesn't recognize, so a single solution-wide invocation could not pass
+#     --retry-failed-tests to just one project anyway -- and referencing the
+#     Retry package from every test project, just to allow that, would let it
+#     silently retry (mask) real flake in the unit suites too.
+#   - Every other project.
+#
+# All project sets below are computed fresh from `dotnet sln list` and the
+# project sources on every run -- never hardcode project names/paths here.
+# Other test projects land in this solution independently of this script, and
+# must fall into the right invocation automatically.
 
 param(
-    [switch]$NoBuild
+    [switch]$NoBuild,
+    # Runs the tests without collecting coverage and without the report.
+    [switch]$NoCoverage
 )
 
 $ErrorActionPreference = 'Stop'
@@ -71,6 +82,44 @@ function New-GeneratedSolution {
     Set-Content -Path $OutFile -Value $lines -Encoding utf8
 }
 
+function Test-UsesContainerHost {
+    param([string]$ProjectPath)
+
+    $projectDirectory = Split-Path -Parent (Join-Path $repoRoot $ProjectPath)
+    $sources = @(Get-ChildItem -Path $projectDirectory -Recurse -File -Filter '*.cs' |
+        Where-Object { $_.FullName -notmatch '[\\/](bin|obj)[\\/]' })
+
+    # Both checks: Vulthil.xUnit's own tests define ContainerHost subclasses
+    # without starting any container.
+    $definesHost = [bool]($sources | Select-String -Pattern ':\s*ContainerHost\b' -List)
+    $registersAssemblyFixture = [bool]($sources | Select-String -Pattern '\[assembly:\s*AssemblyFixture<' -List)
+
+    return $definesHost -and $registersAssemblyFixture
+}
+
+function Start-DotnetTest {
+    param([string]$Solution, [string[]]$TestArguments)
+
+    $arguments = @('test', $Solution, '-c', 'Release', '--no-build')
+    # A bare trailing `--` reaches every test module as an argument, which
+    # Microsoft.Testing.Platform rejects (exit code 5).
+    if ($TestArguments.Count -gt 0) {
+        $arguments += @('--') + $TestArguments
+    }
+
+    $startInfo = [System.Diagnostics.ProcessStartInfo]::new('dotnet')
+    foreach ($argument in $arguments) {
+        $startInfo.ArgumentList.Add($argument)
+    }
+
+    # The invocations share this console, so their progress lines interleave,
+    # each naming its own test module.
+    $startInfo.UseShellExecute = $false
+    $startInfo.WorkingDirectory = $repoRoot
+
+    return [System.Diagnostics.Process]::Start($startInfo)
+}
+
 $solutionFile = Get-ChildItem -Path $repoRoot -Filter '*.slnx' -File |
     Where-Object { $_.Name -notlike '.coverage-*' } |
     Select-Object -First 1
@@ -82,17 +131,21 @@ $allProjects = @(Get-FilteredSolutionProjects -SolutionPath $solutionFile.FullNa
 
 # Path-pattern exclusion, not a project-name list: matches the flaky suite's
 # directory on both Windows (local) and Linux (CI) path separators.
-$integrationSuitePattern = '^tests[\\/]MessagingIntegrationTests[\\/]'
-$integrationTestProjects = @($allProjects | Where-Object { $_ -match $integrationSuitePattern -and $_ -match '\.Tests\.csproj$' })
-$otherProjects = @($allProjects | Where-Object { $_ -notmatch $integrationSuitePattern })
+$dcpSuitePattern = '^tests[\\/]MessagingIntegrationTests[\\/]'
+$dcpTestProjects = @($allProjects | Where-Object { $_ -match $dcpSuitePattern -and $_ -match '\.Tests\.csproj$' })
+$remainingProjects = @($allProjects | Where-Object { $_ -notmatch $dcpSuitePattern })
+$containerTestProjects = @($remainingProjects | Where-Object { Test-UsesContainerHost -ProjectPath $_ })
+$otherProjects = @($remainingProjects | Where-Object { $_ -notin $containerTestProjects })
+
+$coverageArguments = if ($NoCoverage) { @() } else { @('--coverage', '--coverage-output-format', 'cobertura') }
 
 $otherSolution = Join-Path $repoRoot '.coverage-other.generated.slnx'
-$integrationSolution = Join-Path $repoRoot '.coverage-integration.generated.slnx'
+$containerSolution = Join-Path $repoRoot '.coverage-containers.generated.slnx'
+$dcpSolution = Join-Path $repoRoot '.coverage-integration.generated.slnx'
 
+$invocations = [System.Collections.Generic.List[object]]::new()
 try {
-    New-GeneratedSolution -ProjectPaths $otherProjects -OutFile $otherSolution
-
-    # No --coverage-output on either invocation: dotnet test hands every test
+    # No --coverage-output on any invocation: dotnet test hands every test
     # module the same value, and since CodeCoverage 18.9 (Testing.Platform
     # 2.3) a relative filename resolves against the shared
     # <repo root>/TestResults instead of the module's own results directory,
@@ -102,25 +155,65 @@ try {
     # microsoft/codecoverage#226), so don't pin the package back; the option
     # also has no per-module placeholder support. The default GUID filenames
     # are unique per module, keeping the parallel writes disjoint.
-    dotnet test $otherSolution -c Release --no-build -- --coverage --coverage-output-format cobertura
+    if ($containerTestProjects.Count -gt 0) {
+        New-GeneratedSolution -ProjectPaths $containerTestProjects -OutFile $containerSolution
+        $invocations.Add([pscustomobject]@{
+            Name    = 'container suites'
+            Process = Start-DotnetTest -Solution $containerSolution -TestArguments ($coverageArguments + @('--max-threads', '2.0x'))
+        })
+    }
 
-    if ($integrationTestProjects.Count -gt 0) {
-        New-GeneratedSolution -ProjectPaths $integrationTestProjects -OutFile $integrationSolution
-
-        dotnet test $integrationSolution -c Release --no-build -- --coverage --coverage-output-format cobertura --retry-failed-tests 1
+    if ($dcpTestProjects.Count -gt 0) {
+        New-GeneratedSolution -ProjectPaths $dcpTestProjects -OutFile $dcpSolution
+        $invocations.Add([pscustomobject]@{
+            Name    = 'Aspire DCP suite'
+            Process = Start-DotnetTest -Solution $dcpSolution -TestArguments ($coverageArguments + @('--retry-failed-tests', '1'))
+        })
     }
     else {
         Write-Warning "No project matched tests/MessagingIntegrationTests/**/*.Tests.csproj -- skipping the isolated retried run."
     }
+
+    New-GeneratedSolution -ProjectPaths $otherProjects -OutFile $otherSolution
+    $invocations.Add([pscustomobject]@{
+        Name    = 'other projects'
+        Process = Start-DotnetTest -Solution $otherSolution -TestArguments $coverageArguments
+    })
+
+    foreach ($invocation in $invocations) {
+        $invocation.Process.WaitForExit()
+    }
 }
 finally {
+    # A failure while starting the invocations must not leave a started one
+    # running against the generated solutions deleted below.
+    foreach ($invocation in $invocations) {
+        if (-not $invocation.Process.HasExited) {
+            $invocation.Process.Kill($true)
+            $invocation.Process.WaitForExit()
+        }
+    }
+
     # Raw unlink instead of Remove-Item: on Linux, pwsh maps the leading dot to
     # the Hidden attribute and Remove-Item then refuses the file without -Force
-    # (the swallowed refusal left both files behind and broke the no-args
+    # (the swallowed refusal left the files behind and broke the no-args
     # `dotnet pack` that runs after this script in CI). File.Delete has no
     # hidden-file gate and is a documented no-op when the file is absent.
     [System.IO.File]::Delete($otherSolution)
-    [System.IO.File]::Delete($integrationSolution)
+    [System.IO.File]::Delete($containerSolution)
+    [System.IO.File]::Delete($dcpSolution)
+}
+
+$failedInvocations = @($invocations | Where-Object { $_.Process.ExitCode -ne 0 })
+foreach ($invocation in $failedInvocations) {
+    Write-Host "dotnet test for the $($invocation.Name) failed with exit code $($invocation.Process.ExitCode)."
+}
+if ($failedInvocations.Count -gt 0) {
+    exit 1
+}
+
+if ($NoCoverage) {
+    return
 }
 
 dotnet tool restore

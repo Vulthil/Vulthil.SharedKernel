@@ -52,9 +52,11 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             var queues = _messageConfigurationProvider.QueueDefinitions;
             MessagingLog.BusStarting(_logger, queues.Count);
 
-            var dispatchPlans = BuildDispatchPlans(queues);
-            await SetupTopology(queues, dispatchPlans, cancellationToken).ConfigureAwait(false);
-            await StartConsumersAsync(queues, dispatchPlans, cancellationToken).ConfigureAwait(false);
+            var queuePlans = queues
+                .Select(queue => (queue, new QueueDispatchPlans(_messageConfigurationProvider, queue)))
+                .ToList();
+            await SetupTopology(queuePlans, cancellationToken).ConfigureAwait(false);
+            await StartConsumersAsync(queuePlans, cancellationToken).ConfigureAwait(false);
 
             MessagingLog.BusStarted(_logger);
             _startupStatus.MarkStarted();
@@ -64,17 +66,6 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             await DisposeWorkersAsync().ConfigureAwait(false);
             throw;
         }
-    }
-
-    private Dictionary<string, QueueDispatchPlans> BuildDispatchPlans(IReadOnlyCollection<QueueDefinition> queues)
-    {
-        var dispatchPlans = new Dictionary<string, QueueDispatchPlans>(StringComparer.OrdinalIgnoreCase);
-        foreach (var queue in queues)
-        {
-            dispatchPlans[queue.Name] = new QueueDispatchPlans(_messageConfigurationProvider, queue);
-        }
-
-        return dispatchPlans;
     }
 
     public Task WaitUntilReadyAsync(CancellationToken cancellationToken = default) =>
@@ -95,13 +86,12 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     /// partition lanes in arrival order; parallelism comes from the lanes (bounded by <c>PrefetchCount</c>) rather
     /// than concurrent dispatch.
     /// </remarks>
-    private async Task StartConsumersAsync(IReadOnlyCollection<QueueDefinition> queues, Dictionary<string, QueueDispatchPlans> dispatchPlans, CancellationToken cancellationToken)
+    private async Task StartConsumersAsync(List<(QueueDefinition Queue, QueueDispatchPlans Plans)> queuePlans, CancellationToken cancellationToken)
     {
         var workerLogger = _loggerFactory.CreateLogger<RabbitMqConsumerWorker>();
 
-        foreach (var queue in queues)
+        foreach (var (queue, plans) in queuePlans)
         {
-            var plans = dispatchPlans[queue.Name];
             var channelCount = plans.IsPartitioned ? 1 : queue.ChannelCount;
             var dispatchConcurrency = plans.IsPartitioned ? (ushort)1 : queue.ConcurrencyLimit;
 
@@ -148,7 +138,7 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
     /// here by convention with the faulted message's URN as the routing key, so a subscriber binds its queue with
     /// <c>"#"</c> to observe all faults or with a specific URN to filter by faulted message type.
     /// </remarks>
-    private async Task SetupTopology(IReadOnlyCollection<QueueDefinition> queues, Dictionary<string, QueueDispatchPlans> dispatchPlans, CancellationToken cancellationToken)
+    private async Task SetupTopology(List<(QueueDefinition Queue, QueueDispatchPlans Plans)> queuePlans, CancellationToken cancellationToken)
     {
         using var channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
@@ -159,9 +149,9 @@ internal sealed class RabbitMqBus : ITransport, IAsyncDisposable
             autoDelete: false,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        foreach (var queue in queues)
+        foreach (var (queue, plans) in queuePlans)
         {
-            await SetupQueueTopology(queue, dispatchPlans[queue.Name], channel, cancellationToken).ConfigureAwait(false);
+            await SetupQueueTopology(queue, plans, channel, cancellationToken).ConfigureAwait(false);
             MessagingLog.QueueDeclared(_logger, queue.Name, queue.Registrations.Count);
         }
     }

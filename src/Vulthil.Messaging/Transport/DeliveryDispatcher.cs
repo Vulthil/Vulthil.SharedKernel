@@ -119,15 +119,14 @@ public sealed partial class DeliveryDispatcher
                 return null;
             }
 
-            switch (attempt.Result)
+            if (attempt.IsConsumed)
             {
-                case DeliveryAttemptResult.Consumed:
-                    progress.Consumed.Add(handler);
-                    break;
-                case DeliveryAttemptResult.Failed:
-                    progress.Failures.Add(attempt.Exception!);
-                    failures.Add(new HandlerFailure(handler, attempt));
-                    break;
+                progress.Consumed.Add(handler);
+            }
+            else if (attempt.Failure is { } failure)
+            {
+                progress.Failures.Add(failure.Exception);
+                failures.Add(new HandlerFailure(handler, failure));
             }
         }
 
@@ -150,7 +149,7 @@ public sealed partial class DeliveryDispatcher
         var retrying = new List<HandlerFailure>();
         foreach (var failure in failures)
         {
-            var exception = failure.Attempt.Exception!;
+            var exception = failure.Failure.Exception;
             if (failure.Handler.RetryPolicy is { } policy
                 && round < policy.MaxRetryCount
                 && !policy.GetIgnoredExceptionTypes().Contains(exception.GetType()))
@@ -160,7 +159,7 @@ public sealed partial class DeliveryDispatcher
             }
 
             LogConsumerFailed(_logger, exception, failure.Handler.Identity, round);
-            await failure.Attempt.PublishFault!(port).ConfigureAwait(false);
+            await failure.Failure.PublishFault(port).ConfigureAwait(false);
         }
 
         return retrying;
@@ -177,7 +176,7 @@ public sealed partial class DeliveryDispatcher
         foreach (var failure in retrying)
         {
             var policy = failure.Handler.RetryPolicy!;
-            LogConsumerThrew(_logger, failure.Attempt.Exception!, failure.Handler.Identity, round, policy.MaxRetryCount);
+            LogConsumerThrew(_logger, failure.Failure.Exception, failure.Handler.Identity, round, policy.MaxRetryCount);
 
             var handlerDelay = policy.GetDelay(round);
             delay = handlerDelay > delay ? handlerDelay : delay;
@@ -200,7 +199,7 @@ public sealed partial class DeliveryDispatcher
         Message = "Consumer {Consumer} failed for good on retry round {Retry}; publishing its fault")]
     private static partial void LogConsumerFailed(ILogger logger, Exception exception, string consumer, int retry);
 
-    private sealed record HandlerFailure(DeliveryHandler Handler, DeliveryAttempt Attempt);
+    private sealed record HandlerFailure(DeliveryHandler Handler, DeliveryFailure Failure);
 
     private sealed class DeliveryProgress
     {

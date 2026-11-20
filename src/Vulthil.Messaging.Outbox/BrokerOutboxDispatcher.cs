@@ -64,7 +64,7 @@ internal sealed class BrokerOutboxDispatcher(
             context.SetRoutingKey(metadata.RoutingKey);
         }
 
-        if (metadata.Headers is { Count: > 0 } headers)
+        if (metadata.RestoreHeaders() is { Count: > 0 } headers)
         {
             context.AddHeaders(headers);
         }

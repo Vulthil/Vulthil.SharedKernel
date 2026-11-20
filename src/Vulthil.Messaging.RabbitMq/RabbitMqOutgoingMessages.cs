@@ -63,15 +63,8 @@ internal static class RabbitMqOutgoingMessages
         JsonSerializerOptions jsonOptions)
         where TMessage : notnull
     {
-        var ids = ResolveIds(message, context, messageConfiguration);
+        var (ids, properties, body) = CreatePersistent(message, context, messageConfiguration, jsonOptions);
         var exchange = messageConfiguration.Exchange;
-
-        var properties = CreateProperties(ids.UrnString, ids.MessageId, context.Headers);
-        properties.ReplyTo = RabbitMqAddress.ResolveRoutingKey(context.ResponseAddress);
-        properties.CorrelationId = ids.CorrelationId;
-        properties.Persistent = true;
-
-        var body = SerializeEnvelope(message, context, ids, jsonOptions, requestId: null);
         var publish = new RabbitMqOutgoingMessage(exchange, ResolveRoutingKey(message, context, messageConfiguration), Mandatory: false, properties, body);
         return new RabbitMqProducedMessage(publish, ids, "publish", exchange);
     }
@@ -96,14 +89,7 @@ internal static class RabbitMqOutgoingMessages
         JsonSerializerOptions jsonOptions)
         where TMessage : notnull
     {
-        var ids = ResolveIds(message, context, messageConfiguration);
-
-        var properties = CreateProperties(ids.UrnString, ids.MessageId, context.Headers);
-        properties.ReplyTo = RabbitMqAddress.ResolveRoutingKey(context.ResponseAddress);
-        properties.CorrelationId = ids.CorrelationId;
-        properties.Persistent = true;
-
-        var body = SerializeEnvelope(message, context, ids, jsonOptions, requestId: null);
+        var (ids, properties, body) = CreatePersistent(message, context, messageConfiguration, jsonOptions);
         var send = new RabbitMqOutgoingMessage(string.Empty, queueName, Mandatory: true, properties, body);
         return new RabbitMqProducedMessage(send, ids, "send", queueName);
     }
@@ -169,7 +155,9 @@ internal static class RabbitMqOutgoingMessages
         IEnumerable<string> handlerIdentities,
         TimeSpan delay)
     {
-        var headers = CopyHeaders(delivery);
+        // Properties copied from a delivery share its header dictionary, so the re-publish gets its own copy: setting a
+        // header on the shared one would change the delivery itself.
+        var headers = delivery.BasicProperties.Headers is { } deliveryHeaders ? new Dictionary<string, object?>(deliveryHeaders) : [];
         headers[RabbitMqConstants.RetryCountHeader] = retryCount;
         headers[RabbitMqConstants.RetryHandlersHeader] = RabbitMqConstants.SerializeRetryHandlerIdentities(handlerIdentities);
         var properties = new BasicProperties(delivery.BasicProperties)
@@ -263,14 +251,22 @@ internal static class RabbitMqOutgoingMessages
             ? (faultExchangeName, messageTypeName)
             : (string.Empty, RabbitMqAddress.ResolveRoutingKey(faultAddress) ?? string.Empty);
 
-    /// <summary>
-    /// Copies the delivery's headers into a dictionary of their own. AMQP properties copied from a delivery share its
-    /// header dictionary, so a header set on the copy would otherwise change the delivery itself.
-    /// </summary>
-    /// <param name="delivery">The delivery whose headers to copy.</param>
-    /// <returns>A new dictionary with the delivery's headers.</returns>
-    public static Dictionary<string, object?> CopyHeaders(BasicDeliverEventArgs delivery)
-        => delivery.BasicProperties.Headers is { } headers ? new(headers) : [];
+    private static (RabbitMqMessageIds Ids, BasicProperties Properties, byte[] Body) CreatePersistent<TMessage>(
+        TMessage message,
+        PublishContext context,
+        MessageConfiguration messageConfiguration,
+        JsonSerializerOptions jsonOptions)
+        where TMessage : notnull
+    {
+        var ids = ResolveIds(message, context, messageConfiguration);
+
+        var properties = CreateProperties(ids.UrnString, ids.MessageId, context.Headers);
+        properties.ReplyTo = RabbitMqAddress.ResolveRoutingKey(context.ResponseAddress);
+        properties.CorrelationId = ids.CorrelationId;
+        properties.Persistent = true;
+
+        return (ids, properties, SerializeEnvelope(message, context, ids, jsonOptions, requestId: null));
+    }
 
     private static string ResolveRoutingKey<TMessage>(TMessage message, PublishContext context, MessageConfiguration messageConfiguration)
         where TMessage : notnull

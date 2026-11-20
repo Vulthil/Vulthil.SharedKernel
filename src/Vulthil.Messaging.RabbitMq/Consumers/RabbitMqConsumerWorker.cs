@@ -27,7 +27,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     private readonly ILogger<RabbitMqConsumerWorker> _logger;
     private readonly TimeProvider _timeProvider;
     private readonly int _channelIndex;
-    private readonly bool _partitioned;
     private readonly ConcurrentDictionary<ulong, Task> _inFlight = new();
 
     // RabbitMQ channels must not be used concurrently. Concurrent dispatch (and, on a partitioned queue, the
@@ -58,7 +57,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         _logger = logger;
         _timeProvider = timeProvider;
         _channelIndex = channelIndex;
-        _partitioned = plans.IsPartitioned;
     }
 
     /// <summary>
@@ -119,16 +117,16 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             return;
         }
 
-        if (!_partitioned)
+        if (!_plans.IsPartitioned)
         {
-            await ProcessAsync(prepared, ea).ConfigureAwait(false);
+            await ProcessAsync(prepared).ConfigureAwait(false);
             return;
         }
 
         Task work;
         try
         {
-            work = StartPartitionedProcessing(prepared, ea);
+            work = StartPartitionedProcessing(prepared);
         }
         catch (Exception exception) when (!ea.CancellationToken.IsCancellationRequested)
         {
@@ -144,17 +142,17 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// partitioned and the delivery has a key, otherwise at once. Reading the key builds a context from the delivery's
     /// metadata, so it throws on metadata the worker cannot parse.
     /// </summary>
-    private Task StartPartitionedProcessing(PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    private Task StartPartitionedProcessing(PreparedDelivery prepared)
     {
         if (prepared.Plan.Partition is not { } partition)
         {
-            return ProcessAsync(prepared, ea);
+            return ProcessAsync(prepared);
         }
 
-        var key = partition.ExtractKey(prepared.Message, ea, prepared.Envelope);
+        var key = partition.ExtractKey(prepared.Message, prepared.Delivery, prepared.Envelope);
         return string.IsNullOrEmpty(key)
-            ? ProcessAsync(prepared, ea)
-            : partition.Partitioner.RunSequentialAsync(key, () => ProcessAsync(prepared, ea));
+            ? ProcessAsync(prepared)
+            : partition.Partitioner.RunSequentialAsync(key, () => ProcessAsync(prepared));
     }
 
     private void TrackInFlight(ulong deliveryTag, Task work)
@@ -174,8 +172,9 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// dispatches only the handlers it names. A dispatch that throws instead of returning an outcome — for example on
     /// metadata the worker cannot parse — rejects the delivery (see <see cref="RejectUnprocessableAsync"/>).
     /// </summary>
-    private async Task ProcessAsync(PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    private async Task ProcessAsync(PreparedDelivery prepared)
     {
+        var ea = prepared.Delivery;
         using var activity = StartReceiveActivity(ea, prepared.DiagnosticTypeName);
         var pending = ResolvePendingHandlers(prepared.Plan, ea);
         if (pending.Count == 0)
@@ -189,7 +188,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         {
             using (MessagingLog.BeginDelivery(_logger, _queueDefinition.Name, ea.RoutingKey, prepared.DiagnosticTypeName))
             {
-                outcome = await _dispatcher.DispatchAsync(pending, prepared.Message, new DeliveryPort(this, prepared, ea)).ConfigureAwait(false);
+                outcome = await _dispatcher.DispatchAsync(pending, prepared.Message, new DeliveryPort(this, prepared)).ConfigureAwait(false);
             }
         }
         catch (Exception exception) when (!ea.CancellationToken.IsCancellationRequested)
@@ -318,13 +317,13 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     /// <see cref="Fault{TMessage}"/> of the faulted message type. Publishing is best-effort: a failure to publish the
     /// fault is logged and never disrupts settling the original delivery.
     /// </summary>
-    private async Task PublishFaultAsync<TMessage>(Fault<TMessage> fault, PreparedDelivery prepared, BasicDeliverEventArgs ea)
+    private async Task PublishFaultAsync<TMessage>(Fault<TMessage> fault, PreparedDelivery prepared)
         where TMessage : notnull
     {
         var faultExchangeName = _messageConfigurationProvider.FaultExchangeName;
         try
         {
-            var faultMessage = RabbitMqOutgoingMessages.Fault(fault, prepared.Envelope?.Message, ea, faultExchangeName, prepared.DiagnosticTypeName, _jsonOptions);
+            var faultMessage = RabbitMqOutgoingMessages.Fault(fault, prepared.Envelope?.Message, prepared.Delivery, faultExchangeName, prepared.DiagnosticTypeName, _jsonOptions);
             await PublishThroughGateAsync(faultMessage).ConfigureAwait(false);
         }
         catch (Exception faultEx)
@@ -343,21 +342,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         => RabbitMqOutgoingMessages.Reply(reply, ea, _jsonOptions) is { } replyMessage
             ? PublishThroughGateAsync(replyMessage)
             : Task.CompletedTask;
-
-    /// <summary>
-    /// Returns a copy of <paramref name="ea"/> whose <c>x-retry-count</c> header is set to
-    /// <paramref name="retryCount"/>, so a consumer reading <see cref="IMessageContext.RetryCount"/> sees the
-    /// current in-memory attempt. The delivery's AMQP properties are read-only on the receive side, hence the copy;
-    /// <paramref name="ea"/> itself is left unchanged.
-    /// </summary>
-    internal static BasicDeliverEventArgs WithRetryCount(BasicDeliverEventArgs ea, int retryCount)
-    {
-        var headers = RabbitMqOutgoingMessages.CopyHeaders(ea);
-        headers[RabbitMqConstants.RetryCountHeader] = retryCount;
-        var properties = new BasicProperties(ea.BasicProperties) { Headers = headers };
-        return new BasicDeliverEventArgs(
-            ea.ConsumerTag, ea.DeliveryTag, ea.Redelivered, ea.Exchange, ea.RoutingKey, properties, ea.Body, ea.CancellationToken);
-    }
 
     /// <summary>
     /// Parses the envelope, resolves the execution plan, and deserializes the message. Settles the delivery
@@ -382,12 +366,13 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             return null;
         }
 
-        object? message;
         try
         {
-            message = envelope is not null
+            var message = (envelope is not null
                 ? envelope.Message.Deserialize(plan.MessageType.Type, _jsonOptions)
-                : JsonSerializer.Deserialize(ea.Body.Span, plan.MessageType.Type, _jsonOptions);
+                : JsonSerializer.Deserialize(ea.Body.Span, plan.MessageType.Type, _jsonOptions))
+                ?? throw new JsonException("Deserializer returned null.");
+            return new PreparedDelivery(ea, plan, message, envelope, diagnosticTypeName);
         }
         catch (JsonException jsonEx)
         {
@@ -395,15 +380,6 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
             await NackAsync(ea).ConfigureAwait(false);
             return null;
         }
-
-        if (message is null)
-        {
-            MessagingLog.PoisonMessage(_logger, new JsonException("Deserializer returned null."), _queueDefinition.Name, diagnosticTypeName, ea.RoutingKey);
-            await NackAsync(ea).ConfigureAwait(false);
-            return null;
-        }
-
-        return new PreparedDelivery(plan, message, envelope, diagnosticTypeName);
     }
 
     /// <summary>
@@ -528,7 +504,7 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
         }
     }
 
-    private sealed record PreparedDelivery(RabbitMqPlan Plan, object Message, MessageEnvelope? Envelope, string DiagnosticTypeName);
+    private sealed record PreparedDelivery(BasicDeliverEventArgs Delivery, RabbitMqPlan Plan, object Message, MessageEnvelope? Envelope, string DiagnosticTypeName);
 
     /// <summary>
     /// The worker's <see cref="IDeliveryPort"/> for one delivery. The round comes from the delivery's
@@ -540,42 +516,44 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
     {
         private readonly RabbitMqConsumerWorker _worker;
         private readonly PreparedDelivery _prepared;
-        private readonly BasicDeliverEventArgs _delivery;
 
-        public DeliveryPort(RabbitMqConsumerWorker worker, PreparedDelivery prepared, BasicDeliverEventArgs delivery)
+        public DeliveryPort(RabbitMqConsumerWorker worker, PreparedDelivery prepared)
         {
             _worker = worker;
             _prepared = prepared;
-            _delivery = delivery;
-            RetryCount = RabbitMqConstants.GetRetryCount(delivery.BasicProperties.Headers);
+            RetryCount = RabbitMqConstants.GetRetryCount(prepared.Delivery.BasicProperties.Headers);
         }
 
         public int RetryCount { get; }
 
-        public CancellationToken CancellationToken => _delivery.CancellationToken;
+        public CancellationToken CancellationToken => _prepared.Delivery.CancellationToken;
 
-        public bool CanRedeliverLater => !_worker._partitioned;
+        public bool CanRedeliverLater => !_worker._plans.IsPartitioned;
 
         public MessageContext<TMessage> CreateContext<TMessage>(TMessage message, IServiceProvider services, int retryCount)
             where TMessage : notnull
         {
-            var attempt = retryCount == RetryCount ? _delivery : WithRetryCount(_delivery, retryCount);
-            var publisher = services.GetRequiredService<IPublisher>();
-            var sendEndpointProvider = services.GetRequiredService<ISendEndpointProvider>();
-            return _prepared.Envelope is null
-                ? MessageContextFactory.CreateContext(message, attempt, publisher, sendEndpointProvider, _delivery.CancellationToken)
-                : MessageContextFactory.CreateContext(message, attempt, _prepared.Envelope, publisher, sendEndpointProvider, _delivery.CancellationToken);
+            var context = MessageContextFactory.CreateContext(
+                message,
+                _prepared.Delivery,
+                _prepared.Envelope,
+                services.GetRequiredService<IPublisher>(),
+                services.GetRequiredService<ISendEndpointProvider>(),
+                CancellationToken);
+
+            // The delivery's header holds the round it arrived at; an in-memory retry runs later rounds on the same delivery.
+            return context with { RetryCount = retryCount };
         }
 
         public Task WaitBeforeRetryAsync(TimeSpan delay)
             => delay <= TimeSpan.Zero
                 ? Task.CompletedTask
-                : Task.Delay(delay, _worker._timeProvider, _delivery.CancellationToken);
+                : Task.Delay(delay, _worker._timeProvider, CancellationToken);
 
         public Task PublishFaultAsync<TMessage>(Fault<TMessage> fault)
             where TMessage : notnull
-            => _worker.PublishFaultAsync(fault, _prepared, _delivery);
+            => _worker.PublishFaultAsync(fault, _prepared);
 
-        public Task SendReplyAsync(MessageEnvelope reply) => _worker.SendReplyAsync(reply, _delivery);
+        public Task SendReplyAsync(MessageEnvelope reply) => _worker.SendReplyAsync(reply, _prepared.Delivery);
     }
 }

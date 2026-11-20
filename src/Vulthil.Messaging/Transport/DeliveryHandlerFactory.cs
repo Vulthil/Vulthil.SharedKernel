@@ -40,7 +40,7 @@ public sealed class DeliveryHandlerFactory : MessageHandlerFactory<DeliveryHandl
                 consumed = true;
             });
             await pipeline(context).ConfigureAwait(false);
-            return consumed ? DeliveryAttempt.Consumed : DeliveryAttempt.ShortCircuited;
+            return consumed ? DeliveryAttempt.Consumed : DeliveryAttempt.NotConsumed;
         }
         catch (Exception exception) when (!EndsTheDelivery(exception, port))
         {
@@ -75,11 +75,11 @@ public sealed class DeliveryHandlerFactory : MessageHandlerFactory<DeliveryHandl
 
             (reply, attempt) = responseProduced
                 ? (RpcReply.Success(response, provider, context.RequestId, context.CorrelationId), DeliveryAttempt.Consumed)
-                : (RpcReply.ShortCircuited(provider, context.RequestId, context.CorrelationId), DeliveryAttempt.AnsweredWithFault);
+                : (RpcReply.ShortCircuited(provider, context.RequestId, context.CorrelationId), DeliveryAttempt.NotConsumed);
         }
         catch (Exception exception) when (!EndsTheDelivery(exception, port))
         {
-            (reply, attempt) = (RpcReply.Fault(exception, provider, context.RequestId, context.CorrelationId), DeliveryAttempt.AnsweredWithFault);
+            (reply, attempt) = (RpcReply.Fault(exception, provider, context.RequestId, context.CorrelationId), DeliveryAttempt.NotConsumed);
         }
 
         await port.SendReplyAsync(reply).ConfigureAwait(false);

@@ -31,7 +31,7 @@ public sealed record RetryPolicyDefinition
     /// </summary>
     public ICollection<string> IgnoreExceptions { get; } = [];
 
-    private readonly object _ignoredTypesGate = new();
+    private readonly Lock _ignoredTypesGate = new();
     private readonly HashSet<Type> _ignoredTypes = [];
     private HashSet<Type>? _resolvedIgnoredTypes;
 

@@ -74,11 +74,9 @@ function New-GeneratedSolution {
     }
     $lines.Add('</Solution>')
 
-    # Written next to the real solution (and global.json) rather than under
-    # the system temp directory, so MSBuild's upward SDK-resolution walk
-    # (e.g. Aspire.Hosting's AppHost SDK, version-pinned in global.json)
-    # still finds it -- a filtered solution file living outside the repo
-    # tree fails to resolve that SDK.
+    # Written next to the real solution rather than under the system temp
+    # directory, because the project paths that `dotnet sln list` returns are
+    # relative to the repository root.
     Set-Content -Path $OutFile -Value $lines -Encoding utf8
 }
 

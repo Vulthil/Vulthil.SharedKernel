@@ -47,8 +47,10 @@ updates:
       # train.
       - dependency-name: "EFCore.NamingConventions"
       # From Aspire 17.0.0, the EF Core client integrations take EF Core 11 on net11.0 (Cosmos) or exist only as a
-      # preview (Npgsql), and AddProject is obsolete, so an Aspire major update is a hand-made change.
-      - dependency-name: "Aspire.*"
+      # preview (Npgsql), so they move to a new major with EF Core, by hand (AspireEfCoreVersion).
+      - dependency-name: "Aspire.Microsoft.EntityFrameworkCore.Cosmos"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"
         update-types: ["version-update:semver-major"]
     groups:
       xunit:

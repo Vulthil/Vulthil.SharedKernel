@@ -9,7 +9,12 @@ description: >-
 runs:
   using: composite
   steps:
+    # global.json pins the .NET 11 SDK, which carries only the .NET 11 runtime; the net10.0 test legs need the
+    # .NET 10 runtime, which the newest .NET 10 SDK brings.
     - uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+        dotnet-version: 10.0.x
 
     - uses: actions/cache@v6
       with:

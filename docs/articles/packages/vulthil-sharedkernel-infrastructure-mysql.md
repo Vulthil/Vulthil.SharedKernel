@@ -17,12 +17,9 @@ Use `Vulthil.SharedKernel.Infrastructure.MySql` to wire a MySQL-backed `DbContex
 
 ## Provider
 
-The MySQL EF Core provider is resolved per target framework:
+The MySQL EF Core provider is [`Microting.EntityFrameworkCore.MySql`](https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql), registered directly.
 
-- **.NET 9** – the Aspire client integration [`Aspire.Pomelo.EntityFrameworkCore.MySql`](https://www.nuget.org/packages/Aspire.Pomelo.EntityFrameworkCore.MySql), which resolves the connection string and adds health checks, telemetry, and connection resiliency (parity with the Npgsql and Cosmos integrations)
-- **.NET 10** – the API-compatible [`Microting.EntityFrameworkCore.MySql`](https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql) fork of Pomelo, registered directly, until the official Pomelo and Aspire packages ship EF Core 10 support
-
-On .NET 10 the MySQL server version is detected from the connection at startup via `ServerVersion.AutoDetect`, so the database must be reachable when the host starts.
+The MySQL server version is detected from the connection at startup via `ServerVersion.AutoDetect`, so the database must be reachable when the host starts.
 
 ## Usage
 
@@ -38,15 +35,11 @@ builder.AddDbContext<AppDbContext>(config => config
     }));
 ```
 
-### Configuring the integration
+### Configuring the provider
 
-`UseMySql` takes an optional `configureSettings` delegate. Because the Aspire integration only exists on .NET 9, its type differs per target framework — the Aspire `PomeloEntityFrameworkCoreMySqlSettings` on .NET 9, and the EF Core `MySqlDbContextOptionsBuilder` on .NET 10:
+`UseMySql` takes an optional `configureSettings` delegate that configures the MySQL provider options (`MySqlDbContextOptionsBuilder`):
 
 ```csharp
-// .NET 9 (Aspire) — toggle health checks, tracing, retries, command timeout:
-config.UseMySql("Default", settings => settings.DisableHealthChecks = true);
-
-// .NET 10 (Microting) — configure EF Core/Pomelo options:
 config.UseMySql("Default", mySql => mySql.CommandTimeout(30));
 ```
 

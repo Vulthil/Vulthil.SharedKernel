@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.OpenApi;
-#if NET10_0_OR_GREATER
 using Microsoft.OpenApi;
+// Microsoft.OpenApi 3 (the net11.0 dependency of Microsoft.AspNetCore.OpenApi) types a response's content entries as
+// IOpenApiMediaType, which can be a component reference; Microsoft.OpenApi 2 (net10.0) types them as OpenApiMediaType.
+#if NET11_0_OR_GREATER
+using ContentMediaType = Microsoft.OpenApi.IOpenApiMediaType;
 #else
-using Microsoft.OpenApi.Models;
+using ContentMediaType = Microsoft.OpenApi.OpenApiMediaType;
 #endif
 
 namespace Vulthil.SharedKernel.Api;
@@ -66,19 +69,23 @@ internal sealed class ProblemDetailsOperationTransformer : IOpenApiOperationTran
         };
     }
 
-    private static Dictionary<string, OpenApiMediaType> CreateProblemJsonContent(OpenApiSchema schema)
+    private static Dictionary<string, ContentMediaType> CreateProblemJsonContent(OpenApiSchema schema)
     {
-        var content = new Dictionary<string, OpenApiMediaType>(StringComparer.Ordinal);
+        var content = new Dictionary<string, ContentMediaType>(StringComparer.Ordinal);
         AddProblemJsonContent(content, schema);
 
         return content;
     }
 
-    private static void AddProblemJsonContent(IDictionary<string, OpenApiMediaType> content, OpenApiSchema schema)
+    private static void AddProblemJsonContent(IDictionary<string, ContentMediaType> content, OpenApiSchema schema)
     {
         if (content.TryGetValue(ProblemJsonMediaType, out var mediaType))
         {
-            mediaType.Schema ??= schema;
+            // A component reference resolves its schema from the component, so only an inline media type gets one.
+            if (mediaType is OpenApiMediaType { Schema: null } inlineMediaType)
+            {
+                inlineMediaType.Schema = schema;
+            }
 
             return;
         }
@@ -86,7 +93,6 @@ internal sealed class ProblemDetailsOperationTransformer : IOpenApiOperationTran
         content[ProblemJsonMediaType] = new OpenApiMediaType { Schema = schema };
     }
 
-#if NET10_0_OR_GREATER
     private static OpenApiSchema CreateProblemDetailsSchema() => new()
     {
         Type = JsonSchemaType.Object,
@@ -100,19 +106,4 @@ internal sealed class ProblemDetailsOperationTransformer : IOpenApiOperationTran
         },
         AdditionalPropertiesAllowed = true,
     };
-#else
-    private static OpenApiSchema CreateProblemDetailsSchema() => new()
-    {
-        Type = "object",
-        Properties = new Dictionary<string, OpenApiSchema>(StringComparer.Ordinal)
-        {
-            ["type"] = new OpenApiSchema { Type = "string" },
-            ["title"] = new OpenApiSchema { Type = "string" },
-            ["status"] = new OpenApiSchema { Type = "integer", Format = "int32" },
-            ["detail"] = new OpenApiSchema { Type = "string" },
-            ["instance"] = new OpenApiSchema { Type = "string" },
-        },
-        AdditionalPropertiesAllowed = true,
-    };
-#endif
 }

@@ -34,16 +34,4 @@ public abstract class TestContainerFixtureWithConnectionString<TBuilderEntity, T
     /// Gets the configuration key name where the connection string should be injected.
     /// </summary>
     public abstract string ConnectionStringKey { get; }
-
-    /// <summary>
-    /// Creates a pass-through scope view over this container that forwards its connection string unchanged, so every
-    /// consumer shares the container's namespace. Override to return a view that is isolated under
-    /// <paramref name="scopeId"/> when the containerized service supports namespacing (for example one virtual host
-    /// per scope on a message broker); derive that view from
-    /// <see cref="TestContainerWithConnectionStringScope{TContainer}"/>, which forwards the host configuration and the
-    /// connection string key, and creates and deletes the namespace.
-    /// </summary>
-    /// <param name="scopeId">A short, unique, lowercase identifier for the scope, safe to embed in names.</param>
-    /// <returns>The scoped container view.</returns>
-    public override ITestContainer CreateScope(string scopeId) => new SharedContainerWithConnectionStringScope(this);
 }

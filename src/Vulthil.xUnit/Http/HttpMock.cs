@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Net;
+using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -120,19 +121,12 @@ internal sealed class HttpMock : IHttpMock
         private readonly List<KeyValuePair<string, string>> _headers = [];
         private HttpStatusCode _statusCode = HttpStatusCode.OK;
         private string? _body;
-        private string _mediaType = "application/json";
         private Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>? _responder;
 
         public Func<HttpRequestMessage, bool> Matches { get; } = matches;
 
         public IHttpMockResponseBuilder RespondWith<TResponse>(HttpStatusCode statusCode, TResponse body)
-        {
-            _statusCode = statusCode;
-            _body = JsonSerializer.Serialize(body, JsonOptions);
-            _mediaType = "application/json";
-            _responder = null;
-            return this;
-        }
+            => RespondWithJson(statusCode, JsonSerializer.Serialize(body, JsonOptions));
 
         public IHttpMockResponseBuilder RespondWith(HttpStatusCode statusCode)
         {
@@ -152,7 +146,6 @@ internal sealed class HttpMock : IHttpMock
         {
             _statusCode = statusCode;
             _body = json;
-            _mediaType = "application/json";
             _responder = null;
             return this;
         }
@@ -176,7 +169,7 @@ internal sealed class HttpMock : IHttpMock
             var response = new HttpResponseMessage(_statusCode);
             if (_body is not null)
             {
-                response.Content = new StringContent(_body, Encoding.UTF8, _mediaType);
+                response.Content = new StringContent(_body, Encoding.UTF8, MediaTypeNames.Application.Json);
             }
 
             foreach (var header in _headers)

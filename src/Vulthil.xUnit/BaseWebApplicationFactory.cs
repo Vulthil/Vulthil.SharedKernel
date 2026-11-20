@@ -43,7 +43,6 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 {
     private readonly TestHostScope _scope;
     private readonly Dictionary<string, HttpMock> _httpMocks = [];
-    private readonly List<Action<IServiceCollection>> _httpClientConfigurations = [];
 
     /// <summary>
     /// Initializes a factory that consumes the shared containers of <paramref name="containerHost"/>.
@@ -69,11 +68,6 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
 
         var mock = new HttpMock();
         _httpMocks[name] = mock;
-
-        _httpClientConfigurations.Add(services => services.Configure<HttpClientFactoryOptions>(
-            name,
-            options => options.HttpMessageHandlerBuilderActions.Add(builder => builder.PrimaryHandler = mock.CreateHandler())));
-
         return mock;
     }
 
@@ -188,9 +182,11 @@ public abstract class BaseWebApplicationFactory<TEntryPoint> : WebApplicationFac
         {
             services.Insert(0, ServiceDescriptor.Singleton<IHostedService>(_scope.CreateHostLifecycle));
 
-            foreach (var configureHttpClient in _httpClientConfigurations)
+            foreach (var (name, mock) in _httpMocks)
             {
-                configureHttpClient(services);
+                services.Configure<HttpClientFactoryOptions>(
+                    name,
+                    options => options.HttpMessageHandlerBuilderActions.Add(builder => builder.PrimaryHandler = mock.CreateHandler()));
             }
         });
     }

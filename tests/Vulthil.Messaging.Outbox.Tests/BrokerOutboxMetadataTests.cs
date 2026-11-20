@@ -12,21 +12,23 @@ public sealed class BrokerOutboxMetadataTests : BaseUnitTestCase
         // Arrange
         var metadata = new BrokerOutboxMetadata
         {
-            Headers = new Dictionary<string, object?>
-            {
-                ["text"] = "value",
-                ["count"] = 42,
-                ["big"] = 5_000_000_000L,
-                ["ratio"] = 1.5,
-                ["flag"] = true,
-            },
+            Headers = BrokerOutboxMetadata.CaptureHeaders(
+                new Dictionary<string, object?>
+                {
+                    ["text"] = "value",
+                    ["count"] = 42,
+                    ["big"] = 5_000_000_000L,
+                    ["ratio"] = 1.5,
+                    ["flag"] = true,
+                },
+                JsonSerializerOptions.Default),
         };
 
         // Act
         var roundTripped = JsonSerializer.Deserialize<BrokerOutboxMetadata>(JsonSerializer.Serialize(metadata))!;
 
         // Assert
-        var headers = roundTripped.Headers.ShouldNotBeNull();
+        var headers = roundTripped.RestoreHeaders().ShouldNotBeNull();
         headers["text"].ShouldBeOfType<string>().ShouldBe("value");
         headers["count"].ShouldBeOfType<int>().ShouldBe(42);
         headers["big"].ShouldBeOfType<long>().ShouldBe(5_000_000_000L);
@@ -38,20 +40,18 @@ public sealed class BrokerOutboxMetadataTests : BaseUnitTestCase
     public void HeadersRoundTripRematerializesComplexValuesAsDetachedJsonElements()
     {
         // Arrange
-        var metadata = new BrokerOutboxMetadata
+        var published = new Dictionary<string, object?>
         {
-            Headers = new Dictionary<string, object?>
-            {
-                ["shape"] = new Dictionary<string, int> { ["a"] = 1 },
-                ["tags"] = new[] { "vip", "eu" },
-            },
+            ["shape"] = new Dictionary<string, int> { ["a"] = 1 },
+            ["tags"] = new[] { "vip", "eu" },
         };
+        var metadata = new BrokerOutboxMetadata { Headers = BrokerOutboxMetadata.CaptureHeaders(published, JsonSerializerOptions.Default) };
 
         // Act
         var roundTripped = JsonSerializer.Deserialize<BrokerOutboxMetadata>(JsonSerializer.Serialize(metadata))!;
 
         // Assert
-        var headers = roundTripped.Headers.ShouldNotBeNull();
+        var headers = roundTripped.RestoreHeaders().ShouldNotBeNull();
         headers["shape"].ShouldBeOfType<JsonElement>().GetProperty("a").GetInt32().ShouldBe(1);
         headers["tags"].ShouldBeOfType<JsonElement>().GetArrayLength().ShouldBe(2);
     }
@@ -65,13 +65,13 @@ public sealed class BrokerOutboxMetadataTests : BaseUnitTestCase
         source.SetConversationId("conv-1");
         var metadata = new BrokerOutboxMetadata
         {
-            Headers = new Dictionary<string, object?>(source.Headers),
+            Headers = BrokerOutboxMetadata.CaptureHeaders(source.Headers, JsonSerializerOptions.Default),
         };
         var relayed = JsonSerializer.Deserialize<BrokerOutboxMetadata>(JsonSerializer.Serialize(metadata))!;
         var target = new PublishContext();
 
         // Act
-        target.AddHeaders(relayed.Headers!);
+        target.AddHeaders(relayed.RestoreHeaders()!);
 
         // Assert
         target.ResponseAddress.ShouldBe(new Uri("queue:order-replies"));
@@ -92,12 +92,12 @@ public sealed class BrokerOutboxMetadataTests : BaseUnitTestCase
             ["id"] = Guid.Parse("11111111-2222-3333-4444-555555555555"),
             ["shape"] = new Dictionary<string, int> { ["a"] = 1 },
         };
-        var metadata = new BrokerOutboxMetadata { Headers = published };
+        var metadata = new BrokerOutboxMetadata { Headers = BrokerOutboxMetadata.CaptureHeaders(published, JsonSerializerOptions.Default) };
 
         // Act — direct: publish → wire → consume; relayed: capture → outbox row → relay publish → wire → consume.
         var direct = ConsumeThroughEnvelope(published);
         var captured = JsonSerializer.Deserialize<BrokerOutboxMetadata>(JsonSerializer.Serialize(metadata))!;
-        var relayed = ConsumeThroughEnvelope(captured.Headers!);
+        var relayed = ConsumeThroughEnvelope(captured.RestoreHeaders()!);
 
         // Assert — same keys, same CLR types, same values.
         relayed.Keys.ShouldBe(direct.Keys, ignoreOrder: true);

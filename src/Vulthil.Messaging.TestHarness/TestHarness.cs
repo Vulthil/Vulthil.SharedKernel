@@ -81,30 +81,29 @@ internal sealed class TestHarness : ITestHarness, IResettableTestState
 
     internal AdHocResponder? ResponderFor(Uri urn) => _responders.GetValueOrDefault(urn);
 
-    private static AdHocHandler BuildHandler<TMessage>(Func<IMessageContext<TMessage>, Task> handler) where TMessage : notnull
+    private AdHocHandler BuildHandler<TMessage>(Func<IMessageContext<TMessage>, Task> handler) where TMessage : notnull
         => (scope, envelope, ct) =>
         {
-            var message = InMemoryContext.Deserialize<TMessage>(scope, envelope);
+            var message = (TMessage)InMemoryContext.Deserialize(envelope, typeof(TMessage), _provider);
             var context = InMemoryContext.Create(scope, message, envelope, ct);
             return handler(context);
         };
 
-    private static AdHocResponder BuildResponder<TRequest, TResponse>(Func<IMessageContext<TRequest>, TResponse> responder)
+    private AdHocResponder BuildResponder<TRequest, TResponse>(Func<IMessageContext<TRequest>, TResponse> responder)
         where TRequest : notnull
         where TResponse : notnull
         => (scope, envelope, ct) =>
         {
-            var provider = scope.GetRequiredService<IMessageConfigurationProvider>();
-            var request = InMemoryContext.Deserialize<TRequest>(scope, envelope);
+            var request = (TRequest)InMemoryContext.Deserialize(envelope, typeof(TRequest), _provider);
             var context = InMemoryContext.Create(scope, request, envelope, ct);
 
             try
             {
-                return RpcReply.Success(responder(context), provider, envelope.RequestId, envelope.CorrelationId);
+                return RpcReply.Success(responder(context), _provider, envelope.RequestId, envelope.CorrelationId);
             }
             catch (Exception ex)
             {
-                return RpcReply.Fault(ex, provider, envelope.RequestId, envelope.CorrelationId);
+                return RpcReply.Fault(ex, _provider, envelope.RequestId, envelope.CorrelationId);
             }
         };
 

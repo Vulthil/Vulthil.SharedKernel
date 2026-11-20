@@ -127,7 +127,7 @@ internal sealed class InMemoryTransport : ITransport
         MessageEnvelope envelope,
         CancellationToken cancellationToken)
     {
-        var message = Deserialize(envelope, plan.MessageType.Type);
+        var message = InMemoryContext.Deserialize(envelope, plan.MessageType.Type, _provider);
         var port = new DeliveryPort(this, envelope, cancellationToken);
         var outcome = await _dispatcher.DispatchAsync(handlers, message, port).ConfigureAwait(false);
 
@@ -153,10 +153,6 @@ internal sealed class InMemoryTransport : ITransport
             await stub(scope.ServiceProvider, envelope, cancellationToken).ConfigureAwait(false);
         }
     }
-
-    private object Deserialize(MessageEnvelope envelope, Type messageType)
-        => envelope.Message.Deserialize(messageType, _provider.JsonSerializerOptions)
-            ?? throw new InvalidOperationException($"The in-memory transport could not deserialize a '{envelope.MessageType}' payload.");
 
     /// <summary>
     /// The harness's <see cref="IDeliveryPort"/> for one delivery. Retries run in-process, a fault is captured as a

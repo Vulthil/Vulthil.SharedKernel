@@ -32,7 +32,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
             });
 
         // Act
-        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.MessageId.ShouldBe("msg-1");
@@ -68,7 +68,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         });
 
         // Act
-        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.Headers["tenant"].ShouldBeOfType<string>().ShouldBe("acme");
@@ -98,7 +98,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         });
 
         // Act
-        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.Headers.Keys.ShouldBe(["tenant"]);
@@ -118,7 +118,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         var eventArgs = CreateDeliverEventArgs(expiration: "5000", timestamp: sentTime.ToUnixTimeSeconds());
 
         // Act
-        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.SentTime.ShouldBe(sentTime);
@@ -132,7 +132,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         var eventArgs = CreateDeliverEventArgs(expiration: "5000", timestamp: 0);
 
         // Act
-        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.SentTime.ShouldBeNull();
@@ -148,7 +148,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
         var eventArgs = CreateDeliverEventArgs(replyTo: "reply-queue");
 
         // Act
-        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.ResponseAddress.ShouldBe(new Uri("queue:reply-queue"));
@@ -166,7 +166,7 @@ public sealed class MessageContextTests : BaseUnitTestCase
             timestamp: 0);
 
         // Act
-        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs);
+        var context = MessageContextFactory.CreateContext(new TestMessage("payload"), eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.CorrelationId.ShouldBeNull();
@@ -187,38 +187,12 @@ public sealed class MessageContextTests : BaseUnitTestCase
         var eventArgs = CreateDeliverEventArgs(routingKey: "typed.route");
 
         // Act
-        var context = MessageContextFactory.CreateContext(message, eventArgs);
+        var context = MessageContextFactory.CreateContext(message, eventArgs, cancellationToken: CancellationToken);
 
         // Assert
         context.Message.ShouldBe(message);
         context.RoutingKey.ShouldBe("typed.route");
         context.CorrelationId.ShouldBe("corr-1");
-    }
-
-    [Fact]
-    public void CreateSnapshotShouldCaptureTransportMetadata()
-    {
-        // Arrange
-        var eventArgs = CreateDeliverEventArgs(
-            routingKey: "orders.created",
-            headers: new Dictionary<string, object?>
-            {
-                ["ConversationId"] = Encoding.UTF8.GetBytes("conv-1"),
-                ["FaultAddress"] = Encoding.UTF8.GetBytes("fault-queue"),
-                ["x-retry-count"] = 2L,
-            });
-
-        // Act
-        var snapshot = MessageContextFactory.CreateSnapshot(eventArgs);
-
-        // Assert
-        snapshot.MessageId.ShouldBe("msg-1");
-        snapshot.CorrelationId.ShouldBe("corr-1");
-        snapshot.RequestId.ShouldBe("corr-1");
-        snapshot.RoutingKey.ShouldBe("orders.created");
-        snapshot.ConversationId.ShouldBe("conv-1");
-        snapshot.FaultAddress.ShouldBe(new Uri("queue:fault-queue"));
-        snapshot.RetryCount.ShouldBe(2);
     }
 
     private static BasicDeliverEventArgs CreateDeliverEventArgs(

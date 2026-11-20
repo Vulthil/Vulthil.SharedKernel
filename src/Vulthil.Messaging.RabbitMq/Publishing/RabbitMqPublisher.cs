@@ -1,10 +1,8 @@
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.Logging;
-using Vulthil.Messaging.RabbitMq.Telemetry;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Publishing;
@@ -34,17 +32,51 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
     /// Channels come from a bounded pool — each leased channel is used non-concurrently and returned for reuse, or
     /// discarded if it faults.
     /// </remarks>
-    public async Task InternalPublishAsync(
+    public Task InternalPublishAsync(
         RabbitMqOutgoingMessage message,
         MessageConfiguration messageConfiguration,
+        CancellationToken cancellationToken)
+        => PublishOnPooledChannelAsync(message, messageConfiguration, cancellationToken);
+
+    /// <remarks>
+    /// Sends point-to-point via the broker's default exchange, which always routes by queue name; the destination
+    /// queue is owned by the receiving service and is not declared here. The publish is mandatory, so a missing
+    /// destination queue makes the broker return the message and the awaited confirm throw a <c>PublishReturnException</c>.
+    /// </remarks>
+    public Task InternalSendAsync(
+        RabbitMqOutgoingMessage message,
+        CancellationToken cancellationToken)
+        => PublishOnPooledChannelAsync(message, exchangeConfiguration: null, cancellationToken);
+
+    public async Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+        ArgumentNullException.ThrowIfNull(context);
+
+        var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(message.GetType());
+        var publish = RabbitMqOutgoingMessages.Publish(message, context, messageConfiguration, _messageConfigurationProvider.JsonSerializerOptions);
+
+        await publish.RunInActivityAsync(() =>
+        {
+            MessagingLog.Publishing(_logger, publish.Ids.UrnString, publish.Message.Exchange, publish.Message.RoutingKey, publish.Ids.MessageId);
+            return InternalPublishAsync(publish.Message, messageConfiguration, cancellationToken);
+        }).ConfigureAwait(false);
+    }
+
+    private async Task PublishOnPooledChannelAsync(
+        RabbitMqOutgoingMessage message,
+        MessageConfiguration? exchangeConfiguration,
         CancellationToken cancellationToken)
     {
         var channel = await _channelPool.LeaseAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            await EnsureExchangeTopologyAsync(channel, message.Exchange, messageConfiguration, cancellationToken).ConfigureAwait(false);
+            if (exchangeConfiguration is not null)
+            {
+                await EnsureExchangeTopologyAsync(channel, message.Exchange, exchangeConfiguration, cancellationToken).ConfigureAwait(false);
+            }
 
-            await PublishOnAsync(channel, message, cancellationToken).ConfigureAwait(false);
+            await channel.BasicPublishAsync(message.Exchange, message.RoutingKey, message.Mandatory, message.Properties, message.Body, cancellationToken).ConfigureAwait(false);
         }
         catch
         {
@@ -57,56 +89,6 @@ internal sealed class RabbitMqPublisher : ITransportPublisher, IInternalPublishe
 
         await _channelPool.ReturnAsync(channel).ConfigureAwait(false);
     }
-
-    /// <remarks>
-    /// Sends point-to-point via the broker's default exchange, which always routes by queue name; the destination
-    /// queue is owned by the receiving service and is not declared here. The publish is mandatory, so a missing
-    /// destination queue makes the broker return the message and the awaited confirm throw a <c>PublishReturnException</c>.
-    /// </remarks>
-    public async Task InternalSendAsync(
-        RabbitMqOutgoingMessage message,
-        CancellationToken cancellationToken)
-    {
-        var channel = await _channelPool.LeaseAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            await PublishOnAsync(channel, message, cancellationToken).ConfigureAwait(false);
-        }
-        catch
-        {
-            await ReturnOrDiscardAsync(channel).ConfigureAwait(false);
-            throw;
-        }
-
-        await _channelPool.ReturnAsync(channel).ConfigureAwait(false);
-    }
-
-    public async Task PublishAsync(object message, PublishContext context, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(message);
-        ArgumentNullException.ThrowIfNull(context);
-
-        var messageConfiguration = _messageConfigurationProvider.GetMessageConfiguration(message.GetType());
-        var publish = RabbitMqOutgoingMessages.Publish(message, context, messageConfiguration, _messageConfigurationProvider.JsonSerializerOptions);
-
-        using var activity = publish.StartActivity();
-        MessagingLog.Publishing(_logger, publish.Ids.UrnString, publish.Message.Exchange, publish.Message.RoutingKey, publish.Ids.MessageId);
-
-        try
-        {
-            await InternalPublishAsync(publish.Message, messageConfiguration, cancellationToken).ConfigureAwait(false);
-            activity?.SetStatus(ActivityStatusCode.Ok);
-        }
-        catch (Exception ex)
-        {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.AddException(ex);
-            throw;
-        }
-    }
-
-    private static ValueTask PublishOnAsync(IChannel channel, RabbitMqOutgoingMessage message, CancellationToken cancellationToken) =>
-        channel.BasicPublishAsync(message.Exchange, message.RoutingKey, message.Mandatory, message.Properties, message.Body, cancellationToken);
 
     private async ValueTask EnsureExchangeTopologyAsync(IChannel channel, string exchange, MessageConfiguration messageConfiguration, CancellationToken cancellationToken)
     {

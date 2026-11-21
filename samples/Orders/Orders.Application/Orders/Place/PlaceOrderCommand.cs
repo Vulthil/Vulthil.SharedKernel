@@ -1,24 +1,16 @@
-using Microsoft.Extensions.Logging;
+using Orders.Domain.Orders;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Domain.MainEntities;
 
-namespace WebApi.Application.MainEntities.Create;
+namespace Orders.Application.Orders.Place;
 
-public sealed record CreateMainEntityCommand(string Name) : ITransactionalCommand<Result<Guid>>;
+public sealed record PlaceOrderCommand(string Description) : ITransactionalCommand<Result<Guid>>;
 
-public sealed class CreateMainEntityCommandHandler(ILogger<CreateMainEntityCommandHandler> logger, IWebApiDbContext dbContext) : ICommandHandler<CreateMainEntityCommand, Result<Guid>>
+public sealed class PlaceOrderCommandHandler(IOrdersDbContext dbContext) : ICommandHandler<PlaceOrderCommand, Result<Guid>>
 {
-    private readonly ILogger<CreateMainEntityCommandHandler> _logger = logger;
-    private readonly IWebApiDbContext _dbContext = dbContext;
-
-    public async Task<Result<Guid>> HandleAsync(CreateMainEntityCommand command, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Creating MainEntity With name: {Name}", command.Name);
-
-        return await MainEntity.Create(command.Name)
-            .Tap(mainEntity => _dbContext.MainEntities.Add(mainEntity))
-            .TapAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
-            .MapAsync(mainEntity => mainEntity.Id.Value);
-    }
+    public async Task<Result<Guid>> HandleAsync(PlaceOrderCommand command, CancellationToken cancellationToken = default) =>
+        await Order.Place(command.Description)
+            .Tap(order => dbContext.Orders.Add(order))
+            .TapAsync(_ => dbContext.SaveChangesAsync(cancellationToken))
+            .MapAsync(order => order.Id.Value);
 }

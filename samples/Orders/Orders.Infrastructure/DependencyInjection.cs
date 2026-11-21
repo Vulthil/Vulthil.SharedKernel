@@ -9,23 +9,26 @@ using Vulthil.Messaging.RabbitMq;
 using Vulthil.SharedKernel.Infrastructure;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
 using Vulthil.SharedKernel.Infrastructure.Relational;
-using WebApi.Application;
-using WebApi.Application.MainEntities.Create;
-using WebApi.Application.Shipping;
-using WebApi.Application.SideEffects.Create;
-using WebApi.Infrastructure.Data;
-using WebApi.Infrastructure.Messaging;
+using Orders.Application;
+using Orders.Application.Orders.Place;
+using Orders.Application.Shipping;
+using Orders.Application.Fulfillments.GetByOrder;
+using Orders.Application.Fulfillments.Start;
+using Orders.Infrastructure.Data;
+using Orders.Infrastructure.Messaging;
 
-namespace WebApi.Infrastructure;
+namespace Orders.Infrastructure;
 
 public static class DependencyInjection
 {
-    public const string ShipmentEventsQueueName = "webapi-shipment-events";
+    public const string OrderEventsQueueName = "OrderEvents";
 
-    public static IHostApplicationBuilder AddDatabaseInfrastructure(this IHostApplicationBuilder builder, string connectionStringKey)
+    public const string ShipmentEventsQueueName = "orders-shipment-events";
+
+    public static IHostApplicationBuilder AddOrdersPersistence(this IHostApplicationBuilder builder, string connectionStringKey)
     {
         builder
-            .AddDbContext<IWebApiDbContext, WebApiDbContext>(databaseInfrastructureConfigurator =>
+            .AddDbContext<IOrdersDbContext, OrdersDbContext>(databaseInfrastructureConfigurator =>
                     databaseInfrastructureConfigurator
                         .UseNpgsql(connectionStringKey, settings => settings.CommandTimeout = 30)
                         .EnableOutboxProcessing(o =>
@@ -35,34 +38,34 @@ public static class DependencyInjection
                             o.Retention.Enabled = true;
                         }));
 
-        builder.Services.AddRelationalInbox<WebApiDbContext>(o => o.Retention.Enabled = true);
+        builder.Services.AddRelationalInbox<OrdersDbContext>(o => o.Retention.Enabled = true);
 
         return builder;
     }
 
-    public static Task MigrateAsync(this IHost host) => host.MigrateAsync<WebApiDbContext>();
+    public static Task MigrateAsync(this IHost host) => host.MigrateAsync<OrdersDbContext>();
 
-    public static IHostApplicationBuilder AddRabbitMqMessagingInfrastructure(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
+    public static IHostApplicationBuilder AddOrdersMessaging(this IHostApplicationBuilder builder, string rabbitMqConnectionStringKey)
     {
         builder.AddMessaging(x =>
         {
-            x.ConfigureMessage<MainEntityCreatedIntegrationEvent>(pd => pd
-                .UseRoutingKey("main-entity.created")
-                .UseCorrelationId(e => e.Id.ToString()));
+            x.ConfigureMessage<OrderPlacedIntegrationEvent>(pd => pd
+                .UseRoutingKey("order.placed")
+                .UseCorrelationId(e => e.OrderId.ToString()));
 
             ConfigureShipping(x);
 
-            x.ConfigureQueue("MainEntityEvents", queue =>
+            x.ConfigureQueue(OrderEventsQueueName, queue =>
             {
                 queue.UseRetry(r => r.SetIntervals(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5)));
 
                 queue.UseDeadLetterQueue();
 
-                queue.AddRequestConsumer<SideEffectRequestConsumer>();
+                queue.AddRequestConsumer<OrderFulfillmentsRequestConsumer>();
 
-                queue.Subscribe<MainEntityCreatedIntegrationEvent>("main-entity.created");
-                queue.Subscribe<MainEntityCreatedIntegrationEvent>("main-entity.created2");
-                queue.AddConsumer<MainEntityCreatedIntegrationEventConsumer>(c =>
+                queue.Subscribe<OrderPlacedIntegrationEvent>("order.placed");
+                queue.Subscribe<OrderPlacedIntegrationEvent>("order.placed.priority");
+                queue.AddConsumer<StartFulfillmentConsumer>(c =>
                 {
                     c.UseRetry(r => r.Immediate(5));
                 });
@@ -71,7 +74,7 @@ public static class DependencyInjection
             x.AddOpenConsumeFilter(typeof(LoggingScopeConsumeFilter<>));
             x.AddConsumeFilter<ShipmentDeliveredValidationFilter>();
 
-            x.AddIdempotentInbox<MainEntityCreatedIntegrationEvent>(context => context.Message.Id.ToString());
+            x.AddIdempotentInbox<OrderPlacedIntegrationEvent>(context => context.Message.OrderId.ToString());
             x.AddIdempotentInbox<ShipmentDelivered>(context => context.Message.ShipmentId.ToString());
 
             // Publish filters run in registration order, and the outbox filter captures a message without calling
@@ -82,7 +85,7 @@ public static class DependencyInjection
 
             // Run the consumer in a transaction so any messages it publishes are captured by the outbox. Here it
             // composes with the inbox (which opens the transaction first) — the filter joins rather than nesting.
-            x.AddTransactionalConsumer<MainEntityCreatedIntegrationEvent>();
+            x.AddTransactionalConsumer<OrderPlacedIntegrationEvent>();
 
             x.UseRabbitMq(rabbitMqConnectionStringKey);
         });

@@ -4,14 +4,14 @@ using Vulthil.Messaging.TestHarness;
 using Vulthil.xUnit;
 using Vulthil.xUnit.Fixtures;
 
-namespace WebApi.Tests.Fixtures;
+namespace Orders.Tests.Fixtures;
 
 /// <summary>
 /// Boots the same production composition with the RabbitMQ transport swapped for the in-memory test harness. It
-/// consumes only the PostgreSQL container: the WebApi sends to a queue of the Shipments service, which no broker in
+/// consumes only the PostgreSQL container: the Orders sends to a queue of the Shipments service, which no broker in
 /// this test run hosts, so the harness captures the send instead.
 /// </summary>
-public sealed class HarnessWebApplicationFactory(AppContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost)
+public sealed class HarnessWebApplicationFactory(OrdersContainerHost containerHost) : BaseWebApplicationFactory<Program>(containerHost)
 {
     protected override bool ShouldUseContainer(ITestContainer container) => container is PostgreSqlTestContainer;
 

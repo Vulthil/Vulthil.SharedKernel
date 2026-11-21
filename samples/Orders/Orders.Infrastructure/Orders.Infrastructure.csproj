@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
@@ -11,7 +11,7 @@
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.Outbox\Vulthil.Messaging.Outbox.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.RabbitMq\Vulthil.Messaging.RabbitMq.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.SharedKernel.Infrastructure.Npgsql\Vulthil.SharedKernel.Infrastructure.Npgsql.csproj" />
-		<ProjectReference Include="..\WebApi.Application\WebApi.Application.csproj" />
+		<ProjectReference Include="..\Orders.Application\Orders.Application.csproj" />
 	</ItemGroup>
 	
 </Project>

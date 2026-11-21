@@ -1,63 +1,64 @@
+using Orders.Domain.Orders;
+using Orders.Domain.Orders.Events;
 using Shouldly;
+using Vulthil.Results;
 using Vulthil.xUnit;
-using WebApi.Domain.MainEntities;
-using WebApi.Domain.MainEntities.Events;
 
-namespace WebApi.Tests.Unit;
+namespace Orders.Tests.Unit;
 
-// The alias sits inside the namespace so it wins over the WebApi.MainEntity namespace of the endpoints.
-using MainEntity = WebApi.Domain.MainEntities.MainEntity;
-
-public sealed class MainEntityTests : BaseUnitTestCase
+public sealed class OrderTests : BaseUnitTestCase
 {
+    private static readonly DateTimeOffset Now = new(2026, 11, 20, 12, 0, 0, TimeSpan.Zero);
+
     [Fact]
-    public void Create_trims_the_name_and_raises_MainEntityCreatedEvent()
+    public void Place_trims_the_description_and_raises_OrderPlacedDomainEvent()
     {
         // Act
-        var result = MainEntity.Create("  Widget ");
+        var result = Order.Place("  Espresso machine ");
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.Name.ShouldBe("Widget");
-        result.Value.DomainEvents.ShouldHaveSingleItem().ShouldBeOfType<MainEntityCreatedEvent>();
+        result.Value.Description.ShouldBe("Espresso machine");
+        result.Value.DomainEvents.ShouldHaveSingleItem().ShouldBeOfType<OrderPlacedDomainEvent>();
     }
 
     [Fact]
-    public void Create_with_a_too_long_name_fails()
+    public void Place_with_a_too_long_description_fails()
     {
         // Act
-        var result = MainEntity.Create(new string('x', MainEntity.MaxNameLength + 1));
+        var result = Order.Place(new string('x', Order.MaxDescriptionLength + 1));
 
         // Assert
-        result.Error.ShouldBe(MainEntityErrors.NameTooLong);
+        result.Error.ShouldBe(OrderErrors.DescriptionTooLong);
     }
 
     [Fact]
-    public void Rename_to_the_same_name_fails_without_an_event()
-    {
-        // Arrange
-        var mainEntity = MainEntity.Create("Widget").Value;
-        mainEntity.ClearDomainEvents();
-
-        // Act
-        var result = mainEntity.Rename("Widget");
-
-        // Assert
-        result.Error.ShouldBe(MainEntityErrors.NameUnchanged);
-        mainEntity.DomainEvents.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public void Rename_to_a_reserved_name_throws_a_domain_exception_with_a_conflict_error()
+    public void ChangeDescription_to_the_same_description_fails_without_an_event()
     {
         // Arrange
-        var mainEntity = MainEntity.Create("Widget").Value;
+        var order = Order.Place("Espresso machine").Value;
+        order.ClearDomainEvents();
 
         // Act
-        var exception = Should.Throw<ReservedMainEntityNameException>(() => mainEntity.Rename("Admin"));
+        var result = order.ChangeDescription("Espresso machine");
 
         // Assert
-        exception.Error.Type.ShouldBe(Vulthil.Results.ErrorType.Conflict);
-        mainEntity.Name.ShouldBe("Widget");
+        result.Error.ShouldBe(OrderErrors.DescriptionUnchanged);
+        order.DomainEvents.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void MarkShipped_twice_throws_a_domain_exception_with_a_conflict_error()
+    {
+        // Arrange
+        var order = Order.Place("Espresso machine").Value;
+        order.MarkShipped(Now);
+
+        // Act
+        var exception = Should.Throw<OrderAlreadyShippedException>(() => order.MarkShipped(Now.AddMinutes(1)));
+
+        // Assert
+        exception.Error.Type.ShouldBe(ErrorType.Conflict);
+        order.ShippedAtUtc.ShouldBe(Now);
     }
 }

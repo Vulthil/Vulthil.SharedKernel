@@ -1,8 +1,8 @@
 using FluentValidation;
 
-namespace WebApi.Application.MainEntities.CreateMany;
+namespace Orders.Application.Orders.PlaceMany;
 
-public sealed class CreateMainEntitiesCommandValidator : AbstractValidator<CreateMainEntitiesCommand>
+public sealed class PlaceOrdersCommandValidator : AbstractValidator<PlaceOrdersCommand>
 {
-    public CreateMainEntitiesCommandValidator() => RuleFor(command => command.Names).NotEmpty();
+    public PlaceOrdersCommandValidator() => RuleFor(command => command.Descriptions).NotEmpty();
 }

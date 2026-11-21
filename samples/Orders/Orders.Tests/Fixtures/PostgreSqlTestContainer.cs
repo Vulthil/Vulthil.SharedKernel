@@ -4,11 +4,11 @@ using Respawn;
 using ServiceDefaults;
 using Testcontainers.PostgreSql;
 using Vulthil.xUnit.Fixtures;
-using WebApi.Infrastructure.Data;
+using Orders.Infrastructure.Data;
 
-namespace WebApi.Tests.Fixtures;
+namespace Orders.Tests.Fixtures;
 
-internal sealed class PostgreSqlTestContainer : TestDatabaseContainerFixture<WebApiDbContext, PostgreSqlBuilder, PostgreSqlContainer>
+internal sealed class PostgreSqlTestContainer : TestDatabaseContainerFixture<OrdersDbContext, PostgreSqlBuilder, PostgreSqlContainer>
 {
     private readonly PostgreSqlBuilder _builder = new PostgreSqlBuilder("postgres:18.1")
         .WithPassword("webapi");
@@ -16,5 +16,5 @@ internal sealed class PostgreSqlTestContainer : TestDatabaseContainerFixture<Web
 
     protected override IDbAdapter DbAdapter => Respawn.DbAdapter.Postgres;
     public override DbProviderFactory DbProviderFactory => NpgsqlFactory.Instance;
-    public override string ConnectionStringKey => ServiceNames.PostgresSqlServerServiceName;
+    public override string ConnectionStringKey => ServiceNames.OrdersDatabaseServiceName;
 }

@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Application.SideEffects;
-using WebApi.Application.SideEffects.GetById;
-using WebApi.Application.SideEffects.GetInProgress;
+using Orders.Application.Fulfillments;
+using Orders.Application.Fulfillments.GetById;
+using Orders.Application.Fulfillments.GetInProgress;
 
-namespace WebApi.SideEffects;
+namespace Orders.Fulfillments;
 
 /// <summary>
 /// Demonstrates the MVC controller path kept alongside minimal API endpoints: <see cref="BaseController"/> supplies
@@ -16,32 +16,32 @@ namespace WebApi.SideEffects;
 /// (<c>ToIResult</c>).
 /// </summary>
 /// <param name="sender">Dispatches the query to its registered handler.</param>
-public sealed class SideEffectsController(ISender sender) : BaseController
+public sealed class FulfillmentsController(ISender sender) : BaseController
 {
     /// <summary>
-    /// Gets every side effect that is currently in progress.
+    /// Gets every fulfillment that is still in progress.
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <returns>200 OK with the in-progress side effects.</returns>
+    /// <returns>200 OK with the in-progress fulfillments.</returns>
     [HttpGet("in-progress")]
     public async Task<IActionResult> GetInProgress(CancellationToken cancellationToken)
     {
-        var result = await sender.SendAsync(new GetInProgressQuery(), cancellationToken);
+        var result = await sender.SendAsync(new GetInProgressFulfillmentsQuery(), cancellationToken);
         return result.ToActionResult(this);
     }
 
     /// <summary>
-    /// Gets one side effect.
+    /// Gets one fulfillment.
     /// </summary>
-    /// <param name="id">The id of the side effect.</param>
+    /// <param name="id">The id of the fulfillment.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <returns>200 OK with the side effect, or a 404 problem response.</returns>
+    /// <returns>200 OK with the fulfillment, or a 404 problem response.</returns>
     [HttpGet("{id:guid}")]
     [ProducesError(ErrorType.NotFound)]
-    public async Task<Results<Ok<SideEffectDto>, ProblemHttpResult>> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<Results<Ok<FulfillmentDto>, ProblemHttpResult>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        Logger.LogInformation("Getting side effect {SideEffectId}", id);
-        var result = await sender.SendAsync(new GetSideEffectQuery(id), cancellationToken);
+        Logger.LogInformation("Getting fulfillment {FulfillmentId}", id);
+        var result = await sender.SendAsync(new GetFulfillmentQuery(id), cancellationToken);
         return result.ToIResult();
     }
 }

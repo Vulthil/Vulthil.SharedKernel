@@ -1,5 +1,5 @@
 using Vulthil.SharedKernel.Events;
 
-namespace WebApi.Domain.MainEntities.Events;
+namespace Orders.Domain.Orders.Events;
 
-public sealed record MainEntityNameUpdatedEvent(MainEntityId Id, string Name) : IDomainEvent;
+public sealed record OrderDescriptionChangedDomainEvent(OrderId OrderId, string Description) : IDomainEvent;

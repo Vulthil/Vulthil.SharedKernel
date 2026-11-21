@@ -1,73 +1,55 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Orders.Application.Fulfillments;
+using Orders.Application.Fulfillments.GetByOrder;
+using Orders.Domain.Orders;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Application.SideEffects;
-using WebApi.Application.SideEffects.Create;
-using WebApi.Domain.MainEntities;
 
-namespace WebApi.Application.MainEntities.GetById;
+namespace Orders.Application.Orders.GetById;
 
-public sealed record GetMainEntityByIdQuery(Guid Id) : IQuery<Result<MainEntityDto>>;
-public sealed record MainEntityDto
-{
-    public Guid Id { get; private set; }
-    public string Name { get; private set; }
-    public required List<SideEffectDto> SideEffects { get; init; }
-
-    private MainEntityDto(Guid id, string name) => (Id, Name) = (id, name);
-    internal static MainEntityDto FromModel(MainEntity mainEntity, List<SideEffectDto> sideEffectDtos) =>
-        new(mainEntity.Id.Value, mainEntity.Name)
-        {
-            SideEffects = sideEffectDtos
-        };
-}
+public sealed record GetOrderQuery(Guid OrderId) : IQuery<Result<OrderDto>>;
 
 /// <summary>
-/// Loads the entity and asks for its side effects at the same time, then joins the two results with <c>Zip</c>: the
-/// query fails with the first failure of the two. A side-effect request that times out is not a failure of the
+/// Loads the order and asks for its fulfillments at the same time, then joins the two results with <c>Zip</c>: the
+/// query fails with the first failure of the two. A fulfillment request that times out is not a failure of the
 /// query: <c>OrElse</c> turns that one error into an empty list.
 /// </summary>
-public sealed class GetMainEntityQueryHandler(ILogger<GetMainEntityQueryHandler> logger, IWebApiDbContext dbContext, IRequester requester) : IQueryHandler<GetMainEntityByIdQuery, Result<MainEntityDto>>
+public sealed class GetOrderQueryHandler(ILogger<GetOrderQueryHandler> logger, IOrdersDbContext dbContext, IRequester requester) : IQueryHandler<GetOrderQuery, Result<OrderDto>>
 {
-    private static readonly TimeSpan SideEffectsTimeout = TimeSpan.FromSeconds(3);
+    private static readonly TimeSpan FulfillmentsTimeout = TimeSpan.FromSeconds(3);
 
-    private readonly ILogger<GetMainEntityQueryHandler> _logger = logger;
-    private readonly IWebApiDbContext _dbContext = dbContext;
-    private readonly IRequester _requester = requester;
-
-    public async Task<Result<MainEntityDto>> HandleAsync(GetMainEntityByIdQuery query, CancellationToken cancellationToken = default)
+    public async Task<Result<OrderDto>> HandleAsync(GetOrderQuery query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Querying MainEntity With Id: {Id}", query.Id);
+        var id = new OrderId(query.OrderId);
+        var orderTask = dbContext.Orders
+            .AsNoTracking()
+            .FirstOrDefaultAsync(order => order.Id == id, cancellationToken)
+            .ToResultAsync(OrderErrors.NotFound(query.OrderId));
+        var fulfillmentsTask = GetFulfillmentsAsync(query.OrderId, cancellationToken);
 
-        var id = new MainEntityId(query.Id);
-        var mainEntityTask = _dbContext.MainEntities
-            .FirstOrDefaultAsync(w => w.Id == id, cancellationToken)
-            .ToResultAsync(MainEntityErrors.NotFound(query.Id));
-        var sideEffectsTask = GetSideEffectsAsync(query.Id, cancellationToken);
+        var order = await orderTask;
+        var fulfillments = await fulfillmentsTask;
 
-        var mainEntity = await mainEntityTask;
-        var sideEffects = await sideEffectsTask;
-
-        return mainEntity.Zip(sideEffects, MainEntityDto.FromModel);
+        return order.Zip(fulfillments, (o, f) => OrderDto.FromModel(o, f));
     }
 
-    private async Task<Result<List<SideEffectDto>>> GetSideEffectsAsync(Guid mainEntityId, CancellationToken cancellationToken)
+    private async Task<Result<List<FulfillmentDto>>> GetFulfillmentsAsync(Guid orderId, CancellationToken cancellationToken)
     {
-        var sideEffects = await _requester.RequestAsync<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>(
-            new GetSideEffectsBelongingToMainEntity(mainEntityId),
+        var fulfillments = await requester.RequestAsync<GetOrderFulfillments, List<FulfillmentDto>>(
+            new GetOrderFulfillments(orderId),
             context =>
             {
-                context.SetTimeout(SideEffectsTimeout);
+                context.SetTimeout(FulfillmentsTimeout);
                 return ValueTask.CompletedTask;
             },
             cancellationToken);
 
-        return sideEffects
-            .TapError(error => _logger.LogWarning("Side effects of {MainEntityId} are unavailable: {Error}", mainEntityId, error.Code))
+        return fulfillments
+            .TapError(error => logger.LogWarning("The fulfillments of order {OrderId} are unavailable: {Error}", orderId, error.Code))
             .OrElse(error => error.Code == RequestErrorCodes.Timeout
-                ? Result.Success(new List<SideEffectDto>())
-                : Result.Failure<List<SideEffectDto>>(error));
+                ? Result.Success(new List<FulfillmentDto>())
+                : Result.Failure<List<FulfillmentDto>>(error));
     }
 }

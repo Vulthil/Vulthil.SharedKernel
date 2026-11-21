@@ -1,20 +1,20 @@
 using Vulthil.Results;
 
-namespace WebApi.Domain.MainEntities;
+namespace Orders.Domain.Orders;
 
-public static class MainEntityErrors
+public static class OrderErrors
 {
-    public static readonly Error NameRequired =
-        Error.Validation("MainEntity.NameRequired", "A main entity needs a name.");
+    public static readonly Error DescriptionRequired =
+        Error.Validation("Order.DescriptionRequired", "An order needs a description.");
 
-    public static readonly Error NameTooLong =
-        Error.Validation("MainEntity.NameTooLong", $"A name can have at most {MainEntity.MaxNameLength} characters.");
+    public static readonly Error DescriptionTooLong =
+        Error.Validation("Order.DescriptionTooLong", $"A description can have at most {Order.MaxDescriptionLength} characters.");
 
-    public static readonly Error NameUnchanged =
-        Error.Conflict("MainEntity.NameUnchanged", "The entity already has that name.");
+    public static readonly Error DescriptionUnchanged =
+        Error.Conflict("Order.DescriptionUnchanged", "The order already has that description.");
 
-    public static Error NotFound(Guid id) => Error.NotFound("MainEntity.NotFound", $"Entity with Id {id} was not found.");
+    public static Error NotFound(Guid id) => Error.NotFound("Order.NotFound", $"Order {id} was not found.");
 
-    public static Error ReservedName(string name) =>
-        Error.Conflict("MainEntity.ReservedName", $"The name '{name}' is reserved.");
+    public static Error AlreadyShipped(Guid id) =>
+        Error.Conflict("Order.AlreadyShipped", $"Order {id} has already been shipped.");
 }

@@ -1,5 +1,5 @@
 using Vulthil.SharedKernel.Events;
 
-namespace WebApi.Domain.MainEntities.Events;
+namespace Orders.Domain.Orders.Events;
 
-public sealed record MainEntityCreatedEvent(MainEntityId Id) : IDomainEvent;
+public sealed record OrderPlacedDomainEvent(OrderId OrderId) : IDomainEvent;

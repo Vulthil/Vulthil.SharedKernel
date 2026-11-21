@@ -1,26 +1,20 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Orders.Domain.Orders;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Domain.MainEntities;
 
-namespace WebApi.Application.MainEntities.Update;
+namespace Orders.Application.Orders.ChangeDescription;
 
-public sealed record UpdateMainEntityNameCommand(Guid Id, string Name) : ITransactionalCommand;
+public sealed record ChangeOrderDescriptionCommand(Guid OrderId, string Description) : ITransactionalCommand;
 
-public sealed class UpdateMainEntityNameCommandHandler(ILogger<UpdateMainEntityNameCommandHandler> logger, IWebApiDbContext dbContext) : ICommandHandler<UpdateMainEntityNameCommand>
+public sealed class ChangeOrderDescriptionCommandHandler(IOrdersDbContext dbContext) : ICommandHandler<ChangeOrderDescriptionCommand>
 {
-    private readonly ILogger<UpdateMainEntityNameCommandHandler> _logger = logger;
-    private readonly IWebApiDbContext _dbContext = dbContext;
-
-    public async Task<Result> HandleAsync(UpdateMainEntityNameCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result> HandleAsync(ChangeOrderDescriptionCommand command, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Updating MainEntity With name: {Name}", command.Name);
-
-        var id = new MainEntityId(command.Id);
-        return await _dbContext.MainEntities.FirstOrDefaultAsync(w => w.Id == id, cancellationToken)
-            .ToResultAsync(MainEntityErrors.NotFound(command.Id))
-            .BindAsync(e => e.Rename(command.Name))
-            .TapAsync(() => _dbContext.SaveChangesAsync(cancellationToken));
+        var id = new OrderId(command.OrderId);
+        return await dbContext.Orders.FirstOrDefaultAsync(order => order.Id == id, cancellationToken)
+            .ToResultAsync(OrderErrors.NotFound(command.OrderId))
+            .BindAsync(order => order.ChangeDescription(command.Description))
+            .TapAsync(() => dbContext.SaveChangesAsync(cancellationToken));
     }
 }

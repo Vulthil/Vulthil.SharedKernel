@@ -1,33 +1,30 @@
+using Orders.Application.Orders.Place;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Application.MainEntities.Create;
 
-namespace WebApi.MainEntity;
+namespace Orders.Endpoints;
 
-public static class Create
+public static class PlaceOrder
 {
-    public sealed record Request(string Name);
+    public sealed record Request(string Description);
 
-    /// <summary>
-    /// The response for the Create endpoint, containing the unique identifier of the newly created MainEntity.
-    /// </summary>
-    /// <param name="Id">The id of the newly created MainEntity.</param>
     public sealed record Response(Guid Id);
 
-    public class Endpoint : IEndpoint
+    /// <summary>
+    /// Injects the command handler directly; it still runs through the validation and transaction behaviors.
+    /// </summary>
+    public sealed class Endpoint : IEndpoint
     {
-        public void MapEndpoint(IEndpointRouteBuilder app)
-        {
-            app.MapPost("main-entities", async (ICommandHandler<CreateMainEntityCommand, Result<Guid>> handler, Request request, CancellationToken cancellationToken) =>
-            {
-                var command = new CreateMainEntityCommand(request.Name);
-                var result = await handler.HandleAsync(command, cancellationToken);
-                return result
-                    .Map(id => new Response(id))
-                    .ToCreatedAtRouteHttpResult("GetMainEntity", r => r);
-            });
-        }
-
+        public void MapEndpoint(IEndpointRouteBuilder app) =>
+            app.MapPost("orders", async (Request request, ICommandHandler<PlaceOrderCommand, Result<Guid>> handler, CancellationToken cancellationToken) =>
+                {
+                    var result = await handler.HandleAsync(new PlaceOrderCommand(request.Description), cancellationToken);
+                    return result
+                        .Map(id => new Response(id))
+                        .ToCreatedAtRouteHttpResult("GetOrder", response => new { id = response.Id });
+                })
+                .WithName("PlaceOrder")
+                .ProducesErrors(ErrorType.Validation);
     }
 }

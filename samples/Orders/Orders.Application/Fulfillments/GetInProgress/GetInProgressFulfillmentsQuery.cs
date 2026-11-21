@@ -1,25 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Domain.SideEffects;
 
-namespace WebApi.Application.SideEffects.GetInProgress;
+namespace Orders.Application.Fulfillments.GetInProgress;
 
-public sealed record GetInProgressQuery : IQuery<Result<List<SideEffectDto>>>;
+public sealed record GetInProgressFulfillmentsQuery : IQuery<Result<List<FulfillmentDto>>>;
 
-internal class GetInProgressQueryHandler(IWebApiDbContext webApiDbContext) : IQueryHandler<GetInProgressQuery, Result<List<SideEffectDto>>>
+internal class GetInProgressFulfillmentsQueryHandler(IOrdersDbContext ordersDbContext) : IQueryHandler<GetInProgressFulfillmentsQuery, Result<List<FulfillmentDto>>>
 {
-    private readonly IWebApiDbContext _webApiDbContext = webApiDbContext;
+    private readonly IOrdersDbContext _ordersDbContext = ordersDbContext;
 
-    public async Task<Result<List<SideEffectDto>>> HandleAsync(GetInProgressQuery request, CancellationToken cancellationToken = default)
+    public async Task<Result<List<FulfillmentDto>>> HandleAsync(GetInProgressFulfillmentsQuery request, CancellationToken cancellationToken = default)
     {
-        var list = await _webApiDbContext.SideEffects
-            //.Where(s => s.Status is Status.InProgressStatus)
+        // The status is stored as text with a one-letter prefix (see FulfillmentConfiguration), so SQL finds an
+        // in-progress fulfillment by that prefix.
+        var list = await _ordersDbContext.Fulfillments
             .Where(s => EF.Functions.Like((string)(object)s.Status, "I %"))
             .ToListAsync(cancellationToken);
 
         return list
-            .Select(SideEffectDto.FromModel)
+            .Select(FulfillmentDto.FromModel)
             .ToList()
             .ToResult(Error.None);
     }

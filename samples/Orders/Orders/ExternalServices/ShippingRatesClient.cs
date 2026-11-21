@@ -1,30 +1,20 @@
 using System.Net.Http.Json;
 
-namespace WebApi.ExternalServices;
+namespace Orders.ExternalServices;
 
 /// <summary>
-/// Client for an external weather API. Demonstrates an outbound HTTP dependency that integration tests mock.
+/// Client for an external shipping-rates API, registered as a typed <see cref="HttpClient"/>. The tests replace its
+/// wire with an HTTP mock; the sample has no real rates server.
 /// </summary>
-public interface IExternalWeatherClient
+public interface IShippingRatesClient
 {
-    /// <summary>
-    /// Gets the forecast for the given city from the external weather API.
-    /// </summary>
-    /// <param name="city">The city to fetch the forecast for.</param>
-    /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>The forecast, or <see langword="null"/> if none was returned.</returns>
-    Task<ExternalForecast?> GetForecastAsync(string city, CancellationToken cancellationToken);
+    Task<ShippingQuote?> GetQuoteAsync(string country, CancellationToken cancellationToken);
 }
 
-internal sealed class ExternalWeatherClient(HttpClient httpClient) : IExternalWeatherClient
+internal sealed class ShippingRatesClient(HttpClient httpClient) : IShippingRatesClient
 {
-    public Task<ExternalForecast?> GetForecastAsync(string city, CancellationToken cancellationToken)
-        => httpClient.GetFromJsonAsync<ExternalForecast>($"/forecast/{city}", cancellationToken);
+    public Task<ShippingQuote?> GetQuoteAsync(string country, CancellationToken cancellationToken) =>
+        httpClient.GetFromJsonAsync<ShippingQuote>($"/quotes/{Uri.EscapeDataString(country)}", cancellationToken);
 }
 
-/// <summary>
-/// A weather forecast returned by the external weather API.
-/// </summary>
-/// <param name="City">The city the forecast is for.</param>
-/// <param name="TemperatureC">The temperature in degrees Celsius.</param>
-public sealed record ExternalForecast(string City, int TemperatureC);
+public sealed record ShippingQuote(string Country, decimal Price, int TransitDays);

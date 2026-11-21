@@ -9,22 +9,22 @@ using Vulthil.SharedKernel.Infrastructure.Data;
 using Vulthil.SharedKernel.Infrastructure.Npgsql;
 using Vulthil.SharedKernel.Outbox;
 using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
-using WebApi.Application;
-using WebApi.Domain.MainEntities;
-using WebApi.Domain.SideEffects;
+using Orders.Application;
+using Orders.Domain.Orders;
+using Orders.Domain.Fulfillments;
 
-namespace WebApi.Infrastructure.Data;
+namespace Orders.Infrastructure.Data;
 
 /// <summary>
-/// Functionally equivalent with <see cref="WebApiDbContextNoBase"/>, by inheriting from <see cref="BaseDbContext"/>.
+/// The context the service runs on. <see cref="BaseDbContext"/> makes it the unit of work and the outbox store;
+/// <see cref="OrdersDbContextWithoutBase"/> shows the same context written without the base class.
 /// </summary>
-/// <param name="options"></param>
-public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) : BaseDbContext(options), IWebApiDbContext, ISaveInboxMessages
+public sealed class OrdersDbContext(DbContextOptions<OrdersDbContext> options) : BaseDbContext(options), IOrdersDbContext, ISaveInboxMessages
 {
-    public DbSet<MainEntity> MainEntities => Set<MainEntity>();
-    public DbSet<SideEffect> SideEffects => Set<SideEffect>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<Fulfillment> Fulfillments => Set<Fulfillment>();
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
-    protected override Assembly? ConfigurationAssembly => typeof(WebApiDbContext).Assembly;
+    protected override Assembly? ConfigurationAssembly => typeof(OrdersDbContext).Assembly;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,13 +35,13 @@ public sealed class WebApiDbContext(DbContextOptions<WebApiDbContext> options) :
 }
 
 /// <summary>
-/// Functionally equivalent with <see cref="WebApiDbContext"/>, without inheriting from <see cref="BaseDbContext"/>.
+/// Equivalent to <see cref="OrdersDbContext"/> without <see cref="BaseDbContext"/>: it implements the unit of work and
+/// the outbox store itself. The service does not register it.
 /// </summary>
-/// <param name="options"></param>
-public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase> options) : DbContext(options), ISaveOutboxMessages, ISaveInboxMessages, IWebApiDbContext
+public sealed class OrdersDbContextWithoutBase(DbContextOptions<OrdersDbContextWithoutBase> options) : DbContext(options), ISaveOutboxMessages, ISaveInboxMessages, IOrdersDbContext
 {
-    public DbSet<MainEntity> MainEntities => Set<MainEntity>();
-    public DbSet<SideEffect> SideEffects => Set<SideEffect>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<Fulfillment> Fulfillments => Set<Fulfillment>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
@@ -51,7 +51,7 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(WebApiDbContextNoBase).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrdersDbContextWithoutBase).Assembly);
         modelBuilder.ApplyNpgsqlOutbox();
         modelBuilder.ApplyRelationalInbox();
     }
@@ -108,17 +108,17 @@ public sealed class WebApiDbContextNoBase(DbContextOptions<WebApiDbContextNoBase
     }
 }
 
-public class WebApiDbContextFactory : IDesignTimeDbContextFactory<WebApiDbContext>
+public class OrdersDbContextFactory : IDesignTimeDbContextFactory<OrdersDbContext>
 {
-    public WebApiDbContext CreateDbContext(string[] args)
+    public OrdersDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<WebApiDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<OrdersDbContext>();
 
 #pragma warning disable S2068 // Credentials should not be hard-coded
         optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=__dummy__;Username=__dummy__;Password=__dummy__;Pooling=false",
  o => o.ExecutionStrategy(d => new NonRetryingExecutionStrategy(d)));
 #pragma warning restore S2068 // Credentials should not be hard-coded
 
-        return new WebApiDbContext(optionsBuilder.Options);
+        return new OrdersDbContext(optionsBuilder.Options);
     }
 }

@@ -1,44 +1,21 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Orders.Application.Orders.Place;
+using Orders.Domain.Fulfillments;
 using Vulthil.Messaging.Abstractions.Consumers;
-using WebApi.Application.MainEntities.Create;
-using WebApi.Domain.SideEffects;
 
-namespace WebApi.Application.SideEffects.Create;
+namespace Orders.Application.Fulfillments.Start;
 
-public sealed class MainEntityCreatedIntegrationEventConsumer(ILogger<MainEntityCreatedIntegrationEventConsumer> logger, IWebApiDbContext webApiDbContext, TimeProvider timeProvider) : IConsumer<MainEntityCreatedIntegrationEvent>
+/// <summary>
+/// Starts the fulfillment of a placed order. The inbox deduplicates the event on its order id, so a redelivery never
+/// starts a second fulfillment.
+/// </summary>
+public sealed class StartFulfillmentConsumer(ILogger<StartFulfillmentConsumer> logger, IOrdersDbContext dbContext, TimeProvider timeProvider) : IConsumer<OrderPlacedIntegrationEvent>
 {
-    private readonly ILogger<MainEntityCreatedIntegrationEventConsumer> _logger = logger;
-    private readonly IWebApiDbContext _webApiDbContext = webApiDbContext;
-    private readonly TimeProvider _timeProvider = timeProvider;
-
-    public async Task ConsumeAsync(IMessageContext<MainEntityCreatedIntegrationEvent> messageContext, CancellationToken cancellationToken = default)
+    public async Task ConsumeAsync(IMessageContext<OrderPlacedIntegrationEvent> messageContext, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Received MainEntityCreatedIntegrationEvent with Id: {Id} and RoutingKey: {RoutingKey}", messageContext.Message.Id, messageContext.RoutingKey);
-        var sideEffect = SideEffect.Create(messageContext.Message.Id, _timeProvider.GetUtcNow());
+        logger.LogInformation("Starting the fulfillment of order {OrderId} (routing key {RoutingKey})", messageContext.Message.OrderId, messageContext.RoutingKey);
 
-        _webApiDbContext.SideEffects.Add(sideEffect);
-
-        await _webApiDbContext.SaveChangesAsync(cancellationToken);
+        dbContext.Fulfillments.Add(Fulfillment.Start(messageContext.Message.OrderId, timeProvider.GetUtcNow()));
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }
-
-public sealed class SideEffectRequestConsumer(ILogger<SideEffectRequestConsumer> logger, IWebApiDbContext webApiDbContext) : IRequestConsumer<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>
-{
-    private readonly ILogger<SideEffectRequestConsumer> _logger = logger;
-    private readonly IWebApiDbContext _webApiDbContext = webApiDbContext;
-
-
-    public async Task<List<SideEffectDto>> ConsumeAsync(IMessageContext<GetSideEffectsBelongingToMainEntity> messageContext, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Received MainEntityCreatedIntegrationEvent with Id: {Id} and RoutingKey: {RoutingKey}", messageContext.Message.Id, messageContext.RoutingKey);
-
-        var sideEffects = await _webApiDbContext.SideEffects.Where(x => x.MainEntityId == messageContext.Message.Id)
-            .Select(x => SideEffectDto.FromModel(x))
-            .ToListAsync(cancellationToken);
-
-        return sideEffects;
-    }
-}
-
-public sealed record GetSideEffectsBelongingToMainEntity(Guid Id);

@@ -1,10 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.SharedKernel.Application;
 
-namespace WebApi.Application;
+namespace Orders.Application;
+
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
+    public static IServiceCollection AddOrdersApplication(this IServiceCollection services)
     {
         services.AddApplication(appOptions =>
         {

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Vulthil.Messaging.Transport;
 
-namespace WebApi.Infrastructure.Messaging;
+namespace Orders.Infrastructure.Messaging;
 
 /// <summary>
 /// A publish filter: it runs for every publish and send of this service and stamps the <see cref="HeaderName"/>

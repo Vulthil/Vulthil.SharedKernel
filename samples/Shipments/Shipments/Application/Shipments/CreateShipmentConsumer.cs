@@ -10,7 +10,7 @@ using Vulthil.Results;
 namespace Shipments.Application.Shipments;
 
 /// <summary>
-/// Handles the <see cref="CreateShipment"/> command the WebApi sample sends to this service's queue. The inbox runs
+/// Handles the <see cref="CreateShipment"/> command the Orders sample sends to this service's queue. The inbox runs
 /// it in a transaction and records the message id, so a redelivered command never creates a second shipment.
 /// </summary>
 public sealed class CreateShipmentConsumer(

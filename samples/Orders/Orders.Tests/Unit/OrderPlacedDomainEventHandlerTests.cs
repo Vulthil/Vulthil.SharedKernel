@@ -1,25 +1,25 @@
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.xUnit;
-using WebApi.Application.MainEntities.Create;
-using WebApi.Domain.MainEntities;
-using WebApi.Domain.MainEntities.Events;
+using Orders.Application.Orders.Place;
+using Orders.Domain.Orders;
+using Orders.Domain.Orders.Events;
 
-namespace WebApi.Tests.Unit;
+namespace Orders.Tests.Unit;
 
-public sealed class MainEntityCreatedEventHandlerTests : BaseUnitTestCase<MainEntityCreatedEventHandler>
+public sealed class OrderPlacedDomainEventHandlerTests : BaseUnitTestCase<OrderPlacedDomainEventHandler>
 {
     [Fact]
     public async Task HandleAsync_publishes_the_integration_event()
     {
         // Arrange
-        var id = new MainEntityId(Guid.NewGuid());
+        var id = new OrderId(Guid.NewGuid());
 
         // Act
-        await Target.HandleAsync(new MainEntityCreatedEvent(id), CancellationToken);
+        await Target.HandleAsync(new OrderPlacedDomainEvent(id), CancellationToken);
 
         // Assert
         GetMock<IPublisher>().Verify(publisher => publisher.PublishAsync(
-            It.Is<MainEntityCreatedIntegrationEvent>(integrationEvent => integrationEvent.Id == id.Value),
+            It.Is<OrderPlacedIntegrationEvent>(integrationEvent => integrationEvent.OrderId == id.Value),
             CancellationToken), Times.Once);
     }
 }

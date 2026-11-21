@@ -1,16 +1,14 @@
 using Microsoft.Extensions.Logging;
+using Orders.Domain.Orders.Events;
 using Vulthil.SharedKernel.Events;
-using WebApi.Domain.MainEntities.Events;
 
-namespace WebApi.Application.MainEntities.Update;
+namespace Orders.Application.Orders.ChangeDescription;
 
-public sealed class MainEntityNameUpdatedEventHandler(ILogger<MainEntityNameUpdatedEventHandler> logger) : IDomainEventHandler<MainEntityNameUpdatedEvent>
+public sealed class OrderDescriptionChangedDomainEventHandler(ILogger<OrderDescriptionChangedDomainEventHandler> logger) : IDomainEventHandler<OrderDescriptionChangedDomainEvent>
 {
-    private readonly ILogger<MainEntityNameUpdatedEventHandler> _logger = logger;
-
-    public Task HandleAsync(MainEntityNameUpdatedEvent notification, CancellationToken cancellationToken = default)
+    public Task HandleAsync(OrderDescriptionChangedDomainEvent notification, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("WebApiEntity Name updated to: {Name}", notification.Name);
+        logger.LogInformation("Order {OrderId} is now described as {Description}", notification.OrderId.Value, notification.Description);
         return Task.CompletedTask;
     }
 }

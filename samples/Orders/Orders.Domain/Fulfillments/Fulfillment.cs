@@ -1,37 +1,34 @@
 using Vulthil.Results;
 using Vulthil.SharedKernel.Primitives;
 
-namespace WebApi.Domain.SideEffects;
+namespace Orders.Domain.Fulfillments;
 
-public sealed record SideEffectId(Guid Value);
-
-public sealed class SideEffect : AggregateRoot<SideEffectId>
+/// <summary>
+/// Tracks an order from the moment it is placed until the Shipments service reports it delivered.
+/// </summary>
+public sealed class Fulfillment : AggregateRoot<FulfillmentId>
 {
-    public Guid MainEntityId { get; private set; }
-    public Status Status { get; private set; }
-
-    private SideEffect(Guid mainEntityId, Status status) : base(new(Guid.CreateVersion7()))
+    private Fulfillment(Guid orderId, FulfillmentStatus status) : base(FulfillmentId.New())
     {
-        MainEntityId = mainEntityId;
+        OrderId = orderId;
         Status = status;
     }
 
-    public static SideEffect Create(Guid mainEntityId, DateTimeOffset startTime)
-    {
-        var inProgressStatus = Status.InProgress(startTime);
+    public Guid OrderId { get; private set; }
 
-        return new SideEffect(mainEntityId, inProgressStatus);
-    }
+    public FulfillmentStatus Status { get; private set; }
 
-    public Result Complete(DateTimeOffset completedTime, int value)
+    public static Fulfillment Start(Guid orderId, DateTimeOffset startedAtUtc) =>
+        new(orderId, FulfillmentStatus.InProgress(startedAtUtc));
+
+    public Result Complete(DateTimeOffset deliveredAtUtc, int scanCount)
     {
-        if (Status is Status.CompletedStatus)
+        if (Status is FulfillmentStatus.CompletedStatus)
         {
-            return Result.Failure(SideEffectErrors.AlreadyCompleted);
+            return Result.Failure(FulfillmentErrors.AlreadyCompleted);
         }
 
-        Status = Status.Completed(completedTime, value);
-
+        Status = FulfillmentStatus.Completed(deliveredAtUtc, scanCount);
         return Result.Success();
     }
 }

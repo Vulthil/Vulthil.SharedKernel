@@ -1,21 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Domain.SideEffects;
+using Orders.Domain.Fulfillments;
 
-namespace WebApi.Application.SideEffects.GetById;
+namespace Orders.Application.Fulfillments.GetById;
 
-public sealed record GetSideEffectQuery(Guid Id) : IQuery<Result<SideEffectDto>>;
+public sealed record GetFulfillmentQuery(Guid Id) : IQuery<Result<FulfillmentDto>>;
 
-internal sealed class GetSideEffectQueryHandler(IWebApiDbContext dbContext) : IQueryHandler<GetSideEffectQuery, Result<SideEffectDto>>
+internal sealed class GetFulfillmentQueryHandler(IOrdersDbContext dbContext) : IQueryHandler<GetFulfillmentQuery, Result<FulfillmentDto>>
 {
-    public Task<Result<SideEffectDto>> HandleAsync(GetSideEffectQuery request, CancellationToken cancellationToken = default)
+    public Task<Result<FulfillmentDto>> HandleAsync(GetFulfillmentQuery request, CancellationToken cancellationToken = default)
     {
-        var id = new SideEffectId(request.Id);
-        return dbContext.SideEffects
+        var id = new FulfillmentId(request.Id);
+        return dbContext.Fulfillments
             .AsNoTracking()
-            .FirstOrDefaultAsync(sideEffect => sideEffect.Id == id, cancellationToken)
-            .ToResultAsync(SideEffectErrors.NotFound(request.Id))
-            .MapAsync(SideEffectDto.FromModel);
+            .FirstOrDefaultAsync(fulfillment => fulfillment.Id == id, cancellationToken)
+            .ToResultAsync(FulfillmentErrors.NotFound(request.Id))
+            .MapAsync(FulfillmentDto.FromModel);
     }
 }

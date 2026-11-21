@@ -1,20 +1,19 @@
 using Microsoft.Extensions.Logging;
+using Orders.Domain.Orders.Events;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.SharedKernel.Events;
-using WebApi.Domain.MainEntities.Events;
 
-namespace WebApi.Application.MainEntities.Create;
+namespace Orders.Application.Orders.Place;
 
-public sealed class MainEntityCreatedEventHandler(ILogger<MainEntityCreatedEventHandler> logger, IPublisher publisher) : IDomainEventHandler<MainEntityCreatedEvent>
+/// <summary>
+/// Runs when the outbox relay dispatches <see cref="OrderPlacedDomainEvent"/>, inside the relay's transaction, so
+/// the transactional outbox captures the publish and relays it once that transaction commits.
+/// </summary>
+public sealed class OrderPlacedDomainEventHandler(ILogger<OrderPlacedDomainEventHandler> logger, IPublisher publisher) : IDomainEventHandler<OrderPlacedDomainEvent>
 {
-    private readonly ILogger<MainEntityCreatedEventHandler> _logger = logger;
-    private readonly IPublisher _publisher = publisher;
-
-    public async Task HandleAsync(MainEntityCreatedEvent notification, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(OrderPlacedDomainEvent notification, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("MainEntityCreated: {Id}", notification.Id);
-        await _publisher.PublishAsync(new MainEntityCreatedIntegrationEvent(notification.Id.Value), cancellationToken: cancellationToken);
+        logger.LogInformation("Order {OrderId} was placed", notification.OrderId.Value);
+        await publisher.PublishAsync(new OrderPlacedIntegrationEvent(notification.OrderId.Value), cancellationToken: cancellationToken);
     }
 }
-
-public sealed record MainEntityCreatedIntegrationEvent(Guid Id);

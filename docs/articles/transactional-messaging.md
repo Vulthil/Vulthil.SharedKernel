@@ -125,7 +125,7 @@ the guarantee per store.
 4. On the consumer side the inbox filter checks the id, runs the consumer inside a transaction, and commits the
    marker together with the consumer's writes. A redelivery finds the marker and is skipped.
 
-The `samples/WebApi` project wires exactly this against PostgreSQL and RabbitMQ, and `samples/Shipments` against MySQL.
+The `samples/Orders` service wires exactly this against PostgreSQL and RabbitMQ, and `samples/Shipments` against MySQL.
 
 ## Custom stores
 

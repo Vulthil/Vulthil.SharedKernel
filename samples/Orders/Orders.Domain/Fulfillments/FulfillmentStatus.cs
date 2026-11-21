@@ -1,26 +1,26 @@
 using System.Text.Json.Serialization;
 
-namespace WebApi.Domain.SideEffects;
+namespace Orders.Domain.Fulfillments;
 
 [JsonDerivedType(typeof(FailedStatus), "Failed")]
 [JsonDerivedType(typeof(InProgressStatus), "InProgress")]
 [JsonDerivedType(typeof(CompletedStatus), "Completed")]
-public abstract record Status
+public abstract record FulfillmentStatus
 {
-    public sealed record FailedStatus(DateTimeOffset FailedTime, string ErrorMessage) : Status;
-    public sealed record InProgressStatus(DateTimeOffset ProgressTime) : Status;
-    public sealed record CompletedStatus(DateTimeOffset CompletedTime, int Value) : Status;
+    public sealed record FailedStatus(DateTimeOffset FailedTime, string ErrorMessage) : FulfillmentStatus;
+    public sealed record InProgressStatus(DateTimeOffset ProgressTime) : FulfillmentStatus;
+    public sealed record CompletedStatus(DateTimeOffset CompletedTime, int ScanCount) : FulfillmentStatus;
 }
 
-public static class StatusFactories
+public static class FulfillmentStatusFactories
 {
-    extension(Status)
+    extension(FulfillmentStatus)
     {
-        public static Status Failed(DateTimeOffset failedTime, string errorMessage) =>
-            new Status.FailedStatus(failedTime, errorMessage);
-        public static Status InProgress(DateTimeOffset progressTime) =>
-            new Status.InProgressStatus(progressTime);
-        public static Status Completed(DateTimeOffset completedTime, int value) =>
-            new Status.CompletedStatus(completedTime, value);
+        public static FulfillmentStatus Failed(DateTimeOffset failedTime, string errorMessage) =>
+            new FulfillmentStatus.FailedStatus(failedTime, errorMessage);
+        public static FulfillmentStatus InProgress(DateTimeOffset progressTime) =>
+            new FulfillmentStatus.InProgressStatus(progressTime);
+        public static FulfillmentStatus Completed(DateTimeOffset completedTime, int scanCount) =>
+            new FulfillmentStatus.CompletedStatus(completedTime, scanCount);
     }
 }

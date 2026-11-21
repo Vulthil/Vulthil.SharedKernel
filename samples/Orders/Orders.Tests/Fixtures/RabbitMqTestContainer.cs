@@ -2,7 +2,7 @@ using ServiceDefaults;
 using Testcontainers.RabbitMq;
 using Vulthil.xUnit.Fixtures;
 
-namespace WebApi.Tests.Fixtures;
+namespace Orders.Tests.Fixtures;
 
 internal sealed class RabbitMqTestContainer : RabbitMqTestContainerFixture<RabbitMqBuilder, RabbitMqContainer>
 {

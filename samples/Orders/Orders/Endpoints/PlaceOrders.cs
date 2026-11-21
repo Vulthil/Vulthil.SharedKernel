@@ -1,27 +1,25 @@
+using Orders.Application.Orders.PlaceMany;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Api;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Application.MainEntities.CreateMany;
 
-namespace WebApi.MainEntity;
+namespace Orders.Endpoints;
 
-public static class CreateMany
+public static class PlaceOrders
 {
-    public sealed record Request(IReadOnlyList<string> Names);
+    public sealed record Request(IReadOnlyList<string> Descriptions);
 
     public sealed record Response(IReadOnlyList<Guid> Ids);
 
-    public class Endpoint : IEndpoint
+    public sealed class Endpoint : IEndpoint
     {
-        public void MapEndpoint(IEndpointRouteBuilder app)
-        {
-            app.MapPost("main-entities/batch", async (Request request, ISender sender, CancellationToken cancellationToken) =>
-            {
-                var result = await sender.SendAsync(new CreateMainEntitiesCommand(request.Names), cancellationToken);
-                return result.Map(ids => new Response(ids)).ToIResult();
-            })
-            .WithName("CreateMainEntities")
-            .ProducesErrors(ErrorType.Validation);
-        }
+        public void MapEndpoint(IEndpointRouteBuilder app) =>
+            app.MapPost("orders/batch", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+                {
+                    var result = await sender.SendAsync(new PlaceOrdersCommand(request.Descriptions), cancellationToken);
+                    return result.Map(ids => new Response(ids)).ToIResult();
+                })
+                .WithName("PlaceOrders")
+                .ProducesErrors(ErrorType.Validation);
     }
 }

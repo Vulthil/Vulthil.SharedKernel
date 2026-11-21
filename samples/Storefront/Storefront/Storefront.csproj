@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
-  </PropertyGroup>
+	<PropertyGroup>
+		<BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+	</PropertyGroup>
 
-  <ItemGroup>   
-	  <ProjectReference Include="..\..\AppHost\ServiceDefaults\ServiceDefaults.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.Results\Vulthil.Results.csproj" />
+		<ProjectReference Include="..\..\AppHost\ServiceDefaults\ServiceDefaults.csproj" />
+	</ItemGroup>
 
 </Project>

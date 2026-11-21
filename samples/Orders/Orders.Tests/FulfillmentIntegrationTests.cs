@@ -1,26 +1,26 @@
 using Shouldly;
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
-using WebApi.Application.MainEntities.Create;
-using WebApi.Application.SideEffects;
-using WebApi.Application.SideEffects.GetInProgress;
-using WebApi.Domain.SideEffects;
-using WebApi.Tests.Fixtures;
+using Orders.Application.Orders.Place;
+using Orders.Application.Fulfillments;
+using Orders.Application.Fulfillments.GetInProgress;
+using Orders.Domain.Fulfillments;
+using Orders.Tests.Fixtures;
 
-namespace WebApi.Tests;
+namespace Orders.Tests;
 
-public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase(factory, testOutputHelper)
+public sealed class FulfillmentIntegrationTests(OrdersWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+    : OrdersTestCase(factory, testOutputHelper)
 {
     [Fact]
-    public async Task TestCreate()
+    public async Task Placing_an_order_starts_its_fulfillment()
     {
         // Arrange
-        var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
-        var createResult = await Sender.SendAsync(command, CancellationToken);
-        createResult.IsSuccess.ShouldBeTrue();
+        var command = new PlaceOrderCommand(Guid.NewGuid().ToString());
+        var placed = await Sender.SendAsync(command, CancellationToken);
+        placed.IsSuccess.ShouldBeTrue();
 
-        var query = new GetInProgressQuery();
+        var query = new GetInProgressFulfillmentsQuery();
 
         // Act
         var result = await Polling.WaitAsync(TimeSpan.FromSeconds(10), async () =>
@@ -29,12 +29,12 @@ public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory facto
 
             if (queryResult.IsFailure)
             {
-                return Result.Failure<List<SideEffectDto>>(Error.NullValue);
+                return Result.Failure<List<FulfillmentDto>>(Error.NullValue);
             }
 
-            if (!queryResult.Value.Any(s => s.MainEntityId == createResult.Value))
+            if (!queryResult.Value.Any(s => s.OrderId == placed.Value))
             {
-                return Result.Failure<List<SideEffectDto>>(Error.NotFound("NotFound", "No side effects found"));
+                return Result.Failure<List<FulfillmentDto>>(Error.NotFound("Fulfillment.NotFound", "The fulfillment does not exist yet."));
             }
 
             return queryResult;
@@ -43,28 +43,28 @@ public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory facto
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldContain(s =>
-            s.MainEntityId == createResult.Value && s.Status is Status.InProgressStatus);
+            s.OrderId == placed.Value && s.Status is FulfillmentStatus.InProgressStatus);
     }
 
     [Fact]
-    public async Task SideEffect_starts_at_the_time_of_a_TimeProvider_replaced_for_this_test()
+    public async Task Fulfillment_starts_at_the_time_of_a_TimeProvider_replaced_for_this_test()
     {
         // Arrange
         var now = new DateTimeOffset(2030, 1, 2, 3, 4, 5, TimeSpan.Zero);
         Use<TimeProvider>(new FrozenClock(now));
-        var createResult = await Sender.SendAsync(new CreateMainEntityCommand(Guid.NewGuid().ToString()), CancellationToken);
+        var placed = await Sender.SendAsync(new PlaceOrderCommand(Guid.NewGuid().ToString()), CancellationToken);
 
         // Act
         var result = await Polling.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
-            var queryResult = await Sender.SendAsync(new GetInProgressQuery(), CancellationToken);
-            return queryResult.Bind(sideEffects => sideEffects.Find(s => s.MainEntityId == createResult.Value)
-                .ToResult(Error.NotFound("NotFound", "No side effect found")));
+            var queryResult = await Sender.SendAsync(new GetInProgressFulfillmentsQuery(), CancellationToken);
+            return queryResult.Bind(fulfillments => fulfillments.Find(s => s.OrderId == placed.Value)
+                .ToResult(Error.NotFound("Fulfillment.NotFound", "The fulfillment does not exist yet.")));
         }, cancellationToken: CancellationToken);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.Status.ShouldBeOfType<Status.InProgressStatus>().ProgressTime.ShouldBe(now);
+        result.Value.Status.ShouldBeOfType<FulfillmentStatus.InProgressStatus>().ProgressTime.ShouldBe(now);
     }
 
     /// <summary>

@@ -1,16 +1,16 @@
 using Vulthil.xUnit.Fixtures;
-using WebApi.Tests.Fixtures;
+using Orders.Tests.Fixtures;
 
-[assembly: AssemblyFixture<AppContainerHost>]
+[assembly: AssemblyFixture<OrdersContainerHost>]
 
-namespace WebApi.Tests.Fixtures;
+namespace Orders.Tests.Fixtures;
 
 /// <summary>
 /// Assembly-wide container host: one PostgreSQL server and one RabbitMQ broker are started at most once for the
 /// whole test run. Factories consume them through per-class scopes (a uniquely named database and a virtual host),
 /// so test classes run in parallel against shared containers without interfering.
 /// </summary>
-public sealed class AppContainerHost : ContainerHost
+public sealed class OrdersContainerHost : ContainerHost
 {
     protected override Task ConfigureContainers()
     {

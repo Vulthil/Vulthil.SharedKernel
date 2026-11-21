@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Consumers;
 
-namespace WebApi.Application.Shipping;
+namespace Orders.Application.Shipping;
 
 /// <summary>
 /// A consume filter for one message type. A delivery that can never be processed is skipped by not calling

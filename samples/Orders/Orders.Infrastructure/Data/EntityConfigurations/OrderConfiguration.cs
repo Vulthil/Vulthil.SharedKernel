@@ -1,19 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebApi.Domain.MainEntities;
+using Orders.Domain.Orders;
 
-namespace WebApi.Infrastructure.Data.EntityConfigurations;
+namespace Orders.Infrastructure.Data.EntityConfigurations;
 
-public sealed class MainEntityConfiguration : IEntityTypeConfiguration<MainEntity>
+public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
-    public void Configure(EntityTypeBuilder<MainEntity> builder)
+    public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.HasKey(e => e.Id);
-        builder.Property(e => e.Name).IsRequired();
+        builder.HasKey(order => order.Id);
+        builder.Property(order => order.Id)
+            .HasConversion(id => id.Value, value => new OrderId(value))
+            .ValueGeneratedNever();
 
-        builder.Property(e => e.Id)
-            .HasConversion(
-                v => v.Value,
-                v => new MainEntityId(v));
+        builder.Property(order => order.Description).HasMaxLength(Order.MaxDescriptionLength).IsRequired();
     }
 }

@@ -1,10 +1,11 @@
 using Vulthil.Results;
 
-namespace WebApi.Domain.SideEffects;
+namespace Orders.Domain.Fulfillments;
 
-public static class SideEffectErrors
+public static class FulfillmentErrors
 {
-    public static Error NotFound(Guid id) => Error.NotFound("SideEffect.NotFound", $"Side effect {id} was not found.");
+    public static readonly Error AlreadyCompleted =
+        Error.Conflict("Fulfillment.AlreadyCompleted", "The fulfillment is already completed.");
 
-    public static Error AlreadyCompleted => Error.Conflict("SideEffect.AlreadyCompleted", "The side effect has already been completed and cannot be updated again.");
+    public static Error NotFound(Guid id) => Error.NotFound("Fulfillment.NotFound", $"Fulfillment {id} was not found.");
 }

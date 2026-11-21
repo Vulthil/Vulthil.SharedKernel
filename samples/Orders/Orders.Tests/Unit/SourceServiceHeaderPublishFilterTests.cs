@@ -2,9 +2,9 @@ using Microsoft.Extensions.Hosting;
 using Shouldly;
 using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
-using WebApi.Infrastructure.Messaging;
+using Orders.Infrastructure.Messaging;
 
-namespace WebApi.Tests.Unit;
+namespace Orders.Tests.Unit;
 
 public sealed class SourceServiceHeaderPublishFilterTests : BaseUnitTestCase
 {
@@ -14,7 +14,7 @@ public sealed class SourceServiceHeaderPublishFilterTests : BaseUnitTestCase
 
     protected override ValueTask Initialize()
     {
-        GetMock<IHostEnvironment>().SetupGet(environment => environment.ApplicationName).Returns("WebApi");
+        GetMock<IHostEnvironment>().SetupGet(environment => environment.ApplicationName).Returns("Orders");
         return base.Initialize();
     }
 
@@ -34,7 +34,7 @@ public sealed class SourceServiceHeaderPublishFilterTests : BaseUnitTestCase
 
         // Assert
         nextCalled.ShouldBeTrue();
-        context.Context.Headers[SourceServiceHeaderPublishFilter.HeaderName].ShouldBe("WebApi");
+        context.Context.Headers[SourceServiceHeaderPublishFilter.HeaderName].ShouldBe("Orders");
     }
 
     [Fact]

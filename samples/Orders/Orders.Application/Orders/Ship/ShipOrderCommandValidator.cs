@@ -1,8 +1,8 @@
 using FluentValidation;
 
-namespace WebApi.Application.Shipping;
+namespace Orders.Application.Orders.Ship;
 
-public sealed class ShipMainEntityCommandValidator : AbstractValidator<ShipMainEntityCommand>
+public sealed class ShipOrderCommandValidator : AbstractValidator<ShipOrderCommand>
 {
-    public ShipMainEntityCommandValidator() => RuleFor(command => command.Recipient).NotEmpty().MaximumLength(200);
+    public ShipOrderCommandValidator() => RuleFor(command => command.Recipient).NotEmpty().MaximumLength(200);
 }

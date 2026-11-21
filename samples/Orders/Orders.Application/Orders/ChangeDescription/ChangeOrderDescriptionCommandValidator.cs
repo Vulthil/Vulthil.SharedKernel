@@ -1,18 +1,18 @@
 using FluentValidation;
+using Orders.Domain.Orders;
 using Vulthil.SharedKernel.Application;
-using WebApi.Domain.MainEntities;
 
-namespace WebApi.Application.MainEntities.Update;
+namespace Orders.Application.Orders.ChangeDescription;
 
 /// <summary>
-/// <c>WithError</c> reuses the domain's error: the 400 response lists <c>MainEntity.NameTooLong</c> under
+/// <c>WithError</c> reuses the domain's error: the 400 response lists <c>Order.DescriptionTooLong</c> under
 /// <c>errorCodes</c> instead of FluentValidation's validator name.
 /// </summary>
-public sealed class UpdateMainEntityNameCommandValidator : AbstractValidator<UpdateMainEntityNameCommand>
+public sealed class ChangeOrderDescriptionCommandValidator : AbstractValidator<ChangeOrderDescriptionCommand>
 {
-    public UpdateMainEntityNameCommandValidator()
+    public ChangeOrderDescriptionCommandValidator()
     {
-        RuleFor(command => command.Name).NotEmpty().WithError(MainEntityErrors.NameRequired);
-        RuleFor(command => command.Name).MaximumLength(MainEntity.MaxNameLength).WithError(MainEntityErrors.NameTooLong);
+        RuleFor(command => command.Description).NotEmpty().WithError(OrderErrors.DescriptionRequired);
+        RuleFor(command => command.Description).MaximumLength(Order.MaxDescriptionLength).WithError(OrderErrors.DescriptionTooLong);
     }
 }

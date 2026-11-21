@@ -1,13 +1,13 @@
-
 using Microsoft.EntityFrameworkCore;
+using Orders.Domain.Fulfillments;
+using Orders.Domain.Orders;
 using Vulthil.SharedKernel.Application.Data;
-using WebApi.Domain.MainEntities;
-using WebApi.Domain.SideEffects;
 
-namespace WebApi.Application;
+namespace Orders.Application;
 
-public interface IWebApiDbContext : IUnitOfWork
+public interface IOrdersDbContext : IUnitOfWork
 {
-    DbSet<MainEntity> MainEntities { get; }
-    DbSet<SideEffect> SideEffects { get; }
+    DbSet<Order> Orders { get; }
+
+    DbSet<Fulfillment> Fulfillments { get; }
 }

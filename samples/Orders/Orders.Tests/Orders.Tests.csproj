@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 
 	<PropertyGroup>
@@ -28,7 +28,7 @@
 		<ProjectReference Include="..\..\..\src\Vulthil.Extensions.Testing\Vulthil.Extensions.Testing.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.Messaging.TestHarness\Vulthil.Messaging.TestHarness.csproj" />
 		<ProjectReference Include="..\..\..\src\Vulthil.xUnit\Vulthil.xUnit.csproj" />
-		<ProjectReference Include="..\WebApi\WebApi.csproj" />
+		<ProjectReference Include="..\Orders\Orders.csproj" />
 	</ItemGroup>
 
 </Project>

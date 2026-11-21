@@ -3,206 +3,172 @@ using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Orders.Application.Orders.ChangeDescription;
+using Orders.Application.Orders.GetById;
+using Orders.Application.Orders.Place;
+using Orders.Domain.Orders.Events;
+using Orders.Endpoints;
+using Orders.Infrastructure.Data;
+using Orders.Tests.Fixtures;
 using Shouldly;
 using Vulthil.Extensions.Testing;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Outbox;
-using WebApi.Application.MainEntities.Create;
-using WebApi.Application.MainEntities.GetById;
-using WebApi.Application.MainEntities.Update;
-using WebApi.Domain.MainEntities.Events;
-using WebApi.Infrastructure.Data;
-using WebApi.MainEntity;
-using WebApi.Tests.Fixtures;
 
-namespace WebApi.Tests;
+namespace Orders.Tests;
 
-public sealed class MainEntityIntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase(factory, testOutputHelper)
+public sealed class OrderIntegrationTests(OrdersWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+    : OrdersTestCase(factory, testOutputHelper)
 {
     [Fact]
-    public async Task Test_Create_Endpoint()
+    public async Task PlaceOrder_Endpoint_returns_the_new_order_id()
     {
-        // Arrange
-        var client = Client;
-        var response = await client.PostAsJsonAsync("api/main-entities", new Create.Request("Test Name"), CancellationToken);
-
         // Act
-        var result = await response.GetResponseAsync<Create.Response>(CancellationToken);
+        var response = await Client.PostAsJsonAsync("api/orders", new PlaceOrder.Request("Espresso machine"), CancellationToken);
 
         // Assert
+        var result = await response.GetResponseAsync<PlaceOrder.Response>(CancellationToken);
         result.Id.ShouldNotBe(Guid.Empty);
     }
 
     [Fact]
-    public async Task Test_Create_Endpoint_Rejects_An_Empty_Name_With_A_Validation_Problem_Keyed_By_The_Field()
+    public async Task PlaceOrder_Endpoint_rejects_an_empty_description_with_a_validation_problem_keyed_by_the_field()
     {
-        // Arrange
-        var client = Client;
-
         // Act
-        using var response = await client.PostAsJsonAsync("api/main-entities", new Create.Request(string.Empty), CancellationToken);
+        using var response = await Client.PostAsJsonAsync("api/orders", new PlaceOrder.Request(string.Empty), CancellationToken);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var problem = JsonNode.Parse(await response.Content.ReadAsStringAsync(CancellationToken))!;
-        problem["errors"]!["Name"]!.AsArray().Select(message => (string?)message).ShouldBe(["'Name' must not be empty."]);
-        problem["errorCodes"]!["Name"]!.AsArray().Select(code => (string?)code).ShouldBe(["NotEmptyValidator"]);
+        problem["errors"]!["Description"]!.AsArray().Select(message => (string?)message).ShouldBe(["'Description' must not be empty."]);
+        problem["errorCodes"]!["Description"]!.AsArray().Select(code => (string?)code).ShouldBe(["NotEmptyValidator"]);
     }
 
     [Fact]
-    public async Task Test_Create()
+    public async Task GetOrderQuery_returns_the_placed_order()
     {
         // Arrange
-        var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
+        var command = new PlaceOrderCommand(Guid.NewGuid().ToString());
+        var placed = await Sender.SendAsync(command, CancellationToken);
 
         // Act
-        var result = await Sender.SendAsync(command, CancellationToken);
+        var order = await Sender.SendAsync(new GetOrderQuery(placed.Value), CancellationToken);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        order.IsSuccess.ShouldBeTrue();
+        order.Value.Description.ShouldBe(command.Description);
+        order.Value.ShippedAtUtc.ShouldBeNull();
     }
 
     [Fact]
-    public async Task Test_Get()
+    public async Task ChangeOrderDescription_relays_its_domain_event_through_the_outbox()
     {
         // Arrange
-        var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
-        var result = await Sender.SendAsync(command, CancellationToken);
-        result.IsSuccess.ShouldBeTrue();
+        var orderId = await PlaceAsync();
 
         // Act
-        var query = new GetMainEntityByIdQuery(result.Value);
-        var queryResult = await Sender.SendAsync(query, CancellationToken);
+        var changed = await Sender.SendAsync(new ChangeOrderDescriptionCommand(orderId, Guid.NewGuid().ToString()), CancellationToken);
 
         // Assert
-        queryResult.IsSuccess.ShouldBeTrue();
-        queryResult.Value.Name.ShouldBe(command.Name);
-    }
-
-    [Fact]
-    public async Task Test_Update()
-    {
-        // Arrange
-        var command = new CreateMainEntityCommand(Guid.NewGuid().ToString());
-        var result = await Sender.SendAsync(command, CancellationToken);
-        result.IsSuccess.ShouldBeTrue();
-
-        var updateCommand = new UpdateMainEntityNameCommand(result.Value, Guid.NewGuid().ToString());
-
-        // Act
-        var updateResult = await Sender.SendAsync(updateCommand, CancellationToken);
-
-        // Assert
-        var json = $$"""
-                {"Id": { "Value": "{{result.Value}}" } }
-            """;
-
-        updateResult.IsSuccess.ShouldBeTrue();
-        var outboxMessageResult = await Polling.WaitAsync(TimeSpan.FromSeconds(10), async () =>
+        changed.IsSuccess.ShouldBeTrue();
+        var json = $$"""{"OrderId": { "Value": "{{orderId}}" } }""";
+        var relayed = await Polling.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
-            var dbContext = ScopedServices.GetRequiredService<WebApiDbContext>();
-
-            var outboxMessage = await dbContext.OutboxMessages.Where(o =>
-                    EF.Functions.JsonContains(o.Content, json) &&
-                    o.ProcessedOnUtc.HasValue &&
-                    o.Type == typeof(MainEntityNameUpdatedEvent).FullName)
+            var dbContext = ScopedServices.GetRequiredService<OrdersDbContext>();
+            var outboxMessage = await dbContext.OutboxMessages
+                .Where(o => EF.Functions.JsonContains(o.Content, json)
+                    && o.ProcessedOnUtc.HasValue
+                    && o.Type == typeof(OrderDescriptionChangedDomainEvent).FullName)
                 .FirstOrDefaultAsync();
 
-            if (outboxMessage is null)
-            {
-                return Result.Failure<OutboxMessage>(Error.NotFound("OutboxMessage.NotFound", "Could not find processed outbox message"));
-            }
-
-            return Result.Success(outboxMessage);
+            return outboxMessage.ToResult(Error.NotFound("OutboxMessage.NotFound", "The domain event is not relayed yet."));
         }, cancellationToken: CancellationToken);
 
-        outboxMessageResult.IsSuccess.ShouldBeTrue();
+        relayed.IsSuccess.ShouldBeTrue();
     }
 
     [Fact]
-    public async Task Rename_Endpoint_returns_no_content()
+    public async Task ChangeOrderDescription_Endpoint_returns_no_content()
     {
         // Arrange
-        var id = await CreateAsync();
+        var orderId = await PlaceAsync();
 
         // Act
-        using var response = await Client.PutAsJsonAsync($"api/main-entities/{id}", new Rename.Request("Renamed " + Guid.NewGuid()), CancellationToken);
+        using var response = await Client.PutAsJsonAsync($"api/orders/{orderId}", new ChangeOrderDescription.Request("Espresso machine, red"), CancellationToken);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
     [Fact]
-    public async Task Rename_Endpoint_answers_the_reserved_name_domain_exception_with_a_conflict_problem()
+    public async Task ChangeOrderDescription_Endpoint_lists_the_domain_error_code_of_a_too_long_description()
     {
         // Arrange
-        var id = await CreateAsync();
+        var orderId = await PlaceAsync();
 
         // Act
-        using var response = await Client.PutAsJsonAsync($"api/main-entities/{id}", new Rename.Request("admin"), CancellationToken);
-
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
-        var problem = JsonNode.Parse(await response.Content.ReadAsStringAsync(CancellationToken))!;
-        ((string?)problem["detail"]).ShouldBe("The name 'admin' is reserved.");
-    }
-
-    [Fact]
-    public async Task Rename_Endpoint_lists_the_domain_error_code_of_a_too_long_name()
-    {
-        // Arrange
-        var id = await CreateAsync();
-
-        // Act
-        using var response = await Client.PutAsJsonAsync($"api/main-entities/{id}", new Rename.Request(new string('x', 101)), CancellationToken);
+        using var response = await Client.PutAsJsonAsync($"api/orders/{orderId}", new ChangeOrderDescription.Request(new string('x', 101)), CancellationToken);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var problem = JsonNode.Parse(await response.Content.ReadAsStringAsync(CancellationToken))!;
-        problem["errorCodes"]!["Name"]!.AsArray().Select(code => (string?)code).ShouldBe(["MainEntity.NameTooLong"]);
+        problem["errorCodes"]!["Description"]!.AsArray().Select(code => (string?)code).ShouldBe(["Order.DescriptionTooLong"]);
     }
 
     [Fact]
-    public async Task Rename_Endpoint_returns_not_found_for_an_unknown_entity()
+    public async Task ChangeOrderDescription_Endpoint_returns_a_conflict_for_an_unchanged_description()
+    {
+        // Arrange
+        var description = Guid.NewGuid().ToString();
+        var placed = await Sender.SendAsync(new PlaceOrderCommand(description), CancellationToken);
+
+        // Act
+        using var response = await Client.PutAsJsonAsync($"api/orders/{placed.Value}", new ChangeOrderDescription.Request(description), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task ChangeOrderDescription_Endpoint_returns_not_found_for_an_unknown_order()
     {
         // Act
-        using var response = await Client.PutAsJsonAsync($"api/main-entities/{Guid.NewGuid()}", new Rename.Request("Anything"), CancellationToken);
+        using var response = await Client.PutAsJsonAsync($"api/orders/{Guid.NewGuid()}", new ChangeOrderDescription.Request("Anything"), CancellationToken);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
-    public async Task CreateMany_Endpoint_creates_every_entity()
+    public async Task PlaceOrders_Endpoint_places_every_order()
     {
         // Act
-        using var response = await Client.PostAsJsonAsync("api/main-entities/batch", new CreateMany.Request(["First", "Second", "Third"]), CancellationToken);
+        using var response = await Client.PostAsJsonAsync("api/orders/batch", new PlaceOrders.Request(["Cup", "Saucer", "Spoon"]), CancellationToken);
 
         // Assert
-        var result = await response.GetResponseAsync<CreateMany.Response>(CancellationToken);
+        var result = await response.GetResponseAsync<PlaceOrders.Response>(CancellationToken);
         result.Ids.Count.ShouldBe(3);
         result.Ids.ShouldBeUnique();
     }
 
     [Fact]
-    public async Task CreateMany_Endpoint_creates_none_when_one_name_is_invalid()
+    public async Task PlaceOrders_Endpoint_places_none_when_one_description_is_invalid()
     {
         // Arrange
         var marker = Guid.NewGuid().ToString();
 
         // Act
-        using var response = await Client.PostAsJsonAsync("api/main-entities/batch", new CreateMany.Request([marker, " "]), CancellationToken);
+        using var response = await Client.PostAsJsonAsync("api/orders/batch", new PlaceOrders.Request([marker, " "]), CancellationToken);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        var dbContext = ScopedServices.GetRequiredService<WebApiDbContext>();
-        (await dbContext.MainEntities.AnyAsync(e => e.Name == marker, CancellationToken)).ShouldBeFalse();
+        var dbContext = ScopedServices.GetRequiredService<OrdersDbContext>();
+        (await dbContext.Orders.AnyAsync(order => order.Description == marker, CancellationToken)).ShouldBeFalse();
     }
 
-    private async Task<Guid> CreateAsync()
+    private async Task<Guid> PlaceAsync()
     {
-        var result = await Sender.SendAsync(new CreateMainEntityCommand(Guid.NewGuid().ToString()), CancellationToken);
+        var result = await Sender.SendAsync(new PlaceOrderCommand(Guid.NewGuid().ToString()), CancellationToken);
         result.IsSuccess.ShouldBeTrue();
         return result.Value;
     }

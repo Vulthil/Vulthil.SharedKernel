@@ -1,32 +1,36 @@
 using Microsoft.EntityFrameworkCore;
+using Orders.Application.Shipping;
+using Orders.Domain.Orders;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Domain.MainEntities;
 
-namespace WebApi.Application.Shipping;
+namespace Orders.Application.Orders.Ship;
 
-public sealed record ShipMainEntityCommand(Guid Id, string Recipient) : ITransactionalCommand;
+public sealed record ShipOrderCommand(Guid OrderId, string Recipient) : ITransactionalCommand;
 
 /// <summary>
-/// Sends <see cref="CreateShipment"/> to the Shipments service's queue. The command is transactional, so the send is
-/// captured by the outbox in the command's transaction and reaches the broker only after the transaction commits.
+/// Marks the order shipped and sends <see cref="CreateShipment"/> to the Shipments service's queue. The command is
+/// transactional, so the outbox captures the send in the same transaction as the order, and the send reaches the
+/// broker only after that transaction commits. Shipping an order twice throws <see cref="OrderAlreadyShippedException"/>.
 /// </summary>
-public sealed class ShipMainEntityCommandHandler(IWebApiDbContext dbContext, ISendEndpointProvider sendEndpoints)
-    : ICommandHandler<ShipMainEntityCommand>
+public sealed class ShipOrderCommandHandler(IOrdersDbContext dbContext, ISendEndpointProvider sendEndpoints, TimeProvider timeProvider)
+    : ICommandHandler<ShipOrderCommand>
 {
     private static readonly Uri ShipmentCommands = new($"queue:{CreateShipment.QueueName}");
 
-    public Task<Result> HandleAsync(ShipMainEntityCommand command, CancellationToken cancellationToken = default)
+    public Task<Result> HandleAsync(ShipOrderCommand command, CancellationToken cancellationToken = default)
     {
-        var id = new MainEntityId(command.Id);
-        return dbContext.MainEntities
-            .FirstOrDefaultAsync(mainEntity => mainEntity.Id == id, cancellationToken)
-            .ToResultAsync(MainEntityErrors.NotFound(command.Id))
-            .BindAsync(async mainEntity =>
+        var id = new OrderId(command.OrderId);
+        return dbContext.Orders
+            .FirstOrDefaultAsync(order => order.Id == id, cancellationToken)
+            .ToResultAsync(OrderErrors.NotFound(command.OrderId))
+            .TapAsync(order => order.MarkShipped(timeProvider.GetUtcNow()))
+            .BindAsync(async order =>
             {
+                await dbContext.SaveChangesAsync(cancellationToken);
                 var endpoint = await sendEndpoints.GetSendEndpointAsync(ShipmentCommands, cancellationToken);
-                await endpoint.SendAsync(new CreateShipment(mainEntity.Id.Value, command.Recipient), cancellationToken);
+                await endpoint.SendAsync(new CreateShipment(order.Id.Value, command.Recipient), cancellationToken);
                 return Result.Success();
             });
     }

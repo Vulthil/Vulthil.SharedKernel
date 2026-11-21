@@ -1,0 +1,72 @@
+@page "/products"
+@rendermode InteractiveServer
+@inject CatalogApi CatalogApi
+
+<PageTitle>Products</PageTitle>
+
+<h1>Products</h1>
+
+<p>
+    The Catalog stores products in Cosmos DB. A new product reaches the search index a few seconds later: the domain
+    event goes through the Cosmos outbox, out to RabbitMQ and back in through the Cosmos inbox.
+</p>
+
+<ErrorAlert Error="_error" />
+
+<h2 class="h5">Add a product</h2>
+<div class="row g-2 mb-4">
+    <div class="col-md-2"><input class="form-control" placeholder="SKU (ABC-1234)" @bind="_sku" @bind:event="oninput" /></div>
+    <div class="col-md-4"><input class="form-control" placeholder="Name" @bind="_name" @bind:event="oninput" /></div>
+    <div class="col-md-2"><input class="form-control" type="number" step="0.01" placeholder="Price" @bind="_price" /></div>
+    <div class="col-auto"><button class="btn btn-primary" @onclick="AddAsync">Add</button></div>
+</div>
+
+@if (_added is not null)
+{
+    <p class="text-success">Added product @_added.</p>
+}
+
+<h2 class="h5">Search</h2>
+<div class="row g-2 mb-3">
+    <div class="col-md-6"><input class="form-control" placeholder="At least 2 letters" @bind="_term" @bind:event="oninput" /></div>
+    <div class="col-auto"><button class="btn btn-outline-secondary" @onclick="SearchAsync">Search</button></div>
+</div>
+
+@if (_results is not null)
+{
+    <table class="table">
+        <thead>
+            <tr><th>SKU</th><th>Name</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var product in _results)
+            {
+                <tr><td>@product.Sku</td><td>@product.Name</td><td>@product.Price.ToString("0.00")</td></tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Error? _error;
+    private string _sku = string.Empty;
+    private string _name = string.Empty;
+    private decimal _price = 9.95m;
+    private Guid? _added;
+    private string _term = string.Empty;
+    private IReadOnlyList<ProductView>? _results;
+
+    private async Task AddAsync()
+    {
+        _error = null;
+        var added = await CatalogApi.AddProductAsync(_sku, _name, _price, CancellationToken.None);
+        added.Match(id => { _added = id; }, error => { _error = error; });
+    }
+
+    private async Task SearchAsync()
+    {
+        _error = null;
+        var results = await CatalogApi.SearchAsync(_term, CancellationToken.None);
+        results.Match(found => { _results = found; }, error => { _error = error; });
+    }
+}

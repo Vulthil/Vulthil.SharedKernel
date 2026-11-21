@@ -1,18 +1,19 @@
+using Orders.Endpoints;
+using Orders.ExternalServices;
 using Vulthil.xUnit;
-using WebApi.ExternalServices;
 
-namespace WebApi.Tests.Fixtures;
+namespace Orders.Tests.Fixtures;
 
 /// <summary>
-/// Boots the WebApi sample against the shared <see cref="AppContainerHost"/> containers: each test class gets its
+/// Boots the Orders sample against the shared <see cref="OrdersContainerHost"/> containers: each test class gets its
 /// own PostgreSQL database and RabbitMQ virtual host, so classes using this factory run in parallel without
-/// interfering.
+/// interfering. The two external HTTP services are replaced by HTTP mocks that each test configures.
 /// </summary>
-public sealed class CustomWebApplicationFactory : BaseWebApplicationFactory<Program>
+public sealed class OrdersWebApplicationFactory : BaseWebApplicationFactory<Program>
 {
-    public CustomWebApplicationFactory(AppContainerHost containerHost) : base(containerHost)
+    public OrdersWebApplicationFactory(OrdersContainerHost containerHost) : base(containerHost)
     {
-        AddHttpMock<IExternalWeatherClient>();
-        AddHttpMock("inventory");
+        AddHttpMock<IShippingRatesClient>();
+        AddHttpMock(GetStock.InventoryClientName);
     }
 }

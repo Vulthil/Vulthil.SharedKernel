@@ -1,23 +1,23 @@
+using Orders.Domain.Orders;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Domain.MainEntities;
 
-namespace WebApi.Application.MainEntities.CreateMany;
+namespace Orders.Application.Orders.PlaceMany;
 
-public sealed record CreateMainEntitiesCommand(IReadOnlyList<string> Names) : ITransactionalCommand<Result<IReadOnlyList<Guid>>>;
+public sealed record PlaceOrdersCommand(IReadOnlyList<string> Descriptions) : ITransactionalCommand<Result<IReadOnlyList<Guid>>>;
 
 /// <summary>
-/// Creates every entity or none. <c>Combine</c> folds the result of each <see cref="MainEntity.Create"/> into one
-/// result with all the entities, or the failure of the names that were invalid.
+/// Places every order or none. <c>Combine</c> folds the result of each <see cref="Order.Place"/> into one result
+/// with all the orders, or the failure of the descriptions that were invalid.
 /// </summary>
-public sealed class CreateMainEntitiesCommandHandler(IWebApiDbContext dbContext)
-    : ICommandHandler<CreateMainEntitiesCommand, Result<IReadOnlyList<Guid>>>
+public sealed class PlaceOrdersCommandHandler(IOrdersDbContext dbContext)
+    : ICommandHandler<PlaceOrdersCommand, Result<IReadOnlyList<Guid>>>
 {
-    public Task<Result<IReadOnlyList<Guid>>> HandleAsync(CreateMainEntitiesCommand command, CancellationToken cancellationToken = default) =>
-        command.Names
-            .Select(MainEntity.Create)
+    public Task<Result<IReadOnlyList<Guid>>> HandleAsync(PlaceOrdersCommand command, CancellationToken cancellationToken = default) =>
+        command.Descriptions
+            .Select(Order.Place)
             .Combine()
-            .Tap(dbContext.MainEntities.AddRange)
+            .Tap(dbContext.Orders.AddRange)
             .TapAsync(_ => dbContext.SaveChangesAsync(cancellationToken))
-            .MapAsync(mainEntities => (IReadOnlyList<Guid>)[.. mainEntities.Select(mainEntity => mainEntity.Id.Value)]);
+            .MapAsync(orders => (IReadOnlyList<Guid>)[.. orders.Select(order => order.Id.Value)]);
 }

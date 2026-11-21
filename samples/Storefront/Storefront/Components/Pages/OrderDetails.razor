@@ -1,0 +1,75 @@
+@page "/orders/{Id:guid}"
+@rendermode InteractiveServer
+@inject OrdersApi OrdersApi
+@inject ShipmentsApi ShipmentsApi
+
+<PageTitle>Order</PageTitle>
+
+<h1>Order</h1>
+
+<ErrorAlert Error="_error" />
+
+<button class="btn btn-outline-secondary mb-3" @onclick="LoadAsync">Refresh</button>
+
+@if (_order is not null)
+{
+    <dl class="row">
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@_order.Description</dd>
+        <dt class="col-sm-3">Shipped</dt>
+        <dd class="col-sm-9">@(_order.ShippedAtUtc?.ToLocalTime().ToString("g") ?? "Not yet")</dd>
+        <dt class="col-sm-3">Fulfillment</dt>
+        <dd class="col-sm-9">@_order.FulfillmentStatus</dd>
+    </dl>
+
+    <h2>Shipments</h2>
+
+    @if (_shipments is { Count: 0 })
+    {
+        <p>The Shipments service has no shipment for this order yet.</p>
+    }
+
+    @foreach (var shipment in _shipments ?? [])
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">@shipment.StatusName – @shipment.Carrier</h5>
+                <p class="card-text">
+                    To @shipment.Recipient.
+                    Estimated delivery: @(shipment.EstimatedDeliveryUtc?.ToLocalTime().ToString("g") ?? "unknown").
+                </p>
+                <ul class="mb-0">
+                    @foreach (var scan in shipment.TrackingEvents)
+                    {
+                        <li>@scan.OccurredAtUtc.ToLocalTime().ToString("T") – @scan.StatusName in @scan.Location</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private OrderView? _order;
+    private IReadOnlyList<ShipmentView>? _shipments;
+    private Error? _error;
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override Task OnParametersSetAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        var order = await OrdersApi.GetOrderAsync(Id, CancellationToken.None);
+        var shipments = await ShipmentsApi.GetShipmentsAsync(Id, CancellationToken.None);
+
+        order.Zip(shipments).Match(
+            loaded =>
+            {
+                (_order, _shipments) = loaded;
+                _error = null;
+            },
+            error => { _error = error; });
+    }
+}

@@ -1,4 +1,4 @@
-namespace WebApi.Application.Shipping;
+namespace Orders.Application.Shipping;
 
 /// <summary>
 /// This service's copy of the Shipments sample's integration event. <see cref="Urn"/> and <see cref="Exchange"/> are

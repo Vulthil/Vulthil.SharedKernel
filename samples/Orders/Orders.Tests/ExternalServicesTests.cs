@@ -1,70 +1,82 @@
 using System.Net;
-using Microsoft.Extensions.DependencyInjection;
+using Orders.Endpoints;
+using Orders.ExternalServices;
+using Orders.Tests.Fixtures;
 using Shouldly;
-using WebApi.ExternalServices;
-using WebApi.Tests.Fixtures;
+using Vulthil.Extensions.Testing;
 
-namespace WebApi.Tests;
+namespace Orders.Tests;
 
-public sealed class ExternalWeatherClientTests(CustomWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
-    : BaseIntegrationTestCase(factory, testOutputHelper)
+/// <summary>
+/// The endpoints call real HTTP clients; only the wire is mocked, so the client code, the URL and the JSON run as in
+/// production.
+/// </summary>
+public sealed class ExternalServicesTests(OrdersWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+    : OrdersTestCase(factory, testOutputHelper)
 {
-    private IExternalWeatherClient WeatherClient => ScopedServices.GetRequiredService<IExternalWeatherClient>();
-
     [Fact]
-    public async Task GetForecast_returns_strongly_typed_mocked_response()
+    public async Task GetShippingQuote_returns_the_quote_of_the_typed_client()
     {
         // Arrange
-        HttpMock<IExternalWeatherClient>()
-            .On(HttpMethod.Get, "/forecast/london")
-            .RespondWith(HttpStatusCode.OK, new ExternalForecast("London", 18))
+        HttpMock<IShippingRatesClient>()
+            .On(HttpMethod.Get, "/quotes/DK")
+            .RespondWith(HttpStatusCode.OK, new ShippingQuote("DK", 49.5m, 2))
             .WithHeader("X-Source", "mock");
 
         // Act
-        var forecast = await WeatherClient.GetForecastAsync("london", CancellationToken);
+        var response = await Client.GetAsync("api/shipping-quotes/DK", CancellationToken);
 
         // Assert
-        forecast.ShouldNotBeNull();
-        forecast.City.ShouldBe("London");
-        forecast.TemperatureC.ShouldBe(18);
+        var quote = await response.GetResponseAsync<ShippingQuote>(CancellationToken);
+        quote.Price.ShouldBe(49.5m);
+        quote.TransitDays.ShouldBe(2);
+        HttpMock<IShippingRatesClient>().ReceivedRequests.ShouldContain(request => request.RequestUri!.AbsolutePath == "/quotes/DK");
     }
 
     [Fact]
-    public async Task GetForecast_returns_captured_json_string()
+    public async Task GetShippingQuote_answers_a_rates_service_error_with_a_problem_response()
     {
         // Arrange
-        const string capturedJson = """{ "city": "Paris", "temperatureC": 21 }""";
-        HttpMock<IExternalWeatherClient>()
-            .On(HttpMethod.Get, "/forecast/paris")
+        HttpMock<IShippingRatesClient>()
+            .On(HttpMethod.Get, "/quotes/SE")
+            .RespondWithJson(HttpStatusCode.BadRequest, "{}");
+
+        // Act
+        using var response = await Client.GetAsync("api/shipping-quotes/SE", CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+    }
+
+    [Fact]
+    public async Task GetStock_replays_a_captured_json_response_of_the_named_client()
+    {
+        // Arrange
+        const string capturedJson = """{ "sku": "CUP-0001", "available": 7 }""";
+        HttpMock(GetStock.InventoryClientName)
+            .On(HttpMethod.Get, "/stock/CUP-0001")
             .RespondWithJson(HttpStatusCode.OK, capturedJson);
 
         // Act
-        var forecast = await WeatherClient.GetForecastAsync("paris", CancellationToken);
+        var response = await Client.GetAsync("api/stock/CUP-0001", CancellationToken);
 
         // Assert
-        forecast.ShouldNotBeNull();
-        forecast.City.ShouldBe("Paris");
-        forecast.TemperatureC.ShouldBe(21);
-        HttpMock<IExternalWeatherClient>().ReceivedRequests
-            .ShouldContain(request => request.RequestUri!.AbsolutePath == "/forecast/paris");
+        var stock = await response.GetResponseAsync<GetStock.StockLevel>(CancellationToken);
+        stock.Available.ShouldBe(7);
     }
 
     [Fact]
-    public async Task Named_client_returns_mocked_response()
+    public async Task GetStock_answers_an_unknown_sku_with_not_found()
     {
         // Arrange
-        HttpMock("inventory")
-            .On(HttpMethod.Get, "/stock/42")
-            .RespondWithJson(HttpStatusCode.OK, """{ "available": 7 }""");
-
-        var inventoryClient = ScopedServices.GetRequiredService<IHttpClientFactory>().CreateClient("inventory");
+        HttpMock(GetStock.InventoryClientName)
+            .On(HttpMethod.Get, "/stock/NOPE-0000")
+            .RespondWithJson(HttpStatusCode.NotFound, "{}");
 
         // Act
-        var response = await inventoryClient.GetAsync("/stock/42", CancellationToken);
+        using var response = await Client.GetAsync("api/stock/NOPE-0000", CancellationToken);
 
         // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadAsStringAsync(CancellationToken);
-        body.ShouldContain("\"available\": 7");
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }

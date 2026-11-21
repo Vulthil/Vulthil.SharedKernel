@@ -1,17 +1,17 @@
-using WebApi.Domain.SideEffects;
+using Orders.Domain.Fulfillments;
 
-namespace WebApi.Application.SideEffects;
+namespace Orders.Application.Fulfillments;
 
-public sealed record SideEffectDto
+public sealed record FulfillmentDto
 {
     public Guid Id { get; init; }
-    public Guid MainEntityId { get; init; }
-    public required Status Status { get; init; }
+    public Guid OrderId { get; init; }
+    public required FulfillmentStatus Status { get; init; }
 
-    public static SideEffectDto FromModel(SideEffect sideEffect) => new()
+    public static FulfillmentDto FromModel(Fulfillment fulfillment) => new()
     {
-        Id = sideEffect.Id.Value,
-        MainEntityId = sideEffect.MainEntityId,
-        Status = sideEffect.Status
+        Id = fulfillment.Id.Value,
+        OrderId = fulfillment.OrderId,
+        Status = fulfillment.Status
     };
 }

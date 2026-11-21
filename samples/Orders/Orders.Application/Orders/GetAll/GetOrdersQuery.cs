@@ -1,36 +1,30 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Orders.Application.Fulfillments;
+using Orders.Application.Fulfillments.GetByOrder;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Results;
 using Vulthil.SharedKernel.Application.Messaging;
-using WebApi.Application.SideEffects;
-using WebApi.Application.SideEffects.Create;
 
-namespace WebApi.Application.MainEntities.GetById;
+namespace Orders.Application.Orders.GetAll;
 
-public sealed record GetMainEntities : IQuery<Result<IReadOnlyList<MainEntityDto>>>;
+public sealed record GetOrdersQuery : IQuery<Result<IReadOnlyList<OrderDto>>>;
 
 /// <summary>
-/// Asks for the side effects of every entity at once. A failed request does not hide its entity: <c>Recover</c>
-/// replaces the failure with an empty list, and <c>Combine</c> folds the per-entity results into one list.
+/// Asks for the fulfillments of every order at once. A failed request does not hide its order: <c>Recover</c>
+/// replaces the failure with an empty list, and <c>Combine</c> folds the per-order results into one list.
 /// </summary>
-public sealed class GetMainEntitiesQueryHandler(ILogger<GetMainEntitiesQueryHandler> logger, IWebApiDbContext dbContext, IRequester requester) : IQueryHandler<GetMainEntities, Result<IReadOnlyList<MainEntityDto>>>
+public sealed class GetOrdersQueryHandler(IOrdersDbContext dbContext, IRequester requester) : IQueryHandler<GetOrdersQuery, Result<IReadOnlyList<OrderDto>>>
 {
-    private readonly ILogger<GetMainEntitiesQueryHandler> _logger = logger;
-    private readonly IWebApiDbContext _dbContext = dbContext;
-    private readonly IRequester _requester = requester;
-
-    public async Task<Result<IReadOnlyList<MainEntityDto>>> HandleAsync(GetMainEntities query, CancellationToken cancellationToken = default)
+    public async Task<Result<IReadOnlyList<OrderDto>>> HandleAsync(GetOrdersQuery query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Querying all MainEntities");
-        var list = await _dbContext.MainEntities.ToListAsync(cancellationToken);
+        var orders = await dbContext.Orders.AsNoTracking().OrderBy(order => order.Id).ToListAsync(cancellationToken);
 
-        var result = await Task.WhenAll(list.Select(entity =>
-                _requester.RequestAsync<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>(new GetSideEffectsBelongingToMainEntity(entity.Id.Value), null, cancellationToken)
-                .MapAsync(sideEffects => MainEntityDto.FromModel(entity, sideEffects))));
+        var results = await Task.WhenAll(orders.Select(order =>
+            requester.RequestAsync<GetOrderFulfillments, List<FulfillmentDto>>(new GetOrderFulfillments(order.Id.Value), null, cancellationToken)
+                .MapAsync(fulfillments => OrderDto.FromModel(order, fulfillments))));
 
-        return result
-            .Select((dto, index) => dto.Recover(_ => MainEntityDto.FromModel(list[index], [])))
+        return results
+            .Select((result, index) => result.Recover(_ => OrderDto.FromModel(orders[index], [])))
             .Combine();
     }
 }

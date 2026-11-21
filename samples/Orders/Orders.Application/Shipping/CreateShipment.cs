@@ -1,4 +1,4 @@
-namespace WebApi.Application.Shipping;
+namespace Orders.Application.Shipping;
 
 /// <summary>
 /// The command this service sends point-to-point to the Shipments sample's <see cref="QueueName"/> queue. The services

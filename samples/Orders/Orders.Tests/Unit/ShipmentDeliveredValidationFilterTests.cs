@@ -2,9 +2,9 @@ using Microsoft.Extensions.Time.Testing;
 using Shouldly;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.xUnit;
-using WebApi.Application.Shipping;
+using Orders.Application.Shipping;
 
-namespace WebApi.Tests.Unit;
+namespace Orders.Tests.Unit;
 
 public sealed class ShipmentDeliveredValidationFilterTests : BaseUnitTestCase<ShipmentDeliveredValidationFilter>
 {

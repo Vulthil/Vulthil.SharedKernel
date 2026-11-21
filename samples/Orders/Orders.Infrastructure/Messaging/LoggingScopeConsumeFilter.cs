@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Vulthil.Messaging.Abstractions.Consumers;
 
-namespace WebApi.Infrastructure.Messaging;
+namespace Orders.Infrastructure.Messaging;
 
 /// <summary>
 /// An open-generic consume filter: one registration wraps the consumers of every message type. Every log entry a

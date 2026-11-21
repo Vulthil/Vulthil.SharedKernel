@@ -98,6 +98,7 @@
 <li>Derive <code>CosmosTestContainerFixture&lt;TDbContext&gt;</code> and supply the configuration key (optionally pin the emulator image via <code>Configure</code>)</li>
 <li>Register the fixture on the assembly's <code>ContainerHost</code> (or a factory) like any other container</li>
 <li>Let the fixture own database creation, per-test resets, and per-scope isolation — no scope plumbing in test code</li>
+<li>A host that registers its context with <code>UseCosmosDb</code> works as it is: the scope's connection string names the scope's database, and the scope points the host's (pooled) context registration at the emulator</li>
 </ul>
 <p>See <a href="../testing.html">Testing</a> for the full integration-testing guide.</p>
 

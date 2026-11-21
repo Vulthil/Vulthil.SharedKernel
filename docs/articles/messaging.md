@@ -82,7 +82,8 @@ A queue name can be configured in more than one place, for example by two module
 with that name adds to the same queue. A consumer runs once per delivery. Registering the same consumer again with
 equal retry settings has no effect, and registering it with a different retry policy throws during configuration.
 Retry policies compare by their settings. A second queue-level `UseRetry` follows the same rule; a default retry
-policy bound from configuration is still replaced by code.
+policy bound from configuration is still replaced by code. Registering the same request consumer on the same queue
+again also has no effect.
 
 ## Publishing Messages
 
@@ -803,8 +804,10 @@ These failures surface at app startup, not at the first message delivery.
 
 `IRequestConsumer<TRequest, TResponse>` requires a concrete `TRequest` — the
 response type is fixed and can't be selected by the incoming concrete type.
-Each `(queue, message type)` pair admits at most one request consumer; a
-second one fails fast at composition.
+A request type has at most one request consumer in the whole application,
+because a request needs exactly one reply. A different consumer of the same
+request type, or the same consumer on a second queue, fails fast at
+composition; the same consumer registered again on the same queue counts once.
 
 `MessageConfiguration` instances can also come from configuration — see below.
 

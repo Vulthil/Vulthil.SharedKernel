@@ -72,21 +72,22 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
         foreach (var i in requestInterfaces)
         {
             var args = i.GetGenericArguments();
-            var reqType = new MessageType(args[0]);
-            var resType = args[1];
-
-            if (!_messagingOptions.RegisterRequestType(reqType))
-            {
-                throw new InvalidOperationException($"Request '{reqType.Name}' is already handled elsewhere.");
-            }
-
-            _queueDefinition.AddConsumer(new RequestConsumerRegistration
+            var registration = new RequestConsumerRegistration
             {
                 ConsumerType = consumerType,
-                MessageType = reqType,
-                ResponseType = resType,
+                MessageType = new MessageType(args[0]),
+                ResponseType = args[1],
                 RetryPolicy = configurator.RetryPolicy
-            });
+            };
+
+            // A queue can be configured in several places, so the same request consumer on the same queue counts once,
+            // like a repeated AddConsumer. Any other second handler for the request type would make the reply ambiguous.
+            if (!_messagingOptions.RegisterRequestType(registration.MessageType) && !_queueDefinition.Registrations.Contains(registration))
+            {
+                throw new InvalidOperationException($"Request '{registration.MessageType.Name}' is already handled elsewhere.");
+            }
+
+            _queueDefinition.AddConsumer(registration);
         }
 
         return this;

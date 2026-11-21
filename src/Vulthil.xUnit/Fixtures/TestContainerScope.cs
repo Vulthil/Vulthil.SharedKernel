@@ -140,15 +140,15 @@ public abstract class TestContainerWithConnectionStringScope<TContainer>
 
 /// <summary>
 /// Pass-through scope view over a shared container that offers no per-scope isolation: the view shares the container's
-/// namespace, and a reset is forwarded to the container. State inside the container is therefore shared by every test
-/// class consuming it concurrently, so a stateful container should return a view of its own from
-/// <see cref="ITestContainerScopeProvider.CreateScope"/> instead. <see cref="Create"/> picks the pass-through view for
-/// a container: this one, or <see cref="SharedContainerWithConnectionStringScope"/> when the container has a
+/// namespace, and the reset and the startup setup are forwarded to the container. State inside the container is
+/// therefore shared by every test class consuming it concurrently, so a stateful container should return a view of its
+/// own from <see cref="ITestContainerScopeProvider.CreateScope"/> instead. <see cref="Create"/> picks the pass-through
+/// view for a container: this one, or <see cref="SharedContainerWithConnectionStringScope"/> when the container has a
 /// connection string to forward.
 /// </summary>
 /// <param name="container">The shared container to delegate to.</param>
 internal sealed class SharedContainerScope(ITestContainer container)
-    : TestContainerScope<ITestContainer>(container, namespaceName: null), IResettableResource
+    : TestContainerScope<ITestContainer>(container, namespaceName: null), IResettableResource, IStartupResource
 {
     public static ITestContainer Create(ITestContainer container) => container is ITestContainerWithConnectionString withConnectionString
         ? new SharedContainerWithConnectionStringScope(withConnectionString)
@@ -162,15 +162,18 @@ internal sealed class SharedContainerScope(ITestContainer container)
     /// <returns>A task representing the asynchronous reset work.</returns>
     public ValueTask ResetAsync(IServiceProvider serviceProvider)
         => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
+
+    public ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        => Container is IStartupResource startupResource ? startupResource.InitializeAsync(serviceProvider) : ValueTask.CompletedTask;
 }
 
 /// <summary>
 /// Pass-through scope view that also forwards the shared container's connection string unchanged, so consumers share
-/// the container's namespace; a reset is forwarded to the container.
+/// the container's namespace; the reset, the migration and the startup setup are forwarded to the container.
 /// </summary>
 /// <param name="container">The shared container to delegate to.</param>
 internal sealed class SharedContainerWithConnectionStringScope(ITestContainerWithConnectionString container)
-    : TestContainerWithConnectionStringScope<ITestContainerWithConnectionString>(container, namespaceName: null), IResettableResource
+    : TestContainerWithConnectionStringScope<ITestContainerWithConnectionString>(container, namespaceName: null), ITestDatabaseContainer, IStartupResource
 {
     /// <summary>
     /// Forwards the reset to the shared container when it is resettable; otherwise does nothing. The reset acts on
@@ -180,4 +183,10 @@ internal sealed class SharedContainerWithConnectionStringScope(ITestContainerWit
     /// <returns>A task representing the asynchronous reset work.</returns>
     public ValueTask ResetAsync(IServiceProvider serviceProvider)
         => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
+
+    public ValueTask MigrateDatabase(IServiceProvider serviceProvider)
+        => Container is ITestDatabaseContainer database ? database.MigrateDatabase(serviceProvider) : ValueTask.CompletedTask;
+
+    public ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        => Container is IStartupResource startupResource ? startupResource.InitializeAsync(serviceProvider) : ValueTask.CompletedTask;
 }

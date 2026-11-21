@@ -167,6 +167,50 @@ public sealed class QueueConfiguratorBuildTests : BaseUnitTestCase<HostApplicati
         queue.Registrations.ShouldContain(r => r.ConsumerType.Type == typeof(PriceQuoteConsumer));
     }
 
+    [Fact]
+    public void AddRequestConsumerAgainOnTheSameQueueCountsOnce()
+    {
+        // Act
+        Target.AddMessaging(m =>
+        {
+            m.ConfigureQueue("pricing", q => q.AddRequestConsumer<PriceQuoteConsumer>());
+            m.ConfigureQueue("pricing", q => q.AddRequestConsumer<PriceQuoteConsumer>());
+        });
+
+        // Assert
+        var queue = GetQueue(Target, "pricing");
+        queue.ShouldNotBeNull();
+        queue.Registrations.Count(r => r.ConsumerType.Type == typeof(PriceQuoteConsumer)).ShouldBe(1);
+    }
+
+    [Fact]
+    public void AddRequestConsumerOnASecondQueueThrows()
+    {
+        // Act & Assert
+        var ex = Should.Throw<InvalidOperationException>(() =>
+            Target.AddMessaging(m =>
+            {
+                m.ConfigureQueue("pricing", q => q.AddRequestConsumer<PriceQuoteConsumer>());
+                m.ConfigureQueue("pricing-backup", q => q.AddRequestConsumer<PriceQuoteConsumer>());
+            }));
+
+        ex.Message.ShouldContain("already handled elsewhere");
+    }
+
+    [Fact]
+    public void ADifferentRequestConsumerForTheSameRequestOnTheSameQueueThrows()
+    {
+        // Act & Assert
+        var ex = Should.Throw<InvalidOperationException>(() =>
+            Target.AddMessaging(m => m.ConfigureQueue("pricing", q =>
+            {
+                q.AddRequestConsumer<PriceQuoteConsumer>();
+                q.AddRequestConsumer<DiscountedPriceQuoteConsumer>();
+            })));
+
+        ex.Message.ShouldContain("already handled elsewhere");
+    }
+
     internal sealed record PriceQuoteRequest(string Sku);
     internal sealed record PriceQuote(string Sku, decimal Price);
 
@@ -174,6 +218,12 @@ public sealed class QueueConfiguratorBuildTests : BaseUnitTestCase<HostApplicati
     {
         public Task<PriceQuote> ConsumeAsync(IMessageContext<PriceQuoteRequest> messageContext, CancellationToken cancellationToken = default)
             => Task.FromResult(new PriceQuote(messageContext.Message.Sku, 1m));
+    }
+
+    internal sealed class DiscountedPriceQuoteConsumer : IRequestConsumer<PriceQuoteRequest, PriceQuote>
+    {
+        public Task<PriceQuote> ConsumeAsync(IMessageContext<PriceQuoteRequest> messageContext, CancellationToken cancellationToken = default)
+            => Task.FromResult(new PriceQuote(messageContext.Message.Sku, 0.5m));
     }
 }
 

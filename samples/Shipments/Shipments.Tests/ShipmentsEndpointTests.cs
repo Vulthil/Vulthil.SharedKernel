@@ -33,7 +33,7 @@ public sealed class ShipmentsEndpointTests(HarnessWebApplicationFactory factory,
     {
         // Arrange
         var shipment = await CreateShipmentAsync();
-        var estimate = DateTimeOffset.UtcNow.AddDays(5);
+        var estimate = new DateTimeOffset(DateTime.UtcNow.Date.AddDays(5), TimeSpan.Zero);
 
         // Act
         using var response = await Client.PutAsJsonAsync($"shipments/{shipment.Id}/estimated-delivery", new RescheduleDelivery.Request(estimate), CancellationToken);

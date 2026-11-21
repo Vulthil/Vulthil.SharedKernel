@@ -127,6 +127,22 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task AStartingHostMigratesAndSetsUpADatabaseContainerWithoutAScopeViewOfItsOwn()
+    {
+        // Arrange
+        _hostContainers.Add(new UnscopedDatabaseContainer(_log, "plain"));
+        await Target.InitializeAsync();
+        await using var host = HostWith();
+
+        // Act
+        await Target.CreateHostLifecycle(host).StartAsync(CancellationToken);
+
+        // Assert
+        _log.Where(entry => entry.StartsWith("migrate:", StringComparison.Ordinal) || entry.StartsWith("startup:", StringComparison.Ordinal))
+            .ShouldBe(["migrate:plain", "startup:plain"]);
+    }
+
+    [Fact]
     public async Task ASecondHostPausesTheFirstHostsRestartableServicesUntilItStops()
     {
         // Arrange
@@ -418,6 +434,40 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
             log.Enqueue($"reset:{name}");
             return ValueTask.CompletedTask;
         }
+
+        public void ConfigureWebHost(IWebHostBuilder builder)
+        {
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+        }
+    }
+
+    public sealed class UnscopedDatabaseContainer(ConcurrentQueue<string> log, string name)
+        : ITestDatabaseContainer, IStartupResource
+    {
+        public string ConnectionString => $"{name}-connection";
+
+        public string ConnectionStringKey => name;
+
+        public ValueTask InitializeAsync() => ValueTask.CompletedTask;
+
+        public ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        {
+            log.Enqueue($"startup:{name}");
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+        public ValueTask MigrateDatabase(IServiceProvider serviceProvider)
+        {
+            log.Enqueue($"migrate:{name}");
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask ResetAsync(IServiceProvider serviceProvider) => ValueTask.CompletedTask;
 
         public void ConfigureWebHost(IWebHostBuilder builder)
         {

@@ -111,17 +111,18 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Returns the <see cref="ServiceLifetime"/> of the last descriptor in <paramref name="services"/>
+    /// Returns the <see cref="ServiceLifetime"/> of the last non-keyed descriptor in <paramref name="services"/>
     /// whose <see cref="ServiceDescriptor.ServiceType"/> equals <paramref name="serviceType"/>, or
     /// <see cref="ServiceLifetime.Scoped"/> if no such descriptor exists. Walking in reverse mirrors
-    /// the DI container's "last registration wins" rule when resolving a single service.
+    /// the DI container's "last registration wins" rule when resolving a single service, and keyed
+    /// descriptors are skipped because an unkeyed resolution never uses them.
     /// </summary>
     internal static ServiceLifetime FindLifetime(IServiceCollection services, Type serviceType)
     {
         for (var i = services.Count - 1; i >= 0; i--)
         {
             var descriptor = services[i];
-            if (descriptor.ServiceType == serviceType)
+            if (descriptor.ServiceType == serviceType && !descriptor.IsKeyedService)
             {
                 return descriptor.Lifetime;
             }

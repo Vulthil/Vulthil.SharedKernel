@@ -20,7 +20,7 @@ public sealed class UpdateMainEntityNameCommandHandler(ILogger<UpdateMainEntityN
         var id = new MainEntityId(command.Id);
         return await _dbContext.MainEntities.FirstOrDefaultAsync(w => w.Id == id, cancellationToken)
             .ToResultAsync(MainEntityErrors.NotFound(command.Id))
-            .TapAsync(e => e.UpdateName(command.Name))
+            .BindAsync(e => e.Rename(command.Name))
             .TapAsync(() => _dbContext.SaveChangesAsync(cancellationToken));
     }
 }

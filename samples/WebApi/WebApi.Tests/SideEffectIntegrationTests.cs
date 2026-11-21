@@ -45,6 +45,33 @@ public sealed class SideEffectIntegrationTests(CustomWebApplicationFactory facto
         result.Value.ShouldContain(s =>
             s.MainEntityId == createResult.Value && s.Status is Status.InProgressStatus);
     }
+
+    [Fact]
+    public async Task SideEffect_starts_at_the_time_of_a_TimeProvider_replaced_for_this_test()
+    {
+        // Arrange
+        var now = new DateTimeOffset(2030, 1, 2, 3, 4, 5, TimeSpan.Zero);
+        Use<TimeProvider>(new FrozenClock(now));
+        var createResult = await Sender.SendAsync(new CreateMainEntityCommand(Guid.NewGuid().ToString()), CancellationToken);
+
+        // Act
+        var result = await Polling.WaitAsync(TimeSpan.FromSeconds(10), async () =>
+        {
+            var queryResult = await Sender.SendAsync(new GetInProgressQuery(), CancellationToken);
+            return queryResult.Bind(sideEffects => sideEffects.Find(s => s.MainEntityId == createResult.Value)
+                .ToResult(Error.NotFound("NotFound", "No side effect found")));
+        }, cancellationToken: CancellationToken);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.Status.ShouldBeOfType<Status.InProgressStatus>().ProgressTime.ShouldBe(now);
+    }
+
+    /// <summary>
+    /// Stops the wall clock but keeps real timers, so the outbox relay and the consumers still run on schedule.
+    /// </summary>
+    private sealed class FrozenClock(DateTimeOffset now) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => now;
+    }
 }
-
-

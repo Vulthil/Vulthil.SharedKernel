@@ -16,11 +16,9 @@ public sealed class CreateMainEntityCommandHandler(ILogger<CreateMainEntityComma
     {
         _logger.LogInformation("Creating MainEntity With name: {Name}", command.Name);
 
-        var mainEntity = MainEntity.Create(command.Name);
-        _dbContext.MainEntities.Add(mainEntity);
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success(mainEntity.Id.Value);
+        return await MainEntity.Create(command.Name)
+            .Tap(mainEntity => _dbContext.MainEntities.Add(mainEntity))
+            .TapAsync(_ => _dbContext.SaveChangesAsync(cancellationToken))
+            .MapAsync(mainEntity => mainEntity.Id.Value);
     }
 }

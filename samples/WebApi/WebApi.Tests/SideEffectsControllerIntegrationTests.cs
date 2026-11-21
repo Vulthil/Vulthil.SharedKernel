@@ -37,4 +37,14 @@ public sealed class SideEffectsControllerIntegrationTests(CustomWebApplicationFa
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldContain(s => s.MainEntityId == createResult.Value && s.Status is Status.InProgressStatus);
     }
+
+    [Fact]
+    public async Task Test_GetById_Endpoint_returns_a_not_found_problem_for_an_unknown_side_effect()
+    {
+        // Act
+        using var response = await Client.GetAsync($"api/SideEffects/{Guid.NewGuid()}", CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+    }
 }

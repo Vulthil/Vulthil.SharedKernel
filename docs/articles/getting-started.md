@@ -64,6 +64,21 @@ app.MapEndpoints();
 app.Run();
 ```
 
+## Samples
+
+The repository's `samples` folder holds three services that run together under one Aspire AppHost
+(`samples/AppHost`), and `samples/README.md` maps every package feature to the sample file that shows it:
+
+- **WebApi** – PostgreSQL and RabbitMQ: minimal API endpoints and an MVC controller, the CQRS pipeline, the
+  transactional outbox and the relational inbox, consume and publish filters, and a point-to-point send to the
+  Shipments service.
+- **Shipments** – MySQL and RabbitMQ: ordered processing with a partitioner, polymorphic consumers, request/reply,
+  faults, configuration-driven topology, a restartable background service and a custom retention sweep.
+- **Catalog** – Cosmos DB and RabbitMQ: the Cosmos outbox and inbox, and a module assembly registered with the
+  per-assembly entry points.
+
+Each sample has a test project that shows `Vulthil.xUnit`, the messaging test harness and `Vulthil.Extensions.Testing`.
+
 ## Next Steps
 
 - [Result Pattern](result-pattern.md) – explicit success/failure handling

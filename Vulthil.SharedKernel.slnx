@@ -30,10 +30,20 @@
   <Folder Name="/samples/">
     <File Path="samples/aspire.config.json" />
     <File Path="samples/Directory.Build.props" />
+    <File Path="samples/README.md" />
   </Folder>
   <Folder Name="/samples/AppHost/">
     <Project Path="samples/AppHost/AppHost/AppHost.csproj" />
     <Project Path="samples/AppHost/ServiceDefaults/ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/samples/Catalog/">
+    <Project Path="samples/Catalog/Catalog/Catalog.csproj" />
+    <Project Path="samples/Catalog/Catalog.Search/Catalog.Search.csproj" />
+    <Project Path="samples/Catalog/Catalog.Tests/Catalog.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/Shipments/">
+    <Project Path="samples/Shipments/Shipments/Shipments.csproj" />
+    <Project Path="samples/Shipments/Shipments.Tests/Shipments.Tests.csproj" />
   </Folder>
   <Folder Name="/samples/WebApi/">
     <Project Path="samples/WebApi/WebApi.Application/WebApi.Application.csproj" />

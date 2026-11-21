@@ -10,6 +10,10 @@ namespace WebApi.Application.MainEntities.GetById;
 
 public sealed record GetMainEntities : IQuery<Result<IReadOnlyList<MainEntityDto>>>;
 
+/// <summary>
+/// Asks for the side effects of every entity at once. A failed request does not hide its entity: <c>Recover</c>
+/// replaces the failure with an empty list, and <c>Combine</c> folds the per-entity results into one list.
+/// </summary>
 public sealed class GetMainEntitiesQueryHandler(ILogger<GetMainEntitiesQueryHandler> logger, IWebApiDbContext dbContext, IRequester requester) : IQueryHandler<GetMainEntities, Result<IReadOnlyList<MainEntityDto>>>
 {
     private readonly ILogger<GetMainEntitiesQueryHandler> _logger = logger;
@@ -23,10 +27,10 @@ public sealed class GetMainEntitiesQueryHandler(ILogger<GetMainEntitiesQueryHand
 
         var result = await Task.WhenAll(list.Select(entity =>
                 _requester.RequestAsync<GetSideEffectsBelongingToMainEntity, List<SideEffectDto>>(new GetSideEffectsBelongingToMainEntity(entity.Id.Value), null, cancellationToken)
-                .MapAsync(sideEffects => (entity, sideEffects))
-                .MapAsync(tuple => MainEntityDto.FromModel(tuple.entity, tuple.sideEffects))));
+                .MapAsync(sideEffects => MainEntityDto.FromModel(entity, sideEffects))));
 
-        return result.Where(x => x.IsSuccess).Select(x => x.Value).ToList();
-
+        return result
+            .Select((dto, index) => dto.Recover(_ => MainEntityDto.FromModel(list[index], [])))
+            .Combine();
     }
 }

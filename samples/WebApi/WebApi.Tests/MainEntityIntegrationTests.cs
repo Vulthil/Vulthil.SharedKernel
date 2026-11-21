@@ -119,6 +119,91 @@ public sealed class MainEntityIntegrationTests(CustomWebApplicationFactory facto
 
         outboxMessageResult.IsSuccess.ShouldBeTrue();
     }
+
+    [Fact]
+    public async Task Rename_Endpoint_returns_no_content()
+    {
+        // Arrange
+        var id = await CreateAsync();
+
+        // Act
+        using var response = await Client.PutAsJsonAsync($"api/main-entities/{id}", new Rename.Request("Renamed " + Guid.NewGuid()), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task Rename_Endpoint_answers_the_reserved_name_domain_exception_with_a_conflict_problem()
+    {
+        // Arrange
+        var id = await CreateAsync();
+
+        // Act
+        using var response = await Client.PutAsJsonAsync($"api/main-entities/{id}", new Rename.Request("admin"), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        var problem = JsonNode.Parse(await response.Content.ReadAsStringAsync(CancellationToken))!;
+        ((string?)problem["detail"]).ShouldBe("The name 'admin' is reserved.");
+    }
+
+    [Fact]
+    public async Task Rename_Endpoint_lists_the_domain_error_code_of_a_too_long_name()
+    {
+        // Arrange
+        var id = await CreateAsync();
+
+        // Act
+        using var response = await Client.PutAsJsonAsync($"api/main-entities/{id}", new Rename.Request(new string('x', 101)), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var problem = JsonNode.Parse(await response.Content.ReadAsStringAsync(CancellationToken))!;
+        problem["errorCodes"]!["Name"]!.AsArray().Select(code => (string?)code).ShouldBe(["MainEntity.NameTooLong"]);
+    }
+
+    [Fact]
+    public async Task Rename_Endpoint_returns_not_found_for_an_unknown_entity()
+    {
+        // Act
+        using var response = await Client.PutAsJsonAsync($"api/main-entities/{Guid.NewGuid()}", new Rename.Request("Anything"), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task CreateMany_Endpoint_creates_every_entity()
+    {
+        // Act
+        using var response = await Client.PostAsJsonAsync("api/main-entities/batch", new CreateMany.Request(["First", "Second", "Third"]), CancellationToken);
+
+        // Assert
+        var result = await response.GetResponseAsync<CreateMany.Response>(CancellationToken);
+        result.Ids.Count.ShouldBe(3);
+        result.Ids.ShouldBeUnique();
+    }
+
+    [Fact]
+    public async Task CreateMany_Endpoint_creates_none_when_one_name_is_invalid()
+    {
+        // Arrange
+        var marker = Guid.NewGuid().ToString();
+
+        // Act
+        using var response = await Client.PostAsJsonAsync("api/main-entities/batch", new CreateMany.Request([marker, " "]), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var dbContext = ScopedServices.GetRequiredService<WebApiDbContext>();
+        (await dbContext.MainEntities.AnyAsync(e => e.Name == marker, CancellationToken)).ShouldBeFalse();
+    }
+
+    private async Task<Guid> CreateAsync()
+    {
+        var result = await Sender.SendAsync(new CreateMainEntityCommand(Guid.NewGuid().ToString()), CancellationToken);
+        result.IsSuccess.ShouldBeTrue();
+        return result.Value;
+    }
 }
-
-

@@ -173,7 +173,8 @@ then merged with whatever code-side calls add; code wins on conflict.</p>
 with that name adds to the same queue. A consumer runs once per delivery. Registering the same consumer again with
 equal retry settings has no effect, and registering it with a different retry policy throws during configuration.
 Retry policies compare by their settings. A second queue-level <code>UseRetry</code> follows the same rule; a default retry
-policy bound from configuration is still replaced by code.</p>
+policy bound from configuration is still replaced by code. Registering the same request consumer on the same queue
+again also has no effect.</p>
 <h2 id="publishing-messages">Publishing Messages</h2>
 <p>Inject <code>IPublisher</code> to send one-way messages, or <code>IRequester</code> for request/reply:</p>
 <pre><code class="lang-csharp">public sealed class PlaceOrderHandler(IPublisher publisher)
@@ -760,8 +761,10 @@ but no <code>Subscribe&lt;TConcrete&gt;</code> for any implementer).</li>
 <h3 id="request-consumers-stay-non-polymorphic">Request consumers stay non-polymorphic</h3>
 <p><code>IRequestConsumer&lt;TRequest, TResponse&gt;</code> requires a concrete <code>TRequest</code> — the
 response type is fixed and can't be selected by the incoming concrete type.
-Each <code>(queue, message type)</code> pair admits at most one request consumer; a
-second one fails fast at composition.</p>
+A request type has at most one request consumer in the whole application,
+because a request needs exactly one reply. A different consumer of the same
+request type, or the same consumer on a second queue, fails fast at
+composition; the same consumer registered again on the same queue counts once.</p>
 <p><code>MessageConfiguration</code> instances can also come from configuration — see below.</p>
 <h2 id="configuration-driven-setup">Configuration-driven Setup</h2>
 <p>Queue and message settings can be defined entirely in <code>appsettings.json</code>. The

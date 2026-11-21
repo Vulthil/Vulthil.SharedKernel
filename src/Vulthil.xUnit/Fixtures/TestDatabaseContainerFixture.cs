@@ -193,6 +193,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
         private const int MaxMigrationAttempts = 10;
         private const int MigrationRetryDelayMilliseconds = 250;
 
+        private readonly string _databaseName = databaseName;
         private Respawner? _respawner;
         private bool _hasBeenMigrated;
 
@@ -263,6 +264,10 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 DbAdapter = Container.DbAdapter,
                 WithReseed = true,
                 TablesToIgnore = ["__EFMigrationsHistory"],
+                // A MySQL database is a schema, and the information schema lists the tables of every database on the
+                // server. Without this the reset of one scope would also empty, and lock, the databases of the other
+                // scopes on the shared server.
+                SchemasToInclude = ReferenceEquals(Container.DbAdapter, Respawn.DbAdapter.MySql) ? [_databaseName] : [],
             }).ConfigureAwait(false);
             return _respawner;
         }

@@ -1,0 +1,11 @@
+@if (Error is not null)
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>@Error.Type</strong> @Error.Description
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Error? Error { get; set; }
+}

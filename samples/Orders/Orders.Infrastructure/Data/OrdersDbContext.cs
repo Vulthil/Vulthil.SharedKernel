@@ -1,0 +1,124 @@
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Storage;
+using Vulthil.Messaging.Inbox.EntityFrameworkCore;
+using Vulthil.Messaging.Inbox.Relational;
+using Vulthil.SharedKernel.Application.Data;
+using Vulthil.SharedKernel.Infrastructure.Data;
+using Vulthil.SharedKernel.Infrastructure.Npgsql;
+using Vulthil.SharedKernel.Outbox;
+using Vulthil.SharedKernel.Outbox.EntityFrameworkCore;
+using Orders.Application;
+using Orders.Domain.Orders;
+using Orders.Domain.Fulfillments;
+
+namespace Orders.Infrastructure.Data;
+
+/// <summary>
+/// The context the service runs on. <see cref="BaseDbContext"/> makes it the unit of work and the outbox store;
+/// <see cref="OrdersDbContextWithoutBase"/> shows the same context written without the base class.
+/// </summary>
+public sealed class OrdersDbContext(DbContextOptions<OrdersDbContext> options) : BaseDbContext(options), IOrdersDbContext, ISaveInboxMessages
+{
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<Fulfillment> Fulfillments => Set<Fulfillment>();
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
+    protected override Assembly? ConfigurationAssembly => typeof(OrdersDbContext).Assembly;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyNpgsqlOutbox();
+        modelBuilder.ApplyRelationalInbox();
+    }
+}
+
+/// <summary>
+/// Equivalent to <see cref="OrdersDbContext"/> without <see cref="BaseDbContext"/>: it implements the unit of work and
+/// the outbox store itself. The service does not register it.
+/// </summary>
+public sealed class OrdersDbContextWithoutBase(DbContextOptions<OrdersDbContextWithoutBase> options) : DbContext(options), ISaveOutboxMessages, ISaveInboxMessages, IOrdersDbContext
+{
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<Fulfillment> Fulfillments => Set<Fulfillment>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
+
+    public bool IsInTransaction => Database.CurrentTransaction is not null;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrdersDbContextWithoutBase).Assembly);
+        modelBuilder.ApplyNpgsqlOutbox();
+        modelBuilder.ApplyRelationalInbox();
+    }
+
+    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
+
+    public Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) =>
+        ExecuteInTransactionAsync(operation, static _ => true, cancellationToken);
+
+    public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, Func<TResult, bool> shouldCommit, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(shouldCommit);
+
+        if (Database.CurrentTransaction is not null)
+        {
+            return await operation(cancellationToken);
+        }
+
+        var hadUnsavedChanges = ChangeTracker.HasChanges();
+        var isRetry = false;
+        var strategy = Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(
+            async token =>
+            {
+                // Only a retry starts clean: the first attempt saves what the caller changed before the call. A retry
+                // cannot repeat changes made before the call, so it throws instead of dropping them.
+                if (isRetry)
+                {
+                    if (hadUnsavedChanges)
+                    {
+                        throw new InvalidOperationException(
+                            "A transient fault interrupted ExecuteInTransactionAsync, and the operation cannot be retried: the context held unsaved changes before the call, and a retry runs the operation from a clean change tracker. Make the changes inside the operation, so that a retry can repeat them.");
+                    }
+
+                    ChangeTracker.Clear();
+                }
+
+                isRetry = true;
+                await using var transaction = await Database.BeginTransactionAsync(token);
+                var result = await operation(token);
+                if (shouldCommit(result))
+                {
+                    await transaction.CommitAsync(token);
+                }
+                else
+                {
+                    await transaction.RollbackAsync(token);
+                }
+
+                return result;
+            },
+            cancellationToken);
+    }
+}
+
+public class OrdersDbContextFactory : IDesignTimeDbContextFactory<OrdersDbContext>
+{
+    public OrdersDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<OrdersDbContext>();
+
+#pragma warning disable S2068 // Credentials should not be hard-coded
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=__dummy__;Username=__dummy__;Password=__dummy__;Pooling=false",
+ o => o.ExecutionStrategy(d => new NonRetryingExecutionStrategy(d)));
+#pragma warning restore S2068 // Credentials should not be hard-coded
+
+        return new OrdersDbContext(optionsBuilder.Options);
+    }
+}

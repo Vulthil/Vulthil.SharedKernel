@@ -12,24 +12,57 @@ var postgres = builder.AddPostgres("postgres-instance")
     .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent);
 
-var postgresDb = postgres.AddDatabase(ServiceNames.PostgresSqlServerServiceName);
+var ordersDb = postgres.AddDatabase(ServiceNames.OrdersDatabaseServiceName, "orders");
 
-var wepApi = builder.AddDotnetProject(ServiceNames.WebApiServiceName, "../../WebApi/WebApi/WebApi.csproj")
-        .WithReference(rmq)
-        .WithReference(postgresDb)
-        .WaitFor(rmq)
-        .WaitFor(postgresDb);
+var mySql = builder.AddMySql(ServiceNames.MySqlServerServiceName)
+    .WithDataVolume()
+    .WithLifetime(ContainerLifetime.Persistent);
 
-builder.AddDotnetProject(ServiceNames.WebAppServiceName, "../../WebApp/WebApp/WebApp.csproj")
-    .WithReference(wepApi)
-    .WaitFor(wepApi);
+var shipmentsDb = mySql.AddDatabase(ServiceNames.ShipmentsDatabaseServiceName, "shipments");
 
-var scalar = builder.AddScalarApiReference(options =>
+var cosmos = builder.AddAzureCosmosDB(ServiceNames.CosmosDbServiceName)
+    .RunAsEmulator(emulator => emulator
+        .WithDataExplorer()
+        .WithLifetime(ContainerLifetime.Persistent));
+
+var catalogDb = cosmos.AddCosmosDatabase(ServiceNames.CatalogDatabaseServiceName, "catalog");
+
+var orders = builder.AddDotnetProject(ServiceNames.OrdersServiceName, "../../Orders/Orders/Orders.csproj")
+    .WithReference(rmq)
+    .WithReference(ordersDb)
+    .WaitFor(rmq)
+    .WaitFor(ordersDb);
+
+var shipments = builder.AddDotnetProject(ServiceNames.ShipmentsServiceName, "../../Shipments/Shipments/Shipments.csproj")
+    .WithReference(rmq)
+    .WithReference(shipmentsDb)
+    .WaitFor(rmq)
+    .WaitFor(shipmentsDb);
+
+var catalog = builder.AddDotnetProject(ServiceNames.CatalogServiceName, "../../Catalog/Catalog/Catalog.csproj")
+    .WithReference(rmq)
+    .WithReference(catalogDb)
+    .WaitFor(rmq)
+    .WaitFor(catalogDb);
+
+builder.AddDotnetProject(ServiceNames.StorefrontServiceName, "../../Storefront/Storefront/Storefront.csproj")
+    .WithReference(orders)
+    .WithReference(shipments)
+    .WithReference(catalog)
+    .WaitFor(orders)
+    .WaitFor(shipments)
+    .WaitFor(catalog);
+
+builder.AddScalarApiReference(options =>
     {
         options.PreferHttpsEndpoint().AllowSelfSignedCertificates();
         options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     })
-    .WithApiReference(wepApi)
-    .WaitFor(wepApi);
+    .WithApiReference(orders)
+    .WithApiReference(shipments)
+    .WithApiReference(catalog)
+    .WaitFor(orders)
+    .WaitFor(shipments)
+    .WaitFor(catalog);
 
 await builder.Build().RunAsync();

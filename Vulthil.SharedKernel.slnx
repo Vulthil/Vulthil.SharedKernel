@@ -30,20 +30,30 @@
   <Folder Name="/samples/">
     <File Path="samples/aspire.config.json" />
     <File Path="samples/Directory.Build.props" />
+    <File Path="samples/README.md" />
   </Folder>
   <Folder Name="/samples/AppHost/">
     <Project Path="samples/AppHost/AppHost/AppHost.csproj" />
     <Project Path="samples/AppHost/ServiceDefaults/ServiceDefaults.csproj" />
   </Folder>
-  <Folder Name="/samples/WebApi/">
-    <Project Path="samples/WebApi/WebApi.Application/WebApi.Application.csproj" />
-    <Project Path="samples/WebApi/WebApi.Domain/WebApi.Domain.csproj" />
-    <Project Path="samples/WebApi/WebApi.Infrastructure/WebApi.Infrastructure.csproj" />
-    <Project Path="samples/WebApi/WebApi.Tests/WebApi.Tests.csproj" />
-    <Project Path="samples/WebApi/WebApi/WebApi.csproj" />
+  <Folder Name="/samples/Catalog/">
+    <Project Path="samples/Catalog/Catalog/Catalog.csproj" />
+    <Project Path="samples/Catalog/Catalog.Search/Catalog.Search.csproj" />
+    <Project Path="samples/Catalog/Catalog.Tests/Catalog.Tests.csproj" />
   </Folder>
-  <Folder Name="/samples/WebApp/">
-    <Project Path="samples/WebApp/WebApp/WebApp.csproj" />
+  <Folder Name="/samples/Orders/">
+    <Project Path="samples/Orders/Orders.Application/Orders.Application.csproj" />
+    <Project Path="samples/Orders/Orders.Domain/Orders.Domain.csproj" />
+    <Project Path="samples/Orders/Orders.Infrastructure/Orders.Infrastructure.csproj" />
+    <Project Path="samples/Orders/Orders.Tests/Orders.Tests.csproj" />
+    <Project Path="samples/Orders/Orders/Orders.csproj" />
+  </Folder>
+  <Folder Name="/samples/Shipments/">
+    <Project Path="samples/Shipments/Shipments/Shipments.csproj" />
+    <Project Path="samples/Shipments/Shipments.Tests/Shipments.Tests.csproj" />
+  </Folder>
+  <Folder Name="/samples/Storefront/">
+    <Project Path="samples/Storefront/Storefront/Storefront.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

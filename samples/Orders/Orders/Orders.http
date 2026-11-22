@@ -1,0 +1,25 @@
+@hostname = https://localhost:7045
+
+### Place an order
+POST {{hostname}}/api/orders
+Content-Type: application/json
+
+{ "description": "Espresso machine" }
+
+### List orders with their fulfillments
+GET {{hostname}}/api/orders
+
+### Change the description (replace the id)
+PUT {{hostname}}/api/orders/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{ "description": "Espresso machine, red" }
+
+### Ship the order to the Shipments service (replace the id)
+POST {{hostname}}/api/orders/00000000-0000-0000-0000-000000000000/shipments
+Content-Type: application/json
+
+{ "recipient": "Ada Lovelace" }
+
+### Fulfillments still in progress
+GET {{hostname}}/api/Fulfillments/in-progress

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Web.LibraryManager.Build" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Vulthil.Results\Vulthil.Results.csproj" />
+		<ProjectReference Include="..\..\AppHost\ServiceDefaults\ServiceDefaults.csproj" />
+	</ItemGroup>
+
+	<!-- LibMan writes wwwroot/lib during the build, after the wwwroot glob was evaluated. Adding the files here puts
+	     them in the static web assets of the same build, so a fresh clone serves them on its first run. -->
+	<Target Name="IncludeRestoredLibraries" AfterTargets="LibraryManagerRestore">
+		<ItemGroup>
+			<Content Include="wwwroot\lib\**" Exclude="@(Content)" />
+		</ItemGroup>
+	</Target>
+
+</Project>

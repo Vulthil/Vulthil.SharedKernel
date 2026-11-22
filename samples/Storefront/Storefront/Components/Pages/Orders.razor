@@ -1,0 +1,97 @@
+@page "/orders"
+@rendermode InteractiveServer
+@inject OrdersApi OrdersApi
+
+<PageTitle>Orders</PageTitle>
+
+<h1>Orders</h1>
+
+<p>
+    Placing an order stores it in PostgreSQL; the Orders service then starts its fulfillment through RabbitMQ.
+    Shipping sends a command to the Shipments service, and the fulfillment completes when the carrier delivers.
+</p>
+
+<ErrorAlert Error="_error" />
+
+<div class="row g-2 mb-2">
+    <div class="col-md-6">
+        <input class="form-control" placeholder="Description" @bind="_description" @bind:event="oninput" />
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary" disabled="@string.IsNullOrWhiteSpace(_description)" @onclick="PlaceAsync">Place order</button>
+    </div>
+</div>
+<div class="row g-2 mb-3">
+    <div class="col-md-6">
+        <input class="form-control" placeholder="Recipient" @bind="_recipient" @bind:event="oninput" />
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary" @onclick="LoadOrdersAsync">Refresh</button>
+    </div>
+</div>
+
+@if (_orders is null)
+{
+    <p><em>Loading…</em></p>
+}
+else if (_orders.Count == 0)
+{
+    <p>No orders yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Shipped</th>
+                <th>Fulfillment</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in _orders)
+            {
+                <tr>
+                    <td><a href="orders/@order.Id">@order.Description</a></td>
+                    <td>@(order.ShippedAtUtc?.ToLocalTime().ToString("g") ?? "–")</td>
+                    <td>@order.FulfillmentStatus</td>
+                    <td>
+                        <button class="btn btn-sm btn-success" disabled="@(order.ShippedAtUtc is not null || string.IsNullOrWhiteSpace(_recipient))"
+                                @onclick="() => ShipAsync(order.Id)">Ship</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IReadOnlyList<OrderView>? _orders;
+    private Error? _error;
+    private string _description = string.Empty;
+    private string _recipient = "Ada Lovelace";
+
+    protected override Task OnInitializedAsync() => LoadOrdersAsync();
+
+    private async Task LoadOrdersAsync()
+    {
+        var orders = await OrdersApi.GetOrdersAsync(CancellationToken.None);
+        orders.Match(list => { _orders = list; }, error => { _error ??= error; });
+    }
+
+    private Task PlaceAsync() => RunAsync(async () =>
+        (await OrdersApi.PlaceOrderAsync(_description, CancellationToken.None))
+            .Tap(_ => _description = string.Empty)
+            .Bind(_ => Result.Success()));
+
+    private Task ShipAsync(Guid orderId) => RunAsync(() => OrdersApi.ShipOrderAsync(orderId, _recipient, CancellationToken.None));
+
+    private async Task RunAsync(Func<Task<Result>> action)
+    {
+        _error = null;
+        var result = await action();
+        result.TapError(error => { _error = error; });
+        await LoadOrdersAsync();
+    }
+}

@@ -35,6 +35,9 @@ event, the exchange) is the contract.
 The shipping-rates and inventory services that Orders calls over HTTP do not exist in the sample; the tests replace
 them with HTTP mocks.
 
+The Storefront gets Bootstrap through LibMan: `libman.json` pins the version, and the build downloads the files into
+`wwwroot/lib`, which git ignores. The first build therefore needs internet access.
+
 ## Tests
 
 Each service has a test project. Run one like any other test project, for example:

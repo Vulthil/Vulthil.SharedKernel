@@ -71,6 +71,8 @@
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="$(FrameworkVersion)" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="11.0.0" />
     <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="11.0.0" />
+    <!-- Samples only: restores the Storefront's front-end libraries from libman.json during the build. -->
+    <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="3.0.114" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <!-- Scoped to the Aspire DCP integration-test project only (via eng/coverage.ps1's
          split test invocation); retrying failed unit-suite tests would mask real flake. -->

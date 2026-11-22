@@ -29,8 +29,8 @@ public static class DependencyInjection
     /// </remarks>
     /// <param name="builder">The host application builder.</param>
     /// <param name="messagingConfiguratorAction">An action to configure messaging through <see cref="IMessagingConfigurator"/>.</param>
-    /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddMessaging(this IHostApplicationBuilder builder, Action<IMessagingConfigurator> messagingConfiguratorAction)
+    /// <returns>The same host application builder, for chaining.</returns>
+    public static IHostApplicationBuilder AddMessaging(this IHostApplicationBuilder builder, Action<IMessagingConfigurator> messagingConfiguratorAction)
     {
         var messagingOptions = new MessagingOptions();
         builder.Configuration.GetSection(MessagingOptions.SectionName).Bind(messagingOptions);
@@ -47,7 +47,7 @@ public static class DependencyInjection
 
         RegisterDefaultConsumeFilters(builder.Services, messagingOptions);
 
-        return builder.Services;
+        return builder;
     }
 
     /// <remarks>

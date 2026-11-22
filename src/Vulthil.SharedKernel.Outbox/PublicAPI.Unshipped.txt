@@ -12,3 +12,9 @@ Vulthil.SharedKernel.Outbox.IOutboxStore.RunRelayUnitAsync<TResult>(System.Func<
 Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset processedOlderThanUtc, System.DateTimeOffset deadLetteredOlderThanUtc, int batchSize, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod.get -> System.TimeSpan?
 Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.DeadLetterRetentionPeriod.set -> void
+*REMOVED*Vulthil.SharedKernel.Outbox.Telemetry
+*REMOVED*static Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName.get -> string!
+*REMOVED*static Vulthil.SharedKernel.Outbox.Telemetry.MeterName.get -> string!
+Vulthil.SharedKernel.Outbox.OutboxTelemetry
+const Vulthil.SharedKernel.Outbox.OutboxTelemetry.ActivitySourceName = "Vulthil.SharedKernel.Outbox" -> string!
+const Vulthil.SharedKernel.Outbox.OutboxTelemetry.MeterName = "Vulthil.SharedKernel.Outbox" -> string!

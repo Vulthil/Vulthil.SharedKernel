@@ -17,6 +17,16 @@ public sealed class MessagingConfiguratiorTests : BaseUnitTestCase<HostApplicati
     }
 
     [Fact]
+    public void AddMessagingReturnsTheBuilderForChaining()
+    {
+        // Act
+        var returned = Target.AddMessaging(_ => { });
+
+        // Assert
+        returned.ShouldBeSameAs(Target);
+    }
+
+    [Fact]
     public void AddMessagingShouldRegisterConsumerHostedService()
     {
         // Arrange

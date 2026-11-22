@@ -36,7 +36,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
 
         // Assert
         _consumerInvoked.ShouldBeTrue();
-        _store.Verify(store => store.ProcessAsync("message-1", It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Once);
+        _store.Verify(store => store.ProcessAsync("message-1", It.IsAny<IMessageContext>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
         // Act & Assert
         await Should.ThrowAsync<MissingIdempotencyKeyException>(() => Target.ConsumeAsync(_context.Object, Next));
         _consumerInvoked.ShouldBeFalse();
-        _store.Verify(store => store.ProcessAsync(It.IsAny<string>(), It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Never);
+        _store.Verify(store => store.ProcessAsync(It.IsAny<string>(), It.IsAny<IMessageContext>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
 
         // Assert
         _consumerInvoked.ShouldBeTrue();
-        _store.Verify(store => store.ProcessAsync(It.IsAny<string>(), It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Never);
+        _store.Verify(store => store.ProcessAsync(It.IsAny<string>(), It.IsAny<IMessageContext>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
 
         // Assert
         _consumerInvoked.ShouldBeTrue();
-        _store.Verify(store => store.ProcessAsync("message-1", It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Once);
+        _store.Verify(store => store.ProcessAsync("message-1", It.IsAny<IMessageContext>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
         await Target.ConsumeAsync(_context.Object, Next);
 
         // Assert
-        _store.Verify(store => store.ProcessAsync("business-key", It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()), Times.Once);
+        _store.Verify(store => store.ProcessAsync("business-key", It.IsAny<IMessageContext>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -180,12 +180,12 @@ public sealed class IdempotentConsumeFilterTests : BaseUnitTestCase
 
     private void SetupStore(string key, bool runConsumer, bool processed) =>
         _store
-            .Setup(store => store.ProcessAsync(key, It.IsAny<IMessageContext>(), It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()))
-            .Returns(async (string _, IMessageContext _, Func<CancellationToken, Task> process, CancellationToken token) =>
+            .Setup(store => store.ProcessAsync(key, It.IsAny<IMessageContext>(), It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()))
+            .Returns(async (string _, IMessageContext _, Func<Task> process, CancellationToken _) =>
             {
                 if (runConsumer)
                 {
-                    await process(token);
+                    await process();
                 }
 
                 return processed;

@@ -9,6 +9,20 @@
     <IsBaselineSuppression>true</IsBaselineSuppression>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(System.String,Vulthil.Messaging.Abstractions.Consumers.IMessageContext,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Inbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Inbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(System.String,Vulthil.Messaging.Abstractions.Consumers.IMessageContext,System.Func{System.Threading.Tasks.Task},System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Inbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Inbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>PKV006</DiagnosticId>
     <Target>net9.0</Target>
   </Suppression>

@@ -1,17 +1,17 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Vulthil.Messaging.RabbitMq.Telemetry;
+namespace Vulthil.Messaging.RabbitMq;
 
 /// <summary>
 /// Provides the <see cref="System.Diagnostics.ActivitySource"/> emitted by the Vulthil RabbitMQ transport.
 /// </summary>
 /// <remarks>
 /// Register this source with OpenTelemetry by calling
-/// <c>tracerProviderBuilder.AddVulthilMessagingInstrumentation()</c> or by adding the source name directly:
-/// <c>tracerProviderBuilder.AddSource(MessagingInstrumentation.ActivitySourceName)</c>.
+/// <c>tracerProviderBuilder.AddVulthilRabbitMqInstrumentation()</c> or by adding the source name directly:
+/// <c>tracerProviderBuilder.AddSource(RabbitMqTelemetry.ActivitySourceName)</c>.
 /// </remarks>
-public static class MessagingInstrumentation
+public static class RabbitMqTelemetry
 {
     /// <summary>
     /// The name of the <see cref="System.Diagnostics.ActivitySource"/> used by the Vulthil RabbitMQ transport.
@@ -20,8 +20,8 @@ public static class MessagingInstrumentation
 
     internal static readonly ActivitySource ActivitySource = new(
         ActivitySourceName,
-        typeof(MessagingInstrumentation).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? typeof(MessagingInstrumentation).Assembly.GetName().Version?.ToString()
+        typeof(RabbitMqTelemetry).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            ?? typeof(RabbitMqTelemetry).Assembly.GetName().Version?.ToString()
             ?? "0.0.0");
 
     internal static class Tags

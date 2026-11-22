@@ -1,6 +1,6 @@
 using OpenTelemetry.Trace;
 
-namespace Vulthil.Messaging.RabbitMq.Telemetry;
+namespace Vulthil.Messaging.RabbitMq;
 
 /// <summary>
 /// OpenTelemetry registration helpers for the Vulthil RabbitMQ transport.
@@ -12,9 +12,9 @@ public static class TracerProviderBuilderExtensions
     /// </summary>
     /// <param name="builder">The tracer provider builder.</param>
     /// <returns>The same builder, for chaining.</returns>
-    public static TracerProviderBuilder AddVulthilMessagingInstrumentation(this TracerProviderBuilder builder)
+    public static TracerProviderBuilder AddVulthilRabbitMqInstrumentation(this TracerProviderBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        return builder.AddSource(MessagingInstrumentation.ActivitySourceName);
+        return builder.AddSource(RabbitMqTelemetry.ActivitySourceName);
     }
 }

@@ -6,7 +6,7 @@ using Vulthil.xUnit;
 namespace Vulthil.SharedKernel.Outbox.Tests;
 
 /// <summary>
-/// Groups every test that measures the process-wide <see cref="Telemetry.Meter"/> counters within a narrow
+/// Groups every test that measures the process-wide <see cref="OutboxTelemetry.Meter"/> counters within a narrow
 /// listening window, so xUnit never runs them concurrently with each other — a real <see cref="OutboxRelayCycle"/>
 /// dispatch anywhere else in the process (e.g. <see cref="OutboxRelayCycleTests"/>) increments the same static
 /// counters and would otherwise be misattributed to a concurrently-running measurement.
@@ -150,7 +150,7 @@ public sealed class OutboxRelayCycleMetricsTests : BaseUnitTestCase
         {
             InstrumentPublished = (instrument, l) =>
             {
-                if (instrument.Meter.Name == Telemetry.MeterName && instrument.Name == instrumentName)
+                if (instrument.Meter.Name == OutboxTelemetry.MeterName && instrument.Name == instrumentName)
                 {
                     l.EnableMeasurementEvents(instrument);
                 }

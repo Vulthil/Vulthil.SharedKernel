@@ -6,3 +6,12 @@ const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Publish = "Mes
 const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.Timeout = "Messaging.Request.Timeout" -> string!
 const Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes.TransportUnavailable = "Messaging.Request.TransportUnavailable" -> string!
 Vulthil.Messaging.Abstractions.Publishers.RequestErrorCodes
+*REMOVED*Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.Fault(Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>! original) -> void
+*REMOVED*Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary<string!, object?>! headers) -> void
+*REMOVED*virtual Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.<Clone>$() -> Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>!
+*REMOVED*virtual Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.EqualityContract.get -> System.Type!
+*REMOVED*virtual Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.Equals(Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>? other) -> bool
+*REMOVED*virtual Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.PrintMembers(System.Text.StringBuilder! builder) -> bool
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.<Clone>$() -> Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>!
+Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>.Equals(Vulthil.Messaging.Abstractions.Consumers.Fault<TMessage>? other) -> bool
+Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, object?>>! headers) -> void

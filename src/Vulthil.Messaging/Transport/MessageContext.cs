@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
 
@@ -105,7 +106,7 @@ public record MessageContext : IMessageContext
         CancellationToken cancellationToken)
     {
         var userHeaders = new Dictionary<string, object?>();
-        foreach (var (key, value) in envelope.Headers ?? [])
+        foreach (var (key, value) in envelope.Headers ?? ReadOnlyDictionary<string, object?>.Empty)
         {
             userHeaders[key] = HeaderValueNormalizer.Normalize(value);
         }

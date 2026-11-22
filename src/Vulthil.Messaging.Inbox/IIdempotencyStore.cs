@@ -28,14 +28,13 @@ public interface IIdempotencyStore
     /// or headers); the built-in stores do not require it.
     /// </param>
     /// <param name="process">
-    /// The consumer invocation to run when the delivery is not a duplicate. The token an implementation passes to
-    /// this callback does not flow into the consumer: the consumer observes the delivery's own
-    /// <see cref="IMessageContext.CancellationToken"/>, so the callback token cannot cancel the consumer body.
+    /// The consumer invocation to run when the delivery is not a duplicate. It takes no token: the consumer observes
+    /// the delivery's own <see cref="IMessageContext.CancellationToken"/>, so a store cannot cancel the consumer body.
     /// </param>
-    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    /// <param name="cancellationToken">A token to observe for cancellation of the store's own work.</param>
     /// <returns>
     /// <see langword="true"/> if <paramref name="process"/> ran and the marker was recorded; <see langword="false"/>
     /// if the delivery was a duplicate and was skipped.
     /// </returns>
-    Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken);
+    Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<Task> process, CancellationToken cancellationToken);
 }

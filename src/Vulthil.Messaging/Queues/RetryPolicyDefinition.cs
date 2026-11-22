@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+
 namespace Vulthil.Messaging.Queues;
 
 /// <summary>
@@ -33,16 +35,17 @@ public sealed record RetryPolicyDefinition
 
     private readonly Lock _ignoredTypesGate = new();
     private readonly HashSet<Type> _ignoredTypes = [];
-    private HashSet<Type>? _resolvedIgnoredTypes;
+    private FrozenSet<Type>? _resolvedIgnoredTypes;
 
     internal void AddIgnoredType(Type type) => _ignoredTypes.Add(type);
     /// <summary>
     /// Gets the resolved CLR exception types that should be excluded from retry attempts. The set is built
     /// once, on first access, from the fluently ignored types and the resolvable names in
     /// <see cref="IgnoreExceptions"/>; the resolution is thread-safe and later mutations of either
-    /// collection do not change the result.
+    /// collection do not change the result. The set is read-only, because every handler that uses this policy
+    /// shares it.
     /// </summary>
-    public HashSet<Type> GetIgnoredExceptionTypes()
+    public IReadOnlySet<Type> GetIgnoredExceptionTypes()
     {
         lock (_ignoredTypesGate)
         {
@@ -50,7 +53,7 @@ public sealed record RetryPolicyDefinition
         }
     }
 
-    private HashSet<Type> ResolveIgnoredExceptionTypes()
+    private FrozenSet<Type> ResolveIgnoredExceptionTypes()
     {
         var resolved = new HashSet<Type>(_ignoredTypes);
         foreach (var name in IgnoreExceptions)
@@ -61,7 +64,7 @@ public sealed record RetryPolicyDefinition
             }
         }
 
-        return resolved;
+        return resolved.ToFrozenSet();
     }
 
     /// <summary>

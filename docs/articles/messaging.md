@@ -451,9 +451,9 @@ resolution also applies to polymorphic registrations — a policy configured on
 `IConsumer<IOrderEvent>` governs deliveries of every subscribed concrete implementer.
 
 Request consumers never retry: a thrown exception is immediately returned to the requester as an
-RPC fault reply (see [Request/Reply](#requestreply)), so `UseRetry` inside
-`AddRequestConsumer(...)` throws at configuration time, and a queue-level default does not apply
-to them. Retry a failed request on the requesting side if needed.
+RPC fault reply (see [Request/Reply](#requestreply)), so `AddRequestConsumer<TConsumer>()` takes no
+retry policy, and a queue-level default does not apply to them. Retry a failed request on the
+requesting side if needed.
 
 There are two execution modes:
 
@@ -462,7 +462,7 @@ There are two execution modes:
   but it **reorders** relative to other messages. `r.Immediate(n)` without `r.InMemory()` also
   uses this mode: each attempt goes through the broker, only with no delay.
 - **In-memory:** the consumer is re-invoked in-process while the delivery is held, preserving
-  order. Opt in with `q.UseRetry(r => { r.Immediate(3); r.InMemory(); })`. Partitioned queues
+  order. Opt in with `q.UseRetry(r => r.Immediate(3).InMemory())`. Partitioned queues
   use in-memory retry **automatically**, since ordering requires it.
 
 The RabbitMQ transport declares the `{queue}.Retry` exchange and queue only when the queue can use
@@ -532,7 +532,7 @@ filter by faulted message type — and reads the payload. The fault body is a `F
 (the AMQP `type` is `Fault<{original-urn}>`):
 
 ```csharp
-public record Fault<TMessage> where TMessage : notnull
+public sealed record Fault<TMessage> where TMessage : notnull
 {
     public required TMessage Message { get; init; }            // the original message body
     public required string ExceptionMessage { get; init; }
@@ -904,7 +904,7 @@ RabbitMQ tracing in Aspire suppresses the Vulthil spans too. If you bring your o
 
 ```csharp
 builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing.AddVulthilMessagingInstrumentation());
+    .WithTracing(tracing => tracing.AddVulthilRabbitMqInstrumentation());
 ```
 
 Consumer failures and retries are logged by the core `DeliveryDispatcher` (event ids 2200–2202). The

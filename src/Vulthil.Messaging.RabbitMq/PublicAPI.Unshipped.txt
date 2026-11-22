@@ -1,1 +1,9 @@
 #nullable enable
+*REMOVED*Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation
+*REMOVED*Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions
+*REMOVED*const Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.ActivitySourceName = "Vulthil.Messaging.RabbitMq" -> string!
+*REMOVED*static Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+Vulthil.Messaging.RabbitMq.RabbitMqTelemetry
+Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions
+const Vulthil.Messaging.RabbitMq.RabbitMqTelemetry.ActivitySourceName = "Vulthil.Messaging.RabbitMq" -> string!
+static Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!

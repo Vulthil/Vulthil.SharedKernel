@@ -18,15 +18,13 @@ public interface IQueueConfigurator
     /// </summary>
     IQueueConfigurator AddConsumer<TConsumer>(Action<IConsumerConfigurator<TConsumer>>? configure = null) where TConsumer : class, IConsumer;
     /// <summary>
-    /// Registers a request/reply consumer on this queue with optional per-consumer configuration.
-    /// Request consumers do not retry — a thrown exception is returned to the requester as an RPC fault
-    /// reply — so configuring <see cref="IBaseConfigurator{TConfigurator}.UseRetry"/> on
-    /// <paramref name="configure"/> throws at configuration time. A request type has one request consumer in the
-    /// whole application: registering the same consumer on this queue again (for example from a second
-    /// <c>ConfigureQueue</c> call with the same queue name) has no effect, and any other consumer of the same request
-    /// type, or the same consumer on another queue, throws an <see cref="InvalidOperationException"/>.
+    /// Registers a request/reply consumer on this queue. Request consumers do not retry — a thrown exception is
+    /// returned to the requester as an RPC fault reply — so this method takes no retry policy. A request type has one
+    /// request consumer in the whole application: registering the same consumer on this queue again (for example from
+    /// a second <c>ConfigureQueue</c> call with the same queue name) has no effect, and any other consumer of the same
+    /// request type, or the same consumer on another queue, throws an <see cref="InvalidOperationException"/>.
     /// </summary>
-    IQueueConfigurator AddRequestConsumer<TConsumer>(Action<IRequestConfigurator<TConsumer>>? configure = null) where TConsumer : class, IRequestConsumer;
+    IQueueConfigurator AddRequestConsumer<TConsumer>() where TConsumer : class, IRequestConsumer;
 
     /// <summary>
     /// Subscribes this queue to receive deliveries of the concrete message type <typeparamref name="TMessage"/>.

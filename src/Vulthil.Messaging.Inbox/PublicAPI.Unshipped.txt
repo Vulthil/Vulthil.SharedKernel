@@ -1,3 +1,7 @@
 #nullable enable
 *REMOVED*Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions
 *REMOVED*static Vulthil.Messaging.Inbox.InboxRetentionServiceCollectionExtensions.AddInboxRetention(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Vulthil.Messaging.Inbox.InboxOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+*REMOVED*Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(string! idempotencyKey, Vulthil.Messaging.Abstractions.Consumers.IMessageContext! context, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! process, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+*REMOVED*static readonly Vulthil.Messaging.Inbox.InboxTelemetry.MeterName -> string!
+Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(string! idempotencyKey, Vulthil.Messaging.Abstractions.Consumers.IMessageContext! context, System.Func<System.Threading.Tasks.Task!>! process, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+const Vulthil.Messaging.Inbox.InboxTelemetry.MeterName = "Vulthil.Messaging.Inbox" -> string!

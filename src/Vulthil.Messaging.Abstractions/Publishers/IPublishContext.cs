@@ -48,8 +48,9 @@ public interface IPublishContext
     /// <param name="value">The header value.</param>
     void AddHeader(string key, object? value);
     /// <summary>
-    /// Adds multiple custom headers to the published message.
+    /// Adds multiple custom headers to the published message. Any header collection fits, including the read-only
+    /// <see cref="Consumers.IMessageContext.Headers"/> of a consumed message.
     /// </summary>
     /// <param name="headers">The headers to add.</param>
-    void AddHeaders(IDictionary<string, object?> headers);
+    void AddHeaders(IEnumerable<KeyValuePair<string, object?>> headers);
 }

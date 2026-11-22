@@ -47,10 +47,10 @@ public sealed class CosmosInboxIntegrationTests(CosmosWebApplicationFactory fact
         // Act
         var consumerRanAgain = false;
         var secondProcessed = await ScopedServices.GetRequiredService<IIdempotencyStore>()
-            .ProcessAsync(key, _messageContext, async token =>
+            .ProcessAsync(key, _messageContext, async () =>
             {
                 consumerRanAgain = true;
-                await WriteSideEffect(key)(token);
+                await WriteSideEffect(key)();
             }, CancellationToken);
 
         // Assert
@@ -63,10 +63,10 @@ public sealed class CosmosInboxIntegrationTests(CosmosWebApplicationFactory fact
         (await verify.InboxMessages.CountAsync(CancellationToken)).ShouldBe(1);
     }
 
-    private Func<CancellationToken, Task> WriteSideEffect(string key) => async token =>
+    private Func<Task> WriteSideEffect(string key) => async () =>
     {
         var context = ScopedServices.GetRequiredService<CosmosProbeDbContext>();
         context.SideEffects.Add(new CosmosSideEffect { Id = Guid.NewGuid().ToString(), Key = key });
-        await context.SaveChangesAsync(token);
+        await context.SaveChangesAsync(CancellationToken);
     };
 }

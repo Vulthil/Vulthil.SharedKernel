@@ -11,7 +11,7 @@ public static class InboxTelemetry
     /// Meter name for inbox metrics. Subscribe to it on a <c>MeterProviderBuilder</c> with
     /// <c>AddVulthilInboxInstrumentation()</c>.
     /// </summary>
-    public static readonly string MeterName = "Vulthil.Messaging.Inbox";
+    public const string MeterName = "Vulthil.Messaging.Inbox";
     internal static readonly Meter Meter = new(MeterName);
     internal static readonly Counter<long> Processed = Meter.CreateCounter<long>(
         "vulthil.inbox.processed", unit: "{message}", description: "Messages processed through the inbox guard on first delivery.");

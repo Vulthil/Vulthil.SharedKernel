@@ -28,10 +28,10 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         var store = CreateStore(context);
 
         // Act
-        var processed = await store.ProcessAsync("key-1", MessageContext, async token =>
+        var processed = await store.ProcessAsync("key-1", MessageContext, async () =>
         {
             context.Things.Add(new Thing { Id = 1, Name = "first" });
-            await context.SaveChangesAsync(token);
+            await context.SaveChangesAsync(CancellationToken);
         }, CancellationToken);
 
         // Assert
@@ -47,14 +47,14 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         // Arrange
         await using (var first = NewContext())
         {
-            await CreateStore(first).ProcessAsync("key-1", MessageContext, _ => Task.CompletedTask, CancellationToken);
+            await CreateStore(first).ProcessAsync("key-1", MessageContext, () => Task.CompletedTask, CancellationToken);
         }
 
         await using var second = NewContext();
         var consumerInvoked = false;
 
         // Act
-        var processed = await CreateStore(second).ProcessAsync("key-1", MessageContext, _ =>
+        var processed = await CreateStore(second).ProcessAsync("key-1", MessageContext, () =>
         {
             consumerInvoked = true;
             return Task.CompletedTask;
@@ -73,10 +73,10 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         var store = CreateStore(context);
 
         // Act
-        await Should.ThrowAsync<InvalidOperationException>(() => store.ProcessAsync("key-1", MessageContext, async token =>
+        await Should.ThrowAsync<InvalidOperationException>(() => store.ProcessAsync("key-1", MessageContext, async () =>
         {
             context.Things.Add(new Thing { Id = 1, Name = "first" });
-            await context.SaveChangesAsync(token);
+            await context.SaveChangesAsync(CancellationToken);
             throw new InvalidOperationException("consumer failed");
         }, CancellationToken));
 
@@ -100,11 +100,11 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         var consumerInvoked = false;
 
         // Act
-        var processed = await CreateStore(context).ProcessAsync("key-1", MessageContext, token =>
+        var processed = await CreateStore(context).ProcessAsync("key-1", MessageContext, () =>
         {
             consumerInvoked = true;
             context.Things.Add(new Thing { Id = 2, Name = "second" });
-            return context.SaveChangesAsync(token);
+            return context.SaveChangesAsync(CancellationToken);
         }, CancellationToken);
 
         // Assert
@@ -123,10 +123,10 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
         var store = CreateStore(context);
 
         // Act
-        var processed = await store.ProcessAsync("key-1", MessageContext, async token =>
+        var processed = await store.ProcessAsync("key-1", MessageContext, async () =>
         {
             context.Things.Add(new Thing { Id = 1, Name = "first" });
-            await context.SaveChangesAsync(token);
+            await context.SaveChangesAsync(CancellationToken);
         }, CancellationToken);
 
         // Assert

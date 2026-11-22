@@ -45,7 +45,7 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
             .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
+    public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<Task> process, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(idempotencyKey);
         ArgumentNullException.ThrowIfNull(process);
@@ -61,7 +61,7 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
             cancellationToken);
     }
 
-    private async Task<bool> ProcessInOwnTransactionAsync(string idempotencyKey, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
+    private async Task<bool> ProcessInOwnTransactionAsync(string idempotencyKey, Func<Task> process, CancellationToken cancellationToken)
     {
         dbContext.ChangeTracker.Clear();
         var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
@@ -72,7 +72,7 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
             return false;
         }
 
-        await process(cancellationToken).ConfigureAwait(false);
+        await process().ConfigureAwait(false);
         AddMarker(idempotencyKey);
 
         try
@@ -94,14 +94,14 @@ internal sealed class RelationalIdempotencyStore<TContext>(TContext dbContext, T
         }
     }
 
-    private async Task<bool> ProcessInAmbientTransactionAsync(string idempotencyKey, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
+    private async Task<bool> ProcessInAmbientTransactionAsync(string idempotencyKey, Func<Task> process, CancellationToken cancellationToken)
     {
         if (await HasProcessedAsync(idempotencyKey, cancellationToken).ConfigureAwait(false))
         {
             return false;
         }
 
-        await process(cancellationToken).ConfigureAwait(false);
+        await process().ConfigureAwait(false);
         AddMarker(idempotencyKey);
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return true;

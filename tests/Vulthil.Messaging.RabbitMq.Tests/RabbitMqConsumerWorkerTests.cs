@@ -8,7 +8,6 @@ using RabbitMQ.Client.Events;
 using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Consumers;
-using Vulthil.Messaging.RabbitMq.Telemetry;
 using Vulthil.Messaging.Transport;
 using Vulthil.xUnit;
 
@@ -157,11 +156,11 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
         Activity? receiveSpan = null;
         using var listener = new ActivityListener
         {
-            ShouldListenTo = source => source.Name == MessagingInstrumentation.ActivitySourceName,
+            ShouldListenTo = source => source.Name == RabbitMqTelemetry.ActivitySourceName,
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = activity =>
             {
-                if (Equals(activity.GetTagItem(MessagingInstrumentation.Tags.MessagingMessageId), messageId))
+                if (Equals(activity.GetTagItem(RabbitMqTelemetry.Tags.MessagingMessageId), messageId))
                 {
                     receiveSpan = activity;
                 }
@@ -175,7 +174,7 @@ public sealed class RabbitMqConsumerWorkerTests : BaseUnitTestCase
         await DeliverAsync(new TestMessage("payload"), CancellationToken, headers: TextHeader(RabbitMqConstants.RetryCountHeader, "2"), messageId: messageId);
 
         // Assert
-        receiveSpan.ShouldNotBeNull().GetTagItem(MessagingInstrumentation.Tags.RetryCount).ShouldBe(2);
+        receiveSpan.ShouldNotBeNull().GetTagItem(RabbitMqTelemetry.Tags.RetryCount).ShouldBe(2);
     }
 
     [Fact]

@@ -10,7 +10,6 @@ using Vulthil.Messaging.Abstractions.Consumers;
 using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.Queues;
 using Vulthil.Messaging.RabbitMq.Logging;
-using Vulthil.Messaging.RabbitMq.Telemetry;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq.Consumers;
@@ -291,21 +290,21 @@ internal sealed class RabbitMqConsumerWorker : IAsyncDisposable
 
     private Activity? StartReceiveActivity(BasicDeliverEventArgs ea, string messageTypeName)
     {
-        var activity = MessagingInstrumentation.ActivitySource.StartActivity(
+        var activity = RabbitMqTelemetry.ActivitySource.StartActivity(
             $"{_queueDefinition.Name} receive",
             ActivityKind.Consumer);
 
         if (activity is not null)
         {
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingSystem, MessagingInstrumentation.SystemValue);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingOperation, "receive");
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingDestination, _queueDefinition.Name);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingRoutingKey, ea.RoutingKey);
-            activity.SetTag(MessagingInstrumentation.Tags.MessageType, messageTypeName);
-            activity.SetTag(MessagingInstrumentation.Tags.QueueName, _queueDefinition.Name);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingMessageId, ea.BasicProperties.MessageId);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, ea.BasicProperties.CorrelationId);
-            activity.SetTag(MessagingInstrumentation.Tags.RetryCount, RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers));
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingSystem, RabbitMqTelemetry.SystemValue);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingOperation, "receive");
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingDestination, _queueDefinition.Name);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingRoutingKey, ea.RoutingKey);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessageType, messageTypeName);
+            activity.SetTag(RabbitMqTelemetry.Tags.QueueName, _queueDefinition.Name);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingMessageId, ea.BasicProperties.MessageId);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingCorrelationId, ea.BasicProperties.CorrelationId);
+            activity.SetTag(RabbitMqTelemetry.Tags.RetryCount, RabbitMqConstants.GetRetryCount(ea.BasicProperties.Headers));
         }
 
         return activity;

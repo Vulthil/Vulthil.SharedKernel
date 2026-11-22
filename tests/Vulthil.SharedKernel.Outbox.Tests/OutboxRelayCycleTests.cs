@@ -13,7 +13,7 @@ namespace Vulthil.SharedKernel.Outbox.Tests;
 /// <summary>
 /// Shares <see cref="OutboxTelemetryCollection"/> with <see cref="OutboxRelayCycleMetricsTests"/>: every test here
 /// drives a real <see cref="OutboxRelayCycle"/> to a successful or failed dispatch, incrementing the same
-/// process-wide <see cref="Telemetry"/> counters that class measures within a narrow window.
+/// process-wide <see cref="OutboxTelemetry"/> counters that class measures within a narrow window.
 /// </summary>
 [Collection(nameof(OutboxTelemetryCollection))]
 public sealed class OutboxRelayCycleTests : BaseUnitTestCase
@@ -379,7 +379,7 @@ public sealed class OutboxRelayCycleTests : BaseUnitTestCase
         {
             _listener = new ActivityListener
             {
-                ShouldListenTo = source => source.Name == Telemetry.ActivitySourceName,
+                ShouldListenTo = source => source.Name == OutboxTelemetry.ActivitySourceName,
                 Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
                 ActivityStarted = _started.Enqueue,
             };

@@ -48,20 +48,9 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
     }
 
     /// <inheritdoc />
-    public IQueueConfigurator AddRequestConsumer<TConsumer>(Action<IRequestConfigurator<TConsumer>>? configure = null)
+    public IQueueConfigurator AddRequestConsumer<TConsumer>()
         where TConsumer : class, IRequestConsumer
     {
-        var configurator = new RequestConsumerConfigurator<TConsumer>();
-        configure?.Invoke(configurator);
-
-        if (configurator.RetryPolicy is not null)
-        {
-            throw new InvalidOperationException(
-                $"Request consumer '{typeof(TConsumer).FullName}' configures UseRetry, but request consumers do not retry: " +
-                "a thrown exception is immediately returned to the requester as an RPC fault reply, so the policy would never run. " +
-                "Remove UseRetry from AddRequestConsumer and retry on the requesting side if needed.");
-        }
-
         var consumerType = new ConsumerType(typeof(TConsumer));
         _services.TryAddScoped<TConsumer>();
 
@@ -76,8 +65,7 @@ internal sealed class QueueConfigurator(IServiceCollection services, MessagingOp
             {
                 ConsumerType = consumerType,
                 MessageType = new MessageType(args[0]),
-                ResponseType = args[1],
-                RetryPolicy = configurator.RetryPolicy
+                ResponseType = args[1]
             };
 
             // A queue can be configured in several places, so the same request consumer on the same queue counts once,

@@ -16,6 +16,6 @@ public static class TracerProviderBuilderExtensions
     public static TracerProviderBuilder AddVulthilOutboxInstrumentation(this TracerProviderBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        return builder.AddSource(Telemetry.ActivitySourceName);
+        return builder.AddSource(OutboxTelemetry.ActivitySourceName);
     }
 }

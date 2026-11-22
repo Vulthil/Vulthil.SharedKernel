@@ -77,10 +77,12 @@ public sealed record RequestConsumerRegistration : Registration
 }
 
 /// <summary>
-/// Describes a queue including its consumer registrations, exchange bindings, and runtime settings.
+/// Describes a queue including its consumer registrations, exchange bindings, and runtime settings. The settings
+/// can be changed from <see cref="IQueueConfigurator.ConfigureQueue"/> and configuration binding; consumers and
+/// subscriptions are added only through <see cref="IQueueConfigurator"/>, which applies the registration rules.
 /// </summary>
-/// <param name="Name">The initial name of the queue.</param>
-public sealed record QueueDefinition(string Name)
+/// <param name="name">The initial name of the queue.</param>
+public sealed class QueueDefinition(string name)
 {
     private readonly HashSet<Registration> _registrations = [];
     private readonly HashSet<Subscription> _subscriptions = [];
@@ -98,7 +100,7 @@ public sealed record QueueDefinition(string Name)
     /// <summary>
     /// Gets or sets the queue name.
     /// </summary>
-    public string Name { get; set; } = Name;
+    public string Name { get; set; } = name;
     /// <summary>
     /// Gets or sets the prefetch count (number of unacknowledged messages). Default is 16.
     /// </summary>
@@ -188,7 +190,7 @@ public sealed record QueueDefinition(string Name)
     /// The queue already has a <see cref="ConsumerRegistration"/> for the same consumer and message type with a
     /// different <see cref="Registration.RetryPolicy"/>.
     /// </exception>
-    public void AddConsumer(Registration registration)
+    internal void AddConsumer(Registration registration)
     {
         if (registration is ConsumerRegistration && _registrations.Any(existing => HasOtherRetryPolicy(existing, registration)))
         {
@@ -231,6 +233,6 @@ public sealed record QueueDefinition(string Name)
     /// Adds an exchange→queue binding to this queue. Duplicate subscriptions (by value) are ignored.
     /// </summary>
     /// <param name="subscription">The subscription describing the binding to add.</param>
-    public void AddSubscription(Subscription subscription)
+    internal void AddSubscription(Subscription subscription)
         => _subscriptions.Add(subscription);
 }

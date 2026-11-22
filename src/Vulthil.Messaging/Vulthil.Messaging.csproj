@@ -14,6 +14,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- The RabbitMQ transport tests build queue definitions directly, including combinations the configurator
+		     rejects, to test the transport's own dispatch planning. -->
+		<InternalsVisibleTo Include="Vulthil.Messaging.RabbitMq.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Vulthil.Extensions.Hosting\Vulthil.Extensions.Hosting.csproj" />
 	  <ProjectReference Include="..\Vulthil.Messaging.Abstractions\Vulthil.Messaging.Abstractions.csproj" />
 	</ItemGroup>

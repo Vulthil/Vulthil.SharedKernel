@@ -38,8 +38,10 @@ public class PublishContext : IPublishContext
     /// <inheritdoc />
     public void AddHeader(string key, object? value) => _headers[key] = value;
     /// <inheritdoc />
-    public void AddHeaders(IDictionary<string, object?> headers)
+    public void AddHeaders(IEnumerable<KeyValuePair<string, object?>> headers)
     {
+        ArgumentNullException.ThrowIfNull(headers);
+
         foreach (var item in headers)
         {
             _headers[item.Key] = item.Value;

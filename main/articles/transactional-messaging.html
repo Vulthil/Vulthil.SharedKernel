@@ -251,7 +251,7 @@ rows in that transaction.</li>
 <li>On the consumer side the inbox filter checks the id, runs the consumer inside a transaction, and commits the
 marker together with the consumer's writes. A redelivery finds the marker and is skipped.</li>
 </ol>
-<p>The <code>samples/WebApi</code> project wires exactly this against PostgreSQL and RabbitMQ.</p>
+<p>The <code>samples/Orders</code> service wires exactly this against PostgreSQL and RabbitMQ, and <code>samples/Shipments</code> against MySQL.</p>
 <h2 id="custom-stores">Custom stores</h2>
 <ul>
 <li><strong>Outbox</strong>: register your own <code>IOutboxStore</code> with <code>UseOutboxStore&lt;TStore&gt;()</code>. The provider extensions propose

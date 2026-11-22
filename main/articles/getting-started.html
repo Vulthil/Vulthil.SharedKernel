@@ -248,6 +248,20 @@ var app = builder.Build();
 app.MapEndpoints();
 app.Run();
 </code></pre>
+<h2 id="samples">Samples</h2>
+<p>The repository's <code>samples</code> folder holds a small shop: three services and a front end that run together under one
+Aspire AppHost (<code>samples/AppHost</code>). <code>samples/README.md</code> maps every package feature to the sample file that shows it.</p>
+<ul>
+<li><strong>Orders</strong> – PostgreSQL and RabbitMQ: minimal API endpoints and an MVC controller, the CQRS pipeline, the
+transactional outbox and the relational inbox, consume and publish filters, HTTP clients for external services, and
+a point-to-point send to the Shipments service.</li>
+<li><strong>Shipments</strong> – MySQL and RabbitMQ: ordered processing with a partitioner, polymorphic consumers, request/reply,
+faults, configuration-driven topology, a restartable background service and a custom retention sweep.</li>
+<li><strong>Catalog</strong> – Cosmos DB and RabbitMQ: the Cosmos outbox and inbox, and a module assembly registered with the
+per-assembly entry points.</li>
+<li><strong>Storefront</strong> – a Blazor front end that calls the three services and reads each answer into a <code>Result</code>.</li>
+</ul>
+<p>Each service has a test project that shows <code>Vulthil.xUnit</code>, the messaging test harness and <code>Vulthil.Extensions.Testing</code>.</p>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
 <li><a href="result-pattern.html">Result Pattern</a> – explicit success/failure handling</li>

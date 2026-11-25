@@ -62,7 +62,7 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
         }
     }
 
-    public async Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken)
+    public async Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<Task> process, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(idempotencyKey);
         ArgumentNullException.ThrowIfNull(process);
@@ -72,7 +72,7 @@ internal sealed class CosmosIdempotencyStore<TContext>(TContext dbContext, TimeP
             return false;
         }
 
-        await process(cancellationToken).ConfigureAwait(false);
+        await process().ConfigureAwait(false);
 
         dbContext.InboxMessages.Add(new InboxMessage
         {

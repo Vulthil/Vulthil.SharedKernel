@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using Vulthil.Messaging.Queues;
 
 namespace Vulthil.Messaging.Transport;
@@ -17,8 +16,11 @@ public sealed record MessageExecutionPlan<THandler>(MessageType MessageType, Uri
     /// <summary>
     /// The set of handlers that should run when a message of <see cref="MessageType"/> is delivered.
     /// Every handler in this list runs on every delivery; the broker is authoritative for delivery filtering.
+    /// The list is read-only, because concurrent deliveries share the plan.
     /// </summary>
-    public Collection<THandler> Handlers { get; } = [];
+    public IReadOnlyList<THandler> Handlers { get; private set; } = [];
+
+    internal void AddHandler(THandler handler) => Handlers = [.. Handlers, handler];
 
     /// <summary>
     /// The partition specification whose lanes serialize same-key deliveries of this message type, or

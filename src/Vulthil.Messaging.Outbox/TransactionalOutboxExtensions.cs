@@ -38,13 +38,21 @@ public static class TransactionalOutboxExtensions
     /// transaction around a consumer that does not otherwise open one (e.g. one without the inbox). If the inbox is
     /// also enabled for the type it opens the transaction first and this joins it. Requires a relational provider.
     /// </summary>
-    /// <typeparam name="TMessage">The consumed message type.</typeparam>
+    /// <typeparam name="TMessage">The consumed message type, not the consumer type.</typeparam>
     /// <param name="configurator">The messaging configurator.</param>
     /// <returns>The same configurator, for chaining.</returns>
+    /// <exception cref="InvalidOperationException"><typeparamref name="TMessage"/> is a consumer type.</exception>
     public static IMessagingConfigurator AddTransactionalConsumer<TMessage>(this IMessagingConfigurator configurator)
         where TMessage : notnull
     {
         ArgumentNullException.ThrowIfNull(configurator);
+
+        if (typeof(IConsumer).IsAssignableFrom(typeof(TMessage)) || typeof(IRequestConsumer).IsAssignableFrom(typeof(TMessage)))
+        {
+            throw new InvalidOperationException(
+                $"AddTransactionalConsumer<{typeof(TMessage).Name}>() takes the consumed message type, but '{typeof(TMessage).FullName}' " +
+                "is a consumer. Pass the message type the consumer handles, for example AddTransactionalConsumer<OrderPlaced>().");
+        }
 
         configurator.HostApplicationBuilder.Services.TryAddEnumerable(
             ServiceDescriptor.Scoped<IConsumeFilter<TMessage>, TransactionalConsumeFilter<TMessage>>());

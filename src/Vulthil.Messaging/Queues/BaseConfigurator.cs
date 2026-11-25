@@ -12,10 +12,10 @@ internal abstract class BaseConfigurator<TConfigurator> : IBaseConfigurator<TCon
     internal RetryPolicyDefinition? RetryPolicy { get; private set; }
 
     /// <inheritdoc />
-    public TConfigurator UseRetry(Action<RetryPolicyConfigurator> value)
+    public TConfigurator UseRetry(Action<RetryPolicyConfigurator> configure)
     {
         var configurator = new RetryPolicyConfigurator();
-        value(configurator);
+        configure(configurator);
         RetryPolicy = configurator.Build();
         return Self;
     }

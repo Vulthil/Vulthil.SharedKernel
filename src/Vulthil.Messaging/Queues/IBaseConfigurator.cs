@@ -10,5 +10,6 @@ public interface IBaseConfigurator<TConfigurator>
     where TConfigurator : class, IBaseConfigurator<TConfigurator>
 {
     /// <summary>Configures a retry policy and returns the typed configurator for chaining.</summary>
-    TConfigurator UseRetry(Action<RetryPolicyConfigurator> value);
+    /// <param name="configure">Configures the retry policy.</param>
+    TConfigurator UseRetry(Action<RetryPolicyConfigurator> configure);
 }

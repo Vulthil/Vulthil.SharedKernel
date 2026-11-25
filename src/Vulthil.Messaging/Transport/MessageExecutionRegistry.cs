@@ -85,7 +85,7 @@ public sealed class MessageExecutionRegistry<THandler>
                     ? _handlerFactory.ForRequestConsumer(rpc.ConsumerType.Type, rpc.MessageType.Type, rpc.ResponseType)
                     : _handlerFactory.ForConsumer(registration.ConsumerType.Type, registration.MessageType.Type, registration.RetryPolicy ?? queue.DefaultRetryPolicy);
 
-                plan.Handlers.Add(handler);
+                plan.AddHandler(handler);
             }
         }
     }

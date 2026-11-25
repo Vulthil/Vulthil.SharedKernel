@@ -10,7 +10,6 @@ using Vulthil.Messaging.RabbitMq.HealthChecks;
 using Vulthil.Messaging.RabbitMq.Publishing;
 using Vulthil.Messaging.RabbitMq.Requests;
 using Vulthil.Messaging.RabbitMq.Sending;
-using Vulthil.Messaging.RabbitMq.Telemetry;
 using Vulthil.Messaging.Transport;
 
 namespace Vulthil.Messaging.RabbitMq;
@@ -95,7 +94,7 @@ public static class MessagingConfiguratorExtensions
         {
             services
                 .AddOpenTelemetry()
-                .WithTracing(tracing => tracing.AddVulthilMessagingInstrumentation());
+                .WithTracing(tracing => tracing.AddVulthilRabbitMqInstrumentation());
         }
 
         if (healthChecksEnabled)

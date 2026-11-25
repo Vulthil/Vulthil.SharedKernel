@@ -49,7 +49,7 @@ internal sealed class IdempotentConsumeFilter<TMessage>(
             return;
         }
 
-        var processed = await _store.ProcessAsync(key, context, _ => next(context), context.CancellationToken).ConfigureAwait(false);
+        var processed = await _store.ProcessAsync(key, context, () => next(context), context.CancellationToken).ConfigureAwait(false);
 
         if (processed)
         {

@@ -68,6 +68,20 @@ public sealed class RetryPolicyDefinitionTests : BaseUnitTestCase<RetryPolicyDef
     }
 
     [Fact]
+    public void TheIgnoredExceptionTypesCannotBeChangedByACaller()
+    {
+        // Arrange
+        Target.IgnoreExceptions.Add(typeof(InvalidOperationException).AssemblyQualifiedName!);
+
+        // Act
+        var ignored = Target.GetIgnoredExceptionTypes();
+
+        // Assert
+        Should.Throw<NotSupportedException>(() => ((ICollection<Type>)ignored).Add(typeof(TimeoutException)));
+        Target.GetIgnoredExceptionTypes().ShouldBe([typeof(InvalidOperationException)]);
+    }
+
+    [Fact]
     public void GetDelayReusesTheLastIntervalForAttemptsBeyondTheConfiguredOnes()
     {
         // Arrange

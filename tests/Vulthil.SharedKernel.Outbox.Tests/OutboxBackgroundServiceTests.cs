@@ -8,7 +8,7 @@ namespace Vulthil.SharedKernel.Outbox.Tests;
 
 /// <summary>
 /// Shares <see cref="OutboxTelemetryCollection"/> with <see cref="OutboxRelayCycleMetricsTests"/>: the back-off tests
-/// run real <see cref="OutboxRelayCycle"/>s that increment the process-wide <see cref="Telemetry"/> counters that class
+/// run real <see cref="OutboxRelayCycle"/>s that increment the process-wide <see cref="OutboxTelemetry"/> counters that class
 /// measures within a narrow window.
 /// </summary>
 [Collection(nameof(OutboxTelemetryCollection))]

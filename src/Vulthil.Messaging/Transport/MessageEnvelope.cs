@@ -72,5 +72,5 @@ public sealed record MessageEnvelope
     /// contract on <see cref="Abstractions.Consumers.IMessageContext.Headers"/>.
     /// </summary>
     [JsonPropertyName("headers")]
-    public Dictionary<string, object?>? Headers { get; init; }
+    public IReadOnlyDictionary<string, object?>? Headers { get; init; }
 }

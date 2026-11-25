@@ -4,7 +4,7 @@ namespace Vulthil.Messaging.Abstractions.Consumers;
 /// Represents a fault envelope containing the original message and failure details.
 /// </summary>
 /// <typeparam name="TMessage">The type of the original message.</typeparam>
-public record Fault<TMessage> where TMessage : notnull
+public sealed record Fault<TMessage> where TMessage : notnull
 {
     /// <summary>
     /// Gets the original message that caused the fault.

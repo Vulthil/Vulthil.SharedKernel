@@ -35,7 +35,7 @@ internal sealed class OutboxRelayCycle(
         // dead letters again, and the dead letters of a run that never commits are rolled back.
         if (cycle.DeadLettered > 0)
         {
-            Telemetry.DeadLettered.Add(cycle.DeadLettered);
+            OutboxTelemetry.DeadLettered.Add(cycle.DeadLettered);
         }
 
         return cycle;
@@ -130,13 +130,13 @@ internal sealed class OutboxRelayCycle(
                 await unit.RunStepAsync(token => dispatcher.DispatchAsync(message, token), cancellationToken).ConfigureAwait(false);
             }
 
-            Telemetry.Relayed.Add(1);
+            OutboxTelemetry.Relayed.Add(1);
             return null;
         }
         catch (Exception exception) when (exception is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
             logger.LogError(exception, "Failed to publish outbox message {MessageId}", message.Id);
-            Telemetry.Failed.Add(1);
+            OutboxTelemetry.Failed.Add(1);
             return exception.ToString();
         }
         finally
@@ -154,7 +154,7 @@ internal sealed class OutboxRelayCycle(
     {
         if (ActivityContext.TryParse(message.TraceParent, message.TraceState, out var parent))
         {
-            return Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
+            return OutboxTelemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer, parent);
         }
 
         if (logger.IsEnabled(LogLevel.Debug))
@@ -162,7 +162,7 @@ internal sealed class OutboxRelayCycle(
             logger.LogDebug("The trace parent of outbox message {MessageId} is not a W3C trace context; its relay span starts a new trace", message.Id);
         }
 
-        return Telemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer);
+        return OutboxTelemetry.ActivitySource.StartActivity("OutboxPublishing", ActivityKind.Producer);
     }
 
     private static IOutboxDispatcher ResolveDispatcher(IServiceProvider services, OutboxDestination destination) =>

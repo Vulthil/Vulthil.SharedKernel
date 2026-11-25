@@ -196,7 +196,7 @@ public sealed class InboxCoreServiceCollectionExtensionsTests : BaseUnitTestCase
 
     private sealed class FakeIdempotencyStore : IIdempotencyStore, IInboxRetentionStore
     {
-        public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken) => Task.FromResult(false);
+        public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<Task> process, CancellationToken cancellationToken) => Task.FromResult(false);
 
         public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken) => Task.FromResult(0);
     }
@@ -210,7 +210,7 @@ public sealed class InboxCoreServiceCollectionExtensionsTests : BaseUnitTestCase
 
         public IReadOnlyList<DateTimeOffset> ObservedCutoffs => _observedCutoffs;
 
-        public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<CancellationToken, Task> process, CancellationToken cancellationToken) => Task.FromResult(false);
+        public Task<bool> ProcessAsync(string idempotencyKey, IMessageContext context, Func<Task> process, CancellationToken cancellationToken) => Task.FromResult(false);
 
         public Task<int> DeleteProcessedAsync(DateTimeOffset olderThanUtc, int batchSize, CancellationToken cancellationToken)
         {

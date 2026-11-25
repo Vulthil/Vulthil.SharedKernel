@@ -144,19 +144,7 @@ public sealed class QueueConfiguratorBuildTests : BaseUnitTestCase<HostApplicati
     }
 
     [Fact]
-    public void AddRequestConsumerRejectsUseRetryAtConfigurationTime()
-    {
-        // Act & Assert
-        var ex = Should.Throw<InvalidOperationException>(() =>
-            Target.AddMessaging(m => m.ConfigureQueue("pricing", q =>
-                q.AddRequestConsumer<PriceQuoteConsumer>(c => c.UseRetry(r => r.Immediate(3))))));
-
-        ex.Message.ShouldContain(nameof(PriceQuoteConsumer));
-        ex.Message.ShouldContain("do not retry");
-    }
-
-    [Fact]
-    public void AddRequestConsumerWithoutUseRetrySucceeds()
+    public void AddRequestConsumerRegistersTheConsumerOnTheQueue()
     {
         // Act
         Target.AddMessaging(m => m.ConfigureQueue("pricing", q => q.AddRequestConsumer<PriceQuoteConsumer>()));

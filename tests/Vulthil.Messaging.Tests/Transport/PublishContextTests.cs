@@ -85,4 +85,17 @@ public sealed class PublishContextTests : BaseUnitTestCase<PublishContext>
         // Assert
         envelope.FaultAddress.ShouldBe("queue:order-faults");
     }
+
+    [Fact]
+    public void AddHeadersTakesTheReadOnlyHeadersOfAConsumedMessage()
+    {
+        // Arrange
+        IReadOnlyDictionary<string, object?> consumedHeaders = new Dictionary<string, object?> { ["tenant"] = "acme" };
+
+        // Act
+        Target.AddHeaders(consumedHeaders);
+
+        // Assert
+        Target.Headers["tenant"].ShouldBe("acme");
+    }
 }

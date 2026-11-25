@@ -26,27 +26,32 @@ public sealed class RetryPolicyConfigurator
     /// Configures immediate retries with zero delay.
     /// </summary>
     /// <param name="retryCount">The number of retries.</param>
-    public void Immediate(int retryCount)
+    /// <returns>The same configurator, for chaining.</returns>
+    public RetryPolicyConfigurator Immediate(int retryCount)
     {
         RetryLimit = retryCount;
         _intervals = [.. Enumerable.Repeat(TimeSpan.Zero, retryCount)];
+        return this;
     }
 
     /// <summary>
     /// Configures explicit retry intervals.
     /// </summary>
     /// <param name="intervals">The delay between each retry attempt.</param>
-    public void SetIntervals(params TimeSpan[] intervals)
+    /// <returns>The same configurator, for chaining.</returns>
+    public RetryPolicyConfigurator SetIntervals(params TimeSpan[] intervals)
     {
         RetryLimit = intervals.Length;
         _intervals = [.. intervals];
+        return this;
     }
     /// <summary>
     /// Adds random jitter to retry intervals.
     /// </summary>
     /// <param name="factor">The jitter factor between 0.0 and 1.0.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="factor"/> is outside the valid range.</exception>
-    public void UseJitter(double factor)
+    /// <returns>The same configurator, for chaining.</returns>
+    public RetryPolicyConfigurator UseJitter(double factor)
     {
         if (factor is < 0 or > 1.0)
         {
@@ -54,6 +59,7 @@ public sealed class RetryPolicyConfigurator
         }
 
         _jitterFactor = factor;
+        return this;
     }
     /// <summary>
     /// Configures exponential back-off retry intervals.
@@ -62,7 +68,8 @@ public sealed class RetryPolicyConfigurator
     /// <param name="initialInterval">The delay for the first retry.</param>
     /// <param name="maxInterval">The maximum delay cap.</param>
     /// <param name="multiplier">The multiplier applied to each successive interval. Default is 2.0.</param>
-    public void Exponential(
+    /// <returns>The same configurator, for chaining.</returns>
+    public RetryPolicyConfigurator Exponential(
         int retryCount,
         TimeSpan initialInterval,
         TimeSpan maxInterval,
@@ -86,20 +93,31 @@ public sealed class RetryPolicyConfigurator
         }
 
         _intervals = [.. intervals];
+        return this;
     }
 
     /// <summary>
     /// Adds an exception type to the ignore list; matching exceptions will not trigger retries.
     /// </summary>
     /// <typeparam name="TException">The exception type to ignore.</typeparam>
-    public void Ignore<TException>() where TException : Exception => _ignoredExceptions.Add(typeof(TException));
+    /// <returns>The same configurator, for chaining.</returns>
+    public RetryPolicyConfigurator Ignore<TException>() where TException : Exception
+    {
+        _ignoredExceptions.Add(typeof(TException));
+        return this;
+    }
 
     /// <summary>
     /// Configures retries to run in-memory: the consumer is re-invoked in-process while the delivery is held,
     /// instead of being re-delivered later through the retry queue. This preserves message order, so it is the
     /// behavior used automatically for partitioned queues.
     /// </summary>
-    public void InMemory() => _inMemory = true;
+    /// <returns>The same configurator, for chaining.</returns>
+    public RetryPolicyConfigurator InMemory()
+    {
+        _inMemory = true;
+        return this;
+    }
 
     /// <summary>
     /// Builds the <see cref="RetryPolicyDefinition"/> from the current configuration.

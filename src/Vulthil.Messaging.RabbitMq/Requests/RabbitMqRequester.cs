@@ -5,7 +5,6 @@ using Vulthil.Messaging.Abstractions.Publishers;
 using Vulthil.Messaging.RabbitMq.HealthChecks;
 using Vulthil.Messaging.RabbitMq.Logging;
 using Vulthil.Messaging.RabbitMq.Publishing;
-using Vulthil.Messaging.RabbitMq.Telemetry;
 using Vulthil.Messaging.Transport;
 using Vulthil.Results;
 

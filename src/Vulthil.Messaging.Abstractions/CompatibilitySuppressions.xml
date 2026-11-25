@@ -2,6 +2,62 @@
 <!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Abstractions.Consumers.Fault`1.#ctor(Vulthil.Messaging.Abstractions.Consumers.Fault{`0})</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Abstractions.Consumers.Fault`1.get_EqualityContract</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Abstractions.Consumers.Fault`1.PrintMembers(System.Text.StringBuilder)</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary{System.String,System.Object})</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:Vulthil.Messaging.Abstractions.Consumers.Fault`1</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0012</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Abstractions.Consumers.Fault`1.{Clone}$</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0012</DiagnosticId>
+    <Target>M:Vulthil.Messaging.Abstractions.Consumers.Fault`1.Equals(Vulthil.Messaging.Abstractions.Consumers.Fault{`0})</Target>
+    <Left>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Left>
+    <Right>lib/net10.0/Vulthil.Messaging.Abstractions.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>PKV006</DiagnosticId>
     <Target>net9.0</Target>
   </Suppression>

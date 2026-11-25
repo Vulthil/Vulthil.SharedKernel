@@ -16,6 +16,6 @@ public static class MeterProviderBuilderExtensions
     public static MeterProviderBuilder AddVulthilOutboxInstrumentation(this MeterProviderBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        return builder.AddMeter(Telemetry.MeterName);
+        return builder.AddMeter(OutboxTelemetry.MeterName);
     }
 }

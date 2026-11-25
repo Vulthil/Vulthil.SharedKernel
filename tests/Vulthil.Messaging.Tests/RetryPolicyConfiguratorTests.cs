@@ -53,4 +53,23 @@ public sealed class RetryPolicyConfiguratorTests : BaseUnitTestCase<RetryPolicyC
         // Assert
         Target.Build().InMemory.ShouldBeTrue();
     }
+
+    [Fact]
+    public void TheSettingsChainOnTheSameConfigurator()
+    {
+        // Act
+        var chained = Target
+            .Exponential(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(4))
+            .UseJitter(0.2)
+            .Ignore<TimeoutException>()
+            .InMemory();
+
+        // Assert
+        chained.ShouldBeSameAs(Target);
+        var policy = Target.Build();
+        policy.MaxRetryCount.ShouldBe(3);
+        policy.JitterFactor.ShouldBe(0.2);
+        policy.InMemory.ShouldBeTrue();
+        policy.GetIgnoredExceptionTypes().ShouldBe([typeof(TimeoutException)]);
+    }
 }

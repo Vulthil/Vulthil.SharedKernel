@@ -35,16 +35,16 @@ public sealed class RelationalIdempotencyStoreConflictTests : BaseUnitTestCase
         // resolves the lock contention instead of failing fast), so of two genuinely concurrent deliveries
         // for the same key, exactly one commits its business write and marker; the loser observes the
         // marker as already processed and never runs its consumer body.
-        var taskA = CreateStore(contextA).ProcessAsync("race-key", MessageContext, async token =>
+        var taskA = CreateStore(contextA).ProcessAsync("race-key", MessageContext, async () =>
         {
             contextA.Things.Add(new Thing { Id = 1, Name = "a" });
-            await contextA.SaveChangesAsync(token);
+            await contextA.SaveChangesAsync(CancellationToken);
         }, CancellationToken);
 
-        var taskB = CreateStore(contextB).ProcessAsync("race-key", MessageContext, async token =>
+        var taskB = CreateStore(contextB).ProcessAsync("race-key", MessageContext, async () =>
         {
             contextB.Things.Add(new Thing { Id = 2, Name = "b" });
-            await contextB.SaveChangesAsync(token);
+            await contextB.SaveChangesAsync(CancellationToken);
         }, CancellationToken);
 
         var results = await Task.WhenAll(taskA, taskB);
@@ -79,12 +79,12 @@ public sealed class RelationalIdempotencyStoreConflictTests : BaseUnitTestCase
 
         try
         {
-            await store.ProcessAsync("race-key", MessageContext, async token =>
+            await store.ProcessAsync("race-key", MessageContext, async () =>
             {
                 outerContext.Things.Add(new Thing { Id = 1, Name = "losing-consumer-write" });
-                await outerContext.SaveChangesAsync(token);
+                await outerContext.SaveChangesAsync(CancellationToken);
 
-                await InsertConflictingMarkerOnTheSameTransactionAsync(outerContext, outerTransaction, token);
+                await InsertConflictingMarkerOnTheSameTransactionAsync(outerContext, outerTransaction, CancellationToken);
             }, CancellationToken);
 
             await outerTransaction.CommitAsync(CancellationToken);

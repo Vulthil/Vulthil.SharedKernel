@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using RabbitMQ.Client;
-using Vulthil.Messaging.RabbitMq.Telemetry;
 
 namespace Vulthil.Messaging.RabbitMq;
 
@@ -43,16 +42,16 @@ internal sealed record RabbitMqProducedMessage(
     /// <returns>The started activity, or <see langword="null"/>.</returns>
     public Activity? StartActivity()
     {
-        var activity = MessagingInstrumentation.ActivitySource.StartActivity($"{Destination} {Operation}", ActivityKind.Producer);
+        var activity = RabbitMqTelemetry.ActivitySource.StartActivity($"{Destination} {Operation}", ActivityKind.Producer);
         if (activity is not null)
         {
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingSystem, MessagingInstrumentation.SystemValue);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingOperation, Operation);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingDestination, Destination);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingRoutingKey, Message.RoutingKey);
-            activity.SetTag(MessagingInstrumentation.Tags.MessageType, Ids.UrnString);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingMessageId, Ids.MessageId);
-            activity.SetTag(MessagingInstrumentation.Tags.MessagingCorrelationId, Ids.CorrelationId);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingSystem, RabbitMqTelemetry.SystemValue);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingOperation, Operation);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingDestination, Destination);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingRoutingKey, Message.RoutingKey);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessageType, Ids.UrnString);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingMessageId, Ids.MessageId);
+            activity.SetTag(RabbitMqTelemetry.Tags.MessagingCorrelationId, Ids.CorrelationId);
         }
 
         return activity;

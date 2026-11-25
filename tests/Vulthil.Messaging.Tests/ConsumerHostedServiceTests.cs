@@ -21,14 +21,14 @@ public sealed class ConsumerHostedServiceTests : BaseUnitTestCase
         Use<TimeProvider>(_timeProvider);
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_lazyTarget.IsValueCreated)
         {
             Target.Dispose();
         }
 
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

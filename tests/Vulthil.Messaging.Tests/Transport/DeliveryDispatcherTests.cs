@@ -43,11 +43,11 @@ public sealed class DeliveryDispatcherTests : BaseUnitTestCase<DeliveryDispatche
         Use(_services.GetRequiredService<IServiceScopeFactory>());
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         _delivery.Dispose();
         await _services.DisposeAsync();
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

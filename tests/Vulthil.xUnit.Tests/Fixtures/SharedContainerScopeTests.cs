@@ -8,6 +8,12 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
 {
     private readonly RecordingContainer _container = new();
 
+    protected override async ValueTask DisposeAsyncCore()
+    {
+        await _container.DisposeAsync();
+        await base.DisposeAsyncCore();
+    }
+
     public sealed class RecordingContainer : ITestContainerWithConnectionString, IResettableResource
     {
         public int InitializeCount { get; private set; }
@@ -19,6 +25,8 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
         public IServiceCollection? ConfiguredServices { get; private set; }
 
         public IServiceProvider? ResetWith { get; private set; }
+
+        public CancellationToken ResetToken { get; private set; }
 
         public string ConnectionString => "Host=shared;Database=shared";
 
@@ -40,9 +48,10 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
 
         public void ConfigureServices(IServiceCollection services) => ConfiguredServices = services;
 
-        public ValueTask ResetAsync(IServiceProvider serviceProvider)
+        public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             ResetWith = serviceProvider;
+            ResetToken = cancellationToken;
             return ValueTask.CompletedTask;
         }
     }
@@ -66,11 +75,14 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
     {
         public IServiceProvider? StartedWith { get; private set; }
 
+        public CancellationToken StartToken { get; private set; }
+
         public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        public ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             StartedWith = serviceProvider;
+            StartToken = cancellationToken;
             return ValueTask.CompletedTask;
         }
 
@@ -89,7 +101,11 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
     {
         public IServiceProvider? MigratedWith { get; private set; }
 
+        public CancellationToken MigrateToken { get; private set; }
+
         public IServiceProvider? StartedWith { get; private set; }
+
+        public CancellationToken StartToken { get; private set; }
 
         public string ConnectionString => "Host=shared;Database=app";
 
@@ -97,21 +113,23 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
 
         public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        public ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             StartedWith = serviceProvider;
+            StartToken = cancellationToken;
             return ValueTask.CompletedTask;
         }
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
-        public ValueTask MigrateDatabase(IServiceProvider serviceProvider)
+        public ValueTask MigrateDatabaseAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             MigratedWith = serviceProvider;
+            MigrateToken = cancellationToken;
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask ResetAsync(IServiceProvider serviceProvider) => ValueTask.CompletedTask;
+        public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default) => ValueTask.CompletedTask;
 
         public void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -155,17 +173,19 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task ResetIsForwardedToAResettableContainerWithTheSameServiceProvider()
+    public async Task ResetIsForwardedToAResettableContainerWithTheSameServiceProviderAndToken()
     {
         // Arrange
         await using var scope = new SharedContainerScope(_container);
         var serviceProvider = Mock.Of<IServiceProvider>();
+        using var cancellation = new CancellationTokenSource();
 
         // Act
-        await scope.ResetAsync(serviceProvider);
+        await scope.ResetAsync(serviceProvider, cancellation.Token);
 
         // Assert
         _container.ResetWith.ShouldBeSameAs(serviceProvider);
+        _container.ResetToken.ShouldBe(cancellation.Token);
     }
 
     [Fact]
@@ -176,7 +196,7 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
         await using var scope = new SharedContainerScope(plain);
 
         // Act & Assert
-        await Should.NotThrowAsync(() => scope.ResetAsync(Mock.Of<IServiceProvider>()).AsTask());
+        await Should.NotThrowAsync(() => scope.ResetAsync(Mock.Of<IServiceProvider>(), CancellationToken).AsTask());
     }
 
     [Fact]
@@ -191,18 +211,20 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
     }
 
     [Fact]
-    public async Task StartupSetupIsForwardedToAStartupContainerWithTheSameServiceProvider()
+    public async Task StartupSetupIsForwardedToAStartupContainerWithTheSameServiceProviderAndToken()
     {
         // Arrange
         await using var startup = new StartupContainer();
         await using var scope = new SharedContainerScope(startup);
         var serviceProvider = Mock.Of<IServiceProvider>();
+        using var cancellation = new CancellationTokenSource();
 
         // Act
-        await scope.InitializeAsync(serviceProvider);
+        await scope.InitializeAsync(serviceProvider, cancellation.Token);
 
         // Assert
         startup.StartedWith.ShouldBeSameAs(serviceProvider);
+        startup.StartToken.ShouldBe(cancellation.Token);
     }
 
     [Fact]
@@ -213,25 +235,29 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
         await using var scope = new SharedContainerScope(plain);
 
         // Act & Assert
-        await Should.NotThrowAsync(() => scope.InitializeAsync(Mock.Of<IServiceProvider>()).AsTask());
+        await Should.NotThrowAsync(() => scope.InitializeAsync(Mock.Of<IServiceProvider>(), CancellationToken).AsTask());
     }
 
     [Fact]
-    public async Task TheConnectionStringScopeForwardsTheMigrationAndTheStartupSetupWithTheSameServiceProviders()
+    public async Task TheConnectionStringScopeForwardsTheMigrationAndTheStartupSetupWithTheSameServiceProvidersAndTokens()
     {
         // Arrange
         await using var database = new DatabaseContainer();
         await using var scope = new SharedContainerWithConnectionStringScope(database);
         var scopedServices = Mock.Of<IServiceProvider>();
         var rootServices = Mock.Of<IServiceProvider>();
+        using var migrateCancellation = new CancellationTokenSource();
+        using var startCancellation = new CancellationTokenSource();
 
         // Act
-        await scope.MigrateDatabase(scopedServices);
-        await scope.InitializeAsync(rootServices);
+        await scope.MigrateDatabaseAsync(scopedServices, migrateCancellation.Token);
+        await scope.InitializeAsync(rootServices, startCancellation.Token);
 
         // Assert
         database.MigratedWith.ShouldBeSameAs(scopedServices);
+        database.MigrateToken.ShouldBe(migrateCancellation.Token);
         database.StartedWith.ShouldBeSameAs(rootServices);
+        database.StartToken.ShouldBe(startCancellation.Token);
     }
 
     [Fact]
@@ -243,8 +269,8 @@ public sealed class SharedContainerScopeTests : BaseUnitTestCase
         // Act & Assert
         await Should.NotThrowAsync(async () =>
         {
-            await scope.MigrateDatabase(Mock.Of<IServiceProvider>());
-            await scope.InitializeAsync(Mock.Of<IServiceProvider>());
+            await scope.MigrateDatabaseAsync(Mock.Of<IServiceProvider>(), CancellationToken);
+            await scope.InitializeAsync(Mock.Of<IServiceProvider>(), CancellationToken);
         });
     }
 }

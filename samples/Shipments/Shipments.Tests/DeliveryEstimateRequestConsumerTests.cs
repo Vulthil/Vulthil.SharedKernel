@@ -12,11 +12,11 @@ public sealed class DeliveryEstimateRequestConsumerTests : BaseUnitTestCase<Deli
 {
     private readonly FakeTimeProvider _timeProvider = new(new DateTimeOffset(2026, 11, 20, 8, 0, 0, TimeSpan.Zero));
 
-    protected override ValueTask Initialize()
+    protected override ValueTask InitializeAsyncCore()
     {
         Use<TimeProvider>(_timeProvider);
         Use(Options.Create(new CarrierOptions { TransitTime = TimeSpan.FromDays(3) }));
-        return base.Initialize();
+        return base.InitializeAsyncCore();
     }
 
     [Fact]

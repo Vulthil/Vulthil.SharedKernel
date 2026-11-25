@@ -16,7 +16,7 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
     private readonly SqliteConnection _plainConnection = new("DataSource=:memory:");
     private readonly SqliteConnection _unitOfWorkConnection = new("DataSource=:memory:");
 
-    protected override async ValueTask Initialize()
+    protected override async ValueTask InitializeAsyncCore()
     {
         await _plainConnection.OpenAsync(CancellationToken);
         await using var plain = NewPlainContext();
@@ -27,10 +27,11 @@ public sealed class RelationalOutboxStoreTests : BaseUnitTestCase
         await unitOfWork.Database.EnsureCreatedAsync(CancellationToken);
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         await _plainConnection.DisposeAsync();
         await _unitOfWorkConnection.DisposeAsync();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

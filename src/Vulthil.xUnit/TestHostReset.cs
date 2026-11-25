@@ -46,7 +46,7 @@ internal sealed class TestHostReset(TimeProvider timeProvider)
         var stoppedServices = await StopAsync(services, failures).ConfigureAwait(false);
 
         var resetSteps = resources
-            .Select(resource => RunStepAsync(_ => resource.ResetAsync(resourceServices).AsTask(), $"Resetting '{resource.GetType().Name}'"))
+            .Select(resource => RunStepAsync(token => resource.ResetAsync(resourceServices, token).AsTask(), $"Resetting '{resource.GetType().Name}'"))
             .Concat(testStates.Select(testState => RunStepAsync(token => testState.ResetAsync(token).AsTask(), $"Resetting '{testState.GetType().Name}'")));
         var resetFailures = await Task.WhenAll(resetSteps).ConfigureAwait(false);
         failures.AddRange(resetFailures.OfType<Exception>());

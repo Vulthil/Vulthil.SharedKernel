@@ -36,7 +36,7 @@ public sealed class CosmosScopeRegistrationTests(IntegrationTestContainerHost co
         var context = serviceScope.ServiceProvider.GetRequiredService<CosmosProbeDbContext>();
         scope.ConnectionString.ShouldEndWith($";Database={context.Database.GetCosmosDatabaseId()}");
 
-        await ((IStartupResource)scope).InitializeAsync(serviceScope.ServiceProvider);
+        await ((IStartupResource)scope).InitializeAsync(serviceScope.ServiceProvider, CancellationToken);
         context.Probes.Add(new CosmosProbe { Id = Guid.NewGuid().ToString(), Value = "pooled" });
         await context.SaveChangesAsync(CancellationToken);
         (await context.Probes.CountAsync(CancellationToken)).ShouldBe(1);

@@ -11,17 +11,17 @@ public sealed class RelationalIdempotencyStoreConflictTests : BaseUnitTestCase
 {
     private readonly string _databasePath = Path.Combine(Path.GetTempPath(), $"vulthil-inbox-conflict-{Guid.NewGuid():N}.db");
 
-    protected override async ValueTask Initialize()
+    protected override async ValueTask InitializeAsyncCore()
     {
         await using var context = NewContext();
         await context.Database.EnsureCreatedAsync(CancellationToken);
     }
 
-    protected override ValueTask Dispose()
+    protected override ValueTask DisposeAsyncCore()
     {
         SqliteConnection.ClearAllPools();
         File.Delete(_databasePath);
-        return ValueTask.CompletedTask;
+        return base.DisposeAsyncCore();
     }
 
     [Fact]

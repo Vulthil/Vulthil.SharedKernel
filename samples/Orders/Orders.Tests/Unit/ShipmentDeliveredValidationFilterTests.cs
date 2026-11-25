@@ -10,10 +10,10 @@ public sealed class ShipmentDeliveredValidationFilterTests : BaseUnitTestCase<Sh
 {
     private readonly FakeTimeProvider _timeProvider = new(new DateTimeOffset(2026, 11, 20, 12, 0, 0, TimeSpan.Zero));
 
-    protected override ValueTask Initialize()
+    protected override ValueTask InitializeAsyncCore()
     {
         Use<TimeProvider>(_timeProvider);
-        return base.Initialize();
+        return base.InitializeAsyncCore();
     }
 
     [Fact]

@@ -31,10 +31,10 @@ public sealed class HarnessMessageInheritanceTests : BaseUnitTestCase
         _host = builder.Build();
     }
 
-    protected override ValueTask Dispose()
+    protected override ValueTask DisposeAsyncCore()
     {
         _host.Dispose();
-        return base.Dispose();
+        return base.DisposeAsyncCore();
     }
 
     [Fact]

@@ -72,25 +72,27 @@ public abstract class ContainerHost : IAsyncLifetime
 
     /// <summary>
     /// Override to register shared containers by calling <see cref="AddContainer(ITestContainer)"/> or
-    /// <see cref="AddContainer{TContainer}"/>.
+    /// <see cref="AddContainer{TContainer}"/>. Registration does no I/O: the containers start lazily, through
+    /// <see cref="EnsureStartedAsync"/>.
     /// </summary>
-    /// <returns>A task representing the asynchronous registration work.</returns>
-    protected virtual Task ConfigureContainers() => Task.CompletedTask;
+    protected virtual void ConfigureContainers()
+    {
+    }
 
     /// <summary>
     /// Registers the configured containers. Invoked once by xUnit before the fixture is handed to its first consumer;
     /// containers themselves start lazily through <see cref="EnsureStartedAsync"/>.
     /// </summary>
-    /// <returns>A task representing the asynchronous registration work.</returns>
-    public async ValueTask InitializeAsync()
+    /// <returns>A completed task: the registration is synchronous.</returns>
+    public ValueTask InitializeAsync()
     {
-        if (_configured)
+        if (!_configured)
         {
-            return;
+            ConfigureContainers();
+            _configured = true;
         }
 
-        await ConfigureContainers().ConfigureAwait(false);
-        _configured = true;
+        return ValueTask.CompletedTask;
     }
 
     /// <summary>

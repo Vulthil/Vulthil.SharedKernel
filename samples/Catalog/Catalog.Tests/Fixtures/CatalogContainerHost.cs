@@ -11,9 +11,8 @@ namespace Catalog.Tests.Fixtures;
 /// </summary>
 public sealed class CatalogContainerHost : ContainerHost
 {
-    protected override Task ConfigureContainers()
+    protected override void ConfigureContainers()
     {
         AddContainer<CatalogCosmosContainer>();
-        return Task.CompletedTask;
     }
 }

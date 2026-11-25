@@ -150,21 +150,21 @@ public abstract class CosmosTestContainerFixture<TDbContext>
             services.AddDbContext<TDbContext>(options => Container.ApplyCosmosOptions(options, _databaseName));
         }
 
-        public async ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        public async ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             var scope = serviceProvider.CreateAsyncScope();
             await using var _ = scope.ConfigureAwait(false);
             var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-            await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
+            await context.Database.EnsureCreatedAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async ValueTask ResetAsync(IServiceProvider serviceProvider)
+        public async ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             var scope = serviceProvider.CreateAsyncScope();
             await using var _ = scope.ConfigureAwait(false);
             var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
-            await context.Database.EnsureDeletedAsync().ConfigureAwait(false);
-            await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
+            await context.Database.EnsureDeletedAsync(cancellationToken).ConfigureAwait(false);
+            await context.Database.EnsureCreatedAsync(cancellationToken).ConfigureAwait(false);
         }
 
         protected override ValueTask DeleteNamespaceAsync(string namespaceName) => Container.DropDatabaseAsync(namespaceName);

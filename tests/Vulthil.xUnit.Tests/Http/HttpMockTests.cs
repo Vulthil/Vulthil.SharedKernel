@@ -156,7 +156,7 @@ public sealed class HttpMockTests : BaseUnitTestCase
         using var beforeReset = await client.GetAsync(Url("/ping"), CancellationToken);
 
         // Act
-        await Target.ResetAsync(serviceProvider: null!);
+        await Target.ResetAsync(serviceProvider: null!, CancellationToken);
 
         // Assert
         Target.ReceivedRequests.ShouldBeEmpty();
@@ -225,6 +225,23 @@ public sealed class HttpMockTests : BaseUnitTestCase
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task AHeaderIsAddedToTheResponseOfACustomResponder()
+    {
+        // Arrange
+        Target.On(HttpMethod.Get, "/full-control")
+            .RespondWith((_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.Created)))
+            .WithHeader("X-Custom", "value");
+        using var client = CreateClient();
+
+        // Act
+        using var response = await client.GetAsync(Url("/full-control"), CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Headers.GetValues("X-Custom").ShouldBe(["value"]);
     }
 
     [Fact]

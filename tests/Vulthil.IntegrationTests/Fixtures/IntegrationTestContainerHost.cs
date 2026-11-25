@@ -13,12 +13,11 @@ namespace Vulthil.IntegrationTests.Fixtures;
 /// </summary>
 public sealed class IntegrationTestContainerHost : ContainerHost
 {
-    protected override Task ConfigureContainers()
+    protected override void ConfigureContainers()
     {
         AddContainer<PostgreSqlTestContainer>();
         AddContainer<MySqlTestContainer>();
         AddContainer<RabbitMqTestContainer>();
         AddContainer<CosmosTestContainer>();
-        return Task.CompletedTask;
     }
 }

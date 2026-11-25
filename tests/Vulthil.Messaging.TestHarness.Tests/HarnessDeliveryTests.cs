@@ -51,11 +51,11 @@ public sealed class HarnessDeliveryTests : BaseUnitTestCase
         _host = builder.Build();
     }
 
-    protected override ValueTask Dispose()
+    protected override ValueTask DisposeAsyncCore()
     {
         _host.Dispose();
         _probe.Dispose();
-        return base.Dispose();
+        return base.DisposeAsyncCore();
     }
 
     [Fact]

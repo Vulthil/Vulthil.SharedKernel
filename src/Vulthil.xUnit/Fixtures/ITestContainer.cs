@@ -52,6 +52,7 @@ public interface ITestDatabaseContainer : ITestContainerWithConnectionString, IR
     /// than fought.
     /// </summary>
     /// <param name="serviceProvider">The scoped service provider to resolve the DbContext from.</param>
+    /// <param name="cancellationToken">The host's startup token; cancelled when the host start is cancelled.</param>
     /// <returns>A task representing the asynchronous migration work.</returns>
-    ValueTask MigrateDatabase(IServiceProvider serviceProvider);
+    ValueTask MigrateDatabaseAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default);
 }

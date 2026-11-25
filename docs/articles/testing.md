@@ -79,7 +79,7 @@ as another created instance's dependency), so a dependency registered afterward 
 still picked up. Every disposable instance the auto-mocker holds — an explicit `Use()` instance, a `UseReal`/
 `UseRealFor` instance once resolved, or an auto-generated dependency mock — is disposed automatically after each
 test; only a synchronous `IDisposable` is covered, so an `IAsyncDisposable`-only registration needs an override of
-`Dispose()` to dispose it explicitly. The `BaseUnitTestCase<TTarget>` variant's `Target` is disposed the same way,
+`DisposeAsyncCore()` to dispose it explicitly. The `BaseUnitTestCase<TTarget>` variant's `Target` is disposed the same way,
 and always before the auto-mocker's own instances.
 
 ## Integration Tests
@@ -87,7 +87,7 @@ and always before the auto-mocker's own instances.
 ### BaseIntegrationTestCase
 
 `BaseIntegrationTestCase<TEntryPoint>` boots a real `WebApplicationFactory` backed by test containers. It builds on
-`BaseUnitTestCase`, so the cancellation token, the `Initialize()`/`Dispose()` hooks and the auto-mocker vocabulary
+`BaseUnitTestCase`, so the cancellation token, the `InitializeAsyncCore()`/`DisposeAsyncCore()` hooks and the auto-mocker vocabulary
 (`Use`, `GetMock`, `UseReal`) are the same in both kinds of test. The factory is supplied as the xUnit fixture, so its
 containers start once for the scope and are shared across the tests in it:
 
@@ -211,11 +211,10 @@ Containers are registered **once**, on an assembly-level `ContainerHost` fixture
 ```csharp
 public sealed class AppContainerHost : ContainerHost
 {
-    protected override Task ConfigureContainers()
+    protected override void ConfigureContainers()
     {
         AddContainer<PostgresTestContainer>();
         AddContainer<RabbitMqTestContainer>();
-        return Task.CompletedTask;
     }
 }
 
@@ -261,7 +260,7 @@ public sealed class SearchTestContainer : TestContainerFixtureWithConnectionStri
 }
 ```
 
-The view creates the namespace when the factory starts and deletes it when the class finishes. Deleting is best-effort: a failure becomes a diagnostic message instead of a test failure, because the namespace goes away with the container anyway. The base view never resets the shared container; implement `IResettableResource` on the view when its namespace can be reset between tests.
+The view creates the namespace when the factory starts and deletes it when the class finishes. Deleting is best-effort: a failure becomes a diagnostic message instead of a test failure, because the namespace goes away with the container anyway. The base view never resets the shared container; implement `IResettableResource` on the view when its namespace can be reset between tests. The token that `ResetAsync` gets is cancelled when the reset runs longer than 30 seconds.
 
 A scope lives as long as its factory: one test class. All tests of the class — and the per-test hosts they build — share its database and virtual host. The database is reset after each test, but the queues are not purged, so a message that one test leaves in a queue is delivered during the next test of the class. Wait for the messages a test publishes before the test ends.
 
@@ -318,7 +317,7 @@ var request = HttpMock<IWeatherClient>().ReceivedRequests.ShouldHaveSingleItem()
 request.Headers["Authorization"].ShouldHaveSingleItem().ShouldBe("Bearer test-token");
 ```
 
-Mock state is reset after each test (like the database), so stubs and captured requests never leak between tests. Under the hood the mock implements `IResettableResource`; database containers implement it too, and the test case resets every registered resettable resource in its teardown. A WireMock-based or other `IHttpMock` implementation can be substituted if you need richer matching, but the built-in mock has no external dependency.
+Mock state is reset after each test, together with the database, so stubs and captured requests never leak between tests. The test case resets the mocks in its teardown; a test does not call a reset itself.
 
 ### Resetting your own test doubles
 
@@ -441,7 +440,7 @@ captured messages and removes the `Handle`/`Respond` stubs (see
 
 The reset runs after each test, so messages that the host publishes while it starts are visible to the first test
 that uses the host. To ignore them, assert on the ids the test used, or call `Clear()` in the test body after the
-test registers its doubles. Do not call it from `Initialize()`: resolving the harness there builds the host before
+test registers its doubles. Do not call it from `InitializeAsyncCore()`: resolving the harness there builds the host before
 the test can register its doubles.
 
 `Clear()` empties only the captured messages and keeps the stubs, for a test that asserts in phases. A host that you

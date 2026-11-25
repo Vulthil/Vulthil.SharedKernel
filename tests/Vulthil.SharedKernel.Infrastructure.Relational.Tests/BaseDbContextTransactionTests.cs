@@ -28,14 +28,14 @@ public sealed class BaseDbContextTransactionTests : BaseUnitTestCase
             .Options);
     }
 
-    protected override async ValueTask Initialize()
+    protected override async ValueTask InitializeAsyncCore()
     {
         await _connection.OpenAsync(CancellationToken);
         await using var context = NewContext();
         await context.Database.EnsureCreatedAsync(CancellationToken);
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_lazyTarget.IsValueCreated)
         {
@@ -43,7 +43,7 @@ public sealed class BaseDbContextTransactionTests : BaseUnitTestCase
         }
 
         await _connection.DisposeAsync();
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

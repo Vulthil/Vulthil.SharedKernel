@@ -175,9 +175,9 @@ internal sealed class TestHostScope : IAsyncDisposable
     /// Registers a starting host: pauses the restartable services of every other running live host, applies pending
     /// database migrations, and runs the one-time startup resources, all before the host's own hosted services start.
     /// </summary>
-    private async Task HostStartingAsync(IServiceProvider hostServices)
+    private async Task HostStartingAsync(IServiceProvider hostServices, CancellationToken cancellationToken)
     {
-        await _hostsGate.WaitAsync().ConfigureAwait(false);
+        await _hostsGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             if (_liveHosts.Exists(host => ReferenceEquals(host.Services, hostServices)))
@@ -195,7 +195,7 @@ internal sealed class TestHostScope : IAsyncDisposable
             _liveHosts.Add(new LiveHost(hostServices));
             TestHostReset.ThrowIfFailed(failures, "Pausing the other live test hosts before a new test host started failed.");
 
-            await PrepareHostAsync(hostServices).ConfigureAwait(false);
+            await PrepareHostAsync(hostServices, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -233,12 +233,18 @@ internal sealed class TestHostScope : IAsyncDisposable
         }
     }
 
-    private async Task PrepareHostAsync(IServiceProvider hostServices)
+    private async Task PrepareHostAsync(IServiceProvider hostServices, CancellationToken cancellationToken)
     {
         var scope = hostServices.CreateAsyncScope();
         await using var _ = scope.ConfigureAwait(false);
-        await Parallel.ForEachAsync(_containers.OfType<ITestDatabaseContainer>(), (container, ct) => container.MigrateDatabase(scope.ServiceProvider)).ConfigureAwait(false);
-        await Parallel.ForEachAsync(_containers.OfType<IStartupResource>(), (resource, ct) => resource.InitializeAsync(hostServices)).ConfigureAwait(false);
+        await Parallel.ForEachAsync(
+            _containers.OfType<ITestDatabaseContainer>(),
+            cancellationToken,
+            (container, ct) => container.MigrateDatabaseAsync(scope.ServiceProvider, ct)).ConfigureAwait(false);
+        await Parallel.ForEachAsync(
+            _containers.OfType<IStartupResource>(),
+            cancellationToken,
+            (resource, ct) => resource.InitializeAsync(hostServices, ct)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -258,7 +264,7 @@ internal sealed class TestHostScope : IAsyncDisposable
     /// </summary>
     private sealed class HostLifecycle(TestHostScope scope, IServiceProvider hostServices) : IHostedService
     {
-        public Task StartAsync(CancellationToken cancellationToken) => scope.HostStartingAsync(hostServices);
+        public Task StartAsync(CancellationToken cancellationToken) => scope.HostStartingAsync(hostServices, cancellationToken);
 
         public Task StopAsync(CancellationToken cancellationToken) => scope.HostStoppedAsync(hostServices);
     }

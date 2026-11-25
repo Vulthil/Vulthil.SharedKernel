@@ -18,7 +18,11 @@ namespace Vulthil.IntegrationTests;
 /// </summary>
 public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) : BaseUnitTestCase, IClassFixture<MySqlOutboxHostFixture>
 {
-    protected override async ValueTask Dispose() => await fixture.ResetOutboxStateAsync(CancellationToken);
+    protected override async ValueTask DisposeAsyncCore()
+    {
+        await fixture.ResetOutboxStateAsync(CancellationToken);
+        await base.DisposeAsyncCore();
+    }
 
     [Fact]
     public async Task UseMySqlAppliesTheMySqlOptionsAndTheDbContextOptions()

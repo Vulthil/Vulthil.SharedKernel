@@ -97,10 +97,10 @@ public sealed class InitializeHookTests : BaseUnitTestCase
 {
     private bool _initializeCalled;
 
-    protected override ValueTask Initialize()
+    protected override ValueTask InitializeAsyncCore()
     {
         _initializeCalled = true;
-        return base.Initialize();
+        return base.InitializeAsyncCore();
     }
 
     [Fact]
@@ -118,10 +118,10 @@ public sealed class DisposeHookTests : BaseUnitTestCase
 {
     private bool _disposeCalled;
 
-    protected override ValueTask Dispose()
+    protected override ValueTask DisposeAsyncCore()
     {
         _disposeCalled = true;
-        return base.Dispose();
+        return base.DisposeAsyncCore();
     }
 
     [Fact]
@@ -138,7 +138,10 @@ public sealed class DisposeHookTests : BaseUnitTestCase
 public sealed class TargetDisposedBeforeAutoMockerDependenciesTests
     : BaseUnitTestCase<TargetDisposedBeforeAutoMockerDependenciesTests.Consumer>
 {
+    // The auto-mocker owns the dependency through Use and disposes it at teardown; that disposal is what the test checks.
+#pragma warning disable CA2213
     private readonly RecordingDependency _dependency = new();
+#pragma warning restore CA2213
 
     public TargetDisposedBeforeAutoMockerDependenciesTests() => Use<IDependency>(_dependency);
 

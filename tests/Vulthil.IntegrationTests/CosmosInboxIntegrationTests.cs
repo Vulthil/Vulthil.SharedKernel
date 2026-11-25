@@ -29,7 +29,7 @@ public sealed class CosmosInboxIntegrationTests(CosmosWebApplicationFactory fact
 
         // Assert
         processed.ShouldBeTrue();
-        await ResetScope();
+        await ResetScopeAsync();
         var verify = ScopedServices.GetRequiredService<CosmosProbeDbContext>();
         (await verify.SideEffects.CountAsync(CancellationToken)).ShouldBe(1);
         (await verify.InboxMessages.CountAsync(CancellationToken)).ShouldBe(1);
@@ -42,7 +42,7 @@ public sealed class CosmosInboxIntegrationTests(CosmosWebApplicationFactory fact
         const string key = "order-2";
         var firstProcessed = await ScopedServices.GetRequiredService<IIdempotencyStore>()
             .ProcessAsync(key, _messageContext, WriteSideEffect(key), CancellationToken);
-        await ResetScope();
+        await ResetScopeAsync();
 
         // Act
         var consumerRanAgain = false;
@@ -57,7 +57,7 @@ public sealed class CosmosInboxIntegrationTests(CosmosWebApplicationFactory fact
         firstProcessed.ShouldBeTrue();
         secondProcessed.ShouldBeFalse();
         consumerRanAgain.ShouldBeFalse();
-        await ResetScope();
+        await ResetScopeAsync();
         var verify = ScopedServices.GetRequiredService<CosmosProbeDbContext>();
         (await verify.SideEffects.CountAsync(CancellationToken)).ShouldBe(1);
         (await verify.InboxMessages.CountAsync(CancellationToken)).ShouldBe(1);

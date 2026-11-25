@@ -44,7 +44,7 @@ public sealed class TestHarnessResetIntegrationTests(TestHarnessWebApplicationFa
     }
 
     /// <inheritdoc />
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_disposedOnce)
         {
@@ -52,7 +52,7 @@ public sealed class TestHarnessResetIntegrationTests(TestHarnessWebApplicationFa
         }
 
         _disposedOnce = true;
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     private async Task PublishAsync(ProbeCreatedIntegrationEvent message)

@@ -127,6 +127,30 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
     }
 
     [Fact]
+    public async Task CancellingTheHostStartCancelsAMigrationThatIsStillRunning()
+    {
+        // Arrange
+        var container = AddContainer("db", "Db");
+        await Target.InitializeAsync();
+        var migrationStarted = new TaskCompletionSource();
+        container.View!.OnMigrate = async token =>
+        {
+            migrationStarted.SetResult();
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
+        };
+        await using var host = HostWith();
+        using var startCancellation = new CancellationTokenSource();
+
+        // Act
+        var start = Target.CreateHostLifecycle(host).StartAsync(startCancellation.Token);
+        await migrationStarted.Task.WaitAsync(CancellationToken);
+        await startCancellation.CancelAsync();
+
+        // Assert
+        await Should.ThrowAsync<OperationCanceledException>(() => start.WaitAsync(TimeSpan.FromSeconds(10), CancellationToken));
+    }
+
+    [Fact]
     public async Task AStartingHostMigratesAndSetsUpADatabaseContainerWithoutAScopeViewOfItsOwn()
     {
         // Arrange
@@ -410,7 +434,7 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        public ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             log.Enqueue($"startup:{name}");
             return ValueTask.CompletedTask;
@@ -422,13 +446,15 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask MigrateDatabase(IServiceProvider serviceProvider)
+        public Func<CancellationToken, Task>? OnMigrate { get; set; }
+
+        public ValueTask MigrateDatabaseAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             log.Enqueue($"migrate:{name}");
-            return ValueTask.CompletedTask;
+            return OnMigrate is null ? ValueTask.CompletedTask : new ValueTask(OnMigrate(cancellationToken));
         }
 
-        public ValueTask ResetAsync(IServiceProvider serviceProvider)
+        public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             ResetServices.Enqueue(serviceProvider);
             log.Enqueue($"reset:{name}");
@@ -453,7 +479,7 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
 
         public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public ValueTask InitializeAsync(IServiceProvider serviceProvider)
+        public ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             log.Enqueue($"startup:{name}");
             return ValueTask.CompletedTask;
@@ -461,13 +487,13 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
-        public ValueTask MigrateDatabase(IServiceProvider serviceProvider)
+        public ValueTask MigrateDatabaseAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             log.Enqueue($"migrate:{name}");
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask ResetAsync(IServiceProvider serviceProvider) => ValueTask.CompletedTask;
+        public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default) => ValueTask.CompletedTask;
 
         public void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -496,7 +522,7 @@ public sealed class TestHostScopeTests : BaseUnitTestCase
 
     public sealed class RecordingResource(ConcurrentQueue<string> log, string name) : IResettableResource
     {
-        public ValueTask ResetAsync(IServiceProvider serviceProvider)
+        public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             log.Enqueue($"reset:{name}");
             return ValueTask.CompletedTask;

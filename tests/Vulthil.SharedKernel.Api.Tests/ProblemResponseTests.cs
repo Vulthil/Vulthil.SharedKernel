@@ -38,7 +38,7 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
 
     private HttpClient Client => _client ?? throw new InvalidOperationException("The test server is not started.");
 
-    protected override async ValueTask Initialize()
+    protected override async ValueTask InitializeAsyncCore()
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
@@ -61,7 +61,7 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
         _client = _app.GetTestClient();
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         _client?.Dispose();
         if (_app is not null)
@@ -70,7 +70,7 @@ public sealed class ProblemResponseTests : BaseUnitTestCase
         }
 
         _logs.Dispose();
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Theory]

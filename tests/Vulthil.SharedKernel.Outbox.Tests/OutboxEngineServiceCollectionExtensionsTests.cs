@@ -10,14 +10,14 @@ namespace Vulthil.SharedKernel.Outbox.Tests;
 public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestCase
 {
     [Fact]
-    public void MaxDelaySecondsLessThanOutboxProcessingDelaySecondsFailsValidationAtStartup()
+    public void MaxPollingIntervalLessThanPollingIntervalFailsValidationAtStartup()
     {
         // Arrange
         var services = new ServiceCollection();
         services.AddOutboxEngine(o =>
         {
-            o.OutboxProcessingDelaySeconds = 100;
-            o.MaxDelaySeconds = 1;
+            o.PollingInterval = TimeSpan.FromSeconds(100);
+            o.MaxPollingInterval = TimeSpan.FromSeconds(1);
         });
         using var provider = services.BuildServiceProvider();
 
@@ -26,14 +26,14 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
     }
 
     [Fact]
-    public void MaxDelaySecondsEqualToOutboxProcessingDelaySecondsPassesValidation()
+    public void MaxPollingIntervalEqualToPollingIntervalPassesValidation()
     {
         // Arrange
         var services = new ServiceCollection();
         services.AddOutboxEngine(o =>
         {
-            o.OutboxProcessingDelaySeconds = 5;
-            o.MaxDelaySeconds = 5;
+            o.PollingInterval = TimeSpan.FromSeconds(5);
+            o.MaxPollingInterval = TimeSpan.FromSeconds(5);
         });
         using var provider = services.BuildServiceProvider();
 
@@ -41,7 +41,7 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
         var options = provider.GetRequiredService<IOptions<OutboxProcessingOptions>>().Value;
 
         // Assert
-        options.MaxDelaySeconds.ShouldBe(5);
+        options.MaxPollingInterval.ShouldBe(TimeSpan.FromSeconds(5));
     }
 
     [Fact]
@@ -273,12 +273,13 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
 
     [Theory]
     [InlineData(0)]
-    [InlineData(101)]
-    public void OutboxProcessingDelaySecondsOutsideOneToOneHundredFailsValidationAtStartup(int value)
+    [InlineData(999)]
+    [InlineData(100_001)]
+    public void PollingIntervalOutsideOneToOneHundredSecondsFailsValidationAtStartup(int milliseconds)
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddOutboxEngine(o => o.OutboxProcessingDelaySeconds = value);
+        services.AddOutboxEngine(o => o.PollingInterval = TimeSpan.FromMilliseconds(milliseconds));
         using var provider = services.BuildServiceProvider();
 
         // Act & Assert
@@ -287,12 +288,17 @@ public sealed class OutboxEngineServiceCollectionExtensionsTests : BaseUnitTestC
 
     [Theory]
     [InlineData(0)]
-    [InlineData(301)]
-    public void MaxDelaySecondsOutsideOneToThreeHundredFailsValidationAtStartup(int value)
+    [InlineData(999)]
+    [InlineData(300_001)]
+    public void MaxPollingIntervalOutsideOneToThreeHundredSecondsFailsValidationAtStartup(int milliseconds)
     {
         // Arrange
         var services = new ServiceCollection();
-        services.AddOutboxEngine(o => o.MaxDelaySeconds = value);
+        services.AddOutboxEngine(o =>
+        {
+            o.PollingInterval = TimeSpan.FromSeconds(1);
+            o.MaxPollingInterval = TimeSpan.FromMilliseconds(milliseconds);
+        });
         using var provider = services.BuildServiceProvider();
 
         // Act & Assert

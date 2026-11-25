@@ -252,7 +252,7 @@ public sealed class OutboxCommitInterceptorTests : BaseUnitTestCase
     public sealed class UnlockedOutboxStore(WakeupDbContext dbContext)
         : RelationalOutboxStore<WakeupDbContext>(dbContext, TimeProvider.System)
     {
-        protected override Task<List<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
+        protected override Task<IReadOnlyList<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
             FetchMessagesWithRowLockAsync(string.Empty, batchSize, maxRetries, cancellationToken);
     }
 

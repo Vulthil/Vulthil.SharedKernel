@@ -26,7 +26,7 @@ builder.Services.AddApplication(options =>
     options.RegisterFluentValidationAssemblies(typeof(Program).Assembly);
 
     // Add pipeline behaviors: the first one registered is the outermost
-    options.AddRequestLoggingBehavior();
+    options.AddRequestLoggingPipelineBehavior();
     options.AddValidationPipelineBehavior();
     options.AddTransactionalPipelineBehavior();
 });

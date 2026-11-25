@@ -131,7 +131,7 @@ public abstract class CosmosTestContainerFixture<TDbContext>
         private readonly string _databaseName = databaseName;
 
         // Names the scope's database, as the connection string of an Aspire Cosmos DB database resource does: the
-        // AddCosmosDbContext overload behind UseCosmosDb rejects a connection string without one.
+        // AddCosmosDbContext overload behind UseCosmos rejects a connection string without one.
         public override string ConnectionString => $"{Container.ConnectionString.TrimEnd(';')};Database={_databaseName}";
 
         public override void ConfigureServices(IServiceCollection services)
@@ -139,7 +139,7 @@ public abstract class CosmosTestContainerFixture<TDbContext>
             ArgumentNullException.ThrowIfNull(services);
 
             // A host that registered the context itself keeps that registration and gets the emulator options on top.
-            // Aspire's AddCosmosDbContext (behind UseCosmosDb) pools the context, so its options are a singleton and
+            // Aspire's AddCosmosDbContext (behind UseCosmos) pools the context, so its options are a singleton and
             // can only read configuration registered as a singleton.
             if (services.Any(descriptor => descriptor.ServiceType == typeof(TDbContext)))
             {

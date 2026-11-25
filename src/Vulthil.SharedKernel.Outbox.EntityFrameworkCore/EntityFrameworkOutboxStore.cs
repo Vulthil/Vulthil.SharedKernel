@@ -47,7 +47,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     protected DbSet<OutboxMessage> OutboxMessages => DbContext.OutboxMessages;
 
     /// <inheritdoc />
-    public bool IsInTransaction => DbContext.IsInTransaction;
+    public bool IsInTransaction => DbContext.Database.CurrentTransaction is not null;
 
     /// <inheritdoc />
     public void AddOutboxMessage(OutboxMessage message) => DbContext.OutboxMessages.Add(message);
@@ -147,7 +147,7 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The transaction to commit on success, or <see langword="null"/> when none is used.</returns>
-    protected virtual async Task<IDbTransaction?> BeginTransactionAsync(CancellationToken cancellationToken)
+    protected virtual async Task<IUnitOfWorkTransaction?> BeginTransactionAsync(CancellationToken cancellationToken)
     {
         if (DbContext is IUnitOfWork unitOfWork)
         {
@@ -165,14 +165,14 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     /// <param name="maxRetries">Messages at or above this retry count are excluded.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The fetched message data.</returns>
-    protected virtual Task<List<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
-        OutboxMessages
+    protected virtual async Task<IReadOnlyList<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
+        await OutboxMessages
             .Where(o => o.ProcessedOnUtc == null && o.FailedOnUtc == null && o.RetryCount < maxRetries)
             .OrderBy(o => o.OccurredOnUtc)
             .ThenBy(o => o.Id)
             .Take(batchSize)
             .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState, x.Destination, x.Metadata))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Records processed and failed messages, dead-lettering any that reach <paramref name="maxRetries"/>. The default
@@ -261,8 +261,8 @@ public class EntityFrameworkOutboxStore<TContext> : IOutboxStore, IOutboxRetenti
     /// </summary>
     private sealed class RelayUnit(EntityFrameworkOutboxStore<TContext> store, bool inTransaction) : IOutboxRelayUnit
     {
-        public async Task<IReadOnlyList<OutboxMessageData>> ClaimAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
-            await store.FetchMessagesAsync(batchSize, maxRetries, cancellationToken).ConfigureAwait(false);
+        public Task<IReadOnlyList<OutboxMessageData>> ClaimAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
+            store.FetchMessagesAsync(batchSize, maxRetries, cancellationToken);
 
         public Task RunStepAsync(Func<CancellationToken, Task> step, CancellationToken cancellationToken) =>
             store.RunRelayStepAsync(step, inTransaction, cancellationToken);

@@ -23,6 +23,48 @@
     <IsBaselineSuppression>true</IsBaselineSuppression>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.OutboxMessage.set_TraceParent(System.String)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.OutboxMessage.set_TraceState(System.String)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.get_MaxDelaySeconds</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.get_OutboxProcessingDelaySeconds</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.set_MaxDelaySeconds(System.Int32)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.set_OutboxProcessingDelaySeconds(System.Int32)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Vulthil.SharedKernel.Outbox.IOutboxRetentionStore.DeleteProcessedAsync(System.DateTimeOffset,System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)</Target>
     <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.dll</Left>

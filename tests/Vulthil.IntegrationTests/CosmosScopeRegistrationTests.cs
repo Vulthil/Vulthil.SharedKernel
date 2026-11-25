@@ -7,7 +7,7 @@ using Vulthil.xUnit.Fixtures;
 namespace Vulthil.IntegrationTests;
 
 /// <summary>
-/// A host that registers its context itself, pooled, as Aspire's <c>AddCosmosDbContext</c> behind <c>UseCosmosDb</c>
+/// A host that registers its context itself, pooled, as Aspire's <c>AddCosmosDbContext</c> behind <c>UseCosmos</c>
 /// does. The emulator scope runs after the host's registrations, keeps that registration and points it at the
 /// scope's database, whose name the scope's connection string carries, as an Aspire database resource's does.
 /// </summary>

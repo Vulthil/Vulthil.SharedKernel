@@ -24,7 +24,7 @@ public static class DependencyInjection
             {
                 outbox.BatchSize = 25;
                 outbox.MaxRetries = 5;
-                outbox.MaxDelaySeconds = 30;
+                outbox.MaxPollingInterval = TimeSpan.FromSeconds(30);
                 outbox.Retention.Enabled = true;
                 outbox.Retention.RetentionPeriod = TimeSpan.FromDays(3);
                 outbox.Retention.DeadLetterRetentionPeriod = TimeSpan.FromDays(30);

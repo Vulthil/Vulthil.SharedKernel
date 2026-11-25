@@ -67,14 +67,14 @@ public static class OutboxEngineServiceCollectionExtensions
                     || deadLetterRetentionPeriod > TimeSpan.Zero,
                 "Outbox retention requires DeadLetterRetentionPeriod, when set, to be greater than zero.")
             .Validate(
-                o => o.MaxDelaySeconds >= o.OutboxProcessingDelaySeconds,
-                "MaxDelaySeconds must be greater than or equal to OutboxProcessingDelaySeconds.")
+                o => o.MaxPollingInterval >= o.PollingInterval,
+                "MaxPollingInterval must be greater than or equal to PollingInterval.")
             .Validate(
-                o => o.OutboxProcessingDelaySeconds is >= 1 and <= 100,
-                "OutboxProcessingDelaySeconds must be between 1 and 100.")
+                o => o.PollingInterval >= TimeSpan.FromSeconds(1) && o.PollingInterval <= TimeSpan.FromSeconds(100),
+                "PollingInterval must be between 1 and 100 seconds.")
             .Validate(
-                o => o.MaxDelaySeconds is >= 1 and <= 300,
-                "MaxDelaySeconds must be between 1 and 300.")
+                o => o.MaxPollingInterval >= TimeSpan.FromSeconds(1) && o.MaxPollingInterval <= TimeSpan.FromSeconds(300),
+                "MaxPollingInterval must be between 1 and 300 seconds.")
             .Validate(
                 o => o.BatchSize >= 1,
                 "BatchSize must be at least 1.")

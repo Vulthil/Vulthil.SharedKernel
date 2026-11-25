@@ -10,9 +10,9 @@ Use `Vulthil.SharedKernel.Infrastructure.Cosmos` to run the shared infrastructur
 
 ## Pattern
 
-- Call `UseCosmosDb("connectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox store
+- Call `UseCosmos("connectionStringKey")` on the database infrastructure configurator – it both registers the EF Core context and selects the Cosmos outbox store
 - Map `OutboxMessage` via the `ApplyCosmosOutbox()` model-builder extension (call it from your `OnModelCreating`); Cosmos DB needs no provider-specific column types or indexes, so it applies the provider-agnostic mapping
-- Order between `UseCosmosDb`, `EnableOutboxProcessing`, and `UseOutboxStore` does not matter; the configurator defers the underlying registrations until the full chain has executed, and the Cosmos outbox store is applied only as a default – a custom store selected via `UseOutboxStore` is always preserved
+- Order between `UseCosmos`, `EnableOutboxProcessing`, and `UseOutboxStore` does not matter; the configurator defers the underlying registrations until the full chain has executed, and the Cosmos outbox store is applied only as a default – a custom store selected via `UseOutboxStore` is always preserved
 
 ## Usage
 
@@ -20,7 +20,7 @@ Use `Vulthil.SharedKernel.Infrastructure.Cosmos` to run the shared infrastructur
 
 ```csharp
 builder.AddDbContext<AppDbContext>(config => config
-    .UseCosmosDb("Cosmos", settings =>
+    .UseCosmos("Cosmos", settings =>
     {
         settings.DatabaseName = "app";
     })

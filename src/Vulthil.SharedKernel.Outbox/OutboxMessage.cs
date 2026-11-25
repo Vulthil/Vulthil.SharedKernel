@@ -45,11 +45,11 @@ public sealed class OutboxMessage
     /// <summary>
     /// Activity TraceParent, for distributed tracing correlation.
     /// </summary>
-    public string? TraceParent { get; set; }
+    public string? TraceParent { get; init; }
     /// <summary>
     /// Activity TraceState, for distributed tracing correlation.
     /// </summary>
-    public string? TraceState { get; set; }
+    public string? TraceState { get; init; }
     /// <summary>
     /// Gets the sink this message is relayed to (in-process domain event, broker publish, or broker send). Defaults
     /// to <see cref="OutboxDestination.DomainEvent"/>.

@@ -66,7 +66,7 @@ public sealed class OutboxBackgroundServiceTests : BaseUnitTestCase
         Use<IOptions<OutboxProcessingOptions>>(Options.Create(new OutboxProcessingOptions
         {
             BatchSize = batchSize,
-            OutboxProcessingDelaySeconds = baseDelaySeconds
+            PollingInterval = TimeSpan.FromSeconds(baseDelaySeconds)
         }));
         var store = UseRelayCycleOver(new InMemoryRelayStore(messageCount: batchSize - 3));
         TimeSpan? capturedDelay = null;

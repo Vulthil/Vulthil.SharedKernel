@@ -88,8 +88,8 @@ running unprotected.
 | `MaxRetries` | 3 | Publish attempts before a message is dead-lettered (`FailedOnUtc` set, no longer relayed) |
 | `EnableParallelPublishing` | `false` | Publish messages in parallel within a batch (each dispatch runs in its own DI scope) |
 | `MaxDegreeOfParallelism` | 4 | Maximum concurrent dispatches when `EnableParallelPublishing` is enabled |
-| `OutboxProcessingDelaySeconds` | 2 | Base polling delay between processing cycles |
-| `MaxDelaySeconds` | 60 | Maximum back-off delay. The wait doubles up to it after a cycle that relays nothing (no pending messages, or every fetched message failed) and after a cycle that faults (for example while the database is unavailable) |
+| `PollingInterval` | 2 seconds | Base wait between processing cycles (1 to 100 seconds) |
+| `MaxPollingInterval` | 60 seconds | Maximum back-off wait (1 to 300 seconds, at least `PollingInterval`). The wait doubles up to it after a cycle that relays nothing (no pending messages, or every fetched message failed) and after a cycle that faults (for example while the database is unavailable) |
 | `EnableTracing` | `true` | Carry the originating trace identifier when publishing |
 
 ### Dispatch scope
@@ -161,7 +161,7 @@ implementation lives in `Vulthil.SharedKernel.Outbox.EntityFrameworkCore` (`Enti
 and each provider supplies a subclass — `RelationalOutboxStore<TContext>` (the `ExecuteUpdate` base, which also
 composes the row-locking fetch from the model's mapped identifiers), `NpgsqlOutboxStore<TContext>` /
 `MySqlOutboxStore<TContext>` (which pass it `FOR UPDATE SKIP LOCKED`), and `CosmosOutboxStore<TContext>`
-(best-effort, no transaction). A provider's `UseNpgsql`/`UseMySql`/`UseCosmosDb`
+(best-effort, no transaction). A provider's `UseNpgsql`/`UseMySql`/`UseCosmos`
 selects the store; you can supply your own by implementing `IOutboxStore` (or deriving from the EF base) and
 registering it with `UseOutboxStore<TStore>()`:
 

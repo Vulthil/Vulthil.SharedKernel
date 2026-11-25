@@ -1,3 +1,5 @@
 #nullable enable
 *REMOVED*Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>.NpgsqlOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider, Microsoft.Extensions.Options.IOptions<Vulthil.SharedKernel.Outbox.OutboxProcessingOptions!>! options) -> void
 Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>.NpgsqlOutboxStore(TContext! dbContext, System.TimeProvider! timeProvider) -> void
+*REMOVED*override Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>.FetchMessagesAsync(int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.List<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!
+override Vulthil.SharedKernel.Infrastructure.Npgsql.OutboxProcessing.NpgsqlOutboxStore<TContext>.FetchMessagesAsync(int batchSize, int maxRetries, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Vulthil.SharedKernel.Outbox.OutboxMessageData>!>!

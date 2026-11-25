@@ -95,7 +95,7 @@ dotnet test --project samples/Shipments/Shipments.Tests
 | `BaseDbContext`, and the same context without it | [OrdersDbContext.cs](Orders/Orders.Infrastructure/Data/OrdersDbContext.cs) |
 | `UseNpgsql` with settings, `ApplyNpgsqlOutbox` | [Orders.Infrastructure/DependencyInjection.cs](Orders/Orders.Infrastructure/DependencyInjection.cs) |
 | `UseMySql` with settings, `ApplyMySqlOutbox`, EF migrations for MySQL | [Shipments/Infrastructure](Shipments/Shipments/Infrastructure) |
-| `UseCosmosDb` with settings, `ApplyCosmosOutbox`, `EnsureCreatedAsync` | [Catalog/Infrastructure](Catalog/Catalog/Infrastructure), [Catalog/Program.cs](Catalog/Catalog/Program.cs) |
+| `UseCosmos` with settings, `ApplyCosmosOutbox`, `EnsureCreatedAsync` | [Catalog/Infrastructure](Catalog/Catalog/Infrastructure), [Catalog/Program.cs](Catalog/Catalog/Program.cs) |
 | `MigrateAsync` | [Orders/Program.cs](Orders/Orders/Program.cs), [Shipments/Program.cs](Shipments/Shipments/Program.cs) |
 | Outbox options: batch size, retries, back-off, parallel dispatch, retention with a dead-letter period | [Shipments DI](Shipments/Shipments/Infrastructure/DependencyInjection.cs), [Catalog DI](Catalog/Catalog/Infrastructure/DependencyInjection.cs) |
 

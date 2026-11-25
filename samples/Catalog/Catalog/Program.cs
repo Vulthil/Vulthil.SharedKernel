@@ -14,8 +14,8 @@ builder.Services.AddOpenApiServices();
 builder.Services.AddProblemDetailsHandling();
 
 builder.Services.AddApplication(application => application
-    .AddRequestLoggingBehavior()
-    .AddDomainEventLoggingBehavior()
+    .AddRequestLoggingPipelineBehavior()
+    .AddDomainEventLoggingPipelineBehavior()
     .AddValidationPipelineBehavior()
     .RegisterHandlerAssemblies(typeof(Program).Assembly)
     .RegisterFluentValidationAssemblies(typeof(Program).Assembly));

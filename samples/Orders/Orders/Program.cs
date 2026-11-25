@@ -31,7 +31,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapEndpoints(app.MapGroup("api").WithTags("Orders"));
+app.MapGroup("api").WithTags("Orders").MapEndpoints();
 
 if (app.Environment.IsDevelopment())
 {

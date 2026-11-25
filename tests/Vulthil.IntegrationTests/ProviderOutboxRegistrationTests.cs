@@ -125,14 +125,14 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void UseCosmosDbSelectsTheCosmosStoreByDefault()
+    public void UseCosmosSelectsTheCosmosStoreByDefault()
     {
         // Arrange
         var builder = NewBuilder(CosmosConnectionString);
 
         // Act
         builder.AddDbContext<RegistrationProbeDbContext>(database => database
-            .UseCosmosDb(ConnectionStringKey)
+            .UseCosmos(ConnectionStringKey)
             .EnableOutboxProcessing());
 
         // Assert
@@ -140,7 +140,7 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void UseCosmosDbPreservesAUserStoreSelectedBeforeIt()
+    public void UseCosmosPreservesAUserStoreSelectedBeforeIt()
     {
         // Arrange
         var builder = NewBuilder(CosmosConnectionString);
@@ -148,7 +148,7 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddDbContext<RegistrationProbeDbContext>(database => database
             .UseOutboxStore<CustomOutboxStore>()
-            .UseCosmosDb(ConnectionStringKey)
+            .UseCosmos(ConnectionStringKey)
             .EnableOutboxProcessing());
 
         // Assert
@@ -156,7 +156,7 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void UseCosmosDbPreservesAUserStoreSelectedAfterIt()
+    public void UseCosmosPreservesAUserStoreSelectedAfterIt()
     {
         // Arrange
         var builder = NewBuilder(CosmosConnectionString);
@@ -164,7 +164,7 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
         // Act
         builder.AddDbContext<RegistrationProbeDbContext>(database => database
             .EnableOutboxProcessing()
-            .UseCosmosDb(ConnectionStringKey)
+            .UseCosmos(ConnectionStringKey)
             .UseOutboxStore<CustomOutboxStore>());
 
         // Assert
@@ -294,13 +294,13 @@ public sealed class ProviderOutboxRegistrationTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void UseCosmosDbThrowsWhenConfiguratorIsNull()
+    public void UseCosmosThrowsWhenConfiguratorIsNull()
     {
         // Arrange
         IDatabaseInfrastructureConfigurator<RegistrationProbeDbContext> configurator = null!;
 
         // Act
-        var act = () => configurator.UseCosmosDb(ConnectionStringKey);
+        var act = () => configurator.UseCosmos(ConnectionStringKey);
 
         // Assert
         Should.Throw<ArgumentNullException>(act);

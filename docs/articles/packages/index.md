@@ -19,7 +19,7 @@ Focused usage guidance for each package in `src`. Pick the page that matches the
 - [Vulthil.SharedKernel.Infrastructure.Relational](vulthil-sharedkernel-infrastructure-relational.md) – relational outbox store base and `MigrateAsync` for EF Core providers.
 - [Vulthil.SharedKernel.Infrastructure.Npgsql](vulthil-sharedkernel-infrastructure-npgsql.md) – `UseNpgsql` provider wiring with PostgreSQL-tuned outbox.
 - [Vulthil.SharedKernel.Infrastructure.MySql](vulthil-sharedkernel-infrastructure-mysql.md) – `UseMySql` provider wiring with MySQL-tuned outbox.
-- [Vulthil.SharedKernel.Infrastructure.Cosmos](vulthil-sharedkernel-infrastructure-cosmos.md) – `UseCosmosDb` provider wiring with Cosmos-specific outbox.
+- [Vulthil.SharedKernel.Infrastructure.Cosmos](vulthil-sharedkernel-infrastructure-cosmos.md) – `UseCosmos` provider wiring with Cosmos-specific outbox.
 
 ## API
 

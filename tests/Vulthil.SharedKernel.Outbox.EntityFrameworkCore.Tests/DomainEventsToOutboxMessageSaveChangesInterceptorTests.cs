@@ -92,8 +92,6 @@ public sealed class DomainEventsToOutboxMessageSaveChangesInterceptorTests : Bas
 
         public DbSet<TestAggregate> Aggregates => Set<TestAggregate>();
 
-        public bool IsInTransaction => Database.CurrentTransaction is not null;
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);

@@ -21,6 +21,6 @@ public class CosmosOutboxStore<TContext>(TContext dbContext, TimeProvider timePr
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>Always <see langword="null"/>.</returns>
-    protected override Task<IDbTransaction?> BeginTransactionAsync(CancellationToken cancellationToken) =>
-        Task.FromResult<IDbTransaction?>(null);
+    protected override Task<IUnitOfWorkTransaction?> BeginTransactionAsync(CancellationToken cancellationToken) =>
+        Task.FromResult<IUnitOfWorkTransaction?>(null);
 }

@@ -9,8 +9,8 @@ public static class DependencyInjection
     {
         services.AddApplication(appOptions =>
         {
-            appOptions.AddRequestLoggingBehavior()
-                .AddDomainEventLoggingBehavior()
+            appOptions.AddRequestLoggingPipelineBehavior()
+                .AddDomainEventLoggingPipelineBehavior()
                 .AddValidationPipelineBehavior()
                 .AddTransactionalPipelineBehavior()
                 .RegisterHandlerAssemblies(typeof(DependencyInjection).Assembly)

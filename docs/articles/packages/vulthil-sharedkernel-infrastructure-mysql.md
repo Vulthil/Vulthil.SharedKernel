@@ -37,10 +37,15 @@ builder.AddDbContext<AppDbContext>(config => config
 
 ### Configuring the provider
 
-`UseMySql` takes an optional `configureSettings` delegate that configures the MySQL provider options (`MySqlDbContextOptionsBuilder`):
+`UseMySql` takes two optional delegates. `configureMySql` configures the MySQL provider options
+(`MySqlDbContextOptionsBuilder`). `configureDbContextOptions` configures the `DbContextOptionsBuilder`, for example to
+add interceptors or a naming convention; it runs after the MySQL provider is selected:
 
 ```csharp
-config.UseMySql("Default", mySql => mySql.CommandTimeout(30));
+config.UseMySql(
+    "Default",
+    configureMySql: mySql => mySql.CommandTimeout(30),
+    configureDbContextOptions: options => options.AddInterceptors(new AuditInterceptor()));
 ```
 
 ### Applying migrations on startup

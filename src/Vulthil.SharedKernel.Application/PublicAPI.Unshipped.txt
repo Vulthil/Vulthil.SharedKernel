@@ -6,3 +6,18 @@ virtual Vulthil.SharedKernel.Application.Pipeline.PipelineDelegate<TResponse>.In
 Vulthil.SharedKernel.Application.CommandValidationException
 Vulthil.SharedKernel.Application.CommandValidationException.CommandValidationException(System.Collections.Generic.IEnumerable<FluentValidation.Results.ValidationFailure!>! failures) -> void
 Vulthil.SharedKernel.Application.CommandValidationException.Error.get -> Vulthil.Results.ValidationError!
+*REMOVED*Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+*REMOVED*Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+*REMOVED*Vulthil.SharedKernel.Application.Data.IDbTransaction
+*REMOVED*Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+*REMOVED*Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+*REMOVED*Vulthil.SharedKernel.Application.Data.IUnitOfWork.BeginTransactionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IDbTransaction!>!
+*REMOVED*Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(object! notification, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+*REMOVED*Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync<TNotification>(TNotification notification, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingPipelineBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingPipelineBehavior() -> Vulthil.SharedKernel.Application.ApplicationOptions!
+Vulthil.SharedKernel.Application.Data.IUnitOfWork.BeginTransactionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction!>!
+Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction
+Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Vulthil.SharedKernel.Events.IDomainEvent! domainEvent, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!

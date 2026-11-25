@@ -24,19 +24,6 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
         await action.ShouldThrowAsync<ArgumentNullException>();
     }
 
-    [Fact]
-    public async Task PublishDomainEventNonDomainEvent()
-    {
-        // Arrange
-        var o = new { };
-        // Act
-        var action = () => Target.PublishAsync(o, CancellationToken);
-
-        // Assert
-        var argumentException = await action.ShouldThrowAsync<ArgumentException>();
-        argumentException.Message.ShouldBe($"notification does not implement {nameof(IDomainEvent)}");
-    }
-
     internal sealed record TestEvent : IDomainEvent;
 
     internal sealed class TestEventHandler(TextWriter textWriter) : IDomainEventHandler<TestEvent>
@@ -61,7 +48,7 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
         Use<IDomainEventPipelineHandler<TestEvent>>(new TestEventHandlerPipeline());
 
         // Act
-        await Target.PublishAsync((object)testEvent, CancellationToken);
+        await Target.PublishAsync(testEvent, CancellationToken);
 
         // Assert
         stringBuilder.ToString().ShouldContain("Success");
@@ -255,9 +242,10 @@ public sealed class DomainEventPublisherTests : BaseUnitTestCase
         services.AddSingleton<IDomainEventHandler<DerivedScriptedEvent>>(new DerivedScriptedEventHandler(log));
         await using var provider = services.BuildServiceProvider();
         Use<IServiceProvider>(provider);
+        BaseScriptedEvent domainEvent = new DerivedScriptedEvent();
 
         // Act
-        await Target.PublishAsync<BaseScriptedEvent>(new DerivedScriptedEvent(), CancellationToken);
+        await Target.PublishAsync(domainEvent, CancellationToken);
 
         // Assert
         log.ShouldBe(["derived"]);

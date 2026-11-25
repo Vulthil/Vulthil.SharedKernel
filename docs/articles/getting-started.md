@@ -17,7 +17,7 @@ The packages are organised into layers so you can adopt only what you need:
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.Relational` | Shared relational support and the relational outbox store base |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.Npgsql` | PostgreSQL provider integration (`UseNpgsql`) |
 | Infrastructure | `Vulthil.SharedKernel.Infrastructure.MySql` | MySQL provider integration (`UseMySql`) |
-| Infrastructure | `Vulthil.SharedKernel.Infrastructure.Cosmos` | Azure Cosmos DB provider integration (`UseCosmosDb`) |
+| Infrastructure | `Vulthil.SharedKernel.Infrastructure.Cosmos` | Azure Cosmos DB provider integration (`UseCosmos`) |
 | API | `Vulthil.SharedKernel.Api` | Minimal API endpoint conventions and `Result` → HTTP mapping |
 | Hosting | `Vulthil.Extensions.Hosting` | `IRestartableHostedService` marker and `RestartableBackgroundService` base for cleanly pausable hosted services |
 | Messaging | `Vulthil.Messaging.Abstractions` | Transport-agnostic consumer and publisher contracts |

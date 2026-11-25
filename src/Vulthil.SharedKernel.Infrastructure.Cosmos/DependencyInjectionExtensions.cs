@@ -18,7 +18,7 @@ public static class DependencyInjectionExtensions
     /// <param name="configureSettings">An optional action to configure the Cosmos DB settings.</param>
     /// <param name="configureDbContextOptions">An optional action to configure the DbContext options.</param>
     /// <returns>The configurator for chaining.</returns>
-    public static IDatabaseInfrastructureConfigurator<TDbContext> UseCosmosDb<TDbContext>(
+    public static IDatabaseInfrastructureConfigurator<TDbContext> UseCosmos<TDbContext>(
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionStringKey,
         Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>? configureSettings = null,

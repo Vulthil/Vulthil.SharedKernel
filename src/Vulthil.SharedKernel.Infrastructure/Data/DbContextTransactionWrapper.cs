@@ -4,10 +4,10 @@ using Vulthil.SharedKernel.Application.Data;
 namespace Vulthil.SharedKernel.Infrastructure.Data;
 
 /// <summary>
-/// Wraps an EF Core <see cref="IDbContextTransaction"/> as an <see cref="IDbTransaction"/>.
+/// Wraps an EF Core <see cref="IDbContextTransaction"/> as an <see cref="IUnitOfWorkTransaction"/>.
 /// </summary>
 /// <param name="dbContextTransaction">The underlying EF Core transaction.</param>
-public sealed class DbContextTransactionWrapper(IDbContextTransaction dbContextTransaction) : IDbTransaction
+public sealed class DbContextTransactionWrapper(IDbContextTransaction dbContextTransaction) : IUnitOfWorkTransaction
 {
     private readonly IDbContextTransaction _dbContextTransaction = dbContextTransaction;
 

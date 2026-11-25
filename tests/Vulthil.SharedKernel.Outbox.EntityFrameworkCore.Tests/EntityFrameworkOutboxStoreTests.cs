@@ -20,6 +20,27 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
     protected override async ValueTask Dispose() => await _connection.DisposeAsync();
 
     [Fact]
+    public async Task IsInTransactionIsTrueOnlyWhileTheContextHasATransaction()
+    {
+        // Arrange
+        await using var context = NewContext();
+        var store = NewStore(context);
+        var before = store.IsInTransaction;
+
+        // Act
+        bool during;
+        await using (await context.Database.BeginTransactionAsync(CancellationToken))
+        {
+            during = store.IsInTransaction;
+        }
+
+        // Assert
+        before.ShouldBeFalse();
+        during.ShouldBeTrue();
+        store.IsInTransaction.ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task DeadLettersAMessageAfterExhaustingRetries()
     {
         // Arrange
@@ -317,8 +338,6 @@ public sealed class EntityFrameworkOutboxStoreTests : BaseUnitTestCase
     public sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options), ISaveOutboxMessages
     {
         public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
-
-        public bool IsInTransaction => Database.CurrentTransaction is not null;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -40,7 +40,7 @@ public sealed class MyProviderOutboxStore<TContext>(TContext dbContext, TimeProv
     : RelationalOutboxStore<TContext>(dbContext, timeProvider)
     where TContext : DbContext, ISaveOutboxMessages
 {
-    protected override Task<List<OutboxMessageData>> FetchMessagesAsync(
+    protected override Task<IReadOnlyList<OutboxMessageData>> FetchMessagesAsync(
         int batchSize, int maxRetries, CancellationToken cancellationToken) =>
         FetchMessagesWithRowLockAsync("FOR UPDATE SKIP LOCKED", batchSize, maxRetries, cancellationToken);
 }

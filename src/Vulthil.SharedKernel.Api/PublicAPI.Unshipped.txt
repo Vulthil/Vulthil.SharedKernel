@@ -10,3 +10,5 @@ Vulthil.SharedKernel.Api.ProducesErrorAttribute
 Vulthil.SharedKernel.Api.ProducesErrorAttribute.ErrorType.get -> Vulthil.Results.ErrorType
 Vulthil.SharedKernel.Api.ProducesErrorAttribute.ProducesErrorAttribute(Vulthil.Results.ErrorType errorType) -> void
 Vulthil.SharedKernel.Api.ProducesErrorsExtensions
+*REMOVED*static Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(this Microsoft.AspNetCore.Builder.WebApplication! app, Microsoft.AspNetCore.Routing.RouteGroupBuilder? routeGroupBuilder = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+static Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints<TBuilder>(this TBuilder builder) -> TBuilder

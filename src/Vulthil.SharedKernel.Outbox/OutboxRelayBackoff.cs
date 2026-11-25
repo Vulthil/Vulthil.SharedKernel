@@ -40,9 +40,8 @@ internal static class OutboxRelayBackoff
         var baseDelay = BaseDelay(options);
         var doubled = previousDelay * 2;
         var atLeastBase = doubled < baseDelay ? baseDelay : doubled;
-        var maxDelay = TimeSpan.FromSeconds(options.MaxDelaySeconds);
-        return atLeastBase > maxDelay ? maxDelay : atLeastBase;
+        return atLeastBase > options.MaxPollingInterval ? options.MaxPollingInterval : atLeastBase;
     }
 
-    private static TimeSpan BaseDelay(OutboxProcessingOptions options) => TimeSpan.FromSeconds(options.OutboxProcessingDelaySeconds);
+    private static TimeSpan BaseDelay(OutboxProcessingOptions options) => options.PollingInterval;
 }

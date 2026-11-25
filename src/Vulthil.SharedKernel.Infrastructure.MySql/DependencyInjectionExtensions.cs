@@ -28,12 +28,17 @@ public static class DependencyInjectionExtensions
     /// <typeparam name="TDbContext">The application's <c>DbContext</c>; it must expose the outbox set via <c>ISaveOutboxMessages</c>.</typeparam>
     /// <param name="configurator">The database infrastructure configurator.</param>
     /// <param name="connectionStringKey">The connection-string name resolved from the host's configuration.</param>
-    /// <param name="configureSettings">An optional action to configure the MySQL provider options (e.g. command timeout).</param>
+    /// <param name="configureMySql">An optional action to configure the MySQL provider options (e.g. command timeout).</param>
+    /// <param name="configureDbContextOptions">
+    /// An optional action to configure the <see cref="DbContextOptionsBuilder"/>, for example to add interceptors or a
+    /// naming convention. It runs after the MySQL provider is selected.
+    /// </param>
     /// <returns>The configurator for chaining.</returns>
     public static IDatabaseInfrastructureConfigurator<TDbContext> UseMySql<TDbContext>(
         this IDatabaseInfrastructureConfigurator<TDbContext> configurator,
         string connectionStringKey,
-        Action<MySqlDbContextOptionsBuilder>? configureSettings = null)
+        Action<MySqlDbContextOptionsBuilder>? configureMySql = null,
+        Action<DbContextOptionsBuilder>? configureDbContextOptions = null)
         where TDbContext : DbContext, ISaveOutboxMessages
     {
         ArgumentNullException.ThrowIfNull(configurator);
@@ -46,7 +51,10 @@ public static class DependencyInjectionExtensions
                 ?? throw new InvalidOperationException($"A connection string named '{connectionStringKey}' was not found.");
 
             c.HostApplicationBuilder.Services.AddDbContextPool<TDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), configureSettings));
+            {
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), configureMySql);
+                configureDbContextOptions?.Invoke(options);
+            });
 
             if (c.OutboxProcessingEnabled)
             {

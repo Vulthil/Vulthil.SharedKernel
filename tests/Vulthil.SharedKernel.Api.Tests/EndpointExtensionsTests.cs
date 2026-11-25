@@ -50,6 +50,22 @@ public sealed class EndpointExtensionsTests : BaseUnitTestCase
     }
 
     [Fact]
+    public void MapEndpointsReturnsTheWebApplicationForChaining()
+    {
+        // Arrange
+        var builder = WebApplication.CreateBuilder();
+        builder.Services.AddScoped<ScopedMarker>();
+        builder.Services.AddEndpoints(typeof(EndpointExtensionsTests).Assembly);
+        using var app = builder.Build();
+
+        // Act
+        var result = app.MapEndpoints();
+
+        // Assert
+        Assert.Same(app, result);
+    }
+
+    [Fact]
     public void MapEndpointsMapsEachDiscoveredEndpointThroughTheProvidedRouteGroup()
     {
         // Arrange
@@ -60,10 +76,10 @@ public sealed class EndpointExtensionsTests : BaseUnitTestCase
         var group = app.MapGroup("scoped-group");
 
         // Act
-        var result = app.MapEndpoints(group);
+        var result = group.MapEndpoints();
 
         // Assert
-        Assert.Same(app, result);
+        Assert.Same(group, result);
         Assert.Contains(builder.Services, descriptor => descriptor.ImplementationType == typeof(RecordingEndpoint));
         IEndpointRouteBuilder endpointRouteBuilder = app;
         var routePatterns = endpointRouteBuilder.DataSources
@@ -75,12 +91,12 @@ public sealed class EndpointExtensionsTests : BaseUnitTestCase
     }
 
     [Fact]
-    public void MapEndpointsThrowsOnNullApp()
+    public void MapEndpointsThrowsOnNullBuilder()
     {
         // Arrange
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => EndpointExtensions.MapEndpoints(null!));
+        Assert.Throws<ArgumentNullException>(() => EndpointExtensions.MapEndpoints<WebApplication>(null!));
     }
 
     [Fact]

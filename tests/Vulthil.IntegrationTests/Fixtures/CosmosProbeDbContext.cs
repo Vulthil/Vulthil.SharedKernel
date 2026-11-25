@@ -23,8 +23,6 @@ internal sealed class CosmosProbeDbContext(DbContextOptions<CosmosProbeDbContext
 
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
-    public bool IsInTransaction => Database.CurrentTransaction is not null;
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);

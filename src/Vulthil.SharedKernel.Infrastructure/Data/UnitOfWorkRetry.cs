@@ -12,7 +12,7 @@ internal static class UnitOfWorkRetry
 {
     public static Task<TResult> ExecuteAsync<TResult>(
         IExecutionStrategy strategy,
-        Func<CancellationToken, Task<IDbTransaction>> beginTransaction,
+        Func<CancellationToken, Task<IUnitOfWorkTransaction>> beginTransaction,
         Action prepareRetry,
         Func<CancellationToken, Task<TResult>> operation,
         Func<TResult, bool> shouldCommit,

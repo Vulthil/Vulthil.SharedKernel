@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Vulthil.IntegrationTests.Fixtures;
 using Vulthil.SharedKernel.Events;
@@ -18,6 +19,22 @@ namespace Vulthil.IntegrationTests;
 public sealed class MySqlOutboxIntegrationTests(MySqlOutboxHostFixture fixture) : BaseUnitTestCase, IClassFixture<MySqlOutboxHostFixture>
 {
     protected override async ValueTask Dispose() => await fixture.ResetOutboxStateAsync(CancellationToken);
+
+    [Fact]
+    public async Task UseMySqlAppliesTheMySqlOptionsAndTheDbContextOptions()
+    {
+        // Arrange
+        await using var scope = fixture.Services.CreateAsyncScope();
+
+        // Act
+        var context = scope.ServiceProvider.GetRequiredService<MySqlOutboxDbContext>();
+
+        // Assert
+        context.Database.GetCommandTimeout().ShouldBe(MySqlOutboxHostFixture.CommandTimeoutSeconds);
+        context.GetService<IDbContextOptions>().FindExtension<CoreOptionsExtension>().ShouldNotBeNull()
+            .Interceptors.ShouldNotBeNull()
+            .ShouldContain(interceptor => interceptor is MySqlOutboxHostFixture.MarkerCommandInterceptor);
+    }
 
     [Fact]
     public async Task ResolvesTheMySqlStoreAndRelaysACapturedDomainEvent()

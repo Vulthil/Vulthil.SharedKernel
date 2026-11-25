@@ -9,8 +9,8 @@ public sealed class OutboxRelayBackoffTests : BaseUnitTestCase
     private static readonly OutboxProcessingOptions RelayOptions = new()
     {
         BatchSize = BatchSize,
-        OutboxProcessingDelaySeconds = 2,
-        MaxDelaySeconds = 60,
+        PollingInterval = TimeSpan.FromSeconds(2),
+        MaxPollingInterval = TimeSpan.FromSeconds(60),
     };
 
     [Fact]

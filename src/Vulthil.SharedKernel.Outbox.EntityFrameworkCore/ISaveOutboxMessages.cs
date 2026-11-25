@@ -14,13 +14,6 @@ public interface ISaveOutboxMessages
     DbSet<OutboxMessage> OutboxMessages { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the persistence context currently has an active database transaction. The
-    /// transactional outbox uses this to decide whether an outgoing message should be captured into the outbox
-    /// (atomically with the in-flight business changes) or published directly.
-    /// </summary>
-    bool IsInTransaction { get; }
-
-    /// <summary>
     /// Persists the pending outbox-message changes tracked by the context to the database.
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>

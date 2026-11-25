@@ -20,7 +20,7 @@ public interface IUnitOfWork
     /// </summary>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>A transaction that can be committed or rolled back.</returns>
-    Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+    Task<IUnitOfWorkTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Runs <paramref name="operation"/> inside a database transaction, committing on success and rolling back on
@@ -75,21 +75,4 @@ public interface IUnitOfWork
     /// the operation cannot be retried.
     /// </exception>
     Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, Func<TResult, bool> shouldCommit, CancellationToken cancellationToken = default);
-}
-
-/// <summary>
-/// Represents an active database transaction that can be committed or rolled back.
-/// </summary>
-public interface IDbTransaction : IAsyncDisposable
-{
-    /// <summary>
-    /// Commits the transaction, persisting all changes.
-    /// </summary>
-    /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    Task CommitAsync(CancellationToken cancellationToken = default);
-    /// <summary>
-    /// Rolls back the transaction, discarding all changes.
-    /// </summary>
-    /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    Task RollbackAsync(CancellationToken cancellationToken = default);
 }

@@ -6,14 +6,16 @@ namespace Vulthil.SharedKernel.Outbox;
 public sealed class OutboxProcessingOptions
 {
     /// <summary>
-    /// Gets the base polling delay in seconds between outbox processing cycles. Default is 2.
+    /// Gets or sets the base wait between outbox processing cycles. It must be between 1 and 100 seconds. Default is
+    /// 2 seconds.
     /// </summary>
-    public int OutboxProcessingDelaySeconds { get; set; } = 2;
+    public TimeSpan PollingInterval { get; set; } = TimeSpan.FromSeconds(2);
     /// <summary>
-    /// Gets the maximum back-off delay in seconds: the wait doubles up to this value after a cycle that relays nothing
-    /// (no pending message, or every claimed message failed) and after a cycle that faults. Default is 60.
+    /// Gets or sets the maximum back-off wait: the wait doubles up to this value after a cycle that relays nothing
+    /// (no pending message, or every claimed message failed) and after a cycle that faults. It must be between 1 and
+    /// 300 seconds, and at least <see cref="PollingInterval"/>. Default is 60 seconds.
     /// </summary>
-    public int MaxDelaySeconds { get; set; } = 60;
+    public TimeSpan MaxPollingInterval { get; set; } = TimeSpan.FromSeconds(60);
     /// <summary>
     /// Gets the maximum number of outbox messages to process per cycle. Default is 10.
     /// </summary>

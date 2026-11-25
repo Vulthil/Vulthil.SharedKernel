@@ -12,7 +12,7 @@ public static class DependencyInjection
     public static IHostApplicationBuilder AddCatalogPersistence(this IHostApplicationBuilder builder, string connectionStringKey)
     {
         builder.AddDbContext<CatalogDbContext>(database => database
-            .UseCosmosDb(connectionStringKey, settings => settings.RequestTimeout = TimeSpan.FromSeconds(30))
+            .UseCosmos(connectionStringKey, settings => settings.RequestTimeout = TimeSpan.FromSeconds(30))
             .EnableOutboxProcessing(outbox =>
             {
                 // Each relayed message is dispatched in a scope of its own, so handlers run side by side without

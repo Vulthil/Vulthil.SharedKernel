@@ -8,7 +8,7 @@ namespace Vulthil.SharedKernel.Application;
 /// <summary>
 /// Configuration options for FluentValidation assembly scanning.
 /// </summary>
-public class FluentValidationOptions
+public sealed class FluentValidationOptions
 {
     private readonly List<Assembly> _fluentValidationAssemblies = [];
 
@@ -32,7 +32,7 @@ public class FluentValidationOptions
 /// <summary>
 /// Configuration options for handler assembly scanning and pipeline registration.
 /// </summary>
-public class HandlerOptions
+public sealed class HandlerOptions
 {
     private readonly List<Assembly> _handlerAssemblies = [];
     private readonly List<ServiceDescriptor> _pipelineHandlers = [];
@@ -117,7 +117,7 @@ public sealed class ApplicationOptions
     /// Adds the request logging pipeline behavior.
     /// </summary>
     /// <returns>The current options instance for chaining.</returns>
-    public ApplicationOptions AddRequestLoggingBehavior()
+    public ApplicationOptions AddRequestLoggingPipelineBehavior()
     {
         HandlerOptions.AddOpenPipelineHandler(typeof(LoggingBehaviors.RequestLoggingPipelineBehavior<,>));
         return this;
@@ -127,7 +127,7 @@ public sealed class ApplicationOptions
     /// Adds the domain event logging pipeline behavior.
     /// </summary>
     /// <returns>The current options instance for chaining.</returns>
-    public ApplicationOptions AddDomainEventLoggingBehavior()
+    public ApplicationOptions AddDomainEventLoggingPipelineBehavior()
     {
         HandlerOptions.AddOpenDomainEventPipelineHandler(typeof(LoggingBehaviors.DomainEventLoggingPipelineBehavior<>));
         return this;

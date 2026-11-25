@@ -32,7 +32,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
     /// <exception cref="InvalidOperationException">
     /// <typeparamref name="TContext"/> does not implement <see cref="IUnitOfWork"/>, so no transaction could be opened.
     /// </exception>
-    protected override async Task<IDbTransaction?> BeginTransactionAsync(CancellationToken cancellationToken)
+    protected override async Task<IUnitOfWorkTransaction?> BeginTransactionAsync(CancellationToken cancellationToken)
     {
         var transaction = await base.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
@@ -61,7 +61,7 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
     /// <exception cref="InvalidOperationException">
     /// <typeparamref name="TContext"/> does not map the outbox entity, or one of the relay's columns, to a table.
     /// </exception>
-    protected Task<List<OutboxMessageData>> FetchMessagesWithRowLockAsync(string rowLockClause, int batchSize, int maxRetries, CancellationToken cancellationToken)
+    protected async Task<IReadOnlyList<OutboxMessageData>> FetchMessagesWithRowLockAsync(string rowLockClause, int batchSize, int maxRetries, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(rowLockClause);
         _identifiers ??= OutboxSqlIdentifiers.Resolve(DbContext);
@@ -74,12 +74,12 @@ public class RelationalOutboxStore<TContext>(TContext dbContext, TimeProvider ti
             {{rowLockClause}}
             """;
 
-        return OutboxMessages
+        return await OutboxMessages
             .FromSql(FormattableStringFactory.Create(fetchSqlFormat, maxRetries, batchSize))
             .OrderBy(x => x.OccurredOnUtc)
             .ThenBy(x => x.Id)
             .Select(x => new OutboxMessageData(x.Id, x.Type, x.Content, x.TraceParent, x.TraceState, x.Destination, x.Metadata))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

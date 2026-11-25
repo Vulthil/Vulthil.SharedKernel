@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vulthil.SharedKernel.Infrastructure;
@@ -92,17 +93,32 @@ public abstract class ProviderOutboxHostFixture<TDbContext>(IntegrationTestConta
 }
 
 /// <summary>
-/// Host fixture for the MySQL outbox tests: registers <see cref="MySqlOutboxDbContext"/> through <c>UseMySql</c>.
+/// Host fixture for the MySQL outbox tests: registers <see cref="MySqlOutboxDbContext"/> through <c>UseMySql</c>, with
+/// both of its options delegates.
 /// </summary>
 public sealed class MySqlOutboxHostFixture(IntegrationTestContainerHost containerHost) : ProviderOutboxHostFixture<MySqlOutboxDbContext>(containerHost)
 {
+    /// <summary>
+    /// Gets the command timeout, in seconds, that the fixture sets through the MySQL options delegate of <c>UseMySql</c>.
+    /// </summary>
+    public const int CommandTimeoutSeconds = 45;
+
     protected override ITestContainer SelectContainer(IntegrationTestContainerHost host) =>
         host.Containers.OfType<MySqlTestContainer>().Single();
 
     protected override void RegisterDatabase(IHostApplicationBuilder builder, string connectionStringKey) =>
         builder.AddDbContext<MySqlOutboxDbContext>(database => database
-            .UseMySql(connectionStringKey)
+            .UseMySql(
+                connectionStringKey,
+                configureMySql: mySql => mySql.CommandTimeout(CommandTimeoutSeconds),
+                configureDbContextOptions: options => options.AddInterceptors(new MarkerCommandInterceptor()))
             .EnableOutboxProcessing());
+
+    /// <summary>
+    /// An interceptor that changes nothing; the fixture adds it through the <c>DbContextOptionsBuilder</c> delegate of
+    /// <c>UseMySql</c>, so a test can find it in the context options.
+    /// </summary>
+    public sealed class MarkerCommandInterceptor : DbCommandInterceptor;
 
     protected override Task ResetAdditionalStateAsync(MySqlOutboxDbContext context, CancellationToken cancellationToken) =>
         context.Probes.ExecuteDeleteAsync(cancellationToken);

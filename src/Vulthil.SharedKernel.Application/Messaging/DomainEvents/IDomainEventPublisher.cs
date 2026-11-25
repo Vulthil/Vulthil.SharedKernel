@@ -19,22 +19,10 @@ public interface IDomainEventPublisher
     /// <summary>
     /// Publishes a domain event by its runtime type to all registered handlers.
     /// </summary>
-    /// <param name="notification">The domain event to publish.</param>
+    /// <param name="domainEvent">The domain event to publish.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="notification"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="notification"/> does not implement <see cref="IDomainEvent"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="domainEvent"/> is <see langword="null"/>.</exception>
     /// <exception cref="AggregateException">One or more handlers failed; every handler still ran.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> was canceled.</exception>
-    Task PublishAsync(object notification, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Publishes a strongly-typed domain event to all registered handlers.
-    /// </summary>
-    /// <typeparam name="TNotification">The type of domain event to publish.</typeparam>
-    /// <param name="notification">The domain event to publish.</param>
-    /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="notification"/> is <see langword="null"/>.</exception>
-    /// <exception cref="AggregateException">One or more handlers failed; every handler still ran.</exception>
-    /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> was canceled.</exception>
-    Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : IDomainEvent;
+    Task PublishAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default);
 }

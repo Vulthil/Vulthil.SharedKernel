@@ -110,7 +110,7 @@ Cosmos has no migrations — call `EnsureCreatedAsync<AppDbContext>()` instead.
 |---|---|---|---|---|
 | PostgreSQL | `UseNpgsql` | `ApplyNpgsqlOutbox()` | `AddRelationalInbox<T>()` | `ApplyRelationalInbox()` |
 | MySQL | `UseMySql` | `ApplyMySqlOutbox()` | `AddRelationalInbox<T>()` | `ApplyRelationalInbox()` |
-| Cosmos DB | `UseCosmosDb` | `ApplyCosmosOutbox()` | `AddCosmosInbox<T>()` | `ApplyCosmosInbox()` |
+| Cosmos DB | `UseCosmos` | `ApplyCosmosOutbox()` | `AddCosmosInbox<T>()` | `ApplyCosmosInbox()` |
 
 On Cosmos the inbox is effectively-once and the outbox relay runs without a transaction; the pattern articles list
 the guarantee per store.

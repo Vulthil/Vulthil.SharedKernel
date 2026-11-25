@@ -19,6 +19,6 @@ public class NpgsqlOutboxStore<TContext>(TContext dbContext, TimeProvider timePr
     private const string RowLockClause = "FOR UPDATE SKIP LOCKED";
 
     /// <inheritdoc />
-    protected override Task<List<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
+    protected override Task<IReadOnlyList<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
         FetchMessagesWithRowLockAsync(RowLockClause, batchSize, maxRetries, cancellationToken);
 }

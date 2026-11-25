@@ -47,7 +47,7 @@ internal sealed class CompositeUnitOfWork : IUnitOfWork
     }
 
     /// <inheritdoc />
-    public Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) =>
+    public Task<IUnitOfWorkTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) =>
         BeginTransactionsAsync(_commitOrder, cancellationToken);
 
     /// <inheritdoc />
@@ -94,7 +94,7 @@ internal sealed class CompositeUnitOfWork : IUnitOfWork
         UnitOfWorkRetry.Prepare(_contexts, hadUnsavedChanges);
     }
 
-    private static async Task<IDbTransaction> BeginTransactionsAsync(IEnumerable<DbContext> contexts, CancellationToken cancellationToken)
+    private static async Task<IUnitOfWorkTransaction> BeginTransactionsAsync(IEnumerable<DbContext> contexts, CancellationToken cancellationToken)
     {
         var transaction = new CompositeTransaction();
         try
@@ -133,7 +133,7 @@ internal sealed class CompositeUnitOfWork : IUnitOfWork
     /// <summary>
     /// The transactions of one unit, committed one by one in commit order.
     /// </summary>
-    private sealed class CompositeTransaction : IDbTransaction
+    private sealed class CompositeTransaction : IUnitOfWorkTransaction
     {
         private readonly List<(DbContext Context, IDbContextTransaction Transaction)> _transactions = [];
 

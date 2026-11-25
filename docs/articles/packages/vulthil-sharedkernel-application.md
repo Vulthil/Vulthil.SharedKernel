@@ -25,7 +25,7 @@ services.AddApplication(options =>
     options.RegisterFluentValidationAssemblies(typeof(Program).Assembly);
 
     // The first behavior registered is the outermost.
-    options.AddRequestLoggingBehavior();
+    options.AddRequestLoggingPipelineBehavior();
     options.AddValidationPipelineBehavior();
     options.AddTransactionalPipelineBehavior();
 });

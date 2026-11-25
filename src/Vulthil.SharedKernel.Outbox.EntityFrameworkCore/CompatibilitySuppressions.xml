@@ -17,7 +17,21 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.BeginTransactionAsync(System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.DeleteProcessedAsync(System.DateTimeOffset,System.Int32,System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.FetchMessagesAsync(System.Int32,System.Int32,System.Threading.CancellationToken)</Target>
     <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
     <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -32,6 +46,13 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.EntityFrameworkOutboxStore`1.UpdateMessagesAsync(System.Collections.Generic.IReadOnlyList{System.Guid},System.Collections.Generic.IReadOnlyList{Vulthil.SharedKernel.Outbox.OutboxMessageFailure},System.Int32,System.DateTimeOffset,System.Threading.CancellationToken)</Target>
+    <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
+    <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.get_IsInTransaction</Target>
     <Left>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Left>
     <Right>lib/net10.0/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>

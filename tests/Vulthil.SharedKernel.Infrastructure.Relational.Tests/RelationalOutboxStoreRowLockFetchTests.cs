@@ -200,7 +200,7 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
         : RelationalOutboxStore<TContext>(dbContext, TimeProvider.System)
         where TContext : DbContext, ISaveOutboxMessages
     {
-        protected override Task<List<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
+        protected override Task<IReadOnlyList<OutboxMessageData>> FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken) =>
             FetchMessagesWithRowLockAsync(rowLockClause, batchSize, maxRetries, cancellationToken);
     }
 

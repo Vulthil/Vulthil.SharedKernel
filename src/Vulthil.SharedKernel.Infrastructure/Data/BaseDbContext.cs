@@ -15,7 +15,9 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
     /// <inheritdoc />
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets a value indicating whether the context currently has an active database transaction.
+    /// </summary>
     public bool IsInTransaction => Database.CurrentTransaction is not null;
 
     /// <summary>
@@ -41,7 +43,7 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
     }
 
     /// <inheritdoc />
-    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false));
+    public async Task<IUnitOfWorkTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) =>

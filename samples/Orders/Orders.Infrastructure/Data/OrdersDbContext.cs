@@ -45,8 +45,6 @@ public sealed class OrdersDbContextWithoutBase(DbContextOptions<OrdersDbContextW
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
 
-    public bool IsInTransaction => Database.CurrentTransaction is not null;
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -56,7 +54,7 @@ public sealed class OrdersDbContextWithoutBase(DbContextOptions<OrdersDbContextW
         modelBuilder.ApplyRelationalInbox();
     }
 
-    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
+    public async Task<IUnitOfWorkTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => new DbContextTransactionWrapper(await Database.BeginTransactionAsync(cancellationToken));
 
     public Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) =>
         ExecuteInTransactionAsync(operation, static _ => true, cancellationToken);

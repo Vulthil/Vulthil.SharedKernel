@@ -140,7 +140,7 @@ is the derived configurator interface (e.g. <a class="xref" href="Vulthil.Messag
 
   <h3 id="Vulthil_Messaging_Queues_IBaseConfigurator_1_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__" data-uid="Vulthil.Messaging.Queues.IBaseConfigurator`1.UseRetry(System.Action{Vulthil.Messaging.Queues.RetryPolicyConfigurator})">
   UseRetry(Action&lt;RetryPolicyConfigurator&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IBaseConfigurator.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/IBaseConfigurator.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures a retry policy and returns the typed configurator for chaining.</p>
@@ -148,13 +148,14 @@ is the derived configurator interface (e.g. <a class="xref" href="Vulthil.Messag
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">TConfigurator UseRetry(Action&lt;RetryPolicyConfigurator&gt; value)</code></pre>
+    <pre><code class="lang-csharp hljs">TConfigurator UseRetry(Action&lt;RetryPolicyConfigurator&gt; configure)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.RetryPolicyConfigurator.html">RetryPolicyConfigurator</a>&gt;</dt>
-    <dd></dd>
+    <dt><code>configure</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.RetryPolicyConfigurator.html">RetryPolicyConfigurator</a>&gt;</dt>
+    <dd><p>Configures the retry policy.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>

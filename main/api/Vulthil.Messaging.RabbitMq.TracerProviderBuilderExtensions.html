@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class MessagingInstrumentation | Vulthil.SharedKernel </title>
+      <title>Class TracerProviderBuilderExtensions | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class MessagingInstrumentation | Vulthil.SharedKernel ">
+      <meta name="title" content="Class TracerProviderBuilderExtensions | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Provides the  emitted by the Vulthil RabbitMQ transport.">
+      <meta name="description" content="OpenTelemetry registration helpers for the Vulthil RabbitMQ transport.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_RabbitMq_Telemetry_MessagingInstrumentation.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_RabbitMq_TracerProviderBuilderExtensions.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,25 +84,25 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation">
+        <article data-uid="Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions">
 
 
 
-  <h1 id="Vulthil_Messaging_RabbitMq_Telemetry_MessagingInstrumentation" data-uid="Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation" class="text-break">
-Class MessagingInstrumentation  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/Telemetry/MessagingInstrumentation.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_Messaging_RabbitMq_TracerProviderBuilderExtensions" data-uid="Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions" class="text-break">
+Class TracerProviderBuilderExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/TracerProviderBuilderExtensions.cs/#L8"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.RabbitMq.html">RabbitMq</a>.<a class="xref" href="Vulthil.Messaging.RabbitMq.Telemetry.html">Telemetry</a></dd></dl>
+    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.RabbitMq.html">RabbitMq</a></dd></dl>
   <dl><dt>Assembly</dt><dd>Vulthil.Messaging.RabbitMq.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Provides the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.diagnostics.activitysource">ActivitySource</a> emitted by the Vulthil RabbitMQ transport.</p>
+  <div class="markdown summary"><p>OpenTelemetry registration helpers for the Vulthil RabbitMQ transport.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static class MessagingInstrumentation</code></pre>
+    <pre><code class="lang-csharp hljs">public static class TracerProviderBuilderExtensions</code></pre>
   </div>
 
 
@@ -112,7 +112,7 @@ Class MessagingInstrumentation  <a class="header-action link-secondary" title="V
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><span class="xref">MessagingInstrumentation</span></div>
+      <div><span class="xref">TracerProviderBuilderExtensions</span></div>
     </dd>
   </dl>
 
@@ -147,39 +147,42 @@ Class MessagingInstrumentation  <a class="header-action link-secondary" title="V
 
 
 
-  <h2 id="Vulthil_Messaging_RabbitMq_Telemetry_MessagingInstrumentation_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>Register this source with OpenTelemetry by calling
-<code>tracerProviderBuilder.AddVulthilMessagingInstrumentation()</code> or by adding the source name directly:
-<code>tracerProviderBuilder.AddSource(MessagingInstrumentation.ActivitySourceName)</code>.</p>
-</div>
 
 
-  <h2 class="section" id="fields">Fields
+  <h2 class="section" id="methods">Methods
 </h2>
 
 
+  <a id="Vulthil_Messaging_RabbitMq_TracerProviderBuilderExtensions_AddVulthilRabbitMqInstrumentation_" data-uid="Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation*"></a>
 
-  <h3 id="Vulthil_Messaging_RabbitMq_Telemetry_MessagingInstrumentation_ActivitySourceName" data-uid="Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.ActivitySourceName">
-  ActivitySourceName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/Telemetry/MessagingInstrumentation.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_Messaging_RabbitMq_TracerProviderBuilderExtensions_AddVulthilRabbitMqInstrumentation_OpenTelemetry_Trace_TracerProviderBuilder_" data-uid="Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)">
+  AddVulthilRabbitMqInstrumentation(TracerProviderBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/TracerProviderBuilderExtensions.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>The name of the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.diagnostics.activitysource">ActivitySource</a> used by the Vulthil RabbitMQ transport.</p>
+  <div class="markdown level1 summary"><p>Subscribes the tracer provider to the activity source emitted by the Vulthil RabbitMQ transport.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string ActivitySourceName = &quot;Vulthil.Messaging.RabbitMq&quot;</code></pre>
+    <pre><code class="lang-csharp hljs">public static TracerProviderBuilder AddVulthilRabbitMqInstrumentation(this TracerProviderBuilder builder)</code></pre>
   </div>
 
-
-
-
-  <h4 class="section">Field Value</h4>
+  <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dt><code>builder</code> <span class="xref">TracerProviderBuilder</span></dt>
+    <dd><p>The tracer provider builder.</p>
+</dd>
   </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">TracerProviderBuilder</span></dt>
+    <dd><p>The same builder, for chaining.</p>
+</dd>
+  </dl>
+
+
 
 
 
@@ -193,7 +196,7 @@ Class MessagingInstrumentation  <a class="header-action link-secondary" title="V
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/Telemetry/MessagingInstrumentation.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/TracerProviderBuilderExtensions.cs/#L8" class="edit-link">Edit this page</a>
         </div>
 
 

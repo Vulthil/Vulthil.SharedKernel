@@ -157,7 +157,7 @@ Class TransactionalOutboxExtensions  <a class="header-action link-secondary" tit
 
   <h3 id="Vulthil_Messaging_Outbox_TransactionalOutboxExtensions_AddTransactionalConsumer__1_Vulthil_Messaging_IMessagingConfigurator_" data-uid="Vulthil.Messaging.Outbox.TransactionalOutboxExtensions.AddTransactionalConsumer``1(Vulthil.Messaging.IMessagingConfigurator)">
   AddTransactionalConsumer&lt;TMessage&gt;(IMessagingConfigurator)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Outbox/TransactionalOutboxExtensions.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.Outbox/TransactionalOutboxExtensions.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Runs the consumer of <code class="typeparamref">TMessage</code> inside a database transaction, so its database writes and
@@ -188,7 +188,7 @@ also enabled for the type it opens the transaction first and this joins it. Requ
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
     <dt><code>TMessage</code></dt>
-    <dd><p>The consumed message type.</p>
+    <dd><p>The consumed message type, not the consumer type.</p>
 </dd>
   </dl>
 
@@ -198,6 +198,12 @@ also enabled for the type it opens the transaction first and this joins it. Requ
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p><code class="typeparamref">TMessage</code> is a consumer type.</p>
+</dd>
+  </dl>
 
 
 

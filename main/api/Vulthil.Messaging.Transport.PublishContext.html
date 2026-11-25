@@ -539,22 +539,23 @@ properties.</p>
 
   <a id="Vulthil_Messaging_Transport_PublishContext_AddHeaders_" data-uid="Vulthil.Messaging.Transport.PublishContext.AddHeaders*"></a>
 
-  <h3 id="Vulthil_Messaging_Transport_PublishContext_AddHeaders_System_Collections_Generic_IDictionary_System_String_System_Object__" data-uid="Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IDictionary{System.String,System.Object})">
-  AddHeaders(IDictionary&lt;string, object?&gt;)
+  <h3 id="Vulthil_Messaging_Transport_PublishContext_AddHeaders_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String_System_Object___" data-uid="Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+  AddHeaders(IEnumerable&lt;KeyValuePair&lt;string, object?&gt;&gt;)
   <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Adds multiple custom headers to the published message.</p>
+  <div class="markdown level1 summary"><p>Adds multiple custom headers to the published message. Any header collection fits, including the read-only
+<a class="xref" href="Vulthil.Messaging.Abstractions.Consumers.IMessageContext.html#Vulthil_Messaging_Abstractions_Consumers_IMessageContext_Headers">Headers</a> of a consumed message.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void AddHeaders(IDictionary&lt;string, object?&gt; headers)</code></pre>
+    <pre><code class="lang-csharp hljs">public void AddHeaders(IEnumerable&lt;KeyValuePair&lt;string, object?&gt;&gt; headers)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>headers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;</dt>
+    <dt><code>headers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;&gt;</dt>
     <dd><p>The headers to add.</p>
 </dd>
   </dl>
@@ -574,7 +575,7 @@ properties.</p>
 
   <h3 id="Vulthil_Messaging_Transport_PublishContext_SetConversationId_System_String_" data-uid="Vulthil.Messaging.Transport.PublishContext.SetConversationId(System.String)">
   SetConversationId(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the conversation identifier that groups related messages across services.</p>
@@ -607,7 +608,7 @@ properties.</p>
 
   <h3 id="Vulthil_Messaging_Transport_PublishContext_SetCorrelationId_System_String_" data-uid="Vulthil.Messaging.Transport.PublishContext.SetCorrelationId(System.String)">
   SetCorrelationId(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the correlation identifier for the published message.</p>
@@ -640,7 +641,7 @@ properties.</p>
 
   <h3 id="Vulthil_Messaging_Transport_PublishContext_SetFaultAddress_System_Uri_" data-uid="Vulthil.Messaging.Transport.PublishContext.SetFaultAddress(System.Uri)">
   SetFaultAddress(Uri)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the address where fault notifications for this message should be sent.</p>
@@ -673,7 +674,7 @@ properties.</p>
 
   <h3 id="Vulthil_Messaging_Transport_PublishContext_SetInitiatorId_System_String_" data-uid="Vulthil.Messaging.Transport.PublishContext.SetInitiatorId(System.String)">
   SetInitiatorId(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the identifier of the message that initiated this chain.</p>
@@ -706,7 +707,7 @@ properties.</p>
 
   <h3 id="Vulthil_Messaging_Transport_PublishContext_SetMessageId_System_String_" data-uid="Vulthil.Messaging.Transport.PublishContext.SetMessageId(System.String)">
   SetMessageId(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the unique message identifier assigned to the outgoing message.</p>
@@ -739,7 +740,7 @@ properties.</p>
 
   <h3 id="Vulthil_Messaging_Transport_PublishContext_SetResponseAddress_System_Uri_" data-uid="Vulthil.Messaging.Transport.PublishContext.SetResponseAddress(System.Uri)">
   SetResponseAddress(Uri)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the address where replies to this message should be sent.</p>
@@ -772,7 +773,7 @@ properties.</p>
 
   <h3 id="Vulthil_Messaging_Transport_PublishContext_SetRoutingKey_System_String_" data-uid="Vulthil.Messaging.Transport.PublishContext.SetRoutingKey(System.String)">
   SetRoutingKey(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Transport/PublishContext.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the routing key for the published message.</p>

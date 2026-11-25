@@ -111,9 +111,9 @@ the relay's transactional boundary (<code>RunRelayUnitAsync</code>, which hands 
 batch and record its outcomes); the EF implementation and provider stores supply the transaction and row-locking.
 The engine owns the relay cycle itself: batch size, dispatch, retry limit and back-off. <code>AddOutboxEngine</code> registers
 the engine's own internals.</li>
-<li>Relay spans are emitted on the <code>ActivitySource</code> <code>&quot;Vulthil.SharedKernel.Outbox&quot;</code> (<code>Telemetry.ActivitySourceName</code>),
+<li>Relay spans are emitted on the <code>ActivitySource</code> <code>&quot;Vulthil.SharedKernel.Outbox&quot;</code> (<code>OutboxTelemetry.ActivitySourceName</code>),
 auto-registered with OpenTelemetry by <code>AddOutboxEngine</code> (manual: <code>tracing.AddVulthilOutboxInstrumentation()</code>).</li>
-<li>Relay metrics (counters <code>vulthil.outbox.relayed</code>, <code>vulthil.outbox.failed</code> and <code>vulthil.outbox.dead_lettered</code>) are emitted on a <code>Meter</code> (<code>Telemetry.MeterName</code>),
+<li>Relay metrics (counters <code>vulthil.outbox.relayed</code>, <code>vulthil.outbox.failed</code> and <code>vulthil.outbox.dead_lettered</code>) are emitted on a <code>Meter</code> (<code>OutboxTelemetry.MeterName</code>),
 auto-registered by <code>AddOutboxEngine</code> when <code>EnableMetrics</code> is on (manual: <code>metrics.AddVulthilOutboxInstrumentation()</code>).
 Alert on <code>vulthil.outbox.dead_lettered</code>: it counts each message the relay gave up on.</li>
 <li>Opt into a retention sweep via <code>EnableOutboxProcessing(o =&gt; o.Retention.Enabled = true)</code> to periodically delete processed and dead-lettered rows

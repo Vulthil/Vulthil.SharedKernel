@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class Telemetry | Vulthil.SharedKernel </title>
+      <title>Class RabbitMqTelemetry | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class Telemetry | Vulthil.SharedKernel ">
+      <meta name="title" content="Class RabbitMqTelemetry | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Static class for holding the Telemetry ActivitySource used for all outbox processing operations, enabling consistent correlation of telemetry across the capture, processing, and publishing stages.">
+      <meta name="description" content="Provides the  emitted by the Vulthil RabbitMQ transport.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Outbox_Telemetry.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Outbox.Telemetry%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_Messaging_RabbitMq_RabbitMqTelemetry.md&amp;value=---%0Auid%3A%20Vulthil.Messaging.RabbitMq.RabbitMqTelemetry%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,25 +84,25 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.SharedKernel.Outbox.Telemetry">
+        <article data-uid="Vulthil.Messaging.RabbitMq.RabbitMqTelemetry">
 
 
 
-  <h1 id="Vulthil_SharedKernel_Outbox_Telemetry" data-uid="Vulthil.SharedKernel.Outbox.Telemetry" class="text-break">
-Class Telemetry  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/Telemetry.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_Messaging_RabbitMq_RabbitMqTelemetry" data-uid="Vulthil.Messaging.RabbitMq.RabbitMqTelemetry" class="text-break">
+Class RabbitMqTelemetry  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/RabbitMqTelemetry.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<span class="xref">SharedKernel</span>.<a class="xref" href="Vulthil.SharedKernel.Outbox.html">Outbox</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Outbox.dll</dd></dl>
+    <dl><dt>Namespace</dt><dd><span class="xref">Vulthil</span>.<a class="xref" href="Vulthil.Messaging.html">Messaging</a>.<a class="xref" href="Vulthil.Messaging.RabbitMq.html">RabbitMq</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Vulthil.Messaging.RabbitMq.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Static class for holding the Telemetry ActivitySource used for all outbox processing operations, enabling consistent correlation of telemetry across the capture, processing, and publishing stages.</p>
+  <div class="markdown summary"><p>Provides the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.diagnostics.activitysource">ActivitySource</a> emitted by the Vulthil RabbitMQ transport.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static class Telemetry</code></pre>
+    <pre><code class="lang-csharp hljs">public static class RabbitMqTelemetry</code></pre>
   </div>
 
 
@@ -112,7 +112,7 @@ Class Telemetry  <a class="header-action link-secondary" title="View source" hre
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><span class="xref">Telemetry</span></div>
+      <div><span class="xref">RabbitMqTelemetry</span></div>
     </dd>
   </dl>
 
@@ -147,69 +147,40 @@ Class Telemetry  <a class="header-action link-secondary" title="View source" hre
 
 
 
+  <h2 id="Vulthil_Messaging_RabbitMq_RabbitMqTelemetry_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Register this source with OpenTelemetry by calling
+<code>tracerProviderBuilder.AddVulthilRabbitMqInstrumentation()</code> or by adding the source name directly:
+<code>tracerProviderBuilder.AddSource(RabbitMqTelemetry.ActivitySourceName)</code>.</p>
+</div>
 
 
-  <h2 class="section" id="properties">Properties
+  <h2 class="section" id="fields">Fields
 </h2>
 
 
-  <a id="Vulthil_SharedKernel_Outbox_Telemetry_ActivitySourceName_" data-uid="Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Outbox_Telemetry_ActivitySourceName" data-uid="Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName">
+  <h3 id="Vulthil_Messaging_RabbitMq_RabbitMqTelemetry_ActivitySourceName" data-uid="Vulthil.Messaging.RabbitMq.RabbitMqTelemetry.ActivitySourceName">
   ActivitySourceName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/Telemetry.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/RabbitMqTelemetry.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>ActivitySourceName for all outbox processing operations, allowing correlation of events across the capture, processing, and publishing stages.</p>
+  <div class="markdown level1 summary"><p>The name of the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.diagnostics.activitysource">ActivitySource</a> used by the Vulthil RabbitMQ transport.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string ActivitySourceName { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public const string ActivitySourceName = &quot;Vulthil.Messaging.RabbitMq&quot;</code></pre>
   </div>
 
 
 
 
-
-  <h4 class="section">Property Value</h4>
+  <h4 class="section">Field Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
     <dd></dd>
   </dl>
 
-
-
-
-
-
-
-
-  <a id="Vulthil_SharedKernel_Outbox_Telemetry_MeterName_" data-uid="Vulthil.SharedKernel.Outbox.Telemetry.MeterName*"></a>
-
-  <h3 id="Vulthil_SharedKernel_Outbox_Telemetry_MeterName" data-uid="Vulthil.SharedKernel.Outbox.Telemetry.MeterName">
-  MeterName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/Telemetry.cs/#L24"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Meter name for outbox relay metrics. Subscribe to it on a <code>MeterProviderBuilder</code> with
-<code>AddVulthilOutboxInstrumentation()</code>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string MeterName { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
 
 
 
@@ -222,7 +193,7 @@ Class Telemetry  <a class="header-action link-secondary" title="View source" hre
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox/Telemetry.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging.RabbitMq/RabbitMqTelemetry.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

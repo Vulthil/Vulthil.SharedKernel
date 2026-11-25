@@ -116,7 +116,9 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Queues.QueueDefinition.html">QueueDefinition</a></dt>
-      <dd><p>Describes a queue including its consumer registrations, exchange bindings, and runtime settings.</p>
+      <dd><p>Describes a queue including its consumer registrations, exchange bindings, and runtime settings. The settings
+can be changed from <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_ConfigureQueue_System_Action_Vulthil_Messaging_Queues_QueueDefinition__">ConfigureQueue(Action&lt;QueueDefinition&gt;)</a> and configuration binding; consumers and
+subscriptions are added only through <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a>, which applies the registration rules.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -168,15 +170,6 @@ live on <a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">Mes
     <dl class="jumplist">
       <dt><a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a></dt>
       <dd><p>Configures a queue's consumers, retry policies, and dead letter settings.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="Vulthil.Messaging.Queues.IRequestConfigurator-1.html">IRequestConfigurator&lt;TConsumer&gt;</a></dt>
-      <dd><p>Configures per-request-consumer settings. Binding patterns live on
-<a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_Subscribe__1_System_String_">Subscribe&lt;TMessage&gt;(string?)</a>; routing-key formatters for the producer side
-live on <a class="xref" href="Vulthil.Messaging.MessageConfiguration-1.html">MessageConfiguration&lt;TMessage&gt;</a>. Configuring
-<a class="xref" href="Vulthil.Messaging.Queues.IBaseConfigurator-1.html#Vulthil_Messaging_Queues_IBaseConfigurator_1_UseRetry_System_Action_Vulthil_Messaging_Queues_RetryPolicyConfigurator__">UseRetry(Action&lt;RetryPolicyConfigurator&gt;)</a> here throws at configuration time: request
-consumers do not retry — a thrown exception is returned to the requester as an RPC fault reply.</p>
 </dd>
     </dl>
 

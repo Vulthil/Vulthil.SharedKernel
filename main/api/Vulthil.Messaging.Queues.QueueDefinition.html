@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class QueueDefinition | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Describes a queue including its consumer registrations, exchange bindings, and runtime settings.">
+      <meta name="description" content="Describes a queue including its consumer registrations, exchange bindings, and runtime settings. The settings can be changed from  and configuration binding; consumers and subscriptions are added only through , which applies the registration rules.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Vulthil_Messaging_Queues_QueueDefinition" data-uid="Vulthil.Messaging.Queues.QueueDefinition" class="text-break">
-Class QueueDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L83"><i class="bi bi-code-slash"></i></a>
+Class QueueDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,14 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
   <dl><dt>Assembly</dt><dd>Vulthil.Messaging.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Describes a queue including its consumer registrations, exchange bindings, and runtime settings.</p>
+  <div class="markdown summary"><p>Describes a queue including its consumer registrations, exchange bindings, and runtime settings. The settings
+can be changed from <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_ConfigureQueue_System_Action_Vulthil_Messaging_Queues_QueueDefinition__">ConfigureQueue(Action&lt;QueueDefinition&gt;)</a> and configuration binding; consumers and
+subscriptions are added only through <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a>, which applies the registration rules.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed record QueueDefinition : IEquatable&lt;QueueDefinition&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class QueueDefinition</code></pre>
   </div>
 
 
@@ -116,12 +118,6 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
     </dd>
   </dl>
 
-  <dl class="typelist implements">
-    <dt>Implements</dt>
-    <dd>
-      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Vulthil.Messaging.Queues.QueueDefinition.html">QueueDefinition</a>&gt;</div>
-    </dd>
-  </dl>
 
 
   <dl class="typelist inheritedMembers">
@@ -167,20 +163,22 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition__ctor_System_String_" data-uid="Vulthil.Messaging.Queues.QueueDefinition.#ctor(System.String)">
   QueueDefinition(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Describes a queue including its consumer registrations, exchange bindings, and runtime settings.</p>
+  <div class="markdown level1 summary"><p>Describes a queue including its consumer registrations, exchange bindings, and runtime settings. The settings
+can be changed from <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_ConfigureQueue_System_Action_Vulthil_Messaging_Queues_QueueDefinition__">ConfigureQueue(Action&lt;QueueDefinition&gt;)</a> and configuration binding; consumers and
+subscriptions are added only through <a class="xref" href="Vulthil.Messaging.Queues.IQueueConfigurator.html">IQueueConfigurator</a>, which applies the registration rules.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public QueueDefinition(string Name)</code></pre>
+    <pre><code class="lang-csharp hljs">public QueueDefinition(string name)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>Name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
     <dd><p>The initial name of the queue.</p>
 </dd>
   </dl>
@@ -204,7 +202,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_AutoDelete" data-uid="Vulthil.Messaging.Queues.QueueDefinition.AutoDelete">
   AutoDelete
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L128"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether this queue is automatically deleted when the last consumer disconnects.</p>
@@ -236,7 +234,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_ChannelCount" data-uid="Vulthil.Messaging.Queues.QueueDefinition.ChannelCount">
   ChannelCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the number of channels to open for this queue. Default is 1.</p>
@@ -268,7 +266,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_ConcurrencyLimit" data-uid="Vulthil.Messaging.Queues.QueueDefinition.ConcurrencyLimit">
   ConcurrencyLimit
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the maximum number of concurrent consumers per channel. Default is 1.</p>
@@ -300,7 +298,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_DeadLetter" data-uid="Vulthil.Messaging.Queues.QueueDefinition.DeadLetter">
   DeadLetter
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the dead letter configuration for this queue, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if disabled.</p>
@@ -332,7 +330,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_DefaultRetryPolicy" data-uid="Vulthil.Messaging.Queues.QueueDefinition.DefaultRetryPolicy">
   DefaultRetryPolicy
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the default retry policy applied to all consumers on this queue.</p>
@@ -364,7 +362,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_Durable" data-uid="Vulthil.Messaging.Queues.QueueDefinition.Durable">
   Durable
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L124"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether this queue is durable. Default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
@@ -396,7 +394,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_ExchangeArguments" data-uid="Vulthil.Messaging.Queues.QueueDefinition.ExchangeArguments">
   ExchangeArguments
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L158"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets additional arguments passed to the broker during exchange declaration.</p>
@@ -428,7 +426,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_ExchangeAutoDelete" data-uid="Vulthil.Messaging.Queues.QueueDefinition.ExchangeAutoDelete">
   ExchangeAutoDelete
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L153"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the exchange is automatically deleted when no queues are bound.</p>
@@ -460,7 +458,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_ExchangeDurable" data-uid="Vulthil.Messaging.Queues.QueueDefinition.ExchangeDurable">
   ExchangeDurable
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the exchange is durable. Default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
@@ -492,7 +490,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_ExchangeType" data-uid="Vulthil.Messaging.Queues.QueueDefinition.ExchangeType">
   ExchangeType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L145"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the exchange type for the queue's exchange binding. Default is <a class="xref" href="Vulthil.Messaging.MessagingExchangeType.html#Vulthil_Messaging_MessagingExchangeType_Fanout">Fanout</a>.</p>
@@ -524,7 +522,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_Exclusive" data-uid="Vulthil.Messaging.Queues.QueueDefinition.Exclusive">
   Exclusive
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L132"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether this queue is exclusive to the declaring connection.</p>
@@ -556,7 +554,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_IsQuorum" data-uid="Vulthil.Messaging.Queues.QueueDefinition.IsQuorum">
   IsQuorum
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L120"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether this queue uses quorum replication. Default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
@@ -588,7 +586,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_Name" data-uid="Vulthil.Messaging.Queues.QueueDefinition.Name">
   Name
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L103"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the queue name.</p>
@@ -620,7 +618,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_PrefetchCount" data-uid="Vulthil.Messaging.Queues.QueueDefinition.PrefetchCount">
   PrefetchCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L107"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the prefetch count (number of unacknowledged messages). Default is 16.</p>
@@ -652,7 +650,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_Registrations" data-uid="Vulthil.Messaging.Queues.QueueDefinition.Registrations">
   Registrations
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L163"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the collection of consumer-to-message bindings configured for this queue.</p>
@@ -684,7 +682,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_RetryEnabled" data-uid="Vulthil.Messaging.Queues.QueueDefinition.RetryEnabled">
   RetryEnabled
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L179"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether any retry policy is configured, either at the queue or consumer level.</p>
@@ -716,7 +714,7 @@ Class QueueDefinition  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_SingleActiveConsumer" data-uid="Vulthil.Messaging.Queues.QueueDefinition.SingleActiveConsumer">
   SingleActiveConsumer
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L140"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the queue is declared with RabbitMQ's single active consumer
@@ -752,7 +750,7 @@ Default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference
 
   <h3 id="Vulthil_Messaging_Queues_QueueDefinition_Subscriptions" data-uid="Vulthil.Messaging.Queues.QueueDefinition.Subscriptions">
   Subscriptions
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L173"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the exchange bindings configured for this queue — each <a class="xref" href="Vulthil.Messaging.Queues.Subscription.html">Subscription</a> becomes one
@@ -784,91 +782,11 @@ and auto-populated by <code>Build</code> for any consumer whose concrete <code>T
 
 
 
-  <h2 class="section" id="methods">Methods
-</h2>
-
-
-  <a id="Vulthil_Messaging_Queues_QueueDefinition_AddConsumer_" data-uid="Vulthil.Messaging.Queues.QueueDefinition.AddConsumer*"></a>
-
-  <h3 id="Vulthil_Messaging_Queues_QueueDefinition_AddConsumer_Vulthil_Messaging_Queues_Registration_" data-uid="Vulthil.Messaging.Queues.QueueDefinition.AddConsumer(Vulthil.Messaging.Queues.Registration)">
-  AddConsumer(Registration)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L191"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Adds a consumer registration to this queue. Duplicate registrations (by value, including the retry settings)
-are ignored, so a queue that is configured in several places can register the same consumer again. A consumer
-runs once per delivery, so it has one retry policy per queue: a <a class="xref" href="Vulthil.Messaging.Queues.ConsumerRegistration.html">ConsumerRegistration</a> for a
-consumer and message type that the queue already registers with a different retry policy throws.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void AddConsumer(Registration registration)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>registration</code> <a class="xref" href="Vulthil.Messaging.Queues.Registration.html">Registration</a></dt>
-    <dd><p>The consumer-to-message binding to add.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-  <h4 class="section">Exceptions</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
-    <dd><p>The queue already has a <a class="xref" href="Vulthil.Messaging.Queues.ConsumerRegistration.html">ConsumerRegistration</a> for the same consumer and message type with a
-different <a class="xref" href="Vulthil.Messaging.Queues.Registration.html#Vulthil_Messaging_Queues_Registration_RetryPolicy">RetryPolicy</a>.</p>
-</dd>
-  </dl>
-
-
-
-  <a id="Vulthil_Messaging_Queues_QueueDefinition_AddSubscription_" data-uid="Vulthil.Messaging.Queues.QueueDefinition.AddSubscription*"></a>
-
-  <h3 id="Vulthil_Messaging_Queues_QueueDefinition_AddSubscription_Vulthil_Messaging_Queues_Subscription_" data-uid="Vulthil.Messaging.Queues.QueueDefinition.AddSubscription(Vulthil.Messaging.Queues.Subscription)">
-  AddSubscription(Subscription)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L234"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Adds an exchange→queue binding to this queue. Duplicate subscriptions (by value) are ignored.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void AddSubscription(Subscription subscription)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>subscription</code> <a class="xref" href="Vulthil.Messaging.Queues.Subscription.html">Subscription</a></dt>
-    <dd><p>The subscription describing the binding to add.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L83" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.Messaging/Queues/QueueDefinition.cs/#L85" class="edit-link">Edit this page</a>
         </div>
 
 

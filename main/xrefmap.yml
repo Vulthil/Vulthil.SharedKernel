@@ -1327,15 +1327,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeader
   nameWithType: IPublishContext.AddHeader
-- uid: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary{System.String,System.Object})
-  name: AddHeaders(IDictionary<string, object?>)
-  href: api/Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html#Vulthil_Messaging_Abstractions_Publishers_IPublishContext_AddHeaders_System_Collections_Generic_IDictionary_System_String_System_Object__
-  commentId: M:Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary{System.String,System.Object})
-  name.vb: AddHeaders(IDictionary(Of String, Object))
-  fullName: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary<string, object?>)
-  fullName.vb: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IDictionary(Of String, Object))
-  nameWithType: IPublishContext.AddHeaders(IDictionary<string, object?>)
-  nameWithType.vb: IPublishContext.AddHeaders(IDictionary(Of String, Object))
+- uid: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})
+  name: AddHeaders(IEnumerable<KeyValuePair<string, object?>>)
+  href: api/Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html#Vulthil_Messaging_Abstractions_Publishers_IPublishContext_AddHeaders_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String_System_Object___
+  commentId: M:Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})
+  name.vb: AddHeaders(IEnumerable(Of KeyValuePair(Of String, Object)))
+  fullName: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object?>>)
+  fullName.vb: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders(System.Collections.Generic.IEnumerable(Of System.Collections.Generic.KeyValuePair(Of String, Object)))
+  nameWithType: IPublishContext.AddHeaders(IEnumerable<KeyValuePair<string, object?>>)
+  nameWithType.vb: IPublishContext.AddHeaders(IEnumerable(Of KeyValuePair(Of String, Object)))
 - uid: Vulthil.Messaging.Abstractions.Publishers.IPublishContext.AddHeaders*
   name: AddHeaders
   href: api/Vulthil.Messaging.Abstractions.Publishers.IPublishContext.html#Vulthil_Messaging_Abstractions_Publishers_IPublishContext_AddHeaders_
@@ -2186,15 +2186,15 @@ references:
   commentId: T:Vulthil.Messaging.Inbox.IIdempotencyStore
   fullName: Vulthil.Messaging.Inbox.IIdempotencyStore
   nameWithType: IIdempotencyStore
-- uid: Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(System.String,Vulthil.Messaging.Abstractions.Consumers.IMessageContext,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken)
-  name: ProcessAsync(string, IMessageContext, Func<CancellationToken, Task>, CancellationToken)
-  href: api/Vulthil.Messaging.Inbox.IIdempotencyStore.html#Vulthil_Messaging_Inbox_IIdempotencyStore_ProcessAsync_System_String_Vulthil_Messaging_Abstractions_Consumers_IMessageContext_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Threading_CancellationToken_
-  commentId: M:Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(System.String,Vulthil.Messaging.Abstractions.Consumers.IMessageContext,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken)
-  name.vb: ProcessAsync(String, IMessageContext, Func(Of CancellationToken, Task), CancellationToken)
-  fullName: Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(string, Vulthil.Messaging.Abstractions.Consumers.IMessageContext, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(String, Vulthil.Messaging.Abstractions.Consumers.IMessageContext, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task), System.Threading.CancellationToken)
-  nameWithType: IIdempotencyStore.ProcessAsync(string, IMessageContext, Func<CancellationToken, Task>, CancellationToken)
-  nameWithType.vb: IIdempotencyStore.ProcessAsync(String, IMessageContext, Func(Of CancellationToken, Task), CancellationToken)
+- uid: Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(System.String,Vulthil.Messaging.Abstractions.Consumers.IMessageContext,System.Func{System.Threading.Tasks.Task},System.Threading.CancellationToken)
+  name: ProcessAsync(string, IMessageContext, Func<Task>, CancellationToken)
+  href: api/Vulthil.Messaging.Inbox.IIdempotencyStore.html#Vulthil_Messaging_Inbox_IIdempotencyStore_ProcessAsync_System_String_Vulthil_Messaging_Abstractions_Consumers_IMessageContext_System_Func_System_Threading_Tasks_Task__System_Threading_CancellationToken_
+  commentId: M:Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(System.String,Vulthil.Messaging.Abstractions.Consumers.IMessageContext,System.Func{System.Threading.Tasks.Task},System.Threading.CancellationToken)
+  name.vb: ProcessAsync(String, IMessageContext, Func(Of Task), CancellationToken)
+  fullName: Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(string, Vulthil.Messaging.Abstractions.Consumers.IMessageContext, System.Func<System.Threading.Tasks.Task>, System.Threading.CancellationToken)
+  fullName.vb: Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync(String, Vulthil.Messaging.Abstractions.Consumers.IMessageContext, System.Func(Of System.Threading.Tasks.Task), System.Threading.CancellationToken)
+  nameWithType: IIdempotencyStore.ProcessAsync(string, IMessageContext, Func<Task>, CancellationToken)
+  nameWithType.vb: IIdempotencyStore.ProcessAsync(String, IMessageContext, Func(Of Task), CancellationToken)
 - uid: Vulthil.Messaging.Inbox.IIdempotencyStore.ProcessAsync*
   name: ProcessAsync
   href: api/Vulthil.Messaging.Inbox.IIdempotencyStore.html#Vulthil_Messaging_Inbox_IIdempotencyStore_ProcessAsync_
@@ -3065,15 +3065,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer
   nameWithType: IQueueConfigurator.AddRequestConsumer
-- uid: Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer``1(System.Action{Vulthil.Messaging.Queues.IRequestConfigurator{``0}})
-  name: AddRequestConsumer<TConsumer>(Action<IRequestConfigurator<TConsumer>>?)
-  href: api/Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_AddRequestConsumer__1_System_Action_Vulthil_Messaging_Queues_IRequestConfigurator___0___
-  commentId: M:Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer``1(System.Action{Vulthil.Messaging.Queues.IRequestConfigurator{``0}})
-  name.vb: AddRequestConsumer(Of TConsumer)(Action(Of IRequestConfigurator(Of TConsumer)))
-  fullName: Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer<TConsumer>(System.Action<Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>>?)
-  fullName.vb: Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer(Of TConsumer)(System.Action(Of Vulthil.Messaging.Queues.IRequestConfigurator(Of TConsumer)))
-  nameWithType: IQueueConfigurator.AddRequestConsumer<TConsumer>(Action<IRequestConfigurator<TConsumer>>?)
-  nameWithType.vb: IQueueConfigurator.AddRequestConsumer(Of TConsumer)(Action(Of IRequestConfigurator(Of TConsumer)))
+- uid: Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer``1
+  name: AddRequestConsumer<TConsumer>()
+  href: api/Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_AddRequestConsumer__1
+  commentId: M:Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer``1
+  name.vb: AddRequestConsumer(Of TConsumer)()
+  fullName: Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer<TConsumer>()
+  fullName.vb: Vulthil.Messaging.Queues.IQueueConfigurator.AddRequestConsumer(Of TConsumer)()
+  nameWithType: IQueueConfigurator.AddRequestConsumer<TConsumer>()
+  nameWithType.vb: IQueueConfigurator.AddRequestConsumer(Of TConsumer)()
 - uid: Vulthil.Messaging.Queues.IQueueConfigurator.ConfigureQueue(System.Action{Vulthil.Messaging.Queues.QueueDefinition})
   name: ConfigureQueue(Action<QueueDefinition>)
   href: api/Vulthil.Messaging.Queues.IQueueConfigurator.html#Vulthil_Messaging_Queues_IQueueConfigurator_ConfigureQueue_System_Action_Vulthil_Messaging_Queues_QueueDefinition__
@@ -3167,15 +3167,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Queues.IQueueConfigurator.UseSingleActiveConsumer
   nameWithType: IQueueConfigurator.UseSingleActiveConsumer
-- uid: Vulthil.Messaging.Queues.IRequestConfigurator`1
-  name: IRequestConfigurator<TConsumer>
-  href: api/Vulthil.Messaging.Queues.IRequestConfigurator-1.html
-  commentId: T:Vulthil.Messaging.Queues.IRequestConfigurator`1
-  name.vb: IRequestConfigurator(Of TConsumer)
-  fullName: Vulthil.Messaging.Queues.IRequestConfigurator<TConsumer>
-  fullName.vb: Vulthil.Messaging.Queues.IRequestConfigurator(Of TConsumer)
-  nameWithType: IRequestConfigurator<TConsumer>
-  nameWithType.vb: IRequestConfigurator(Of TConsumer)
 - uid: Vulthil.Messaging.Queues.MessageType
   name: MessageType
   href: api/Vulthil.Messaging.Queues.MessageType.html
@@ -3252,32 +3243,6 @@ references:
   fullName.vb: Vulthil.Messaging.Queues.QueueDefinition.New
   nameWithType: QueueDefinition.QueueDefinition
   nameWithType.vb: QueueDefinition.New
-- uid: Vulthil.Messaging.Queues.QueueDefinition.AddConsumer(Vulthil.Messaging.Queues.Registration)
-  name: AddConsumer(Registration)
-  href: api/Vulthil.Messaging.Queues.QueueDefinition.html#Vulthil_Messaging_Queues_QueueDefinition_AddConsumer_Vulthil_Messaging_Queues_Registration_
-  commentId: M:Vulthil.Messaging.Queues.QueueDefinition.AddConsumer(Vulthil.Messaging.Queues.Registration)
-  fullName: Vulthil.Messaging.Queues.QueueDefinition.AddConsumer(Vulthil.Messaging.Queues.Registration)
-  nameWithType: QueueDefinition.AddConsumer(Registration)
-- uid: Vulthil.Messaging.Queues.QueueDefinition.AddConsumer*
-  name: AddConsumer
-  href: api/Vulthil.Messaging.Queues.QueueDefinition.html#Vulthil_Messaging_Queues_QueueDefinition_AddConsumer_
-  commentId: Overload:Vulthil.Messaging.Queues.QueueDefinition.AddConsumer
-  isSpec: "True"
-  fullName: Vulthil.Messaging.Queues.QueueDefinition.AddConsumer
-  nameWithType: QueueDefinition.AddConsumer
-- uid: Vulthil.Messaging.Queues.QueueDefinition.AddSubscription(Vulthil.Messaging.Queues.Subscription)
-  name: AddSubscription(Subscription)
-  href: api/Vulthil.Messaging.Queues.QueueDefinition.html#Vulthil_Messaging_Queues_QueueDefinition_AddSubscription_Vulthil_Messaging_Queues_Subscription_
-  commentId: M:Vulthil.Messaging.Queues.QueueDefinition.AddSubscription(Vulthil.Messaging.Queues.Subscription)
-  fullName: Vulthil.Messaging.Queues.QueueDefinition.AddSubscription(Vulthil.Messaging.Queues.Subscription)
-  nameWithType: QueueDefinition.AddSubscription(Subscription)
-- uid: Vulthil.Messaging.Queues.QueueDefinition.AddSubscription*
-  name: AddSubscription
-  href: api/Vulthil.Messaging.Queues.QueueDefinition.html#Vulthil_Messaging_Queues_QueueDefinition_AddSubscription_
-  commentId: Overload:Vulthil.Messaging.Queues.QueueDefinition.AddSubscription
-  isSpec: "True"
-  fullName: Vulthil.Messaging.Queues.QueueDefinition.AddSubscription
-  nameWithType: QueueDefinition.AddSubscription
 - uid: Vulthil.Messaging.Queues.QueueDefinition.AutoDelete
   name: AutoDelete
   href: api/Vulthil.Messaging.Queues.QueueDefinition.html#Vulthil_Messaging_Queues_QueueDefinition_AutoDelete
@@ -3935,6 +3900,18 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.RabbitMq.MessagingConfiguratorExtensions.UseRabbitMq
   nameWithType: MessagingConfiguratorExtensions.UseRabbitMq
+- uid: Vulthil.Messaging.RabbitMq.RabbitMqTelemetry
+  name: RabbitMqTelemetry
+  href: api/Vulthil.Messaging.RabbitMq.RabbitMqTelemetry.html
+  commentId: T:Vulthil.Messaging.RabbitMq.RabbitMqTelemetry
+  fullName: Vulthil.Messaging.RabbitMq.RabbitMqTelemetry
+  nameWithType: RabbitMqTelemetry
+- uid: Vulthil.Messaging.RabbitMq.RabbitMqTelemetry.ActivitySourceName
+  name: ActivitySourceName
+  href: api/Vulthil.Messaging.RabbitMq.RabbitMqTelemetry.html#Vulthil_Messaging_RabbitMq_RabbitMqTelemetry_ActivitySourceName
+  commentId: F:Vulthil.Messaging.RabbitMq.RabbitMqTelemetry.ActivitySourceName
+  fullName: Vulthil.Messaging.RabbitMq.RabbitMqTelemetry.ActivitySourceName
+  nameWithType: RabbitMqTelemetry.ActivitySourceName
 - uid: Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions
   name: RabbitMqTransportOptions
   href: api/Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions.html
@@ -3960,43 +3937,25 @@ references:
   commentId: F:Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions.SectionName
   fullName: Vulthil.Messaging.RabbitMq.RabbitMqTransportOptions.SectionName
   nameWithType: RabbitMqTransportOptions.SectionName
-- uid: Vulthil.Messaging.RabbitMq.Telemetry
-  name: Vulthil.Messaging.RabbitMq.Telemetry
-  href: api/Vulthil.Messaging.RabbitMq.Telemetry.html
-  commentId: N:Vulthil.Messaging.RabbitMq.Telemetry
-  fullName: Vulthil.Messaging.RabbitMq.Telemetry
-  nameWithType: Vulthil.Messaging.RabbitMq.Telemetry
-- uid: Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation
-  name: MessagingInstrumentation
-  href: api/Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.html
-  commentId: T:Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation
-  fullName: Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation
-  nameWithType: MessagingInstrumentation
-- uid: Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.ActivitySourceName
-  name: ActivitySourceName
-  href: api/Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.html#Vulthil_Messaging_RabbitMq_Telemetry_MessagingInstrumentation_ActivitySourceName
-  commentId: F:Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.ActivitySourceName
-  fullName: Vulthil.Messaging.RabbitMq.Telemetry.MessagingInstrumentation.ActivitySourceName
-  nameWithType: MessagingInstrumentation.ActivitySourceName
-- uid: Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions
+- uid: Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions
   name: TracerProviderBuilderExtensions
-  href: api/Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.html
-  commentId: T:Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions
-  fullName: Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions
+  href: api/Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.html
+  commentId: T:Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions
+  fullName: Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions
   nameWithType: TracerProviderBuilderExtensions
-- uid: Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
-  name: AddVulthilMessagingInstrumentation(TracerProviderBuilder)
-  href: api/Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.html#Vulthil_Messaging_RabbitMq_Telemetry_TracerProviderBuilderExtensions_AddVulthilMessagingInstrumentation_OpenTelemetry_Trace_TracerProviderBuilder_
-  commentId: M:Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
-  fullName: Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
-  nameWithType: TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation(TracerProviderBuilder)
-- uid: Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation*
-  name: AddVulthilMessagingInstrumentation
-  href: api/Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.html#Vulthil_Messaging_RabbitMq_Telemetry_TracerProviderBuilderExtensions_AddVulthilMessagingInstrumentation_
-  commentId: Overload:Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation
+- uid: Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
+  name: AddVulthilRabbitMqInstrumentation(TracerProviderBuilder)
+  href: api/Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.html#Vulthil_Messaging_RabbitMq_TracerProviderBuilderExtensions_AddVulthilRabbitMqInstrumentation_OpenTelemetry_Trace_TracerProviderBuilder_
+  commentId: M:Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
+  fullName: Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation(OpenTelemetry.Trace.TracerProviderBuilder)
+  nameWithType: TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation(TracerProviderBuilder)
+- uid: Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation*
+  name: AddVulthilRabbitMqInstrumentation
+  href: api/Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.html#Vulthil_Messaging_RabbitMq_TracerProviderBuilderExtensions_AddVulthilRabbitMqInstrumentation_
+  commentId: Overload:Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation
   isSpec: "True"
-  fullName: Vulthil.Messaging.RabbitMq.Telemetry.TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation
-  nameWithType: TracerProviderBuilderExtensions.AddVulthilMessagingInstrumentation
+  fullName: Vulthil.Messaging.RabbitMq.TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation
+  nameWithType: TracerProviderBuilderExtensions.AddVulthilRabbitMqInstrumentation
 - uid: Vulthil.Messaging.TestHarness
   name: Vulthil.Messaging.TestHarness
   href: api/Vulthil.Messaging.TestHarness.html
@@ -5665,15 +5624,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.Messaging.Transport.PublishContext.AddHeader
   nameWithType: PublishContext.AddHeader
-- uid: Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IDictionary{System.String,System.Object})
-  name: AddHeaders(IDictionary<string, object?>)
-  href: api/Vulthil.Messaging.Transport.PublishContext.html#Vulthil_Messaging_Transport_PublishContext_AddHeaders_System_Collections_Generic_IDictionary_System_String_System_Object__
-  commentId: M:Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IDictionary{System.String,System.Object})
-  name.vb: AddHeaders(IDictionary(Of String, Object))
-  fullName: Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IDictionary<string, object?>)
-  fullName.vb: Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IDictionary(Of String, Object))
-  nameWithType: PublishContext.AddHeaders(IDictionary<string, object?>)
-  nameWithType.vb: PublishContext.AddHeaders(IDictionary(Of String, Object))
+- uid: Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})
+  name: AddHeaders(IEnumerable<KeyValuePair<string, object?>>)
+  href: api/Vulthil.Messaging.Transport.PublishContext.html#Vulthil_Messaging_Transport_PublishContext_AddHeaders_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String_System_Object___
+  commentId: M:Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})
+  name.vb: AddHeaders(IEnumerable(Of KeyValuePair(Of String, Object)))
+  fullName: Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object?>>)
+  fullName.vb: Vulthil.Messaging.Transport.PublishContext.AddHeaders(System.Collections.Generic.IEnumerable(Of System.Collections.Generic.KeyValuePair(Of String, Object)))
+  nameWithType: PublishContext.AddHeaders(IEnumerable<KeyValuePair<string, object?>>)
+  nameWithType.vb: PublishContext.AddHeaders(IEnumerable(Of KeyValuePair(Of String, Object)))
 - uid: Vulthil.Messaging.Transport.PublishContext.AddHeaders*
   name: AddHeaders
   href: api/Vulthil.Messaging.Transport.PublishContext.html#Vulthil_Messaging_Transport_PublishContext_AddHeaders_
@@ -11464,38 +11423,24 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxRetentionOptions.SweepInterval
   nameWithType: OutboxRetentionOptions.SweepInterval
-- uid: Vulthil.SharedKernel.Outbox.Telemetry
-  name: Telemetry
-  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html
-  commentId: T:Vulthil.SharedKernel.Outbox.Telemetry
-  fullName: Vulthil.SharedKernel.Outbox.Telemetry
-  nameWithType: Telemetry
-- uid: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
+- uid: Vulthil.SharedKernel.Outbox.OutboxTelemetry
+  name: OutboxTelemetry
+  href: api/Vulthil.SharedKernel.Outbox.OutboxTelemetry.html
+  commentId: T:Vulthil.SharedKernel.Outbox.OutboxTelemetry
+  fullName: Vulthil.SharedKernel.Outbox.OutboxTelemetry
+  nameWithType: OutboxTelemetry
+- uid: Vulthil.SharedKernel.Outbox.OutboxTelemetry.ActivitySourceName
   name: ActivitySourceName
-  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_ActivitySourceName
-  commentId: P:Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
-  fullName: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
-  nameWithType: Telemetry.ActivitySourceName
-- uid: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName*
-  name: ActivitySourceName
-  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_ActivitySourceName_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.Telemetry.ActivitySourceName
-  nameWithType: Telemetry.ActivitySourceName
-- uid: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
+  href: api/Vulthil.SharedKernel.Outbox.OutboxTelemetry.html#Vulthil_SharedKernel_Outbox_OutboxTelemetry_ActivitySourceName
+  commentId: F:Vulthil.SharedKernel.Outbox.OutboxTelemetry.ActivitySourceName
+  fullName: Vulthil.SharedKernel.Outbox.OutboxTelemetry.ActivitySourceName
+  nameWithType: OutboxTelemetry.ActivitySourceName
+- uid: Vulthil.SharedKernel.Outbox.OutboxTelemetry.MeterName
   name: MeterName
-  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_MeterName
-  commentId: P:Vulthil.SharedKernel.Outbox.Telemetry.MeterName
-  fullName: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
-  nameWithType: Telemetry.MeterName
-- uid: Vulthil.SharedKernel.Outbox.Telemetry.MeterName*
-  name: MeterName
-  href: api/Vulthil.SharedKernel.Outbox.Telemetry.html#Vulthil_SharedKernel_Outbox_Telemetry_MeterName_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.Telemetry.MeterName
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.Telemetry.MeterName
-  nameWithType: Telemetry.MeterName
+  href: api/Vulthil.SharedKernel.Outbox.OutboxTelemetry.html#Vulthil_SharedKernel_Outbox_OutboxTelemetry_MeterName
+  commentId: F:Vulthil.SharedKernel.Outbox.OutboxTelemetry.MeterName
+  fullName: Vulthil.SharedKernel.Outbox.OutboxTelemetry.MeterName
+  nameWithType: OutboxTelemetry.MeterName
 - uid: Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions
   name: TracerProviderBuilderExtensions
   href: api/Vulthil.SharedKernel.Outbox.TracerProviderBuilderExtensions.html

@@ -117,7 +117,7 @@ app.Run();
     : RelationalOutboxStore&lt;TContext&gt;(dbContext, timeProvider)
     where TContext : DbContext, ISaveOutboxMessages
 {
-    protected override Task&lt;List&lt;OutboxMessageData&gt;&gt; FetchMessagesAsync(
+    protected override Task&lt;IReadOnlyList&lt;OutboxMessageData&gt;&gt; FetchMessagesAsync(
         int batchSize, int maxRetries, CancellationToken cancellationToken) =&gt;
         FetchMessagesWithRowLockAsync(&quot;FOR UPDATE SKIP LOCKED&quot;, batchSize, maxRetries, cancellationToken);
 }

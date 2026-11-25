@@ -155,9 +155,9 @@ Class DependencyInjectionExtensions  <a class="header-action link-secondary" tit
 
   <a id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql_" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Microsoft_EntityFrameworkCore_Infrastructure_MySqlDbContextOptionsBuilder__" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder})">
-  UseMySql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;MySqlDbContextOptionsBuilder&gt;?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/DependencyInjectionExtensions.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Microsoft_EntityFrameworkCore_Infrastructure_MySqlDbContextOptionsBuilder__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__" data-uid="Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})">
+  UseMySql&lt;TDbContext&gt;(IDatabaseInfrastructureConfigurator&lt;TDbContext&gt;, string, Action&lt;MySqlDbContextOptionsBuilder&gt;?, Action&lt;DbContextOptionsBuilder&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Infrastructure.MySql/DependencyInjectionExtensions.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the database infrastructure for MySQL: registers a pooled <code class="typeparamref">TDbContext</code> for
@@ -168,7 +168,7 @@ processing is enabled, the commit-time relay trigger is wired as well.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseMySql&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionStringKey, Action&lt;MySqlDbContextOptionsBuilder&gt;? configureSettings = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
+    <pre><code class="lang-csharp hljs">public static IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; UseMySql&lt;TDbContext&gt;(this IDatabaseInfrastructureConfigurator&lt;TDbContext&gt; configurator, string connectionStringKey, Action&lt;MySqlDbContextOptionsBuilder&gt;? configureMySql = null, Action&lt;DbContextOptionsBuilder&gt;? configureDbContextOptions = null) where TDbContext : DbContext, ISaveOutboxMessages</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -179,8 +179,12 @@ processing is enabled, the commit-time relay trigger is wired as well.</p>
     <dt><code>connectionStringKey</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
     <dd><p>The connection-string name resolved from the host's configuration.</p>
 </dd>
-    <dt><code>configureSettings</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">MySqlDbContextOptionsBuilder</span>&gt;</dt>
+    <dt><code>configureMySql</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<span class="xref">MySqlDbContextOptionsBuilder</span>&gt;</dt>
     <dd><p>An optional action to configure the MySQL provider options (e.g. command timeout).</p>
+</dd>
+    <dt><code>configureDbContextOptions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder">DbContextOptionsBuilder</a>&gt;</dt>
+    <dd><p>An optional action to configure the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder">DbContextOptionsBuilder</a>, for example to add interceptors or a
+naming convention. It runs after the MySQL provider is selected.</p>
 </dd>
   </dl>
 
@@ -203,7 +207,7 @@ processing is enabled, the commit-time relay trigger is wired as well.</p>
 
 
 
-  <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Microsoft_EntityFrameworkCore_Infrastructure_MySqlDbContextOptionsBuilder___remarks">Remarks</h4>
+  <h4 class="section" id="Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Microsoft_EntityFrameworkCore_Infrastructure_MySqlDbContextOptionsBuilder__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder___remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>The <code>Microting.EntityFrameworkCore.MySql</code> provider is registered directly and the MySQL server version is
 detected from the connection at startup (<code>ServerVersion.AutoDetect</code>), so the database must be reachable
 when the host starts. The underlying registrations are deferred until the configuration chain has executed, so

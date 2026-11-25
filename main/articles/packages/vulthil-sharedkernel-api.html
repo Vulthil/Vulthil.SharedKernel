@@ -130,6 +130,10 @@ var app = builder.Build();
 app.MapEndpoints();
 app.MapOpenApiEndpoints();
 </code></pre>
+<p><code>MapEndpoints</code> maps to any <code>IEndpointRouteBuilder</code> and returns it, so a route group maps the endpoints under its
+prefix:</p>
+<pre><code class="lang-csharp">app.MapGroup(&quot;api&quot;).WithTags(&quot;Orders&quot;).MapEndpoints();
+</code></pre>
 <h3 id="controller-based-endpoints">Controller-based endpoints</h3>
 <p>Derive from <code>BaseController</code> for the standard <code>[ApiController]</code>/route conventions and a <code>Logger</code> property resolved for the concrete controller type (no constructor logger argument required). Controllers can return typed results directly for OpenAPI documentation:</p>
 <pre><code class="lang-csharp">public sealed class UsersController(ISender sender) : BaseController

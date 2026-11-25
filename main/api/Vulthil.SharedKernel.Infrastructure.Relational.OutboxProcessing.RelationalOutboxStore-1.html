@@ -263,7 +263,7 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task&lt;IDbTransaction?&gt; BeginTransactionAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task&lt;IUnitOfWorkTransaction?&gt; BeginTransactionAsync(CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -275,7 +275,7 @@ provider packages (e.g. Npgsql, MySQL) opt into by overriding
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Application.Data.IDbTransaction.html">IDbTransaction</a>&gt;</dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.html">IUnitOfWorkTransaction</a>&gt;</dt>
     <dd><p>The transaction to commit on success.</p>
 </dd>
   </dl>
@@ -369,7 +369,7 @@ dispatch order is deterministic. Provider stores call this from their
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected Task&lt;List&lt;OutboxMessageData&gt;&gt; FetchMessagesWithRowLockAsync(string rowLockClause, int batchSize, int maxRetries, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">protected Task&lt;IReadOnlyList&lt;OutboxMessageData&gt;&gt; FetchMessagesWithRowLockAsync(string rowLockClause, int batchSize, int maxRetries, CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -390,7 +390,7 @@ dispatch order is deterministic. Provider stores call this from their
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessageData.html">OutboxMessageData</a>&gt;&gt;</dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessageData.html">OutboxMessageData</a>&gt;&gt;</dt>
     <dd><p>The fetched message data, oldest first.</p>
 </dd>
   </dl>

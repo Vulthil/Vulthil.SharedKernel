@@ -139,9 +139,9 @@ while the caller's token is still live is an ordinary failure.</p>
 
   <a id="Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_" data-uid="Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_System_Object_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(System.Object,System.Threading.CancellationToken)">
-  PublishAsync(object, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Messaging/DomainEvents/IDomainEventPublisher.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_Vulthil_SharedKernel_Events_IDomainEvent_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Vulthil.SharedKernel.Events.IDomainEvent,System.Threading.CancellationToken)">
+  PublishAsync(IDomainEvent, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Messaging/DomainEvents/IDomainEventPublisher.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Publishes a domain event by its runtime type to all registered handlers.</p>
@@ -149,12 +149,12 @@ while the caller's token is still live is an ordinary failure.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task PublishAsync(object notification, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">Task PublishAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>notification</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dt><code>domainEvent</code> <a class="xref" href="Vulthil.SharedKernel.Events.IDomainEvent.html">IDomainEvent</a></dt>
     <dd><p>The domain event to publish.</p>
 </dd>
     <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
@@ -178,69 +178,7 @@ while the caller's token is still live is an ordinary failure.</p>
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
-    <dd><p><code class="paramref">notification</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
-</dd>
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
-    <dd><p><code class="paramref">notification</code> does not implement <a class="xref" href="Vulthil.SharedKernel.Events.IDomainEvent.html">IDomainEvent</a>.</p>
-</dd>
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.aggregateexception">AggregateException</a></dt>
-    <dd><p>One or more handlers failed; every handler still ran.</p>
-</dd>
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.operationcanceledexception">OperationCanceledException</a></dt>
-    <dd><p><code class="paramref">cancellationToken</code> was canceled.</p>
-</dd>
-  </dl>
-
-
-
-  <a id="Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_" data-uid="Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync*"></a>
-
-  <h3 id="Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync__1___0_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync``1(``0,System.Threading.CancellationToken)">
-  PublishAsync&lt;TNotification&gt;(TNotification, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Messaging/DomainEvents/IDomainEventPublisher.cs/#L39"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Publishes a strongly-typed domain event to all registered handlers.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task PublishAsync&lt;TNotification&gt;(TNotification notification, CancellationToken cancellationToken = default) where TNotification : IDomainEvent</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>notification</code> <span class="xref">TNotification</span></dt>
-    <dd><p>The domain event to publish.</p>
-</dd>
-    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
-    <dd><p>A token to observe for cancellation.</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
-    <dd></dd>
-  </dl>
-
-  <h4 class="section">Type Parameters</h4>
-  <dl class="parameters">
-    <dt><code>TNotification</code></dt>
-    <dd><p>The type of domain event to publish.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-  <h4 class="section">Exceptions</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
-    <dd><p><code class="paramref">notification</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+    <dd><p><code class="paramref">domainEvent</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
 </dd>
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.aggregateexception">AggregateException</a></dt>
     <dd><p>One or more handlers failed; every handler still ran.</p>

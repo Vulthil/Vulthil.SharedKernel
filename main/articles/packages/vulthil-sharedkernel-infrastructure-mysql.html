@@ -115,8 +115,13 @@
     }));
 </code></pre>
 <h3 id="configuring-the-provider">Configuring the provider</h3>
-<p><code>UseMySql</code> takes an optional <code>configureSettings</code> delegate that configures the MySQL provider options (<code>MySqlDbContextOptionsBuilder</code>):</p>
-<pre><code class="lang-csharp">config.UseMySql(&quot;Default&quot;, mySql =&gt; mySql.CommandTimeout(30));
+<p><code>UseMySql</code> takes two optional delegates. <code>configureMySql</code> configures the MySQL provider options
+(<code>MySqlDbContextOptionsBuilder</code>). <code>configureDbContextOptions</code> configures the <code>DbContextOptionsBuilder</code>, for example to
+add interceptors or a naming convention; it runs after the MySQL provider is selected:</p>
+<pre><code class="lang-csharp">config.UseMySql(
+    &quot;Default&quot;,
+    configureMySql: mySql =&gt; mySql.CommandTimeout(30),
+    configureDbContextOptions: options =&gt; options.AddInterceptors(new AuditInterceptor()));
 </code></pre>
 <h3 id="applying-migrations-on-startup">Applying migrations on startup</h3>
 <p><code>Vulthil.SharedKernel.Infrastructure.Relational</code> (pulled in transitively) exposes <code>MigrateAsync</code>:</p>

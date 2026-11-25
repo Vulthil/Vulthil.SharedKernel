@@ -182,14 +182,14 @@ running unprotected.</p>
 <td>Maximum concurrent dispatches when <code>EnableParallelPublishing</code> is enabled</td>
 </tr>
 <tr>
-<td><code>OutboxProcessingDelaySeconds</code></td>
-<td>2</td>
-<td>Base polling delay between processing cycles</td>
+<td><code>PollingInterval</code></td>
+<td>2 seconds</td>
+<td>Base wait between processing cycles (1 to 100 seconds)</td>
 </tr>
 <tr>
-<td><code>MaxDelaySeconds</code></td>
-<td>60</td>
-<td>Maximum back-off delay. The wait doubles up to it after a cycle that relays nothing (no pending messages, or every fetched message failed) and after a cycle that faults (for example while the database is unavailable)</td>
+<td><code>MaxPollingInterval</code></td>
+<td>60 seconds</td>
+<td>Maximum back-off wait (1 to 300 seconds, at least <code>PollingInterval</code>). The wait doubles up to it after a cycle that relays nothing (no pending messages, or every fetched message failed) and after a cycle that faults (for example while the database is unavailable)</td>
 </tr>
 <tr>
 <td><code>EnableTracing</code></td>
@@ -297,7 +297,7 @@ implementation lives in <code>Vulthil.SharedKernel.Outbox.EntityFrameworkCore</c
 and each provider supplies a subclass — <code>RelationalOutboxStore&lt;TContext&gt;</code> (the <code>ExecuteUpdate</code> base, which also
 composes the row-locking fetch from the model's mapped identifiers), <code>NpgsqlOutboxStore&lt;TContext&gt;</code> /
 <code>MySqlOutboxStore&lt;TContext&gt;</code> (which pass it <code>FOR UPDATE SKIP LOCKED</code>), and <code>CosmosOutboxStore&lt;TContext&gt;</code>
-(best-effort, no transaction). A provider's <code>UseNpgsql</code>/<code>UseMySql</code>/<code>UseCosmosDb</code>
+(best-effort, no transaction). A provider's <code>UseNpgsql</code>/<code>UseMySql</code>/<code>UseCosmos</code>
 selects the store; you can supply your own by implementing <code>IOutboxStore</code> (or deriving from the EF base) and
 registering it with <code>UseOutboxStore&lt;TStore&gt;()</code>:</p>
 <pre><code class="lang-csharp">config

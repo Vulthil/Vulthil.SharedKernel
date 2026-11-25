@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Interface IDbTransaction | Vulthil.SharedKernel </title>
+      <title>Interface IUnitOfWorkTransaction | Vulthil.SharedKernel </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Interface IDbTransaction | Vulthil.SharedKernel ">
+      <meta name="title" content="Interface IUnitOfWorkTransaction | Vulthil.SharedKernel ">
       
-      <meta name="description" content="Represents an active database transaction that can be committed or rolled back.">
+      <meta name="description" content="Represents an active unit-of-work transaction that can be committed or rolled back.">
       <link rel="icon" href="../images/favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Application_Data_IDbTransaction.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Application.Data.IDbTransaction%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Vulthil/Vulthil.SharedKernel/new/main/docs/api/new?filename=Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction.md&amp;value=---%0Auid%3A%20Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,12 +84,12 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Vulthil.SharedKernel.Application.Data.IDbTransaction">
+        <article data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction">
 
 
 
-  <h1 id="Vulthil_SharedKernel_Application_Data_IDbTransaction" data-uid="Vulthil.SharedKernel.Application.Data.IDbTransaction" class="text-break">
-Interface IDbTransaction  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction" class="text-break">
+Interface IUnitOfWorkTransaction  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWorkTransaction.cs/#L10"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,12 @@ Interface IDbTransaction  <a class="header-action link-secondary" title="View so
   <dl><dt>Assembly</dt><dd>Vulthil.SharedKernel.Application.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Represents an active database transaction that can be committed or rolled back.</p>
+  <div class="markdown summary"><p>Represents an active unit-of-work transaction that can be committed or rolled back.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IDbTransaction : IAsyncDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IUnitOfWorkTransaction : IAsyncDisposable</code></pre>
   </div>
 
 
@@ -129,17 +129,21 @@ Interface IDbTransaction  <a class="header-action link-secondary" title="View so
 
 
 
+  <h2 id="Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>When the unit of work spans several databases, the transaction covers all of them, and a commit is atomic per
+database only.</p>
+</div>
 
 
   <h2 class="section" id="methods">Methods
 </h2>
 
 
-  <a id="Vulthil_SharedKernel_Application_Data_IDbTransaction_CommitAsync_" data-uid="Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync*"></a>
+  <a id="Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_CommitAsync_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Application_Data_IDbTransaction_CommitAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync(System.Threading.CancellationToken)">
+  <h3 id="Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_CommitAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync(System.Threading.CancellationToken)">
   CommitAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWorkTransaction.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Commits the transaction, persisting all changes.</p>
@@ -173,11 +177,11 @@ Interface IDbTransaction  <a class="header-action link-secondary" title="View so
 
 
 
-  <a id="Vulthil_SharedKernel_Application_Data_IDbTransaction_RollbackAsync_" data-uid="Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync*"></a>
+  <a id="Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_RollbackAsync_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Application_Data_IDbTransaction_RollbackAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync(System.Threading.CancellationToken)">
+  <h3 id="Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_RollbackAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync(System.Threading.CancellationToken)">
   RollbackAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWorkTransaction.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Rolls back the transaction, discarding all changes.</p>
@@ -215,7 +219,7 @@ Interface IDbTransaction  <a class="header-action link-secondary" title="View so
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWork.cs/#L83" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Application/Data/IUnitOfWorkTransaction.cs/#L10" class="edit-link">Edit this page</a>
         </div>
 
 

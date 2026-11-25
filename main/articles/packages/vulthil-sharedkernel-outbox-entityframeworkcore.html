@@ -92,7 +92,7 @@ engine. It isolates all EF Core coupling so the engine package stays persistence
 <h2 id="when-to-use">When to use</h2>
 <ul>
 <li>You normally get it transitively via <code>Vulthil.SharedKernel.Infrastructure</code> (<code>EnableOutboxProcessing</code>) plus a
-provider package (<code>UseNpgsql</code>, <code>UseMySql</code>, <code>UseCosmosDb</code>).</li>
+provider package (<code>UseNpgsql</code>, <code>UseMySql</code>, <code>UseCosmos</code>).</li>
 <li>Reference it directly to implement a custom EF <code>IOutboxStore</code> (derive from <code>EntityFrameworkOutboxStore&lt;TContext&gt;</code>),
 or to have a <code>DbContext</code> implement <code>ISaveOutboxMessages</code> without the full infrastructure package.</li>
 </ul>

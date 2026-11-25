@@ -193,7 +193,7 @@ Class EndpointExtensions  <a class="header-action link-secondary" title="View so
 
   <h4 class="section" id="Vulthil_SharedKernel_Api_EndpointExtensions_AddEndpoints_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Reflection_Assembly__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>Open generic <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementations are skipped, since they cannot be resolved
-without type arguments and would otherwise fail when <a class="xref" href="Vulthil.SharedKernel.Api.EndpointExtensions.html#Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_Microsoft_AspNetCore_Builder_WebApplication_Microsoft_AspNetCore_Routing_RouteGroupBuilder_">MapEndpoints(WebApplication, RouteGroupBuilder?)</a> enumerates them.</p>
+without type arguments and would otherwise fail when <a class="xref" href="Vulthil.SharedKernel.Api.EndpointExtensions.html#Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints__1___0_">MapEndpoints&lt;TBuilder&gt;(TBuilder)</a> enumerates them.</p>
 </div>
 
 
@@ -201,33 +201,38 @@ without type arguments and would otherwise fail when <a class="xref" href="Vulth
 
   <a id="Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_" data-uid="Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints*"></a>
 
-  <h3 id="Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_Microsoft_AspNetCore_Builder_WebApplication_Microsoft_AspNetCore_Routing_RouteGroupBuilder_" data-uid="Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(Microsoft.AspNetCore.Builder.WebApplication,Microsoft.AspNetCore.Routing.RouteGroupBuilder)">
-  MapEndpoints(WebApplication, RouteGroupBuilder?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/EndpointExtensions.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints__1___0_" data-uid="Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints``1(``0)">
+  MapEndpoints&lt;TBuilder&gt;(TBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Api/EndpointExtensions.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Maps all registered <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementations to the application's route builder.</p>
+  <div class="markdown level1 summary"><p>Maps all registered <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementations to <code class="paramref">builder</code>: the web application,
+or a route group to map the endpoints under it, for example <code>app.MapGroup(&quot;api&quot;).MapEndpoints()</code>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IApplicationBuilder MapEndpoints(this WebApplication app, RouteGroupBuilder? routeGroupBuilder = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static TBuilder MapEndpoints&lt;TBuilder&gt;(this TBuilder builder) where TBuilder : IEndpointRouteBuilder</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>app</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.builder.webapplication">WebApplication</a></dt>
-    <dd><p>The web application.</p>
-</dd>
-    <dt><code>routeGroupBuilder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.routing.routegroupbuilder">RouteGroupBuilder</a></dt>
-    <dd><p>An optional route group to scope endpoints under.</p>
+    <dt><code>builder</code> <span class="xref">TBuilder</span></dt>
+    <dd><p>The endpoint route builder to map the endpoints to.</p>
 </dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.builder.iapplicationbuilder">IApplicationBuilder</a></dt>
-    <dd><p>The application builder for chaining.</p>
+    <dt><span class="xref">TBuilder</span></dt>
+    <dd><p>The same builder, for chaining.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TBuilder</code></dt>
+    <dd><p>The type of the endpoint route builder.</p>
 </dd>
   </dl>
 
@@ -236,8 +241,7 @@ without type arguments and would otherwise fail when <a class="xref" href="Vulth
 
 
 
-
-  <h4 class="section" id="Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_Microsoft_AspNetCore_Builder_WebApplication_Microsoft_AspNetCore_Routing_RouteGroupBuilder__remarks">Remarks</h4>
+  <h4 class="section" id="Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints__1___0__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>Endpoints are resolved from a dedicated service scope rather than the root provider, so that any
 scoped or transient dependencies an <a class="xref" href="Vulthil.SharedKernel.Api.IEndpoint.html">IEndpoint</a> implementation requires are resolved
 and disposed correctly instead of being rooted for the lifetime of the application.</p>

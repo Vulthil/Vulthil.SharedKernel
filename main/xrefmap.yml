@@ -8200,15 +8200,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Api.EndpointExtensions.AddEndpoints
   nameWithType: EndpointExtensions.AddEndpoints
-- uid: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(Microsoft.AspNetCore.Builder.WebApplication,Microsoft.AspNetCore.Routing.RouteGroupBuilder)
-  name: MapEndpoints(WebApplication, RouteGroupBuilder?)
-  href: api/Vulthil.SharedKernel.Api.EndpointExtensions.html#Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_Microsoft_AspNetCore_Builder_WebApplication_Microsoft_AspNetCore_Routing_RouteGroupBuilder_
-  commentId: M:Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(Microsoft.AspNetCore.Builder.WebApplication,Microsoft.AspNetCore.Routing.RouteGroupBuilder)
-  name.vb: MapEndpoints(WebApplication, RouteGroupBuilder)
-  fullName: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(Microsoft.AspNetCore.Builder.WebApplication, Microsoft.AspNetCore.Routing.RouteGroupBuilder?)
-  fullName.vb: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(Microsoft.AspNetCore.Builder.WebApplication, Microsoft.AspNetCore.Routing.RouteGroupBuilder)
-  nameWithType: EndpointExtensions.MapEndpoints(WebApplication, RouteGroupBuilder?)
-  nameWithType.vb: EndpointExtensions.MapEndpoints(WebApplication, RouteGroupBuilder)
 - uid: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints*
   name: MapEndpoints
   href: api/Vulthil.SharedKernel.Api.EndpointExtensions.html#Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints_
@@ -8216,6 +8207,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints
   nameWithType: EndpointExtensions.MapEndpoints
+- uid: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints``1(``0)
+  name: MapEndpoints<TBuilder>(TBuilder)
+  href: api/Vulthil.SharedKernel.Api.EndpointExtensions.html#Vulthil_SharedKernel_Api_EndpointExtensions_MapEndpoints__1___0_
+  commentId: M:Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints``1(``0)
+  name.vb: MapEndpoints(Of TBuilder)(TBuilder)
+  fullName: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints<TBuilder>(TBuilder)
+  fullName.vb: Vulthil.SharedKernel.Api.EndpointExtensions.MapEndpoints(Of TBuilder)(TBuilder)
+  nameWithType: EndpointExtensions.MapEndpoints<TBuilder>(TBuilder)
+  nameWithType.vb: EndpointExtensions.MapEndpoints(Of TBuilder)(TBuilder)
 - uid: Vulthil.SharedKernel.Api.IEndpoint
   name: IEndpoint
   href: api/Vulthil.SharedKernel.Api.IEndpoint.html
@@ -8442,19 +8442,19 @@ references:
   commentId: T:Vulthil.SharedKernel.Application.ApplicationOptions
   fullName: Vulthil.SharedKernel.Application.ApplicationOptions
   nameWithType: ApplicationOptions
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior
-  name: AddDomainEventLoggingBehavior()
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddDomainEventLoggingBehavior
-  commentId: M:Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior()
-  nameWithType: ApplicationOptions.AddDomainEventLoggingBehavior()
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior*
-  name: AddDomainEventLoggingBehavior
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddDomainEventLoggingBehavior_
-  commentId: Overload:Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior
+- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingPipelineBehavior
+  name: AddDomainEventLoggingPipelineBehavior()
+  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddDomainEventLoggingPipelineBehavior
+  commentId: M:Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingPipelineBehavior
+  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingPipelineBehavior()
+  nameWithType: ApplicationOptions.AddDomainEventLoggingPipelineBehavior()
+- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingPipelineBehavior*
+  name: AddDomainEventLoggingPipelineBehavior
+  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddDomainEventLoggingPipelineBehavior_
+  commentId: Overload:Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingPipelineBehavior
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingBehavior
-  nameWithType: ApplicationOptions.AddDomainEventLoggingBehavior
+  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddDomainEventLoggingPipelineBehavior
+  nameWithType: ApplicationOptions.AddDomainEventLoggingPipelineBehavior
 - uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenDomainEventPipelineHandler(System.Type)
   name: AddOpenDomainEventPipelineHandler(Type)
   href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddOpenDomainEventPipelineHandler_System_Type_
@@ -8481,19 +8481,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddOpenPipelineHandler
   nameWithType: ApplicationOptions.AddOpenPipelineHandler
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior
-  name: AddRequestLoggingBehavior()
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddRequestLoggingBehavior
-  commentId: M:Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior()
-  nameWithType: ApplicationOptions.AddRequestLoggingBehavior()
-- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior*
-  name: AddRequestLoggingBehavior
-  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddRequestLoggingBehavior_
-  commentId: Overload:Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior
+- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingPipelineBehavior
+  name: AddRequestLoggingPipelineBehavior()
+  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddRequestLoggingPipelineBehavior
+  commentId: M:Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingPipelineBehavior
+  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingPipelineBehavior()
+  nameWithType: ApplicationOptions.AddRequestLoggingPipelineBehavior()
+- uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingPipelineBehavior*
+  name: AddRequestLoggingPipelineBehavior
+  href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddRequestLoggingPipelineBehavior_
+  commentId: Overload:Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingPipelineBehavior
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingBehavior
-  nameWithType: ApplicationOptions.AddRequestLoggingBehavior
+  fullName: Vulthil.SharedKernel.Application.ApplicationOptions.AddRequestLoggingPipelineBehavior
+  nameWithType: ApplicationOptions.AddRequestLoggingPipelineBehavior
 - uid: Vulthil.SharedKernel.Application.ApplicationOptions.AddTransactionalPipelineBehavior
   name: AddTransactionalPipelineBehavior()
   href: api/Vulthil.SharedKernel.Application.ApplicationOptions.html#Vulthil_SharedKernel_Application_ApplicationOptions_AddTransactionalPipelineBehavior
@@ -8648,38 +8648,6 @@ references:
   commentId: N:Vulthil.SharedKernel.Application.Data
   fullName: Vulthil.SharedKernel.Application.Data
   nameWithType: Vulthil.SharedKernel.Application.Data
-- uid: Vulthil.SharedKernel.Application.Data.IDbTransaction
-  name: IDbTransaction
-  href: api/Vulthil.SharedKernel.Application.Data.IDbTransaction.html
-  commentId: T:Vulthil.SharedKernel.Application.Data.IDbTransaction
-  fullName: Vulthil.SharedKernel.Application.Data.IDbTransaction
-  nameWithType: IDbTransaction
-- uid: Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync(System.Threading.CancellationToken)
-  name: CommitAsync(CancellationToken)
-  href: api/Vulthil.SharedKernel.Application.Data.IDbTransaction.html#Vulthil_SharedKernel_Application_Data_IDbTransaction_CommitAsync_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync(System.Threading.CancellationToken)
-  fullName: Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync(System.Threading.CancellationToken)
-  nameWithType: IDbTransaction.CommitAsync(CancellationToken)
-- uid: Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync*
-  name: CommitAsync
-  href: api/Vulthil.SharedKernel.Application.Data.IDbTransaction.html#Vulthil_SharedKernel_Application_Data_IDbTransaction_CommitAsync_
-  commentId: Overload:Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Application.Data.IDbTransaction.CommitAsync
-  nameWithType: IDbTransaction.CommitAsync
-- uid: Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync(System.Threading.CancellationToken)
-  name: RollbackAsync(CancellationToken)
-  href: api/Vulthil.SharedKernel.Application.Data.IDbTransaction.html#Vulthil_SharedKernel_Application_Data_IDbTransaction_RollbackAsync_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync(System.Threading.CancellationToken)
-  fullName: Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync(System.Threading.CancellationToken)
-  nameWithType: IDbTransaction.RollbackAsync(CancellationToken)
-- uid: Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync*
-  name: RollbackAsync
-  href: api/Vulthil.SharedKernel.Application.Data.IDbTransaction.html#Vulthil_SharedKernel_Application_Data_IDbTransaction_RollbackAsync_
-  commentId: Overload:Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Application.Data.IDbTransaction.RollbackAsync
-  nameWithType: IDbTransaction.RollbackAsync
 - uid: Vulthil.SharedKernel.Application.Data.IUnitOfWork
   name: IUnitOfWork
   href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWork.html
@@ -8737,6 +8705,38 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWork.SaveChangesAsync
   nameWithType: IUnitOfWork.SaveChangesAsync
+- uid: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction
+  name: IUnitOfWorkTransaction
+  href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.html
+  commentId: T:Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction
+  fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction
+  nameWithType: IUnitOfWorkTransaction
+- uid: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync(System.Threading.CancellationToken)
+  name: CommitAsync(CancellationToken)
+  href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.html#Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_CommitAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync(System.Threading.CancellationToken)
+  nameWithType: IUnitOfWorkTransaction.CommitAsync(CancellationToken)
+- uid: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync*
+  name: CommitAsync
+  href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.html#Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_CommitAsync_
+  commentId: Overload:Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.CommitAsync
+  nameWithType: IUnitOfWorkTransaction.CommitAsync
+- uid: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync(System.Threading.CancellationToken)
+  name: RollbackAsync(CancellationToken)
+  href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.html#Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_RollbackAsync_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync(System.Threading.CancellationToken)
+  fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync(System.Threading.CancellationToken)
+  nameWithType: IUnitOfWorkTransaction.RollbackAsync(CancellationToken)
+- uid: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync*
+  name: RollbackAsync
+  href: api/Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.html#Vulthil_SharedKernel_Application_Data_IUnitOfWorkTransaction_RollbackAsync_
+  commentId: Overload:Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync
+  isSpec: "True"
+  fullName: Vulthil.SharedKernel.Application.Data.IUnitOfWorkTransaction.RollbackAsync
+  nameWithType: IUnitOfWorkTransaction.RollbackAsync
 - uid: Vulthil.SharedKernel.Application.DependencyInjection
   name: DependencyInjection
   href: api/Vulthil.SharedKernel.Application.DependencyInjection.html
@@ -8984,15 +8984,12 @@ references:
   commentId: T:Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher
   fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher
   nameWithType: IDomainEventPublisher
-- uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(System.Object,System.Threading.CancellationToken)
-  name: PublishAsync(object, CancellationToken)
-  href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_System_Object_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(System.Object,System.Threading.CancellationToken)
-  name.vb: PublishAsync(Object, CancellationToken)
-  fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(object, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Object, System.Threading.CancellationToken)
-  nameWithType: IDomainEventPublisher.PublishAsync(object, CancellationToken)
-  nameWithType.vb: IDomainEventPublisher.PublishAsync(Object, CancellationToken)
+- uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Vulthil.SharedKernel.Events.IDomainEvent,System.Threading.CancellationToken)
+  name: PublishAsync(IDomainEvent, CancellationToken)
+  href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_Vulthil_SharedKernel_Events_IDomainEvent_System_Threading_CancellationToken_
+  commentId: M:Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Vulthil.SharedKernel.Events.IDomainEvent,System.Threading.CancellationToken)
+  fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Vulthil.SharedKernel.Events.IDomainEvent, System.Threading.CancellationToken)
+  nameWithType: IDomainEventPublisher.PublishAsync(IDomainEvent, CancellationToken)
 - uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync*
   name: PublishAsync
   href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync_
@@ -9000,15 +8997,6 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync
   nameWithType: IDomainEventPublisher.PublishAsync
-- uid: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync``1(``0,System.Threading.CancellationToken)
-  name: PublishAsync<TNotification>(TNotification, CancellationToken)
-  href: api/Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.html#Vulthil_SharedKernel_Application_Messaging_DomainEvents_IDomainEventPublisher_PublishAsync__1___0_System_Threading_CancellationToken_
-  commentId: M:Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync``1(``0,System.Threading.CancellationToken)
-  name.vb: PublishAsync(Of TNotification)(TNotification, CancellationToken)
-  fullName: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync<TNotification>(TNotification, System.Threading.CancellationToken)
-  fullName.vb: Vulthil.SharedKernel.Application.Messaging.DomainEvents.IDomainEventPublisher.PublishAsync(Of TNotification)(TNotification, System.Threading.CancellationToken)
-  nameWithType: IDomainEventPublisher.PublishAsync<TNotification>(TNotification, CancellationToken)
-  nameWithType.vb: IDomainEventPublisher.PublishAsync(Of TNotification)(TNotification, CancellationToken)
 - uid: Vulthil.SharedKernel.Application.Messaging.ICommand
   name: ICommand
   href: api/Vulthil.SharedKernel.Application.Messaging.ICommand.html
@@ -9331,22 +9319,22 @@ references:
   commentId: T:Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions
   fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions
   nameWithType: DependencyInjectionExtensions
-- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb*
-  name: UseCosmosDb
-  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb_
-  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb
+- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmos*
+  name: UseCosmos
+  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmos_
+  commentId: Overload:Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmos
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb
-  nameWithType: DependencyInjectionExtensions.UseCosmosDb
-- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
-  name: UseCosmosDb<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?, Action<DbContextOptionsBuilder>?)
-  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmosDb__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Microsoft_EntityFrameworkCore_Cosmos_EntityFrameworkCoreCosmosSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
-  name.vb: UseCosmosDb(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings), Action(Of DbContextOptionsBuilder))
-  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>?, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder>?)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmosDb(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings), System.Action(Of Microsoft.EntityFrameworkCore.DbContextOptionsBuilder))
-  nameWithType: DependencyInjectionExtensions.UseCosmosDb<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?, Action<DbContextOptionsBuilder>?)
-  nameWithType.vb: DependencyInjectionExtensions.UseCosmosDb(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings), Action(Of DbContextOptionsBuilder))
+  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmos
+  nameWithType: DependencyInjectionExtensions.UseCosmos
+- uid: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmos``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name: UseCosmos<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?, Action<DbContextOptionsBuilder>?)
+  href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_Cosmos_DependencyInjectionExtensions_UseCosmos__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Aspire_Microsoft_EntityFrameworkCore_Cosmos_EntityFrameworkCoreCosmosSettings__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__
+  commentId: M:Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmos``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name.vb: UseCosmos(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings), Action(Of DbContextOptionsBuilder))
+  fullName: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmos<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings>?, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder>?)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.Cosmos.DependencyInjectionExtensions.UseCosmos(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Aspire.Microsoft.EntityFrameworkCore.Cosmos.EntityFrameworkCoreCosmosSettings), System.Action(Of Microsoft.EntityFrameworkCore.DbContextOptionsBuilder))
+  nameWithType: DependencyInjectionExtensions.UseCosmos<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<EntityFrameworkCoreCosmosSettings>?, Action<DbContextOptionsBuilder>?)
+  nameWithType.vb: DependencyInjectionExtensions.UseCosmos(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of EntityFrameworkCoreCosmosSettings), Action(Of DbContextOptionsBuilder))
 - uid: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing
   name: Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing
   href: api/Vulthil.SharedKernel.Infrastructure.Cosmos.OutboxProcessing.html
@@ -9786,15 +9774,15 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql
   nameWithType: DependencyInjectionExtensions.UseMySql
-- uid: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder})
-  name: UseMySql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<MySqlDbContextOptionsBuilder>?)
-  href: api/Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Microsoft_EntityFrameworkCore_Infrastructure_MySqlDbContextOptionsBuilder__
-  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder})
-  name.vb: UseMySql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of MySqlDbContextOptionsBuilder))
-  fullName: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder>?)
-  fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder))
-  nameWithType: DependencyInjectionExtensions.UseMySql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<MySqlDbContextOptionsBuilder>?)
-  nameWithType.vb: DependencyInjectionExtensions.UseMySql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of MySqlDbContextOptionsBuilder))
+- uid: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name: UseMySql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<MySqlDbContextOptionsBuilder>?, Action<DbContextOptionsBuilder>?)
+  href: api/Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.html#Vulthil_SharedKernel_Infrastructure_MySql_DependencyInjectionExtensions_UseMySql__1_Vulthil_SharedKernel_Infrastructure_IDatabaseInfrastructureConfigurator___0__System_String_System_Action_Microsoft_EntityFrameworkCore_Infrastructure_MySqlDbContextOptionsBuilder__System_Action_Microsoft_EntityFrameworkCore_DbContextOptionsBuilder__
+  commentId: M:Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql``1(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator{``0},System.String,System.Action{Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder},System.Action{Microsoft.EntityFrameworkCore.DbContextOptionsBuilder})
+  name.vb: UseMySql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of MySqlDbContextOptionsBuilder), Action(Of DbContextOptionsBuilder))
+  fullName: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql<TDbContext>(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator<TDbContext>, string, System.Action<Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder>?, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder>?)
+  fullName.vb: Vulthil.SharedKernel.Infrastructure.MySql.DependencyInjectionExtensions.UseMySql(Of TDbContext)(Vulthil.SharedKernel.Infrastructure.IDatabaseInfrastructureConfigurator(Of TDbContext), String, System.Action(Of Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder), System.Action(Of Microsoft.EntityFrameworkCore.DbContextOptionsBuilder))
+  nameWithType: DependencyInjectionExtensions.UseMySql<TDbContext>(IDatabaseInfrastructureConfigurator<TDbContext>, string, Action<MySqlDbContextOptionsBuilder>?, Action<DbContextOptionsBuilder>?)
+  nameWithType.vb: DependencyInjectionExtensions.UseMySql(Of TDbContext)(IDatabaseInfrastructureConfigurator(Of TDbContext), String, Action(Of MySqlDbContextOptionsBuilder), Action(Of DbContextOptionsBuilder))
 - uid: Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions
   name: MySqlOutboxModelBuilderExtensions
   href: api/Vulthil.SharedKernel.Infrastructure.MySql.MySqlOutboxModelBuilderExtensions.html
@@ -10458,19 +10446,6 @@ references:
   commentId: T:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages
   fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages
   nameWithType: ISaveOutboxMessages
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction
-  name: IsInTransaction
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_IsInTransaction
-  commentId: P:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction
-  nameWithType: ISaveOutboxMessages.IsInTransaction
-- uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction*
-  name: IsInTransaction
-  href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_IsInTransaction_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction
-  isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction
-  nameWithType: ISaveOutboxMessages.IsInTransaction
 - uid: Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.OutboxMessages
   name: OutboxMessages
   href: api/Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.html#Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_OutboxMessages
@@ -11300,19 +11275,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDegreeOfParallelism
   nameWithType: OutboxProcessingOptions.MaxDegreeOfParallelism
-- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds
-  name: MaxDelaySeconds
-  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxDelaySeconds
-  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds
-  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds
-  nameWithType: OutboxProcessingOptions.MaxDelaySeconds
-- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds*
-  name: MaxDelaySeconds
-  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxDelaySeconds_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxPollingInterval
+  name: MaxPollingInterval
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxPollingInterval
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxPollingInterval
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxPollingInterval
+  nameWithType: OutboxProcessingOptions.MaxPollingInterval
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxPollingInterval*
+  name: MaxPollingInterval
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxPollingInterval_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxPollingInterval
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxDelaySeconds
-  nameWithType: OutboxProcessingOptions.MaxDelaySeconds
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxPollingInterval
+  nameWithType: OutboxProcessingOptions.MaxPollingInterval
 - uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries
   name: MaxRetries
   href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_MaxRetries
@@ -11326,19 +11301,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.MaxRetries
   nameWithType: OutboxProcessingOptions.MaxRetries
-- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
-  name: OutboxProcessingDelaySeconds
-  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelaySeconds
-  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
-  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
-  nameWithType: OutboxProcessingOptions.OutboxProcessingDelaySeconds
-- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds*
-  name: OutboxProcessingDelaySeconds
-  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_OutboxProcessingDelaySeconds_
-  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.PollingInterval
+  name: PollingInterval
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_PollingInterval
+  commentId: P:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.PollingInterval
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.PollingInterval
+  nameWithType: OutboxProcessingOptions.PollingInterval
+- uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.PollingInterval*
+  name: PollingInterval
+  href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_PollingInterval_
+  commentId: Overload:Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.PollingInterval
   isSpec: "True"
-  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.OutboxProcessingDelaySeconds
-  nameWithType: OutboxProcessingOptions.OutboxProcessingDelaySeconds
+  fullName: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.PollingInterval
+  nameWithType: OutboxProcessingOptions.PollingInterval
 - uid: Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.Retention
   name: Retention
   href: api/Vulthil.SharedKernel.Outbox.OutboxProcessingOptions.html#Vulthil_SharedKernel_Outbox_OutboxProcessingOptions_Retention

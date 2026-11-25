@@ -265,7 +265,7 @@ locking (e.g. <code>FOR UPDATE SKIP LOCKED</code>).</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task&lt;List&lt;OutboxMessageData&gt;&gt; FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task&lt;IReadOnlyList&lt;OutboxMessageData&gt;&gt; FetchMessagesAsync(int batchSize, int maxRetries, CancellationToken cancellationToken)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -283,7 +283,7 @@ locking (e.g. <code>FOR UPDATE SKIP LOCKED</code>).</p>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessageData.html">OutboxMessageData</a>&gt;&gt;</dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Vulthil.SharedKernel.Outbox.OutboxMessageData.html">OutboxMessageData</a>&gt;&gt;</dt>
     <dd><p>The fetched message data.</p>
 </dd>
   </dl>

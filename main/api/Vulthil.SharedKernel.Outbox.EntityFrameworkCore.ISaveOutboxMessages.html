@@ -128,40 +128,6 @@ Interface ISaveOutboxMessages  <a class="header-action link-secondary" title="Vi
 </h2>
 
 
-  <a id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_IsInTransaction_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction*"></a>
-
-  <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_IsInTransaction" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.IsInTransaction">
-  IsInTransaction
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/ISaveOutboxMessages.cs/#L21"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets a value indicating whether the persistence context currently has an active database transaction. The
-transactional outbox uses this to decide whether an outgoing message should be captured into the outbox
-(atomically with the in-flight business changes) or published directly.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">bool IsInTransaction { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_OutboxMessages_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.OutboxMessages*"></a>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_OutboxMessages" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.OutboxMessages">
@@ -203,7 +169,7 @@ Used by the outbox processor to read, update, and add outbox messages.</p>
 
   <h3 id="Vulthil_SharedKernel_Outbox_EntityFrameworkCore_ISaveOutboxMessages_SaveChangesAsync_System_Threading_CancellationToken_" data-uid="Vulthil.SharedKernel.Outbox.EntityFrameworkCore.ISaveOutboxMessages.SaveChangesAsync(System.Threading.CancellationToken)">
   SaveChangesAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/ISaveOutboxMessages.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.SharedKernel.Outbox.EntityFrameworkCore/ISaveOutboxMessages.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Persists the pending outbox-message changes tracked by the context to the database.</p>

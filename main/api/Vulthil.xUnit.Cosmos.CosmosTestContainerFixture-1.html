@@ -214,8 +214,8 @@ emulator image via <code>Configure</code>).</p>
   <div class="markdown level0 remarks"><p>Each scope's database is created and reset through the application's own <code class="typeparamref">TDbContext</code>
 resolved from the test host's service provider — so a context whose constructor takes more than its options works
 without extra plumbing. The scope creates it once during host startup through
-<a class="xref" href="Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_System_IServiceProvider_">InitializeAsync(IServiceProvider)</a> and recreates it after each test through
-<a class="xref" href="Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_">ResetAsync(IServiceProvider)</a>. Only the emulator readiness probe and the best-effort scope teardown
+<a class="xref" href="Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_System_IServiceProvider_System_Threading_CancellationToken_">InitializeAsync(IServiceProvider, CancellationToken)</a> and recreates it after each test through
+<a class="xref" href="Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_System_Threading_CancellationToken_">ResetAsync(IServiceProvider, CancellationToken)</a>. Only the emulator readiness probe and the best-effort scope teardown
 use a bare <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext">DbContext</a>, because neither needs the model.</p>
 </div>
 

@@ -246,7 +246,7 @@ Class BaseUnitTestCase  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Vulthil_xUnit_BaseUnitTestCase_CreateInstance__1" data-uid="Vulthil.xUnit.BaseUnitTestCase.CreateInstance``1">
   CreateInstance&lt;TTarget&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an instance of <code class="typeparamref">TTarget</code> using the configured automocker.</p>
@@ -277,46 +277,6 @@ Class BaseUnitTestCase  <a class="header-action link-secondary" title="View sour
 
 
 
-
-
-
-
-  <a id="Vulthil_xUnit_BaseUnitTestCase_Dispose_" data-uid="Vulthil.xUnit.BaseUnitTestCase.Dispose*"></a>
-
-  <h3 id="Vulthil_xUnit_BaseUnitTestCase_Dispose" data-uid="Vulthil.xUnit.BaseUnitTestCase.Dispose">
-  Dispose()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L35"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Disposes every disposable instance the auto-mocker holds — explicit <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Use__1___0_">Use&lt;TService&gt;(TService)</a>
-registrations, <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_UseReal__1">UseReal&lt;TService&gt;()</a>/<a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_UseRealFor__2">UseRealFor&lt;TService, TImplementation&gt;()</a> instances
-once resolved, and auto-generated dependency mocks — then override (calling the base implementation) to
-perform further cleanup.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual ValueTask Dispose()</code></pre>
-  </div>
-
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A task representing the cleanup work.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-  <h4 class="section" id="Vulthil_xUnit_BaseUnitTestCase_Dispose_remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>Only synchronous <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a> instances are covered; an auto-mocker registration that is only
-<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a> is not disposed by this sweep and needs an override to dispose it explicitly.</p>
-</div>
 
 
 
@@ -355,11 +315,51 @@ resetting unmanaged resources asynchronously.</p>
 
 
 
+  <a id="Vulthil_xUnit_BaseUnitTestCase_DisposeAsyncCore_" data-uid="Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore*"></a>
+
+  <h3 id="Vulthil_xUnit_BaseUnitTestCase_DisposeAsyncCore" data-uid="Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore">
+  DisposeAsyncCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Disposes every disposable instance the auto-mocker holds — explicit <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Use__1___0_">Use&lt;TService&gt;(TService)</a>
+registrations, <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_UseReal__1">UseReal&lt;TService&gt;()</a>/<a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_UseRealFor__2">UseRealFor&lt;TService, TImplementation&gt;()</a> instances
+once resolved, and auto-generated dependency mocks — then override (calling the base implementation) to
+perform further cleanup.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual ValueTask DisposeAsyncCore()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A task representing the cleanup work.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Vulthil_xUnit_BaseUnitTestCase_DisposeAsyncCore_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Only synchronous <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a> instances are covered; an auto-mocker registration that is only
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a> is not disposed by this sweep and needs an override to dispose it explicitly.</p>
+</div>
+
+
+
+
   <a id="Vulthil_xUnit_BaseUnitTestCase_GetMock_" data-uid="Vulthil.xUnit.BaseUnitTestCase.GetMock*"></a>
 
   <h3 id="Vulthil_xUnit_BaseUnitTestCase_GetMock__1" data-uid="Vulthil.xUnit.BaseUnitTestCase.GetMock``1">
   GetMock&lt;TMock&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Retrieves the mock for the specified type from the auto-mocker.</p>
@@ -394,19 +394,20 @@ resetting unmanaged resources asynchronously.</p>
 
 
 
-  <a id="Vulthil_xUnit_BaseUnitTestCase_Initialize_" data-uid="Vulthil.xUnit.BaseUnitTestCase.Initialize*"></a>
+  <a id="Vulthil_xUnit_BaseUnitTestCase_InitializeAsync_" data-uid="Vulthil.xUnit.BaseUnitTestCase.InitializeAsync*"></a>
 
-  <h3 id="Vulthil_xUnit_BaseUnitTestCase_Initialize" data-uid="Vulthil.xUnit.BaseUnitTestCase.Initialize">
-  Initialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_xUnit_BaseUnitTestCase_InitializeAsync" data-uid="Vulthil.xUnit.BaseUnitTestCase.InitializeAsync">
+  InitializeAsync()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Override to perform custom async initialization before each test.</p>
+  <div class="markdown level1 summary"><p>Runs <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_InitializeAsyncCore">InitializeAsyncCore()</a> before each test. xUnit calls this method; override
+<a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_InitializeAsyncCore">InitializeAsyncCore()</a> to add initialization.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual ValueTask Initialize()</code></pre>
+    <pre><code class="lang-csharp hljs">public ValueTask InitializeAsync()</code></pre>
   </div>
 
 
@@ -427,26 +428,27 @@ resetting unmanaged resources asynchronously.</p>
 
 
 
-  <a id="Vulthil_xUnit_BaseUnitTestCase_InitializeAsync_" data-uid="Vulthil.xUnit.BaseUnitTestCase.InitializeAsync*"></a>
+  <a id="Vulthil_xUnit_BaseUnitTestCase_InitializeAsyncCore_" data-uid="Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore*"></a>
 
-  <h3 id="Vulthil_xUnit_BaseUnitTestCase_InitializeAsync" data-uid="Vulthil.xUnit.BaseUnitTestCase.InitializeAsync">
-  InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_xUnit_BaseUnitTestCase_InitializeAsyncCore" data-uid="Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore">
+  InitializeAsyncCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Called immediately after the class has been created, before it is used.</p>
+  <div class="markdown level1 summary"><p>Override to perform custom async initialization before each test.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual ValueTask InitializeAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual ValueTask InitializeAsyncCore()</code></pre>
   </div>
 
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd></dd>
+    <dd><p>A task representing the initialization work.</p>
+</dd>
   </dl>
 
 
@@ -455,12 +457,6 @@ resetting unmanaged resources asynchronously.</p>
 
 
 
-  <h4 class="section" id="Vulthil_xUnit_BaseUnitTestCase_InitializeAsync_remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>If this method throws an exception, then <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable.disposeasync">DisposeAsync()</a>
-will not be called. This mirrors the behavior of constructors and usage of
-<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>/<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a>, since this method
-is intended as the equivalent of an async constructor.</p>
-</div>
 
 
 
@@ -469,7 +465,7 @@ is intended as the equivalent of an async constructor.</p>
 
   <h3 id="Vulthil_xUnit_BaseUnitTestCase_UseRealFor__2" data-uid="Vulthil.xUnit.BaseUnitTestCase.UseRealFor``2">
   UseRealFor&lt;TService, TImplementation&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the auto-mocker to create a real instance of <code class="typeparamref">TImplementation</code> registered as
@@ -513,7 +509,7 @@ resolution is still picked up.</p>
 
   <h3 id="Vulthil_xUnit_BaseUnitTestCase_UseReal__1" data-uid="Vulthil.xUnit.BaseUnitTestCase.UseReal``1">
   UseReal&lt;TService&gt;()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Configures the auto-mocker to create a real instance of <code class="typeparamref">TService</code> with all dependencies
@@ -554,7 +550,7 @@ resolution is still picked up.</p>
 
   <h3 id="Vulthil_xUnit_BaseUnitTestCase_Use__1___0_" data-uid="Vulthil.xUnit.BaseUnitTestCase.Use``1(``0)">
   Use&lt;TService&gt;(TService)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseUnitTestCase.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers an explicit service instance in the auto-mocker.</p>
@@ -588,7 +584,7 @@ resolution is still picked up.</p>
   <h4 class="section" id="Vulthil_xUnit_BaseUnitTestCase_Use__1___0__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>The auto-mocker takes ownership of <code class="paramref">service</code> for disposal purposes: if it implements
 <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>, it is disposed at test teardown along with every other auto-mocker-held instance
-(see <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Dispose">Dispose()</a>).</p>
+(see <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_DisposeAsyncCore">DisposeAsyncCore()</a>).</p>
 </div>
 
 

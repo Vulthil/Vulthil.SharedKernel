@@ -367,21 +367,16 @@ host, so a derived host can list its containers by type. Call from the construct
   </h3>
 
   <div class="markdown level1 summary"><p>Override to register shared containers by calling <a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost_AddContainer_Vulthil_xUnit_Fixtures_ITestContainer_">AddContainer(ITestContainer)</a> or
-<a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost_AddContainer__1">AddContainer&lt;TContainer&gt;()</a>.</p>
+<a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost_AddContainer__1">AddContainer&lt;TContainer&gt;()</a>. Registration does no I/O: the containers start lazily, through
+<a class="xref" href="Vulthil.xUnit.Fixtures.ContainerHost.html#Vulthil_xUnit_Fixtures_ContainerHost_EnsureStartedAsync_Vulthil_xUnit_Fixtures_ITestContainer_">EnsureStartedAsync(ITestContainer)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Task ConfigureContainers()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual void ConfigureContainers()</code></pre>
   </div>
 
 
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
-    <dd><p>A task representing the asynchronous registration work.</p>
-</dd>
-  </dl>
 
 
 
@@ -397,7 +392,7 @@ host, so a derived host can list its containers by type. Call from the construct
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_DisposeAsync" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.DisposeAsync">
   DisposeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L124"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Disposes every container that was started. Invoked once by xUnit after the last test in the assembly.</p>
@@ -430,7 +425,7 @@ host, so a derived host can list its containers by type. Call from the construct
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_EnsureStartedAsync_Vulthil_xUnit_Fixtures_ITestContainer_" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.EnsureStartedAsync(Vulthil.xUnit.Fixtures.ITestContainer)">
   EnsureStartedAsync(ITestContainer)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Starts the given container if it has not been started yet. Thread-safe: concurrent callers share a single
@@ -476,7 +471,7 @@ startup task, and a failed startup is observed by every consumer instead of bein
 
   <h3 id="Vulthil_xUnit_Fixtures_ContainerHost_InitializeAsync" data-uid="Vulthil.xUnit.Fixtures.ContainerHost.InitializeAsync">
   InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/Fixtures/ContainerHost.cs/#L87"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Registers the configured containers. Invoked once by xUnit before the fixture is handed to its first consumer;
@@ -492,7 +487,7 @@ containers themselves start lazily through <a class="xref" href="Vulthil.xUnit.F
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A task representing the asynchronous registration work.</p>
+    <dd><p>A completed task: the registration is synchronous.</p>
 </dd>
   </dl>
 

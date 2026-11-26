@@ -150,7 +150,10 @@ that service in a per-test copy of the host, so an external dependency is mocked
       <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_DisposeAsync">BaseUnitTestCase.DisposeAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Initialize">BaseUnitTestCase.Initialize()</a>
+      <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_InitializeAsync">BaseUnitTestCase.InitializeAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_InitializeAsyncCore">BaseUnitTestCase.InitializeAsyncCore()</a>
     </div>
     <div>
       <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_CreateInstance__1">BaseUnitTestCase.CreateInstance&lt;TTarget&gt;()</a>
@@ -490,11 +493,11 @@ reset covers every live host of the fixture without building one.</p>
 
 
 
-  <a id="Vulthil_xUnit_BaseIntegrationTestCase_1_Dispose_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose*"></a>
+  <a id="Vulthil_xUnit_BaseIntegrationTestCase_1_DisposeAsyncCore_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.DisposeAsyncCore*"></a>
 
-  <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_Dispose" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose">
-  Dispose()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L217"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_DisposeAsyncCore" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.DisposeAsyncCore">
+  DisposeAsyncCore()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L209"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resets the fixture's live hosts (restartable services paused, resettable resources and test states reset),
@@ -504,7 +507,7 @@ Override (calling the base implementation) for further cleanup.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override ValueTask Dispose()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override ValueTask DisposeAsyncCore()</code></pre>
   </div>
 
 
@@ -647,45 +650,11 @@ responses and inspecting captured requests. The mock is reset after each test.</
 
 
 
-  <a id="Vulthil_xUnit_BaseIntegrationTestCase_1_InitializeAsync_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync*"></a>
+  <a id="Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScopeAsync_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScopeAsync*"></a>
 
-  <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_InitializeAsync" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync">
-  InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L205"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Runs the <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Initialize">Initialize()</a> hook, then discards the service scope it may have used so
-the test itself starts from a fresh one.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override ValueTask InitializeAsync()</code></pre>
-  </div>
-
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
-    <dd><p>A task representing the initialization work.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScope_" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope*"></a>
-
-  <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScope" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope">
-  ResetScope()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L249"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScopeAsync" data-uid="Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScopeAsync">
+  ResetScopeAsync()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Vulthil/Vulthil.SharedKernel/blob/main/src/Vulthil.xUnit/BaseIntegrationTestCase.cs/#L241"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Disposes the current service scope, if one exists, so the next access to
@@ -694,7 +663,7 @@ the test itself starts from a fresh one.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ValueTask ResetScope()</code></pre>
+    <pre><code class="lang-csharp hljs">protected ValueTask ResetScopeAsync()</code></pre>
   </div>
 
 
@@ -838,7 +807,7 @@ resolution is still picked up.</p>
   <h4 class="section" id="Vulthil_xUnit_BaseIntegrationTestCase_1_Use__1___0__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>The auto-mocker takes ownership of <code class="paramref">service</code> for disposal purposes: if it implements
 <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>, it is disposed at test teardown along with every other auto-mocker-held instance
-(see <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Dispose">Dispose()</a>).</p>
+(see <a class="xref" href="Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_DisposeAsyncCore">DisposeAsyncCore()</a>).</p>
 </div>
 
 

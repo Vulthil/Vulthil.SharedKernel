@@ -3411,7 +3411,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.xUnit.Fixtures.ITestDatabaseContainer",
-      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.yml\" sourcestartlinenumber=\"1\">Extends <xref href=\"Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString\" data-throw-if-not-resolved=\"false\"></xref> with database migration capabilities. Data is reset\nbetween tests through <xref href=\"Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)\" data-throw-if-not-resolved=\"false\"></xref> (Respawn).</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.yml\" sourcestartlinenumber=\"1\">Extends <xref href=\"Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString\" data-throw-if-not-resolved=\"false\"></xref> with database migration capabilities. Data is reset\nbetween tests through <xref href=\"Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider%2cSystem.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref> (Respawn).</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3537,7 +3537,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Vulthil.xUnit.Http.IHttpMock",
-      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Http.IHttpMock.yml\" sourcestartlinenumber=\"1\">An in-process fake for an outbound <xref href=\"System.Net.Http.HttpClient\" data-throw-if-not-resolved=\"false\"></xref> dependency. Configure stubbed responses per test\nand inspect the requests the system under test sent. Register one per typed client via\n<code>AddHttpMock&lt;TClient&gt;()</code> (or per named client via <code>AddHttpMock(&quot;name&quot;)</code>) on the factory and\nretrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot;name&quot;)</code>).</p>\n"
+      "Summary": "<p sourcefile=\"api/Vulthil.xUnit.Http.IHttpMock.yml\" sourcestartlinenumber=\"1\">An in-process fake for an outbound <xref href=\"System.Net.Http.HttpClient\" data-throw-if-not-resolved=\"false\"></xref> dependency. Configure stubbed responses per test\nand inspect the requests the system under test sent. Register one per typed client via\n<code>AddHttpMock&lt;TClient&gt;()</code> (or per named client via <code>AddHttpMock(&quot;name&quot;)</code>) on the factory and\nretrieve it with <code>HttpMock&lt;TClient&gt;()</code> (or <code>HttpMock(&quot;name&quot;)</code>). The test case clears the configured\nresponses and the captured requests after each test.</p>\n"
     },
     {
       "type": "ManagedReference",

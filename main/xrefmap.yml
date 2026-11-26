@@ -11717,23 +11717,23 @@ references:
   fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).CreateFactory
   nameWithType: BaseIntegrationTestCase<TEntryPoint>.CreateFactory
   nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).CreateFactory
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose
-  name: Dispose()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Dispose
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Dispose()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Dispose()
-  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Dispose()
-  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Dispose()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose*
-  name: Dispose
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Dispose_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.Dispose
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.DisposeAsyncCore
+  name: DisposeAsyncCore()
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_DisposeAsyncCore
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.DisposeAsyncCore
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.DisposeAsyncCore()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).DisposeAsyncCore()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.DisposeAsyncCore()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).DisposeAsyncCore()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.DisposeAsyncCore*
+  name: DisposeAsyncCore
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_DisposeAsyncCore_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.DisposeAsyncCore
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Dispose
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).Dispose
-  nameWithType: BaseIntegrationTestCase<TEntryPoint>.Dispose
-  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).Dispose
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.DisposeAsyncCore
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).DisposeAsyncCore
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.DisposeAsyncCore
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).DisposeAsyncCore
 - uid: Vulthil.xUnit.BaseIntegrationTestCase`1.Factory
   name: Factory
   href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_Factory
@@ -11813,40 +11813,23 @@ references:
   fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).HttpMock(Of TClient)()
   nameWithType: BaseIntegrationTestCase<TEntryPoint>.HttpMock<TClient>()
   nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).HttpMock(Of TClient)()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync
-  name: InitializeAsync()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_InitializeAsync
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.InitializeAsync()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync()
-  nameWithType: BaseIntegrationTestCase<TEntryPoint>.InitializeAsync()
-  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync*
-  name: InitializeAsync
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_InitializeAsync_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.InitializeAsync
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScopeAsync
+  name: ResetScopeAsync()
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScopeAsync
+  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScopeAsync
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScopeAsync()
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ResetScopeAsync()
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ResetScopeAsync()
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ResetScopeAsync()
+- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScopeAsync*
+  name: ResetScopeAsync
+  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScopeAsync_
+  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScopeAsync
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.InitializeAsync
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync
-  nameWithType: BaseIntegrationTestCase<TEntryPoint>.InitializeAsync
-  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).InitializeAsync
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope
-  name: ResetScope()
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScope
-  commentId: M:Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScope()
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ResetScope()
-  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ResetScope()
-  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ResetScope()
-- uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope*
-  name: ResetScope
-  href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ResetScope_
-  commentId: Overload:Vulthil.xUnit.BaseIntegrationTestCase`1.ResetScope
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScope
-  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ResetScope
-  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ResetScope
-  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ResetScope
+  fullName: Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScopeAsync
+  fullName.vb: Vulthil.xUnit.BaseIntegrationTestCase(Of TEntryPoint).ResetScopeAsync
+  nameWithType: BaseIntegrationTestCase<TEntryPoint>.ResetScopeAsync
+  nameWithType.vb: BaseIntegrationTestCase(Of TEntryPoint).ResetScopeAsync
 - uid: Vulthil.xUnit.BaseIntegrationTestCase`1.ScopedServices
   name: ScopedServices
   href: api/Vulthil.xUnit.BaseIntegrationTestCase-1.html#Vulthil_xUnit_BaseIntegrationTestCase_1_ScopedServices
@@ -11983,19 +11966,6 @@ references:
   fullName.vb: Vulthil.xUnit.BaseUnitTestCase.CreateInstance(Of TTarget)()
   nameWithType: BaseUnitTestCase.CreateInstance<TTarget>()
   nameWithType.vb: BaseUnitTestCase.CreateInstance(Of TTarget)()
-- uid: Vulthil.xUnit.BaseUnitTestCase.Dispose
-  name: Dispose()
-  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Dispose
-  commentId: M:Vulthil.xUnit.BaseUnitTestCase.Dispose
-  fullName: Vulthil.xUnit.BaseUnitTestCase.Dispose()
-  nameWithType: BaseUnitTestCase.Dispose()
-- uid: Vulthil.xUnit.BaseUnitTestCase.Dispose*
-  name: Dispose
-  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Dispose_
-  commentId: Overload:Vulthil.xUnit.BaseUnitTestCase.Dispose
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseUnitTestCase.Dispose
-  nameWithType: BaseUnitTestCase.Dispose
 - uid: Vulthil.xUnit.BaseUnitTestCase.DisposeAsync
   name: DisposeAsync()
   href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_DisposeAsync
@@ -12009,6 +11979,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.xUnit.BaseUnitTestCase.DisposeAsync
   nameWithType: BaseUnitTestCase.DisposeAsync
+- uid: Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore
+  name: DisposeAsyncCore()
+  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_DisposeAsyncCore
+  commentId: M:Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore
+  fullName: Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore()
+  nameWithType: BaseUnitTestCase.DisposeAsyncCore()
+- uid: Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore*
+  name: DisposeAsyncCore
+  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_DisposeAsyncCore_
+  commentId: Overload:Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore
+  nameWithType: BaseUnitTestCase.DisposeAsyncCore
 - uid: Vulthil.xUnit.BaseUnitTestCase.GetMock*
   name: GetMock
   href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_GetMock_
@@ -12025,19 +12008,6 @@ references:
   fullName.vb: Vulthil.xUnit.BaseUnitTestCase.GetMock(Of TMock)()
   nameWithType: BaseUnitTestCase.GetMock<TMock>()
   nameWithType.vb: BaseUnitTestCase.GetMock(Of TMock)()
-- uid: Vulthil.xUnit.BaseUnitTestCase.Initialize
-  name: Initialize()
-  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Initialize
-  commentId: M:Vulthil.xUnit.BaseUnitTestCase.Initialize
-  fullName: Vulthil.xUnit.BaseUnitTestCase.Initialize()
-  nameWithType: BaseUnitTestCase.Initialize()
-- uid: Vulthil.xUnit.BaseUnitTestCase.Initialize*
-  name: Initialize
-  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Initialize_
-  commentId: Overload:Vulthil.xUnit.BaseUnitTestCase.Initialize
-  isSpec: "True"
-  fullName: Vulthil.xUnit.BaseUnitTestCase.Initialize
-  nameWithType: BaseUnitTestCase.Initialize
 - uid: Vulthil.xUnit.BaseUnitTestCase.InitializeAsync
   name: InitializeAsync()
   href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_InitializeAsync
@@ -12051,6 +12021,19 @@ references:
   isSpec: "True"
   fullName: Vulthil.xUnit.BaseUnitTestCase.InitializeAsync
   nameWithType: BaseUnitTestCase.InitializeAsync
+- uid: Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore
+  name: InitializeAsyncCore()
+  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_InitializeAsyncCore
+  commentId: M:Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore
+  fullName: Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore()
+  nameWithType: BaseUnitTestCase.InitializeAsyncCore()
+- uid: Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore*
+  name: InitializeAsyncCore
+  href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_InitializeAsyncCore_
+  commentId: Overload:Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore
+  isSpec: "True"
+  fullName: Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore
+  nameWithType: BaseUnitTestCase.InitializeAsyncCore
 - uid: Vulthil.xUnit.BaseUnitTestCase.Use*
   name: Use
   href: api/Vulthil.xUnit.BaseUnitTestCase.html#Vulthil_xUnit_BaseUnitTestCase_Use_
@@ -12144,23 +12127,23 @@ references:
   fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).CreateInstance
   nameWithType: BaseUnitTestCase<TTarget>.CreateInstance
   nameWithType.vb: BaseUnitTestCase(Of TTarget).CreateInstance
-- uid: Vulthil.xUnit.BaseUnitTestCase`1.Dispose
-  name: Dispose()
-  href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_Dispose
-  commentId: M:Vulthil.xUnit.BaseUnitTestCase`1.Dispose
-  fullName: Vulthil.xUnit.BaseUnitTestCase<TTarget>.Dispose()
-  fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).Dispose()
-  nameWithType: BaseUnitTestCase<TTarget>.Dispose()
-  nameWithType.vb: BaseUnitTestCase(Of TTarget).Dispose()
-- uid: Vulthil.xUnit.BaseUnitTestCase`1.Dispose*
-  name: Dispose
-  href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_Dispose_
-  commentId: Overload:Vulthil.xUnit.BaseUnitTestCase`1.Dispose
+- uid: Vulthil.xUnit.BaseUnitTestCase`1.DisposeAsyncCore
+  name: DisposeAsyncCore()
+  href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_DisposeAsyncCore
+  commentId: M:Vulthil.xUnit.BaseUnitTestCase`1.DisposeAsyncCore
+  fullName: Vulthil.xUnit.BaseUnitTestCase<TTarget>.DisposeAsyncCore()
+  fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).DisposeAsyncCore()
+  nameWithType: BaseUnitTestCase<TTarget>.DisposeAsyncCore()
+  nameWithType.vb: BaseUnitTestCase(Of TTarget).DisposeAsyncCore()
+- uid: Vulthil.xUnit.BaseUnitTestCase`1.DisposeAsyncCore*
+  name: DisposeAsyncCore
+  href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_DisposeAsyncCore_
+  commentId: Overload:Vulthil.xUnit.BaseUnitTestCase`1.DisposeAsyncCore
   isSpec: "True"
-  fullName: Vulthil.xUnit.BaseUnitTestCase<TTarget>.Dispose
-  fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).Dispose
-  nameWithType: BaseUnitTestCase<TTarget>.Dispose
-  nameWithType.vb: BaseUnitTestCase(Of TTarget).Dispose
+  fullName: Vulthil.xUnit.BaseUnitTestCase<TTarget>.DisposeAsyncCore
+  fullName.vb: Vulthil.xUnit.BaseUnitTestCase(Of TTarget).DisposeAsyncCore
+  nameWithType: BaseUnitTestCase<TTarget>.DisposeAsyncCore
+  nameWithType.vb: BaseUnitTestCase(Of TTarget).DisposeAsyncCore
 - uid: Vulthil.xUnit.BaseUnitTestCase`1.Target
   name: Target
   href: api/Vulthil.xUnit.BaseUnitTestCase-1.html#Vulthil_xUnit_BaseUnitTestCase_1_Target
@@ -12705,19 +12688,19 @@ references:
   commentId: T:Vulthil.xUnit.Fixtures.ITestDatabaseContainer
   fullName: Vulthil.xUnit.Fixtures.ITestDatabaseContainer
   nameWithType: ITestDatabaseContainer
-- uid: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase(System.IServiceProvider)
-  name: MigrateDatabase(IServiceProvider)
-  href: api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.html#Vulthil_xUnit_Fixtures_ITestDatabaseContainer_MigrateDatabase_System_IServiceProvider_
-  commentId: M:Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase(System.IServiceProvider)
-  fullName: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase(System.IServiceProvider)
-  nameWithType: ITestDatabaseContainer.MigrateDatabase(IServiceProvider)
-- uid: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase*
-  name: MigrateDatabase
-  href: api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.html#Vulthil_xUnit_Fixtures_ITestDatabaseContainer_MigrateDatabase_
-  commentId: Overload:Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase
+- uid: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabaseAsync(System.IServiceProvider,System.Threading.CancellationToken)
+  name: MigrateDatabaseAsync(IServiceProvider, CancellationToken)
+  href: api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.html#Vulthil_xUnit_Fixtures_ITestDatabaseContainer_MigrateDatabaseAsync_System_IServiceProvider_System_Threading_CancellationToken_
+  commentId: M:Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabaseAsync(System.IServiceProvider,System.Threading.CancellationToken)
+  fullName: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabaseAsync(System.IServiceProvider, System.Threading.CancellationToken)
+  nameWithType: ITestDatabaseContainer.MigrateDatabaseAsync(IServiceProvider, CancellationToken)
+- uid: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabaseAsync*
+  name: MigrateDatabaseAsync
+  href: api/Vulthil.xUnit.Fixtures.ITestDatabaseContainer.html#Vulthil_xUnit_Fixtures_ITestDatabaseContainer_MigrateDatabaseAsync_
+  commentId: Overload:Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabaseAsync
   isSpec: "True"
-  fullName: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase
-  nameWithType: ITestDatabaseContainer.MigrateDatabase
+  fullName: Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabaseAsync
+  nameWithType: ITestDatabaseContainer.MigrateDatabaseAsync
 - uid: Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture`2
   name: RabbitMqTestContainerFixture<TBuilderEntity, TContainerEntity>
   href: api/Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture-2.html
@@ -13558,12 +13541,12 @@ references:
   commentId: T:Vulthil.xUnit.IResettableResource
   fullName: Vulthil.xUnit.IResettableResource
   nameWithType: IResettableResource
-- uid: Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)
-  name: ResetAsync(IServiceProvider)
-  href: api/Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_
-  commentId: M:Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)
-  fullName: Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider)
-  nameWithType: IResettableResource.ResetAsync(IServiceProvider)
+- uid: Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider,System.Threading.CancellationToken)
+  name: ResetAsync(IServiceProvider, CancellationToken)
+  href: api/Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_System_IServiceProvider_System_Threading_CancellationToken_
+  commentId: M:Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider,System.Threading.CancellationToken)
+  fullName: Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider, System.Threading.CancellationToken)
+  nameWithType: IResettableResource.ResetAsync(IServiceProvider, CancellationToken)
 - uid: Vulthil.xUnit.IResettableResource.ResetAsync*
   name: ResetAsync
   href: api/Vulthil.xUnit.IResettableResource.html#Vulthil_xUnit_IResettableResource_ResetAsync_
@@ -13577,12 +13560,12 @@ references:
   commentId: T:Vulthil.xUnit.IStartupResource
   fullName: Vulthil.xUnit.IStartupResource
   nameWithType: IStartupResource
-- uid: Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider)
-  name: InitializeAsync(IServiceProvider)
-  href: api/Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_System_IServiceProvider_
-  commentId: M:Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider)
-  fullName: Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider)
-  nameWithType: IStartupResource.InitializeAsync(IServiceProvider)
+- uid: Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider,System.Threading.CancellationToken)
+  name: InitializeAsync(IServiceProvider, CancellationToken)
+  href: api/Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_System_IServiceProvider_System_Threading_CancellationToken_
+  commentId: M:Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider,System.Threading.CancellationToken)
+  fullName: Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider, System.Threading.CancellationToken)
+  nameWithType: IStartupResource.InitializeAsync(IServiceProvider, CancellationToken)
 - uid: Vulthil.xUnit.IStartupResource.InitializeAsync*
   name: InitializeAsync
   href: api/Vulthil.xUnit.IStartupResource.html#Vulthil_xUnit_IStartupResource_InitializeAsync_

@@ -171,12 +171,12 @@ as another created instance's dependency), so a dependency registered afterward 
 still picked up. Every disposable instance the auto-mocker holds — an explicit <code>Use()</code> instance, a <code>UseReal</code>/
 <code>UseRealFor</code> instance once resolved, or an auto-generated dependency mock — is disposed automatically after each
 test; only a synchronous <code>IDisposable</code> is covered, so an <code>IAsyncDisposable</code>-only registration needs an override of
-<code>Dispose()</code> to dispose it explicitly. The <code>BaseUnitTestCase&lt;TTarget&gt;</code> variant's <code>Target</code> is disposed the same way,
+<code>DisposeAsyncCore()</code> to dispose it explicitly. The <code>BaseUnitTestCase&lt;TTarget&gt;</code> variant's <code>Target</code> is disposed the same way,
 and always before the auto-mocker's own instances.</p>
 <h2 id="integration-tests">Integration Tests</h2>
 <h3 id="baseintegrationtestcase">BaseIntegrationTestCase</h3>
 <p><code>BaseIntegrationTestCase&lt;TEntryPoint&gt;</code> boots a real <code>WebApplicationFactory</code> backed by test containers. It builds on
-<code>BaseUnitTestCase</code>, so the cancellation token, the <code>Initialize()</code>/<code>Dispose()</code> hooks and the auto-mocker vocabulary
+<code>BaseUnitTestCase</code>, so the cancellation token, the <code>InitializeAsyncCore()</code>/<code>DisposeAsyncCore()</code> hooks and the auto-mocker vocabulary
 (<code>Use</code>, <code>GetMock</code>, <code>UseReal</code>) are the same in both kinds of test. The factory is supplied as the xUnit fixture, so its
 containers start once for the scope and are shared across the tests in it:</p>
 <pre><code class="lang-csharp">public sealed class UsersEndpointTests(AppWebFactory factory)
@@ -279,11 +279,10 @@ specific; without one it is forwarded to xUnit's diagnostic messages (visible wi
 <p>Containers are registered <strong>once</strong>, on an assembly-level <code>ContainerHost</code> fixture, and every factory consumes them through a per-factory <strong>scope</strong> — so twenty test classes share one PostgreSQL server and one broker instead of starting twenty of each:</p>
 <pre><code class="lang-csharp">public sealed class AppContainerHost : ContainerHost
 {
-    protected override Task ConfigureContainers()
+    protected override void ConfigureContainers()
     {
         AddContainer&lt;PostgresTestContainer&gt;();
         AddContainer&lt;RabbitMqTestContainer&gt;();
-        return Task.CompletedTask;
     }
 }
 
@@ -324,7 +323,7 @@ public sealed class AppWebFactory(AppContainerHost containerHost) : BaseWebAppli
     }
 }
 </code></pre>
-<p>The view creates the namespace when the factory starts and deletes it when the class finishes. Deleting is best-effort: a failure becomes a diagnostic message instead of a test failure, because the namespace goes away with the container anyway. The base view never resets the shared container; implement <code>IResettableResource</code> on the view when its namespace can be reset between tests.</p>
+<p>The view creates the namespace when the factory starts and deletes it when the class finishes. Deleting is best-effort: a failure becomes a diagnostic message instead of a test failure, because the namespace goes away with the container anyway. The base view never resets the shared container; implement <code>IResettableResource</code> on the view when its namespace can be reset between tests. The token that <code>ResetAsync</code> gets is cancelled when the reset runs longer than 30 seconds.</p>
 <p>A scope lives as long as its factory: one test class. All tests of the class — and the per-test hosts they build — share its database and virtual host. The database is reset after each test, but the queues are not purged, so a message that one test leaves in a queue is delivered during the next test of the class. Wait for the messages a test publishes before the test ends.</p>
 <h3 id="mocking-outbound-http-dependencies">Mocking outbound HTTP dependencies</h3>
 <p>For a service that calls an external API through an <code>HttpClient</code> from <code>IHttpClientFactory</code>, register an in-process HTTP mock on the factory. It replaces that client's primary message handler, so the real client code runs (URL building, serialization, the delegating-handler pipeline) and only the wire is faked. Both <strong>typed</strong> clients (<code>AddHttpClient&lt;TClient, ...&gt;()</code>, generic client types included) and <strong>named</strong> clients (<code>AddHttpClient(&quot;name&quot;)</code>) are supported; for typed clients the implementation type does not need to be accessible:</p>
@@ -369,7 +368,7 @@ case-insensitive:</p>
 <pre><code class="lang-csharp">var request = HttpMock&lt;IWeatherClient&gt;().ReceivedRequests.ShouldHaveSingleItem();
 request.Headers[&quot;Authorization&quot;].ShouldHaveSingleItem().ShouldBe(&quot;Bearer test-token&quot;);
 </code></pre>
-<p>Mock state is reset after each test (like the database), so stubs and captured requests never leak between tests. Under the hood the mock implements <code>IResettableResource</code>; database containers implement it too, and the test case resets every registered resettable resource in its teardown. A WireMock-based or other <code>IHttpMock</code> implementation can be substituted if you need richer matching, but the built-in mock has no external dependency.</p>
+<p>Mock state is reset after each test, together with the database, so stubs and captured requests never leak between tests. The test case resets the mocks in its teardown; a test does not call a reset itself.</p>
 <h3 id="resetting-your-own-test-doubles">Resetting your own test doubles</h3>
 <p>A test double that keeps state in the test host's services — an in-memory email sender that records what it sent,
 a stub store — is reset after each test when it implements <code>IResettableTestState</code> (from <code>Vulthil.Extensions.Testing</code>)
@@ -473,7 +472,7 @@ captured messages and removes the <code>Handle</code>/<code>Respond</code> stubs
 <a href="#resetting-your-own-test-doubles">Resetting your own test doubles</a>). A test needs no setup code for this.</p>
 <p>The reset runs after each test, so messages that the host publishes while it starts are visible to the first test
 that uses the host. To ignore them, assert on the ids the test used, or call <code>Clear()</code> in the test body after the
-test registers its doubles. Do not call it from <code>Initialize()</code>: resolving the harness there builds the host before
+test registers its doubles. Do not call it from <code>InitializeAsyncCore()</code>: resolving the harness there builds the host before
 the test can register its doubles.</p>
 <p><code>Clear()</code> empties only the captured messages and keeps the stubs, for a test that asserts in phases. A host that you
 build yourself and keep across tests is not reset for you; reset it from your per-test teardown:</p>

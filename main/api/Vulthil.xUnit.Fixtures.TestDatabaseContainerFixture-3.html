@@ -499,7 +499,7 @@ default database. Override for engines that need non-standard DDL.</p>
 
   <div class="markdown level1 summary"><p>Creates a scope view backed by its own database on this server, named after <code class="paramref">scopeId</code>. The
 view creates the database when it initializes, applies migrations through
-<a class="xref" href="Vulthil.xUnit.Fixtures.ITestDatabaseContainer.html#Vulthil_xUnit_Fixtures_ITestDatabaseContainer_MigrateDatabase_System_IServiceProvider_">MigrateDatabase(IServiceProvider)</a>, resets it with Respawn between tests, and drops it
+<a class="xref" href="Vulthil.xUnit.Fixtures.ITestDatabaseContainer.html#Vulthil_xUnit_Fixtures_ITestDatabaseContainer_MigrateDatabaseAsync_System_IServiceProvider_System_Threading_CancellationToken_">MigrateDatabaseAsync(IServiceProvider, CancellationToken)</a>, resets it with Respawn between tests, and drops it
 (best-effort) when disposed. The server container itself keeps running for other scopes.</p>
 </div>
   <div class="markdown level1 conceptual"></div>

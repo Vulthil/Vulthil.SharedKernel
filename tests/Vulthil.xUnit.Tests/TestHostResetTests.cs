@@ -69,12 +69,15 @@ public sealed class TestHostResetTests : BaseUnitTestCase
     }
 
     public sealed class RecordingResource(
-        ICollection<string> log, string name, Func<Task>? onReset = null) : IResettableResource
+        ICollection<string> log, string name, Func<CancellationToken, Task>? onReset = null) : IResettableResource
     {
-        public ValueTask ResetAsync(IServiceProvider serviceProvider)
+        public CancellationToken ResetToken { get; private set; }
+
+        public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             log.Add($"reset:{name}");
-            return onReset is null ? ValueTask.CompletedTask : new ValueTask(onReset());
+            ResetToken = cancellationToken;
+            return onReset is null ? ValueTask.CompletedTask : new ValueTask(onReset(cancellationToken));
         }
     }
 
@@ -154,7 +157,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new RecordingService(_log, "a"));
         IResettableResource[] resources =
         [
-            new RecordingResource(_log, "broken", () => Task.FromException(new InvalidOperationException("dirty"))),
+            new RecordingResource(_log, "broken", _ => Task.FromException(new InvalidOperationException("dirty"))),
             new RecordingResource(_log, "db"),
         ];
 
@@ -207,7 +210,7 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         await using var host = HostWith(new RecordingService(_log, "a"));
         IResettableResource[] resources =
         [
-            new RecordingResource(_log, "stuck", () => neverResets.Task),
+            new RecordingResource(_log, "stuck", _ => neverResets.Task),
             new RecordingResource(_log, "db"),
         ];
 
@@ -220,6 +223,24 @@ public sealed class TestHostResetTests : BaseUnitTestCase
         _log.ShouldBe(["stop:a", "reset:stuck", "reset:db", "start:a"]);
         exception.InnerExceptions.ShouldHaveSingleItem().ShouldBeOfType<TimeoutException>()
             .Message.ShouldContain($"Resetting '{nameof(RecordingResource)}'");
+    }
+
+    [Fact]
+    public async Task AResourceResetThatHonoursItsTokenIsCancelledAtTheStepTimeout()
+    {
+        // Arrange
+        await using var host = HostWith(new RecordingService(_log, "a"));
+        var slowResource = new RecordingResource(_log, "slow", token => Task.Delay(Timeout.InfiniteTimeSpan, token));
+
+        // Act
+        var reset = ResetAsync(host, [slowResource]);
+        _timeProvider.Advance(TestHostReset.StepTimeout);
+        var exception = await Should.ThrowAsync<AggregateException>(() => reset);
+
+        // Assert
+        _log.ShouldBe(["stop:a", "reset:slow", "start:a"]);
+        exception.InnerExceptions.ShouldHaveSingleItem().ShouldBeOfType<TimeoutException>();
+        slowResource.ResetToken.IsCancellationRequested.ShouldBeTrue();
     }
 
     [Fact]

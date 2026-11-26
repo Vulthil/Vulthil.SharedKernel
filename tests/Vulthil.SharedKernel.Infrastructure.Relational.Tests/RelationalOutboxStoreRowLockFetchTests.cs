@@ -24,7 +24,7 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
     private readonly SqliteConnection _renamedConnection = new("DataSource=:memory:");
     private readonly SqliteConnection _unmappedConnection = new("DataSource=:memory:");
 
-    protected override async ValueTask Initialize()
+    protected override async ValueTask InitializeAsyncCore()
     {
         await _connection.OpenAsync(CancellationToken);
         await using var context = NewContext();
@@ -37,11 +37,12 @@ public sealed class RelationalOutboxStoreRowLockFetchTests : BaseUnitTestCase
         await _unmappedConnection.OpenAsync(CancellationToken);
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         await _connection.DisposeAsync();
         await _renamedConnection.DisposeAsync();
         await _unmappedConnection.DisposeAsync();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

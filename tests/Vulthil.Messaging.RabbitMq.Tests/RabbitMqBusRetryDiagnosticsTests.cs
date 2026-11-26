@@ -42,7 +42,7 @@ public sealed class RabbitMqBusRetryDiagnosticsTests : BaseUnitTestCase
         Use<ILogger<RabbitMqBus>>(_logger);
     }
 
-    protected override ValueTask Dispose() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.Dispose();
+    protected override ValueTask DisposeAsyncCore() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.DisposeAsyncCore();
 
     [Fact]
     public async Task StartupWarnsForEachUnresolvableIgnoredExceptionName()

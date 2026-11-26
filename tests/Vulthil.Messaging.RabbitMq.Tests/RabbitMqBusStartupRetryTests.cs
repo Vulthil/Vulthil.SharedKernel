@@ -37,7 +37,7 @@ public sealed class RabbitMqBusStartupRetryTests : BaseUnitTestCase
         _lazyTarget = new(CreateInstance<RabbitMqBus>);
     }
 
-    protected override ValueTask Dispose() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.Dispose();
+    protected override ValueTask DisposeAsyncCore() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.DisposeAsyncCore();
 
     [Fact]
     public async Task StartAsyncFailThenRetrySucceedsWithoutDoublingHandlersOrRejectingTheRpcConsumer()

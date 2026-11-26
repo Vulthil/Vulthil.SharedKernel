@@ -11,14 +11,18 @@ public sealed class RelationalIdempotencyStoreTests : BaseUnitTestCase
 {
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
 
-    protected override async ValueTask Initialize()
+    protected override async ValueTask InitializeAsyncCore()
     {
         await _connection.OpenAsync(CancellationToken);
         await using var context = NewContext();
         await context.Database.EnsureCreatedAsync(CancellationToken);
     }
 
-    protected override async ValueTask Dispose() => await _connection.DisposeAsync();
+    protected override async ValueTask DisposeAsyncCore()
+    {
+        await _connection.DisposeAsync();
+        await base.DisposeAsyncCore();
+    }
 
     [Fact]
     public async Task ProcessPersistsMarkerAndBusinessWriteTogether()

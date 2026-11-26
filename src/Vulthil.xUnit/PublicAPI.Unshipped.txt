@@ -11,7 +11,6 @@ Vulthil.xUnit.Fixtures.ContainerHost.AddContainer<TContainer>() -> void
 *REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ResetScope() -> System.Threading.Tasks.ValueTask
 *REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.ScopedServices.get -> System.IServiceProvider!
 *REMOVED*Vulthil.xUnit.BaseIntegrationTestCase<TFactory, TEntryPoint>.TestOutputHelper.get -> Xunit.ITestOutputHelper?
-*REMOVED*Vulthil.xUnit.BaseUnitTestCase.InitializeAsync() -> System.Threading.Tasks.ValueTask
 *REMOVED*Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.AddContainer(Vulthil.xUnit.Fixtures.ITestContainer! container) -> void
 *REMOVED*Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.BaseWebApplicationFactory() -> void
 *REMOVED*Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint>.ContainersWithConnectionStrings.get -> System.Collections.Generic.IEnumerable<Vulthil.xUnit.Fixtures.ITestContainerWithConnectionString!>!
@@ -35,7 +34,6 @@ Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Factory.get -> Microsoft.AspN
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.FactoryFixture.get -> Vulthil.xUnit.BaseWebApplicationFactory<TEntryPoint!>!
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.HttpMock(string! name) -> Vulthil.xUnit.Http.IHttpMock!
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.HttpMock<TClient>() -> Vulthil.xUnit.Http.IHttpMock!
-Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScope() -> System.Threading.Tasks.ValueTask
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ScopedServices.get -> System.IServiceProvider!
 Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.TestOutputHelper.get -> Xunit.ITestOutputHelper?
 Vulthil.xUnit.Fixtures.ContainerHost.ContainerHost(Xunit.Sdk.IMessageSink? messageSink = null) -> void
@@ -43,14 +41,11 @@ Vulthil.xUnit.Fixtures.RabbitMqTestContainerFixture<TBuilderEntity, TContainerEn
 Vulthil.xUnit.Fixtures.TestContainerFixture<TBuilderEntity, TContainerEntity>.TestContainerFixture(Xunit.Sdk.IMessageSink? messageSink = null) -> void
 Vulthil.xUnit.Fixtures.TestContainerFixtureWithConnectionString<TBuilderEntity, TContainerEntity>.TestContainerFixtureWithConnectionString(Xunit.Sdk.IMessageSink? messageSink = null) -> void
 Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.TestDatabaseContainerFixture(Xunit.Sdk.IMessageSink? messageSink = null) -> void
-override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Dispose() -> System.Threading.Tasks.ValueTask
 override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.GetMock<TMock>() -> Moq.Mock<TMock!>!
-override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
 override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.Use<TService>(TService service) -> void
 override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseReal<TService>() -> void
 override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.UseRealFor<TService, TImplementation>() -> void
 virtual Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.CreateFactory() -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
-virtual Vulthil.xUnit.BaseUnitTestCase.InitializeAsync() -> System.Threading.Tasks.ValueTask
 Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>
 Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.Container.get -> TContainer
 Vulthil.xUnit.Fixtures.TestContainerScope<TContainer>.DisposeAsync() -> System.Threading.Tasks.ValueTask
@@ -68,3 +63,19 @@ Vulthil.xUnit.Http.CapturedHttpRequest.Headers.get -> System.Collections.Generic
 Vulthil.xUnit.Http.CapturedHttpRequest.Headers.init -> void
 *REMOVED*Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
 *REMOVED*Vulthil.xUnit.Fixtures.TestDatabaseContainerFixture<TDbContext, TBuilderEntity, TContainerEntity>.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabase(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+*REMOVED*Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider! serviceProvider) -> System.Threading.Tasks.ValueTask
+*REMOVED*override Vulthil.xUnit.BaseUnitTestCase<TTarget>.Dispose() -> System.Threading.Tasks.ValueTask
+*REMOVED*virtual Vulthil.xUnit.BaseUnitTestCase.Dispose() -> System.Threading.Tasks.ValueTask
+*REMOVED*virtual Vulthil.xUnit.BaseUnitTestCase.Initialize() -> System.Threading.Tasks.ValueTask
+*REMOVED*virtual Vulthil.xUnit.Fixtures.ContainerHost.ConfigureContainers() -> System.Threading.Tasks.Task!
+Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.ResetScopeAsync() -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.Fixtures.ITestDatabaseContainer.MigrateDatabaseAsync(System.IServiceProvider! serviceProvider, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.IResettableResource.ResetAsync(System.IServiceProvider! serviceProvider, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Vulthil.xUnit.IStartupResource.InitializeAsync(System.IServiceProvider! serviceProvider, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.BaseIntegrationTestCase<TEntryPoint>.DisposeAsyncCore() -> System.Threading.Tasks.ValueTask
+override Vulthil.xUnit.BaseUnitTestCase<TTarget>.DisposeAsyncCore() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseUnitTestCase.DisposeAsyncCore() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.BaseUnitTestCase.InitializeAsyncCore() -> System.Threading.Tasks.ValueTask
+virtual Vulthil.xUnit.Fixtures.ContainerHost.ConfigureContainers() -> void

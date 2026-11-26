@@ -80,7 +80,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
     /// <summary>
     /// Creates a scope view backed by its own database on this server, named after <paramref name="scopeId"/>. The
     /// view creates the database when it initializes, applies migrations through
-    /// <see cref="ITestDatabaseContainer.MigrateDatabase"/>, resets it with Respawn between tests, and drops it
+    /// <see cref="ITestDatabaseContainer.MigrateDatabaseAsync"/>, resets it with Respawn between tests, and drops it
     /// (best-effort) when disposed. The server container itself keeps running for other scopes.
     /// </summary>
     /// <param name="scopeId">A short, unique, lowercase identifier for the scope; sanitized into a database name.</param>
@@ -199,7 +199,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
         public override string ConnectionString => connectionString;
 
-        public async ValueTask MigrateDatabase(IServiceProvider serviceProvider)
+        public async ValueTask MigrateDatabaseAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             if (_hasBeenMigrated)
             {
@@ -210,7 +210,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
             for (var attempt = 1; attempt <= MaxMigrationAttempts; attempt++)
             {
-                if (!(await dbContext.Database.GetPendingMigrationsAsync().ConfigureAwait(false)).Any())
+                if (!(await dbContext.Database.GetPendingMigrationsAsync(cancellationToken).ConfigureAwait(false)).Any())
                 {
                     _hasBeenMigrated = true;
                     return;
@@ -218,13 +218,13 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
                 try
                 {
-                    await dbContext.Database.MigrateAsync().ConfigureAwait(false);
+                    await dbContext.Database.MigrateAsync(cancellationToken).ConfigureAwait(false);
                     _hasBeenMigrated = true;
                     return;
                 }
-                catch when (attempt < MaxMigrationAttempts)
+                catch when (attempt < MaxMigrationAttempts && !cancellationToken.IsCancellationRequested)
                 {
-                    await Task.Delay(MigrationRetryDelayMilliseconds).ConfigureAwait(false);
+                    await Task.Delay(MigrationRetryDelayMilliseconds, cancellationToken).ConfigureAwait(false);
                 }
             }
 
@@ -232,16 +232,16 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
                 $"Pending migrations for '{typeof(TDbContext).Name}' did not complete after {MaxMigrationAttempts} attempts.");
         }
 
-        public async ValueTask ResetAsync(IServiceProvider serviceProvider)
+        public async ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
             if (!_hasBeenMigrated)
             {
                 return;
             }
 
-            var respawner = await GetOrCreateRespawnerAsync().ConfigureAwait(false);
+            var respawner = await GetOrCreateRespawnerAsync(cancellationToken).ConfigureAwait(false);
 
-            var connection = await OpenScopedConnectionAsync().ConfigureAwait(false);
+            var connection = await OpenScopedConnectionAsync(cancellationToken).ConfigureAwait(false);
             await using var _ = connection.ConfigureAwait(false);
             await respawner.ResetAsync(connection).ConfigureAwait(false);
         }
@@ -250,14 +250,14 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
 
         protected override ValueTask DeleteNamespaceAsync(string namespaceName) => new(Container.DropDatabaseAsync(namespaceName));
 
-        private async ValueTask<Respawner> GetOrCreateRespawnerAsync()
+        private async ValueTask<Respawner> GetOrCreateRespawnerAsync(CancellationToken cancellationToken)
         {
             if (_respawner is not null)
             {
                 return _respawner;
             }
 
-            var connection = await OpenScopedConnectionAsync().ConfigureAwait(false);
+            var connection = await OpenScopedConnectionAsync(cancellationToken).ConfigureAwait(false);
             await using var _ = connection.ConfigureAwait(false);
             _respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
             {
@@ -272,7 +272,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
             return _respawner;
         }
 
-        private async Task<DbConnection> OpenScopedConnectionAsync()
+        private async Task<DbConnection> OpenScopedConnectionAsync(CancellationToken cancellationToken)
         {
             var connection = Container.DbProviderFactory.CreateConnection()
                 ?? throw new InvalidOperationException(
@@ -281,7 +281,7 @@ public abstract class TestDatabaseContainerFixture<TDbContext, TBuilderEntity, T
             try
             {
                 connection.ConnectionString = connectionString;
-                await connection.OpenAsync().ConfigureAwait(false);
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
                 return connection;
             }
             catch

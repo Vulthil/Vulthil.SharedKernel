@@ -12,10 +12,10 @@ public sealed class SourceServiceHeaderPublishFilterTests : BaseUnitTestCase
 
     public SourceServiceHeaderPublishFilterTests() => _target = new(CreateInstance<SourceServiceHeaderPublishFilter>);
 
-    protected override ValueTask Initialize()
+    protected override ValueTask InitializeAsyncCore()
     {
         GetMock<IHostEnvironment>().SetupGet(environment => environment.ApplicationName).Returns("Orders");
-        return base.Initialize();
+        return base.InitializeAsyncCore();
     }
 
     [Fact]

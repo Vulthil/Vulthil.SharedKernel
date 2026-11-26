@@ -55,7 +55,7 @@ public sealed class RabbitMqBusTopologyTests : BaseUnitTestCase
         _lazyTarget = new(CreateInstance<RabbitMqBus>);
     }
 
-    protected override ValueTask Dispose() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.Dispose();
+    protected override ValueTask DisposeAsyncCore() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.DisposeAsyncCore();
 
     private Task DeclareTopologyAsync(IMessageConfigurationProvider provider)
     {

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Vulthil.xUnit;
 
@@ -20,6 +21,9 @@ public interface IResettableResource
     /// One-time setup that must run before the first test instead belongs in <see cref="IStartupResource"/>.
     /// </summary>
     /// <param name="serviceProvider">The application's root service provider; create a scope from it to resolve scoped services.</param>
+    /// <param name="cancellationToken">
+    /// Cancelled when the reset runs past its time limit; the next test then starts without waiting for it.
+    /// </param>
     /// <returns>A task representing the asynchronous reset work.</returns>
-    ValueTask ResetAsync(IServiceProvider serviceProvider);
+    ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default);
 }

@@ -37,7 +37,7 @@ public sealed class FixtureResetRoutingTests(RestartProbeWebApplicationFactory f
     }
 
     /// <inheritdoc />
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_disposedOnce)
         {
@@ -45,6 +45,6 @@ public sealed class FixtureResetRoutingTests(RestartProbeWebApplicationFactory f
         }
 
         _disposedOnce = true;
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 }

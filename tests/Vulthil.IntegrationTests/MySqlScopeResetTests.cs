@@ -34,10 +34,10 @@ public sealed class MySqlScopeResetTests(IntegrationTestContainerHost containerH
             .AddDbContext<MySqlOutboxDbContext>(options => options.UseMySql(resetScope.ConnectionString, ServerVersion.Parse("8.4.0-mysql")))
             .BuildServiceProvider();
         await using var scope = services.CreateAsyncScope();
-        await resetScope.MigrateDatabase(scope.ServiceProvider);
+        await resetScope.MigrateDatabaseAsync(scope.ServiceProvider, CancellationToken);
 
         // Act
-        await resetScope.ResetAsync(scope.ServiceProvider);
+        await resetScope.ResetAsync(scope.ServiceProvider, CancellationToken);
 
         // Assert
         (await CountProbeRowsAsync(resetScope.ConnectionString)).ShouldBe(0);

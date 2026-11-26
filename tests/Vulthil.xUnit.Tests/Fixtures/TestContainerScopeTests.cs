@@ -10,6 +10,12 @@ public sealed class TestContainerScopeTests : BaseUnitTestCase
 
     private readonly SharedContainer _container = new();
 
+    protected override async ValueTask DisposeAsyncCore()
+    {
+        await _container.DisposeAsync();
+        await base.DisposeAsyncCore();
+    }
+
     [Fact]
     public async Task AScopeCreatesItsNamespaceWhenItInitializesAndDeletesItWhenItIsDisposed()
     {

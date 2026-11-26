@@ -12,7 +12,7 @@ namespace Vulthil.xUnit.Http;
 /// requests as durable state, and hands out lightweight <see cref="HttpMessageHandler"/> instances (which the
 /// HTTP client factory owns and may dispose) that delegate back to this shared state.
 /// </summary>
-internal sealed class HttpMock : IHttpMock
+internal sealed class HttpMock : IHttpMock, IResettableResource
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -51,8 +51,7 @@ internal sealed class HttpMock : IHttpMock
         return rule;
     }
 
-    /// <inheritdoc />
-    public ValueTask ResetAsync(IServiceProvider serviceProvider)
+    public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
     {
         lock (_gate)
         {
@@ -163,7 +162,7 @@ internal sealed class HttpMock : IHttpMock
         {
             if (_responder is not null)
             {
-                return _responder(request, cancellationToken);
+                return RespondWithResponderAsync(_responder, request, cancellationToken);
             }
 
             var response = new HttpResponseMessage(_statusCode);
@@ -172,6 +171,22 @@ internal sealed class HttpMock : IHttpMock
                 response.Content = new StringContent(_body, Encoding.UTF8, MediaTypeNames.Application.Json);
             }
 
+            AddHeaders(response);
+            return Task.FromResult(response);
+        }
+
+        private async Task<HttpResponseMessage> RespondWithResponderAsync(
+            Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responder,
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            var response = await responder(request, cancellationToken).ConfigureAwait(false);
+            AddHeaders(response);
+            return response;
+        }
+
+        private void AddHeaders(HttpResponseMessage response)
+        {
             foreach (var header in _headers)
             {
                 if (!response.Headers.TryAddWithoutValidation(header.Key, header.Value))
@@ -179,8 +194,6 @@ internal sealed class HttpMock : IHttpMock
                     response.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
             }
-
-            return Task.FromResult(response);
         }
     }
 

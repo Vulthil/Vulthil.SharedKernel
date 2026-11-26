@@ -149,15 +149,13 @@ public sealed class ContainerHostTests : BaseUnitTestCase<ContainerHostTests.Tes
 
         public void QueueContainer(ITestContainer container) => _pendingContainers.Add(container);
 
-        protected override Task ConfigureContainers()
+        protected override void ConfigureContainers()
         {
             ConfigureContainersCallCount++;
             foreach (var container in _pendingContainers)
             {
                 AddContainer(container);
             }
-
-            return Task.CompletedTask;
         }
     }
 
@@ -168,10 +166,9 @@ public sealed class ContainerHostTests : BaseUnitTestCase<ContainerHostTests.Tes
 
     public sealed class TypeRegisteringContainerHost : ContainerHost
     {
-        protected override Task ConfigureContainers()
+        protected override void ConfigureContainers()
         {
             AddContainer<FakeTestContainer>();
-            return Task.CompletedTask;
         }
     }
 

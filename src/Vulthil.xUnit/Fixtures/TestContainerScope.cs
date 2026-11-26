@@ -159,12 +159,13 @@ internal sealed class SharedContainerScope(ITestContainer container)
     /// shared state and therefore also affects other test classes using the container.
     /// </summary>
     /// <param name="serviceProvider">The application's root service provider, forwarded to the container.</param>
+    /// <param name="cancellationToken">The reset step's token, forwarded to the container.</param>
     /// <returns>A task representing the asynchronous reset work.</returns>
-    public ValueTask ResetAsync(IServiceProvider serviceProvider)
-        => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
+    public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+        => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider, cancellationToken) : ValueTask.CompletedTask;
 
-    public ValueTask InitializeAsync(IServiceProvider serviceProvider)
-        => Container is IStartupResource startupResource ? startupResource.InitializeAsync(serviceProvider) : ValueTask.CompletedTask;
+    public ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+        => Container is IStartupResource startupResource ? startupResource.InitializeAsync(serviceProvider, cancellationToken) : ValueTask.CompletedTask;
 }
 
 /// <summary>
@@ -180,13 +181,14 @@ internal sealed class SharedContainerWithConnectionStringScope(ITestContainerWit
     /// shared state and therefore also affects other test classes using the container.
     /// </summary>
     /// <param name="serviceProvider">The application's root service provider, forwarded to the container.</param>
+    /// <param name="cancellationToken">The reset step's token, forwarded to the container.</param>
     /// <returns>A task representing the asynchronous reset work.</returns>
-    public ValueTask ResetAsync(IServiceProvider serviceProvider)
-        => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider) : ValueTask.CompletedTask;
+    public ValueTask ResetAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+        => Container is IResettableResource resettable ? resettable.ResetAsync(serviceProvider, cancellationToken) : ValueTask.CompletedTask;
 
-    public ValueTask MigrateDatabase(IServiceProvider serviceProvider)
-        => Container is ITestDatabaseContainer database ? database.MigrateDatabase(serviceProvider) : ValueTask.CompletedTask;
+    public ValueTask MigrateDatabaseAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+        => Container is ITestDatabaseContainer database ? database.MigrateDatabaseAsync(serviceProvider, cancellationToken) : ValueTask.CompletedTask;
 
-    public ValueTask InitializeAsync(IServiceProvider serviceProvider)
-        => Container is IStartupResource startupResource ? startupResource.InitializeAsync(serviceProvider) : ValueTask.CompletedTask;
+    public ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+        => Container is IStartupResource startupResource ? startupResource.InitializeAsync(serviceProvider, cancellationToken) : ValueTask.CompletedTask;
 }

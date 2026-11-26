@@ -12,10 +12,9 @@ namespace Orders.Tests.Fixtures;
 /// </summary>
 public sealed class OrdersContainerHost : ContainerHost
 {
-    protected override Task ConfigureContainers()
+    protected override void ConfigureContainers()
     {
         AddContainer<PostgreSqlTestContainer>();
         AddContainer<RabbitMqTestContainer>();
-        return Task.CompletedTask;
     }
 }

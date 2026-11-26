@@ -14,14 +14,14 @@ public sealed class OutboxSignalTests : BaseUnitTestCase
 
     public OutboxSignalTests() => _lazyTarget = new(CreateInstance<OutboxSignal>);
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_lazyTarget.IsValueCreated)
         {
             Target.Dispose();
         }
 
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

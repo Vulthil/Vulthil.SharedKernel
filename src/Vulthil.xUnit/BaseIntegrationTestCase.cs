@@ -197,16 +197,8 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
         base.UseRealFor<TService, TImplementation>();
     }
 
-    /// <summary>
-    /// Runs the <see cref="BaseUnitTestCase.Initialize"/> hook, then discards the service scope it may have used so
-    /// the test itself starts from a fresh one.
-    /// </summary>
-    /// <returns>A task representing the initialization work.</returns>
-    public override async ValueTask InitializeAsync()
-    {
-        await base.InitializeAsync().ConfigureAwait(false);
-        await ResetScope().ConfigureAwait(false);
-    }
+    // The InitializeAsyncCore hook may have used a service scope; the test itself starts from a fresh one.
+    private protected override ValueTask OnInitializedAsync() => ResetScopeAsync();
 
     /// <summary>
     /// Resets the fixture's live hosts (restartable services paused, resettable resources and test states reset),
@@ -214,7 +206,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     /// Override (calling the base implementation) for further cleanup.
     /// </summary>
     /// <returns>A task representing the cleanup work.</returns>
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         try
         {
@@ -226,7 +218,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
         }
         finally
         {
-            await ResetScope().ConfigureAwait(false);
+            await ResetScopeAsync().ConfigureAwait(false);
             if (_client.IsValueCreated)
             {
                 _client.Value.Dispose();
@@ -237,7 +229,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
                 await _lazyFactory.Value.DisposeAsync().ConfigureAwait(false);
             }
 
-            await base.Dispose().ConfigureAwait(false);
+            await base.DisposeAsyncCore().ConfigureAwait(false);
         }
     }
 
@@ -246,7 +238,7 @@ public abstract class BaseIntegrationTestCase<TEntryPoint> : BaseUnitTestCase
     /// <see cref="ScopedServices"/> resolves a fresh scope.
     /// </summary>
     /// <returns>A task representing the asynchronous dispose operation.</returns>
-    protected async ValueTask ResetScope()
+    protected async ValueTask ResetScopeAsync()
     {
         AsyncServiceScope? scope;
         lock (_gate)

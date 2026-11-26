@@ -20,10 +20,10 @@ public abstract class RelayWakeupIntegrationTests<TFixture, TDbContext>(TFixture
     where TFixture : ProviderOutboxHostFixture<TDbContext>
     where TDbContext : BaseDbContext
 {
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         await fixture.ResetOutboxStateAsync(CancellationToken);
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

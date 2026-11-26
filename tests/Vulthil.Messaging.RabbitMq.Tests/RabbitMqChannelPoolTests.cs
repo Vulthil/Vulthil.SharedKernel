@@ -25,7 +25,7 @@ public sealed class RabbitMqChannelPoolTests : BaseUnitTestCase
         _lazyTarget = new(CreateInstance<RabbitMqChannelPool>);
     }
 
-    protected override ValueTask Dispose() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.Dispose();
+    protected override ValueTask DisposeAsyncCore() => _lazyTarget.IsValueCreated ? Target.DisposeAsync() : base.DisposeAsyncCore();
 
 
     [Fact]

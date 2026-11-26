@@ -11,10 +11,9 @@ namespace Shipments.Tests.Fixtures;
 /// </summary>
 public sealed class ShipmentsContainerHost : ContainerHost
 {
-    protected override Task ConfigureContainers()
+    protected override void ConfigureContainers()
     {
         AddContainer<MySqlTestContainer>();
         AddContainer<RabbitMqTestContainer>();
-        return Task.CompletedTask;
     }
 }

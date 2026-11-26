@@ -21,10 +21,10 @@ public sealed class FilteringSendEndpointProviderTests : BaseUnitTestCase
         _lazyTarget = new(CreateInstance<FilteringSendEndpointProvider>);
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         await _services.DisposeAsync();
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

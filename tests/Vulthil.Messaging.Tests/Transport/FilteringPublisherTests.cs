@@ -19,10 +19,10 @@ public sealed class FilteringPublisherTests : BaseUnitTestCase
         _lazyTarget = new(CreateInstance<FilteringPublisher>);
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         await _services.DisposeAsync();
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

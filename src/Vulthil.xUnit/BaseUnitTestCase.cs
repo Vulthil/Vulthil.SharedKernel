@@ -17,7 +17,7 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        await Dispose().ConfigureAwait(false);
+        await DisposeAsyncCore().ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 
@@ -32,20 +32,32 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     /// <see cref="IAsyncDisposable"/> is not disposed by this sweep and needs an override to dispose it explicitly.
     /// </remarks>
     /// <returns>A task representing the cleanup work.</returns>
-    protected virtual ValueTask Dispose()
+    protected virtual ValueTask DisposeAsyncCore()
     {
         AutoMocker.AsDisposable().Dispose();
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc />
-    public virtual ValueTask InitializeAsync() => Initialize();
+    /// <summary>
+    /// Runs <see cref="InitializeAsyncCore"/> before each test. xUnit calls this method; override
+    /// <see cref="InitializeAsyncCore"/> to add initialization.
+    /// </summary>
+    /// <returns>A task representing the initialization work.</returns>
+    public async ValueTask InitializeAsync()
+    {
+        await InitializeAsyncCore().ConfigureAwait(false);
+        await OnInitializedAsync().ConfigureAwait(false);
+    }
 
     /// <summary>
     /// Override to perform custom async initialization before each test.
     /// </summary>
     /// <returns>A task representing the initialization work.</returns>
-    protected virtual ValueTask Initialize() => ValueTask.CompletedTask;
+    protected virtual ValueTask InitializeAsyncCore() => ValueTask.CompletedTask;
+
+    // Runs after InitializeAsyncCore even when an override does not call the base implementation, so a derived base
+    // class of this assembly can finish its own setup after the test's.
+    private protected virtual ValueTask OnInitializedAsync() => ValueTask.CompletedTask;
     /// <summary>
     /// Retrieves the mock for the specified type from the auto-mocker.
     /// </summary>
@@ -60,7 +72,7 @@ public abstract class BaseUnitTestCase : IAsyncLifetime
     /// <remarks>
     /// The auto-mocker takes ownership of <paramref name="service"/> for disposal purposes: if it implements
     /// <see cref="IDisposable"/>, it is disposed at test teardown along with every other auto-mocker-held instance
-    /// (see <see cref="Dispose"/>).
+    /// (see <see cref="DisposeAsyncCore"/>).
     /// </remarks>
     /// <typeparam name="TService">The service type.</typeparam>
     /// <param name="service">The service instance to register.</param>
@@ -139,7 +151,7 @@ public abstract class BaseUnitTestCase<TTarget> : BaseUnitTestCase where TTarget
     /// dependencies are.
     /// </summary>
     /// <returns>A task representing the cleanup work.</returns>
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_lazyTarget.IsValueCreated)
         {
@@ -154,7 +166,7 @@ public abstract class BaseUnitTestCase<TTarget> : BaseUnitTestCase where TTarget
             }
         }
 
-        await base.Dispose().ConfigureAwait(false);
+        await base.DisposeAsyncCore().ConfigureAwait(false);
     }
 }
 

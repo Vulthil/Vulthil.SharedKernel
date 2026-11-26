@@ -13,14 +13,14 @@ public sealed class RestartableBackgroundServiceTests : BaseUnitTestCase
 
     public RestartableBackgroundServiceTests() => _lazyTarget = new(CreateInstance<ProbeService>);
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_lazyTarget.IsValueCreated)
         {
             Target.Dispose();
         }
 
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]

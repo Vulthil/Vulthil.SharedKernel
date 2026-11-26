@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Vulthil.xUnit;
 
@@ -18,6 +19,7 @@ public interface IStartupResource
     /// Performs the resource's one-time startup setup.
     /// </summary>
     /// <param name="serviceProvider">The application's root service provider; create a scope from it to resolve scoped services.</param>
+    /// <param name="cancellationToken">The host's startup token; cancelled when the host start is cancelled.</param>
     /// <returns>A task representing the asynchronous setup work.</returns>
-    ValueTask InitializeAsync(IServiceProvider serviceProvider);
+    ValueTask InitializeAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default);
 }

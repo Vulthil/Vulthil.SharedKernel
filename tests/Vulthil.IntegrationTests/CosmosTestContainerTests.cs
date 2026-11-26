@@ -26,7 +26,7 @@ public sealed class CosmosTestContainerTests(CosmosWebApplicationFactory factory
         var write = ScopedServices.GetRequiredService<CosmosProbeDbContext>();
         write.Probes.Add(new CosmosProbe { Id = id, Value = "hello" });
         await write.SaveChangesAsync(CancellationToken);
-        await ResetScope();
+        await ResetScopeAsync();
 
         // Act
         var read = ScopedServices.GetRequiredService<CosmosProbeDbContext>();

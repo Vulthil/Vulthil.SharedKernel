@@ -47,13 +47,13 @@ public sealed class UnitOfWorkAcrossContextsTests : BaseUnitTestCase
 
     private BillingContext Billing => Services.GetRequiredService<BillingContext>();
 
-    protected override async ValueTask Initialize()
+    protected override async ValueTask InitializeAsyncCore()
     {
         await _ordersConnection.OpenAsync(CancellationToken);
         await _billingConnection.OpenAsync(CancellationToken);
     }
 
-    protected override async ValueTask Dispose()
+    protected override async ValueTask DisposeAsyncCore()
     {
         if (_scope is { } scope)
         {
@@ -67,7 +67,7 @@ public sealed class UnitOfWorkAcrossContextsTests : BaseUnitTestCase
 
         await _ordersConnection.DisposeAsync();
         await _billingConnection.DisposeAsync();
-        await base.Dispose();
+        await base.DisposeAsyncCore();
     }
 
     [Fact]
